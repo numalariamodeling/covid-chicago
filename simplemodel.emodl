@@ -15,16 +15,14 @@
 (observe recovered   R)
 
 ;(observe population  (sum S E I R))
-;(observe clock       time)
-;(observe moonphase   (* 500 (+ 1 (sin (* (/ time 29.5) 2 pi)))))
-;(observe fivec       500)
 
 (param Ki 0.0005)
 (param Kl 0.2)
 (param Kr (/ 1 7))
 (param Kw (/ 1 135))
 
-(reaction exposure   (S I) (E I) (* Ki S I))
+; (reaction exposure   (S I) (E I) (* Ki S I))
+(reaction exposure   (S) (E) (* Ki S I))
 (reaction infection  (E)   (I)   (* Kl E))
 (reaction recovery   (I)   (R)   (* Kr I))
 (reaction waning     (R)   (S)   (* Kw R))
