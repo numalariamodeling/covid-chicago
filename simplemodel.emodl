@@ -17,7 +17,6 @@
 ;(observe population  (sum S E I R))
 
 (param Ki 0.0005)
-
 (param incubation_pd 5)
 (param Kl (/ 1 incubation_pd)
 (param recovery_rate 16)
@@ -29,7 +28,6 @@
 (reaction exposure   (S) (E) (* Ki S I))
 (reaction infection  (E)   (I)   (* Kl E))
 (reaction recovery   (I)   (R)   (* Kr I))
-
 ; (reaction waning     (R)   (S)   (* Kw R))
 
 (end-model)
