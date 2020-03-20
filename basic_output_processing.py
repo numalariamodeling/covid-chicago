@@ -5,6 +5,8 @@ import os
 from plotting.colors import load_color_palette
 
 sim_output_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
+#sim_output_path = '/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
+
 raw_palette = load_color_palette('wes')
 palette = { x : raw_palette[y] for (y,x) in enumerate([
     'susceptible',
