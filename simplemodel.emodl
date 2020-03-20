@@ -30,7 +30,6 @@
 (reaction infection  (E)   (I)   (* Kl E))
 (reaction recovery   (I)   (R)   (* Kr I))
 
-; this makes an SEIRS model
 ; (reaction waning     (R)   (S)   (* Kw R))
 
 (end-model)
