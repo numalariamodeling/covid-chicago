@@ -16,8 +16,8 @@
 
 ;(observe population  (sum S E I R))
 
-(param Ki 0.0005)
-(param incubation_pd 5)
+(param Ki 0.319)
+(param incubation_pd 6.63)
 (param Kl (/ 1 incubation_pd))
 (param recovery_rate 16)
 (param Kr (/ 1 recovery_rate))
