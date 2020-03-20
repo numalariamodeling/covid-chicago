@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import os
 from plotting.colors import load_color_palette
 
-sim_output_path = '/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
+sim_output_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
+#sim_output_path = '/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
+
 raw_palette = load_color_palette('wes')
 palette = { x : raw_palette[y] for (y,x) in enumerate([
     'susceptible',
@@ -19,7 +21,7 @@ palette = { x : raw_palette[y] for (y,x) in enumerate([
 
 def reprocess(output_fname=None) :
 
-    fname = os.path.join(sim_output_path, 'trajectories_incubation_pd_6.63.csv')
+    fname = os.path.join(sim_output_path, 'trajectories.csv')
     df = pd.read_csv(fname, skiprows=1)
     df = df.set_index('sampletimes').transpose()
     df = df.reset_index(drop=False)
@@ -113,7 +115,7 @@ def sample_and_plot(df, samples) :
 
     ax.set_xlim(0,60)
     ax.legend()
-    plt.savefig(os.path.join(sim_output_path, 'sample_plot_incubation_pd_6.63.png'))
+    plt.savefig(os.path.join(sim_output_path, 'sample_plot.png'))
     plt.show()
 
 
