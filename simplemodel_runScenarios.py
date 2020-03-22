@@ -10,14 +10,8 @@ exe_dir = os.path.join(user_path, 'Box/NU-malaria-team/projects/binaries/compart
 if "mrung" in user_path :
     git_dir = os.path.join(user_path, 'gitrepos/covid-chicago/')
     sim_output_path = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
-    #sim_output_path = git_dir  # for testing
 
 # Selected range values from SEIR Parameter Estimates.xlsx
-# Need to update to run for sample distributions, rather than discrete values
-# Generate csv file with scenarios
-# Load scenarios.csv
-
-# print dataframe.
 initial_infect = [1,5,10]
 Ki = [0.05, 0.19, 0.312]
 incubation_pd = [6.63, 4.2, 12.4]
