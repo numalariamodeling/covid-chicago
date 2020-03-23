@@ -3,8 +3,13 @@
 # =============================================================0
 ## Using same terminology as in https://idmod.org/docs/cms/model-file.html#function-list
 
+library(tidyverse)
+library(cowplot)
+library(cowplot)
+library(deSolve)
 
-rm(list = ls())
+
+#rm(list = ls())
 # contact_rate = 27                     
 # transmission_probability = 0.18       
 recovery_rate <- 16 
@@ -58,3 +63,47 @@ matplot(modelResults$time, modelResults[, 2:5],
 )
 legend("topright", xpd = TRUE, bty = "n", horiz = TRUE, inset = c(0, 0), c("S", "E", "I", "R"), col = 1:4, lty = 1:4)
 # pdf(file="plot_human.pdf")   # save as pdf
+
+
+
+##### COmpare with data 
+illinois_pop = 12671821
+pred = modelResults %>%  
+        pivot_longer(-time,names_to = "outcome") %>% 
+        mutate(dat="pred",
+               value = value/1000* illinois_pop )
+
+        
+datD <- read.csv("C:/Users/mrung/gitrepos/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv")
+datC<- read.csv("C:/Users/mrung/gitrepos/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv")
+
+editDat <- function(dat){
+  colnames(dat ) <- gsub("*X","date_",colnames(dat ))
+  
+  dat <- dat %>% pivot_longer(cols=-c(Province.State ,Country.Region  ,   Lat  ,   Long), names_to = "Date") %>%
+    separate(Date, into=c("del","Date"), sep="_") %>% select(-del) %>%
+    mutate(Date = as.Date(Date, format="%m.%d.%y")) %>% 
+    group_by(Province.State ,Country.Region) %>% 
+    arrange(Province.State ,Country.Region,Date) %>%
+    mutate(nday = dplyr::row_number()) %>%
+    as.data.frame()
+  
+  return(dat)
+}
+
+datD <- editDat(datD)
+datC <- editDat(datC)
+
+datD$outcome="deaths"
+datC$outcome="confirmed cases"
+
+dat <- rbind(datD,datC) %>% as.data.frame
+
+illinois <- as.data.frame(dat[grep("Illinois",dat$Province.State),])
+dat <- illinois %>% 
+        mutate(time=nday-48,dat="data") %>% filter(nday>=48) %>%
+        select(time, outcome, value, dat)
+
+combinedDat <- rbind(dat, pred)
+
+ggplot(data=subset(combinedDat, outcome!="S")) + geom_line(aes(x=time, y=value, col=outcome, linetype=dat))
