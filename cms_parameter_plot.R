@@ -60,7 +60,7 @@ p1 <- ggplot() + theme_cowplot() +
   scale_color_manual(values = cols) +
   labs(subtitle="Explorative plot SEIR model (cms) trajectories",
     x = "Time [days]", y = "Population [N]", color = "Parameter",
-    caption = "\nBase parameter: initial_infect=5 (1,5,10), Ki=0.312 (0.050, 0.190,0.312) & \nincubation_pd=6.63 (4.20,6.63,12.40) & recovery_rate=6 (6, 13,16) "
+    caption = "\nBase parameter: initial_infect=5 (1,5,10), Ki=0.312 (0.0009, 0.050,0.312) & \nincubation_pd=6.63 (4.20,6.63,12.40) & recovery_rate=6 (6, 13,16) "
   ) +
   facet_wrap(~outcome, scales = "free") +
   customTheme
@@ -119,7 +119,7 @@ p2 <- ggplot() + theme_cowplot() +
   scale_color_manual(values = cols) +
   labs(subtitle="Explorative plot SEIR model (cms) trajectories",
     x = "Time [days]", y = "Population [N]", color = "Parameter",
-    caption = "\nBase parameter: initial_infect=5 (1,5,10), Ki=0.312 (0.050, 0.190,0.312) & \nincubation_pd=6.63 (4.20,6.63,12.40) & recovery_rate=6 (6, 13,16) "
+    caption = "\nBase parameter: initial_infect=5 (1,5,10), Ki=0.312 (0.0009, 0.050,0.312) & \nincubation_pd=6.63 (4.20,6.63,12.40) & recovery_rate=6 (6, 13,16) "
   ) +
   facet_wrap(~outcome, scales = "free") +
   customTheme
