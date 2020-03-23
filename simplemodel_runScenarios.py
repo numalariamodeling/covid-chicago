@@ -13,7 +13,7 @@ if "mrung" in user_path :
 
 # Selected range values from SEIR Parameter Estimates.xlsx
 initial_infect = [1,5,10]
-Ki = [0.05, 0.19, 0.312]
+Ki = [0.0009, 0.05, 0.312]
 incubation_pd = [6.63, 4.2, 12.4]
 recovery_rate = [6,13, 16 ]
 
