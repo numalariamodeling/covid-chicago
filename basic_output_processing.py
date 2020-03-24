@@ -2,43 +2,40 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from plotting.colors import load_color_palette
+import seaborn as sns
 
-sim_output_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
+sim_output_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago/cms_sim/sample_trajectories'
 #sim_output_path = '/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
 
-raw_palette = load_color_palette('wes')
-palette = { x : raw_palette[y] for (y,x) in enumerate([
-    'susceptible',
-    'exposed',
-    'infectious',
-    'recovered',
-    'symptomatic',
-    'hospitalized',
-    'critical',
-    'death'
-])}
 
-def reprocess(output_fname=None) :
+def reprocess(input_fname='trajectories.csv', output_fname=None) :
 
-    fname = os.path.join(sim_output_path, 'trajectories.csv')
+    fname = os.path.join(sim_output_path, input_fname)
     df = pd.read_csv(fname, skiprows=1)
+    num_samples = int((len(df)-1)/4)
     df = df.set_index('sampletimes').transpose()
     df = df.reset_index(drop=False)
     df = df.rename(columns={'index' : 'time'})
     df['time'] = df['time'].astype(float)
 
-    channels = [x for x in df.columns.values if '{' in x]
-    df = df.rename(columns={
-        x : x.split('{')[0] for x in channels
-    })
+    adf = pd.DataFrame()
+    for sample_num in range(num_samples) :
+        channels = [x for x in df.columns.values if '{%d}' % sample_num in x]
+        sdf = df[['time'] + channels]
+        sdf = sdf.rename(columns={
+            x : x.split('{')[0] for x in channels
+        })
+        sdf['sample_num'] = sample_num
+        adf = pd.concat([adf, sdf])
 
+    adf = adf.reset_index()
+    del adf['index']
     if output_fname :
-        df.to_csv(output_fname)
-    return df
+        adf.to_csv(output_fname)
+    return adf
 
 
-def calculate_other_channels(adf, CFR, fraction_symptomatic, fraction_hospitalized,
+def calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalized,
                              fraction_critical, time_to_hospitalization,
                              time_to_critical, time_to_death, sample_num=0) :
 
@@ -53,65 +50,63 @@ def calculate_other_channels(adf, CFR, fraction_symptomatic, fraction_hospitaliz
     df['critical'] = df['hospitalized'] * fraction_critical
     df['death'] = df['critical'] * fraction_death
 
-    df['sample_num'] = sample_num
+    df['downstream_sample_num'] = sample_num
     return df
 
 
-def plot(ax, df, channels=None, linewidth=1.0, alpha=1.0, label=False) :
+def CI_5(x) :
 
-    plotchannels = channels or [x for x in df.columns.values if 'time' not in x]
-    plotchannels = [x for x in plotchannels if x != 'sample_num']
-    offset_channels = ['hospitalized', 'critical', 'death']
-
-    for channel in plotchannels :
-        label = channel if label else ''
-        if channel in offset_channels :
-            ax.plot(df['time_%s' % channel], df[channel], label=label, linewidth=linewidth, alpha=alpha,
-                    color=palette[channel])
-        else :
-            ax.plot(df['time'], df[channel], label=label, linewidth=linewidth, alpha=alpha,
-                    color=palette[channel])
+    return np.percentile(x, 5)
 
 
-def sample_and_plot(df, samples) :
+def CI_95(x) :
 
-    CFR = 0.016
-    fraction_symptomatic = 0.7
-    fraction_hospitalized = 0.3
-    fraction_critical = 0.8
-    time_to_hospitalization = 6
-    time_to_critical = 6
-    time_to_death = 2
+    return np.percentile(x, 95)
+
+
+def sample_and_plot(master_df, sub_samples) :
+
+    # CFR = 0.016
+    # fraction_symptomatic = 0.7
+    # fraction_hospitalized = 0.3
+    # fraction_critical = 0.8
+    # time_to_hospitalization = 6
+    # time_to_critical = 6
+    # time_to_death = 2
 
     offset_channels = ['hospitalized', 'critical', 'death']
 
     fig = plt.figure()
     ax = fig.gca()
+    palette = sns.color_palette('Set1', 8)
 
     adf = pd.DataFrame()
+    for sim_sample, df in master_df.groupby('sample_num') :
 
-    for sample in range(samples) :
+        for sample in range(sub_samples) :
 
-        CFR = np.random.uniform(0.008, 0.022)
-        fraction_symptomatic = np.random.uniform(0.5, 0.9)
-        fraction_hospitalized = np.random.uniform(0.1, 0.5)
-        fraction_critical = np.random.uniform(0.5, 1)
+            CFR = np.random.uniform(0.008, 0.022)
+            fraction_symptomatic = np.random.uniform(0.5, 0.9)
+            fraction_hospitalized = np.random.uniform(0.1, 0.5)
+            fraction_critical = np.random.uniform(0.5, 1)
 
-        time_to_hospitalization = np.random.normal(5.9, 2)
-        time_to_critical = np.random.normal(5.9, 2)
-        time_to_death = np.random.uniform(1, 3)
+            time_to_hospitalization = np.random.normal(5.9, 2)
+            time_to_critical = np.random.normal(5.9, 2)
+            time_to_death = np.random.uniform(1, 3)
 
-        df = calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalized,
-                                      fraction_critical, time_to_hospitalization,
-                                      time_to_critical, time_to_death)
-        plot(ax, df, alpha=0.3, linewidth=0.5, channels=offset_channels, label=False)
-        adf = pd.concat([adf, df])
+            df = calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalized,
+                                          fraction_critical, time_to_hospitalization,
+                                          time_to_critical, time_to_death)
+            adf = pd.concat([adf, df])
 
-    mdf = adf.groupby('time').agg(np.mean)
-    plotchannels = [x for x in df.columns.values if 'time' not in x]
-    plotchannels = [x for x in plotchannels if x not in offset_channels]
-    plot(ax, df, channels=plotchannels, label=True)
-    plot(ax, mdf, channels=offset_channels, label=True)
+    allchannels = [x for x in adf.columns.values if ('time' not in x and 'sample' not in x)]
+    for c, channel in enumerate(allchannels) :
+        x_name = 'time' if channel not in offset_channels else 'time_%s' % channel
+        mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95]).reset_index()
+        x_data = mdf['time'] if channel not in offset_channels else adf.groupby('time')[x_name].agg(np.mean).reset_index()[x_name]
+        ax.plot(x_data, mdf['mean'], label=channel, color=palette[c])
+        ax.fill_between(x_data, mdf['CI_5'], mdf['CI_95'],
+                        color=palette[c], linewidth=0, alpha=0.3)
 
     ax.set_xlim(0,60)
     ax.legend()
@@ -121,5 +116,5 @@ def sample_and_plot(df, samples) :
 
 if __name__ == '__main__' :
 
-    df = reprocess()
-    sample_and_plot(df, 10)
+    df = reprocess(input_fname='trajectories_multipleSeeds.csv')
+    sample_and_plot(df, 1)
