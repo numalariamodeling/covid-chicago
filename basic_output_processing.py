@@ -7,8 +7,12 @@ import matplotlib as mpl
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-sim_output_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago/cms_sim/sample_trajectories'
-#sim_output_path = '/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
+# user_path = '/Users/jlg1657'
+user_path = '/Users/mrung'
+
+wdir = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
+sim_output_path = os.path.join(wdir, 'sample_trajectories')
+plot_path = os.path.join(wdir, 'sample_plots')
 
 
 offset_channels = ['hospitalized', 'critical', 'death']
@@ -124,7 +128,7 @@ def plot(adf) :
 
         ax.set_xlim(0,60)
         ax.set_title(channel, y=0.8)
-    plt.savefig(os.path.join(sim_output_path, 'sample_plot.png'))
+    plt.savefig(os.path.join(plot_path, 'sample_plot.png'))
     plt.show()
 
 
