@@ -18,35 +18,6 @@ plot_path = os.path.join(wdir, 'sample_plots')
 offset_channels = ['hospitalized', 'critical', 'death']
 
 
-def reprocess(input_fname='trajectories.csv', output_fname=None) :
-
-    fname = os.path.join(sim_output_path, input_fname)
-    row_df = pd.read_csv(fname, skiprows=1)
-    df = row_df.set_index('sampletimes').transpose()
-    num_channels = len([x for x in df.columns.values if '{0}' in x])
-    num_samples = int((len(row_df)-1)/num_channels)
-
-    df = df.reset_index(drop=False)
-    df = df.rename(columns={'index' : 'time'})
-    df['time'] = df['time'].astype(float)
-
-    adf = pd.DataFrame()
-    for sample_num in range(num_samples) :
-        channels = [x for x in df.columns.values if '{%d}' % sample_num in x]
-        sdf = df[['time'] + channels]
-        sdf = sdf.rename(columns={
-            x : x.split('{')[0] for x in channels
-        })
-        sdf['sample_num'] = sample_num
-        adf = pd.concat([adf, sdf])
-
-    adf = adf.reset_index()
-    del adf['index']
-    if output_fname :
-        adf.to_csv(output_fname)
-    return adf
-
-
 def calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalized,
                              fraction_critical, time_to_hospitalization,
                              time_to_critical, time_to_death, sample_num=0) :
