@@ -3,17 +3,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
+import matplotlib as mpl
+
+mpl.rcParams['pdf.fonttype'] = 42
 
 sim_output_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago/cms_sim/sample_trajectories'
 #sim_output_path = '/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim'
 
 
+offset_channels = ['hospitalized', 'critical', 'death']
+
+
 def reprocess(input_fname='trajectories.csv', output_fname=None) :
 
     fname = os.path.join(sim_output_path, input_fname)
-    df = pd.read_csv(fname, skiprows=1)
-    num_samples = int((len(df)-1)/4)
-    df = df.set_index('sampletimes').transpose()
+    row_df = pd.read_csv(fname, skiprows=1)
+    df = row_df.set_index('sampletimes').transpose()
+    num_channels = len([x for x in df.columns.values if '{0}' in x])
+    num_samples = int((len(row_df)-1)/num_channels)
+
     df = df.reset_index(drop=False)
     df = df.rename(columns={'index' : 'time'})
     df['time'] = df['time'].astype(float)
@@ -50,7 +58,7 @@ def calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalize
     df['critical'] = df['hospitalized'] * fraction_critical
     df['death'] = df['critical'] * fraction_death
 
-    df['downstream_sample_num'] = sample_num
+    df.loc[:, 'downstream_sample_num'] = sample_num
     return df
 
 
@@ -64,7 +72,7 @@ def CI_95(x) :
     return np.percentile(x, 95)
 
 
-def sample_and_plot(master_df, sub_samples) :
+def sample_downstream_populations(master_df, sub_samples) :
 
     # CFR = 0.016
     # fraction_symptomatic = 0.7
@@ -73,12 +81,6 @@ def sample_and_plot(master_df, sub_samples) :
     # time_to_hospitalization = 6
     # time_to_critical = 6
     # time_to_death = 2
-
-    offset_channels = ['hospitalized', 'critical', 'death']
-
-    fig = plt.figure()
-    ax = fig.gca()
-    palette = sns.color_palette('Set1', 8)
 
     adf = pd.DataFrame()
     for sim_sample, df in master_df.groupby('sample_num') :
@@ -99,17 +101,29 @@ def sample_and_plot(master_df, sub_samples) :
                                           time_to_critical, time_to_death)
             adf = pd.concat([adf, df])
 
+    return adf
+
+
+def plot(adf) :
+
+    fig = plt.figure(figsize=(8,6))
+    palette = sns.color_palette('Set1', 8)
+
     allchannels = [x for x in adf.columns.values if ('time' not in x and 'sample' not in x)]
+    axes = [fig.add_subplot(3,3,x+1) for x in range(len(allchannels))]
+    fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(allchannels) :
         x_name = 'time' if channel not in offset_channels else 'time_%s' % channel
         mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95]).reset_index()
         x_data = mdf['time'] if channel not in offset_channels else adf.groupby('time')[x_name].agg(np.mean).reset_index()[x_name]
+
+        ax = axes[c]
         ax.plot(x_data, mdf['mean'], label=channel, color=palette[c])
         ax.fill_between(x_data, mdf['CI_5'], mdf['CI_95'],
                         color=palette[c], linewidth=0, alpha=0.3)
 
-    ax.set_xlim(0,60)
-    ax.legend()
+        ax.set_xlim(0,60)
+        ax.set_title(channel, y=0.8)
     plt.savefig(os.path.join(sim_output_path, 'sample_plot.png'))
     plt.show()
 
@@ -117,4 +131,5 @@ def sample_and_plot(master_df, sub_samples) :
 if __name__ == '__main__' :
 
     df = reprocess(input_fname='trajectories_multipleSeeds.csv')
-    sample_and_plot(df, 1)
+    adf = sample_downstream_populations(df, 10)
+    plot(adf)
