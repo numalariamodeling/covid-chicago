@@ -13,11 +13,22 @@ if "mrung" in user_path :
 
 # Selected range values from SEIR Parameter Estimates.xlsx
 initial_infect = [1,5,10]
-Ki = [0.0009, 0.05, 0.312]
+Ki = [0.00000019,  0.0009, 0.05, 0.312]
 incubation_pd = [6.63, 4.2, 12.4]
 recovery_rate = [6,13, 16 ]
 
-def runExp_fullFactorial() :
+initial_infect = [1,5,10]
+Ki = [0.00000019,  0.0009, 0.05, 0.312]
+incubation_pd = [6.63, 4.2, 12.4]
+recovery_rate = [6,13, 16 ]
+
+def runExp_fullFactorial(Testmode = False) :
+
+    if Testmode == True:
+        initial_infect = [1,5]
+        Ki = [0.0009,5]
+        incubation_pd = [6.63]
+        recovery_rate = [6]
 
     lst = []
     scen_num = 0
@@ -25,7 +36,7 @@ def runExp_fullFactorial() :
     # Requires exactly that order!
     for i in itertools.product(initial_infect, Ki, incubation_pd, recovery_rate) :
         scen_num += 1
-        #print(scen_num)
+       # print(i)
 
         lst.append([scen_num ,i, "initial_infect, Ki, incubation_pd, recovery_rate"])
 
@@ -57,8 +68,9 @@ def runExp_fullFactorial() :
 
         subprocess.call([r'runModel_i.bat'])
 
-        df = pd.DataFrame(lst, columns=['scen_num', 'params', 'order'])
-        df.to_csv("scenarios.csv")
+    df = pd.DataFrame(lst, columns=['scen_num', 'params', 'order'])
+    df.to_csv("scenarios.csv")
+    return(scen_num)
 
 
 def reprocess(input_fname='trajectories.csv', output_fname=None) :
@@ -120,6 +132,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False) :
 
 #if __name__ == '__main__' :
 
-runExp_fullFactorial()
-combineTrajectories(81)
+nscen = runExp_fullFactorial()
+combineTrajectories(nscen+1)
+
 
