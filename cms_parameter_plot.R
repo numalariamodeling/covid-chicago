@@ -1,8 +1,28 @@
+###==========================================
+### Project: Covid-19 Chicago
+### MR
+### Input:
+### - predicted trajectories from cms model 
+### - The input csv file was already formatted running simplemodel_runScenarios.py 
+### - for single run and multiple parameters
+### 
+### Output:
+### Plots that compare the parameter ranges per outcome, visualised in different facets
+###
+### Note: This script is for quick eplorative plots using cms outputs, 
+### ideally all the figures and analysis will be done in python
+###==========================================
+
 library(tidyverse)
 library(cowplot)
 
-dat <- read.csv("C:/Users/mrung/gitrepos/covid-chicago/trajectoriesDat.csv")
 
+username = Sys.getenv("USERNAME")
+project_dir = file.path("C:/Users/",username ,"/Box/NU-malaria-team/projects/covid_chicago")
+dat <- read.csv(file.path(project_dir ,"cms_sim/scenario_trajectories/trajectoriesDat.csv"))
+
+
+##  Custom plotting theme and colors
 customTheme <- theme(
   strip.text.x = element_text(size = 16, face = "bold"),
   strip.text.y = element_text(size = 16, face = "bold"),
@@ -17,25 +37,33 @@ customTheme <- theme(
   axis.text.x = element_text(size = 16),
   axis.text.y = element_text(size = 16)
 )
-cols <- c("FullFactorial" = "grey", "Ki" = "mediumvioletred", "initial_infect" = "deepskyblue3",
-          "incubation_pd" = "tan2", "recovery_rate" = "olivedrab4")
 
-unique(plotdat$Ki)
-unique(plotdat$initial_infect)
-unique(plotdat$incubation_pd)
-unique(plotdat$recovery_rate)
+cols <- c("FullFactorial" = "grey", 
+          "Ki" = "mediumvioletred", 
+          "initial_infect" = "deepskyblue3",
+          "incubation_pd" = "tan2", 
+          "recovery_rate" = "olivedrab4")
 
+# Tranform data to long format 
 plotdat <- dat %>%
   filter(time <= 30) %>%
   select(-X, -params) %>%
   pivot_longer(cols = c(susceptible, exposed, infectious, recovered), names_to = "outcome")
 # pivot_longer(cols=c(initial_infect ,   Ki, incubation_pd, recovery_rate), names_to = "param_name", values_to="param_val")
 
+## Display unique parameter values
+unique(plotdat$Ki)
+unique(plotdat$initial_infect)
+unique(plotdat$incubation_pd)
+unique(plotdat$recovery_rate)
+
+## Set order of outcomes by defining factor variable
 plotdat$outcome <- factor(plotdat$outcome,
   levels = c("susceptible", "exposed", "infectious", "recovered"),
   labels = c("susceptible", "exposed", "infectious", "recovered")
 )
 
+##  Generate plot for main SEIR outcomes
 p1 <- ggplot() + theme_cowplot() +
   geom_line(
     data = subset(plotdat),
@@ -66,8 +94,9 @@ p1 <- ggplot() + theme_cowplot() +
   customTheme
 
 
-
-##### Hospitaliszations and deaths (from python script, to do: add sample num)
+## Extend SEIR outcomes by calculating hospitaliszations and deaths
+## Note these calculations are placed in the python script
+## To do: add sample num, or export dataframe from within python script
 CFR <- 0.016
 fraction_symptomatic <- 0.7
 fraction_hospitalized <- 0.3
@@ -124,7 +153,7 @@ p2 <- ggplot() + theme_cowplot() +
   facet_wrap(~outcome, scales = "free") +
   customTheme
 
-
+### Display plots and save
 print(p1)
 print(p2)
 ggsave(paste0("cms_testfull_out1.png"),
