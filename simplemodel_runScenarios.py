@@ -60,24 +60,35 @@ def runExp_fullFactorial() :
         df = pd.DataFrame(lst, columns=['scen_num', 'params', 'order'])
         df.to_csv("scenarios.csv")
 
-def reprocess(input_fname, output_fname=None) :
 
-    #input_fname ="trajectories_scen1.csv"
+def reprocess(input_fname='trajectories.csv', output_fname=None) :
+
     fname = os.path.join(git_dir, input_fname)
-    df = pd.read_csv(fname, skiprows=1)
-    df = df.set_index('sampletimes').transpose()
+    row_df = pd.read_csv(fname, skiprows=1)
+    df = row_df.set_index('sampletimes').transpose()
+    num_channels = len([x for x in df.columns.values if '{0}' in x])
+    num_samples = int((len(row_df)-1)/num_channels)
+
     df = df.reset_index(drop=False)
     df = df.rename(columns={'index' : 'time'})
     df['time'] = df['time'].astype(float)
 
-    channels = [x for x in df.columns.values if '{' in x]
-    df = df.rename(columns={
-        x : x.split('{')[0] for x in channels
-    })
+    adf = pd.DataFrame()
+    for sample_num in range(num_samples) :
+        channels = [x for x in df.columns.values if '{%d}' % sample_num in x]
+        sdf = df[['time'] + channels]
+        sdf = sdf.rename(columns={
+            x : x.split('{')[0] for x in channels
+        })
+        sdf['sample_num'] = sample_num
+        adf = pd.concat([adf, sdf])
 
+    adf = adf.reset_index()
+    del adf['index']
     if output_fname :
-        df.to_csv(output_fname)
-    return df
+        adf.to_csv(output_fname)
+    return adf
+
 
 def combineTrajectories(Nscenarios, deleteFiles=False) :
 
