@@ -17,18 +17,14 @@ Ki = [0.00000019,  0.0009, 0.05, 0.312]
 incubation_pd = [6.63, 4.2, 12.4]
 recovery_rate = [6,13, 16 ]
 
-initial_infect = [1,5,10]
-Ki = [0.00000019,  0.0009, 0.05, 0.312]
-incubation_pd = [6.63, 4.2, 12.4]
-recovery_rate = [6,13, 16 ]
+Testmode = True
+if Testmode == True :
+     initial_infect = [1,5]
+     Ki = [0.0009,5]
+     incubation_pd = [6.63]
+     recovery_rate = [6]
 
-def runExp_fullFactorial(Testmode = False) :
-
-    if Testmode == True:
-        initial_infect = [1,5]
-        Ki = [0.0009,5]
-        incubation_pd = [6.63]
-        recovery_rate = [6]
+def runExp_fullFactorial() :
 
     lst = []
     scen_num = 0
