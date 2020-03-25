@@ -171,14 +171,14 @@ customPlot <- function(OUTCOMES, ymax, TITLE) {
       x = ""
     ) +
     theme_bw()
-  
+
   return(pout)
 }
 
 
 ## Deaths over time
-p1 <- customPlot(OUTCOME=c("deaths"), ymax= 20, TITLE="")
-ggplot(data = subset(combinedDat, (outcome %in% c("deaths")))) 
+p1 <- customPlot(OUTCOME = c("deaths"), ymax = 20, TITLE = "")
+ggplot(data = subset(combinedDat, (outcome %in% c("deaths"))))
 
 
 p2a <- customPlot(
@@ -208,7 +208,8 @@ p2a <- p2a + theme(legend.position = "none")
 pplot <- plot_grid(p2a, p2b, p2c, ncol = 1)
 pplot2 <- plot_grid(pplot, legend, ncol = 2, rel_widths = c(1, 0.3))
 
+
 ggsave("sample_plot_illinpis.png",
-  plot = pplot2, device = "png", path = file.path(projectDir, "r_sim"),
+  plot = pplot2, device = "png", path = file.path(project_dir, "r_sim"),
   width = 10, height = 12
 )
