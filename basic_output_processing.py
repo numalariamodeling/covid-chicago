@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import os
 import seaborn as sns
 import matplotlib as mpl
+import matplotlib.dates as mdates
+from datetime import date, timedelta
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-# user_path = '/Users/jlg1657'
-user_path = '/Users/mrung'
+user_path = '/Users/jlg1657'
+# user_path = '/Users/mrung'
 
 wdir = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
 sim_output_path = os.path.join(wdir, 'sample_trajectories')
@@ -16,6 +18,8 @@ plot_path = os.path.join(wdir, 'sample_plots')
 
 
 offset_channels = ['hospitalized', 'critical', 'death']
+master_channel_list = offset_channels + ['susceptible', 'exposed', 'infectious', 'recovered', 'symptomatic']
+first_day = date(2020, 3, 1)
 
 
 def calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalized,
@@ -84,7 +88,7 @@ def plot(adf) :
     fig = plt.figure(figsize=(8,6))
     palette = sns.color_palette('Set1', 8)
 
-    allchannels = [x for x in adf.columns.values if ('time' not in x and 'sample' not in x)]
+    allchannels = master_channel_list
     axes = [fig.add_subplot(3,3,x+1) for x in range(len(allchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(allchannels) :
@@ -93,18 +97,23 @@ def plot(adf) :
         x_data = mdf['time'] if channel not in offset_channels else adf.groupby('time')[x_name].agg(np.mean).reset_index()[x_name]
 
         ax = axes[c]
-        ax.plot(x_data, mdf['mean'], label=channel, color=palette[c])
-        ax.fill_between(x_data, mdf['CI_5'], mdf['CI_95'],
+        dates = [first_day + timedelta(days=int(x)) for x in x_data]
+        ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
+        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
                         color=palette[c], linewidth=0, alpha=0.3)
 
-        ax.set_xlim(0,60)
         ax.set_title(channel, y=0.8)
+
+        formatter = mdates.DateFormatter("%m-%d")
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.set_xlim(first_day, )
     plt.savefig(os.path.join(plot_path, 'sample_plot.png'))
     plt.show()
 
 
 if __name__ == '__main__' :
 
-    df = reprocess(input_fname='trajectories_multipleSeeds.csv')
-    adf = sample_downstream_populations(df, 10)
+    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+    adf = sample_downstream_populations(df, 1)
     plot(adf)
