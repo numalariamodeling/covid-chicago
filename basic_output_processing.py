@@ -56,7 +56,6 @@ def calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalize
     df.loc[:, 'downstream_sample_num'] = sample_num
     return df
 
-
 def CI_5(x) :
 
     return np.percentile(x, 5)
@@ -124,12 +123,36 @@ def estimate_surveilled_cases(adf) :
     return adf
 
 
-def plot(adf) :
+def lag(df, column, groups=['sample_num', 'downstream_sample_num', 'scen_num'])  :
+
+    column_lag = df.groupby(groups)[column].shift(1)
+
+    return(column_lag)
+
+def calculate_new_channels(df, neg_to_zero=False) :
+
+   #for channel in selected_channels :
+   df['new exposed'] = df['exposed'] -lag(df=df, column='exposed')
+   df['new infectious'] =  df['infectious'] -lag(df=df, column='infectious')
+   df['new recovered'] =  df['recovered'] -lag(df=df, column='recovered')
+   df['new symptomatics'] =  df['symptomatic'] -lag(df=df, column='symptomatic')
+   df['new hospitalized'] =  df['hospitalized'] -lag(df=df, column='hospitalized')
+   df['new critical'] =  df['critical'] -lag(df=df, column='critical')
+   df['new death'] = df['death'] - lag(df=df, column='death')
+   df['new detected'] =  df['detected'] -lag(df=df, column='detected')
+
+   if neg_to_zero == True :
+
+       new_channel = [x for x in adf.columns[adf.columns.str.contains('new')]]
+       df[new_channel] = df[new_channel].mask(df[new_channel] < 0, 0)
+
+    return df
+
+def plot(adf,allchannels=master_channel_list, plotname='sample_plot.png') :
 
     fig = plt.figure(figsize=(8,6))
     palette = sns.color_palette('Set1', 10)
 
-    allchannels = master_channel_list
     axes = [fig.add_subplot(3,3,x+1) for x in range(len(allchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(allchannels) :
@@ -150,7 +173,7 @@ def plot(adf) :
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, )
 
-    plt.savefig(os.path.join(plot_path, 'sample_plot.png'))
+    plt.savefig(os.path.join(plot_path, plotname))
     plt.show()
 
 
@@ -159,3 +182,15 @@ if __name__ == '__main__' :
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     adf = sample_downstream_populations(df, 1)
     plot(adf)
+
+    adf_new = calculate_new_channels(adf)
+    plot(adf_new ,
+         allchannels=[x for x in adf.columns[adf.columns.str.contains('new')]],
+         plotname='sample_plot_v2.png')
+
+    #adf_new = calculate_new_channels(adf, neg_to_zero=True)
+    #plot(adf_new ,
+    #     allchannels=[x for x in adf.columns[adf.columns.str.contains('new')]],
+    #     plotname='sample_plot_neg_to_zero.png')
+
+
