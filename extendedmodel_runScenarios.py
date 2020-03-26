@@ -1,28 +1,43 @@
-import os
-import subprocess
+import numpy as np
 import pandas as pd
+import subprocess
+import matplotlib.pyplot as plt
+import os
+import seaborn as sns
+import matplotlib as mpl
+import matplotlib.dates as mdates
+from datetime import date, timedelta
 import itertools
+from scipy.interpolate import interp1d
+
+mpl.rcParams['pdf.fonttype'] = 42
 
 ## directories
 user_path = os.path.expanduser('~')
 exe_dir = os.path.join(user_path, 'Box/NU-malaria-team/projects/binaries/compartments/')
+
+wdir = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
+sim_output_path = os.path.join(wdir, 'sample_trajectories')
+plot_path = os.path.join(wdir, 'sample_plots')
+
+
+master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'detected',
+                       'hospitalized', 'critical', 'death', 'recovered']
+first_day = date(2020, 3, 1)
+
+
 
 if "mrung" in user_path :
     git_dir = os.path.join(user_path, 'gitrepos/covid-chicago/')
     sim_output_path = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
 
 # Selected range values from SEIR Parameter Estimates.xlsx
-initial_infect = [1,5,10]
-Ki = [0.00000019,  0.0009, 0.05]
-incubation_pd = [6.63, ]
+speciesS = [360980]   ## Chicago population + NHS market share 2705994 * 0.1334  - in infect
+initial_infect = [1, 5]
+Ki = [0.000009]
+incubation_pd = [6.63]
 recovery_rate = [6]
 
-Testmode = False
-if Testmode == True :
-     initial_infect = [1,5]
-     Ki = [0.0009]
-     incubation_pd = [6.63]
-     recovery_rate = [6]
 
 def runExp_fullFactorial() :
 
@@ -30,18 +45,19 @@ def runExp_fullFactorial() :
     scen_num = 0
 
     # Requires exactly that order!
-    for i in itertools.product(initial_infect, Ki, incubation_pd, recovery_rate) :
+    for i in itertools.product(speciesS, initial_infect, Ki, incubation_pd, recovery_rate) :
         scen_num += 1
-       # print(i)
+        print(i)
 
-        lst.append([scen_num ,i, "initial_infect, Ki, incubation_pd, recovery_rate"])
+        lst.append([scen_num ,i, "speciesS, initial_infect, Ki, incubation_pd, recovery_rate"])
 
         fin = open("extendedmodel_covid.emodl", "rt")
         data = fin.read()
-        data = data.replace('(species I 10)', '(species I ' + str(i[0]) +')')
-        data = data.replace('(param Ki 0.0005)', '(param Ki '  + str(i[1]) +')')
-        data = data.replace('(param incubation_pd 6.63)', '(param incubation_pd ' + str(i[2]) +')')
-        data = data.replace('(param recovery_rate 16)', '(param recovery_rate '  + str(i[3]) +')')
+        data = data.replace('(species S 990)', '(species S ' + str(i[0]) + ')')
+        data = data.replace('(species As 10)', '(species As ' + str(i[1]) +')')
+        data = data.replace('(param Ki 0.0005)', '(param Ki '  + str(i[2]) +')')
+        data = data.replace('(param incubation_pd 6.63)', '(param incubation_pd ' + str(i[3]) +')')
+        data = data.replace('(param recovery_rate 16)', '(param recovery_rate '  + str(i[4]) +')')
         fin.close()
 
         fin = open("extendedmodel_covid_i.emodl", "wt")
@@ -64,7 +80,7 @@ def runExp_fullFactorial() :
 
         subprocess.call([r'runModel_i.bat'])
 
-    df = pd.DataFrame(lst, columns=['scen_num', 'params', 'order'])
+    df = pd.DataFrame(lst, columns=['scen_num',  'params', 'order'])
     df.to_csv("scenarios.csv")
     return(scen_num)
 
@@ -106,7 +122,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False) :
     del scendf['order']
     del scendf['Unnamed: 0']
 
-    scendf[['initial_infect', 'Ki', 'incubation_pd', 'recovery_rate']] = scendf.params.str.split(",", expand=True)
+    scendf[['speciesS','initial_infect', 'Ki', 'incubation_pd', 'recovery_rate']] = scendf.params.str.split(",", expand=True)
     scendf.recovery_rate = scendf.recovery_rate.str.extract('(\d+)')
     scendf.initial_infect = scendf.initial_infect.str.extract('(\d+)')
 
@@ -162,5 +178,7 @@ nscen = runExp_fullFactorial()
 combineTrajectories(nscen)
 
 df = pd.read_csv(os.path.join('trajectoriesDat.csv'))
-df = df[df['Ki'] == 0.0009]
-plot(df, allchannels=['susceptible', 'exposed', 'infectious', 'symptomatic', 'hospitalized', 'critical', 'deaths', 'recovered'])
+#df = df[df['Ki'] == 0.05]
+#Ki = [0.000019,0.0009,0.05]
+
+plot(df, allchannels=['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized','detected', 'critical', 'deaths', 'recovered'])

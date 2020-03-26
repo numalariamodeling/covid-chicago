@@ -6,7 +6,7 @@
 
 (species S 990)
 (species E 0)
-(species I 10)
+(species As 10)
 (species Sy 0)
 (species H 0)
 (species C 0)
@@ -15,20 +15,22 @@
 
 (observe susceptible S)
 (observe exposed E)
-(observe infectious  I)
+(observe asymptomatic  As)
 (observe symptomatic  Sy)
 (observe hospitalized  H)
 (observe critical  C)
 (observe deaths D)
 (observe recovered R)
 
-(observe detected (+ (* Sy d1) (* H d2)  (* I d3) ))
-;(observe population  (sum S E I Sy H C D R))
+(observe detected (+ (* Sy d1) (* H d2)  (* As d3) ))
+;(observe detected (+ (* Sy (/ d1 detection_delay)) (* H d2)  (* As d3) ))
+;(observe population  (sum S E As Sy H C D R))
 ;(observe clock       time)
 ;(observe moonphase   (* 500 (+ 1 (sin (* (/ time 29.5) 2 pi)))))
 ;(observe fivec       500)
 
 (param incubation_pd 6.63)
+;(param detection_delay 1)
 (param time_to_hospitalization 6)
 (param time_to_critical 6)
 (param time_to_death 2)
@@ -52,15 +54,15 @@
 (param Kc (/ fraction_critical time_to_critical ))
 (param Km (/ fraction_dead  time_to_death))
 
-(reaction exposure   (S) (E) (* Ki S (+ I Sy)))
-(reaction infection  (E)   (I)   (* Kl E))
+(reaction exposure   (S) (E) (* Ki S (+ As Sy)))
+(reaction infection  (E)   (As)   (* Kl E))
 (reaction symptomatic (E)   (Sy)   (* Ks E))
 
 (reaction hospitalization   (Sy)   (H)   (* Kh Sy))
 (reaction critical   (H)   (C)   (* Kc H))
 (reaction death   (C)   (D)   (* Km C))
 
-(reaction recovery   (I)   (R)   (* Kr I))
+(reaction recovery   (As)   (R)   (* Kr As))
 (reaction recovery   (Sy)   (R)   (* (- 1 Kh)  Sy))
 (reaction recovery   (H)   (R)   (* (- 1 Kc) H))
 (reaction recovery   (C)   (R)   (* (- 1 Km) C))
