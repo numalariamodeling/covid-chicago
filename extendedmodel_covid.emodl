@@ -22,7 +22,7 @@
 (observe deaths D)
 (observe recovered R)
 
-(observe detected (+ (* Sy d1) (* H d2) ))
+(observe detected (+ (* Sy d1) (* H d2)  (* I d3) ))
 ;(observe population  (sum S E I Sy H C D R))
 ;(observe clock       time)
 ;(observe moonphase   (* 500 (+ 1 (sin (* (/ time 29.5) 2 pi)))))
@@ -42,6 +42,7 @@
 
 (param d1 0.2)
 (param d2 1)
+(param d3 0)
 (param Ki 0.0005)
 (param Kr (/ 1 recovery_rate))
 ;(param Kw (/ 1 waning))
