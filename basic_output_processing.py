@@ -90,7 +90,7 @@ def sample_downstream_populations(master_df, sub_samples=1) :
 
     adf = pd.DataFrame()
 
-    master_df = master_df[master_df['Ki'] == 0.0009]
+   # master_df = master_df[master_df['Ki'] == 0.0009]
 
     for (sim_sample, scen), df in master_df.groupby(['sample_num', 'scen_num']) :
 
