@@ -34,7 +34,7 @@
 (observe exposed E)
 (observe asymptomatic  (+ As As_det1))
 (observe symptomatic  (+ Sy Sy_det2))
-(observe hospitalized  (sum H H_det2 H_det3)
+(observe hospitalized  (sum H H_det2 H_det3))
 (observe critical (sum C C_det2 C_det3))
 (observe deaths (sum D D_det2 D_det3))
 (observe asymp_undet_out RAs )
@@ -86,9 +86,9 @@
 (reaction death   (C)   (D)   (* Km C))
 
 (reaction recovery_As   (As)   (RAs)   (* Kr As))
-(reaction recovery_Sy   (Sy)   (RSy)   (* (- 1 Kh)  Sy))
-(reaction recovery_H   (H)   (RH)   (* (- 1 Kc) H))
-(reaction recovery_C   (C)   (RC)   (* (- 1 Km) C))
+(reaction recovery_Sy   (Sy)   (RSy)   (* Kr  Sy))
+(reaction recovery_H   (H)   (RH)   (* Kr H))
+(reaction recovery_C   (C)   (RC)   (* Kr C))
 
 (reaction detect_As (As) (As_det1) (* d_As As))
 (reaction detect_symp (Sy) (Sy_det2) (* d_Sy Sy))
@@ -99,14 +99,14 @@
 (reaction hospitalization_det2   (Sy_det2)   (H_det2)   (* Kh Sy_det2))
 (reaction critical_det2   (H_det2)   (C_det2)   (* Kc H_det2))
 (reaction death_det2   (C_det2)   (D_det2)   (* Km C_det2))
-(reaction recovery_Sy_det2   (Sy_det2)   (RSy_det2)   (* (- 1 Kh)  Sy_det2))
-(reaction recovery_H_det2   (H_det2)   (RH_det2)   (* (- 1 Kc) H_det2))
-(reaction recovery_C_det2   (C_det2)   (RC_det2)   (* (- 1 Km) C_det2))
+(reaction recovery_Sy_det2   (Sy_det2)   (RSy_det2)   (* Kr  Sy_det2))
+(reaction recovery_H_det2   (H_det2)   (RH_det2)   (* Kr H_det2))
+(reaction recovery_C_det2   (C_det2)   (RC_det2)   (* Kr C_det2))
 
 (reaction critical_det3   (H_det3)   (C_det3)   (* Kc H_det3))
 (reaction death_det3   (C_det3)   (D_det3)   (* Km C_det3))
-(reaction recovery_H_det3   (H_det3)   (RH_det3)   (* (- 1 Kc) H_det3))
-(reaction recovery_C_det3   (C_det3)   (RC_det3)   (* (- 1 Km) C_det3))
+(reaction recovery_H_det3   (H_det3)   (RH_det3)   (* Kr H_det3))
+(reaction recovery_C_det3   (C_det3)   (RC_det3)   (* Kr C_det3))
 
 
 (end-model)
