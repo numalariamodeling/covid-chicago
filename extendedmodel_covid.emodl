@@ -11,7 +11,10 @@
 (species H 0)
 (species C 0)
 (species D 0)
-(species R 0)
+(species RAs 0)
+(species RSy 0)
+(species RH 0)
+(species RC 0)
 
 (observe susceptible S)
 (observe exposed E)
@@ -20,9 +23,13 @@
 (observe hospitalized  H)
 (observe critical  C)
 (observe deaths D)
-(observe recovered R)
+(observe recovered_asymp RAs)
+(observe recovered_symp RSy)
+(observe recovered_hosp RH)
+(observe recovered_crit RC)
 
 (observe detected (+ (* Sy d_Sy) (* H d_H)  (* As d_As) ))
+(observe recovered (sum RAs RSy RH RC)
 
 (func infectious (+ As Sy))
 
@@ -57,10 +64,10 @@
 (reaction critical   (H)   (C)   (* Kc H))
 (reaction death   (C)   (D)   (* Km C))
 
-(reaction recovery_As   (As)   (R)   (* Kr As))
-(reaction recovery_Sy   (Sy)   (R)   (* (- 1 Kh)  Sy))
-(reaction recovery_H   (H)   (R)   (* (- 1 Kc) H))
-(reaction recovery_C   (C)   (R)   (* (- 1 Km) C))
+(reaction recovery_As   (As)   (RAs)   (* Kr As))
+(reaction recovery_Sy   (Sy)   (RSy)   (* (- 1 Kh)  Sy))
+(reaction recovery_H   (H)   (RH)   (* (- 1 Kc) H))
+(reaction recovery_C   (C)   (RC)   (* (- 1 Km) C))
 
 
 (end-model)
