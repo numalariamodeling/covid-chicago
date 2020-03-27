@@ -2,6 +2,7 @@ import os
 import subprocess
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 
@@ -25,6 +26,7 @@ def define_and_replaceParameters(inputfile , outputfile):
     fraction_hospitalized = np.random.uniform(0.1, 5)
     fraction_symptomatic = np.random.uniform(0.5, 0.8)
     fraction_critical = np.random.uniform(0.1, 5)
+    reduced_inf_of_det_cases = np.random.uniform(0,1)
     cfr = np.random.uniform(0.008, 0.022)
     d_Sy = np.random.uniform(0.2, 0.3)
     d_H = 1
@@ -42,6 +44,7 @@ def define_and_replaceParameters(inputfile , outputfile):
     data = data.replace('@fraction_hospitalized@', str(fraction_hospitalized))
     data = data.replace('@fraction_symptomatic@', str(fraction_symptomatic))
     data = data.replace('@fraction_critical@', str(fraction_critical))
+    data = data.replace('@reduced_inf_of_det_cases@', str(reduced_inf_of_det_cases))
     data = data.replace('@cfr@', str(cfr))
     data = data.replace('@d_As@', str(d_As))
     data = data.replace('@d_Sy@', str(d_Sy))
@@ -126,7 +129,7 @@ def plot_by_channel(adf) :
 if __name__ == '__main__' :
 
     runExp_simple(modelname="extendedmodel_covid.emodl", replaceParams=True)
-    #runExp_simple(modelname="simplemodel_covid.emodl")
+    runExp_simple(modelname="temp_model.emodl")
     df = reprocess()
     first_day = date(2020, 3, 1)
     plot(df)
