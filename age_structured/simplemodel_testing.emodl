@@ -1,0 +1,62 @@
+; simplemodel
+
+(import (rnrs) (emodl cmslib))
+
+(start-model "seir.emodl")
+
+(species S1 211)
+(species E1)
+(species I1 1)
+(species R1)
+
+(species S2 658)
+(species E2)
+(species I2 10)
+(species R2)
+
+(species S3 120)
+(species E3)
+(species I3 1)
+(species R3)
+
+(observe susceptible (sum S1 S2 S3))
+(observe exposed     (sum E1 E2 E3))
+(observe infectious  (sum I1 I2 I3))
+(observe recovered   (sum R1 R2 R3))
+
+;(observe population  (sum S1 E1 I1 R1 S2 E2 I2 R2 S3 E3 I3 R3))
+;(observe clock       time)
+;(observe moonphase   (* 500 (+ 1 (sin (* (/ time 29.5) 2 pi)))))
+;(observe fivec       500)
+
+; (func infections (+ I2 I3 I3))
+; Ki placeholders !!!!!
+(param Ki1.1 0.001)
+(param Ki1.2 0.0005)
+(param Ki1.3 0.0006)
+(param Ki2.1 Ki1.2)
+(param Ki2.2 0.0005)
+(param Ki2.3 0.0006)
+(param Ki3.1 Ki1.3)
+(param Ki3.2 Ki2.3)
+(param Ki3.3 0.0006)
+(param Kl 0.2)
+(param Kr (/ 1 7))
+;(param Kw (/ 1 135))
+
+(reaction exposure1   (S1) (E1) (sum(* Ki1.1 S1  I1 ) (* Ki1.2 S1  I2) (* Ki1.3 S1  I3) ))
+(reaction infection1  (E1)   (I1)   (* Kl E1))
+(reaction recovery1   (I1)   (R1)   (* Kr I1))
+
+
+(reaction exposure2   (S2) (E2) (sum (* Ki2.1 S2  I1 ) (* Ki2.2 S2  I2) (* Ki2.3 S2  I3) ))
+(reaction infection2  (E2)   (I2)   (* Kl E2))
+(reaction recovery2   (I2)   (R2)   (* Kr I2))
+
+
+(reaction exposure3   (S3) (E3) (sum (* Ki3.1 S3  I1 ) (* Ki3.2 S3  I2) (* Ki3.3 S3  I3) ) )
+(reaction infection3  (E3)   (I3)   (* Kl E3))
+(reaction recovery3   (I3)   (R3)   (* Kr I3))
+
+
+(end-model)
