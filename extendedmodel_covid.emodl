@@ -34,25 +34,26 @@
 (observe exposed E)
 (observe asymptomatic  (+ As As_det1))
 (observe symptomatic  (+ Sy Sy_det2))
-(observe hospitalized  (sum H H_det2 H_det3)
+(observe hospitalized  (sum H H_det2 H_det3))
 (observe critical (sum C C_det2 C_det3))
 (observe deaths (sum D D_det2 D_det3))
-(observe asymp_undet_out RAs )
-(observe asymp_det1_out RAs_det1)
-(observe symp_undet_out (+ H RSy))
-(observe symp_det2_out (+ H_det2 RSy_det2))
-(observe hosp_undet_out (+ RH C))
-(observe hosp_det2_out (+ RH_det2 C_det2))
-(observe hosp_det3_out (+ RH_det3 C_det3))
-(observe crit_undet_out (+ RC D))
-(observe crit_det2_out (+ RC_det2 D_det2))
-(observe crit_det3_out (+ RC_det3 D_det3))
 
-; (observe detected (+ (* Sy d_Sy) (* H d_H)  (* As d_As) ))
 (observe detected (sum As_det1 Sy_det2 H_det2 H_det3 C_det2 C_det3))
 (observe recovered (sum RAs RSy RH RC RAs_det1 RSy_det2 RH_det2 RH_det3 RC_det2 RC_det3))
+(observe infected (sum As As_det1 Sy Sy_det2 H H_det2 H_det3 C C_det2 C_det3))
 
-(func infectious (+ As Sy))
+(observe asymp_cumul (+ (+ As As_det1) RAs RAs_det1 ))
+(observe asymp_det_cumul (+ As_det1 RAs_det1))
+(observe symp_cumul (+ (sum RAs RSy RH RC RAs_det1 RSy_det2 RH_det2 RH_det3 RC_det2 RC_det3) (sum D D_det2 D_det3) (sum C C_det2 C_det3) (sum H H_det2 H_det3) (+ Sy Sy_det2)))
+(observe symp_det_cumul (+ Sy_det2 H_det2 RSy_det2 C_det2 D_det2))
+(observe hosp_cumul (+ (sum D D_det2 D_det3) (sum C C_det2 C_det3) (sum H H_det2 H_det3) RH RH_det2 RH_det3))
+(observe hosp_det_cumul (+ H_det2 H_det3 RH_det2 RH_det3 C_det2 C_det3 D_det2 D_det3 RC_det2 RC_det3))
+(observe crit_cumul (+ (sum C C_det2 C_det3) (sum D D_det2 D_det3) RC RC_det2 RC_det3))
+(observe crit_det_cumul (+ C_det2 C_det3 RC_det2 RC_det3 D_det2 D_det3))
+(observe detected_cumul (+ (sum As_det1 Sy_det2 H_det2 H_det3 C_det2 C_det3) RAs_det1 RSy_det2 RH_det2 RH_det3 RC_det2 RC_det3 D_det2 D_det3))
+
+(func infectious_undet (+ As Sy))
+(func infectious_det (+ As_det1 Sy_det2))
 
 (param incubation_pd @incubation_pd@)
 (param time_to_hospitalization @time_to_hospitalization@)
@@ -64,7 +65,7 @@
 (param fraction_critical @fraction_critical@ )
 (param cfr @cfr@)
 (param fraction_dead ( / cfr (* fraction_hospitalized fraction_critical)))
-
+(param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 
 (param d_As @d_As@)
 (param d_Sy @d_Sy@)
@@ -77,7 +78,8 @@
 (param Kc (/ fraction_critical time_to_critical ))
 (param Km (/ fraction_dead  time_to_death))
 
-(reaction exposure   (S) (E) (* Ki S infectious))
+(reaction exposure_from_undetected   (S) (E) (* Ki S infectious_undet))
+(reaction exposure_from_detected   (S) (E) (* Ki S infectious_det reduced_inf_of_det_cases))
 (reaction infection  (E)   (As)   (* Kl E))
 (reaction symptomatic (E)   (Sy)   (* Ks E))
 
@@ -86,9 +88,9 @@
 (reaction death   (C)   (D)   (* Km C))
 
 (reaction recovery_As   (As)   (RAs)   (* Kr As))
-(reaction recovery_Sy   (Sy)   (RSy)   (* (- 1 Kh)  Sy))
-(reaction recovery_H   (H)   (RH)   (* (- 1 Kc) H))
-(reaction recovery_C   (C)   (RC)   (* (- 1 Km) C))
+(reaction recovery_Sy   (Sy)   (RSy)   (* Kr  Sy))
+(reaction recovery_H   (H)   (RH)   (* Kr H))
+(reaction recovery_C   (C)   (RC)   (* Kr C))
 
 (reaction detect_As (As) (As_det1) (* d_As As))
 (reaction detect_symp (Sy) (Sy_det2) (* d_Sy Sy))
@@ -99,14 +101,14 @@
 (reaction hospitalization_det2   (Sy_det2)   (H_det2)   (* Kh Sy_det2))
 (reaction critical_det2   (H_det2)   (C_det2)   (* Kc H_det2))
 (reaction death_det2   (C_det2)   (D_det2)   (* Km C_det2))
-(reaction recovery_Sy_det2   (Sy_det2)   (RSy_det2)   (* (- 1 Kh)  Sy_det2))
-(reaction recovery_H_det2   (H_det2)   (RH_det2)   (* (- 1 Kc) H_det2))
-(reaction recovery_C_det2   (C_det2)   (RC_det2)   (* (- 1 Km) C_det2))
+(reaction recovery_Sy_det2   (Sy_det2)   (RSy_det2)   (* Kr  Sy_det2))
+(reaction recovery_H_det2   (H_det2)   (RH_det2)   (* Kr H_det2))
+(reaction recovery_C_det2   (C_det2)   (RC_det2)   (* Kr C_det2))
 
 (reaction critical_det3   (H_det3)   (C_det3)   (* Kc H_det3))
 (reaction death_det3   (C_det3)   (D_det3)   (* Km C_det3))
-(reaction recovery_H_det3   (H_det3)   (RH_det3)   (* (- 1 Kc) H_det3))
-(reaction recovery_C_det3   (C_det3)   (RC_det3)   (* (- 1 Km) C_det3))
+(reaction recovery_H_det3   (H_det3)   (RH_det3)   (* Kr H_det3))
+(reaction recovery_C_det3   (C_det3)   (RC_det3)   (* Kr C_det3))
 
 
 (end-model)
