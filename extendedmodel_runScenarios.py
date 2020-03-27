@@ -21,6 +21,9 @@ sim_output_path = os.path.join(wdir, 'sample_trajectories')
 plot_path = os.path.join(wdir, 'sample_plots')
 
 master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
+undetection_channel_list = ['symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
+custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
 
 first_day = date(2020, 3, 1)
 
@@ -30,7 +33,7 @@ if "mrung" in user_path:
 
 # Selected range values from SEIR Parameter Estimates.xlsx
 # speciesS = [360980]   ## Chicago population + NHS market share 2705994 * 0.1334  - in infect
-Kivalues =  np.random.uniform(5e-07, 5e-02 , 20)   # [9e-05, 7e-06, 8e-06, 9e-06, 9e-077]
+Kivalues =  np.random.uniform(3.23107e-06, 4.7126e-06 , 1)   # [9e-05, 7e-06, 8e-06, 9e-06, 9e-077]
 
 #plt.hist(Kivalues, bins=100)
 #plt.show()
@@ -46,9 +49,10 @@ def define_and_replaceParameters(Ki_i):
     fraction_hospitalized = np.random.uniform(0.1, 5)
     fraction_symptomatic = np.random.uniform(0.5, 0.8)
     fraction_critical = np.random.uniform(0.1, 5)
+    reduced_inf_of_det_cases = np.random.uniform(0.2, 0.3)
     cfr = np.random.uniform(0.008, 0.022)
     d_Sy = np.random.uniform(0.2, 0.3)
-    d_H = 1 - d_Sy
+    d_H = 1
     d_As = 0
     Ki = Ki_i
 
@@ -63,6 +67,7 @@ def define_and_replaceParameters(Ki_i):
     data = data.replace('@fraction_hospitalized@', str(fraction_hospitalized))
     data = data.replace('@fraction_symptomatic@', str(fraction_symptomatic))
     data = data.replace('@fraction_critical@', str(fraction_critical))
+    data = data.replace('@reduced_inf_of_det_cases@', str(reduced_inf_of_det_cases))
     data = data.replace('@cfr@', str(cfr))
     data = data.replace('@d_As@', str(d_As))
     data = data.replace('@d_Sy@', str(d_Sy))
@@ -139,9 +144,6 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
 
 def combineTrajectories(Nscenarios, deleteFiles=False):
     scendf = pd.read_csv("scenarios.csv")
-    # order = scendf[ 'order'][1]
-
-    del scendf['order']
     del scendf['Unnamed: 0']
 
     df_list = []
@@ -210,10 +212,12 @@ def plot(adf, allchannels=master_channel_list):
 
 # if __name__ == '__main__' :
 
-nscen = runExp(Kivalues, sub_samples=10)
+nscen = runExp(Kivalues, sub_samples=5)
 combineTrajectories(nscen)
 
 df = pd.read_csv(os.path.join('trajectoriesDat.csv'))
 #df.params.unique()
 #df= df[df['params'] == 9.e-05]
 plot(df, allchannels=master_channel_list)
+plot(df, allchannels=detection_channel_list)
+plot(df, allchannels=undetection_channel_list)
