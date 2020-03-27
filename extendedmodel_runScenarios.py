@@ -30,7 +30,8 @@ if "mrung" in user_path:
 
 # Selected range values from SEIR Parameter Estimates.xlsx
 # speciesS = [360980]   ## Chicago population + NHS market share 2705994 * 0.1334  - in infect
-Kivalues =  np.random.uniform(5e-07, 5e-02 , 20)   # [9e-05, 7e-06, 8e-06, 9e-06, 9e-077]
+#Kivalues =  np.random.uniform(5e-07, 5e-02 , 20)   # [9e-05, 7e-06, 8e-06, 9e-06, 9e-077]
+Kivalues =  np.random.uniform(5e-07, 5e-02 , 2)
 
 #plt.hist(Kivalues, bins=100)
 #plt.show()
@@ -48,7 +49,7 @@ def define_and_replaceParameters(Ki_i):
     fraction_critical = np.random.uniform(0.1, 5)
     cfr = np.random.uniform(0.008, 0.022)
     d_Sy = np.random.uniform(0.2, 0.3)
-    d_H = 1 - d_Sy
+    d_H = 1
     d_As = 0
     Ki = Ki_i
 
@@ -139,9 +140,6 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
 
 def combineTrajectories(Nscenarios, deleteFiles=False):
     scendf = pd.read_csv("scenarios.csv")
-    # order = scendf[ 'order'][1]
-
-    del scendf['order']
     del scendf['Unnamed: 0']
 
     df_list = []
@@ -217,3 +215,5 @@ df = pd.read_csv(os.path.join('trajectoriesDat.csv'))
 #df.params.unique()
 #df= df[df['params'] == 9.e-05]
 plot(df, allchannels=master_channel_list)
+
+
