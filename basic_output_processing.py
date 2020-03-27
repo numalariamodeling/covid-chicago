@@ -6,7 +6,7 @@ import seaborn as sns
 import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
-from scipy.interpolate import interp1d
+from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -55,26 +55,6 @@ def calculate_other_channels(df, CFR, fraction_symptomatic, fraction_hospitalize
 
     df.loc[:, 'downstream_sample_num'] = sample_num
     return df
-
-
-def CI_5(x) :
-
-    return np.percentile(x, 5)
-
-
-def CI_95(x) :
-
-    return np.percentile(x, 95)
-
-
-def CI_25(x) :
-
-    return np.percentile(x, 25)
-
-
-def CI_75(x) :
-
-    return np.percentile(x, 75)
 
 
 def sample_downstream_populations(master_df, sub_samples=1) :
