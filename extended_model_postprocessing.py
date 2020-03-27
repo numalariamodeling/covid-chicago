@@ -23,10 +23,10 @@ master_channel_list = ['susceptible', 'exposed', 'infectious', 'symptomatic', 'd
 first_day = date(2020, 3, 1)
 
 
-def count_new(df, curr_ch, num_rows) :
+def count_new(df, curr_ch) :
 
     ch_list = list(df[curr_ch].values)
-    diff = [0] + [ch_list[x] - ch_list[x - 1] for x in range(1, num_rows)]
+    diff = [0] + [ch_list[x] - ch_list[x - 1] for x in range(1, len(df))]
     return diff
 
 
@@ -34,18 +34,17 @@ def calculate_incidence(adf, output_filename=None) :
 
     inc_df = pd.DataFrame()
     for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
-        num_rows = len(df)-1
 
         sdf = pd.DataFrame( { 'time' : df['time'],
-                              'new_exposures' : [-1*x for x in count_new(df, 'susceptible', num_rows)],
-                              'new_asymptomatic' : count_new(df, 'asymp_cumul', num_rows),
-                              'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul', num_rows),
-                              'new_symptomatic' : count_new(df, 'symp_cumul', num_rows),
-                              'new_symptomatic_detected' : count_new(df, 'symp_det_cumul', num_rows),
-                              'new_hospitalized' : count_new(df, 'hosp_cumul', num_rows),
-                              'new_detected' : count_new(df, 'detected_cumul', num_rows),
-                              'new_critical' : count_new(df, 'crit_cumul', num_rows),
-                              'new_deaths' : count_new(df, 'deaths', num_rows)
+                              'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
+                              'new_asymptomatic' : count_new(df, 'asymp_cumul'),
+                              'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
+                              'new_symptomatic' : count_new(df, 'symp_cumul'),
+                              'new_symptomatic_detected' : count_new(df, 'symp_det_cumul'),
+                              'new_hospitalized' : count_new(df, 'hosp_cumul'),
+                              'new_detected' : count_new(df, 'detected_cumul'),
+                              'new_critical' : count_new(df, 'crit_cumul'),
+                              'new_deaths' : count_new(df, 'deaths')
                               })
         sdf['sample_num'] = samp
         sdf['scen_num'] = scen
@@ -59,11 +58,11 @@ def calculate_incidence(adf, output_filename=None) :
 def plot(adf) :
 
     fig = plt.figure(figsize=(12,6))
-    palette = sns.color_palette('muted', 10)
 
     plotchannels = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic',
                     'detected', 'hospitalized', 'critical', 'deaths', 'recovered',
                     'new_detected', 'new_hospitalized', 'new_deaths']
+    palette = sns.color_palette('muted', len(plotchannels))
     axes = [fig.add_subplot(3,4,x+1) for x in range(len(plotchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(plotchannels) :
