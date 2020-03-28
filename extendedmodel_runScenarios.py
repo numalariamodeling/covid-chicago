@@ -22,7 +22,6 @@ plot_path = os.path.join(wdir, 'sample_plots')
 
 master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
 detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
-undetection_channel_list = ['symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
 custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
 
 first_day = date(2020, 3, 1)
@@ -212,7 +211,7 @@ def plot(adf, allchannels=master_channel_list):
 
 # if __name__ == '__main__' :
 
-nscen = runExp(Kivalues, sub_samples=5)
+nscen = runExp(Kivalues, sub_samples=2)
 combineTrajectories(nscen)
 
 df = pd.read_csv(os.path.join('trajectoriesDat.csv'))
@@ -220,4 +219,4 @@ df = pd.read_csv(os.path.join('trajectoriesDat.csv'))
 #df= df[df['params'] == 9.e-05]
 plot(df, allchannels=master_channel_list)
 plot(df, allchannels=detection_channel_list)
-plot(df, allchannels=undetection_channel_list)
+plot(df, allchannels=custom_channel_list)
