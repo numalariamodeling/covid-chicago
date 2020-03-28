@@ -5,6 +5,10 @@ import csv
 ### DIRECTORIES
 user_path = os.path.expanduser('~')
 
+### desired file name:
+file_output = 'age_model_covid.emodl'
+
+
 if "mrung" in user_path:
     exe_dir = os.path.join(user_path, 'Box/NU-malaria-team/projects/binaries/compartments/')
     git_dir = os.path.join(user_path, 'gitrepos/covid-chicago/age_structured/')
@@ -15,20 +19,19 @@ elif 'geickelb1' in user_path:
 
 ##making the age dict, assuming each age is [pop, 0, 1, 0]
 
-age_dic = {}
-with open(os.path.join(git_dir,'age_dic.csv')) as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        age_dic[row['age']] = [int(x) for x in row['val_list'].strip('][').split(', ')]
+def read_group_dictionary(filename= 'age_dic.csv', Testmode=True ) :
 
-#ki_param_dic = {'ki': 0.00000019,
-#             'incubation_pd': 6.63,
-#             'recovery_rate': 16,
-#             'waning': 180}
+    age_dic = {}
+    with open(os.path.join(git_dir,filename)) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            age_dic[row['age']] = [int(x) for x in row['val_list'].strip('][').split(', ')]
 
+    if Testmode == True :
+        age_dic = {k: age_dic[k] for k in sorted(age_dic.keys())[:2]}
 
-### desired file name:
-file_output = 'age_model_covid.emodl'
+    return age_dic
+
 
 def write_species_init(age_dic, age):
 
@@ -281,7 +284,7 @@ def main() :
 
 
 if __name__ == '__main__':
-
+    read_group_dictionary(filename = 'age_dic.csv', Testmode=True)
     if (os.path.exists(file_output)): os.remove(file_output)
     main()
     if (os.path.exists(file_output)) :
