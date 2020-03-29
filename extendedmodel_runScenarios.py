@@ -9,26 +9,31 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import itertools
 from scipy.interpolate import interp1d
+from load_paths import load_box_paths
 
 mpl.rcParams['pdf.fonttype'] = 42
+testMode = False
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-## directories
-user_path = os.path.expanduser('~')
-exe_dir = os.path.join(user_path, 'Box/NU-malaria-team/projects/binaries/compartments/')
+today =  date.today()
+exp_name = today.strftime("%d%m%Y") + '_extendedModel_base_chicago'
 
-wdir = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
-sim_output_path = os.path.join(wdir, 'sample_trajectories')
-plot_path = os.path.join(wdir, 'sample_plots')
+if testMode == True :
+    sim_output_path = os.path.join(wdir, 'sample_trajectories')
+    plot_path = os.path.join(wdir, 'sample_plots')
+else :
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    plot_path = sim_output_path
+
+if not os.path.exists(sim_output_path):
+    os.makedirs(sim_output_path)
+
+if not os.path.exists(plot_path):
+    os.makedirs(plot_path)
 
 master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
 detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
 custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
-
-first_day = date(2020, 3, 1)
-
-if "mrung" in user_path:
-    git_dir = os.path.join(user_path, 'gitrepos/covid-chicago/')
-    sim_output_path = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
 
 # Selected range values from SEIR Parameter Estimates.xlsx
 # speciesS = [360980]   ## Chicago population + NHS market share 2705994 * 0.1334  - in infect
@@ -137,7 +142,7 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     adf = adf.reset_index()
     del adf['index']
     if output_fname:
-        adf.to_csv(output_fname)
+        adf.to_csv(os.path.join(sim_output_path,output_fname))
     return adf
 
 
@@ -159,7 +164,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
         if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
 
     dfc = pd.concat(df_list)
-    dfc.to_csv("trajectoriesDat.csv")
+    dfc.to_csv( os.path.join(sim_output_path,"trajectoriesDat.csv"))
 
     return dfc
 
@@ -182,7 +187,7 @@ def CI_75(x) :
 
     return np.percentile(x, 75)
 
-def plot(adf, allchannels=master_channel_list):
+def plot(adf, allchannels=master_channel_list, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
 
@@ -205,18 +210,21 @@ def plot(adf, allchannels=master_channel_list):
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, )
 
-    # plt.savefig(os.path.join(plot_path, 'sample_plot.png'))
+    if plot_fname :
+        plt.savefig(os.path.join(plot_path, plot_fname))
     plt.show()
 
 
 # if __name__ == '__main__' :
 
-nscen = runExp(Kivalues, sub_samples=2)
+nscen = runExp(Kivalues, sub_samples=10)
 combineTrajectories(nscen)
 
-df = pd.read_csv(os.path.join('trajectoriesDat.csv'))
+df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 #df.params.unique()
 #df= df[df['params'] == 9.e-05]
-plot(df, allchannels=master_channel_list)
-plot(df, allchannels=detection_channel_list)
-plot(df, allchannels=custom_channel_list)
+first_day = date(2020, 3, 1)
+
+plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
+plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
+plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
