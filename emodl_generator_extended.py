@@ -1,52 +1,40 @@
 import os
 import subprocess
 import csv
+from load_paths import load_box_paths
 
-### DIRECTORIES
-user_path = os.path.expanduser('~')
-selectedGroup = "county"  # 'age'
-file_output = selectedGroup + '_model_covid.emodl'
+datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
-if "mrung" in user_path:
-    exe_dir = os.path.join(user_path, 'Box/NU-malaria-team/projects/binaries/compartments/')
-    git_dir = os.path.join(user_path, 'gitrepos/covid-chicago/')
-elif 'geickelb1' in user_path:
-    exe_dir = os.path.join(user_path, 'Desktop/compartments/')
-    git_dir = os.path.join(user_path, 'Documents/Github/covid-chicago/')
-###
 
 ##making the grp dict, assuming each grp is [pop, 0, 1, 0]
 
-def read_group_dictionary(filename= 'county_dic.csv', Testmode=True, ngroups=2 ) :
-
-    grp_dic= {}
-    with open(os.path.join(git_dir,filename)) as csvfile:
+def read_group_dictionary(filename='county_dic.csv',grpname ='county', Testmode=True, ngroups=2):
+    grp_dic = {}
+    with open(os.path.join(git_dir, filename)) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            grp_dic[row['county']] = [int(x) for x in row['val_list'].strip('][').split(', ')]
+            grp_dic[row[grpname]] = [int(x) for x in row['val_list'].strip('][').split(', ')]
 
-    if Testmode == True :
+    if Testmode == True:
         grp_dic = {k: grp_dic[k] for k in sorted(grp_dic.keys())[:ngroups]}
 
     return grp_dic
 
 
 def write_species_init(grp_dic, grp):
+    S = "(species S_{} {})".format(grp, grp_dic[grp][0])
+    As = "(species As_{} {})".format(grp, grp_dic[grp][1])
+    Sy = "(species Sy_{} {})".format(grp, grp_dic[grp][2])
+    H = "(species H_{} {})".format(grp, grp_dic[grp][3])
+    species_init_str = S + '\n' + As + '\n' + Sy + '\n' + H + '\n'
 
-    S= "(species S_{} {})".format(grp, grp_dic[grp][0])
-    As= "(species As_{} {})".format(grp, grp_dic[grp][1])
-    Sy= "(species Sy_{} {})".format(grp, grp_dic[grp][2])
-    H= "(species H_{} {})".format(grp, grp_dic[grp][3])
-    species_init_str=  S + '\n' + As + '\n' + Sy + '\n' + H + '\n'
-
-    species_init_str = species_init_str.replace("  ",  " ")
-    return(species_init_str)
+    species_init_str = species_init_str.replace("  ", " ")
+    return (species_init_str)
 
 
 ### WRITE EMODL CHUNKS
 # eval(" 'grp,' * 26") + "grp"   ### need to add the number of grps pasted into format automatically depending on n groups
 def write_species(grp):
-    
     grp = str(grp)
     species_str = """
 (species E_{} 0)
@@ -70,17 +58,16 @@ def write_species(grp):
 (species RC_{} 0)
 (species RC_det2_{} 0)
 (species RC_det3_{} 0)
-""".format(grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-           grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-           grp,grp,grp,grp,grp,grp,grp
- )
-    species_str = species_str.replace("  ",  " ")
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp
+           )
+    species_str = species_str.replace("  ", " ")
     return (species_str)
 
 
 # eval(" 'grp,' * 108") + "grp"   ### need to add the number of grps pasted into format automatically depending on n groups
 def write_observe(grp):
-    
     grp = str(grp)
 
     observe_str = """
@@ -103,22 +90,22 @@ def write_observe(grp):
 (observe crit_cumul_{} (+ deaths_{} critical_{} RC_{} RC_det2_{} RC_det3_{}))
 (observe crit_det_cumul_{} (+ C_det2_{} C_det3_{} RC_det2_{} RC_det3_{} D_det2_{} D_det3_{}))
 (observe detected_cumul_{} (+ (sum As_det1_{} Sy_det2_{} H_det2_{} H_det3_{} C_det2_{} C_det3_{}) RAs_det1_{} RSy_det2_{} RH_det2_{} RH_det3_{} RC_det2_{} RC_det3_{} D_det2_{} D_det3_{}))
-""".format(grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp, grp,grp,grp
- )
-    observe_str = observe_str.replace("  ",  " ")
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp
+           )
+    observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
-# eval(" 'grp,' * 34") + "grp"
-def write_functions (grp) :
 
+# eval(" 'grp,' * 34") + "grp"
+def write_functions(grp):
     grp = str(grp)
     functions_str = """
 (func asymptomatic_{} (+ As_{} As_det1_{}))
@@ -129,14 +116,14 @@ def write_functions (grp) :
 (func recovered_{} (sum RAs_{} RSy_{} RH_{} RC_{} RAs_det1_{} RSy_det2_{} RH_det2_{} RH_det3_{} RC_det2_{} RC_det3_{}))
 (func infectious_undet_{} (+ As_{} Sy_{}))
 (func infectious_det_{} (+ As_det1_{} Sy_det2_{}))
-""".format(grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-           grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-           grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-           grp,grp,grp,grp,grp,grp,grp
-    )
-    functions_str = functions_str.replace("  ",  "")
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp
+           )
+    functions_str = functions_str.replace("  ", "")
     return (functions_str)
-    
+
 
 def write_params():
     params_str = """
@@ -162,15 +149,15 @@ def write_params():
 (param Kc (/ fraction_critical time_to_critical ))
 (param Km (/ fraction_dead  time_to_death))
  """
-    params_str = params_str.replace("  ",  " ")
- 
+    params_str = params_str.replace("  ", " ")
+
     return (params_str)
 
 
 # eval(" 'grp,' * 105") + "grp"   ### need to add the number of grps pasted into format automatically depending on n groups
 ## note, these lines need to be edited for grp-specific infection rates and contacts
-#(reaction exposure_from_undetected_{} (S_{}) (E_{}) (* Ki S_{} infectious_undet_{}))
-#(reaction exposure_from_detected_{} (S_{}) (E_{}) (* Ki S_{} infectious_det_{} reduced_inf_of_det_cases))
+# (reaction exposure_from_undetected_{} (S_{}) (E_{}) (* Ki S_{} infectious_undet_{}))
+# (reaction exposure_from_detected_{} (S_{}) (E_{}) (* Ki S_{} infectious_det_{} reduced_inf_of_det_cases))
 def write_reactions(grp):
     grp = str(grp)
 
@@ -200,25 +187,28 @@ def write_reactions(grp):
 (reaction death_det3_{} (C_det3_{}) (D_det3_{}) (* Km C_det3_{}))
 (reaction recovery_H_det3_{} (H_det3_{}) (RH_det3_{}) (* Kr H_det3_{}))
 (reaction recovery_C_det3_{} (C_det3_{}) (RC_det3_{}) (* Kr C_det3_{}))
-""".format(grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,grp,
-    grp,grp,grp,grp,grp
- )
- 
-    reaction_str = reaction_str.replace("  ",  " ")
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp
+           )
+
+    reaction_str = reaction_str.replace("  ", " ")
     return (reaction_str)
+
 
 ###
 
 ###stringing all of the functions together to make the file:
 
-def main() :
+def generate_extended_emodl(grp_dic, file_output, verbose=False):
+    if (os.path.exists(file_output)):
+        os.remove(file_output)
 
     model_name = "seir.emodl"  ### can make this more flexible
     header_str = "; simplemodel \n\n" + "(import (rnrs) (emodl cmslib)) \n\n" + '(start-model "{}") \n\n'.format(
@@ -234,7 +224,7 @@ def main() :
     functions_string = ""
     total_string = total_string + header_str
 
-    for key in  grp_dic.keys():
+    for key in grp_dic.keys():
         species_init = write_species_init(grp_dic, grp=key)
         species = write_species(key)
         observe = write_observe(key)
@@ -246,18 +236,22 @@ def main() :
         reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
     params = write_params()
-    total_string = total_string + '\n\n' + species_init_string + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' +  footer_str
+    total_string = total_string + '\n\n' + species_init_string + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
     emodl.close()
-
-
-if __name__ == '__main__':
-    grp_dic = read_group_dictionary(filename = 'county_dic.csv', Testmode=False)
-    if (os.path.exists(file_output)): os.remove(file_output)
-    main()
-    if (os.path.exists(file_output)) :
+    if (os.path.exists(file_output)):
         print("{} file was successfully created".format(file_output))
-    else :
-        print("{} file was not created".format(file_output))
+    else:
+        print("{} file was NOT created".format(file_output))
+
+
+# Example run for county (also runs for age, but this version does not take into accoun mixing between groups!!!)
+county_dic = read_group_dictionary(filename='county_dic.csv',grpname="county",Testmode=False)
+generate_extended_emodl(grp_dic=county_dic, file_output='county_model_covid.emodl')
+
+# Example run for age not taking into account mixing between groups!!!
+age_dic = read_group_dictionary(filename='age_structured/age_dic.csv',grpname="age", Testmode=False)
+generate_extended_emodl(grp_dic=age_dic, file_output='age_model_covid.emodl')
+
