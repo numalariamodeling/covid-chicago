@@ -7,20 +7,18 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 from scipy.interpolate import interp1d
-
+from load_paths import load_box_paths
 
 ## directories
 user_path = os.path.expanduser('~')
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-if "mrung" in user_path : 
-    exe_dir = os.path.join(user_path, 'Box/NU-malaria-team/projects/binaries/compartments/')
-    git_dir = os.path.join(user_path, 'gitrepos/covid-chicago/')
-    #plot_path= os.path.join(project_dir,'fitting/') ###need to specify this for yourself
-elif 'geickelb1' in user_path:
-    project_dir= os.path.join(user_path,'Box/covid_chicago/cms_sim/')
+if 'geickelb1' in user_path:
+    wdir = os.path.join(user_path,'Box/covid_chicago/cms_sim/')
     exe_dir = os.path.join(user_path,'Desktop/compartments/')
     git_dir = os.path.join(user_path, 'Documents/Github/covid-chicago/')
-    plot_path= os.path.join(project_dir,'fitting/')
+
+plot_path= os.path.join(wdir ,'fitting/')
 
 master_channel_list = ['susceptible', 'exposed', 'infectious', 'symptomatic', 'detected',
                        'hospitalized', 'critical', 'death', 'recovered']
@@ -146,13 +144,13 @@ def plot(adf, allchannels = master_channel_list, save=False) :
     
 ### data reading
 chicago_df= df= pd.read_csv(
-        os.path.join(project_dir,'chicago/chicago_cases.csv'),
+        os.path.join( wdir,'chicago/chicago_cases.csv'),
         index_col=0)
 chicago_df= chicago_df.reset_index()#.head()
 chicago_df['Date']=pd.to_datetime(chicago_df['Date'])
 
 df= pd.read_csv(
-        os.path.join(project_dir,'fitting/trajectoriesDat_v5.csv'),
+        os.path.join( wdir,'fitting/trajectoriesDat_v5.csv'),
         index_col=0)
 
 
