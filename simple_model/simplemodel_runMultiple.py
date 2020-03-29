@@ -19,27 +19,27 @@ def runExp_singleParamChange(param, paramname ) :
     # paramname = "Ki"
     for i in enumerate(param) :
         print(i)
-        fin = open("simplemodel_covid.emodl", "rt")
+        fin = open(os.path.join(git_dir,  'simple_model',"simplemodel_covid.emodl"), "rt")
         data = fin.read()
         if(paramname ==  "initial_infect") : data = data.replace('(species I 10)', '(species I ' + str(i[1]) +')')
         if (paramname == "Ki") : data = data.replace('(param Ki 0.319)', '(param Ki '  + str(i[1]) +')')
         if (paramname == "incubation_pd") : data = data.replace('(param incubation_pd 6.63)', '(param incubation_pd ' + str(i[1]) +')')
         if (paramname == "recovery_rate") :data = data.replace('(param recovery_rate 16)', '(param recovery_rate '  + str(i[1]) +')')
         fin.close()
-        fin = open("simplemodel_covid_i.emodl", "wt")
+        fin = open(os.path.join(git_dir,  'simple_model',"simplemodel_covid_i.emodl"), "wt")
         fin.write(data)
         fin.close()
         # adjust simplemodel.cfg file as well
-        fin = open("simplemodel.cfg", "rt")
+        fin = open(os.path.join(git_dir,  'simple_model',"simplemodel.cfg"), "rt")
         data_cfg = fin.read()
         data_cfg = data_cfg.replace('trajectories', 'trajectories_' + paramname + '_' + str(i[1]) )
         fin.close()
-        fin = open("simplemodel_i.cfg", "wt")
+        fin = open(os.path.join(git_dir,  'simple_model',"simplemodel_i.cfg"), "wt")
         fin.write(data_cfg)
         fin.close()
         file = open('runModel_i.bat', 'w')
-        file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(git_dir, "simplemodel_i.cfg") +
-                   '"' + ' -m ' + '"' + os.path.join( git_dir, "simplemodel_covid_i.emodl", ) + '"')
+        file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(git_dir,  'simple_model', "simplemodel_i.cfg") +
+                   '"' + ' -m ' + '"' + os.path.join( git_dir, 'simple_model', "simplemodel_covid_i.emodl", ) + '"')
         file.close()
         subprocess.call([r'runModel_i.bat'])
 
