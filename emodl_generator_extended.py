@@ -252,6 +252,6 @@ county_dic = read_group_dictionary(filename='county_dic.csv',grpname="county",Te
 generate_extended_emodl(grp_dic=county_dic, file_output='county_model_covid.emodl')
 
 # Example run for age not taking into account mixing between groups!!!
-age_dic = read_group_dictionary(filename='age_structured/age_dic.csv',grpname="age", Testmode=False)
+age_dic = read_group_dictionary(filename='age_model/age_dic.csv',grpname="age", Testmode=False)
 generate_extended_emodl(grp_dic=age_dic, file_output='age_model_covid.emodl')
 
