@@ -17,3 +17,10 @@ simulation/itn_calibration/banfora_ITN_year_reduction_old_block_071.pdf
 Code to compare string/.RData
 Code to compare string/compare_string.R
 .Rproj.user
+age_model_covid_i.emodl
+extendedmodel_covid_i.emodl
+simple_model/simplemodel_i.cfg
+simple_model/scenarios.csv
+simple_model/simplemodel_covid_i.emodl
+trajectories.csv
+temp_model.emodl

@@ -7,16 +7,26 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 from processing_helpers import *
+from load_paths import load_box_paths
 
 mpl.rcParams['pdf.fonttype'] = 42
+testMode = False
 
-user_path = '/Users/jlg1657'
-# user_path = '/Users/mrung'
+exp_name = '29032020_extendedModel_base_chicago'
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-wdir = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
-sim_output_path = os.path.join(wdir, 'sample_trajectories')
-plot_path = os.path.join(wdir, 'sample_plots')
+if testMode == True :
+    sim_output_path = os.path.join(wdir, 'sample_trajectories')
+    plot_path = os.path.join(wdir, 'sample_plots')
+else :
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    plot_path =  sim_output_path
 
+if not os.path.exists(sim_output_path):
+    os.makedirs(sim_output_path)
+
+if not os.path.exists(plot_path):
+    os.makedirs(plot_path)
 
 master_channel_list = ['susceptible', 'exposed', 'infectious', 'symptomatic', 'detected',
                        'hospitalized', 'critical', 'deaths', 'recovered']
@@ -83,7 +93,7 @@ def plot(adf) :
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, )
 
-    plt.savefig(os.path.join(plot_path, 'sample_plot.png'))
+    plt.savefig(os.path.join(plot_path, 'sample_plot_withIncidence.png'))
 
     plt.show()
 

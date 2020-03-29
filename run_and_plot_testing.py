@@ -5,15 +5,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.dates as mdates
 from datetime import date, timedelta
+from load_paths import load_box_paths
 
-## directories
-user_path = os.path.expanduser('~')
-exe_dir = os.path.join(user_path, 'Box/NU-malaria-team/projects/binaries/compartments/')
-
-if "mrung" in user_path :
-    git_dir = os.path.join(user_path, 'gitrepos/covid-chicago/')
-    sim_output_path = os.path.join(user_path, 'Box/NU-malaria-team/projects/covid_chicago/cms_sim')
-
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 def define_and_replaceParameters(inputfile , outputfile):
     speciesS = 360980
@@ -86,7 +80,7 @@ def reprocess(output_fname=None) :
     })
 
     if output_fname :
-        df.to_csv(output_fname)
+        df.to_csv(os.path.join(sim_output_path,output_fname))
     return df
 
 
@@ -128,8 +122,7 @@ def plot_by_channel(adf) :
 
 if __name__ == '__main__' :
 
-    runExp_simple(modelname="extendedmodel_covid.emodl", replaceParams=True)
-    runExp_simple(modelname="temp_model.emodl")
+    runExp_simple(modelname="simplemodel_testing.emodl", replaceParams=False)
     df = reprocess()
     first_day = date(2020, 3, 1)
     plot(df)
