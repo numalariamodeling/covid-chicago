@@ -65,6 +65,13 @@ def calculate_incidence(adf, output_filename=None) :
     return adf
 
 
+def calculate_mean_and_CI(adf, channel, output_filename=None) :
+
+    mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
+    if output_filename :
+        mdf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
+
+
 def plot(adf) :
 
     fig = plt.figure(figsize=(12,6))
@@ -102,4 +109,7 @@ if __name__ == '__main__' :
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     adf = calculate_incidence(df, output_filename='trajectoresDat_withIncidence.csv')
+    adf['infections_cumul'] = adf['asymp_cumul'] + adf['symp_cumul']
+    for channel in ['infections_cumul', 'detected_cumul'] :
+        calculate_mean_and_CI(adf, channel, output_filename='%s.csv' % channel)
     plot(adf)
