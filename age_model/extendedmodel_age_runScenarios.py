@@ -41,16 +41,7 @@ if not os.path.exists(os.path.join(sim_output_path,emodlname)):
     shutil.copyfile(os.path.join(git_dir, 'age_model', emodlname) , os.path.join(sim_output_path,emodlname))
 
 # Selected range values from SEIR Parameter Estimates.xlsx
-# speciesS = [360980]   ## Chicago population + NHS market share 2705994 * 0.1334  - in infect
-Kivalues = np.random.uniform(3.23107e-06, 4.7126e-06 , 3)   # [9e-05, 7e-06, 8e-06, 9e-06, 9e-077]
-
-### Contact rates (scale factors)
-
-#def defineContactScalingParameters () :
-
-
-#plt.hist(Kivalues, bins=100)
-#plt.show()
+Kivalues = np.random.uniform(3.23107e-06, 4.7126e-06 , 3)
 
 def define_Ki_contact_matrix(data) :
     ## placeholder values
@@ -222,80 +213,6 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
     return dfc
 
 
-def plot(adf, allchannels, plot_fname=None):
-    fig = plt.figure(figsize=(8, 6))
-    palette = sns.color_palette('Set1', 10)
-
-    axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
-    fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
-    for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
-        ax = axes[c]
-        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-        ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
-        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
-                        color=palette[c], linewidth=0, alpha=0.2)
-        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
-                        color=palette[c], linewidth=0, alpha=0.4)
-
-        ax.set_title(channel, y=0.8)
-
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, )
-
-    if plot_fname :
-        plt.savefig(os.path.join(plot_path, plot_fname))
-    plt.show()
-
-
 # if __name__ == '__main__' :
-
 nscen = runExp(Kivalues, sub_samples=3, modelname=emodlname)
 combineTrajectories(nscen)
-
-df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-#df.params.unique()
-#df= df[df['params'] == 9.e-05]
-first_day = date(2020, 10, 1)
-
-#plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
-#plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
-
-plot(df, allchannels=['susceptible_age0to19','susceptible_age20to59','susceptible_age60to100',
-                      'exposed_age0to19', 'exposed_age20to59', 'exposed_age60to100',
-                       'detected_cumul_age0to19', 'detected_cumul_age20to59', 'detected_cumul_age60to100'], plot_fname='main_channels.png')
-
-plot(df, allchannels=['hosp_cumul_age0to19','hosp_cumul_age20to59','hosp_cumul_age60to100',
-                      'crit_cumul_age0to19', 'crit_cumul_age20to59', 'crit_cumul_age60to100',
-                       'deaths_age0to19', 'deaths_age20to59', 'deaths_age60to100'], plot_fname='hosp_channels.png')
-
-
-# generating a list of base names in cols we might want to keep:
-base_names=set([x.split('_')[0] for x in list(df) if len(x.split('_'))>1 and x not in ['scen','sample']])
-# generating a list of suffix names in cols we might want to keep:
-suffix_names= list(set([x.split('_')[-1] for x in list(df) if len(x.split('_'))>1 and x not in['sample_num', 'scen_num']]))
-
-
-#### automated wrangling columns wanted for melt
-col_bools= []
-for element in list(df):
-    col_bools.append(any(substring in element for substring in suffix_names))
-### melting from wide to long
-dfm = pd.melt(df, id_vars=[x for x in list(df) if x not in list(df.loc[:,col_bools])], value_vars=list(df.loc[:,col_bools]), var_name='channels')
-
-# dropping null value columns to avoid errors
-dfm.dropna(inplace=True)
-
-# new data frame with split value columns
-new = dfm["Name"].str.split(" ", n=1, expand=True)
-
-# making separate first name column from new data frame
-dfm["First Name"] = new[0]
-
-# making separate last name column from new data frame
-dfm["Last Name"] = new[1]
-
-# Dropping old Name columns
-dfm.drop(columns=["Name"], inplace=True)
