@@ -147,7 +147,7 @@ def write_ki_mix(nageGroups, scale=True):
         if scale == False :
             string_i = "(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )" + "\n"
         elif scale == True :
-            string_i = "(param " + ki_dic[i][0] + " ( Ki / @s" + ki_dic[i][0] + "@ ))" + "\n"
+            string_i = "(param " + ki_dic[i][0] + " (/ Ki @s" + ki_dic[i][0] + "@ ))" + "\n"
         ki_mix_param = ki_mix_param + string_i
 
     return ki_mix_param
@@ -187,18 +187,16 @@ def write_params():
 ### need automatization (parked for now)
 def write_exposure_reaction():
     exposure_reaction_str = """  
-(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (sum (* Ki1_1  S_ageU5 infectious_det_ageU5 ) (* Ki1_2  S_ageU5 infectious_det_age5to17 ) (* Ki1_3 S_ageU5 infectious_det_age18to64 ) (* Ki1_4 S_ageU5 infectious_det_age64to100 ) ))
-(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (sum (* Ki2_1 S_ageage5to17 infectious_det_ageU5 ) (* Ki2_2 S_age5to17 infectious_det_age20to59)  (* Ki2_3 S_age5to17 infectious_det_age18to64 ) (* Ki2_4 S_age5to17 infectious_det_age64to100 ) ))
-(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (sum (* Ki3_1 S_age18to64 infectious_det_ageU5 ) (* Ki3_2 S_age18to64 infectious_det_age5to17)  (* Ki3_3 S_age18to64 infectious_det_age18to64 ) (* Ki3_4 S_age18to64 infectious_det_age64to100 ) ))
-(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (sum (* Ki4_1 S_age64to100 infectious_det_ageU5 ) (* Ki4_2 S_age64to100 infectious_det_age5to17)  (* Ki4_3 S_age64to100 infectious_det_age18to64 ) (* Ki4_4 S_age64to100 infectious_det_age64to100 ) ))
+(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (sum (* Ki1_1 S_ageU5 infectious_det_ageU5) (* Ki1_2 S_ageU5 infectious_det_age5to17) (* Ki1_3 S_ageU5 infectious_det_age18to64) (* Ki1_4 S_ageU5 infectious_det_age64to100)))
+(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (sum (* Ki2_1 S_age5to17 infectious_det_ageU5) (* Ki2_2 S_age5to17 infectious_det_age5to17) (* Ki2_3 S_age5to17 infectious_det_age18to64) (* Ki2_4 S_age5to17 infectious_det_age64to100)))
+(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (sum (* Ki3_1 S_age18to64 infectious_det_ageU5) (* Ki3_2 S_age18to64 infectious_det_age5to17) (* Ki3_3 S_age18to64 infectious_det_age18to64) (* Ki3_4 S_age18to64 infectious_det_age64to100)))
+(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (sum (* Ki4_1 S_age64to100 infectious_det_ageU5) (* Ki4_2 S_age64to100 infectious_det_age5to17) (* Ki4_3 S_age64to100 infectious_det_age18to64) (* Ki4_4 S_age64to100 infectious_det_age64to100)))
 
-(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (sum (* Ki1_1  S_ageU5 infectious_undet_ageU5 ) (* Ki1_2  S_ageU5 infectious_undet_age5to17 ) (* Ki1_3 S_ageU5 infectious_undet_age18to64 ) (* Ki1_4 S_ageU5 infectious_undet_age64to100 ) ))
-(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (sum (* Ki2_1 S_ageage5to17 infectious_undet_ageU5 ) (* Ki2_2 S_age5to17 infectious_undet_age20to59)  (* Ki2_3 S_age5to17 infectious_undet_age18to64 ) (* Ki2_4 S_age5to17 infectious_undet_age64to100 ) ))
-(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (sum (* Ki3_1 S_age18to64 infectious_undet_ageU5 ) (* Ki3_2 S_age18to64 infectious_undet_age5to17)  (* Ki3_3 S_age18to64 infectious_undet_age18to64 ) (* Ki3_4 S_age18to64 infectious_undet_age64to100 ) ))
-(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (sum (* Ki4_1 S_age64to100 infectious_undet_ageU5 ) (* Ki4_2 S_age64to100 infectious_undet_age5to17)  (* Ki4_3 S_age64to100 infectious_undet_age18to64 ) (* Ki4_4 S_age64to100 infectious_undet_age64to100 ) ))
+(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (sum (* Ki1_1 S_ageU5 infectious_undet_ageU5) (* Ki1_2 S_ageU5 infectious_undet_age5to17) (* Ki1_3 S_ageU5 infectious_undet_age18to64) (* Ki1_4 S_ageU5 infectious_undet_age64to100)))
+(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (sum (* Ki2_1 S_age5to17 infectious_undet_ageU5) (* Ki2_2 S_age5to17 infectious_undet_age5to17) (* Ki2_3 S_age5to17 infectious_undet_age18to64) (* Ki2_4 S_age5to17 infectious_undet_age64to100)))
+(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (sum (* Ki3_1 S_age18to64 infectious_undet_ageU5) (* Ki3_2 S_age18to64 infectious_undet_age5to17) (* Ki3_3 S_age18to64 infectious_undet_age18to64) (* Ki3_4 S_age18to64 infectious_undet_age64to100)))
+(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (sum (* Ki4_1 S_age64to100 infectious_undet_ageU5) (* Ki4_2 S_age64to100 infectious_undet_age5to17) (* Ki4_3 S_age64to100 infectious_undet_age18to64) (* Ki4_4 S_age64to100 infectious_undet_age64to100)))
     """
-
-
     return exposure_reaction_str
 
 
@@ -274,19 +272,18 @@ def generate_extended_emodl(grp_dic, file_output, verbose=False):
         species_init = write_species_init(age_dic, key)
         species = write_species(key)
         observe = write_observe(key)
-        reaction_exposure = write_exposure_reaction()
         reaction = write_reactions(key)
         functions = write_functions(key)
         species_init_string = species_init_string + species_init
         species_string = species_string + species
         observe_string = observe_string + observe
-        reaction_string = reaction_string + reaction_exposure + reaction
+        reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
 
+    reaction_string_combined = write_exposure_reaction() + '\n' + reaction_string
     params = write_params() + write_ki_mix(len(age_dic.keys()))
 
-
-    total_string = total_string + '\n\n' + species_init_string + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_init_string + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
