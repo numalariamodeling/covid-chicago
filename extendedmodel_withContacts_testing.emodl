@@ -6,15 +6,18 @@
 
 
 
-(species S_age0to19 2414060)
+;(species S_age0to19 2414060)
+(species S_age0to19 250)
 (species As_age0to19 0)
 (species Sy_age0to19 0)
 (species H_age0to19 0)
-(species S_age20to59 5111147)
+;(species S_age20to59 5111147)
+(species S_age20to59 500)
 (species As_age20to59 0)
 (species Sy_age20to59 0)
 (species H_age20to59 0)
-(species S_age60to100 2046830)
+;(species S_age60to100 2046830)
+(species S_age60to100 250)
 (species As_age60to100 0)
 (species Sy_age60to100 0)
 (species H_age60to100 0)
