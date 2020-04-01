@@ -9,6 +9,9 @@ from datetime import date, timedelta
 from processing_helpers import *
 from load_paths import load_box_paths
 
+
+#### overall, this file takes the trajectories and calculates the incidence for all of the channels. There may need to be an intermediate step between the runScenerios file and this, because of the age and county. if we run it for groups, {susceptable_H} where H can be county/locale/agegroup etc. can put into a long format for those groups and do the plotting via groupby. 
+
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
@@ -38,7 +41,6 @@ def count_new(df, curr_ch) :
     ch_list = list(df[curr_ch].values)
     diff = [0] + [ch_list[x] - ch_list[x - 1] for x in range(1, len(df))]
     return diff
-
 
 def calculate_incidence(adf, age_group, output_filename=None) :
 
@@ -136,7 +138,10 @@ def plot(adf,age_group,filename) :
 
 
 if __name__ == '__main__' :
-
+    ### trajectories vs trajectories_with_Incidence.   
+    ### fitting is not yet included
+    ### use trajectories w/ incidence, this just add new channels.
+    ### 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
     base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
