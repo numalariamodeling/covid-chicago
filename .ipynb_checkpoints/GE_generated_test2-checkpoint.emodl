@@ -1,0 +1,30 @@
+
+    ; simplemodel
+
+    (import (rnrs) (emodl cmslib))
+
+    (start-model "seir.emodl")
+
+    (species S_illinois 12671890)
+(species E_illinois 0)
+(species I_illinois 12)
+(species R_illinois 0)
+(observe susceptible_illinois S_illinois)
+(observe exposed_illinois E_illinois)
+(observe infectious_illinois I_illinois)
+(observe recovered_illinois R_illinois)
+
+(param Ki 1.9e-07)
+(param incubation_pd 6.63)
+(param Kl (/ 1 incubation_pd))
+(param recovery_rate 16)
+(param Kr (/ 1 recovery_rate))
+(param waning 180)
+(param Kw (/ 1 waning))
+    
+(reaction exposure   (S_illinois) (E_illinois) (* Ki S_illinois I_illinois))
+(reaction infection  (E_illinois)   (I_illinois)   (* Kl E_illinois))
+(reaction recovery   (I_illinois)   (R_illinois)   (* Kr I_illinois))
+;(reaction waning     (R_illinois)   (S_illinois)   (* Kw R_illinois))
+
+(end-model)

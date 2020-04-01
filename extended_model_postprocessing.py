@@ -9,10 +9,13 @@ from datetime import date, timedelta
 from processing_helpers import *
 from load_paths import load_box_paths
 
+
+#### overall, this file takes the trajectories and calculates the incidence for all of the channels. There may need to be an intermediate step between the runScenerios file and this, because of the age and county. if we run it for groups, {susceptable_H} where H can be county/locale/agegroup etc. can put into a long format for those groups and do the plotting via groupby. 
+
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
-exp_name = '29032020_extendedModel_base_chicago'
+exp_name = '30032020_extendedModel_base_chicago'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
@@ -40,7 +43,7 @@ def count_new(df, curr_ch) :
     return diff
 
 
-def calculate_incidence(adf, output_filename=None) :
+def calculate_incidence(adf, output_filename=None) : ## incidence is new outcome, it's ~ events happening between timesteps. this is a proper channel to use to compare to the data (IDPH or chicago). 
 
     inc_df = pd.DataFrame()
     for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
@@ -106,7 +109,10 @@ def plot(adf) :
 
 
 if __name__ == '__main__' :
-
+    ### trajectories vs trajectories_with_Incidence.   
+    ### fitting is not yet included
+    ### use trajectories w/ incidence, this just add new channels.
+    ### 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     adf = calculate_incidence(df, output_filename='trajectoresDat_withIncidence.csv')
     adf['infections_cumul'] = adf['asymp_cumul'] + adf['symp_cumul']
