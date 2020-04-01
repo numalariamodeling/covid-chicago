@@ -9,19 +9,23 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import itertools
 from scipy.interpolate import interp1d
-from load_paths import load_box_paths
-from processing_helpers import *
+import os
 import shutil
+from load_paths import load_box_paths
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+emodl_dir = os.path.join(git_dir, 'age_model', 'emodl')
+cfg_dir = os.path.join(git_dir, 'age_model', 'cfg')
 
 today =  date.today()
-exp_name = today.strftime("%d%m%Y") + '_TEST_extendedModel_age_4grp'
+exp_name = today.strftime("%Y%m%d") + '_extendedModel_age_pop1000_test'
 
 #emodlname = 'age_model_covid_noContactMix.emodl'
-emodlname = 'age_extendedmodel_covid.emodl'
+#emodlname = 'age_model_covid_homogeneousMixing_lowerPop.emodl'
+#emodlname = 'age_extendedmodel_covid_pop5000.emodl'
+emodlname = 'age_extendedmodel_covid_Pop1000 _v3.emodl'
 
 if testMode == True :
     sim_output_path = os.path.join(wdir, 'sample_trajectories')
@@ -36,134 +40,151 @@ if not os.path.exists(sim_output_path):
 if not os.path.exists(plot_path):
     os.makedirs(plot_path)
 
+# Create temporary folder for the simulation files
+# currently allowing to run only 1 experiment at a time locally
+temp_dir = os.path.join(git_dir,'age_model','_temp')
+if not os.path.exists(temp_dir):
+    os.makedirs(os.path.join(temp_dir))
+
 ## Copy emodl file  to experiment folder
 if not os.path.exists(os.path.join(sim_output_path,emodlname)):
-    shutil.copyfile(os.path.join(git_dir, 'age_model', emodlname) , os.path.join(sim_output_path,emodlname))
+    shutil.copyfile(os.path.join(emodl_dir, emodlname) , os.path.join(sim_output_path,emodlname))
 
-# Selected range values from SEIR Parameter Estimates.xlsx
-Kivalues = np.random.uniform(3.23107e-06, 4.7126e-06 , 3)
+if not os.path.exists(os.path.join(sim_output_path, 'model.cfg')):
+    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(sim_output_path, 'model.cfg'))
 
-def define_Ki_contact_matrix(data) :
+# Select range for fitting parameter
+Kivalues = np.random.uniform(5e-03, 1e-06, 10)
+
+# Define scaling factors for the contact mixing between groups
+def define_Ki_contact_matrix(df):
     ## placeholder values
-    sKi1_4 = np.random.uniform(0.2, 0.3)
-    sKi1_3 = np.random.uniform(0.4, 0.5)
-    sKi1_2 = np.random.uniform(0.8, 0.9)
-    sKi1_1 = np.random.uniform(0.9, 1)
-    sKi2_4 = np.random.uniform(0.6, 0.8)
-    sKi2_3 = np.random.uniform(0.8, 0.9)
-    sKi2_2 = np.random.uniform(0.9, 1)
-    sKi2_1 = sKi1_2
-    sKi3_4 = np.random.uniform(0.8, 0.9)
-    sKi3_3 = np.random.uniform(0.9, 1)
-    sKi3_2 = sKi2_3
-    sKi3_1 = sKi1_3
-    sKi4_4 = np.random.uniform(0.9, 1)
-    sKi4_3 = sKi3_4
-    sKi4_2 = sKi2_4
-    sKi4_1 = sKi1_4
+    df['sKi1_4'] = np.random.uniform(0.2, 0.3)
+    df['sKi1_3'] = np.random.uniform(0.4, 0.5)
+    df['sKi1_2'] = np.random.uniform(0.8, 0.9)
+    df['sKi1_1'] = np.random.uniform(0.9, 1)
+    df['sKi2_4'] = np.random.uniform(0.6, 0.8)
+    df['sKi2_3'] = np.random.uniform(0.8, 0.9)
+    df['sKi2_2'] = np.random.uniform(0.9, 1)
+    df['sKi2_1'] = df['sKi1_2']
+    df['sKi3_4'] = np.random.uniform(0.8, 0.9)
+    df['sKi3_3'] = np.random.uniform(0.9, 1)
+    df['sKi3_2'] = df['sKi2_3']
+    df['sKi3_1'] = df['sKi1_3']
+    df['sKi4_4'] = np.random.uniform(0.9, 1)
+    df['sKi4_3'] = df['sKi3_4']
+    df['sKi4_2'] = df['sKi2_4']
+    df['sKi4_1'] = df['sKi1_4']
+    return df
 
-    data = data.replace('@sKi1_4@', str(sKi1_4))
-    data = data.replace('@sKi1_3@', str(sKi1_3))
-    data = data.replace('@sKi1_2@', str(sKi1_2))
-    data = data.replace('@sKi1_1@', str(sKi1_1))
-    data = data.replace('@sKi2_4@', str(sKi2_4))
-    data = data.replace('@sKi2_3@', str(sKi2_3))
-    data = data.replace('@sKi2_2@', str(sKi2_2))
-    data = data.replace('@sKi2_1@', str(sKi2_1))
-    data = data.replace('@sKi3_4@', str(sKi3_4))
-    data = data.replace('@sKi3_3@', str(sKi3_3))
-    data = data.replace('@sKi3_2@', str(sKi3_2))
-    data = data.replace('@sKi3_1@', str(sKi3_1))
-    data = data.replace('@sKi4_4@', str(sKi4_4))
-    data = data.replace('@sKi4_3@', str(sKi4_3))
-    data = data.replace('@sKi4_2@', str(sKi4_2))
-    data = data.replace('@sKi4_1@', str(sKi4_1))
-
+def replace_Ki_contact_param(data, df, sample_nr) :
+    data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
+    data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
+    data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
+    data = data.replace('@sKi1_1@', str(df.sKi1_1[sample_nr]))
+    data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
+    data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
+    data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
+    data = data.replace('@sKi2_1@', str(df.sKi2_1[sample_nr]))
+    data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
+    data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
+    data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
+    data = data.replace('@sKi3_1@', str(df.sKi3_1[sample_nr]))
+    data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
+    data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
+    data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
+    data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
     return data
 
 
-
-def define_and_replaceParameters(inputfile , outputfile, Ki_i, Ki_contact_matrix = True):
-    speciesS = 360980
-    initialAs = np.random.uniform(1, 5)
-    incubation_pd = np.random.uniform(4.2, 6.63)
-    time_to_hospitalization = np.random.normal(5.9, 2)
-    time_to_critical = np.random.normal(5.9, 2)
-    time_to_death = np.random.uniform(1, 3)
-    recovery_rate = np.random.uniform(6, 16)
-    fraction_hospitalized = np.random.uniform(0.1, 5)
-    fraction_symptomatic = np.random.uniform(0.5, 0.8)
-    fraction_critical = np.random.uniform(0.1, 5)
-    reduced_inf_of_det_cases = np.random.uniform(0,1)
-    cfr = np.random.uniform(0.008, 0.022)
-    d_Sy = np.random.uniform(0.2, 0.3)
-    d_H = 1
-    d_As = 0
-    Ki = Ki_i
-
-    fin = open(os.path.join(git_dir, 'age_model', inputfile), "rt")
-    data = fin.read()
-    data = data.replace('@speciesS@', str(speciesS))
-    data = data.replace('@initialAs@', str(initialAs))
-    data = data.replace('@incubation_pd@', str(incubation_pd))
-    data = data.replace('@time_to_hospitalization@', str(time_to_hospitalization))
-    data = data.replace('@time_to_critical@', str(time_to_critical))
-    data = data.replace('@time_to_death@', str(time_to_death))
-    data = data.replace('@fraction_hospitalized@', str(fraction_hospitalized))
-    data = data.replace('@fraction_symptomatic@', str(fraction_symptomatic))
-    data = data.replace('@fraction_critical@', str(fraction_critical))
-    data = data.replace('@reduced_inf_of_det_cases@', str(reduced_inf_of_det_cases))
-    data = data.replace('@cfr@', str(cfr))
-    data = data.replace('@d_As@', str(d_As))
-    data = data.replace('@d_Sy@', str(d_Sy))
-    data = data.replace('@d_H@', str(d_H))
-    data = data.replace('@recovery_rate@', str(recovery_rate))
-    data = data.replace('@Ki@', str(Ki))
-
+def generateParameterSamples(samples, pop=10000, Ki_contact_matrix = True):
+    df = pd.DataFrame()
+    df['sample_num'] = range(samples)
+    df['speciesS'] = pop
+    df['initialAs'] = np.random.uniform(1, 5, samples)
+    df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
+    df['time_to_hospitalization'] = np.random.normal(5.9, 2, samples)
+    df['time_to_critical'] = np.random.normal(5.9, 2, samples)
+    df['time_to_death'] = np.random.uniform(1, 3, samples)
+    df['recovery_rate'] = np.random.uniform(6, 16, samples)
+    df['fraction_hospitalized'] = np.random.uniform(0.1, 5, samples)
+    df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
+    df['fraction_critical'] = np.random.uniform(0.1, 5, samples)
+    df['reduced_inf_of_det_cases'] = np.random.uniform(0.2, 0.3, samples)
+    df['cfr'] = np.random.uniform(0.008, 0.022, samples)
+    df['d_Sy'] = np.random.uniform(0.2, 0.3, samples)
+    df['d_H'] = np.random.uniform(1, 1, samples)
+    df['d_As'] = np.random.uniform(0, 0, samples)
+    # df['Ki'] = Ki_i
     if Ki_contact_matrix==True :
-         data = define_Ki_contact_matrix(data)
-    fin.close()
+         df = define_Ki_contact_matrix(df)
+    df.to_csv(os.path.join(sim_output_path, "sampled_parameters.csv"))
+    return (df)
 
-    fin = open(os.path.join(git_dir, 'age_model', outputfile), "wt")
+
+def replaceParameters(df, Ki_i, sample_nr, emodlname, Ki_contact_matrix = True) :
+    fin = open(os.path.join(emodl_dir,emodlname), "rt")
+    data = fin.read()
+    data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
+    data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
+    data = data.replace('@incubation_pd@', str(df.incubation_pd[sample_nr]))
+    data = data.replace('@time_to_hospitalization@', str(df.time_to_hospitalization[sample_nr]))
+    data = data.replace('@time_to_critical@', str(df.time_to_critical[sample_nr]))
+    data = data.replace('@time_to_death@', str(df.time_to_death[sample_nr]))
+    data = data.replace('@fraction_hospitalized@', str(df.fraction_hospitalized[sample_nr]))
+    data = data.replace('@fraction_symptomatic@', str(df.fraction_symptomatic[sample_nr]))
+    data = data.replace('@fraction_critical@', str(df.fraction_critical[sample_nr]))
+    data = data.replace('@reduced_inf_of_det_cases@', str(df.reduced_inf_of_det_cases[sample_nr]))
+    data = data.replace('@cfr@', str(df.cfr[sample_nr]))
+    data = data.replace('@d_As@', str(df.d_As[sample_nr]))
+    data = data.replace('@d_Sy@', str(df.d_Sy[sample_nr]))
+    data = data.replace('@d_H@', str(df.d_H[sample_nr]))
+    data = data.replace('@recovery_rate@', str(df.recovery_rate[sample_nr]))
+    data = data.replace('@Ki@', str(Ki_i))
+    if Ki_contact_matrix==True :
+         data = replace_Ki_contact_param(data, df, sample_nr)
+
+    fin.close()
+    fin = open(os.path.join(temp_dir, "simulation_i.emodl"), "wt")
     fin.write(data)
     fin.close()
 
 
 def runExp(Kivalues, sub_samples, modelname):
-
     lst = []
     scen_num = 0
+    dfparam = generateParameterSamples(samples=sub_samples, pop=10000)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
             print(i)
-
             lst.append([sample, scen_num, i])
-            define_and_replaceParameters(Ki_i=i, inputfile = modelname, outputfile= "temp_i.emodl")
-
+            replaceParameters(df=dfparam, Ki_i=i, sample_nr=sample, emodlname=modelname)
             # adjust simplemodel.cfg
-            fin = open(os.path.join(git_dir,'age_model',"model.cfg"), "rt")
+            fin = open(os.path.join(cfg_dir,"model.cfg"), "rt")
             data_cfg = fin.read()
             data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
-            fin = open(os.path.join(git_dir, 'age_model',"model_i.cfg"), "wt")
+            fin = open(os.path.join(temp_dir,"model_i.cfg"), "wt")
             fin.write(data_cfg)
             fin.close()
 
             file = open('runModel_i.bat', 'w')
-            file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(git_dir, 'age_model', "model_i.cfg") +
-                       '"' + ' -m ' + '"' + os.path.join(git_dir, 'age_model', "temp_i.emodl" ) + '"')
+            file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(temp_dir,
+                                                                                                             "model_i.cfg") +
+                       '"' + ' -m ' + '"' + os.path.join(temp_dir, "simulation_i.emodl" ) + '"')
             file.close()
 
             subprocess.call([r'runModel_i.bat'])
 
+
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
-    df.to_csv("scenarios.csv")
+    df.to_csv(os.path.join(sim_output_path,"scenarios.csv"))
     return (scen_num)
 
 
 def reprocess(input_fname='trajectories.csv', output_fname=None):
-    fname = os.path.join(git_dir, input_fname)
+    fname = os.path.join(git_dir, 'age_model',input_fname)
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
     num_channels = len([x for x in df.columns.values if '{0}' in x])
@@ -190,8 +211,8 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     return adf
 
 
-def combineTrajectories(Nscenarios, deleteFiles=False):
-    scendf = pd.read_csv(os.path.join(git_dir,"scenarios.csv"))
+def combineTrajectories(Nscenarios):
+    scendf = pd.read_csv(os.path.join(sim_output_path,"scenarios.csv"))
     del scendf['Unnamed: 0']
 
     df_list = []
@@ -205,14 +226,23 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
         except:
             continue
 
-        if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
-
     dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(sim_output_path,"trajectoriesDat.csv"))
+    dfc.to_csv(os.path.join(sim_output_path,"trajectoriesDat.csv"))
 
     return dfc
 
 
+def cleanup(Nscenarios) :
+    if os.path.exists(os.path.join(sim_output_path,"trajectoriesDat.csv")):
+        for scen_i in range(1, Nscenarios):
+            input_name = "trajectories_scen" + str(scen_i) + ".csv"
+            try:
+                os.remove(os.path.join(git_dir, input_name))
+            except:
+                continue
+
+
 # if __name__ == '__main__' :
-nscen = runExp(Kivalues, sub_samples=3, modelname=emodlname)
+nscen = runExp(Kivalues, sub_samples=5, modelname=emodlname)
 combineTrajectories(nscen)
+cleanup(nscen)
