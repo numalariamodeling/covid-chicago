@@ -1,0 +1,31 @@
+; simplemodel
+
+(import (rnrs) (emodl cmslib))
+
+(start-model "seir.emodl")
+
+(locale site-1)
+(set-locale site-1)
+(species S::1 5223719)
+(species E::1 0)
+(species I::1 1000)
+(species R::1 0)
+
+(observe susceptible_Cook S::1)
+(observe exposed_Cook    E::1)
+(observe infectious_Cook    I::1)
+(observe recovered_Cook   R::1)
+
+(param Ki 4.45e-6)
+(param incubation_pd 6.63)
+(param Kl (/ 1 incubation_pd))
+(param recovery_rate 16)
+(param Kr (/ 1 recovery_rate))
+(param waning 180)
+(param Kw (/ 1 waning))
+
+(reaction S1->E1   (S::1) (E::1) (* Ki S::1 I::1))
+(reaction E1->I1  (E::1)   (I::1)   (* Kl E::1))
+(reaction I1->R1   (I::1)   (R::1)   (* Kr I::1))
+
+(end-model)
