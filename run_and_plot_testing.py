@@ -3,11 +3,18 @@ import subprocess
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+emodl_dir = os.path.join(git_dir, 'emodl')
+cfg_dir = os.path.join(git_dir, 'cfg')
+
+temp_dir = os.path.join(git_dir,'_temp')
+if not os.path.exists(temp_dir):
+    os.makedirs(os.path.join(temp_dir))
 
 def define_and_replaceParameters(inputfile , outputfile):
     speciesS = 360980
@@ -27,7 +34,7 @@ def define_and_replaceParameters(inputfile , outputfile):
     d_As = 0
     Ki = np.random.uniform(1e-6, 9e-5)
 
-    fin = open(inputfile, "rt")
+    fin = open(os.path.join(emodl_dir,inputfile), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(speciesS))
     data = data.replace('@initialAs@', str(initialAs))
@@ -47,19 +54,17 @@ def define_and_replaceParameters(inputfile , outputfile):
     data = data.replace('@Ki@', str(Ki))
     fin.close()
 
-    fin = open(outputfile, "wt")
+    fin = open(os.path.join(temp_dir,outputfile), "wt")
     fin.write(data)
     fin.close()
 
-def runExp_simple(modelname="extendedmodel_covid.emodl", replaceParams=False) :
+def runExp_simple(modelname) :
 
-    if replaceParams == True :
-        define_and_replaceParameters(inputfile = modelname, outputfile= "temp_model.emodl")
-        modelname = "temp_model.emodl"
+    define_and_replaceParameters(inputfile = modelname, outputfile= "simulation_i.emodl")
 
     file = open('runModel_testing.bat', 'w')
-    file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(git_dir, "simplemodel_testing.cfg") +
-                  '"' + ' -m ' + '"' + os.path.join( git_dir, modelname  ) + '"')
+    file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(cfg_dir, "simplemodel_testing.cfg") +
+                  '"' + ' -m ' + '"' + os.path.join(temp_dir, "simulation_i.emodl") + '"')
     file.close()
     subprocess.call([r'runModel_testing.bat'])
 
@@ -80,7 +85,7 @@ def reprocess(output_fname=None) :
     })
 
     if output_fname :
-        df.to_csv(os.path.join(sim_output_path,output_fname))
+        df.to_csv(os.path.join(temp_dir, output_fname))
     return df
 
 
@@ -122,10 +127,10 @@ def plot_by_channel(adf) :
 
 if __name__ == '__main__' :
 
-    runExp_simple(modelname="simplemodel_testing.emodl", replaceParams=False)
+    runExp_simple(modelname="simplemodel_testing.emodl")
     df = reprocess()
-    first_day = date(2020, 3, 1)
+    first_day = date(2020, 3, 1)  # arbitrary selection of starting date
     plot(df)
-   # plot_by_channel(df)
+    plot_by_channel(df)
 
 

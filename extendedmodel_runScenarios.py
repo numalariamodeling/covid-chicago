@@ -7,17 +7,20 @@ import seaborn as sns
 import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
-from load_paths import load_box_paths
 import shutil
+from load_paths import load_box_paths
+from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-today =  date.today()
-exp_name = today.strftime("%d%m%Y") + '_extendedModel_base_Kirange'
+emodl_dir = os.path.join(git_dir, 'emodl')
+cfg_dir = os.path.join(git_dir, 'cfg')
 
-#emodlname = 'age_model_covid_noContactMix.emodl'
+today = date.today()
+exp_name = today.strftime("%Y%m%d") + '_extendedModel_testrun'
+
 emodlname = 'extendedmodel_covid.emodl'
 
 if testMode == True :
@@ -33,27 +36,28 @@ if not os.path.exists(sim_output_path):
 if not os.path.exists(plot_path):
     os.makedirs(plot_path)
 
+# Create temporary folder for the simulation files
+# currently allowing to run only 1 experiment at a time locally
+temp_dir = os.path.join(git_dir, '_temp')
+if not os.path.exists(temp_dir):
+    os.makedirs(os.path.join(temp_dir ))
+
 ## Copy emodl file  to experiment folder
 if not os.path.exists(os.path.join(sim_output_path, emodlname)):
     shutil.copyfile(os.path.join(git_dir, emodlname), os.path.join(sim_output_path, emodlname))
-if not os.path.exists(os.path.join(sim_output_path, 'simplemodel.cfg')):
-    shutil.copyfile(os.path.join(git_dir, 'simplemodel.cfg'), os.path.join(sim_output_path, 'simplemodel.cfg'))
-
-
-
+if not os.path.exists(os.path.join(sim_output_path, 'model.cfg')):
+    shutil.copyfile(os.path.join(git_dir, 'model.cfg'), os.path.join(sim_output_path, 'model.cfg'))
 
 master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
 detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
 custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
 
 # Selected range values from SEIR Parameter Estimates.xlsx
-# speciesS = [360980]   ## Chicago population + NHS market share 2705994 * 0.1334  - in infect
-Kivalues = np.random.uniform(4e-02, 5e-06, 20)  # [9e-05, 7e-06, 8e-06, 9e-06, 9e-077]
-
+Kivalues = np.random.uniform(5e-03, 5e-07, 10)
 #plt.hist(Kivalues, bins=100)
 #plt.show()
 
-def generateParameterSamples( samples, pop=10000):
+def generateParameterSamples(samples, pop=10000):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -75,8 +79,8 @@ def generateParameterSamples( samples, pop=10000):
         df.to_csv(os.path.join(sim_output_path, "sampled_parameters.csv"))
         return(df)
 
-def replaceParameters(df, Ki_i, sample_nr, emodlname="extendedmodel_covid.emodl") :
-    fin = open(os.path.join(sim_output_path,emodlname), "rt")
+def replaceParameters(df, Ki_i, sample_nr, emodlname) :
+    fin = open(os.path.join(emodl_dir,emodlname), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
     data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
@@ -96,13 +100,12 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname="extendedmodel_covid.emodl"
     data = data.replace('@Ki@', str(Ki_i))
     # data = data.replace('@Ki@', str(df.Ki[sub_sample]))
     fin.close()
-    fin = open(os.path.join(sim_output_path, "simulation_i.emodl"), "wt")
+    fin = open(os.path.join(temp_dir, "simulation_i.emodl"), "wt")
     fin.write(data)
     fin.close()
 
 
-
-def runExp(Kivalues, sub_samples):
+def runExp(Kivalues, sub_samples, modelname):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=10000)
@@ -112,21 +115,21 @@ def runExp(Kivalues, sub_samples):
             print(i)
 
             lst.append([sample, scen_num, i])
-            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample )
+            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname )
 
-            # adjust simplemodel.cfg
-            fin = open(os.path.join(sim_output_path,"simplemodel.cfg"), "rt")
+            # adjust model.cfg
+            fin = open(os.path.join(cfg_dir,"model.cfg"), "rt")
             data_cfg = fin.read()
             data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
-            fin = open(os.path.join(sim_output_path,"simplemodel_i.cfg"), "wt")
+            fin = open(os.path.join(temp_dir,"emodel_i.cfg"), "wt")
             fin.write(data_cfg)
             fin.close()
 
             file = open('runModel_i.bat', 'w')
-            file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(sim_output_path,
-                                                                                                             "simplemodel_i.cfg") +
-                       '"' + ' -m ' + '"' + os.path.join(sim_output_path, "simulation_i.emodl" ) + '"')
+            file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(temp_dir,
+                                                                                                             "model_i.cfg") +
+                       '"' + ' -m ' + '"' + os.path.join(temp_dir, "simulation_i.emodl" ) + '"')
             file.close()
 
             subprocess.call([r'runModel_i.bat'])
@@ -186,24 +189,18 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
 
     return dfc
 
-def CI_5(x) :
-
-    return np.percentile(x, 5)
-
-
-def CI_95(x) :
-
-    return np.percentile(x, 95)
-
-
-def CI_25(x) :
-
-    return np.percentile(x, 25)
+def cleanup(Nscenarios) :
+    if os.path.exists(os.path.join(sim_output_path,"trajectoriesDat.csv")):
+        for scen_i in range(1, Nscenarios):
+            input_name = "trajectories_scen" + str(scen_i) + ".csv"
+            try:
+                os.remove(os.path.join(git_dir, input_name))
+            except:
+                continue
+    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
+    os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
 
-def CI_75(x) :
-
-    return np.percentile(x, 75)
 
 def plot(adf, allchannels=master_channel_list, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
@@ -234,15 +231,16 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
 
 
 # if __name__ == '__main__' :
-
-nscen = runExp(Kivalues, sub_samples=20)
+nscen = runExp(Kivalues, sub_samples=20, modelname=emodlname)
 combineTrajectories(nscen)
+cleanup(nscen)
 
 df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 #df.params.unique()
 #df= df[df['params'] == 9.e-05]
-first_day = date(2020, 3, 1)
 
+# Plots for quick check of simulation results
+first_day = date(2020, 3, 1)
 plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
 plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
 plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
