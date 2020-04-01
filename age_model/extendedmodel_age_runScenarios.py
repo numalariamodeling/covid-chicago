@@ -240,7 +240,8 @@ def cleanup(Nscenarios) :
                 os.remove(os.path.join(git_dir, input_name))
             except:
                 continue
-
+    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
+    os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
 # if __name__ == '__main__' :
 nscen = runExp(Kivalues, sub_samples=5, modelname=emodlname)
