@@ -24,6 +24,3 @@ simple_model/scenarios.csv
 simple_model/simplemodel_covid_i.emodl
 trajectories.csv
 temp_model.emodl
-fixing_detection_plot.ipynb
-runModel_i.bat
-spatial_model/postprocessing.ipynb
