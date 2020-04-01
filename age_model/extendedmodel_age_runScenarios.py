@@ -20,12 +20,12 @@ emodl_dir = os.path.join(git_dir, 'age_model', 'emodl')
 cfg_dir = os.path.join(git_dir, 'age_model', 'cfg')
 
 today =  date.today()
-exp_name = today.strftime("%Y%m%d") + '_extendedModel_age_pop1000_test'
+exp_name = today.strftime("%Y%m%d") + '_extendedModel_cook_fitKi'
 
 #emodlname = 'age_model_covid_noContactMix.emodl'
 #emodlname = 'age_model_covid_homogeneousMixing_lowerPop.emodl'
 #emodlname = 'age_extendedmodel_covid_pop5000.emodl'
-emodlname = 'age_extendedmodel_covid_Pop1000 _v3.emodl'
+emodlname = 'age_extendedmodel_covid_Pop1000.emodl'
 
 if testMode == True :
     sim_output_path = os.path.join(wdir, 'sample_trajectories')
@@ -244,6 +244,6 @@ def cleanup(Nscenarios) :
     os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
 # if __name__ == '__main__' :
-nscen = runExp(Kivalues, sub_samples=5, modelname=emodlname)
+nscen = runExp(Kivalues, sub_samples=10, modelname=emodlname)
 combineTrajectories(nscen)
 cleanup(nscen)

@@ -9,7 +9,6 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import shutil
 from load_paths import load_box_paths
-from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -19,7 +18,7 @@ emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_extendedModel_testrun'
+exp_name = today.strftime("%Y%m%d") + '_extendedModel_cook_fitKi'
 
 emodlname = 'extendedmodel_covid.emodl'
 
@@ -44,16 +43,17 @@ if not os.path.exists(temp_dir):
 
 ## Copy emodl file  to experiment folder
 if not os.path.exists(os.path.join(sim_output_path, emodlname)):
-    shutil.copyfile(os.path.join(git_dir, emodlname), os.path.join(sim_output_path, emodlname))
+    shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(sim_output_path, emodlname))
 if not os.path.exists(os.path.join(sim_output_path, 'model.cfg')):
-    shutil.copyfile(os.path.join(git_dir, 'model.cfg'), os.path.join(sim_output_path, 'model.cfg'))
+    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(sim_output_path, 'model.cfg'))
 
 master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
 detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
 custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
 
 # Selected range values from SEIR Parameter Estimates.xlsx
-Kivalues = np.random.uniform(5e-03, 5e-07, 10)
+
+Kivalues = np.random.uniform(0,0.3, 30)
 #plt.hist(Kivalues, bins=100)
 #plt.show()
 
@@ -122,7 +122,7 @@ def runExp(Kivalues, sub_samples, modelname):
             data_cfg = fin.read()
             data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
-            fin = open(os.path.join(temp_dir,"emodel_i.cfg"), "wt")
+            fin = open(os.path.join(temp_dir,"model_i.cfg"), "wt")
             fin.write(data_cfg)
             fin.close()
 
@@ -231,7 +231,7 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
 
 
 # if __name__ == '__main__' :
-nscen = runExp(Kivalues, sub_samples=20, modelname=emodlname)
+nscen = runExp(Kivalues, sub_samples=3, modelname=emodlname)
 combineTrajectories(nscen)
 cleanup(nscen)
 

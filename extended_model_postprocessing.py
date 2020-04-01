@@ -12,7 +12,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
-exp_name = '30032020_extendedModel_base_chicago'
+exp_name = '31032020_extendedModel_base_varyingKi'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
@@ -40,11 +40,7 @@ def count_new(df, curr_ch) :
     return diff
 
 
-<<<<<<< HEAD
-def calculate_incidence(adf, output_filename=None) : ## incidence is new outcome, it's ~ events happening between timesteps. this is a proper channel to use to compare to the data (IDPH or chicago). 
-=======
-def calculate_incidence(adf, age_group, output_filename=None) :
->>>>>>> parent of 4ec60e2... Merge branch 'pr/8' into master
+def calculate_incidence(adf, output_filename=None) :
 
     inc_df = pd.DataFrame()
     for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
