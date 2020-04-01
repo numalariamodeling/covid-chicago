@@ -7,12 +7,7 @@ import seaborn as sns
 import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
-<<<<<<< Updated upstream
 import shutil
-=======
-import itertools
-from scipy.interpolate import interp1d #for linear least squares fitting
->>>>>>> Stashed changes
 from load_paths import load_box_paths
 from processing_helpers import *
 
@@ -110,14 +105,7 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname) :
     fin.close()
 
 
-<<<<<<< Updated upstream
 def runExp(Kivalues, sub_samples, modelname):
-=======
-def runExp(Kivalues, sub_samples):
-    """
-    tests through two different for loops:  different subsamples and different Ki values. scen_num will represent the iteration # over the subsamples
-    """
->>>>>>> Stashed changes
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=10000)
@@ -151,12 +139,7 @@ def runExp(Kivalues, sub_samples):
     return (scen_num)
 
 
-### data management. these are SAME for any emodl
 def reprocess(input_fname='trajectories.csv', output_fname=None):
-    """
-    this function combines trajectories, since individual traj files are not useful on their own. 
-    """
-    
     fname = os.path.join(git_dir, input_fname)
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
@@ -205,8 +188,6 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
     dfc.to_csv( os.path.join(sim_output_path,"trajectoriesDat.csv"))
 
     return dfc
-###
-
 
 def cleanup(Nscenarios) :
     if os.path.exists(os.path.join(sim_output_path,"trajectoriesDat.csv")):
@@ -249,26 +230,17 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
     plt.show()
 
 
-### running it all
 # if __name__ == '__main__' :
 nscen = runExp(Kivalues, sub_samples=20, modelname=emodlname)
 combineTrajectories(nscen)
 cleanup(nscen)
 
-df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat_getest.csv'))
-
-
-### plotting for QC and checking. 
-
+df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 #df.params.unique()
 #df= df[df['params'] == 9.e-05]
 
-<<<<<<< Updated upstream
 # Plots for quick check of simulation results
 first_day = date(2020, 3, 1)
-=======
-### if 
->>>>>>> Stashed changes
 plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
 plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
 plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
