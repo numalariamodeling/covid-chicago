@@ -4,7 +4,7 @@ import csv
 from load_paths import load_box_paths
 
 datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
-
+emodl_dir = os.path.join(git_dir, 'emodl')
 
 ##making the grp dict, assuming each grp is [pop, 0, 1, 0]
 
@@ -247,11 +247,11 @@ def generate_extended_emodl(grp_dic, file_output, verbose=False):
         print("{} file was NOT created".format(file_output))
 
 
-# Example run for county (also runs for age, but this version does not take into accoun mixing between groups!!!)
+# Example run for county (not using locale version, not taking into account mixing between groups)
 county_dic = read_group_dictionary(filename='county_dic.csv',grpname="county",Testmode=False)
-generate_extended_emodl(grp_dic=county_dic, file_output='county_model_covid.emodl')
+generate_extended_emodl(grp_dic=county_dic, file_output=os.path.join(emodl_dir, 'county_model_covid.emodl'))
 
 # Example run for age not taking into account mixing between groups!!!
 age_dic = read_group_dictionary(filename='age_model/age_dic.csv',grpname="age", Testmode=False)
-generate_extended_emodl(grp_dic=age_dic, file_output='age_model_covid.emodl')
+generate_extended_emodl(grp_dic=age_dic, file_output=os.path.join(emodl_dir, 'age_model_covid.emodl'))
 
