@@ -12,7 +12,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
-exp_name = '01042020_extendedModel_age_pop1000_v2'
+exp_name = '31032020_extendedModel_base_varyingKi'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
@@ -20,7 +20,7 @@ if testMode == True :
     plot_path = os.path.join(wdir, 'sample_plots')
 else :
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = sim_output_path
+    plot_path =  sim_output_path
 
 if not os.path.exists(sim_output_path):
     os.makedirs(sim_output_path)
@@ -40,21 +40,21 @@ def count_new(df, curr_ch) :
     return diff
 
 
-def calculate_incidence(adf, age_group, output_filename=None) :
+def calculate_incidence(adf, output_filename=None) :
 
     inc_df = pd.DataFrame()
     for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
 
         sdf = pd.DataFrame( { 'time' : df['time'],
-                              'new_exposures_%s' % age_group : [-1*x for x in count_new(df, 'susceptible_%s' % age_group)],
-                              'new_asymptomatic_%s' % age_group : count_new(df, 'asymp_cumul_%s' % age_group),
-                              'new_asymptomatic_detected_%s' % age_group : count_new(df, 'asymp_det_cumul_%s' % age_group),
-                              'new_symptomatic_%s' % age_group : count_new(df, 'symp_cumul_%s' % age_group),
-                              'new_symptomatic_detected_%s' % age_group : count_new(df, 'symp_det_cumul_%s' % age_group),
-                              'new_hospitalized_%s' % age_group : count_new(df, 'hosp_cumul_%s' % age_group),
-                              'new_detected_%s' % age_group : count_new(df, 'detected_cumul_%s' % age_group),
-                              'new_critical_%s' % age_group : count_new(df, 'crit_cumul_%s' % age_group),
-                              'new_deaths_%s' % age_group : count_new(df, 'deaths_%s' % age_group)
+                              'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
+                              'new_asymptomatic' : count_new(df, 'asymp_cumul'),
+                              'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
+                              'new_symptomatic' : count_new(df, 'symp_cumul'),
+                              'new_symptomatic_detected' : count_new(df, 'symp_det_cumul'),
+                              'new_hospitalized' : count_new(df, 'hosp_cumul'),
+                              'new_detected' : count_new(df, 'detected_cumul'),
+                              'new_critical' : count_new(df, 'crit_cumul'),
+                              'new_deaths' : count_new(df, 'deaths')
                               })
         sdf['sample_num'] = samp
         sdf['scen_num'] = scen
@@ -72,45 +72,13 @@ def calculate_mean_and_CI(adf, channel, output_filename=None) :
         mdf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
 
 
-def melter(df):
-    """
-    overview: melts columns of the grouped
-    it woulda been fairly straight forward, but i wanted to automate the finding of columns we want to keep so we dont need ot specify which columns have the prefex and suffix, and which we want to keep.
-    it should be all automatic now base_names splits a string into a list based on the "_" delimiter, and takes the first entry, but only if the entry list is longer than 1 and i do that for all column names
-​
-    suffix_list does same thing but takes the last entry and excludes a few suffixes (sample_num and scen_num).
-    so it does a pretty good job at finding the "channels" (base_names) and the channel groups (suffix_names).
-    i then make a list of booleans that loops over all column names and makes it true if any of the suffix_names match the col name.
-    so the final result is a bool list of all columns we want to pivot.
-​
-    """
-
-    # generating a list of base names in cols we might want to keep:
-    # base_names = set([x.split('_')[0] for x in list(df) if len(x.split('_')) > 1 and x not in ['scen', 'sample']])
-    # generating a list of suffix names in cols we might want to keep:
-    # suffix_names = list(set([x.split('_')[-1] for x in list(df) if len(x.split('_')) > 1 and x not in ['sample_num', 'scen_num']]))
-    #### automated wrangling columns wanted for melt
-    col_bools = []
-    for element in list(df):
-        col_bools.append(any(substring in element for substring in suffix_names))
-    ### melting from wide to long
-    df_melted = pd.melt(df, id_vars=[x for x in list(df) if x not in list(df.loc[:, col_bools])],
-                        value_vars=list(df.loc[:, col_bools]), var_name='channels')
-
-    df_melted['base_channel'] = df_melted['channels'].apply(lambda x: "_".join(str(x).split('_')[:-1]))
-    df_melted['base_group'] = df_melted['channels'].apply(lambda x: str(x).split('_')[-1])
-
-    return (df_melted)
-
-
-def plot(adf,age_group,filename) :
+def plot(adf) :
 
     fig = plt.figure(figsize=(12,6))
 
-    plotchannels = [ '%s_%s' % (x, age_group) for x in [
-        'susceptible', 'exposed', 'asymptomatic', 'symptomatic',
+    plotchannels = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic',
                     'detected', 'hospitalized', 'critical', 'deaths', 'recovered',
-                    'new_detected', 'new_hospitalized', 'new_deaths']]
+                    'new_detected', 'new_hospitalized', 'new_deaths']
     palette = sns.color_palette('muted', len(plotchannels))
     axes = [fig.add_subplot(3,4,x+1) for x in range(len(plotchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
@@ -132,27 +100,16 @@ def plot(adf,age_group,filename) :
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, )
 
-    plt.savefig(os.path.join(plot_path, '%s.png' % filename))
+    plt.savefig(os.path.join(plot_path, 'sample_plot_withIncidence.png'))
+
+    plt.show()
 
 
 if __name__ == '__main__' :
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
-    base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
-    sample_index_names = [x for x in df.columns.values if ('num' in x or 'time' in x)]
-
-    for col in base_names :
-        df['%s_%s' % (col, 'all')] = sum([df['%s_%s' % (col, age_group)] for age_group in suffix_names])
-
-    suffix_names.append('all')
-    for age_group in suffix_names :
-        cols = sample_index_names + [ "%s_%s" % (channel, age_group) for channel in base_names]
-        adf = df[cols]
-        adf = calculate_incidence(adf, age_group, output_filename='trajectoresDat_withIncidence_%s.csv' % age_group)
-        adf['infections_cumul_%s' % age_group] = adf['asymp_cumul_%s' % age_group] + adf['symp_cumul_%s' % age_group]
-        for channel in ['infections_cumul_%s' % age_group, 'detected_cumul_%s' % age_group] :
-            calculate_mean_and_CI(adf, channel, output_filename='%s_%s.csv' % (channel, age_group))
-        plot(adf, age_group, 'plot_withIncidence_%s' % age_group)
-
-    # plt.show()
+    adf = calculate_incidence(df, output_filename='trajectoresDat_withIncidence.csv')
+    adf['infections_cumul'] = adf['asymp_cumul'] + adf['symp_cumul']
+    for channel in ['infections_cumul', 'detected_cumul'] :
+        calculate_mean_and_CI(adf, channel, output_filename='%s.csv' % channel)
+    plot(adf)
