@@ -8,6 +8,8 @@
 (species E 0)
 (species As @initialAs@)
 (species As_det1 0)
+(species pSy 0)
+(species pSy_det1 0)
 (species Sy 0)
 (species Sy_det2 0)
 (species H 0)
@@ -33,6 +35,7 @@
 (observe susceptible S)
 (observe exposed E)
 (func asymptomatic  (+ As As_det1))
+(func presymptomatic (+ pSy pSy_det1))
 (func symptomatic  (+ Sy Sy_det2))
 (func hospitalized  (sum H H_det2 H_det3))
 (func critical (sum C C_det2 C_det3))
@@ -40,9 +43,10 @@
 (func recovered (sum RAs RSy RH RC RAs_det1 RSy_det2 RH_det2 RH_det3 RC_det2 RC_det3))
 
 (observe detected (sum As_det1 Sy_det2 H_det2 H_det3 C_det2 C_det3))
-(observe infected (sum As As_det1 Sy Sy_det2 H H_det2 H_det3 C C_det2 C_det3))
+(observe infected (sum As As_det1 pSy pSy_det1 Sy Sy_det2 H H_det2 H_det3 C C_det2 C_det3))
 
 (observe asymptomatic asymptomatic)
+(observe presymptomatic presymptomatic)
 (observe symptomatic symptomatic)
 (observe hospitalized hospitalized)
 (observe critical critical)
@@ -51,6 +55,8 @@
 
 (observe asymp_cumul (+ asymptomatic RAs RAs_det1 ))
 (observe asymp_det_cumul (+ As_det1 RAs_det1))
+(observe psymp_cumul presymptomatic)
+(observe psymp_det_cumul pSy_det1)
 (observe symp_cumul (+ (sum RSy RH RC RSy_det2 RH_det2 RH_det3 RC_det2 RC_det3) deaths critical hospitalized symptomatic))
 (observe symp_det_cumul (+ Sy_det2 H_det2 RSy_det2 C_det2 D_det2))
 (observe hosp_cumul (+ deaths critical hospitalized RH RH_det2 RH_det3 RC RC_det2 RC_det3))
@@ -59,10 +65,12 @@
 (observe crit_det_cumul (+ C_det2 C_det3 RC_det2 RC_det3 D_det2 D_det3))
 (observe detected_cumul (+ (sum As_det1 Sy_det2 H_det2 H_det3 C_det2 C_det3) RAs_det1 RSy_det2 RH_det2 RH_det3 RC_det2 RC_det3 D_det2 D_det3))
 
-(func infectious_undet (+ As Sy))
-(func infectious_det (+ As_det1 Sy_det2))
+(func infectious_undet (+ As pSy Sy))
+(func infectious_det (+ As_det1 pSy_det1 Sy_det2))
 
 (param incubation_pd @incubation_pd@)
+(param time_to_infectious @time_to_infectious@)
+(param time_to_symptomatic (- incubation_pd time_to_infectious ))
 (param time_to_hospitalization @time_to_hospitalization@)
 (param time_to_critical @time_to_critical@)
 (param time_to_death @time_to_death@)
@@ -80,7 +88,8 @@
 (param Ki @Ki@)
 (param Kr (/ 1 recovery_rate))
 (param Kl (/ (- 1 fraction_symptomatic ) incubation_pd))
-(param Ks (/ fraction_symptomatic  incubation_pd))
+(param Ks (/ 1 time_to_symptomatic))
+(param Kp (/ fraction_symptomatic  time_to_infectious))
 (param Kh (/ fraction_hospitalized time_to_hospitalization))
 (param Kc (/ fraction_critical time_to_critical ))
 (param Km (/ fraction_dead  time_to_death))
@@ -88,7 +97,8 @@
 (reaction exposure_from_undetected   (S) (E) (* Ki infectious_undet))
 (reaction exposure_from_detected   (S) (E) (* Ki infectious_det reduced_inf_of_det_cases))
 (reaction infection  (E)   (As)   (* Kl E))
-(reaction symptomatic (E)   (Sy)   (* Ks E))
+(reaction presymptomatic (E)   (pSy)   (* Kp E))
+(reaction symptomatic (pSy)   (Sy)   (* Ks pSy))
 
 (reaction hospitalization   (Sy)   (H)   (* Kh Sy))
 (reaction critical   (H)   (C)   (* Kc H))
@@ -100,6 +110,7 @@
 (reaction recovery_C   (C)   (RC)   (* Kr C))
 
 (reaction detect_As (As) (As_det1) (* d_As As))
+(reaction detect_pSy (pSy) (pSy_det1) (* d_As pSy))
 (reaction detect_symp (Sy) (Sy_det2) (* d_Sy Sy))
 (reaction detect_hosp (H) (H_det3) (* d_H H))
 
