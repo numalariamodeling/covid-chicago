@@ -78,7 +78,7 @@
 (param d_Sy @d_Sy@)
 (param d_H @d_H@)
 (param Ki @Ki@)
-(param Ki_red (* Ki @contactReduction@))
+(param Ki_red (* Ki (- 1 @contactReduction@)))
 (param Kr (/ 1 recovery_rate))
 (param Kl (/ (- 1 fraction_symptomatic ) incubation_pd))
 (param Ks (/ fraction_symptomatic  incubation_pd))
