@@ -57,24 +57,27 @@ if not os.path.exists(os.path.join(sim_output_path, 'model.cfg')):
 Kivalues = np.random.uniform(5e-03, 1e-06, 10)
 
 # Define scaling factors for the contact mixing between groups
+#### ALL LOCATIONS
 def define_Ki_contact_matrix(df):
-    ## placeholder values
-    df['sKi1_4'] = np.random.uniform(0.2, 0.3)
-    df['sKi1_3'] = np.random.uniform(0.4, 0.5)
-    df['sKi1_2'] = np.random.uniform(0.8, 0.9)
-    df['sKi1_1'] = np.random.uniform(0.9, 1)
-    df['sKi2_4'] = np.random.uniform(0.6, 0.8)
-    df['sKi2_3'] = np.random.uniform(0.8, 0.9)
-    df['sKi2_2'] = np.random.uniform(0.9, 1)
-    df['sKi2_1'] = df['sKi1_2']
-    df['sKi3_4'] = np.random.uniform(0.8, 0.9)
-    df['sKi3_3'] = np.random.uniform(0.9, 1)
-    df['sKi3_2'] = df['sKi2_3']
-    df['sKi3_1'] = df['sKi1_3']
-    df['sKi4_4'] = np.random.uniform(0.9, 1)
-    df['sKi4_3'] = df['sKi3_4']
-    df['sKi4_2'] = df['sKi2_4']
-    df['sKi4_1'] = df['sKi1_4']
+    ##  20200318_EMODKingCountyCovidInterventions.docx
+    ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
+	##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
+    df['sKi1_4'] = 0.209526849
+    df['sKi1_3'] = 0.039466462
+    df['sKi1_2'] = 0.037694265
+    df['sKi1_1'] = 0.015909742
+    df['sKi2_4'] = 0.051521569
+    df['sKi2_3'] = 0.293093246
+    df['sKi2_2'] = 0.066737714
+    df['sKi2_1'] = 0.02740285
+    df['sKi3_4'] = 0.042740507
+    df['sKi3_3'] = 0.046714807
+    df['sKi3_2'] = 0.092046263
+    df['sKi3_1'] = 0.027158353
+    df['sKi4_4'] = 0.006685113
+    df['sKi4_3'] = 0.004914879
+    df['sKi4_2'] = 0.007194698
+    df['sKi4_1'] = 0.031192683
     return df
 
 def replace_Ki_contact_param(data, df, sample_nr) :
