@@ -6,13 +6,15 @@ import seaborn as sns
 import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
+import sys
+sys.path.append('../')
 from processing_helpers import *
 from load_paths import load_box_paths
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
-exp_name = '31032020_extendedModel_base_varyingKi'
+exp_name = '20200402_extendedModel_age_NMH_test4'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
