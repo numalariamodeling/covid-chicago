@@ -73,21 +73,21 @@ def generateParameterSamples(samples, pop=10000, addIntervention = True, interve
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
-        df['initialAs'] = np.random.uniform(1, 5,samples )
+        df['initialAs'] = np.random.uniform(1, 5, samples)
         df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
-        df['time_to_infectious'] = np.random.uniform(0, df['incubation_pd'], samples)  # placeholder and  time_to_infectious <= incubation_pd
-        df['time_to_hospitalization'] = np.random.normal(5.9, 2,samples )
-        df['time_to_critical'] = np.random.normal(5.9, 2,samples )
-        df['time_to_death'] = np.random.uniform(1, 3,samples )
-        df['recovery_rate'] = np.random.uniform(6, 16,samples )
-        df['fraction_hospitalized'] = np.random.uniform(0.1, 5,samples )
-        df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8,samples )
-        df['fraction_critical'] = np.random.uniform(0.1, 5,samples )
-        df['reduced_inf_of_det_cases'] = np.random.uniform(0.2, 0.3,samples )
-        df['cfr'] = np.random.uniform(0.008, 0.022,samples )
-        df['d_Sy'] = np.random.uniform(0.2, 0.3,samples )
-        df['d_H'] =  np.random.uniform(1, 1,samples )
-        df['d_As'] = np.random.uniform(0, 0,samples )
+        df['time_to_infectious'] = np.random.uniform(0, df['incubation_pd'],samples)  # placeholder and  time_to_infectious <= incubation_pd
+        df['time_to_hospitalization'] = np.random.normal(5.76, 4.22, samples)
+        df['time_to_critical'] = np.random.uniform(4, 9, samples)
+        df['time_to_death'] = np.random.uniform(3, 11, samples)
+        df['recovery_rate'] = np.random.uniform(6, 16, samples)
+        df['fraction_hospitalized'] = np.random.uniform(0.1, 5, samples)
+        df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
+        df['fraction_critical'] = np.random.uniform(0.1, 5, samples)
+        df['reduced_inf_of_det_cases'] = np.random.uniform(0.2, 0.3, samples)
+        df['cfr'] = np.random.uniform(0.008, 0.022, samples)  #
+        df['d_Sy'] = np.random.uniform(0.2, 0.3, samples)
+        df['d_H'] = np.random.uniform(1, 1, samples)
+        df['d_As'] = np.random.uniform(0, 0, samples)
         #df['Ki'] = Ki_i
 
         if addIntervention == True:
