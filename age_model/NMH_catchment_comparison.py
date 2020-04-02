@@ -20,7 +20,7 @@ if __name__ == '__main__' :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_chicago', 'NMH', 'Modeling COVID Data NMH_v1_200327_jg.csv'))
     ref_df['date'] = pd.to_datetime(ref_df['date'])
-    exp_name = '20200401_extendedModel_age_NMH_test2'
+    exp_name = '20200402_extendedModel_age_NMH_test4'
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
 
