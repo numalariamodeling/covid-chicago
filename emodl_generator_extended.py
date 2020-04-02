@@ -83,7 +83,7 @@ def write_observe(grp):
 (observe recovered_{} recovered_{})
 (observe asymp_cumul_{} (+ asymptomatic_{} RAs_{} RAs_det1_{} ))
 (observe asymp_det_cumul_{} (+ As_det1_{} RAs_det1_{}))
-(observe symp_cumul_{} (+ (sum RSy_{} RH_{} RC_{} RSy_det2_{} RH_det2_{} RH_det3_{} RC_det2_{} RC_det3_{}) deaths_{} critical_{} hospitalized_{} asymptomatic_{}))
+(observe symp_cumul_{} (+ (sum RSy_{} RH_{} RC_{} RSy_det2_{} RH_det2_{} RH_det3_{} RC_det2_{} RC_det3_{}) deaths_{} critical_{} hospitalized_{} symptomatic_{}))
 (observe symp_det_cumul_{} (+ Sy_det2_{} H_det2_{} RSy_det2_{} C_det2_{} D_det2_{}))
 (observe hosp_cumul_{} (+ deaths_{} critical_{} hospitalized_{} RH_{} RH_det2_{} RH_det3_{} RC_{} RC_det2_{} RC_det3_{}))
 (observe hosp_det_cumul_{} (+ H_det2_{} H_det3_{} RH_det2_{} RH_det3_{} C_det2_{} C_det3_{} D_det2_{} D_det3_{} RC_det2_{} RC_det3_{}))
@@ -114,7 +114,7 @@ def write_functions(grp):
 (func critical_{} (sum C_{} C_det2_{} C_det3_{}))
 (func deaths_{} (sum D_{} D_det2_{} D_det3_{}))
 (func recovered_{} (sum RAs_{} RSy_{} RH_{} RC_{} RAs_det1_{} RSy_det2_{} RH_det2_{} RH_det3_{} RC_det2_{} RC_det3_{}))
-(func infectious_undet_{} (+ As_{} Sy_{}))
+(func infectious_undet_{} (+ As_{} Sy_{} H_{} C_{}))
 (func infectious_det_{} (+ As_det1_{} Sy_det2_{}))
 """.format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
@@ -162,8 +162,7 @@ def write_reactions(grp):
     grp = str(grp)
 
     reaction_str = """
-(reaction exposure_from_undetected_{} (S_{}) (E_{}) (* Ki S_{} infectious_undet_{}))
-(reaction exposure_from_detected_{} (S_{}) (E_{}) (* Ki S_{} infectious_det_{} reduced_inf_of_det_cases))
+(reaction exposure_{} (S_{}) (E_{}) (+(* Ki S_{} infectious_undet_{}) (* Ki S_{} infectious_det_{} reduced_inf_of_det_cases)))
 (reaction infection_{} (E_{}) (As_{}) (* Kl E_{}))
 (reaction symptomatic_{} (E_{}) (Sy_{}) (* Ks E_{}))
 (reaction hospitalization_{} (Sy_{}) (H_{}) (* Kh Sy_{}))

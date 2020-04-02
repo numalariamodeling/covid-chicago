@@ -9,6 +9,7 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import shutil
 from load_paths import load_box_paths
+from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -18,10 +19,10 @@ emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_extendedModel_withIntervention'
+exp_name = today.strftime("%Y%m%d") + '_extendedModel_TEST3'
 
-#emodlname = 'extendedmodel_covid.emodl'
-emodlname = 'extendedmodel_covid_timeevent.emodl'
+emodlname = 'extendedmodel_covid.emodl'
+# emodlname = 'extendedmodel_covid_timeevent.emodl'
 
 
 if testMode == True :
@@ -55,7 +56,8 @@ custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'h
 
 # Selected range values from SEIR Parameter Estimates.xlsx
 
-Kivalues = np.random.uniform(0,0.3, 30)
+Kivalues = np.linspace(0.7, 1.5, 8)
+simulation_population = 2700000
 #plt.hist(Kivalues, bins=100)
 #plt.show()
 
@@ -73,20 +75,20 @@ def generateParameterSamples(samples, pop=10000, addIntervention = True, interve
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
-        df['initialAs'] = np.random.uniform(1, 5, samples)
+        df['initialAs'] = 10#np.random.uniform(1, 5, samples)
         df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
         df['time_to_infectious'] = np.random.uniform(0, df['incubation_pd'],samples)  # placeholder and  time_to_infectious <= incubation_pd
         df['time_to_hospitalization'] = np.random.normal(5.76, 4.22, samples)
         df['time_to_critical'] = np.random.uniform(4, 9, samples)
         df['time_to_death'] = np.random.uniform(3, 11, samples)
         df['recovery_rate'] = np.random.uniform(6, 16, samples)
-        df['fraction_hospitalized'] = np.random.uniform(0.1, 5, samples)
+        df['fraction_hospitalized'] = np.random.uniform(0.1, 1, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
-        df['fraction_critical'] = np.random.uniform(0.1, 5, samples)
+        df['fraction_critical'] = np.random.uniform(0.1, 1, samples)
         df['reduced_inf_of_det_cases'] = np.random.uniform(0.2, 0.3, samples)
-        df['cfr'] = np.random.uniform(0.008, 0.022, samples)  #
+        df['cfr'] = np.random.uniform(0.008, 0.022, samples)
         df['d_Sy'] = np.random.uniform(0.2, 0.3, samples)
-        df['d_H'] = np.random.uniform(1, 1, samples)
+        df['d_H'] = np.random.uniform(0.8, 1, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
         #df['Ki'] = Ki_i
 
@@ -129,7 +131,7 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, addIntervention=True) :
 def runExp(Kivalues, sub_samples, modelname):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=10000)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
@@ -252,7 +254,7 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
 
 
 # if __name__ == '__main__' :
-nscen = runExp(Kivalues, sub_samples=3, modelname=emodlname)
+nscen = runExp(Kivalues, sub_samples=50, modelname=emodlname)
 combineTrajectories(nscen)
 cleanup(nscen)
 

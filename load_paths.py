@@ -17,11 +17,8 @@ def load_box_paths(user_path=None):
         else:
         
             if 'jlg1657' in user_path :
-                if 'C:/' in user_path :
-                    git_dir = os.path.join(user_path, 'Documents/covid-chicago/')
-                    user_path = 'E:/'
-                else :
-                    git_dir = os.path.join('/Users/jlg1657', 'Documents/work/covid-chicago/')
+                git_dir = os.path.join('C:/Users/jlg1657', 'Documents/covid-chicago/')
+                user_path = 'E:/'
                 home_path = os.path.join(user_path, 'Box', 'NU-malaria-team','projects')
                 data_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'data')
             if 'mrung' in user_path :
