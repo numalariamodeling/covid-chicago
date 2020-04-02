@@ -14,7 +14,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-first_day = date(2020, 3, 1)
+first_day = date(2020, 2, 20)
 
 
 def load_sim_data(exp_name) :
@@ -81,7 +81,7 @@ def compare_NMH(exp_name) :
 def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40) :
 
     fig = plt.figure()
-    palette = sns.color_palette('muted', len(channels))
+    palette = sns.color_palette('husl', len(df['Ki'].unique()))
     for c, channel in enumerate(channels) :
         ax = fig.add_subplot(2,2,c+1)
 
@@ -101,7 +101,8 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40) :
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, date(2020, 4, 1))
-        ax.set_ylim(0,ymax)
+        ax.set_ylim(1,ymax)
+        ax.set_yscale('log')
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#969696', linewidth=0)
     plt.show()
@@ -124,5 +125,5 @@ def compare_county(exp_name, county_name) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200402_extendedModel_TEST1'
+    exp_name = '20200402_extendedModel_TEST3'
     compare_county(exp_name, 'Cook')
