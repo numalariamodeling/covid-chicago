@@ -151,7 +151,7 @@ if __name__ == '__main__' :
     for age_group in suffix_names :
         cols = sample_index_names + [ "%s_%s" % (channel, age_group) for channel in base_names]
         adf = df[cols]
-        adf = calculate_incidence(adf, age_group, output_filename='trajectoresDat_withIncidence_%s.csv' % age_group)
+        adf = calculate_incidence(adf, age_group, output_filename='trajectoriesDat_withIncidence_%s.csv' % age_group)
         adf['infections_cumul_%s' % age_group] = adf['asymp_cumul_%s' % age_group] + adf['symp_cumul_%s' % age_group]
         for channel in ['infections_cumul_%s' % age_group, 'detected_cumul_%s' % age_group] :
             calculate_mean_and_CI(adf, channel, output_filename='%s_%s.csv' % (channel, age_group))
