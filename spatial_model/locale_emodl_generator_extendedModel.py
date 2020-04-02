@@ -149,12 +149,13 @@ def write_params():
 
     return (params_str)
 
+# Reaction without contact matrix
 def write_reactions(county):
     county = str(county)
 
     reaction_str = """
-(reaction exposure_from_undetected_{} (S::{}) (E::{}) (* Ki S::{} infectious_undet::{}))
-(reaction exposure_from_detected_{} (S::{}) (E::{}) (* Ki S::{} infectious_det::{} reduced_inf_of_det_cases))
+(reaction exposure_from_undetected_{} (S::{}) (E::{}) (* Ki infectious_undet::{}))
+(reaction exposure_from_detected_{} (S::{}) (E::{}) (* Ki infectious_det::{} reduced_inf_of_det_cases))
 (reaction infection_{} (E::{}) (As::{}) (* Kl E::{}))
 (reaction symptomatic_{} (E::{}) (Sy::{}) (* Ks E::{}))
 (reaction hospitalization::{} (Sy::{}) (H::{}) (* Kh Sy::{}))
