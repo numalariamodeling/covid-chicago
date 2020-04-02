@@ -14,7 +14,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
-exp_name = '20200401_extendedModel_age_NMH_test2'
+exp_name = '20200402_extendedModel_age_NMH_test4'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
