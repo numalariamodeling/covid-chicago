@@ -17,28 +17,32 @@ if not os.path.exists(temp_dir):
     os.makedirs(os.path.join(temp_dir))
 
 def define_and_replaceParameters(inputfile , outputfile):
-    speciesS = 360980
-    initialAs = np.random.uniform(1, 5)
+    speciesS = 1000 #360980
+    initialAs = np.random.uniform(5, 10)
     incubation_pd = np.random.uniform(4.2, 6.63)
-    time_to_hospitalization = np.random.normal(5.9, 2)
-    time_to_critical = np.random.normal(5.9, 2)
-    time_to_death = np.random.uniform(1, 3)
+    time_to_infectious = np.random.uniform(0, incubation_pd)
+    time_to_hospitalization = np.random.normal(5.76, 4.22)
+    time_to_critical = np.random.uniform(4, 9)
+    time_to_death = np.random.uniform(3, 11)
     recovery_rate = np.random.uniform(6, 16)
     fraction_hospitalized = np.random.uniform(0.1, 5)
     fraction_symptomatic = np.random.uniform(0.5, 0.8)
     fraction_critical = np.random.uniform(0.1, 5)
     reduced_inf_of_det_cases = np.random.uniform(0,1)
     cfr = np.random.uniform(0.008, 0.022)
-    d_Sy = np.random.uniform(0.2, 0.3)
+    d_Sy = np.random.uniform(0.8, 0.9)
     d_H = 1
     d_As = 0
-    Ki = np.random.uniform(1e-6, 9e-5)
+    Ki = np.random.uniform(0.5e-2, 0.5e-6)
+    socialDistance_start = np.random.uniform(20, 22)
+    contactReduction = np.random.uniform(0.1, 0.3)
 
     fin = open(os.path.join(emodl_dir,inputfile), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(speciesS))
     data = data.replace('@initialAs@', str(initialAs))
     data = data.replace('@incubation_pd@', str(incubation_pd))
+    data = data.replace('@time_to_infectious@', str(time_to_infectious))
     data = data.replace('@time_to_hospitalization@', str(time_to_hospitalization))
     data = data.replace('@time_to_critical@', str(time_to_critical))
     data = data.replace('@time_to_death@', str(time_to_death))
@@ -52,6 +56,8 @@ def define_and_replaceParameters(inputfile , outputfile):
     data = data.replace('@d_H@', str(d_H))
     data = data.replace('@recovery_rate@', str(recovery_rate))
     data = data.replace('@Ki@', str(Ki))
+    data = data.replace('@socialDistance_start@', str(socialDistance_start))
+    data = data.replace('@contactReduction@', str(contactReduction))
     fin.close()
 
     fin = open(os.path.join(temp_dir,outputfile), "wt")
@@ -127,7 +133,7 @@ def plot_by_channel(adf) :
 
 if __name__ == '__main__' :
 
-    runExp_simple(modelname="simplemodel_testing.emodl")
+    runExp_simple(modelname="locale_extendedmodel_covid.emodl")
     df = reprocess()
     first_day = date(2020, 3, 1)  # arbitrary selection of starting date
     plot(df)
