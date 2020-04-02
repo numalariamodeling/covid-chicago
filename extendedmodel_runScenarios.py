@@ -18,9 +18,11 @@ emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_extendedModel_cook_fitKi'
+exp_name = today.strftime("%Y%m%d") + '_extendedModel_withIntervention'
 
-emodlname = 'extendedmodel_covid.emodl'
+#emodlname = 'extendedmodel_covid.emodl'
+emodlname = 'extendedmodel_covid_timeevent.emodl'
+
 
 if testMode == True :
     sim_output_path = os.path.join(wdir, 'sample_trajectories')
@@ -57,12 +59,23 @@ Kivalues = np.random.uniform(0,0.3, 30)
 #plt.hist(Kivalues, bins=100)
 #plt.show()
 
-def generateParameterSamples(samples, pop=10000):
+def define_intervention_param(df, startDate, reduction):
+    df['socialDistance_start'] = startDate
+    df['contactReduction'] = reduction
+    return df
+
+def replace_intervention_param(data, df, sample_nr) :
+    data = data.replace('@socialDistance_start@', str(df.socialDistance_start[sample_nr]))
+    data = data.replace('@contactReduction@', str(df.contactReduction[sample_nr]))
+    return data
+
+def generateParameterSamples(samples, pop=10000, addIntervention = True, interventionStart=10, coverage=0.4):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
         df['initialAs'] = np.random.uniform(1, 5,samples )
         df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
+        df['time_to_infectious'] = np.random.uniform(0, df['incubation_pd'], samples)  # placeholder and  time_to_infectious <= incubation_pd
         df['time_to_hospitalization'] = np.random.normal(5.9, 2,samples )
         df['time_to_critical'] = np.random.normal(5.9, 2,samples )
         df['time_to_death'] = np.random.uniform(1, 3,samples )
@@ -76,15 +89,20 @@ def generateParameterSamples(samples, pop=10000):
         df['d_H'] =  np.random.uniform(1, 1,samples )
         df['d_As'] = np.random.uniform(0, 0,samples )
         #df['Ki'] = Ki_i
+
+        if addIntervention == True:
+            df = define_intervention_param(df, startDate=interventionStart, reduction=coverage)
+
         df.to_csv(os.path.join(sim_output_path, "sampled_parameters.csv"))
         return(df)
 
-def replaceParameters(df, Ki_i, sample_nr, emodlname) :
+def replaceParameters(df, Ki_i, sample_nr, emodlname, addIntervention=True) :
     fin = open(os.path.join(emodl_dir,emodlname), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
     data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
     data = data.replace('@incubation_pd@', str(df.incubation_pd[sample_nr]))
+    data = data.replace('@time_to_infectious@', str(df.time_to_infectious[sample_nr]))
     data = data.replace('@time_to_hospitalization@', str(df.time_to_hospitalization[sample_nr]))
     data = data.replace('@time_to_critical@', str(df.time_to_critical[sample_nr]))
     data = data.replace('@time_to_death@', str(df.time_to_death[sample_nr]))
@@ -99,6 +117,9 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname) :
     data = data.replace('@recovery_rate@', str(df.recovery_rate[sample_nr]))
     data = data.replace('@Ki@', str(Ki_i))
     # data = data.replace('@Ki@', str(df.Ki[sub_sample]))
+    if addIntervention==True :
+         data = replace_intervention_param(data, df, sample_nr)
+
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_i.emodl"), "wt")
     fin.write(data)

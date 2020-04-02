@@ -97,12 +97,23 @@ def replace_Ki_contact_param(data, df, sample_nr) :
     return data
 
 
-def generateParameterSamples(samples, pop=10000, Ki_contact_matrix = True):
+def define_intervention_param(df, startDate, reduction):
+    df['socialDistance_start'] = startDate
+    df['contactReduction'] = reduction
+    return df
+
+def replace_intervention_param(data, df, sample_nr) :
+    data = data.replace('@socialDistance_start@', str(df.socialDistance_start[sample_nr]))
+    data = data.replace('@contactReduction@', str(df.contactReduction[sample_nr]))
+    return data
+
+def generateParameterSamples(samples, pop=10000, Ki_contact_matrix = True, addIntervention=True ,interventionStart=10, coverage=0.4):
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = np.random.uniform(1, 5, samples)
     df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
+    df['time_to_infectious'] = np.random.uniform(0, df['incubation_pd'] , samples)  # placeholder and  time_to_infectious <= incubation_pd
     df['time_to_hospitalization'] = np.random.normal(5.9, 2, samples)
     df['time_to_critical'] = np.random.normal(5.9, 2, samples)
     df['time_to_death'] = np.random.uniform(1, 3, samples)
@@ -118,16 +129,20 @@ def generateParameterSamples(samples, pop=10000, Ki_contact_matrix = True):
     # df['Ki'] = Ki_i
     if Ki_contact_matrix==True :
          df = define_Ki_contact_matrix(df)
+
+    if addIntervention==True :
+         df = define_intervention_param(df, startDate=interventionStart, reduction=coverage)
     df.to_csv(os.path.join(sim_output_path, "sampled_parameters.csv"))
     return (df)
 
 
-def replaceParameters(df, Ki_i, sample_nr, emodlname, Ki_contact_matrix = True) :
+def replaceParameters(df, Ki_i, sample_nr, emodlname, Ki_contact_matrix = True, addIntervention=True):
     fin = open(os.path.join(emodl_dir,emodlname), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
     data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
     data = data.replace('@incubation_pd@', str(df.incubation_pd[sample_nr]))
+    data = data.replace('@time_to_infectious@', str(df.time_to_infectious[sample_nr]))
     data = data.replace('@time_to_hospitalization@', str(df.time_to_hospitalization[sample_nr]))
     data = data.replace('@time_to_critical@', str(df.time_to_critical[sample_nr]))
     data = data.replace('@time_to_death@', str(df.time_to_death[sample_nr]))
@@ -141,8 +156,12 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, Ki_contact_matrix = True) 
     data = data.replace('@d_H@', str(df.d_H[sample_nr]))
     data = data.replace('@recovery_rate@', str(df.recovery_rate[sample_nr]))
     data = data.replace('@Ki@', str(Ki_i))
+
     if Ki_contact_matrix==True :
          data = replace_Ki_contact_param(data, df, sample_nr)
+
+    if addIntervention==True :
+         data = replace_intervention_param(data, df, sample_nr)
 
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_i.emodl"), "wt")
@@ -150,7 +169,7 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, Ki_contact_matrix = True) 
     fin.close()
 
 
-def runExp(Kivalues, sub_samples, modelname):
+def runExp(Kivalues, sub_samples, modelname) :
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=10000)
