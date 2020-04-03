@@ -201,7 +201,7 @@ def generateSubmissionFile(scen_num,exp_name, Location='Local'):
 
 def runExp(Location = 'Local'):
     if Location =='Local' :
-        p = os.path.join(temp_exp_dir, ‘runSimulations.bat’)
+        p = os.path.join(temp_exp_dir,  'runSimulations.bat')
         subprocess.call([p])
     if Location =='NUCLUSTER' :
         print('please submit sbatch runSimulations.sh in the terminal')
@@ -313,7 +313,7 @@ if __name__ == '__main__' :
     simulation_population = 2700000  #1000
     number_of_samples = 20
     number_of_runs = 3
-    
+
     Ki_red_dic = addTimeEvent(scalingFactors=[2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2], method='scaling', samples=None)
 
     nscen = generateScenarios(simulation_population,
