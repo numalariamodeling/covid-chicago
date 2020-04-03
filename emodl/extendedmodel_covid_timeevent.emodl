@@ -78,7 +78,6 @@
 (param d_Sy @d_Sy@)
 (param d_H @d_H@)
 (param Ki @Ki@)
-(param Ki_red (* Ki (- 1 @contactReduction@)))
 (param Kr (/ 1 recovery_rate))
 (param Kl (/ (- 1 fraction_symptomatic ) incubation_pd))
 (param Ks (/ fraction_symptomatic  incubation_pd))
@@ -86,8 +85,8 @@
 (param Kc (/ fraction_critical time_to_critical ))
 (param Km (/ fraction_dead  time_to_death))
 
-(reaction exposure_from_undetected   (S) (E) (* Ki infectious_undet))
-(reaction exposure_from_detected   (S) (E) (* Ki infectious_det reduced_inf_of_det_cases))
+(reaction exposure_from_undetected   (S) (E) (* S Ki infectious_undet))
+(reaction exposure_from_detected   (S) (E) (* Ki S infectious_det reduced_inf_of_det_cases))
 (reaction infection  (E)   (As)   (* Kl E))
 (reaction symptomatic (E)   (Sy)   (* Ks E))
 
@@ -118,8 +117,8 @@
 (reaction recovery_H_det3   (H_det3)   (RH_det3)   (* Kr H_det3))
 (reaction recovery_C_det3   (C_det3)   (RC_det3)   (* Kr C_det3))
 
-(time-event socialDistance_start @socialDistance_start@ ((Ki Ki_red)))
-;(time-event socialDistance_end 100.0 ((Ki @Ki@)))
+(time-event socialDistance_start @socialDistance_start@ ((Ki @Ki_red@)))
+;(time-event socialDistance_end 100.0 ((Ki Ki)))
 
 
 (end-model)
