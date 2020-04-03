@@ -49,13 +49,6 @@ if not os.path.exists(os.path.join(sim_output_path, emodlname)):
 if not os.path.exists(os.path.join(sim_output_path, 'model.cfg')):
     shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(sim_output_path, 'model.cfg'))
 
-master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
-custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
-
-# Selected range values from SEIR Parameter Estimates.xlsx
-
-Kivalues = np.logspace(-8, -5, 4)
 simulation_population = 2700000
 
 def define_intervention_param(df, startDate, reduction):
@@ -98,7 +91,7 @@ def generateParameterSamples(samples, pop=10000, addIntervention = True, interve
         if addIntervention == True:
             df = define_intervention_param(df, startDate=interventionStart, reduction=coverage)
 
-        df.to_csv(os.path.join(sim_output_path, "sampled_parameters.csv"))
+        df.to_csv(os.path.join(sim_output_path, "sampled_parameters.csv"), index=False)
         return(df)
 
 def replaceParameters(df, Ki_i, sample_nr, emodlname, addIntervention=True) :
@@ -141,7 +134,6 @@ def runExp(Kivalues, sub_samples, modelname):
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
     for sample in range(sub_samples):
         for i in Kivalues:
-            scen_num += 1
             print(i)
 
             lst.append([sample, scen_num, i])
@@ -163,9 +155,10 @@ def runExp(Kivalues, sub_samples, modelname):
             file.close()
 
             subprocess.call([r'runModel_i.bat'])
+            scen_num += 1
 
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
-    df.to_csv(os.path.join(sim_output_path,"scenarios.csv"))
+    df.to_csv(os.path.join(sim_output_path,"scenarios.csv"), index=False)
     return (scen_num)
 
 
@@ -193,7 +186,7 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     adf = adf.reset_index()
     del adf['index']
     if output_fname:
-        adf.to_csv(os.path.join(sim_output_path,output_fname))
+        adf.to_csv(os.path.join(sim_output_path,output_fname), index=False)
     return adf
 
 
@@ -202,7 +195,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
     del scendf['Unnamed: 0']
 
     df_list = []
-    for scen_i in range(1, Nscenarios):
+    for scen_i in range(Nscenarios):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
             df_i = reprocess(input_name)
@@ -215,13 +208,14 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
         if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
 
     dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(sim_output_path,"trajectoriesDat.csv"))
+    dfc.to_csv( os.path.join(sim_output_path,"trajectoriesDat.csv"), index=False)
 
     return dfc
 
+
 def cleanup(Nscenarios) :
     if os.path.exists(os.path.join(sim_output_path,"trajectoriesDat.csv")):
-        for scen_i in range(1, Nscenarios):
+        for scen_i in range(Nscenarios):
             input_name = "trajectories_scen" + str(scen_i) + ".csv"
             try:
                 os.remove(os.path.join(git_dir, input_name))
@@ -231,8 +225,7 @@ def cleanup(Nscenarios) :
     os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
 
-
-def plot(adf, allchannels=master_channel_list, plot_fname=None):
+def plot(adf, allchannels, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
 
@@ -260,17 +253,27 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
     plt.show()
 
 
-# if __name__ == '__main__' :
-nscen = runExp(Kivalues, sub_samples=1, modelname=emodlname)
-combineTrajectories(nscen)
-cleanup(nscen)
+if __name__ == '__main__' :
 
-df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-#df.params.unique()
-#df= df[df['params'] == 9.e-05]
+    master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+                           'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+    detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
+    custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
+                           'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-# Plots for quick check of simulation results
-first_day = date(2020, 2, 22)
-plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
-plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
-plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
+    # Selected range values from SEIR Parameter Estimates.xlsx
+    Kivalues = np.logspace(-8, -4, 4)
+
+    nscen = runExp(Kivalues, sub_samples=3, modelname=emodlname)
+    combineTrajectories(nscen)
+    cleanup(nscen)
+
+    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+    #df.params.unique()
+    #df= df[df['params'] == 9.e-05]
+
+    # Plots for quick check of simulation results
+    first_day = date(2020, 2, 22)
+    plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
+    plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
+    plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
