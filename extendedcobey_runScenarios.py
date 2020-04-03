@@ -20,7 +20,7 @@ emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_cobeyModel_Quest_linspace' + '_rn' + str(int(np.random.uniform(10, 99)))
+exp_name = today.strftime("%Y%m%d") + '_cobeyModel_run' + '_rn' + str(int(np.random.uniform(10, 99)))
 
 emodlname = 'extendedmodel_cobey.emodl'
 
@@ -52,16 +52,7 @@ if not os.path.exists(temp_exp_dir):
 ## Copy emodl and cfg file  to experiment folder
 shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
 shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
-
-master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
-custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
-
-# Experiment design, fitting parameter and population
-Kivalues = np.linspace(0.005, 0.7, 20) #np.logspace(-8, -5, 4)
-simulation_population = 2700000
-#plt.hist(Kivalues, bins=100)
-#plt.show()                             
+                 
 
 # parameter samples                
 def generateParameterSamples(samples, pop):
@@ -90,7 +81,8 @@ def generateParameterSamples(samples, pop):
         df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
         #df['Ki'] = Ki_i
-        df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"))
+        
+        df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
 
 def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
@@ -144,8 +136,9 @@ def generateScenarios(Kivalues, sub_samples, modelname):
             fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
             fin.write(data_cfg)
             fin.close()
+
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
-    df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
+    df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
 def generateSubmissionFile(scen_num,exp_name, Location='Local'):
@@ -159,7 +152,7 @@ def generateSubmissionFile(scen_num,exp_name, Location='Local'):
     if Location == 'NUCLUSTER':
         # Hardcoded Quest directories for now!
         # additional parameters , ncores, time, queue...
-        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 1\n#SBATCH --ntasks-per-node=5'
+        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 5\n#SBATCH --ntasks-per-node=5'
         module = '\nmodule load singularity'
         singularity = '\nsingularity exec /software/singularity/images/singwine-v1.img wine'
         array = '\n#SBATCH --array=1-' + str(scen_num)
@@ -186,7 +179,7 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
     num_channels = len([x for x in df.columns.values if '{0}' in x])
-    num_samples = int((len(row_df) - 1) / num_channels)
+    num_samples = int((len(row_df)) / num_channels)
 
     df = df.reset_index(drop=False)
     df = df.rename(columns={'index': 'time'})
@@ -205,16 +198,15 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     adf = adf.reset_index()
     del adf['index']
     if output_fname:
-        adf.to_csv(os.path.join(temp_exp_dir,output_fname))
+        adf.to_csv(os.path.join(temp_exp_dir,output_fname), index=False)
     return adf
 
 
 def combineTrajectories(Nscenarios, deleteFiles=False):
     scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
-    del scendf['Unnamed: 0']
 
     df_list = []
-    for scen_i in range(1, Nscenarios):
+    for scen_i in range(Nscenarios):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
             df_i = reprocess(input_name)
@@ -227,12 +219,12 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
         if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
 
     dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"))
+    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
 
     return dfc
 
 #def cleanup(Nscenarios) :
-#    if os.path.exists(os.path.join(sim_output_path,"trajectoriesDat.csv")):
+#    if os.path.exists(os.path.join(temp_exp_dir,"trajectoriesDat.csv")):
 #        for scen_i in range(1, Nscenarios):
 #            input_name = "trajectories_scen" + str(scen_i) + ".csv"
 #            try:
@@ -242,9 +234,10 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
 #    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
 #    os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
-def cleanup() :
-    os.remove(os.path.join(temp_dir, "simulation_*"))
-    os.remove(os.path.join(temp_dir, "model_*"))
+def cleanup(delete_temp_dir=True) :
+    if delete_temp_dir ==True : 
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        print('temp_dir folder deleted')
     shutil.move(temp_exp_dir, sim_output_path)
 
 def plot(adf, allchannels=master_channel_list, plot_fname=None):
@@ -274,19 +267,30 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
         plt.savefig(os.path.join(plot_path, plot_fname))
     plt.show()
 
+if __name__ == '__main__' :
 
-# if __name__ == '__main__' :
-nscen = generateScenarios(Kivalues,  sub_samples=20, modelname=emodlname )
-generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
+    master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+                           'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+    detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
+    custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
+                           'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-if Location == 'Local' :
+    # Experiment design, fitting parameter and population
+    Kivalues = np.logspace(-8, -4, 4) 
+    simulation_population = 2700000
+    #plt.hist(Kivalues, bins=100)
+    #plt.show()        
+
+    nscen = generateScenarios(Kivalues,  sub_samples=20, modelname=emodlname )
+    generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
+  
+  if Location == 'Local' :
     runExp(Location='Local')
     # Once the simulations are done
     combineTrajectories(nscen)
-    #cleanup()
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    #df.params.unique()
-    #df= df[df['params'] == 9.e-05]
+    cleanup(delete_temp_dir=True)
+    df = pd.read_csv(os.path.join(temp_exp_dir, 'trajectoriesDat.csv'))
+
     # Plots for quick check of simulation results
     first_day = date(2020, 2, 22)
     plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
