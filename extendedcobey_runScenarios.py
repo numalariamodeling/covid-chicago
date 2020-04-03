@@ -143,7 +143,7 @@ def replaceParameters(df, Ki_i, Ki_multiplier1, Ki_multiplier2, Ki_multiplier3, 
     
     
     
-def generateScenarios(simulation_population, Kivalues,Ki_red_dic, nruns, sub_samples, modelname):
+def generateScenarios(simulation_population, Kivalues,Ki_red_dic, duration, monitoring_samples, nruns, sub_samples, modelname):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
@@ -161,6 +161,8 @@ def generateScenarios(simulation_population, Kivalues,Ki_red_dic, nruns, sub_sam
                 # adjust model.cfg
                 fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
                 data_cfg = fin.read()
+                data_cfg = data_cfg.replace('@duration@', str(duration))
+                data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
                 data_cfg = data_cfg.replace('@nruns@', str(nruns))
                 data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
                 fin.close()
@@ -313,6 +315,8 @@ if __name__ == '__main__' :
     simulation_population = 2700000  #1000
     number_of_samples = 20
     number_of_runs = 3
+    duration = 60
+    monitoring_samples = 60  # needs to be smaller than duration
 
     Ki_red_dic = addTimeEvent(scalingFactors=[2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2], method='scaling', samples=None)
 
@@ -321,6 +325,8 @@ if __name__ == '__main__' :
                               Ki_red_dic,
                               nruns=number_of_runs,
                               sub_samples=number_of_samples,
+                              duration = duration,
+                              monitoring_samples = monitoring_samples,
                               modelname=emodlname )
 
     generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
