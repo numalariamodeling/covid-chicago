@@ -148,6 +148,7 @@ def write_params():
 (param Kh (/ fraction_hospitalized time_to_hospitalization))
 (param Kc (/ fraction_critical time_to_critical ))
 (param Km (/ fraction_dead  time_to_death))
+(time-event socialDistance_start 31 ((Ki 0)))
  """
     params_str = params_str.replace("  ", " ")
 

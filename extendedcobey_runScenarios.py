@@ -19,10 +19,9 @@ emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_extendedModel_TEST7'
+exp_name = today.strftime("%Y%m%d") + '_cobey_TEST1'
 
-emodlname = 'extendedmodel_covid.emodl'
-# emodlname = 'extendedmodel_covid_timeevent.emodl'
+emodlname = 'extendedmodel_cobey.emodl'
 
 
 if testMode == True :
@@ -56,10 +55,8 @@ custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'h
 
 # Selected range values from SEIR Parameter Estimates.xlsx
 
-Kivalues = np.linspace(0.7, 1, 4)
+Kivalues = np.logspace(-8, -5, 4)
 simulation_population = 2700000
-#plt.hist(Kivalues, bins=100)
-#plt.show()
 
 def define_intervention_param(df, startDate, reduction):
     df['socialDistance_start'] = startDate
@@ -76,19 +73,25 @@ def generateParameterSamples(samples, pop=10000, addIntervention = True, interve
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
         df['initialAs'] = 10#np.random.uniform(1, 5, samples)
+
         df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
-        df['time_to_infectious'] = np.random.uniform(0, df['incubation_pd'],samples)  # placeholder and  time_to_infectious <= incubation_pd
-        df['time_to_hospitalization'] = np.random.normal(5.76, 4.22, samples)
+        df['time_to_symptoms'] = np.random.uniform(1, 5,samples)
+        df['time_to_hospitalization'] = np.random.uniform(2, 10, samples)
         df['time_to_critical'] = np.random.uniform(4, 9, samples)
         df['time_to_death'] = np.random.uniform(3, 11, samples)
-        df['recovery_rate'] = np.random.uniform(6, 16, samples)
-        df['fraction_hospitalized'] = np.random.uniform(0.1, 1, samples)
+        df['recovery_rate_asymp'] = np.random.uniform(6, 16, samples)
+        df['recovery_rate_mild'] = np.random.uniform(6, 16, samples)
+        df['recovery_rate_hosp'] = np.random.uniform(6, 16, samples)
+        df['recovery_rate_crit'] = np.random.uniform(6, 16, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
-        df['fraction_critical'] = np.random.uniform(0.1, 1, samples)
-        df['reduced_inf_of_det_cases'] = np.random.uniform(0.2, 0.3, samples)
-        df['cfr'] = np.random.uniform(0.008, 0.022, samples)
-        df['d_Sy'] = np.random.uniform(0.2, 0.3, samples)
-        df['d_H'] = np.random.uniform(0.8, 1, samples)
+        df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
+        df['fraction_critical'] = np.random.uniform(0.1, 0.3, samples)
+        df['cfr'] = np.random.uniform(0.008, 0.04, samples)
+        df['fraction_dead'] = df.apply(lambda x : x['cfr']/x['fraction_severe'], axis=1)
+        df['fraction_hospitalized'] = df.apply(lambda x : 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+        df['reduced_inf_of_det_cases'] = np.random.uniform(0.5, 0.9, samples)
+        df['d_Sym'] = np.random.uniform(0.2, 0.3, samples)
+        df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
         #df['Ki'] = Ki_i
 
@@ -104,20 +107,24 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, addIntervention=True) :
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
     data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
     data = data.replace('@incubation_pd@', str(df.incubation_pd[sample_nr]))
-    data = data.replace('@time_to_infectious@', str(df.time_to_infectious[sample_nr]))
+    data = data.replace('@time_to_symptoms@', str(df.time_to_symptoms[sample_nr]))
     data = data.replace('@time_to_hospitalization@', str(df.time_to_hospitalization[sample_nr]))
     data = data.replace('@time_to_critical@', str(df.time_to_critical[sample_nr]))
     data = data.replace('@time_to_death@', str(df.time_to_death[sample_nr]))
     data = data.replace('@fraction_hospitalized@', str(df.fraction_hospitalized[sample_nr]))
     data = data.replace('@fraction_symptomatic@', str(df.fraction_symptomatic[sample_nr]))
+    data = data.replace('@fraction_severe@', str(df.fraction_severe[sample_nr]))
     data = data.replace('@fraction_critical@', str(df.fraction_critical[sample_nr]))
     data = data.replace('@reduced_inf_of_det_cases@', str(df.reduced_inf_of_det_cases[sample_nr]))
-    data = data.replace('@cfr@', str(df.cfr[sample_nr]))
+    data = data.replace('@fraction_dead@', str(df.fraction_dead[sample_nr]))
     data = data.replace('@d_As@', str(df.d_As[sample_nr]))
-    data = data.replace('@d_Sy@', str(df.d_Sy[sample_nr]))
-    data = data.replace('@d_H@', str(df.d_H[sample_nr]))
-    data = data.replace('@recovery_rate@', str(df.recovery_rate[sample_nr]))
-    data = data.replace('@Ki@', str(Ki_i))
+    data = data.replace('@d_Sym@', str(df.d_Sym[sample_nr]))
+    data = data.replace('@d_Sys@', str(df.d_Sys[sample_nr]))
+    data = data.replace('@recovery_rate_asymp@', str(df.recovery_rate_asymp[sample_nr]))
+    data = data.replace('@recovery_rate_mild@', str(df.recovery_rate_mild[sample_nr]))
+    data = data.replace('@recovery_rate_hosp@', str(df.recovery_rate_hosp[sample_nr]))
+    data = data.replace('@recovery_rate_crit@', str(df.recovery_rate_crit[sample_nr]))
+    data = data.replace('@Ki@', '%.09f'% Ki_i)
     # data = data.replace('@Ki@', str(df.Ki[sub_sample]))
     if addIntervention==True :
          data = replace_intervention_param(data, df, sample_nr)
@@ -254,7 +261,7 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
 
 
 # if __name__ == '__main__' :
-nscen = runExp(Kivalues, sub_samples=20, modelname=emodlname)
+nscen = runExp(Kivalues, sub_samples=1, modelname=emodlname)
 combineTrajectories(nscen)
 cleanup(nscen)
 
