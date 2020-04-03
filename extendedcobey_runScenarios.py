@@ -167,10 +167,10 @@ def generateSubmissionFile(scen_num,exp_name, Location='Local'):
         err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
         out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
         exe = '\n/home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe'
-        cfg = ' -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'simulations/model_${SLURM_ARRAY_TASK_ID}.cfg'
-        emodl = ' -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
+        cfg = ' -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg'
+        emodl = ' -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
         file = open(os.path.join(temp_exp_dir,'runSimulations.sh'), 'w')
-        file.write(header + array + module + singularity + err + out + exe + cfg + emodl)
+        file.write(header + array + err + out + module + singularity  + exe + cfg + emodl)
         file.close()
 
 
