@@ -6,6 +6,12 @@ from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+emodl_dir = os.path.join(git_dir,  'simple_model', 'emodl')
+cfg_dir = os.path.join(git_dir,  'simple_model', 'cfg')
+temp_dir = os.path.join(git_dir,  'simple_model', '_temp')
+if not os.path.exists(temp_dir):
+    os.makedirs(os.path.join(temp_dir ))
+
 # Selected range values from SEIR Parameter Estimates.xlsx
 initial_infect = [1,5,10]
 Ki = [0.00000019,  0.0009, 0.05, 0.312]
@@ -31,7 +37,7 @@ def runExp_fullFactorial() :
 
         lst.append([scen_num ,i, "initial_infect, Ki, incubation_pd, recovery_rate"])
 
-        fin = open(os.path.join(git_dir, "simple_model","simplemodel_covid.emodl"), "rt")
+        fin = open(os.path.join(emodl_dir, "simplemodel_covid.emodl"), "rt")
         data = fin.read()
         data = data.replace('(species I 10)', '(species I ' + str(i[0]) +')')
         data = data.replace('(param Ki 0.319)', '(param Ki '  + str(i[1]) +')')
@@ -39,28 +45,28 @@ def runExp_fullFactorial() :
         data = data.replace('(param recovery_rate 16)', '(param recovery_rate '  + str(i[3]) +')')
         fin.close()
 
-        fin = open(os.path.join(git_dir, "simple_model","simplemodel_covid_i.emodl"), "wt")
+        fin = open(os.path.join(temp_dir, "simplemodel_covid_i.emodl"), "wt")
         fin.write(data)
         fin.close()
 
         # adjust simplemodel.cfg file as well
-        fin = open(os.path.join(git_dir, "simple_model","simplemodel.cfg"), "rt")
+        fin = open(os.path.join(cfg_dir, "simplemodel.cfg"), "rt")
         data_cfg = fin.read()
         data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num) )
         fin.close()
-        fin = open(os.path.join(git_dir, "simple_model","simplemodel_i.cfg"), "wt")
+        fin = open(os.path.join(temp_dir, "simplemodel_i.cfg"), "wt")
         fin.write(data_cfg)
         fin.close()
 
         file = open('runModel_i.bat', 'w')
-        file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(git_dir, "simple_model","simplemodel_i.cfg") +
-                   '"' + ' -m ' + '"' + os.path.join( git_dir, 'simple_model', "simplemodel_covid_i.emodl", ) + '"')
+        file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(temp_dir, "simplemodel_i.cfg") +
+                   '"' + ' -m ' + '"' + os.path.join( temp_dir,  "simplemodel_covid_i.emodl", ) + '"')
         file.close()
 
         subprocess.call([r'runModel_i.bat'])
 
     df = pd.DataFrame(lst, columns=['scen_num', 'params', 'order'])
-    df.to_csv(os.path.join(git_dir, 'simple_model', "scenarios.csv"))
+    df.to_csv(os.path.join(temp_dir, "scenarios.csv"))
     return(scen_num)
 
 
@@ -89,13 +95,13 @@ def reprocess(input_fname='trajectories.csv', output_fname=None) :
     adf = adf.reset_index()
     del adf['index']
     if output_fname :
-        adf.to_csv(os.path.join(git_dir,  'simple_model',output_fname))
+        adf.to_csv(os.path.join(temp_dir,  output_fname))
     return adf
 
 
 def combineTrajectories(Nscenarios, deleteFiles=False) :
 
-    scendf = pd.read_csv(os.path.join(git_dir,  'simple_model',"scenarios.csv"))
+    scendf = pd.read_csv(os.path.join(temp_dir,  "scenarios.csv"))
     #order = scendf[ 'order'][1]
 
     del scendf['order']
@@ -114,10 +120,10 @@ def combineTrajectories(Nscenarios, deleteFiles=False) :
         df_i = df_i.merge(scendf, on ='scen_num')
 
         df_list.append(df_i)
-        if deleteFiles ==True : os.remove( os.path.join(git_dir,  'simple_model', input_name))
+        if deleteFiles ==True : os.remove( os.path.join(temp_dir,  input_name))
 
     dfc = pd.concat(df_list)
-    dfc.to_csv(os.path.join(git_dir,  'simple_model',"trajectoriesDat.csv"))
+    dfc.to_csv(os.path.join(temp_dir,  "trajectoriesDat.csv"))
 
     return dfc
 
