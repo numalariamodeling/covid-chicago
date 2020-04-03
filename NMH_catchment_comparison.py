@@ -19,7 +19,7 @@ first_day = date(2020, 2, 20)
 
 def load_sim_data(exp_name) :
 
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name, exp_name)
     scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
@@ -47,8 +47,8 @@ def calculate_incidence(adf, output_filename=None) :
                               'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
                               'new_asymptomatic' : count_new(df, 'asymp_cumul'),
                               'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
-                              'new_symptomatic' : count_new(df, 'symp_cumul'),
-                              'new_symptomatic_detected' : count_new(df, 'symp_det_cumul'),
+                              # 'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
+                              # 'new_symptomatic_severe' : count_new(df, 'symp_severe_cumul'),
                               'new_hospitalized' : count_new(df, 'hosp_cumul'),
                               'new_detected' : count_new(df, 'detected_cumul'),
                               'new_critical' : count_new(df, 'crit_cumul'),
@@ -70,15 +70,15 @@ def compare_NMH(exp_name) :
 
     df = load_sim_data(exp_name)
 
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name)
-
     channels = ['new_hospitalized_all', 'hosp_cumul_all', 'hospitalized_all', 'critical_all']
     data_channel_names = ['covid pos admissions', 'cumulative admissions', 'inpatient census', 'ICU census']
 
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=40)
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data')
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=40,
+                     plot_path=plot_path)
 
 
-def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40) :
+def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40, plot_path=None) :
 
     fig = plt.figure()
     palette = sns.color_palette('husl', len(df['Ki'].unique()))
@@ -105,6 +105,8 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40) :
         ax.set_yscale('log')
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#969696', linewidth=0)
+    if plot_path :
+        plt.savefig('%s.png' % plot_path)
     plt.show()
 
 
@@ -120,10 +122,12 @@ def compare_county(exp_name, county_name) :
     channels = ['new_detected', 'new_hospitalized', 'detected_cumul', 'hosp_cumul']
     data_channel_names = ['new_case', 'new_hospitalizations', 'total_case', 'total_hospitalizations']
 
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100)
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data')
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
+                     plot_path=plot_path)
 
 
 if __name__ == '__main__' :
 
-    exp_name = '20200402_extendedModel_TEST3'
+    exp_name = '20200403_cobeyModel_Chicago_run_rn85'
     compare_county(exp_name, 'Cook')
