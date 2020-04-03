@@ -13,13 +13,14 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
+Location = 'Local'  # 'NUCLUSTER'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_cobey_TEST1'
+exp_name = today.strftime("%Y%m%d") + '_cobeyModel_run' + '_rn' + str(int(np.random.uniform(10, 99)))
 
 emodlname = 'extendedmodel_cobey.emodl'
 
@@ -39,29 +40,22 @@ if not os.path.exists(plot_path):
 
 # Create temporary folder for the simulation files
 # currently allowing to run only 1 experiment at a time locally
-temp_dir = os.path.join(git_dir, '_temp')
-if not os.path.exists(temp_dir):
-    os.makedirs(os.path.join(temp_dir ))
+temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
+temp_dir = os.path.join(temp_exp_dir,  'simulations')
+if not os.path.exists(os.path.join(git_dir, '_temp')):
+    os.makedirs(os.path.join(os.path.join(git_dir, '_temp') ))
+if not os.path.exists(temp_exp_dir):
+    os.makedirs(temp_exp_dir)
+    os.makedirs(temp_dir)
+    os.makedirs(os.path.join(temp_exp_dir, 'log'))  # Required on quest
 
-## Copy emodl file  to experiment folder
-if not os.path.exists(os.path.join(sim_output_path, emodlname)):
-    shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(sim_output_path, emodlname))
-if not os.path.exists(os.path.join(sim_output_path, 'model.cfg')):
-    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(sim_output_path, 'model.cfg'))
+## Copy emodl and cfg file  to experiment folder
+shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
+shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
+                 
 
-simulation_population = 2700000
-
-def define_intervention_param(df, startDate, reduction):
-    df['socialDistance_start'] = startDate
-    df['contactReduction'] = reduction
-    return df
-
-def replace_intervention_param(data, df, sample_nr) :
-    data = data.replace('@socialDistance_start@', str(df.socialDistance_start[sample_nr]))
-    data = data.replace('@contactReduction@', str(df.contactReduction[sample_nr]))
-    return data
-
-def generateParameterSamples(samples, pop=10000, addIntervention = True, interventionStart=10, coverage=0.4):
+# parameter samples                
+def generateParameterSamples(samples, pop):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -87,15 +81,12 @@ def generateParameterSamples(samples, pop=10000, addIntervention = True, interve
         df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
         #df['Ki'] = Ki_i
-
-        if addIntervention == True:
-            df = define_intervention_param(df, startDate=interventionStart, reduction=coverage)
-
-        df.to_csv(os.path.join(sim_output_path, "sampled_parameters.csv"), index=False)
+        
+        df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
 
-def replaceParameters(df, Ki_i, sample_nr, emodlname, addIntervention=True) :
-    fin = open(os.path.join(emodl_dir,emodlname), "rt")
+def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
+    fin = open(os.path.join(temp_exp_dir,emodlname), "rt")          
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
     data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
@@ -118,48 +109,69 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, addIntervention=True) :
     data = data.replace('@recovery_rate_hosp@', str(df.recovery_rate_hosp[sample_nr]))
     data = data.replace('@recovery_rate_crit@', str(df.recovery_rate_crit[sample_nr]))
     data = data.replace('@Ki@', '%.09f'% Ki_i)
-    # data = data.replace('@Ki@', str(df.Ki[sub_sample]))
-    if addIntervention==True :
-         data = replace_intervention_param(data, df, sample_nr)
-
     fin.close()
-    fin = open(os.path.join(temp_dir, "simulation_i.emodl"), "wt")
+    fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
     fin.write(data)
     fin.close()
-
-
-def runExp(Kivalues, sub_samples, modelname):
+    
+    
+    
+def generateScenarios(Kivalues, sub_samples, modelname):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
     for sample in range(sub_samples):
         for i in Kivalues:
-            print(i)
+            scen_num += 1
+            #print(i)
 
             lst.append([sample, scen_num, i])
-            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname )
+            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
 
             # adjust model.cfg
-            fin = open(os.path.join(cfg_dir,"model.cfg"), "rt")
+            fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
             data_cfg = fin.read()
             data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
-            fin = open(os.path.join(temp_dir,"model_i.cfg"), "wt")
+            fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
             fin.write(data_cfg)
             fin.close()
 
-            file = open('runModel_i.bat', 'w')
-            file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '"' + ' -c ' + '"' + os.path.join(temp_dir,
-                                                                                                             "model_i.cfg") +
-                       '"' + ' -m ' + '"' + os.path.join(temp_dir, "simulation_i.emodl" ) + '"')
-            file.close()
-
-            subprocess.call([r'runModel_i.bat'])
-            scen_num += 1
-
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
-    df.to_csv(os.path.join(sim_output_path,"scenarios.csv"), index=False)
+    df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
+
+def generateSubmissionFile(scen_num,exp_name, Location='Local'):
+    if Location =='Local':
+        file = open(os.path.join(temp_exp_dir,'runSimulations.bat'), 'w')
+        for i in range(1, scen_num):
+            file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '" -c "' + os.path.join(temp_dir, "model_" + str(i) + ".cfg") +
+																															 
+                       '" -m "' + os.path.join(temp_dir, "simulation_" + str(i) + ".emodl") + '"')
+        file.close()
+    if Location == 'NUCLUSTER':
+        # Hardcoded Quest directories for now!
+        # additional parameters , ncores, time, queue...
+        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 5\n#SBATCH --ntasks-per-node=5'
+        module = '\nmodule load singularity'
+        singularity = '\nsingularity exec /software/singularity/images/singwine-v1.img wine'
+        array = '\n#SBATCH --array=1-' + str(scen_num)
+        #ID = '\nID=${SLURM_ARRAY_TASK_ID}'
+        err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
+        out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
+        exe = '\n/home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe'
+        cfg = ' -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg'
+        emodl = ' -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
+        file = open(os.path.join(temp_exp_dir,'runSimulations.sh'), 'w')
+        file.write(header + array + err + out + module + singularity  + exe + cfg + emodl)
+        file.close()
+
+
+def runExp(Location = 'Local'):
+    if Location =='Local' :
+        subprocess.call([r'runSimulations.bat'])
+    if Location =='NUCLUSTER' :
+        print('please submit sbatch runSimulations.sh in the terminal')
 
 
 def reprocess(input_fname='trajectories.csv', output_fname=None):
@@ -186,12 +198,12 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     adf = adf.reset_index()
     del adf['index']
     if output_fname:
-        adf.to_csv(os.path.join(sim_output_path,output_fname), index=False)
+        adf.to_csv(os.path.join(temp_exp_dir,output_fname), index=False)
     return adf
 
 
 def combineTrajectories(Nscenarios, deleteFiles=False):
-    scendf = pd.read_csv(os.path.join(sim_output_path,"scenarios.csv"))
+    scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
 
     df_list = []
     for scen_i in range(Nscenarios):
@@ -207,24 +219,28 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
         if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
 
     dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(sim_output_path,"trajectoriesDat.csv"), index=False)
+    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
 
     return dfc
 
+#def cleanup(Nscenarios) :
+#    if os.path.exists(os.path.join(temp_exp_dir,"trajectoriesDat.csv")):
+#        for scen_i in range(1, Nscenarios):
+#            input_name = "trajectories_scen" + str(scen_i) + ".csv"
+#            try:
+#                    os.remove(os.path.join(git_dir, input_name))
+#            except:
+#                continue
+#    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
+#    os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
-def cleanup(Nscenarios) :
-    if os.path.exists(os.path.join(sim_output_path,"trajectoriesDat.csv")):
-        for scen_i in range(Nscenarios):
-            input_name = "trajectories_scen" + str(scen_i) + ".csv"
-            try:
-                os.remove(os.path.join(git_dir, input_name))
-            except:
-                continue
-    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
-    os.remove(os.path.join(temp_dir, "model_i.cfg"))
+def cleanup(delete_temp_dir=True) :
+    if delete_temp_dir ==True : 
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        print('temp_dir folder deleted')
+    shutil.move(temp_exp_dir, sim_output_path)
 
-
-def plot(adf, allchannels, plot_fname=None):
+def plot(adf, allchannels=master_channel_list, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
 
@@ -251,7 +267,6 @@ def plot(adf, allchannels, plot_fname=None):
         plt.savefig(os.path.join(plot_path, plot_fname))
     plt.show()
 
-
 if __name__ == '__main__' :
 
     master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
@@ -260,16 +275,21 @@ if __name__ == '__main__' :
     custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
                            'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-    # Selected range values from SEIR Parameter Estimates.xlsx
-    Kivalues = np.logspace(-8, -4, 4)
+    # Experiment design, fitting parameter and population
+    Kivalues = np.logspace(-8, -4, 4) 
+    simulation_population = 2700000
+    #plt.hist(Kivalues, bins=100)
+    #plt.show()        
 
-    nscen = runExp(Kivalues, sub_samples=3, modelname=emodlname)
+    nscen = generateScenarios(Kivalues,  sub_samples=20, modelname=emodlname )
+    generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
+  
+  if Location == 'Local' :
+    runExp(Location='Local')
+    # Once the simulations are done
     combineTrajectories(nscen)
-    cleanup(nscen)
-
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    #df.params.unique()
-    #df= df[df['params'] == 9.e-05]
+    cleanup(delete_temp_dir=True)
+    df = pd.read_csv(os.path.join(temp_exp_dir, 'trajectoriesDat.csv'))
 
     # Plots for quick check of simulation results
     first_day = date(2020, 2, 22)

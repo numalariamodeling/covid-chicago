@@ -2,6 +2,8 @@
 
 - SEIR model using Institute for Disease Modeling (IDM's) [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html)
 
+- For more information on Covid in Chicago visit the (Chicago Covid Coalition website)[https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0]
+
 ## CMS software
 - [input](https://idmod.org/docs/cms/input-files.html) configuration file (cfg)
 - [input](https://idmod.org/docs/cms/input-files.html)  model file (emodl)
@@ -15,13 +17,7 @@ The "simplemodel" includes only the basic S-E-I-R compartments.
 The "extendedmodel" imclides additional compartments for asymptomatics, symptomatics, hospitalization, progression to critical and deaths. In addition the detections are tracked as a sum of detected asymptomatics, symptomatics,hospitalized, critical and deaths with group specific detection rates. 
 
 ### Age model 
-The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. In the format of:
-
-- (reaction exposure1   (S1) (E1) (sum(* Ki1.1 S1  I1 ) (* Ki1.2 S1  I2) (* Ki1.3 S1  I3) ))
-- (reaction exposure2   (S2) (E2) (sum (* Ki2.1 S2  I1 ) (* Ki2.2 S2  I2) (* Ki2.3 S2  I3) ))
-- (reaction exposure3   (S3) (E3) (sum (* Ki3.1 S3  I1 ) (* Ki3.2 S3  I2) (* Ki3.3 S3  I3) ) )
-
-(where Ki1.2 == Ki2.1  etc) 
+The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. 
 
 ### Spatial model 
 The "spatial_model" uses a special syntax as described [here](https://idmod.org/docs/cms/create-spatial-model.html?searchText=spatial). 
@@ -43,9 +39,6 @@ The [extendedmodel_runScenarios.py](https://github.com/numalariamodeling/covid-c
 - combines multiple trajectories.csv files produced into a trajectoriesDat.csv, that is used for postprocessing. 
 
 ## Postprocessing and visualizing results
-- postprocessing for simple SEIR model [basic_output_processing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/basic_output_processing.py)
 - latest postprocessing file that calculates incidences for extended SEIR model [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extended_model_postprocessing.py)
 
-## Fitting to data
-[in process]
 
