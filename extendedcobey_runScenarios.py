@@ -192,7 +192,6 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
 
 def combineTrajectories(Nscenarios, deleteFiles=False):
     scendf = pd.read_csv(os.path.join(sim_output_path,"scenarios.csv"))
-    del scendf['Unnamed: 0']
 
     df_list = []
     for scen_i in range(Nscenarios):
