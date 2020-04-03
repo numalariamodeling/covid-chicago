@@ -59,7 +59,7 @@ def getKiredCMS(i, scl):
     if y > 1: y = 1
     return (y)
 
-def addTimeEvent(scalingFactors=None, method="randomSampling", samples):
+def addTimeEvent(samples , scalingFactors=None, method="randomSampling"):
     Ki_red_dic = {}
 
     if method == 'randomSampling' :
@@ -310,10 +310,19 @@ if __name__ == '__main__' :
 
     # Experiment design, fitting parameter and population
     Kivalues =  np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
-    simulation_population = 1000 #2700000
-    Ki_red_dic = addTimeEvent(scalingFactors=[2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2])
+    simulation_population = 2700000  #1000
+    number_of_samples = 20
+    number_of_runs = 3
+    
+    Ki_red_dic = addTimeEvent(scalingFactors=[2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2], method='scaling', samples=None)
 
-    nscen = generateScenarios(simulation_population, Kivalues, Ki_red_dic, nruns=2, sub_samples=2, modelname=emodlname )
+    nscen = generateScenarios(simulation_population,
+                              Kivalues,
+                              Ki_red_dic,
+                              nruns=number_of_runs,
+                              sub_samples=number_of_samples,
+                              modelname=emodlname )
+
     generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
   
   if Location == 'Local' :
