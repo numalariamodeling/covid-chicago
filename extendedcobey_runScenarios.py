@@ -167,7 +167,7 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
     num_channels = len([x for x in df.columns.values if '{0}' in x])
-    num_samples = int((len(row_df) - 1) / num_channels)
+    num_samples = int((len(row_df)) / num_channels)
 
     df = df.reset_index(drop=False)
     df = df.rename(columns={'index': 'time'})
