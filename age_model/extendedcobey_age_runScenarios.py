@@ -20,9 +20,9 @@ emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_cobeyModel_testTimeEvent' + '_rn' + str(int(np.random.uniform(10, 99)))
+exp_name = today.strftime("%Y%m%d") + 'age_cobeyModel_test' + '_rn' + str(int(np.random.uniform(10, 99)))
 
-emodlname = 'extendedmodel_cobey.emodl'
+emodlname = 'age_colbeymodel_covid_test.emodl'
 
 
 if testMode == True :
@@ -53,30 +53,57 @@ if not os.path.exists(temp_exp_dir):
 shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
 shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
 
+master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+detection_channel_list = ['detected', 'detected_cumul',  'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul',  'crit_det_cumul']
+custom_channel_list = ['detected_cumul', 'symp_det_cumul', 'asymp_det_cumul', 'hosp_det_cumul', 'crit_det_cumul', 'symp_cumul',  'asymp_cumul','hosp_cumul', 'crit_cumul']
 
-def getKiredCMS(i, scl):
-    y = i * scl
-    if y > 1: y = 1
-    return (y)
+# Experiment design, fitting parameter and population
+Kivalues = np.linspace(0.005, 0.7, 20) #np.logspace(-8, -5, 4)
+simulation_population = 2700000
+#plt.hist(Kivalues, bins=100)
+#plt.show()                             
 
-def addTimeEvent(scalingFactors=None, method="randomSampling", samples):
-    Ki_red_dic = {}
+def define_Ki_contact_matrix(df):
+    ##  20200318_EMODKingCountyCovidInterventions.docx
+    ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
+	##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
+    df['sKi1_4'] = 0.209526849
+    df['sKi1_3'] = 0.039466462
+    df['sKi1_2'] = 0.037694265
+    df['sKi1_1'] = 0.015909742
+    df['sKi2_4'] = 0.051521569
+    df['sKi2_3'] = 0.293093246
+    df['sKi2_2'] = 0.066737714
+    df['sKi2_1'] = 0.02740285
+    df['sKi3_4'] = 0.042740507
+    df['sKi3_3'] = 0.046714807
+    df['sKi3_2'] = 0.092046263
+    df['sKi3_1'] = 0.027158353
+    df['sKi4_4'] = 0.006685113
+    df['sKi4_3'] = 0.004914879
+    df['sKi4_2'] = 0.007194698
+    df['sKi4_1'] = 0.031192683
+    return df
 
-    if method == 'randomSampling' :
-        social_multiplier_1 = np.random.uniform(0.9, 1, samples)
-        social_multiplier_2 = np.random.uniform(0.6, 0.9, samples)
-        social_multiplier_3 = np.random.uniform(0.2, 0.6, samples)
-        for nr in range(samples) :
-            Ki_red_dic[nr] = [social_multiplier_1[nr], social_multiplier_2[nr], social_multiplier_3[nr]]
-    elif method != 'randomSampling' :
-        if scalingFactors == None :
-            scalingFactors = [2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2]
-         for nr, scl in enumerate(scalingFactors):
-            # scl = 0.5
-            Set1 = [0.65, 0.4, 0.1]  # np.random.uniform(0,0.5, 10)
-            Ki_red_dic[nr] = [getKiredCMS(x, scl) for x in Set1]
+def replace_Ki_contact_param(data, df, sample_nr) :
+    data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
+    data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
+    data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
+    data = data.replace('@sKi1_1@', str(df.sKi1_1[sample_nr]))
+    data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
+    data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
+    data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
+    data = data.replace('@sKi2_1@', str(df.sKi2_1[sample_nr]))
+    data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
+    data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
+    data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
+    data = data.replace('@sKi3_1@', str(df.sKi3_1[sample_nr]))
+    data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
+    data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
+    data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
+    data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
+    return data
 
-    return(Ki_red_dic)
 
 # parameter samples                
 def generateParameterSamples(samples, pop):
@@ -104,12 +131,12 @@ def generateParameterSamples(samples, pop):
         df['d_Sym'] = np.random.uniform(0.2, 0.3, samples)
         df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
+        df = define_Ki_contact_matrix(df)
         #df['Ki'] = Ki_i
-        
-        df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
+        df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"))
         return(df)
 
-def replaceParameters(df, Ki_i, Ki_multiplier1, Ki_multiplier2, Ki_multiplier3, sample_nr, emodlname,  scen_num) :
+def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin = open(os.path.join(temp_exp_dir,emodlname), "rt")          
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
@@ -133,9 +160,7 @@ def replaceParameters(df, Ki_i, Ki_multiplier1, Ki_multiplier2, Ki_multiplier3, 
     data = data.replace('@recovery_rate_hosp@', str(df.recovery_rate_hosp[sample_nr]))
     data = data.replace('@recovery_rate_crit@', str(df.recovery_rate_crit[sample_nr]))
     data = data.replace('@Ki@', '%.09f'% Ki_i)
-    data = data.replace('@Ki_multiplier1@', '%.09f'% Ki_multiplier1)
-    data = data.replace('@Ki_multiplier2@', '%.09f'% Ki_multiplier2)
-    data = data.replace('@Ki_multiplier3@', '%.09f'% Ki_multiplier3)
+    data = replace_Ki_contact_param(data, df, sample_nr)
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
     fin.write(data)
@@ -143,34 +168,28 @@ def replaceParameters(df, Ki_i, Ki_multiplier1, Ki_multiplier2, Ki_multiplier3, 
     
     
     
-def generateScenarios(simulation_population, Kivalues,Ki_red_dic, nruns, sub_samples, modelname):
+def generateScenarios(Kivalues, sub_samples, modelname):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
     for sample in range(sub_samples):
-        for Kindex , Kval in enumerate(Ki_red_dic.values()):
-            #print(Kindex , Kval)
-            for i in Kivalues:
-                scen_num += 1
-                #print(i)
+        for i in Kivalues:
+            scen_num += 1
+            #print(i)
 
-                #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
-                lst.append([sample, scen_num, i, Kval])
-                replaceParameters(df=dfparam, Ki_i=i, Ki_multiplier1 =Kval[0] , Ki_multiplier2=Kval[1], Ki_multiplier3=Kval[2], sample_nr= sample, emodlname=modelname, scen_num=scen_num)
+            lst.append([sample, scen_num, i])
+            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
 
-                # adjust model.cfg
-                fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
-                data_cfg = fin.read()
-                data_cfg = data_cfg.replace('@nruns@', str(nruns))
-                data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
-                fin.close()
-                fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
-                fin.write(data_cfg)
-                fin.close()
-
-    #df = pd.DataFrame(lst, columns=['statisticalPop','sample_num','nruns', 'scen_num', 'Ki', 'Ki_red'])
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'Ki_red'])
-    df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
+            # adjust model.cfg
+            fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
+            data_cfg = fin.read()
+            data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            fin.close()
+            fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
+            fin.write(data_cfg)
+            fin.close()
+    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
+    df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
     return (scen_num)
 
 def generateSubmissionFile(scen_num,exp_name, Location='Local'):
@@ -184,7 +203,7 @@ def generateSubmissionFile(scen_num,exp_name, Location='Local'):
     if Location == 'NUCLUSTER':
         # Hardcoded Quest directories for now!
         # additional parameters , ncores, time, queue...
-        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 5\n#SBATCH --ntasks-per-node=5'
+        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 1\n#SBATCH --ntasks-per-node=5'
         module = '\nmodule load singularity'
         singularity = '\nsingularity exec /software/singularity/images/singwine-v1.img wine'
         array = '\n#SBATCH --array=1-' + str(scen_num)
@@ -201,8 +220,7 @@ def generateSubmissionFile(scen_num,exp_name, Location='Local'):
 
 def runExp(Location = 'Local'):
     if Location =='Local' :
-        p = os.path.join(temp_exp_dir, ‘runSimulations.bat’)
-        subprocess.call([p])
+        subprocess.call([r'runSimulations.bat'])
     if Location =='NUCLUSTER' :
         print('please submit sbatch runSimulations.sh in the terminal')
 
@@ -212,7 +230,7 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
     num_channels = len([x for x in df.columns.values if '{0}' in x])
-    num_samples = int((len(row_df)) / num_channels)
+    num_samples = int((len(row_df) - 1) / num_channels)
 
     df = df.reset_index(drop=False)
     df = df.rename(columns={'index': 'time'})
@@ -231,15 +249,16 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     adf = adf.reset_index()
     del adf['index']
     if output_fname:
-        adf.to_csv(os.path.join(temp_exp_dir,output_fname), index=False)
+        adf.to_csv(os.path.join(temp_exp_dir,output_fname))
     return adf
 
 
 def combineTrajectories(Nscenarios, deleteFiles=False):
     scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
+    del scendf['Unnamed: 0']
 
     df_list = []
-    for scen_i in range(Nscenarios):
+    for scen_i in range(1, Nscenarios):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
             df_i = reprocess(input_name)
@@ -252,12 +271,12 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
         if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
 
     dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
+    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"))
 
     return dfc
 
 #def cleanup(Nscenarios) :
-#    if os.path.exists(os.path.join(temp_exp_dir,"trajectoriesDat.csv")):
+#    if os.path.exists(os.path.join(sim_output_path,"trajectoriesDat.csv")):
 #        for scen_i in range(1, Nscenarios):
 #            input_name = "trajectories_scen" + str(scen_i) + ".csv"
 #            try:
@@ -267,13 +286,12 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
 #    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
 #    os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
-def cleanup(delete_temp_dir=True) :
-    if delete_temp_dir ==True : 
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print('temp_dir folder deleted')
+def cleanup() :
+    os.remove(os.path.join(temp_dir, "simulation_*"))
+    os.remove(os.path.join(temp_dir, "model_*"))
     shutil.move(temp_exp_dir, sim_output_path)
 
-def plot(adf, allchannels, plot_fname=None):
+def plot(adf, allchannels=master_channel_list, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
 
@@ -300,29 +318,19 @@ def plot(adf, allchannels, plot_fname=None):
         plt.savefig(os.path.join(plot_path, plot_fname))
     plt.show()
 
-if __name__ == '__main__' :
 
-    master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                           'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-    detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-    custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
-                           'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
+# if __name__ == '__main__' :
+nscen = generateScenarios(Kivalues,  sub_samples=3, modelname=emodlname )
+generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
 
-    # Experiment design, fitting parameter and population
-    Kivalues =  np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
-    simulation_population = 1000 #2700000
-    Ki_red_dic = addTimeEvent(scalingFactors=[2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2])
-
-    nscen = generateScenarios(simulation_population, Kivalues, Ki_red_dic, nruns=2, sub_samples=2, modelname=emodlname )
-    generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
-  
-  if Location == 'Local' :
+if Location == 'Local' :
     runExp(Location='Local')
     # Once the simulations are done
     combineTrajectories(nscen)
-    cleanup(delete_temp_dir=True)
-    df = pd.read_csv(os.path.join(temp_exp_dir, 'trajectoriesDat.csv'))
-
+    #cleanup()
+    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+    #df.params.unique()
+    #df= df[df['params'] == 9.e-05]
     # Plots for quick check of simulation results
     first_day = date(2020, 2, 22)
     plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
