@@ -112,10 +112,13 @@
 (time-event socialDistance_start 31 ((Ki Ki_red3)))
 
 (reaction exposure   (S) (E) (* Ki S (+ infectious_undet (* infectious_det reduced_inf_of_det_cases))))
-(reaction infection  (E)   (As)   (* Kl E))
+(reaction infection_asymp_undet  (E)   (As)   (* Kl E (- 1 d_As)))
+(reaction infection_asymp_det  (E)   (As_det1)   (* Kl E d_As))
 (reaction presymptomatic (E)   (P)   (* Ks E))
-(reaction mild_symptomatic (P)  (Sym) (* Ksym P))
-(reaction severe_symptomatic (P)  (Sys)  (* Ksys P))
+(reaction mild_symptomatic_undet (P)  (Sym) (* Ksym P (- 1 d_Sym)))
+(reaction mild_symptomatic_det (P)  (Sym_det2) (* Ksym P d_Sym))
+(reaction severe_symptomatic_undet (P)  (Sys)  (* Ksys P (- 1 d_Sys)))
+(reaction severe_symptomatic_det (P)  (Sys_det3)  (* Ksys P d_Sys))
 
 (reaction hospitalization_1   (Sys)   (H1)   (* Kh1 Sys))
 (reaction hospitalization_2   (Sys)   (H2)   (* Kh2 Sys))
@@ -129,9 +132,6 @@
 (reaction recovery_H1   (H1)   (RH1)   (* Kr_h H1))
 (reaction recovery_C2   (C2)   (RC2)   (* Kr_c C2))
 
-(reaction detect_As (As) (As_det1) (* d_As As))
-(reaction detect_symp (Sym) (Sym_det2) (* d_Sym Sym))
-(reaction detect_hosp (Sys) (Sys_det3) (* d_Sys Sys))
 
 (reaction recovery_As_det (As_det1)   (RAs_det1)   (* Kr_a As_det1))
 
