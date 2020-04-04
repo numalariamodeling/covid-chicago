@@ -21,6 +21,7 @@ cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
 
+
 def makeExperimentFolder() :
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
@@ -74,6 +75,10 @@ def generateParameterSamples(samples, pop):
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
         df['social_multiplier_3'] = np.random.uniform( 0.005 , 0.3, samples) #0.2, 0.6
 
+        df['socialDistance_time1'] = 24
+        df['socialDistance_time2'] = 29
+        df['socialDistance_time3'] = 33
+
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
 
@@ -104,6 +109,10 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     data = data.replace('@social_multiplier_1@',  str(df.social_multiplier_1[sample_nr]))
     data = data.replace('@social_multiplier_2@',  str(df.social_multiplier_2[sample_nr]))
     data = data.replace('@social_multiplier_3@',  str(df.social_multiplier_3[sample_nr]))
+    data = data.replace('@socialDistance_time1@',  str(df.socialDistance_time1[sample_nr]))
+    data = data.replace('@socialDistance_time2@',  str(df.socialDistance_time2[sample_nr]))
+    data = data.replace('@socialDistance_time3@',  str(df.socialDistance_time3[sample_nr]))
+
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
     fin.write(data)
@@ -284,7 +293,7 @@ if __name__ == '__main__' :
     #exp_name = today.strftime("%Y%m%d") + '_cobeyModel_updatedParam_infectious_det_urban' + '_rn' + str(int(np.random.uniform(10, 99)))
     #exp_name = today.strftime("%Y%m%d") + '_cobeyModel_updatedParam_infectious_det_rural' + '_rn' + str(int(np.random.uniform(10, 99)))
     #exp_name = today.strftime("%Y%m%d") + '_cobeyModel__IL_updatedParam_infectious_det_urban' + '_rn' + str(int(np.random.uniform(10, 99)))
-    exp_name = today.strftime("%Y%m%d") + '_test' + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + 'mr_test_popIL' + '_rn' + str(int(np.random.uniform(10, 99)))
 
 
     # Selected SEIR model
@@ -294,14 +303,18 @@ if __name__ == '__main__' :
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     # Simlation setup
-    simulation_population = 2700000  # 2700000  #1000  # 12830632 Illinois   # 2700000  Chicago
-    number_of_samples = 20
-    number_of_runs = 3
+    simulation_population = 2700000  #  1000  # 12830632 Illinois   # 2700000  Chicago
+    number_of_samples = 10
+    number_of_runs = 2
     duration = 120
     monitoring_samples = 120  # needs to be smaller than duration
 
+    # Time event
+    #startDate = '02.20.2020'
+    #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
+
     # Parameter values
-    Kivalues =  np.linspace(2.e-7,2.5e-7,5) *0.9  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues =  np.linspace(2.e-7,2.5e-7,3)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -314,7 +327,7 @@ if __name__ == '__main__' :
     generateSubmissionFile(nscen, exp_name)
   
   if Location == 'Local' :
-    #runExp(Location='Local')
+    runExp(Location='Local')
 
     # Once the simulations are done
     combineTrajectories(500)

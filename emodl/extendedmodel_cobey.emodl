@@ -107,9 +107,9 @@
 (param Ki_red2 (* Ki @social_multiplier_2@))
 (param Ki_red3 (* Ki @social_multiplier_3@))
 
-(time-event socialDistance_no_large_events_start 22 ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start 27 ((Ki Ki_red2)))
-(time-event socialDistance_start 31 ((Ki Ki_red3)))
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
 (reaction exposure   (S) (E) (* Ki S (+ infectious_undet (* infectious_det reduced_inf_of_det_cases))))
 (reaction infection_asymp_undet  (E)   (As)   (* Kl E (- 1 d_As)))
