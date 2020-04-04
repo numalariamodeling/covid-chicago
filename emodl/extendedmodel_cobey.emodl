@@ -63,10 +63,12 @@
 (observe detected_cumul (+ (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
 
 (func infectious_undet (+ As P Sym Sys H1 H2 H3 C2 C3))
-(func infectious_det (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
+;(func infectious_det (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
+(func infectious_det (+ As_det1 Sym_det2 Sys_det3))
 
 (observe detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (observe infected (+ infectious_det infectious_undet))
+
 
 (param incubation_pd @incubation_pd@)
 (param time_to_symptoms @time_to_symptoms@)
@@ -102,9 +104,9 @@
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
-(param Ki_red1 (* Ki 0.65))
-(param Ki_red2 (* Ki 0.4))
-(param Ki_red3 (* Ki 0.1))
+(param Ki_red1 (* Ki @social_multiplier_1@))
+(param Ki_red2 (* Ki @social_multiplier_2@))
+(param Ki_red3 (* Ki @social_multiplier_3@))
 
 (time-event socialDistance_no_large_events_start 22 ((Ki Ki_red1)))
 (time-event socialDistance_school_closure_start 27 ((Ki Ki_red2)))
