@@ -20,96 +20,73 @@ emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
-exp_name = today.strftime("%Y%m%d") + '_cobeyModel_testTimeEvent' + '_rn' + str(int(np.random.uniform(10, 99)))
 
-emodlname = 'extendedmodel_cobey.emodl'
+def makeExperimentFolder() :
+    if testMode == True:
+        sim_output_path = os.path.join(wdir, 'sample_trajectories')
+        plot_path = os.path.join(wdir, 'sample_plots')
+    else:
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = sim_output_path
 
+    if not os.path.exists(sim_output_path):
+        os.makedirs(sim_output_path)
 
-if testMode == True :
-    sim_output_path = os.path.join(wdir, 'sample_trajectories')
-    plot_path = os.path.join(wdir, 'sample_plots')
-else :
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = sim_output_path
+    if not os.path.exists(plot_path):
+        os.makedirs(plot_path)
 
-if not os.path.exists(sim_output_path):
-    os.makedirs(sim_output_path)
+    # Create temporary folder for the simulation files
+    # currently allowing to run only 1 experiment at a time locally
+    temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
+    temp_dir = os.path.join(temp_exp_dir, 'simulations')
+    if not os.path.exists(os.path.join(git_dir, '_temp')):
+        os.makedirs(os.path.join(os.path.join(git_dir, '_temp')))
+    if not os.path.exists(temp_exp_dir):
+        os.makedirs(temp_exp_dir)
+        os.makedirs(temp_dir)
+        os.makedirs(os.path.join(temp_exp_dir, 'log'))  # Required on quest
 
-if not os.path.exists(plot_path):
-    os.makedirs(plot_path)
+    ## Copy emodl and cfg file  to experiment folder
+    shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
+    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
 
-# Create temporary folder for the simulation files
-# currently allowing to run only 1 experiment at a time locally
-temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
-temp_dir = os.path.join(temp_exp_dir,  'simulations')
-if not os.path.exists(os.path.join(git_dir, '_temp')):
-    os.makedirs(os.path.join(os.path.join(git_dir, '_temp') ))
-if not os.path.exists(temp_exp_dir):
-    os.makedirs(temp_exp_dir)
-    os.makedirs(temp_dir)
-    os.makedirs(os.path.join(temp_exp_dir, 'log'))  # Required on quest
+    return temp_dir, temp_exp_dir, sim_output_path, plot_path
 
-## Copy emodl and cfg file  to experiment folder
-shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
-shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
-
-
-def getKiredCMS(i, scl):
-    y = i * scl
-    if y > 1: y = 1
-    return (y)
-
-def addTimeEvent(samples , scalingFactors=None, method="randomSampling"):
-    Ki_red_dic = {}
-
-    if method == 'randomSampling' :
-        social_multiplier_1 = np.random.uniform(0.9, 1, samples)
-        social_multiplier_2 = np.random.uniform(0.6, 0.9, samples)
-        social_multiplier_3 = np.random.uniform(0.2, 0.6, samples)
-        for nr in range(samples) :
-            Ki_red_dic[nr] = [social_multiplier_1[nr], social_multiplier_2[nr], social_multiplier_3[nr]]
-    elif method != 'randomSampling' :
-        if scalingFactors == None :
-            scalingFactors = [2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2]
-         for nr, scl in enumerate(scalingFactors):
-            # scl = 0.5
-            Set1 = [0.65, 0.4, 0.1]  # np.random.uniform(0,0.5, 10)
-            Ki_red_dic[nr] = [getKiredCMS(x, scl) for x in Set1]
-
-    return(Ki_red_dic)
-
-# parameter samples                
+# parameter samples
 def generateParameterSamples(samples, pop):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
-        df['initialAs'] = 10#np.random.uniform(1, 5, samples)
+        df['initialAs'] = 10 #np.random.uniform(1, 5, samples)
 
         df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
-        df['time_to_symptoms'] = np.random.uniform(1, 5,samples)
+        df['time_to_symptoms'] = np.random.uniform(1, 5, samples)
         df['time_to_hospitalization'] = np.random.uniform(2, 10, samples)
         df['time_to_critical'] = np.random.uniform(4, 9, samples)
         df['time_to_death'] = np.random.uniform(3, 11, samples)
         df['recovery_rate_asymp'] = np.random.uniform(6, 16, samples)
-        df['recovery_rate_mild'] = np.random.uniform(6, 16, samples)
-        df['recovery_rate_hosp'] = np.random.uniform(6, 16, samples)
-        df['recovery_rate_crit'] = np.random.uniform(6, 16, samples)
+        df['recovery_rate_mild'] = np.random.uniform(19.4, 21.3, samples)
+        df['recovery_rate_hosp'] = np.random.uniform(19.5, 21.1, samples)
+        df['recovery_rate_crit'] = np.random.uniform(25.3, 31.6, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
         df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
         df['fraction_critical'] = np.random.uniform(0.1, 0.3, samples)
-        df['cfr'] = np.random.uniform(0.008, 0.04, samples)
-        df['fraction_dead'] = df.apply(lambda x : x['cfr']/x['fraction_severe'], axis=1)
-        df['fraction_hospitalized'] = df.apply(lambda x : 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+        df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
+        df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
+        df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
         df['reduced_inf_of_det_cases'] = np.random.uniform(0.5, 0.9, samples)
         df['d_Sym'] = np.random.uniform(0.2, 0.3, samples)
         df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
-        #df['Ki'] = Ki_i
-        
+
+        df['social_multiplier_1'] = np.random.uniform(0.9, 1, samples)
+        df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
+        df['social_multiplier_3'] = np.random.uniform(0.2, 0.6, samples)
+
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
 
-def replaceParameters(df, Ki_i, Ki_multiplier1, Ki_multiplier2, Ki_multiplier3, sample_nr, emodlname,  scen_num) :
+def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin = open(os.path.join(temp_exp_dir,emodlname), "rt")          
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
@@ -133,57 +110,52 @@ def replaceParameters(df, Ki_i, Ki_multiplier1, Ki_multiplier2, Ki_multiplier3, 
     data = data.replace('@recovery_rate_hosp@', str(df.recovery_rate_hosp[sample_nr]))
     data = data.replace('@recovery_rate_crit@', str(df.recovery_rate_crit[sample_nr]))
     data = data.replace('@Ki@', '%.09f'% Ki_i)
-    data = data.replace('@Ki_multiplier1@', '%.09f'% Ki_multiplier1)
-    data = data.replace('@Ki_multiplier2@', '%.09f'% Ki_multiplier2)
-    data = data.replace('@Ki_multiplier3@', '%.09f'% Ki_multiplier3)
+    data = data.replace('@social_multiplier_1@',  str(df.social_multiplier_1[sample_nr]))
+    data = data.replace('@social_multiplier_2@',  str(df.social_multiplier_2[sample_nr]))
+    data = data.replace('@social_multiplier_3@',  str(df.social_multiplier_3[sample_nr]))
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
     fin.write(data)
     fin.close()
+
     
-    
-    
-def generateScenarios(simulation_population, Kivalues,Ki_red_dic, duration, monitoring_samples, nruns, sub_samples, modelname):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
     for sample in range(sub_samples):
-        for Kindex , Kval in enumerate(Ki_red_dic.values()):
-            #print(Kindex , Kval)
-            for i in Kivalues:
-                scen_num += 1
-                #print(i)
+        for i in Kivalues:
+            scen_num += 1
+            #print(i)
 
-                #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
-                lst.append([sample, scen_num, i, Kval])
-                replaceParameters(df=dfparam, Ki_i=i, Ki_multiplier1 =Kval[0] , Ki_multiplier2=Kval[1], Ki_multiplier3=Kval[2], sample_nr= sample, emodlname=modelname, scen_num=scen_num)
+            #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
+            lst.append([sample, scen_num, i])
+            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
 
-                # adjust model.cfg
-                fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
-                data_cfg = fin.read()
-                data_cfg = data_cfg.replace('@duration@', str(duration))
-                data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
-                data_cfg = data_cfg.replace('@nruns@', str(nruns))
-                data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
-                fin.close()
-                fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
-                fin.write(data_cfg)
-                fin.close()
+            # adjust model.cfg
+            fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
+            data_cfg = fin.read()
+            data_cfg = data_cfg.replace('@duration@', str(duration))
+            data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
+            data_cfg = data_cfg.replace('@nruns@', str(nruns))
+            data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            fin.close()
+            fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
+            fin.write(data_cfg)
+            fin.close()
 
-    #df = pd.DataFrame(lst, columns=['statisticalPop','sample_num','nruns', 'scen_num', 'Ki', 'Ki_red'])
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'Ki_red'])
+    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
-def generateSubmissionFile(scen_num,exp_name, Location='Local'):
-    if Location =='Local':
+def generateSubmissionFile(scen_num,exp_name):
         file = open(os.path.join(temp_exp_dir,'runSimulations.bat'), 'w')
         for i in range(1, scen_num):
             file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '" -c "' + os.path.join(temp_dir, "model_" + str(i) + ".cfg") +
 																															 
                        '" -m "' + os.path.join(temp_dir, "simulation_" + str(i) + ".emodl") + '"')
         file.close()
-    if Location == 'NUCLUSTER':
+
         # Hardcoded Quest directories for now!
         # additional parameters , ncores, time, queue...
         header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 5\n#SBATCH --ntasks-per-node=5'
@@ -258,16 +230,6 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
 
     return dfc
 
-#def cleanup(Nscenarios) :
-#    if os.path.exists(os.path.join(temp_exp_dir,"trajectoriesDat.csv")):
-#        for scen_i in range(1, Nscenarios):
-#            input_name = "trajectories_scen" + str(scen_i) + ".csv"
-#            try:
-#                    os.remove(os.path.join(git_dir, input_name))
-#            except:
-#                continue
-#    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
-#    os.remove(os.path.join(temp_dir, "model_i.cfg"))
 
 def cleanup(delete_temp_dir=True) :
     if delete_temp_dir ==True : 
@@ -310,33 +272,48 @@ if __name__ == '__main__' :
     custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
                            'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
+    #============================================================
     # Experiment design, fitting parameter and population
-    Kivalues =  np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
-    simulation_population = 2700000  #1000
+    #=============================================================
+
+    #exp_name = today.strftime("%Y%m%d") + '_cobeyModel_updatedParam_infectious_det_urban' + '_rn' + str(int(np.random.uniform(10, 99)))
+    #exp_name = today.strftime("%Y%m%d") + '_cobeyModel_updatedParam_infectious_det_rural' + '_rn' + str(int(np.random.uniform(10, 99)))
+    #exp_name = today.strftime("%Y%m%d") + '_cobeyModel__IL_updatedParam_infectious_det_urban' + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_test' + '_rn' + str(int(np.random.uniform(10, 99)))
+
+
+    # Selected SEIR model
+    emodlname = 'extendedmodel_cobey.emodl'
+
+    # Generate folders and copy required files
+    temp_dir, temp_exp_dir, sim_output_path, plot_path = makeExperimentFolder()
+
+    # Simlation setup
+    simulation_population = 12830632  # 2700000  #1000  # 12830632 Illinois   # 2700000  Chicago
     number_of_samples = 20
     number_of_runs = 3
-    duration = 60
-    monitoring_samples = 60  # needs to be smaller than duration
+    duration = 120
+    monitoring_samples = 120  # needs to be smaller than duration
 
-    Ki_red_dic = addTimeEvent(scalingFactors=[2, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2], method='scaling', samples=None)
+    # Parameter values
+    Kivalues =  np.linspace(2e-7,3e-7,5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
-                              Ki_red_dic,
                               nruns=number_of_runs,
                               sub_samples=number_of_samples,
                               duration = duration,
                               monitoring_samples = monitoring_samples,
-                              modelname=emodlname )
+                              modelname=emodlname)
 
-    generateSubmissionFile(nscen, exp_name,Location='Local')  # 'NUCLUSTER'
+    generateSubmissionFile(nscen, exp_name)
   
   if Location == 'Local' :
     runExp(Location='Local')
     # Once the simulations are done
     combineTrajectories(nscen)
     cleanup(delete_temp_dir=True)
-    df = pd.read_csv(os.path.join(temp_exp_dir, 'trajectoriesDat.csv'))
+    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
     # Plots for quick check of simulation results
     first_day = date(2020, 2, 22)
