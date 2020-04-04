@@ -63,11 +63,10 @@
 (observe detected_cumul (+ (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
 
 (func infectious_undet (+ As P Sym Sys H1 H2 H3 C2 C3))
-;(func infectious_det (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infectious_det (+ As_det1 Sym_det2 Sys_det3))
 
 (observe detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
-(observe infected (+ infectious_det infectious_undet))
+(observe infected (+ infectious_det infectious_undet H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 
 
 (param incubation_pd @incubation_pd@)
