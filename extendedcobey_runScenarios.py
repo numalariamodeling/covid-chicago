@@ -306,8 +306,8 @@ if __name__ == '__main__' :
     simulation_population = 2700000  #  1000  # 12830632 Illinois   # 2700000  Chicago
     number_of_samples = 10
     number_of_runs = 2
-    duration = 120
-    monitoring_samples = 120  # needs to be smaller than duration
+    duration = 365
+    monitoring_samples = 365  # needs to be smaller than duration
 
     # Time event
     #startDate = '02.20.2020'
