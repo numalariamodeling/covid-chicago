@@ -19,7 +19,7 @@ first_day = date(2020, 2, 20)
 
 def load_sim_data(exp_name) :
 
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name, exp_name)
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
@@ -129,5 +129,5 @@ def compare_county(exp_name, county_name) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200403_cobeyModel_Chicago_run_rn85'
+    exp_name = '20200404_Cook_urban_updatedKI_rn78'
     compare_county(exp_name, 'Cook')
