@@ -19,20 +19,17 @@ def read_group_dictionary(filename='age_dic.csv', Testmode=True, ngroups=2):
 
     return age_dic
 
-def define_group_dictionary(totalPop, ageGroups,  ageGroupScale, initialAs, initialSy, initialH) :
+def define_group_dictionary(totalPop, ageGroups,  ageGroupScale, initialAs) :
     age_dic = {}
     for i, grp in enumerate(ageGroups):
         print(i, grp)
-        age_dic[grp] = [totalPop * ageGroupScale[i], initialAs[i], initialSy[i], initialH[i]]
+        age_dic[grp] = [totalPop * ageGroupScale[i], initialAs[i]]
     return age_dic
 
 def write_species_init(age_dic, age):
     S = "(species S_{} {})".format(age, age_dic[age][0])
     As = "(species As_{} {})".format(age, age_dic[age][1])
-    Sym = "(species Sy_{} {})".format(age, age_dic[age][2])
-    H1 = "(species H1_{} {})".format(age, age_dic[age][3])
-    species_init_str = S + '\n' + As + '\n' + Sym + '\n' + H1 + '\n'
-
+    species_init_str = S + '\n' + As + '\n'
     species_init_str = species_init_str.replace("  ", " ")
     return (species_init_str)
 
@@ -45,9 +42,11 @@ def write_species(grp):
 (species E_{} 0)
 (species As_det1_{} 0)
 (species P_{} 0)
+(species Sym_{} 0)
 (species Sym_det2_{} 0)
 (species Sys_{} 0)
 (species Sys_det3_{} 0)
+(species H1_{} 0)
 (species H2_{} 0)
 (species H3_{} 0)
 (species H1_det3_{} 0)
@@ -83,7 +82,7 @@ def write_observe(grp):
 (observe susceptible_{} S_{})
 (observe exposed_{} E_{})
 (observe asymptomatic_{} asymptomatic_{})
-(observe presymptomatic_{} P)
+(observe presymptomatic_{} P_{})
 (observe symptomatic_mild_{} symptomatic_mild_{})
 (observe symptomatic_severe_{} symptomatic_severe_{})
 (observe hospitalized_{} hospitalized_{})
@@ -92,21 +91,21 @@ def write_observe(grp):
 (observe recovered_{} recovered_{})
 (observe asymp_cumul_{} (+ asymptomatic_{} RAs_{} RAs_det1_{} ))
 (observe asymp_det_cumul_{} (+ As_det1_{} RAs_det1_{}))
-(observe symp_mild_cumul_{} (+ symptomatic_mild_{} RSym RSym_det2_{}))
-(observe symp_severe_cumul_{} (+ symptomatic_severe_{} hospitalized critical_{} deaths_{} RH1_{} RC2_{} RH1_det3_{} RC2_det3_{}))
+(observe symp_mild_cumul_{} (+ symptomatic_mild_{} RSym_{} RSym_det2_{}))
+(observe symp_severe_cumul_{} (+ symptomatic_severe_{} hospitalized_{} critical_{} deaths_{} RH1_{} RC2_{} RH1_det3_{} RC2_det3_{}))
 (observe hosp_cumul_{} (+ hospitalized_{} critical_{} deaths_{} RH1_{} RC2_{} RH1_det3_{} RC2_det3_{}))
 (observe hosp_det_cumul_{} (+ H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{} D3_det3_{} RH1_det3_{} RC2_det3_{}))
 (observe crit_cumul_{} (+ deaths_{} critical_{} RC2_{} RC2_det3_{}))
 (observe detected_cumul_{} (+ (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} C2_det3_{} C3_det3_{}) RAs_det1_{} RSym_det2_{} RH1_det3_{} RC2_det3_{} D3_det3_{}))
 (observe detected_{} (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
 (observe infected_{} (+ infectious_det_{} infectious_undet_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
-""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
            )
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
@@ -131,7 +130,7 @@ def write_functions(grp):
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
            )
-    functions_str = functions_str.replace("  ", "")
+   # functions_str = functions_str.replace("  ", "")
     return (functions_str)
 
 
@@ -148,7 +147,7 @@ def write_ki_mix(nageGroups, scale=True):
         if scale == False :
             string_i = "(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )" + "\n"
         elif scale == True :
-            string_i = "(param " + ki_dic[i][0] + " (/ Ki @s" + ki_dic[i][0] + "@ ))" + "\n"
+            string_i = "(param " + ki_dic[i][0] + " (* Ki @s" + ki_dic[i][0] + "@ ))" + "\n"
         ki_mix_param = ki_mix_param + string_i
 
     return ki_mix_param
@@ -197,7 +196,7 @@ def write_params():
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
  """
-    params_str = params_str.replace("  ", " ")
+    #params_str = params_str.replace("  ", " ")
 
     return (params_str)
 
@@ -259,8 +258,8 @@ def write_reactions(grp):
     reaction_str = """
 (reaction infection_asymp_undet_{}  (E_{})   (As_{})   (* Kl E_{} (- 1 d_As)))
 (reaction infection_asymp_det_{}  (E_{})   (As_det1_{})   (* Kl E_{} d_As))
-(reaction presymptomatic_{} (E)   (P_{})   (* Ks E_{}))
-(reaction mild_symptomatic_undet_{} (P_{})  (Sym) (* Ksym P_{} (- 1 d_Sym)))
+(reaction presymptomatic_{} (E_{})   (P_{})   (* Ks E_{}))
+(reaction mild_symptomatic_undet_{} (P_{})  (Sym_{}) (* Ksym P_{} (- 1 d_Sym)))
 (reaction mild_symptomatic_det_{} (P_{})  (Sym_det2_{}) (* Ksym P_{} d_Sym))
 (reaction severe_symptomatic_undet_{} (P_{})  (Sys_{})  (* Ksys P_{} (- 1 d_Sys)))
 (reaction severe_symptomatic_det_{} (P_{})  (Sys_det3_{})  (* Ksys P_{} d_Sys))
@@ -293,7 +292,7 @@ def write_reactions(grp):
 (reaction recovery_Sym_det2_{}   (Sym_det2_{})   (RSym_det2_{})   (* Kr_m  Sym_det2_{}))
 (reaction recovery_H1_det3_{}   (H1_det3_{})   (RH1_det3_{})   (* Kr_h H1_det3_{}))
 (reaction recovery_C2_det3_{}   (C2_det3_{})   (RC2_det3_{})   (* Kr_c C2_det3_{}))
-""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,grp,grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
@@ -305,7 +304,7 @@ def write_reactions(grp):
            grp, grp, grp, grp, grp, grp, grp
            )
 
-    reaction_str = reaction_str.replace("  ", " ")
+    #reaction_str = reaction_str.replace("  ", " ")
     return (reaction_str)
 
 
@@ -361,13 +360,11 @@ def generate_extended_emodl(grp_dic, file_output, verbose=False):
 #if __name__ == '__main__':
 #age_dic = read_group_dictionary(filename='age_dic_agg.csv', Testmode=False)
 # Age scaling needs revision based on latest demography data
-age_dic = define_group_dictionary(totalPop = 2700000,
-                                      ageGroups = ['ageU5','age5to17','age18to64','age64to100'],
-                                      ageGroupScale = [0.062, 0.203, 0.606, 0.129],
-                                  initialAs= [1,1,1,1],
-                                  initialSy= [0,0,0,0],
-                                  initialH= [0,0,0,0])  ## scaled from Chicago population data shared in w7 channel
+age_dic = define_group_dictionary(totalPop = 1000,      #2700000
+                                  ageGroups=['ageU5', 'age5to17', 'age18to64', 'age64to100'],
+                                  ageGroupScale=[0.062, 0.203, 0.606, 0.129],   ## scaled from Chicago population data shared in w7 channel
+                                  initialAs= [3,3,3,3])    ## homogeneous distribution of  initial cases  in all age groups?
 
-generate_extended_emodl(grp_dic=age_dic, file_output=os.path.join(emodl_dir, 'age_colbeymodel_covid.emodl'))
+generate_extended_emodl(grp_dic=age_dic, file_output=os.path.join(emodl_dir, 'age_colbeymodel_covid_4agegrp_pop1000.emodl'))
 
 
