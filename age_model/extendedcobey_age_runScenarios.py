@@ -22,45 +22,132 @@ cfg_dir = os.path.join(git_dir,'age_model', 'cfg')
 today = date.today()
 
 
-def define_Ki_contact_matrix(df):
+def define_Ki_contact_matrix(df, ageGroupSet):
     ##  20200318_EMODKingCountyCovidInterventions.docx
     ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
 	##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
-    df['sKi1_4'] = 0.209526849
-    df['sKi1_3'] = 0.039466462
-    df['sKi1_2'] = 0.037694265
-    df['sKi1_1'] = 0.015909742
-    df['sKi2_4'] = 0.051521569
-    df['sKi2_3'] = 0.293093246
-    df['sKi2_2'] = 0.066737714
-    df['sKi2_1'] = 0.02740285
-    df['sKi3_4'] = 0.042740507
-    df['sKi3_3'] = 0.046714807
-    df['sKi3_2'] = 0.092046263
-    df['sKi3_1'] = 0.027158353
-    df['sKi4_4'] = 0.006685113
-    df['sKi4_3'] = 0.004914879
-    df['sKi4_2'] = 0.007194698
-    df['sKi4_1'] = 0.031192683
+
+    if ageGroupSet == 'Set1':
+        df['sKi1_4'] = 0.209526849
+        df['sKi1_3'] = 0.039466462
+        df['sKi1_2'] = 0.037694265
+        df['sKi1_1'] = 0.015909742
+        df['sKi2_4'] = 0.051521569
+        df['sKi2_3'] = 0.293093246
+        df['sKi2_2'] = 0.066737714
+        df['sKi2_1'] = 0.02740285
+        df['sKi3_4'] = 0.042740507
+        df['sKi3_3'] = 0.046714807
+        df['sKi3_2'] = 0.092046263
+        df['sKi3_1'] = 0.027158353
+        df['sKi4_4'] = 0.006685113
+        df['sKi4_3'] = 0.004914879
+        df['sKi4_2'] = 0.007194698
+        df['sKi4_1'] = 0.031192683
+
+
+    ## COPIED VALUES FROM SET1 - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
+    elif ageGroupSet == 'Set2' :
+        df['sKi1_6'] = 0.209526849
+        df['sKi1_5'] = 0.039466462
+        df['sKi1_4'] = 0.209526849
+        df['sKi1_3'] = 0.039466462
+        df['sKi1_2'] = 0.037694265
+        df['sKi1_1'] = 0.015909742
+
+        df['sKi2_6'] = 0.051521569
+        df['sKi2_5'] = 0.293093246
+        df['sKi2_4'] = 0.051521569
+        df['sKi2_3'] = 0.293093246
+        df['sKi2_2'] = 0.066737714
+        df['sKi2_1'] = 0.02740285
+
+        df['sKi3_6'] = 0.042740507
+        df['sKi3_5'] = 0.046714807
+        df['sKi3_4'] = 0.042740507
+        df['sKi3_3'] = 0.046714807
+        df['sKi3_2'] = 0.092046263
+        df['sKi3_1'] = 0.027158353
+
+        df['sKi4_6'] = 0.006685113
+        df['sKi4_5'] = 0.004914879
+        df['sKi4_4'] = 0.006685113
+        df['sKi4_3'] = 0.004914879
+        df['sKi4_2'] = 0.007194698
+        df['sKi4_1'] = 0.031192683
+
+        df['sKi5_6'] = 0.006685113
+        df['sKi5_5'] = 0.004914879
+        df['sKi5_4'] = 0.006685113
+        df['sKi5_3'] = 0.004914879
+        df['sKi5_2'] = 0.007194698
+        df['sKi5_1'] = 0.031192683
+
+        df['sKi6_6'] = 0.006685113
+        df['sKi6_5'] = 0.004914879
+        df['sKi6_4'] = 0.006685113
+        df['sKi6_3'] = 0.004914879
+        df['sKi6_2'] = 0.007194698
+        df['sKi6_1'] = 0.031192683
     return df
 
-def replace_Ki_contact_param(data, df, sample_nr) :
-    data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
-    data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
-    data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
-    data = data.replace('@sKi1_1@', str(df.sKi1_1[sample_nr]))
-    data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
-    data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
-    data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
-    data = data.replace('@sKi2_1@', str(df.sKi2_1[sample_nr]))
-    data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
-    data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
-    data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
-    data = data.replace('@sKi3_1@', str(df.sKi3_1[sample_nr]))
-    data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
-    data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
-    data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
-    data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
+def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
+
+    if ageGroupSet == 'Set1':
+        data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
+        data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
+        data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
+        data = data.replace('@sKi1_1@', str(df.sKi1_1[sample_nr]))
+        data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
+        data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
+        data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
+        data = data.replace('@sKi2_1@', str(df.sKi2_1[sample_nr]))
+        data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
+        data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
+        data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
+        data = data.replace('@sKi3_1@', str(df.sKi3_1[sample_nr]))
+        data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
+        data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
+        data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
+        data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
+
+    if ageGroupSet == 'Set2':
+        data = data.replace('@sKi1_6@', str(df.sKi1_6[sample_nr]))
+        data = data.replace('@sKi1_5@', str(df.sKi1_5[sample_nr]))
+        data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
+        data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
+        data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
+        data = data.replace('@sKi1_1@', str(df.sKi1_1[sample_nr]))
+        data = data.replace('@sKi2_6@', str(df.sKi2_6[sample_nr]))
+        data = data.replace('@sKi2_5@', str(df.sKi2_5[sample_nr]))
+        data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
+        data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
+        data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
+        data = data.replace('@sKi2_1@', str(df.sKi2_1[sample_nr]))
+        data = data.replace('@sKi3_6@', str(df.sKi3_6[sample_nr]))
+        data = data.replace('@sKi3_5@', str(df.sKi3_5[sample_nr]))
+        data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
+        data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
+        data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
+        data = data.replace('@sKi3_1@', str(df.sKi3_1[sample_nr]))
+        data = data.replace('@sKi4_6@', str(df.sKi4_6[sample_nr]))
+        data = data.replace('@sKi4_5@', str(df.sKi4_5[sample_nr]))
+        data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
+        data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
+        data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
+        data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
+        data = data.replace('@sKi5_6@', str(df.sKi5_6[sample_nr]))
+        data = data.replace('@sKi5_5@', str(df.sKi5_5[sample_nr]))
+        data = data.replace('@sKi5_4@', str(df.sKi5_4[sample_nr]))
+        data = data.replace('@sKi5_3@', str(df.sKi5_3[sample_nr]))
+        data = data.replace('@sKi5_2@', str(df.sKi5_2[sample_nr]))
+        data = data.replace('@sKi5_1@', str(df.sKi5_1[sample_nr]))
+        data = data.replace('@sKi6_6@', str(df.sKi6_6[sample_nr]))
+        data = data.replace('@sKi6_5@', str(df.sKi6_5[sample_nr]))
+        data = data.replace('@sKi6_4@', str(df.sKi6_4[sample_nr]))
+        data = data.replace('@sKi6_3@', str(df.sKi6_3[sample_nr]))
+        data = data.replace('@sKi6_2@', str(df.sKi6_2[sample_nr]))
+        data = data.replace('@sKi6_1@', str(df.sKi6_1[sample_nr]))
     return data
 
 
@@ -87,7 +174,7 @@ def makeExperimentFolder() :
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 # parameter samples
-def generateParameterSamples(samples, pop):
+def generateParameterSamples(samples, pop, ageGroupSet = 'Set1'):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -123,12 +210,12 @@ def generateParameterSamples(samples, pop):
         df['socialDistance_time2'] = 29
         df['socialDistance_time3'] = 33
         
-        df = define_Ki_contact_matrix(df)
+        df = define_Ki_contact_matrix(df, ageGroupSet=ageGroupSet)
 
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
 
-def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
+def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num, ageGroupSet) :
     fin = open(os.path.join(temp_exp_dir,emodlname), "rt")          
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
@@ -158,7 +245,8 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     data = data.replace('@socialDistance_time1@',  str(df.socialDistance_time1[sample_nr]))
     data = data.replace('@socialDistance_time2@',  str(df.socialDistance_time2[sample_nr]))
     data = data.replace('@socialDistance_time3@',  str(df.socialDistance_time3[sample_nr]))
-    data = replace_Ki_contact_param(data, df, sample_nr)
+
+    data = replace_Ki_contact_param(data, df, sample_nr, ageGroupSet=ageGroupSet)
 
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
@@ -170,10 +258,10 @@ def writeTxt(txtdir, filename, textstring) :
     file.write(textstring)
     file.close()
     
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname,ageGroupSet):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, ageGroupSet=ageGroupSet)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
@@ -181,7 +269,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
             #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
             lst.append([sample, scen_num, i])
-            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
+            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num, ageGroupSet = ageGroupSet)
 
             # adjust model.cfg
             fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
@@ -343,18 +431,22 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_mr_test_age' + '_rn' + str(int(np.random.uniform(10, 99)))
-    exp_description = "Test extended cobey model using the age setup for four age groups"
+    exp_name = today.strftime("%Y%m%d") + '_mr_test_age_6grp' + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_description = "Test extended cobey model using the age setup for six age groups"
 
     # Selected SEIR model
-    emodlname =   'simulation_1.emodl'
+    emodlname =  'age_cobeymodel_covid_4agegrp_pop1000.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
+    ageGroupSet = 'Set1'
+
+    #emodlname =  'age_cobeymodel_covid_6agegrp_pop1000.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
+    #ageGroupSet = 'Set2'
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     # Simlation setup
-    simulation_population = 1000 #2700000  #  1000  # 12830632 Illinois   # 2700000  Chicago
-    number_of_samples = 5
+    simulation_population = 2700000 #2700000  #  1000  # 12830632 Illinois   # 2700000  Chicago
+    number_of_samples = 3
     number_of_runs = 2
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
@@ -364,7 +456,7 @@ if __name__ == '__main__' :
     #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
 
     # Parameter values
-    Kivalues =  np.linspace(2.e-7,2.5e-7,3)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues =  np.linspace(2.e-7,2.5e-7,5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -372,7 +464,8 @@ if __name__ == '__main__' :
                               sub_samples=number_of_samples,
                               duration = duration,
                               monitoring_samples = monitoring_samples,
-                              modelname=emodlname)
+                              modelname=emodlname,
+                              ageGroupSet =ageGroupSet)
 
     generateSubmissionFile(nscen, exp_name)
   
