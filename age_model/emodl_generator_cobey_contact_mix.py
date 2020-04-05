@@ -1,5 +1,4 @@
 import os
-import subprocess
 import csv
 import itertools
 from load_paths import load_box_paths
@@ -100,14 +99,14 @@ def write_observe(grp):
 (observe crit_cumul_{} (+ deaths_{} critical_{} RC2_{} RC2_det3_{}))
 (observe detected_cumul_{} (+ (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} C2_det3_{} C3_det3_{}) RAs_det1_{} RSym_det2_{} RH1_det3_{} RC2_det3_{} D3_det3_{}))
 (observe detected_{} (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
-(observe infected_{} (+ infectious_det_{} infectious_undet_{}))
-""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+(observe infected_{} (+ infectious_det_{} infectious_undet_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
            )
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
@@ -125,7 +124,7 @@ def write_functions(grp):
 (func deaths_{} (+ D3_{} D3_det3_{}))
 (func recovered_{} (+ RAs_{} RSym_{} RH1_{} RC2_{} RAs_det1_{} RSym_det2_{} RH1_det3_{} RC2_det3_{}))
 (func infectious_undet_{} (+ As_{} P_{} Sym_{} Sys_{} H1_{} H2_{} H3_{} C2_{} C3_{}))
-(func infectious_det_{} (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
+(func infectious_det_{} (+ As_det1_{} Sym_det2_{} Sys_det3_{} ))
 """.format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
@@ -190,10 +189,13 @@ def write_params():
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
+(param Ki_red1 (* Ki @social_multiplier_1@))
+(param Ki_red2 (* Ki @social_multiplier_2@))
+(param Ki_red3 (* Ki @social_multiplier_3@))
 
-(time-event socialDistance_no_large_events_start 22 ((Ki 0.65)))
-(time-event socialDistance_school_closure_start 27 ((Ki 0.4)))
-(time-event socialDistance_start 31 ((Ki 0.1)))
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
  """
     params_str = params_str.replace("  ", " ")
 
@@ -255,10 +257,13 @@ def write_reactions(grp):
     grp = str(grp)
 
     reaction_str = """
-(reaction infection_{}  (E_{})   (As_{})   (* Kl E_{}))
-(reaction presymptomatic_{} (E_{})   (P_{})   (* Ks E_{}))
-(reaction mild_symptomatic_{} (P_{})  (Sym_{}) (* Ksym P_{}))
-(reaction severe_symptomatic_{} (P_{})  (Sys_{})  (* Ksys P_{}))
+(reaction infection_asymp_undet_{}  (E_{})   (As_{})   (* Kl E_{} (- 1 d_As)))
+(reaction infection_asymp_det_{}  (E_{})   (As_det1_{})   (* Kl E_{} d_As))
+(reaction presymptomatic_{} (E)   (P_{})   (* Ks E_{}))
+(reaction mild_symptomatic_undet_{} (P_{})  (Sym) (* Ksym P_{} (- 1 d_Sym)))
+(reaction mild_symptomatic_det_{} (P_{})  (Sym_det2_{}) (* Ksym P_{} d_Sym))
+(reaction severe_symptomatic_undet_{} (P_{})  (Sys_{})  (* Ksys P_{} (- 1 d_Sys)))
+(reaction severe_symptomatic_det_{} (P_{})  (Sys_det3_{})  (* Ksys P_{} d_Sys))
 
 (reaction hospitalization_1_{}   (Sys_{})   (H1_{})   (* Kh1 Sys_{}))
 (reaction hospitalization_2_{}   (Sys_{})   (H2_{})   (* Kh2 Sys_{}))
@@ -267,10 +272,10 @@ def write_reactions(grp):
 (reaction critical_3_{}   (H3_{})   (C3_{})   (* Kc H3_{}))
 (reaction death_{}   (C3_{})   (D3_{})   (* Km C3_{}))
 
-(reaction recovery_As_{}   (As_{})   (RAs)   (* Kr_a As_{}))
-(reaction recovery_Sym_{}   (Sym_{})   (RSym)   (* Kr_m  Sym_{}))
-(reaction recovery_H1_{}   (H1_{})   (RH1)   (* Kr_h H1_{}))
-(reaction recovery_C2_{}   (C2_{})   (RC2)   (* Kr_c C2_{}))
+(reaction recovery_As_{}   (As_{})   (RAs_{})   (* Kr_a As_{}))
+(reaction recovery_Sym_{}   (Sym_{})   (RSym_{})   (* Kr_m  Sym_{}))
+(reaction recovery_H1_{}   (H1_{})   (RH1_{})   (* Kr_h H1_{}))
+(reaction recovery_C2_{}   (C2_{})   (RC2_{})   (* Kr_c C2_{}))
 
 (reaction detect_As_{} (As_{}) (As_det1_{}) (* d_As As_{}))
 (reaction detect_symp_{} (Sym_{}) (Sym_det2_{}) (* d_Sym Sym_{}))
@@ -296,7 +301,8 @@ def write_reactions(grp):
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp
            )
 
     reaction_str = reaction_str.replace("  ", " ")
