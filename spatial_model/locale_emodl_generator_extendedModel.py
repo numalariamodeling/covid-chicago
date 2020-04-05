@@ -301,13 +301,12 @@ def generate_locale_cfg(cfg_filename,nruns, filepath):
     
 
 if __name__ == '__main__':
-    county_dic = define_group_dictionary(totalPop=1000,  # 3715523 from Central region service area/NMH catchment
-                                      countyGroups=['EMS1','EMS2','EMS3'],
-                                      countyGroupScale=[0.25, 0.25, 0.25],     ## scaled population per area for testing only, put in EMS true population or true proportions
-                                      initialAs=[10,0,0]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
+    county_dic = define_group_dictionary(totalPop=10000,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
+                                      countyGroups=['EMS_0','EMS_1','EMS_2','EMS_3','EMS_4','EMS_5','EMS_6'],
+                                      countyGroupScale=[0.68, 0.05, 0.08,  0.04, 0.05,  0.03, 0.06],    ## proportion of total population, based on IL_population_by_Age_2010_2018
+                                      initialAs=[2, 2, 2, 2, 2, 2, 2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
                                       )
 
-
-    generate_locale_emodl_extended(county_dic=county_dic, file_output=os.path.join('locale_extendedmodel_covid_test.emodl'))
+    generate_locale_emodl_extended(county_dic=county_dic, file_output=os.path.join('locale_extendedmodel_covid_EMS_scaledPop10000.emodl'))
 
 
