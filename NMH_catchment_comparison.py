@@ -65,7 +65,7 @@ def calculate_incidence(adf, output_filename=None) :
 
 def compare_NMH(exp_name) :
 
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_chicago', 'NMH', 'Modeling COVID Data NMH_v1_200327_jg.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_chicago', 'NMH', 'Modeling COVID Data NMH_v2_200406_jg.csv'))
     ref_df['date'] = pd.to_datetime(ref_df['date'])
 
     df = load_sim_data(exp_name)
@@ -73,7 +73,14 @@ def compare_NMH(exp_name) :
     channels = ['new_hospitalized_all', 'hosp_cumul_all', 'hospitalized_all', 'critical_all']
     data_channel_names = ['covid pos admissions', 'cumulative admissions', 'inpatient census', 'ICU census']
 
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data')
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v1')
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=40,
+                     plot_path=plot_path)
+
+    channels = ['new_hospitalized_all', 'hosp_cumul_all', 'hospitalized_all', 'critical_all']
+    data_channel_names = ['new admits v2', 'cumulative admits positive results v2', 'non ICU v2', 'ICU census v2']
+
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v2')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=40,
                      plot_path=plot_path)
 
@@ -148,4 +155,5 @@ def compare_county(exp_name, county_name) :
 if __name__ == '__main__' :
 
     exp_name = '20200404_mr_Cook_urban_updatedKI_rn78'
-    compare_county(exp_name, 'Cook')
+    # compare_county(exp_name, 'Cook')
+    compare_NMH(exp_name)
