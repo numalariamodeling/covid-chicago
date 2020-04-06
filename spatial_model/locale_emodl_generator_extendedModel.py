@@ -14,21 +14,18 @@ def read_group_dictionary(filename='county_dic.csv',grpname ='county', Testmode=
 
     return county_dic
 
-def define_group_dictionary(totalPop, countyGroups,  countyGroupScale, initialAs, initialSy, initialH) :
+def define_group_dictionary(totalPop, countyGroups,  countyGroupScale, initialAs) :
     county_dic = {}
     for i, grp in enumerate(countyGroups):
         print(i, grp)
-        county_dic[grp] = [totalPop * countyGroupScale[i], initialAs[i], initialSy[i], initialH[i]]
+        county_dic[grp] = [totalPop * countyGroupScale[i], initialAs[i]]
     return county_dic
 
 
 def write_species_init(county_dic, county):
-    S = "(species S_{} {})".format(county, county_dic[county][0])
-    As = "(species As_{} {})".format(county, county_dic[county][1])
-    Sy = "(species Sy_{} {})".format(county, county_dic[county][2])
-    H = "(species H_{} {})".format(county, county_dic[county][3])
-    species_init_str = S + '\n' + As + '\n' + Sy + '\n' + H + '\n'
-
+    S = "(species S::{} {})".format(county, county_dic[county][0])
+    As = "(species As::{} {})".format(county, county_dic[county][1])
+    species_init_str = S + '\n' + As 
     species_init_str = species_init_str.replace("  ", " ")
     return (species_init_str)
 
@@ -38,25 +35,31 @@ def write_species(county):
     species_str = """
 (species E::{} 0)
 (species As_det1::{} 0)
-(species Sy_det2::{} 0)
-(species H_det2::{} 0)
-(species H_det3::{} 0)
-(species C::{} 0)
-(species C_det2::{} 0)
-(species C_det3::{} 0)
-(species D::{} 0)
-(species D_det2::{} 0)
-(species D_det3::{} 0)
+(species P::{} 0)
+(species Sym::{} 0)
+(species Sym_det2::{} 0)
+(species Sys::{} 0)
+(species Sys_det3::{} 0)
+(species H1::{} 0)
+(species H2::{} 0)
+(species H3::{} 0)
+(species H1_det3::{} 0)
+(species H2_det3::{} 0)
+(species H3_det3::{} 0)
+(species C2::{} 0)
+(species C3::{} 0)
+(species C2_det3::{} 0)
+(species C3_det3::{} 0)
+(species D3::{} 0)
+(species D3_det3::{} 0)
 (species RAs::{} 0)
 (species RAs_det1::{} 0)
-(species RSy::{} 0)
-(species RSy_det2::{} 0)
-(species RH::{} 0)
-(species RH_det2::{} 0)
-(species RH_det3::{} 0)
-(species RC::{} 0)
-(species RC_det2::{} 0)
-(species RC_det3::{} 0)
+(species RSym::{} 0)
+(species RSym_det2::{} 0)
+(species RH1::{} 0)
+(species RH1_det3::{} 0)
+(species RC2::{} 0)
+(species RC2_det3::{} 0)
 """.format(county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county
@@ -71,32 +74,31 @@ def write_observe(county):
     observe_str = """
 (observe susceptible_{} S::{})
 (observe exposed_{} E::{})
-(observe detected_{} (sum As_det1::{} Sy_det2::{} H_det2::{} H_det3::{} C_det2::{} C_det3::{}))
-(observe infected_{} (sum As::{} As_det1::{} Sy::{} Sy_det2::{} H::{} H_det2::{} H_det3::{} C::{} C_det2::{} C_det3::{}))
-(observe asymptomatic_{} asymptomatic::{})
-(observe symptomatic_{} symptomatic::{})
-(observe hospitalized_{} hospitalized::{})
-(observe critical_{} critical::{})
-(observe deaths_{} deaths::{})
-(observe recovered_{} recovered::{})
-(observe asymp_cumul_{} (+ asymptomatic::{} RAs::{} RAs_det1::{} ))
+(observe asymptomatic_{} asymptomatic_{})
+(observe presymptomatic_{} P::{})
+(observe symptomatic_mild_{} symptomatic_mild_{})
+(observe symptomatic_severe_{} symptomatic_severe_{})
+(observe hospitalized_{} hospitalized_{})
+(observe critical_{} critical_{})
+(observe deaths_{} deaths_{})
+(observe recovered_{} recovered_{})
+(observe asymp_cumul_{} (+ asymptomatic_{} RAs::{} RAs_det1::{} ))
 (observe asymp_det_cumul_{} (+ As_det1::{} RAs_det1::{}))
-(observe symp_cumul_{} (+ (sum RSy::{} RH::{} RC::{} RSy_det2::{} RH_det2::{} RH_det3::{} RC_det2::{} RC_det3::{}) deaths::{} critical::{} hospitalized::{} asymptomatic::{}))
-(observe symp_det_cumul_{} (+ Sy_det2::{} H_det2::{} RSy_det2::{} C_det2::{} D_det2::{}))
-(observe hosp_cumul_{} (+ deaths::{} critical::{} hospitalized::{} RH::{} RH_det2::{} RH_det3::{} RC::{} RC_det2::{} RC_det3::{}))
-(observe hosp_det_cumul_{} (+ H_det2::{} H_det3::{} RH_det2::{} RH_det3::{} C_det2::{} C_det3::{} D_det2::{} D_det3::{} RC_det2::{} RC_det3::{}))
-(observe crit_cumul_{} (+ deaths::{} critical::{} RC::{} RC_det2::{} RC_det3::{}))
-(observe crit_det_cumul_{} (+ C_det2::{} C_det3::{} RC_det2::{} RC_det3::{} D_det2::{} D_det3::{}))
-(observe detected_cumul_{} (+ (sum As_det1::{} Sy_det2::{} H_det2::{} H_det3::{} C_det2::{} C_det3::{}) RAs_det1::{} RSy_det2::{} RH_det2::{} RH_det3::{} RC_det2::{} RC_det3::{} D_det2::{} D_det3::{}))
-""".format(county, county, county, county, county, county, county, county, county, county,
+(observe symp_mild_cumul_{} (+ symptomatic_mild_{} RSym::{} RSym_det2::{}))
+(observe symp_severe_cumul_{} (+ symptomatic_severe_{} hospitalized_{} critical_{} deaths_{} RH1::{} RC2::{} RH1_det3::{} RC2_det3::{}))
+(observe hosp_cumul_{} (+ hospitalized_{} critical_{} deaths_{} RH1::{} RC2::{} RH1_det3::{} RC2_det3::{}))
+(observe hosp_det_cumul_{} (+ H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{} D3_det3::{} RH1_det3::{} RC2_det3::{}))
+(observe crit_cumul_{} (+ deaths_{} critical_{} RC2::{} RC2_det3::{}))
+(observe detected_cumul_{} (+ (+ As_det1::{} Sym_det2::{} Sys_det3::{} H1_det3::{} H2_det3::{} C2_det3::{} C3_det3::{}) RAs_det1::{} RSym_det2::{} RH1_det3::{} RC2_det3::{} D3_det3::{}))
+(observe detected_{} (+ As_det1::{} Sym_det2::{} Sys_det3::{} H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{}))
+(observe infected_{} (+ infectious_det_{} infectious_undet_{} H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{}))
+""".format(county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county
+           county, county, county, county, county, county, county, county, county, county, county, county, county, county
            )
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
@@ -104,18 +106,20 @@ def write_observe(county):
 def write_functions(county):
     county = str(county)
     functions_str = """
-(func asymptomatic_{} (+ As::{} As_det1::{}))
-(func symptomatic_{} (+ Sy::{} Sy_det2::{}))
-(func hospitalized_{} (sum H::{} H_det2::{} H_det3::{}))
-(func critical_{} (sum C::{} C_det2::{} C_det3::{}))
-(func deaths_{} (sum D::{} D_det2::{} D_det3::{}))
-(func recovered_{} (sum RAs::{} RSy::{} RH::{} RC::{} RAs_det1::{} RSy_det2::{} RH_det2::{} RH_det3::{} RC_det2::{} RC_det3::{}))
-(func infectious_undet_{} (+ As::{} Sy::{}))
-(func infectious_det_{} (+ As_det1::{} Sy_det2::{}))
+(func asymptomatic_{}  (+ As::{} As_det1::{}))
+(func symptomatic_mild_{}  (+ Sym::{} Sym_det2::{}))
+(func symptomatic_severe_{}  (+ Sys::{} Sys_det3::{}))
+(func hospitalized_{}  (+ H1::{} H2::{} H3::{} H1_det3::{} H2_det3::{} H3_det3::{}))
+(func critical_{} (+ C2::{} C3::{} C2_det3::{} C3_det3::{}))
+(func deaths_{} (+ D3::{} D3_det3::{}))
+(func recovered_{} (+ RAs::{} RSym::{} RH1::{} RC2::{} RAs_det1::{} RSym_det2::{} RH1_det3::{} RC2_det3::{}))
+(func infectious_undet_{} (+ As::{} P::{} Sym::{} Sys::{} H1::{} H2::{} H3::{} C2::{} C3::{}))
+(func infectious_det_{} (+ As_det1::{} Sym_det2::{} Sys_det3::{} ))
 """.format(county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county
+           county, county, county, county, county, county, county, county, county, county,
+           county, county, county, county, county, county, county, county, county, county, county, county
            )
     functions_str = functions_str.replace("  ", "")
     return (functions_str)
@@ -124,26 +128,45 @@ def write_functions(county):
 def write_params():
     params_str = """
 (param incubation_pd @incubation_pd@)
+(param time_to_symptoms @time_to_symptoms@)
 (param time_to_hospitalization @time_to_hospitalization@)
 (param time_to_critical @time_to_critical@)
 (param time_to_death @time_to_death@)
-(param recovery_rate @recovery_rate@)
-(param fraction_hospitalized @fraction_hospitalized@)
+(param recovery_rate_asymp @recovery_rate_asymp@)
+(param recovery_rate_mild @recovery_rate_mild@)
+(param recovery_rate_hosp @recovery_rate_hosp@)
+(param recovery_rate_crit @recovery_rate_crit@)
 (param fraction_symptomatic @fraction_symptomatic@)
+(param fraction_severe @fraction_severe@)
+(param fraction_hospitalized @fraction_hospitalized@)
 (param fraction_critical @fraction_critical@ )
-(param cfr @cfr@)
-(param fraction_dead ( / cfr (* fraction_hospitalized fraction_critical)))
+(param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param d_As @d_As@)
-(param d_Sy @d_Sy@)
-(param d_H @d_H@)
+(param d_Sym @d_Sym@)
+(param d_Sys @d_Sys@)
 (param Ki @Ki@)
-(param Kr (/ 1 recovery_rate))
+(param Kr_a (/ 1 recovery_rate_asymp))
+(param Kr_m (/ 1 recovery_rate_mild))
+(param Kr_h (/ 1 recovery_rate_hosp))
+(param Kr_c (/ 1 recovery_rate_crit))
 (param Kl (/ (- 1 fraction_symptomatic ) incubation_pd))
 (param Ks (/ fraction_symptomatic  incubation_pd))
-(param Kh (/ fraction_hospitalized time_to_hospitalization))
-(param Kc (/ fraction_critical time_to_critical ))
-(param Km (/ fraction_dead  time_to_death))
+(param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
+(param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
+(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
+(param Kh2 (/ fraction_critical time_to_hospitalization ))
+(param Kh3 (/ fraction_dead  time_to_hospitalization))
+(param Kc (/ 1 time_to_critical))
+(param Km (/ 1 time_to_death))
+(param Ki_red1 (* Ki @social_multiplier_1@))
+(param Ki_red2 (* Ki @social_multiplier_2@))
+(param Ki_red3 (* Ki @social_multiplier_3@))
+
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
+
  """
     params_str = params_str.replace("  ", " ")
 
@@ -154,31 +177,43 @@ def write_reactions(county):
     county = str(county)
 
     reaction_str = """
-(reaction exposure_from_undetected_{} (S::{}) (E::{}) (* Ki S::{} infectious_undet::{}))
-(reaction exposure_from_detected_{} (S::{}) (E::{}) (* Ki S::{} infectious_det::{} reduced_inf_of_det_cases))
-(reaction infection_{} (E::{}) (As::{}) (* Kl E::{}))
-(reaction symptomatic_{} (E::{}) (Sy::{}) (* Ks E::{}))
-(reaction hospitalization::{} (Sy::{}) (H::{}) (* Kh Sy::{}))
-(reaction critical_{} (H::{}) (C::{}) (* Kc H::{}))
-(reaction death_{} (C::{}) (D::{}) (* Km C::{}))
-(reaction recovery_As_{} (As::{}) (RAs::{}) (* Kr As::{}))
-(reaction recovery_Sy_{} (Sy::{}) (RSy::{}) (* Kr Sy::{}))
-(reaction recovery_H_{} (H::{}) (RH::{}) (* Kr H::{}))
-(reaction recovery_C_{} (C::{}) (RC::{}) (* Kr C::{}))
+(reaction exposure_{}   (S::{}) (E::{}) (* Ki S::{} (+ infectious_undet_{} (* infectious_det_{} reduced_inf_of_det_cases))))
+(reaction infection_asymp_undet_{}  (E::{})   (As::{})   (* Kl E::{} (- 1 d_As)))
+(reaction infection_asymp_det_{}  (E::{})   (As_det1::{})   (* Kl E::{} d_As))
+(reaction presymptomatic_{} (E::{})   (P::{})   (* Ks E::{}))
+(reaction mild_symptomatic_undet_{} (P::{})  (Sym::{}) (* Ksym P::{} (- 1 d_Sym)))
+(reaction mild_symptomatic_det_{} (P::{})  (Sym_det2::{}) (* Ksym P::{} d_Sym))
+(reaction severe_symptomatic_undet_{} (P::{})  (Sys::{})  (* Ksys P::{} (- 1 d_Sys)))
+(reaction severe_symptomatic_det_{} (P::{})  (Sys_det3::{})  (* Ksys P::{} d_Sys))
+
+(reaction hospitalization_1_{}   (Sys::{})   (H1::{})   (* Kh1 Sys::{}))
+(reaction hospitalization_2_{}   (Sys::{})   (H2::{})   (* Kh2 Sys::{}))
+(reaction hospitalization_3_{}   (Sys::{})   (H3::{})   (* Kh3 Sys::{}))
+(reaction critical_2_{}   (H2::{})   (C2::{})   (* Kc H2::{}))
+(reaction critical_3_{}   (H3::{})   (C3::{})   (* Kc H3::{}))
+(reaction death_{}   (C3::{})   (D3::{})   (* Km C3::{}))
+
+(reaction recovery_As_{}   (As::{})   (RAs::{})   (* Kr_a As::{}))
+(reaction recovery_Sym_{}   (Sym::{})   (RSym::{})   (* Kr_m  Sym::{}))
+(reaction recovery_H1_{}   (H1::{})   (RH1::{})   (* Kr_h H1::{}))
+(reaction recovery_C2_{}   (C2::{})   (RC2::{})   (* Kr_c C2::{}))
+
 (reaction detect_As_{} (As::{}) (As_det1::{}) (* d_As As::{}))
-(reaction detect_symp_{} (Sy::{}) (Sy_det2::{}) (* d_Sy Sy::{}))
-(reaction detect_hosp_{} (H::{}) (H_det3::{}) (* d_H H::{}))
-(reaction recovery_As_det_{} (As_det1::{}) (RAs_det1::{})  (* Kr As_det1::{}))
-(reaction hospitalization_det2_{} (Sy_det2::{}) (H_det2::{}) (* Kh Sy_det2::{}))
-(reaction critical_det2_{} (H_det2::{}) (C_det2::{}) (* Kc H_det2::{}))
-(reaction death_det2_{} (C_det2::{}) (D_det2::{}) (* Km C_det2::{}))
-(reaction recovery_Sy_det2_{} (Sy_det2::{}) (RSy_det2::{}) (* Kr  Sy_det2::{}))
-(reaction recovery_H_det2_{} (H_det2::{}) (RH_det2::{}) (* Kr H_det2::{}))
-(reaction recovery_C_det2_{} (C_det2::{}) (RC_det2::{}) (* Kr C_det2::{}))
-(reaction critical_det3_{} (H_det3::{}) (C_det3::{}) (* Kc H_det3::{}))
-(reaction death_det3_{} (C_det3::{}) (D_det3::{}) (* Km C_det3::{}))
-(reaction recovery_H_det3_{} (H_det3::{}) (RH_det3::{}) (* Kr H_det3::{}))
-(reaction recovery_C_det3_{} (C_det3::{}) (RC_det3::{}) (* Kr C_det3::{}))
+(reaction detect_symp_{} (Sym::{}) (Sym_det2::{}) (* d_Sym Sym::{}))
+(reaction detect_hosp_{} (Sys::{}) (Sys_det3::{}) (* d_Sys Sys::{}))
+
+(reaction recovery_As_det_{} (As_det1::{})   (RAs_det1::{})   (* Kr_a As_det1::{}))
+
+(reaction hospitalization_1_det_{}   (Sys_det3::{})   (H1_det3::{})   (* Kh1 Sys_det3::{}))
+(reaction hospitalization_2_det_{}   (Sys_det3::{})   (H2_det3::{})   (* Kh2 Sys_det3::{}))
+(reaction hospitalization_3_det_{}   (Sys_det3::{})   (H3_det3::{})   (* Kh3 Sys_det3::{}))
+(reaction critical_2_det2_{}   (H2_det3::{})   (C2_det3::{})   (* Kc H2_det3::{}))
+(reaction critical_3_det2_{}   (H3_det3::{})   (C3_det3::{})   (* Kc H3_det3::{}))
+(reaction death_det3_{}   (C3_det3::{})   (D3_det3::{})   (* Km C3_det3::{}))
+
+(reaction recovery_Sym_det2_{}   (Sym_det2::{})   (RSym_det2::{})   (* Kr_m  Sym_det2::{}))
+(reaction recovery_H1_det3_{}   (H1_det3::{})   (RH1_det3::{})   (* Kr_h H1_det3::{}))
+(reaction recovery_C2_det3_{}   (C2_det3::{})   (RC2_det3::{})   (* Kr_c C2_det3::{}))
 """.format(county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
@@ -187,7 +222,8 @@ def write_reactions(county):
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county
+           county, county, county, county, county, county, county, county, county, county, county, county, county,
+           county, county, county, county, county, county, county, county, county, county, county, county
            )
 
     reaction_str = reaction_str.replace("  ", " ")
@@ -226,7 +262,7 @@ def generate_locale_emodl_extended(county_dic, file_output):
         observe_string = observe_string + observe
         reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
-
+ 
     params = write_params()
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
     print(total_string)
@@ -265,14 +301,12 @@ def generate_locale_cfg(cfg_filename,nruns, filepath):
     
 
 if __name__ == '__main__':
-    county_dic = define_group_dictionary(totalPop=1000,  # 3715523 from Central region service area/NMH catchment
-                                      countyGroups=['EMS1', 'EMS2', 'EMS3', 'EMS4'],
-                                      countyGroupScale=[0.062, 0.203, 0.606, 0.129],
-                                      initialAs=[1, 1, 1, 1],
-                                      initialSy=[0, 0, 0, 0],
-                                      initialH=[0, 0, 0,
-                                                0])  ## scaled from Chicago population data shared in w7 channel
+    county_dic = define_group_dictionary(totalPop=10000,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
+                                      countyGroups=['EMS_0','EMS_1','EMS_2','EMS_3','EMS_4','EMS_5','EMS_6'],
+                                      countyGroupScale=[0.68, 0.05, 0.08,  0.04, 0.05,  0.03, 0.06],    ## proportion of total population, based on IL_population_by_Age_2010_2018
+                                      initialAs=[2, 2, 2, 2, 2, 2, 2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
+                                      )
 
-    generate_locale_emodl_extended(county_dic=county_dic, file_output=os.path.join('locale_extendedmodel_covid.emodl'))
+    generate_locale_emodl_extended(county_dic=county_dic, file_output=os.path.join('locale_extendedmodel_covid_EMS_scaledPop10000.emodl'))
 
 
