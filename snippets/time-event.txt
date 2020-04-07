@@ -1,0 +1,3 @@
+(time - event socialDistance_no_large_events_start 22 ((Ki 0.65)))
+(time - event socialDistance_school_closure_start 27 ((Ki 0.4)))
+(time - event socialDistance_start 31 ((Ki 0.1)))
