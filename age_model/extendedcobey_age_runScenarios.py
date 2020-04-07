@@ -8,8 +8,11 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 import shutil
+import sys
+sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
+from simulation_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -237,6 +240,7 @@ def makeExperimentFolder() :
         os.makedirs(temp_dir)
         os.makedirs(trajectories_dir)
         os.makedirs(os.path.join(temp_exp_dir, 'log'))
+        os.makedirs(os.path.join(trajectories_dir, 'log'))  # location of log file on quest
 
     ## Copy emodl and cfg file  to experiment folder
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
@@ -329,11 +333,7 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num, ageGroupSet) :
     fin.write(data)
     fin.close()
 
-def writeTxt(txtdir, filename, textstring) :
-    file = open(os.path.join(txtdir, filename), 'w')
-    file.write(textstring)
-    file.close()
-    
+
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname, age_dic, ageGroupSet):
     lst = []
     scen_num = 0
@@ -361,8 +361,6 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
-    if not exp_description == None :
-        writeTxt(temp_exp_dir, 'exp_description.txt', exp_description )
     return (scen_num)
 
 def generateSubmissionFile(scen_num,exp_name):
@@ -394,81 +392,6 @@ def generateSubmissionFile(scen_num,exp_name):
         file.write(header + jobname + email + emailtype + array + err + out + module + singularity  + exe + cfg + emodl)
         file.close()
 
-
-def runExp(Location = 'Local'):
-    if Location =='Local' :
-        p = os.path.join(trajectories_dir,  'runSimulations.bat')
-        subprocess.call([p])
-    if Location =='NUCLUSTER' :
-        print('please submit sbatch runSimulations.sh in the terminal')
-
-
-def reprocess(input_fname='trajectories.csv', output_fname=None):
-    fname = os.path.join(trajectories_dir, input_fname)
-    row_df = pd.read_csv(fname, skiprows=1)
-    df = row_df.set_index('sampletimes').transpose()
-    num_channels = len([x for x in df.columns.values if '{0}' in x])
-    num_samples = int((len(row_df)) / num_channels)
-
-    df = df.reset_index(drop=False)
-    df = df.rename(columns={'index': 'time'})
-    df['time'] = df['time'].astype(float)
-
-    adf = pd.DataFrame()
-    for sample_num in range(num_samples):
-        channels = [x for x in df.columns.values if '{%d}' % sample_num in x]
-        sdf = df[['time'] + channels]
-        sdf = sdf.rename(columns={
-            x: x.split('{')[0] for x in channels
-        })
-        sdf['sample_num'] = sample_num
-        adf = pd.concat([adf, sdf])
-
-    adf = adf.reset_index()
-    del adf['index']
-    if output_fname:
-        adf.to_csv(os.path.join(temp_exp_dir,output_fname), index=False)
-    return adf
-
-
-def combineTrajectories(Nscenarios, deleteFiles=False):
-    scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
-
-    df_list = []
-    for scen_i in range(Nscenarios):
-        input_name = "trajectories_scen" + str(scen_i) + ".csv"
-        try:
-            df_i = reprocess(input_name)
-            df_i['scen_num'] = scen_i
-            df_i = df_i.merge(scendf, on=['scen_num','sample_num'])
-            df_list.append(df_i)
-        except:
-            continue
-
-        if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
-
-    dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
-
-    return dfc
-
-
-def cleanup(delete_temp_dir=True) :
-    # Delete simulation model and emodl files
-    # But keeps per default the trajectories, better solution, zip folders and copy
-    if delete_temp_dir ==True :
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print('temp_dir folder deleted')
-    shutil.copytree(temp_exp_dir, sim_output_path)
-    if not os.path.exists(plot_path):
-        os.makedirs(plot_path)
-    # Delete files after being copied to the project folder
-    if os.path.exists(sim_output_path):
-        shutil.rmtree(temp_exp_dir, ignore_errors=True)
-    elif not os.path.exists(sim_output_path):
-        print('Sim_output_path does not exists')
-
-
 if __name__ == '__main__' :
 
 
@@ -478,28 +401,8 @@ if __name__ == '__main__' :
 
     ageGroupSet = '4grp'   # '6grp'
 
-    exp_name = today.strftime("%Y%m%d") + '_test_age_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_TEST_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
     exp_description = " "
-
-    # Selected SEIR model
-    #emodlname = "extendedmodel_cobey_age_4grp.emodl"
-
-
-    if ageGroupSet == '4grp':
-        emodlname =  'extendedmodel_cobey_age_4grp.emodl'
-        ageGroups_4grp = ['ageU5', 'age5to17', 'age18to64', 'age64to100']
-        ageGroupScale_4grp = [0.062, 0.203, 0.606, 0.129]
-        initialAs_4grp = [3, 3, 3, 3, 3, 3]
-
-    elif ageGroupSet == '6grp':
-        emodlname =  'extendedmodel_cobey_age_6grp.emodl'
-        ageGroups_6grp = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74', 'age75to84']
-        ageGroupScale_6grp = [0.226, 0.412, 0.120, 0.112, 0.075, 0.038]
-        initialAs_6grp = [3, 3, 3, 3, 3, 3]
-
-
-    # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     # Simlation setup
     simulation_population = 315000 #  1000  # 12830632 Illinois   # 2700000  Chicago ## 315000 NMH catchment
@@ -508,10 +411,29 @@ if __name__ == '__main__' :
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
-    age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
-                                      ageGroups=ageGroupScale_6grp,
-                                      ageGroupScale=ageGroupScale_6grp,
-                                      initialAs=initialAs_6grp)
+    ## Specify age population
+    if ageGroupSet == '4grp':
+        emodlname = 'extendedmodel_cobey_age_4grp.emodl'
+        ageGroups_4grp = ['ageU5', 'age5to17', 'age18to64', 'age64to100']
+        ageGroupScale_4grp = [0.062, 0.203, 0.606, 0.129]
+        initialAs_4grp = [3, 3, 3, 3, 3, 3]
+
+        age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
+                                          ageGroups=ageGroupScale_4grp,
+                                          ageGroupScale=ageGroupScale_4grp,
+                                          initialAs=initialAs_4grp)
+
+
+    elif ageGroupSet == '6grp':
+        emodlname = 'extendedmodel_cobey_age_6grp.emodl'
+        ageGroups_6grp = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74', 'age75to84']
+        ageGroupScale_6grp = [0.226, 0.412, 0.120, 0.112, 0.075, 0.038]
+        initialAs_6grp = [3, 3, 3, 3, 3, 3]
+
+        age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
+                                          ageGroups=ageGroupScale_6grp,
+                                          ageGroupScale=ageGroupScale_6grp,
+                                          initialAs=initialAs_6grp)
 
     # Time event
     #startDate = '02.20.2020'
@@ -519,6 +441,9 @@ if __name__ == '__main__' :
 
     # Parameter values
     Kivalues =  np.linspace(2.e-7,2.5e-7,5)# np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+
+    # Generate folders and copy required files
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -532,9 +457,9 @@ if __name__ == '__main__' :
 
     generateSubmissionFile(nscen, exp_name)
   
-  if Location == 'Local' :
-    runExp(Location='Local')
+if Location == 'Local' :
+    runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
-    combineTrajectories(500)
+    combineTrajectories(nscen)
     cleanup(delete_temp_dir=False)
