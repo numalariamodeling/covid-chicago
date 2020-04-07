@@ -28,22 +28,22 @@ def define_Ki_contact_matrix(df, ageGroupSet):
 	##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
 
     if ageGroupSet == 'Set1':
-        df['sKi1_4'] = 0.209526849
-        df['sKi1_3'] = 0.039466462
-        df['sKi1_2'] = 0.037694265
-        df['sKi1_1'] = 0.015909742
-        df['sKi2_4'] = 0.051521569
-        df['sKi2_3'] = 0.293093246
-        df['sKi2_2'] = 0.066737714
-        df['sKi2_1'] = 0.02740285
-        df['sKi3_4'] = 0.042740507
-        df['sKi3_3'] = 0.046714807
-        df['sKi3_2'] = 0.092046263
-        df['sKi3_1'] = 0.027158353
-        df['sKi4_4'] = 0.006685113
-        df['sKi4_3'] = 0.004914879
-        df['sKi4_2'] = 0.007194698
-        df['sKi4_1'] = 0.031192683
+        df['sKi1_1'] = 0.257686875216915
+        df['sKi1_2'] = 0.0559508758329188
+        df['sKi1_3'] = 0.0494614061407881
+        df['sKi1_4'] = 0.013894156574477
+        df['sKi1_2'] = 0.0559508758329188
+        df['sKi2_2'] = 0.360461121322605
+        df['sKi2_3'] = 0.0697648677126865
+        df['sKi2_4'] = 0.0198730010097838
+        df['sKi1_3'] = 0.0494614061407881
+        df['sKi2_3'] = 0.0697648677126865
+        df['sKi3_3'] = 0.113203219876234
+        df['sKi3_4'] = 0.021342113533092
+        df['sKi1_4'] = 0.013894156574477
+        df['sKi2_4'] = 0.0198730010097838
+        df['sKi3_4'] = 0.021342113533092
+        df['sKi4_4'] = 0.0383623627804992
 
 
     ## COPIED VALUES FROM SET1 - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
@@ -152,7 +152,7 @@ def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
 
 
 def makeExperimentFolder() :
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    sim_output_path = os.path.join(wdir, 'simulation_output_age', exp_name)
     plot_path = sim_output_path
     # Create temporary folder for the simulation files
     # currently allowing to run only 1 experiment at a time locally
@@ -191,10 +191,13 @@ def generateParameterSamples(samples, pop, ageGroupSet = 'Set1'):
         df['recovery_rate_crit'] = np.random.uniform(25.3, 31.6, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
         df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
-        df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
+        #df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
+        #df['fraction_critical'] = np.random.uniform(0.15, 0.35, samples)
+        df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
         #df['cfr'] = np.random.uniform(0.008, 0.022, samples)
         #df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
-        df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
+        #df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
+        df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
         df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
         df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
         df['reduced_inf_of_det_cases'] = np.random.uniform(0.5, 0.9, samples)
@@ -431,11 +434,13 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_mr_test_age_6grp' + '_rn' + str(int(np.random.uniform(10, 99)))
-    exp_description = "Test extended cobey model using the age setup for six age groups"
+    exp_name = today.strftime("%Y%m%d") + '_mr_test_rerun_age_extendeexdmodel_covid_NMH_catchment' + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_description = "Test trimmed cobey model using the age setup for four age groups v2 - tested with higher Ki"
 
     # Selected SEIR model
-    emodlname =  'age_cobeymodel_covid_4agegrp_pop1000.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
+    #emodlname =  'age_cobeymodel_covid_4agegrp_trimmed_v2 rmS.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
+    emodlname = "age_extendedmodel_covid_NMH_catchment.emodl"
+    #emodlname = 'age_extendeexdmodel_covid_NMH_catchment (2).emodl'
     ageGroupSet = 'Set1'
 
     #emodlname =  'age_cobeymodel_covid_6agegrp_pop1000.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
@@ -456,7 +461,7 @@ if __name__ == '__main__' :
     #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
 
     # Parameter values
-    Kivalues =  np.linspace(2.e-7,2.5e-7,5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues =  np.linspace(2.e-5,2.5e-3,5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,

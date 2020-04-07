@@ -1,0 +1,53 @@
+def generateParameterSamples(samples, pop, addIntervention = True, interventionStart=10, coverage=0.4):
+        df =  pd.DataFrame()
+        df['sample_num'] = range(samples)
+        df['speciesS'] = pop
+        df['initialAs'] = 10#np.random.uniform(1, 5, samples)
+        df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
+        df['time_to_infectious'] = np.random.uniform(0, df['incubation_pd'],samples)  # placeholder and  time_to_infectious <= incubation_pd
+        df['time_to_hospitalization'] = np.random.normal(5.76, 4.22, samples)
+        df['time_to_critical'] = np.random.uniform(4, 9, samples)
+        df['time_to_death'] = np.random.uniform(3, 11, samples)
+        df['recovery_rate'] = np.random.uniform(6, 16, samples)
+        df['fraction_hospitalized'] = np.random.uniform(0.1, 1, samples)
+        df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
+        df['fraction_critical'] = np.random.uniform(0.1, 1, samples)
+        df['reduced_inf_of_det_cases'] = np.random.uniform(0.2, 0.3, samples)
+        df['cfr'] = np.random.uniform(0.008, 0.022, samples)
+        df['d_Sy'] = np.random.uniform(0.2, 0.3, samples)
+        df['d_H'] = np.random.uniform(0.8, 1, samples)
+        df['d_As'] = np.random.uniform(0, 0, samples)
+        #df['Ki'] = Ki_i
+
+        if addIntervention == True:
+            df = define_intervention_param(df, startDate=interventionStart, reduction=coverage)
+
+        df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"))
+        return(df)
+
+def replaceParameters(df, Ki_i, sample_nr, emodlname, ,  scen_num) :
+    fin = open(os.path.join(temp_exp_dir,emodlname), "rt")
+    data = fin.read()
+    data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
+    data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
+    data = data.replace('@incubation_pd@', str(df.incubation_pd[sample_nr]))
+    data = data.replace('@time_to_infectious@', str(df.time_to_infectious[sample_nr]))
+    data = data.replace('@time_to_hospitalization@', str(df.time_to_hospitalization[sample_nr]))
+    data = data.replace('@time_to_critical@', str(df.time_to_critical[sample_nr]))
+    data = data.replace('@time_to_death@', str(df.time_to_death[sample_nr]))
+    data = data.replace('@fraction_hospitalized@', str(df.fraction_hospitalized[sample_nr]))
+    data = data.replace('@fraction_symptomatic@', str(df.fraction_symptomatic[sample_nr]))
+    data = data.replace('@fraction_critical@', str(df.fraction_critical[sample_nr]))
+    data = data.replace('@reduced_inf_of_det_cases@', str(df.reduced_inf_of_det_cases[sample_nr]))
+    data = data.replace('@cfr@', str(df.cfr[sample_nr]))
+    data = data.replace('@d_As@', str(df.d_As[sample_nr]))
+    data = data.replace('@d_Sy@', str(df.d_Sy[sample_nr]))
+    data = data.replace('@d_H@', str(df.d_H[sample_nr]))
+    data = data.replace('@recovery_rate@', str(df.recovery_rate[sample_nr]))
+    data = data.replace('@Ki@', str(Ki_i))
+    # data = data.replace('@Ki@', str(df.Ki[sub_sample]))
+    data = replace_intervention_param(data, df, sample_nr)
+    fin.close()
+    fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
+    fin.write(data)
+    fin.close()

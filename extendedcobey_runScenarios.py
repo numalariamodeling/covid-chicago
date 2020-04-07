@@ -62,14 +62,20 @@ def generateParameterSamples(samples, pop):
         df['recovery_rate_crit'] = np.random.uniform(25.3, 31.6, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
         df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
-        df['fraction_critical'] = np.random.uniform(0.1, 0.3, samples)
-        df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
+        #df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
+        #df['fraction_critical'] = np.random.uniform(0.15, 0.35, samples)
+        df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
+        #df['cfr'] = np.random.uniform(0.008, 0.022, samples)
+        #df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
+        #df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
+        df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
         df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
         df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
         df['reduced_inf_of_det_cases'] = np.random.uniform(0.5, 0.9, samples)
         df['d_Sym'] = np.random.uniform(0.2, 0.3, samples)
         df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
+        #df['Ki'] = np.random.uniform(2.e-7, 2.5e-7, samples)
 
         df['social_multiplier_1'] = np.random.uniform(0.9, 1, samples)
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
@@ -290,10 +296,7 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    #exp_name = today.strftime("%Y%m%d") + '_cobeyModel_updatedParam_infectious_det_urban' + '_rn' + str(int(np.random.uniform(10, 99)))
-    #exp_name = today.strftime("%Y%m%d") + '_cobeyModel_updatedParam_infectious_det_rural' + '_rn' + str(int(np.random.uniform(10, 99)))
-    #exp_name = today.strftime("%Y%m%d") + '_cobeyModel__IL_updatedParam_infectious_det_urban' + '_rn' + str(int(np.random.uniform(10, 99)))
-    exp_name = today.strftime("%Y%m%d") + 'mr_test_popIL' + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + 'mr_NMH_catchment_pop315000_narrowKi' + '_rn' + str(int(np.random.uniform(10, 99)))
 
 
     # Selected SEIR model
@@ -303,9 +306,9 @@ if __name__ == '__main__' :
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     # Simlation setup
-    simulation_population = 2700000  #  1000  # 12830632 Illinois   # 2700000  Chicago
-    number_of_samples = 10
-    number_of_runs = 2
+    simulation_population = 315000 #  1000  # 12830632 Illinois   # 2700000  Chicago  ## 315000 NMH catchment
+    number_of_samples = 20
+    number_of_runs = 3
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
@@ -314,7 +317,7 @@ if __name__ == '__main__' :
     #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
 
     # Parameter values
-    Kivalues =  np.linspace(2.e-7,2.5e-7,3)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues =  np.linspace(2.e-7,2.5e-7,5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -332,9 +335,9 @@ if __name__ == '__main__' :
     # Once the simulations are done
     combineTrajectories(500)
     cleanup(delete_temp_dir=False)
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    # Plots for quick check of simulation results
-    #first_day = date(2020, 2, 22)
+    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat_50.csv'))
+
+    first_day = date(2020, 2, 22)
     plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
     plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
     plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
