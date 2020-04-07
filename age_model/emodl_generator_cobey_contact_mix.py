@@ -63,14 +63,20 @@ def write_observe(grp):
 (observe critical_{} critical_{})
 (observe deaths_{} deaths_{})
 (observe recovered_{} recovered_{})
+
 (observe asymp_cumul_{} (+ asymptomatic_{} RAs_{} RAs_det1_{} ))
 (observe asymp_det_cumul_{} (+ As_det1_{} RAs_det1_{}))
 (observe symp_mild_cumul_{} (+ symptomatic_mild_{} RSym_{} RSym_det2_{}))
+(observe symp_mild_det_cumul_{} (+ RSym_det2_{} Sym_det2_{}))
 (observe symp_severe_cumul_{} (+ symptomatic_severe_{} hospitalized_{} critical_{} deaths_{} RH1_{} RC2_{} RH1_det3_{} RC2_det3_{}))
+(observe symp_severe_det_cumul_{} (+ Sys_det3_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{} D3_det3_{} RH1_det3_{} RC2_det3_{}))
 (observe hosp_cumul_{} (+ hospitalized_{} critical_{} deaths_{} RH1_{} RC2_{} RH1_det3_{} RC2_det3_{}))
 (observe hosp_det_cumul_{} (+ H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{} D3_det3_{} RH1_det3_{} RC2_det3_{}))
 (observe crit_cumul_{} (+ deaths_{} critical_{} RC2_{} RC2_det3_{}))
+(observe crit_det_cumul_{} (+ C2_det3_{} C3_det3_{} D3_det3_{} RC2_det3_{}))
 (observe detected_cumul_{} (+ (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} C2_det3_{} C3_det3_{}) RAs_det1_{} RSym_det2_{} RH1_det3_{} RC2_det3_{} D3_det3_{}))
+(observe death_det_cumul_{} D3_det3_{} )
+
 (observe detected_{} (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
 (observe infected_{} (+ infectious_det_{} infectious_undet_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
 """.format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
@@ -79,7 +85,9 @@ def write_observe(grp):
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, 
+           grp, grp, grp, grp, grp, grp, grp, grp
            )
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)

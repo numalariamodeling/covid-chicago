@@ -6,15 +6,9 @@
 
 
 
-(species S_ageU5 62.0)
-(species As_ageU5 3)
-(species S_age5to17 203.0)
-(species As_age5to17 3)
-(species S_age18to64 606.0)
-(species As_age18to64 3)
-(species S_age64to100 129.0)
-(species As_age64to100 3)
 
+(species S_ageU5 @speciesS_ageU5@)
+(species As_ageU5 @initialAs_ageU5@)
 (species E_ageU5 0)
 (species As_det1_ageU5 0)
 (species P_ageU5 0)
@@ -43,6 +37,8 @@
 (species RC2_ageU5 0)
 (species RC2_det3_ageU5 0)
 
+(species S_age5to17 @speciesS_age5to17@)
+(species As_age5to17 @initialAs_age5to17@)
 (species E_age5to17 0)
 (species As_det1_age5to17 0)
 (species P_age5to17 0)
@@ -71,6 +67,8 @@
 (species RC2_age5to17 0)
 (species RC2_det3_age5to17 0)
 
+(species S_age18to64 @speciesS_age18to64@)
+(species As_age18to64 @initialAs_age18to64@)
 (species E_age18to64 0)
 (species As_det1_age18to64 0)
 (species P_age18to64 0)
@@ -99,6 +97,8 @@
 (species RC2_age18to64 0)
 (species RC2_det3_age18to64 0)
 
+(species S_age64to100 @speciesS_age64to100@)
+(species As_age64to100 @initialAs_age64to100@)
 (species E_age64to100 0)
 (species As_det1_age64to100 0)
 (species P_age64to100 0)
@@ -181,14 +181,20 @@
 (observe critical_ageU5 critical_ageU5)
 (observe deaths_ageU5 deaths_ageU5)
 (observe recovered_ageU5 recovered_ageU5)
+
 (observe asymp_cumul_ageU5 (+ asymptomatic_ageU5 RAs_ageU5 RAs_det1_ageU5 ))
 (observe asymp_det_cumul_ageU5 (+ As_det1_ageU5 RAs_det1_ageU5))
 (observe symp_mild_cumul_ageU5 (+ symptomatic_mild_ageU5 RSym_ageU5 RSym_det2_ageU5))
+(observe symp_mild_det_cumul_ageU5 (+ RSym_det2_ageU5 Sym_det2_ageU5))
 (observe symp_severe_cumul_ageU5 (+ symptomatic_severe_ageU5 hospitalized_ageU5 critical_ageU5 deaths_ageU5 RH1_ageU5 RC2_ageU5 RH1_det3_ageU5 RC2_det3_ageU5))
+(observe symp_severe_det_cumul_ageU5 (+ Sys_det3_ageU5 H1_det3_ageU5 H2_det3_ageU5 H3_det3_ageU5 C2_det3_ageU5 C3_det3_ageU5 D3_det3_ageU5 RH1_det3_ageU5 RC2_det3_ageU5))
 (observe hosp_cumul_ageU5 (+ hospitalized_ageU5 critical_ageU5 deaths_ageU5 RH1_ageU5 RC2_ageU5 RH1_det3_ageU5 RC2_det3_ageU5))
 (observe hosp_det_cumul_ageU5 (+ H1_det3_ageU5 H2_det3_ageU5 H3_det3_ageU5 C2_det3_ageU5 C3_det3_ageU5 D3_det3_ageU5 RH1_det3_ageU5 RC2_det3_ageU5))
 (observe crit_cumul_ageU5 (+ deaths_ageU5 critical_ageU5 RC2_ageU5 RC2_det3_ageU5))
+(observe crit_det_cumul_ageU5 (+ C2_det3_ageU5 C3_det3_ageU5 D3_det3_ageU5 RC2_det3_ageU5))
 (observe detected_cumul_ageU5 (+ (+ As_det1_ageU5 Sym_det2_ageU5 Sys_det3_ageU5 H1_det3_ageU5 H2_det3_ageU5 C2_det3_ageU5 C3_det3_ageU5) RAs_det1_ageU5 RSym_det2_ageU5 RH1_det3_ageU5 RC2_det3_ageU5 D3_det3_ageU5))
+(observe death_det_cumul_ageU5 D3_det3_ageU5 )
+
 (observe detected_ageU5 (+ As_det1_ageU5 Sym_det2_ageU5 Sys_det3_ageU5 H1_det3_ageU5 H2_det3_ageU5 H3_det3_ageU5 C2_det3_ageU5 C3_det3_ageU5))
 (observe infected_ageU5 (+ infectious_det_ageU5 infectious_undet_ageU5 H1_det3_ageU5 H2_det3_ageU5 H3_det3_ageU5 C2_det3_ageU5 C3_det3_ageU5))
 
@@ -202,14 +208,20 @@
 (observe critical_age5to17 critical_age5to17)
 (observe deaths_age5to17 deaths_age5to17)
 (observe recovered_age5to17 recovered_age5to17)
+
 (observe asymp_cumul_age5to17 (+ asymptomatic_age5to17 RAs_age5to17 RAs_det1_age5to17 ))
 (observe asymp_det_cumul_age5to17 (+ As_det1_age5to17 RAs_det1_age5to17))
 (observe symp_mild_cumul_age5to17 (+ symptomatic_mild_age5to17 RSym_age5to17 RSym_det2_age5to17))
+(observe symp_mild_det_cumul_age5to17 (+ RSym_det2_age5to17 Sym_det2_age5to17))
 (observe symp_severe_cumul_age5to17 (+ symptomatic_severe_age5to17 hospitalized_age5to17 critical_age5to17 deaths_age5to17 RH1_age5to17 RC2_age5to17 RH1_det3_age5to17 RC2_det3_age5to17))
+(observe symp_severe_det_cumul_age5to17 (+ Sys_det3_age5to17 H1_det3_age5to17 H2_det3_age5to17 H3_det3_age5to17 C2_det3_age5to17 C3_det3_age5to17 D3_det3_age5to17 RH1_det3_age5to17 RC2_det3_age5to17))
 (observe hosp_cumul_age5to17 (+ hospitalized_age5to17 critical_age5to17 deaths_age5to17 RH1_age5to17 RC2_age5to17 RH1_det3_age5to17 RC2_det3_age5to17))
 (observe hosp_det_cumul_age5to17 (+ H1_det3_age5to17 H2_det3_age5to17 H3_det3_age5to17 C2_det3_age5to17 C3_det3_age5to17 D3_det3_age5to17 RH1_det3_age5to17 RC2_det3_age5to17))
 (observe crit_cumul_age5to17 (+ deaths_age5to17 critical_age5to17 RC2_age5to17 RC2_det3_age5to17))
+(observe crit_det_cumul_age5to17 (+ C2_det3_age5to17 C3_det3_age5to17 D3_det3_age5to17 RC2_det3_age5to17))
 (observe detected_cumul_age5to17 (+ (+ As_det1_age5to17 Sym_det2_age5to17 Sys_det3_age5to17 H1_det3_age5to17 H2_det3_age5to17 C2_det3_age5to17 C3_det3_age5to17) RAs_det1_age5to17 RSym_det2_age5to17 RH1_det3_age5to17 RC2_det3_age5to17 D3_det3_age5to17))
+(observe death_det_cumul_age5to17 D3_det3_age5to17 )
+
 (observe detected_age5to17 (+ As_det1_age5to17 Sym_det2_age5to17 Sys_det3_age5to17 H1_det3_age5to17 H2_det3_age5to17 H3_det3_age5to17 C2_det3_age5to17 C3_det3_age5to17))
 (observe infected_age5to17 (+ infectious_det_age5to17 infectious_undet_age5to17 H1_det3_age5to17 H2_det3_age5to17 H3_det3_age5to17 C2_det3_age5to17 C3_det3_age5to17))
 
@@ -223,14 +235,20 @@
 (observe critical_age18to64 critical_age18to64)
 (observe deaths_age18to64 deaths_age18to64)
 (observe recovered_age18to64 recovered_age18to64)
+
 (observe asymp_cumul_age18to64 (+ asymptomatic_age18to64 RAs_age18to64 RAs_det1_age18to64 ))
 (observe asymp_det_cumul_age18to64 (+ As_det1_age18to64 RAs_det1_age18to64))
 (observe symp_mild_cumul_age18to64 (+ symptomatic_mild_age18to64 RSym_age18to64 RSym_det2_age18to64))
+(observe symp_mild_det_cumul_age18to64 (+ RSym_det2_age18to64 Sym_det2_age18to64))
 (observe symp_severe_cumul_age18to64 (+ symptomatic_severe_age18to64 hospitalized_age18to64 critical_age18to64 deaths_age18to64 RH1_age18to64 RC2_age18to64 RH1_det3_age18to64 RC2_det3_age18to64))
+(observe symp_severe_det_cumul_age18to64 (+ Sys_det3_age18to64 H1_det3_age18to64 H2_det3_age18to64 H3_det3_age18to64 C2_det3_age18to64 C3_det3_age18to64 D3_det3_age18to64 RH1_det3_age18to64 RC2_det3_age18to64))
 (observe hosp_cumul_age18to64 (+ hospitalized_age18to64 critical_age18to64 deaths_age18to64 RH1_age18to64 RC2_age18to64 RH1_det3_age18to64 RC2_det3_age18to64))
 (observe hosp_det_cumul_age18to64 (+ H1_det3_age18to64 H2_det3_age18to64 H3_det3_age18to64 C2_det3_age18to64 C3_det3_age18to64 D3_det3_age18to64 RH1_det3_age18to64 RC2_det3_age18to64))
 (observe crit_cumul_age18to64 (+ deaths_age18to64 critical_age18to64 RC2_age18to64 RC2_det3_age18to64))
+(observe crit_det_cumul_age18to64 (+ C2_det3_age18to64 C3_det3_age18to64 D3_det3_age18to64 RC2_det3_age18to64))
 (observe detected_cumul_age18to64 (+ (+ As_det1_age18to64 Sym_det2_age18to64 Sys_det3_age18to64 H1_det3_age18to64 H2_det3_age18to64 C2_det3_age18to64 C3_det3_age18to64) RAs_det1_age18to64 RSym_det2_age18to64 RH1_det3_age18to64 RC2_det3_age18to64 D3_det3_age18to64))
+(observe death_det_cumul_age18to64 D3_det3_age18to64 )
+
 (observe detected_age18to64 (+ As_det1_age18to64 Sym_det2_age18to64 Sys_det3_age18to64 H1_det3_age18to64 H2_det3_age18to64 H3_det3_age18to64 C2_det3_age18to64 C3_det3_age18to64))
 (observe infected_age18to64 (+ infectious_det_age18to64 infectious_undet_age18to64 H1_det3_age18to64 H2_det3_age18to64 H3_det3_age18to64 C2_det3_age18to64 C3_det3_age18to64))
 
@@ -244,14 +262,20 @@
 (observe critical_age64to100 critical_age64to100)
 (observe deaths_age64to100 deaths_age64to100)
 (observe recovered_age64to100 recovered_age64to100)
+
 (observe asymp_cumul_age64to100 (+ asymptomatic_age64to100 RAs_age64to100 RAs_det1_age64to100 ))
 (observe asymp_det_cumul_age64to100 (+ As_det1_age64to100 RAs_det1_age64to100))
 (observe symp_mild_cumul_age64to100 (+ symptomatic_mild_age64to100 RSym_age64to100 RSym_det2_age64to100))
+(observe symp_mild_det_cumul_age64to100 (+ RSym_det2_age64to100 Sym_det2_age64to100))
 (observe symp_severe_cumul_age64to100 (+ symptomatic_severe_age64to100 hospitalized_age64to100 critical_age64to100 deaths_age64to100 RH1_age64to100 RC2_age64to100 RH1_det3_age64to100 RC2_det3_age64to100))
+(observe symp_severe_det_cumul_age64to100 (+ Sys_det3_age64to100 H1_det3_age64to100 H2_det3_age64to100 H3_det3_age64to100 C2_det3_age64to100 C3_det3_age64to100 D3_det3_age64to100 RH1_det3_age64to100 RC2_det3_age64to100))
 (observe hosp_cumul_age64to100 (+ hospitalized_age64to100 critical_age64to100 deaths_age64to100 RH1_age64to100 RC2_age64to100 RH1_det3_age64to100 RC2_det3_age64to100))
 (observe hosp_det_cumul_age64to100 (+ H1_det3_age64to100 H2_det3_age64to100 H3_det3_age64to100 C2_det3_age64to100 C3_det3_age64to100 D3_det3_age64to100 RH1_det3_age64to100 RC2_det3_age64to100))
 (observe crit_cumul_age64to100 (+ deaths_age64to100 critical_age64to100 RC2_age64to100 RC2_det3_age64to100))
+(observe crit_det_cumul_age64to100 (+ C2_det3_age64to100 C3_det3_age64to100 D3_det3_age64to100 RC2_det3_age64to100))
 (observe detected_cumul_age64to100 (+ (+ As_det1_age64to100 Sym_det2_age64to100 Sys_det3_age64to100 H1_det3_age64to100 H2_det3_age64to100 C2_det3_age64to100 C3_det3_age64to100) RAs_det1_age64to100 RSym_det2_age64to100 RH1_det3_age64to100 RC2_det3_age64to100 D3_det3_age64to100))
+(observe death_det_cumul_age64to100 D3_det3_age64to100 )
+
 (observe detected_age64to100 (+ As_det1_age64to100 Sym_det2_age64to100 Sys_det3_age64to100 H1_det3_age64to100 H2_det3_age64to100 H3_det3_age64to100 C2_det3_age64to100 C3_det3_age64to100))
 (observe infected_age64to100 (+ infectious_det_age64to100 infectious_undet_age64to100 H1_det3_age64to100 H2_det3_age64to100 H3_det3_age64to100 C2_det3_age64to100 C3_det3_age64to100))
 
@@ -377,9 +401,6 @@
 (reaction recovery_H1_ageU5   (H1_ageU5)   (RH1_ageU5)   (* Kr_h H1_ageU5))
 (reaction recovery_C2_ageU5   (C2_ageU5)   (RC2_ageU5)   (* Kr_c C2_ageU5))
 
-(reaction detect_As_ageU5 (As_ageU5) (As_det1_ageU5) (* d_As As_ageU5))
-(reaction detect_symp_ageU5 (Sym_ageU5) (Sym_det2_ageU5) (* d_Sym Sym_ageU5))
-(reaction detect_hosp_ageU5 (Sys_ageU5) (Sys_det3_ageU5) (* d_Sys Sys_ageU5))
 
 (reaction recovery_As_det_ageU5 (As_det1_ageU5)   (RAs_det1_ageU5)   (* Kr_a As_det1_ageU5))
 
@@ -414,9 +435,6 @@
 (reaction recovery_H1_age5to17   (H1_age5to17)   (RH1_age5to17)   (* Kr_h H1_age5to17))
 (reaction recovery_C2_age5to17   (C2_age5to17)   (RC2_age5to17)   (* Kr_c C2_age5to17))
 
-(reaction detect_As_age5to17 (As_age5to17) (As_det1_age5to17) (* d_As As_age5to17))
-(reaction detect_symp_age5to17 (Sym_age5to17) (Sym_det2_age5to17) (* d_Sym Sym_age5to17))
-(reaction detect_hosp_age5to17 (Sys_age5to17) (Sys_det3_age5to17) (* d_Sys Sys_age5to17))
 
 (reaction recovery_As_det_age5to17 (As_det1_age5to17)   (RAs_det1_age5to17)   (* Kr_a As_det1_age5to17))
 
@@ -451,9 +469,6 @@
 (reaction recovery_H1_age18to64   (H1_age18to64)   (RH1_age18to64)   (* Kr_h H1_age18to64))
 (reaction recovery_C2_age18to64   (C2_age18to64)   (RC2_age18to64)   (* Kr_c C2_age18to64))
 
-(reaction detect_As_age18to64 (As_age18to64) (As_det1_age18to64) (* d_As As_age18to64))
-(reaction detect_symp_age18to64 (Sym_age18to64) (Sym_det2_age18to64) (* d_Sym Sym_age18to64))
-(reaction detect_hosp_age18to64 (Sys_age18to64) (Sys_det3_age18to64) (* d_Sys Sys_age18to64))
 
 (reaction recovery_As_det_age18to64 (As_det1_age18to64)   (RAs_det1_age18to64)   (* Kr_a As_det1_age18to64))
 
@@ -488,9 +503,6 @@
 (reaction recovery_H1_age64to100   (H1_age64to100)   (RH1_age64to100)   (* Kr_h H1_age64to100))
 (reaction recovery_C2_age64to100   (C2_age64to100)   (RC2_age64to100)   (* Kr_c C2_age64to100))
 
-(reaction detect_As_age64to100 (As_age64to100) (As_det1_age64to100) (* d_As As_age64to100))
-(reaction detect_symp_age64to100 (Sym_age64to100) (Sym_det2_age64to100) (* d_Sym Sym_age64to100))
-(reaction detect_hosp_age64to100 (Sys_age64to100) (Sys_det3_age64to100) (* d_Sys Sys_age64to100))
 
 (reaction recovery_As_det_age64to100 (As_det1_age64to100)   (RAs_det1_age64to100)   (* Kr_a As_det1_age64to100))
 
