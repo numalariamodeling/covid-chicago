@@ -37,6 +37,7 @@ def makeExperimentFolder() :
         os.makedirs(temp_dir)
         os.makedirs(trajectories_dir)
         os.makedirs(os.path.join(temp_exp_dir, 'log'))
+        os.makedirs(os.path.join(trajectories_dir, 'log'))  # location of log file on quest
 
     ## Copy emodl and cfg file  to experiment folder
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
@@ -154,34 +155,37 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
-def generateSubmissionFile(scen_num,exp_name):
-        file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
-        file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
-            str(scen_num),
-            os.path.join(exe_dir, "compartments.exe"),
-            os.path.join(temp_dir, "model_%%i" + ".cfg"),
-            os.path.join(temp_dir, "simulation_%%i" + ".emodl")
-        ) + "\n ECHO end")
-        file.close()
 
-        # Hardcoded Quest directories for now!
-        # additional parameters , ncores, time, queue...
-        exp_name_short = exp_name[-20:]
-        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 5\n#SBATCH --ntasks-per-node=5'
-        jobname = '#SBATCH	--job-name="'  + exp_name_short +'"'
-        module = '\nmodule load singularity'
-        singularity = '\nsingularity exec /software/singularity/images/singwine-v1.img wine'
-        array = '\n#SBATCH --array=1-' + str(scen_num)
-        email = '\n# SBATCH --mail-user=manuela.runge@northwestern.edu'  ## create input mask or user txt where specified
-        emailtype = '\n# SBATCH --mail-type=ALL'
-        err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
-        out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
-        exe = '\n/home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe'
-        cfg = ' -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg'
-        emodl = ' -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
-        file = open(os.path.join(trajectories_dir,'runSimulations.sh'), 'w')
-        file.write(header + jobname + email + emailtype + array + err + out + module + singularity  + exe + cfg + emodl)
-        file.close()
+def generateSubmissionFile(scen_num, exp_name):
+    file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
+    file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
+        str(scen_num),
+        os.path.join(exe_dir, "compartments.exe"),
+        os.path.join(temp_dir, "model_%%i" + ".cfg"),
+        os.path.join(temp_dir, "simulation_%%i" + ".emodl")
+    ) + "\n ECHO end")
+    file.close()
+
+    # Hardcoded Quest directories for now!
+    # additional parameters , ncores, time, queue...
+    exp_name_short = exp_name[-20:]
+    header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 1\n#SBATCH --ntasks-per-node=1'
+    jobname = '\n#SBATCH	--job-name="' + exp_name_short + '"'
+    array = '\n#SBATCH --array=1-' + str(scen_num)
+    email = '\n# SBATCH --mail-user=manuela.runge@northwestern.edu'  ## create input mask or user txt where specified
+    emailtype = '\n# SBATCH --mail-type=ALL'
+    err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
+    out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
+    module = '\n\nmodule load singularity'
+    singularity = '\n\nsingularity exec /software/singularity/images/singwine-v1.img wine /home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe  -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg  -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
+    file = open(os.path.join(trajectories_dir, 'runSimulations.sh'), 'w')
+    file.write(header + jobname + email + emailtype + array + err + out + module + singularity)
+    file.close()
+
+    submit_runSimulations = 'cd /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
+    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
+    file.write(submit_runSimulations)
+    file.close()
 
 
 def runExp(Location = 'Local'):
