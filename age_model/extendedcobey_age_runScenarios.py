@@ -227,7 +227,7 @@ def makeExperimentFolder() :
     plot_path = sim_output_path
     # Create temporary folder for the simulation files
     # currently allowing to run only 1 experiment at a time locally
-    temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
+    temp_exp_dir = os.path.join(git_dir, 'age_model','_temp', exp_name)
     temp_dir = os.path.join(temp_exp_dir, 'simulations')
     trajectories_dir = os.path.join(temp_exp_dir, 'trajectories')
     if not os.path.exists(os.path.join(git_dir, '_temp')):
@@ -471,11 +471,6 @@ def cleanup(delete_temp_dir=True) :
 
 if __name__ == '__main__' :
 
-    master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                           'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-    detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-    custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
-                           'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
     #============================================================
     # Experiment design, fitting parameter and population
@@ -483,7 +478,7 @@ if __name__ == '__main__' :
 
     ageGroupSet = '4grp'   # '6grp'
 
-    exp_name = today.strftime("%Y%m%d") + '_mr_test_age_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_test_age_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
     exp_description = " "
 
     # Selected SEIR model
@@ -507,9 +502,9 @@ if __name__ == '__main__' :
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     # Simlation setup
-    simulation_population = 2700000 #2700000  #  1000  # 12830632 Illinois   # 2700000  Chicago
-    number_of_samples = 3
-    number_of_runs = 2
+    simulation_population = 315000 #  1000  # 12830632 Illinois   # 2700000  Chicago ## 315000 NMH catchment
+    number_of_samples = 20
+    number_of_runs = 3
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
