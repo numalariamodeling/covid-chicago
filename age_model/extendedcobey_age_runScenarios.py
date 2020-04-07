@@ -22,32 +22,103 @@ cfg_dir = os.path.join(git_dir,'age_model', 'cfg')
 today = date.today()
 
 
+def define_group_dictionary(totalPop, ageGroups, ageGroupScale, initialAs):
+    age_dic = {}
+    for i, grp in enumerate(ageGroups):
+        print(i, grp)
+        age_dic[i] = [totalPop * ageGroupScale[i], initialAs[i]]
+    return age_dic
+
+
+def define_Species_initial(df, age_dic, ageGroupSet):
+    ##  20200318_EMODKingCountyCovidInterventions.docx
+    ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
+    ##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
+
+    if ageGroupSet == '4grp':
+        df['speciesS_ageU5'] = age_dic[0][0]
+        df['speciesS_age5to17'] = age_dic[1][0]
+        df['speciesS_age18to64'] = age_dic[2][0]
+        df['speciesS_age64to100'] = age_dic[3][0]
+
+        df['initialAs_ageU5'] = age_dic[0][1]
+        df['initialAs_age5to17'] = age_dic[1][1]
+        df['initialAs_age18to64'] = age_dic[2][1]
+        df['initialAs_age64to100'] = age_dic[3][1]
+
+    ## COPIED VALUES FROM 4grp - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
+    elif ageGroupSet == '6grp':
+        df['speciesS_age0to19'] = age_dic[0][0]
+        df['speciesS_age20to44'] = age_dic[1][0]
+        df['speciesS_age45to54'] = age_dic[2][0]
+        df['speciesS_age55to64'] = age_dic[3][0]
+        df['speciesS_age65to74'] = age_dic[4][0]
+        df['speciesS_age75to84'] = age_dic[5][0]
+
+        df['initialAs_age0to19'] = age_dic[0][1]
+        df['initialAs_age20to44'] = age_dic[1][1]
+        df['initialAs_age45to54'] = age_dic[2][1]
+        df['initialAs_age55to64'] = age_dic[3][1]
+        df['initialAs_age65to74'] = age_dic[4][1]
+        df['initialAs_age75to84'] = age_dic[5][1]
+
+    return df
+
+def replace_Species_initial(data, df, sample_nr, ageGroupSet) :
+
+    if ageGroupSet == '4grp':
+        data = data.replace('@speciesS_ageU5@', str(df.speciesS_ageU5[sample_nr]))
+        data = data.replace('@speciesS_age5to17@', str(df.speciesS_age5to17[sample_nr]))
+        data = data.replace('@speciesS_age18to64@', str(df.speciesS_age18to64[sample_nr]))
+        data = data.replace('@speciesS_age64to100@', str(df.speciesS_age64to100[sample_nr]))
+
+        data = data.replace('@initialAs_ageU5@', str(df.initialAs_ageU5[sample_nr]))
+        data = data.replace('@initialAs_age5to17@', str(df.initialAs_age5to17[sample_nr]))
+        data = data.replace('@initialAs_age18to64@', str(df.initialAs_age18to64[sample_nr]))
+        data = data.replace('@initialAs_age64to100@', str(df.initialAs_age64to100[sample_nr]))
+
+    if ageGroupSet == '6grp':
+        data = data.replace('@speciesS_age0to19@', str(df.speciesS_age0to19[sample_nr]))
+        data = data.replace('@speciesS_age20to44@', str(df.speciesS_age20to44[sample_nr]))
+        data = data.replace('@speciesS_age45to54@', str(df.speciesS_age45to54[sample_nr]))
+        data = data.replace('@speciesS_age55to64@', str(df.speciesS_age55to64[sample_nr]))
+        data = data.replace('@speciesS_age65to74@', str(df.speciesS_age65to74[sample_nr]))
+        data = data.replace('@speciesS_age75to84@', str(df.speciesS_age75to84[sample_nr]))
+
+        data = data.replace('@initialAs_age0to19@', str(df.initialAs_age0to19[sample_nr]))
+        data = data.replace('@initialAs_age20to44@', str(df.initialAs_age20to44[sample_nr]))
+        data = data.replace('@initialAs_age45to54@', str(df.initialAs_age45to54[sample_nr]))
+        data = data.replace('@initialAs_age55to64@', str(df.initialAs_age55to64[sample_nr]))
+        data = data.replace('@initialAs_age65to74@', str(df.initialAs_age65to74[sample_nr]))
+        data = data.replace('@initialAs_age75to84@', str(df.initialAs_age75to84[sample_nr]))
+    return data
+
 def define_Ki_contact_matrix(df, ageGroupSet):
     ##  20200318_EMODKingCountyCovidInterventions.docx
     ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
 	##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
 
-    if ageGroupSet == 'Set1':
+    if ageGroupSet == '4grp':
         df['sKi1_1'] = 0.257686875216915
         df['sKi1_2'] = 0.0559508758329188
         df['sKi1_3'] = 0.0494614061407881
         df['sKi1_4'] = 0.013894156574477
-        df['sKi1_2'] = 0.0559508758329188
+        df['sKi2_1'] = 0.0559508758329188
         df['sKi2_2'] = 0.360461121322605
         df['sKi2_3'] = 0.0697648677126865
         df['sKi2_4'] = 0.0198730010097838
-        df['sKi1_3'] = 0.0494614061407881
-        df['sKi2_3'] = 0.0697648677126865
+        df['sKi3_1'] = 0.0494614061407881
+        df['sKi3_2'] = 0.0697648677126865
         df['sKi3_3'] = 0.113203219876234
         df['sKi3_4'] = 0.021342113533092
-        df['sKi1_4'] = 0.013894156574477
-        df['sKi2_4'] = 0.0198730010097838
-        df['sKi3_4'] = 0.021342113533092
+        df['sKi4_1'] = 0.013894156574477
+        df['sKi4_2'] = 0.0198730010097838
+        df['sKi4_3'] = 0.021342113533092
         df['sKi4_4'] = 0.0383623627804992
 
 
-    ## COPIED VALUES FROM SET1 - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
-    elif ageGroupSet == 'Set2' :
+    ## COPIED VALUES FROM 4grp - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
+    elif ageGroupSet == '4grp' :
         df['sKi1_6'] = 0.209526849
         df['sKi1_5'] = 0.039466462
         df['sKi1_4'] = 0.209526849
@@ -93,7 +164,7 @@ def define_Ki_contact_matrix(df, ageGroupSet):
 
 def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
 
-    if ageGroupSet == 'Set1':
+    if ageGroupSet == '4grp':
         data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
         data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
         data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
@@ -111,7 +182,7 @@ def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
         data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
         data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
 
-    if ageGroupSet == 'Set2':
+    if ageGroupSet == '6grp':
         data = data.replace('@sKi1_6@', str(df.sKi1_6[sample_nr]))
         data = data.replace('@sKi1_5@', str(df.sKi1_5[sample_nr]))
         data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
@@ -174,7 +245,7 @@ def makeExperimentFolder() :
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 # parameter samples
-def generateParameterSamples(samples, pop, ageGroupSet = 'Set1'):
+def generateParameterSamples(samples, pop, age_dic, ageGroupSet):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -214,6 +285,7 @@ def generateParameterSamples(samples, pop, ageGroupSet = 'Set1'):
         df['socialDistance_time3'] = 33
         
         df = define_Ki_contact_matrix(df, ageGroupSet=ageGroupSet)
+        df = define_Species_initial(df, age_dic, ageGroupSet=ageGroupSet )
 
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
@@ -250,6 +322,7 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num, ageGroupSet) :
     data = data.replace('@socialDistance_time3@',  str(df.socialDistance_time3[sample_nr]))
 
     data = replace_Ki_contact_param(data, df, sample_nr, ageGroupSet=ageGroupSet)
+    data = replace_Species_initial(data, df, sample_nr, ageGroupSet=ageGroupSet)
 
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
@@ -261,10 +334,10 @@ def writeTxt(txtdir, filename, textstring) :
     file.write(textstring)
     file.close()
     
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname,ageGroupSet):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname, age_dic, ageGroupSet):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, ageGroupSet=ageGroupSet)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, ageGroupSet=ageGroupSet, age_dic=age_dic)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
@@ -395,32 +468,6 @@ def cleanup(delete_temp_dir=True) :
     elif not os.path.exists(sim_output_path):
         print('Sim_output_path does not exists')
 
-def plot(adf, allchannels, plot_fname=None):
-    fig = plt.figure(figsize=(8, 6))
-    palette = sns.color_palette('Set1', 10)
-
-    axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
-    fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
-    for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
-        ax = axes[c]
-        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-        ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
-        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
-                        color=palette[c], linewidth=0, alpha=0.2)
-        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
-                        color=palette[c], linewidth=0, alpha=0.4)
-
-        ax.set_title(channel, y=0.8)
-
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, )
-
-    if plot_fname :
-        plt.savefig(os.path.join(plot_path, plot_fname))
-    plt.show()
 
 if __name__ == '__main__' :
 
@@ -434,17 +481,27 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_mr_test_rerun_age_extendeexdmodel_covid_NMH_catchment' + '_rn' + str(int(np.random.uniform(10, 99)))
-    exp_description = "Test trimmed cobey model using the age setup for four age groups v2 - tested with higher Ki"
+    ageGroupSet = '4grp'   # '6grp'
+
+    exp_name = today.strftime("%Y%m%d") + '_mr_test_age_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_description = " "
 
     # Selected SEIR model
-    #emodlname =  'age_cobeymodel_covid_4agegrp_trimmed_v2 rmS.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
-    emodlname = "age_extendedmodel_covid_NMH_catchment.emodl"
-    #emodlname = 'age_extendeexdmodel_covid_NMH_catchment (2).emodl'
-    ageGroupSet = 'Set1'
+    #emodlname = "extendedmodel_cobey_age_4grp.emodl"
 
-    #emodlname =  'age_cobeymodel_covid_6agegrp_pop1000.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
-    #ageGroupSet = 'Set2'
+
+    if ageGroupSet == '4grp':
+        emodlname =  'extendedmodel_cobey_age_4grp.emodl'
+        ageGroups_4grp = ['ageU5', 'age5to17', 'age18to64', 'age64to100']
+        ageGroupScale_4grp = [0.062, 0.203, 0.606, 0.129]
+        initialAs_4grp = [3, 3, 3, 3, 3, 3]
+
+    elif ageGroupSet == '6grp':
+        emodlname =  'extendedmodel_cobey_age_6grp.emodl'
+        ageGroups_6grp = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74', 'age75to84']
+        ageGroupScale_6grp = [0.226, 0.412, 0.120, 0.112, 0.075, 0.038]
+        initialAs_6grp = [3, 3, 3, 3, 3, 3]
+
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
@@ -456,12 +513,17 @@ if __name__ == '__main__' :
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
+    age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
+                                      ageGroups=ageGroupScale_6grp,
+                                      ageGroupScale=ageGroupScale_6grp,
+                                      initialAs=initialAs_6grp)
+
     # Time event
     #startDate = '02.20.2020'
     #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
 
     # Parameter values
-    Kivalues =  np.linspace(2.e-5,2.5e-3,5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues =  np.linspace(2.e-7,2.5e-7,5)# np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -470,6 +532,7 @@ if __name__ == '__main__' :
                               duration = duration,
                               monitoring_samples = monitoring_samples,
                               modelname=emodlname,
+                              age_dic = age_dic,
                               ageGroupSet =ageGroupSet)
 
     generateSubmissionFile(nscen, exp_name)
@@ -480,9 +543,3 @@ if __name__ == '__main__' :
     # Once the simulations are done
     combineTrajectories(500)
     cleanup(delete_temp_dir=False)
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    # Plots for quick check of simulation results
-    # first_day = date(2020, 2, 20)
-    plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
-    plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
-    plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')

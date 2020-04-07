@@ -6,39 +6,13 @@ from load_paths import load_box_paths
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 emodl_dir = os.path.join(git_dir, 'age_model', 'emodl')
 
-# generate the age dict, assuming each age is [pop, 0, 1, 0]
-def read_group_dictionary(filename='age_dic.csv', Testmode=True, ngroups=2):
-    age_dic = {}
-    with open(os.path.join(git_dir, filename)) as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            age_dic[row['age']] = [int(x) for x in row['val_list'].strip('][').split(', ')]
-
-    if Testmode == True:
-        age_dic = {k: age_dic[k] for k in sorted(age_dic.keys())[:ngroups]}
-
-    return age_dic
-
-def define_group_dictionary(totalPop, ageGroups,  ageGroupScale, initialAs) :
-    age_dic = {}
-    for i, grp in enumerate(ageGroups):
-        print(i, grp)
-        age_dic[grp] = [totalPop * ageGroupScale[i], initialAs[i]]
-    return age_dic
-
-def write_species_init(age_dic, age):
-    S = "(species S_{} {})".format(age, age_dic[age][0])
-    As = "(species As_{} {})".format(age, age_dic[age][1])
-    species_init_str = S + '\n' + As + '\n'
-    species_init_str = species_init_str.replace("  ", " ")
-    return (species_init_str)
-
-
 ### WRITE EMODL CHUNKS
 # eval(" 'age,' * 26") + "age"   ### need to add the number of ages pasted into format automatically depending on n groups
 def write_species(grp):
    grp = str(grp)
    species_str = """
+(species S_{} @speciesS_{}@)
+(species As_{} @initialAs_{}@)
 (species E_{} 0)
 (species As_det1_{} 0)
 (species P_{} 0)
@@ -68,7 +42,7 @@ def write_species(grp):
 (species RC2_det3_{} 0)
 """.format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp
+           grp, grp, grp, grp, grp, grp, grp,grp, grp ,grp, grp
            )
    species_str = species_str.replace("  ", " ")
    return (species_str)
@@ -366,9 +340,6 @@ def write_reactions(grp):
 (reaction recovery_H1_{}   (H1_{})   (RH1_{})   (* Kr_h H1_{}))
 (reaction recovery_C2_{}   (C2_{})   (RC2_{})   (* Kr_c C2_{}))
 
-(reaction detect_As_{} (As_{}) (As_det1_{}) (* d_As As_{}))
-(reaction detect_symp_{} (Sym_{}) (Sym_det2_{}) (* d_Sym Sym_{}))
-(reaction detect_hosp_{} (Sys_{}) (Sys_det3_{}) (* d_Sys Sys_{}))
 
 (reaction recovery_As_det_{} (As_det1_{})   (RAs_det1_{})   (* Kr_a As_det1_{}))
 
@@ -390,8 +361,7 @@ def write_reactions(grp):
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp
+           grp, grp, grp, grp, grp, 
            )
 
     #reaction_str = reaction_str.replace("  ", " ")
@@ -401,7 +371,7 @@ def write_reactions(grp):
 ###
 
 ###stringing all of the functions together to make the file:
-def generate_extended_emodl(grp_dic, file_output, verbose=False):
+def generate_extended_emodl(grp, file_output):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -412,30 +382,27 @@ def generate_extended_emodl(grp_dic, file_output, verbose=False):
 
     # building up the .emodl string
     total_string = ""
-    species_init_string = ""
     species_string = ""
     observe_string = ""
     reaction_string = ""
     functions_string = ""
     total_string = total_string + header_str
 
-    for key in age_dic.keys():
+    for key in grp:
         # key = 'age0to9'
-        species_init = write_species_init(age_dic, key)
         species = write_species(key)
         observe = write_observe(key)
         reaction = write_reactions(key)
         functions = write_functions(key)
-        species_init_string = species_init_string + species_init
         species_string = species_string + species
         observe_string = observe_string + observe
         reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
 
     reaction_string_combined = write_exposure_reaction() + '\n' + reaction_string
-    params = write_params() + write_ki_mix(len(age_dic.keys()))
+    params = write_params() + write_ki_mix(len(grp))
 
-    total_string = total_string + '\n\n' + species_init_string + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
@@ -446,7 +413,7 @@ def generate_extended_emodl(grp_dic, file_output, verbose=False):
         print("{} file was NOT created".format(file_output))
 
 
-def generate_extended_emodl2(grp_dic, file_output, verbose=False):
+def generate_extended_emodl2(grp, file_output):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -457,30 +424,27 @@ def generate_extended_emodl2(grp_dic, file_output, verbose=False):
 
     # building up the .emodl string
     total_string = ""
-    species_init_string = ""
     species_string = ""
     observe_string = ""
     reaction_string = ""
     functions_string = ""
     total_string = total_string + header_str
 
-    for key in grp_dic.keys():
+    for key in grp:
         # key = 'age0to9'
-        species_init = write_species_init(grp_dic, key)
         species = write_species(key)
         observe = write_observe(key)
         reaction = write_reactions(key)
         functions = write_functions(key)
-        species_init_string = species_init_string + species_init
         species_string = species_string + species
         observe_string = observe_string + observe
         reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
 
     reaction_string_combined = write_exposure_reaction2() + '\n' + reaction_string
-    params = write_params() + write_ki_mix(len(grp_dic.keys()))
+    params = write_params() + write_ki_mix(len(grp))
 
-    total_string = total_string + '\n\n' + species_init_string + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
@@ -492,18 +456,9 @@ def generate_extended_emodl2(grp_dic, file_output, verbose=False):
 
 
 #if __name__ == '__main__':
-#age_dic = read_group_dictionary(filename='age_dic_agg.csv', Testmode=False)
-# Age scaling needs revision based on latest demography data
-age_dic = define_group_dictionary(totalPop = 1000,      #2700000
-                                  ageGroups=['ageU5', 'age5to17', 'age18to64', 'age64to100'],
-                                  ageGroupScale=[0.062, 0.203, 0.606, 0.129],   ## scaled from Chicago population data shared in w7 channel
-                                  initialAs= [3,3,3,3])    ## homogeneous distribution of  initial cases  in all age groups?
-                                  
-age_dic2 = define_group_dictionary(totalPop = 1000,      #2700000
-                                  ageGroups=['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74', 'age75to84'],   # 85 and over ?
-                                  ageGroupScale=[0.226, 0.412, 0.120, 0.112,0.075, 0.038],   ## scaled from Chicago population data shared in w7 channel
-                                  initialAs= [3,3,3,3,3,3])    ## homogeneous distribution of  initial cases  in all age groups?
 
-generate_extended_emodl(grp_dic=age_dic, file_output=os.path.join(emodl_dir, 'age_cobeymodel_covid_4agegrp_pop1000.emodl'))
-generate_extended_emodl2(grp_dic=age_dic2, file_output=os.path.join(emodl_dir, 'age_cobeymodel_covid_6agegrp_pop1000.emodl'))
+age_grp4 = ['ageU5','age5to17','age18to64','age64to100']
+generate_extended_emodl(grp=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
 
+age_grp6 = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74','age75to84']
+generate_extended_emodl2(grp=age_grp6, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_6grp.emodl'))
