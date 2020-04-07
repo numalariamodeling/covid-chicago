@@ -35,19 +35,19 @@ def define_Species_initial(df, age_dic, ageGroupSet):
     ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
     ##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
 
-    if ageGroupSet == 'Set1':
+    if ageGroupSet == '4grp':
         df['speciesS_ageU5'] = age_dic[0][0]
         df['speciesS_age5to17'] = age_dic[1][0]
         df['speciesS_age18to64'] = age_dic[2][0]
         df['speciesS_age64to100'] = age_dic[3][0]
 
-        df['initialAs_age0to19'] = age_dic[0][1]
+        df['initialAs_ageU5'] = age_dic[0][1]
         df['initialAs_age5to17'] = age_dic[1][1]
         df['initialAs_age18to64'] = age_dic[2][1]
         df['initialAs_age64to100'] = age_dic[3][1]
 
-    ## COPIED VALUES FROM SET1 - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
-    elif ageGroupSet == 'Set2':
+    ## COPIED VALUES FROM 4grp - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
+    elif ageGroupSet == '6grp':
         df['speciesS_age0to19'] = age_dic[0][0]
         df['speciesS_age20to44'] = age_dic[1][0]
         df['speciesS_age45to54'] = age_dic[2][0]
@@ -66,7 +66,7 @@ def define_Species_initial(df, age_dic, ageGroupSet):
 
 def replace_Species_initial(data, df, sample_nr, ageGroupSet) :
 
-    if ageGroupSet == 'Set1':
+    if ageGroupSet == '4grp':
         data = data.replace('@speciesS_ageU5@', str(df.speciesS_ageU5[sample_nr]))
         data = data.replace('@speciesS_age5to17@', str(df.speciesS_age5to17[sample_nr]))
         data = data.replace('@speciesS_age18to64@', str(df.speciesS_age18to64[sample_nr]))
@@ -77,7 +77,7 @@ def replace_Species_initial(data, df, sample_nr, ageGroupSet) :
         data = data.replace('@initialAs_age18to64@', str(df.initialAs_age18to64[sample_nr]))
         data = data.replace('@initialAs_age64to100@', str(df.initialAs_age64to100[sample_nr]))
 
-    if ageGroupSet == 'Set2':
+    if ageGroupSet == '6grp':
         data = data.replace('@speciesS_age0to19@', str(df.speciesS_age0to19[sample_nr]))
         data = data.replace('@speciesS_age20to44@', str(df.speciesS_age20to44[sample_nr]))
         data = data.replace('@speciesS_age45to54@', str(df.speciesS_age45to54[sample_nr]))
@@ -98,7 +98,7 @@ def define_Ki_contact_matrix(df, ageGroupSet):
     ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
 	##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
 
-    if ageGroupSet == 'Set1':
+    if ageGroupSet == '4grp':
         df['sKi1_1'] = 0.257686875216915
         df['sKi1_2'] = 0.0559508758329188
         df['sKi1_3'] = 0.0494614061407881
@@ -117,8 +117,8 @@ def define_Ki_contact_matrix(df, ageGroupSet):
         df['sKi4_4'] = 0.0383623627804992
 
 
-    ## COPIED VALUES FROM SET1 - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
-    elif ageGroupSet == 'Set2' :
+    ## COPIED VALUES FROM 4grp - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
+    elif ageGroupSet == '4grp' :
         df['sKi1_6'] = 0.209526849
         df['sKi1_5'] = 0.039466462
         df['sKi1_4'] = 0.209526849
@@ -164,7 +164,7 @@ def define_Ki_contact_matrix(df, ageGroupSet):
 
 def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
 
-    if ageGroupSet == 'Set1':
+    if ageGroupSet == '4grp':
         data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
         data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
         data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
@@ -182,7 +182,7 @@ def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
         data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
         data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
 
-    if ageGroupSet == 'Set2':
+    if ageGroupSet == '6grp':
         data = data.replace('@sKi1_6@', str(df.sKi1_6[sample_nr]))
         data = data.replace('@sKi1_5@', str(df.sKi1_5[sample_nr]))
         data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
@@ -481,15 +481,27 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_mr_test_age_6grp' + '_rn' + str(int(np.random.uniform(10, 99)))
-    exp_description = "Test running time for full age model and 6 grp (contact matrix placeholders)"
+    ageGroupSet = '4grp'   # '6grp'
+
+    exp_name = today.strftime("%Y%m%d") + '_mr_test_age_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_description = " "
 
     # Selected SEIR model
-    emodlname = "age_cobeymodel_covid_6grp.emodl"
-    ageGroupSet = 'Set2'
+    #emodlname = "extendedmodel_cobey_age_4grp.emodl"
 
-    #emodlname =  'age_cobeymodel_covid_6agegrp_pop1000.emodl' # 'age_colbeymodel_covid_4agegrp_pop1000.emodl'
-    #ageGroupSet = 'Set2'
+
+    if ageGroupSet == '4grp':
+        emodlname =  'extendedmodel_cobey_age_4grp.emodl'
+        ageGroups_4grp = ['ageU5', 'age5to17', 'age18to64', 'age64to100']
+        ageGroupScale_4grp = [0.062, 0.203, 0.606, 0.129]
+        initialAs_4grp = [3, 3, 3, 3, 3, 3]
+
+    elif ageGroupSet == '6grp':
+        emodlname =  'extendedmodel_cobey_age_6grp.emodl'
+        ageGroups_6grp = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74', 'age75to84']
+        ageGroupScale_6grp = [0.226, 0.412, 0.120, 0.112, 0.075, 0.038]
+        initialAs_6grp = [3, 3, 3, 3, 3, 3]
+
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
@@ -500,15 +512,6 @@ if __name__ == '__main__' :
     number_of_runs = 2
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
-
-    # Age specification
-    ageGroups_4grp=['ageU5', 'age5to17', 'age18to64', 'age64to100']
-    ageGroupScale_4grp = [0.062, 0.203, 0.606, 0.129]
-    initialAs_4grp = [3, 3, 3, 3, 3, 3]
-
-    ageGroups_6grp = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74','age75to84']
-    ageGroupScale_6grp = [0.226, 0.412, 0.120, 0.112, 0.075, 0.038]
-    initialAs_6grp = [3, 3, 3, 3, 3, 3]
 
     age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
                                       ageGroups=ageGroupScale_6grp,

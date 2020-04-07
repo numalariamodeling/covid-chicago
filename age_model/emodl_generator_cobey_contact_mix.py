@@ -340,9 +340,6 @@ def write_reactions(grp):
 (reaction recovery_H1_{}   (H1_{})   (RH1_{})   (* Kr_h H1_{}))
 (reaction recovery_C2_{}   (C2_{})   (RC2_{})   (* Kr_c C2_{}))
 
-(reaction detect_As_{} (As_{}) (As_det1_{}) (* d_As As_{}))
-(reaction detect_symp_{} (Sym_{}) (Sym_det2_{}) (* d_Sym Sym_{}))
-(reaction detect_hosp_{} (Sys_{}) (Sys_det3_{}) (* d_Sys Sys_{}))
 
 (reaction recovery_As_det_{} (As_det1_{})   (RAs_det1_{})   (* Kr_a As_det1_{}))
 
@@ -364,8 +361,7 @@ def write_reactions(grp):
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp
+           grp, grp, grp, grp, grp, 
            )
 
     #reaction_str = reaction_str.replace("  ", " ")
@@ -461,8 +457,8 @@ def generate_extended_emodl2(grp, file_output):
 
 #if __name__ == '__main__':
 
-age_grp4 = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74', 'age75to84']
-generate_extended_emodl(grp=age_grp4, file_output=os.path.join(emodl_dir, 'age_cobeymodel_covid_4grp.emodl'))
+age_grp4 = ['ageU5','age5to17','age18to64','age64to100']
+generate_extended_emodl(grp=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
 
 age_grp6 = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74','age75to84']
-generate_extended_emodl2(grp=age_grp6, file_output=os.path.join(emodl_dir, 'age_cobeymodel_covid_6grp.emodl'))
+generate_extended_emodl2(grp=age_grp6, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_6grp.emodl'))
