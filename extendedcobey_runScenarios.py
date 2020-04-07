@@ -10,6 +10,7 @@ from datetime import date, timedelta
 import shutil
 from load_paths import load_box_paths
 from processing_helpers import *
+from simulation_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -63,9 +64,9 @@ def generateParameterSamples(samples, pop):
         df['recovery_rate_crit'] = np.random.uniform(25.3, 31.6, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
         df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
-        #df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
+        df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
         #df['fraction_critical'] = np.random.uniform(0.15, 0.35, samples)
-        df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
+        #df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
         #df['cfr'] = np.random.uniform(0.008, 0.022, samples)
         #df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
         #df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
@@ -82,9 +83,9 @@ def generateParameterSamples(samples, pop):
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
         df['social_multiplier_3'] = np.random.uniform( 0.005 , 0.3, samples) #0.2, 0.6
 
-        df['socialDistance_time1'] = 24
-        df['socialDistance_time2'] = 29
-        df['socialDistance_time3'] = 33
+        df['socialDistance_time1'] = 32 # 24  ## (+8 for NMH)
+        df['socialDistance_time2'] = 37 # 29  ## (+8 for NMH)
+        df['socialDistance_time3'] = 41 # 33  ## (+8 for NMH)
 
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
@@ -156,111 +157,6 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     return (scen_num)
 
 
-def generateSubmissionFile(scen_num, exp_name):
-    file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
-    file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
-        str(scen_num),
-        os.path.join(exe_dir, "compartments.exe"),
-        os.path.join(temp_dir, "model_%%i" + ".cfg"),
-        os.path.join(temp_dir, "simulation_%%i" + ".emodl")
-    ) + "\n ECHO end")
-    file.close()
-
-    # Hardcoded Quest directories for now!
-    # additional parameters , ncores, time, queue...
-    exp_name_short = exp_name[-20:]
-    header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 1\n#SBATCH --ntasks-per-node=1'
-    jobname = '\n#SBATCH	--job-name="' + exp_name_short + '"'
-    array = '\n#SBATCH --array=1-' + str(scen_num)
-    email = '\n# SBATCH --mail-user=manuela.runge@northwestern.edu'  ## create input mask or user txt where specified
-    emailtype = '\n# SBATCH --mail-type=ALL'
-    err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
-    out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
-    module = '\n\nmodule load singularity'
-    singularity = '\n\nsingularity exec /software/singularity/images/singwine-v1.img wine /home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe  -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg  -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
-    file = open(os.path.join(trajectories_dir, 'runSimulations.sh'), 'w')
-    file.write(header + jobname + email + emailtype + array + err + out + module + singularity)
-    file.close()
-
-    submit_runSimulations = 'cd /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
-    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
-    file.write(submit_runSimulations)
-    file.close()
-
-
-def runExp(Location = 'Local'):
-    if Location =='Local' :
-        p = os.path.join(trajectories_dir,  'runSimulations.bat')
-        subprocess.call([p])
-    if Location =='NUCLUSTER' :
-        print('please submit sbatch runSimulations.sh in the terminal')
-
-
-def reprocess(input_fname='trajectories.csv', output_fname=None):
-    fname = os.path.join(trajectories_dir, input_fname)
-    row_df = pd.read_csv(fname, skiprows=1)
-    df = row_df.set_index('sampletimes').transpose()
-    num_channels = len([x for x in df.columns.values if '{0}' in x])
-    num_samples = int((len(row_df)) / num_channels)
-
-    df = df.reset_index(drop=False)
-    df = df.rename(columns={'index': 'time'})
-    df['time'] = df['time'].astype(float)
-
-    adf = pd.DataFrame()
-    for sample_num in range(num_samples):
-        channels = [x for x in df.columns.values if '{%d}' % sample_num in x]
-        sdf = df[['time'] + channels]
-        sdf = sdf.rename(columns={
-            x: x.split('{')[0] for x in channels
-        })
-        sdf['sample_num'] = sample_num
-        adf = pd.concat([adf, sdf])
-
-    adf = adf.reset_index()
-    del adf['index']
-    if output_fname:
-        adf.to_csv(os.path.join(temp_exp_dir,output_fname), index=False)
-    return adf
-
-
-def combineTrajectories(Nscenarios, deleteFiles=False):
-    scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
-
-    df_list = []
-    for scen_i in range(Nscenarios):
-        input_name = "trajectories_scen" + str(scen_i) + ".csv"
-        try:
-            df_i = reprocess(input_name)
-            df_i['scen_num'] = scen_i
-            df_i = df_i.merge(scendf, on=['scen_num','sample_num'])
-            df_list.append(df_i)
-        except:
-            continue
-
-        if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
-
-    dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
-
-    return dfc
-
-
-def cleanup(delete_temp_dir=True) :
-    # Delete simulation model and emodl files
-    # But keeps per default the trajectories, better solution, zip folders and copy
-    if delete_temp_dir ==True :
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print('temp_dir folder deleted')
-    shutil.copytree(temp_exp_dir, sim_output_path)
-    if not os.path.exists(plot_path):
-        os.makedirs(plot_path)
-    # Delete files after being copied to the project folder
-    if os.path.exists(sim_output_path):
-        shutil.rmtree(temp_exp_dir, ignore_errors=True)
-    elif not os.path.exists(sim_output_path):
-        print('Sim_output_path does not exists')
-
 def plot(adf, allchannels, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
@@ -300,7 +196,7 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    exp_name = today.strftime("%Y%m%d") + 'mr_NMH_catchment_pop315000_narrowKi' + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_TEST' + '_rn' + str(int(np.random.uniform(10, 99)))
 
 
     # Selected SEIR model
@@ -317,11 +213,17 @@ if __name__ == '__main__' :
     monitoring_samples = 365  # needs to be smaller than duration
 
     # Time event
-    #startDate = '02.20.2020'
-    #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
+    ### Cook   -
+    # Kivalues  = np.linspace(2.e-7,2.5e-7,5)
+    # startDate = '02.20.2020'
+    # socialDistance_time = [24, 29, 33]
+    ### NMH
+    # Kivalues  = np.linspace(1.5e-6, 2e-6, 3)
+    # startDate = '02.28.2020'
+    # socialDistance_time = [32, 37, 41]
 
     # Parameter values
-    Kivalues =  np.linspace(2.e-7,2.5e-7,5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues =  np.linspace(1.5e-6, 2e-6, 5)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -333,11 +235,11 @@ if __name__ == '__main__' :
 
     generateSubmissionFile(nscen, exp_name)
   
-  if Location == 'Local' :
-    runExp(Location='Local')
+if Location == 'Local' :
+    runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
-    combineTrajectories(500)
+    combineTrajectories(nscen)
     cleanup(delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat_50.csv'))
 
