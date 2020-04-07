@@ -86,14 +86,20 @@ def write_observe(county):
 (observe critical_{} critical_{})
 (observe deaths_{} deaths_{})
 (observe recovered_{} recovered_{})
+
 (observe asymp_cumul_{} (+ asymptomatic_{} RAs::{} RAs_det1::{} ))
 (observe asymp_det_cumul_{} (+ As_det1::{} RAs_det1::{}))
 (observe symp_mild_cumul_{} (+ symptomatic_mild_{} RSym::{} RSym_det2::{}))
+(observe symp_mild_det_cumul_{} (+ RSym_det2::{} Sym_det2::{}))
 (observe symp_severe_cumul_{} (+ symptomatic_severe_{} hospitalized_{} critical_{} deaths_{} RH1::{} RC2::{} RH1_det3::{} RC2_det3::{}))
+(observe symp_severe_det_cumul_{} (+ Sys_det3::{} H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{} D3_det3::{} RH1_det3::{} RC2_det3::{}))
 (observe hosp_cumul_{} (+ hospitalized_{} critical_{} deaths_{} RH1::{} RC2::{} RH1_det3::{} RC2_det3::{}))
 (observe hosp_det_cumul_{} (+ H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{} D3_det3::{} RH1_det3::{} RC2_det3::{}))
 (observe crit_cumul_{} (+ deaths_{} critical_{} RC2::{} RC2_det3::{}))
+(observe crit_det_cumul_{} (+ C2_det3::{} C3_det3::{} D3_det3::{} RC2_det3::{}))
+(observe death_det_cumul_{} D3_det3::{} )
 (observe detected_cumul_{} (+ (+ As_det1::{} Sym_det2::{} Sys_det3::{} H1_det3::{} H2_det3::{} C2_det3::{} C3_det3::{}) RAs_det1::{} RSym_det2::{} RH1_det3::{} RC2_det3::{} D3_det3::{}))
+
 (observe detected_{} (+ As_det1::{} Sym_det2::{} Sys_det3::{} H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{}))
 (observe infected_{} (+ infectious_det_{} infectious_undet_{} H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{}))
 """.format(county, county, county, county, county, county, county, county, county, county, county, county, county,
@@ -102,7 +108,9 @@ def write_observe(county):
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county, county
+           county, county, county, county, county, county, county, county, county, county, county, county, county, 
+           county, county, county, county, county, county, county, county, county, county,county, county, county, 
+           county, county, county, county, county, county, county, county
            )
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
