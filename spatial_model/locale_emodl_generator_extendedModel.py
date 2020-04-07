@@ -1,5 +1,9 @@
 import os
 import subprocess
+from load_paths import load_box_paths
+
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+emodl_dir = os.path.join(git_dir, 'spatial_model', 'emodl')
 
 ### FUNCTIONS
 def read_group_dictionary(filename='county_dic.csv',grpname ='county', Testmode=True, ngroups=2):
@@ -198,10 +202,6 @@ def write_reactions(county):
 (reaction recovery_H1_{}   (H1::{})   (RH1::{})   (* Kr_h H1::{}))
 (reaction recovery_C2_{}   (C2::{})   (RC2::{})   (* Kr_c C2::{}))
 
-(reaction detect_As_{} (As::{}) (As_det1::{}) (* d_As As::{}))
-(reaction detect_symp_{} (Sym::{}) (Sym_det2::{}) (* d_Sym Sym::{}))
-(reaction detect_hosp_{} (Sys::{}) (Sys_det3::{}) (* d_Sys Sys::{}))
-
 (reaction recovery_As_det_{} (As_det1::{})   (RAs_det1::{})   (* Kr_a As_det1::{}))
 
 (reaction hospitalization_1_det_{}   (Sys_det3::{})   (H1_det3::{})   (* Kh1 Sys_det3::{}))
@@ -214,7 +214,7 @@ def write_reactions(county):
 (reaction recovery_Sym_det2_{}   (Sym_det2::{})   (RSym_det2::{})   (* Kr_m  Sym_det2::{}))
 (reaction recovery_H1_det3_{}   (H1_det3::{})   (RH1_det3::{})   (* Kr_h H1_det3::{}))
 (reaction recovery_C2_det3_{}   (C2_det3::{})   (RC2_det3::{})   (* Kr_c C2_det3::{}))
-""".format(county, county, county, county, county, county, county, county, county, county,
+""".format(county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
@@ -222,8 +222,7 @@ def write_reactions(county):
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
            county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county
+           county, county, county, county, county, county, county, county, county, county
            )
 
     reaction_str = reaction_str.replace("  ", " ")
@@ -301,12 +300,12 @@ def generate_locale_cfg(cfg_filename,nruns, filepath):
     
 
 if __name__ == '__main__':
-    county_dic = define_group_dictionary(totalPop=10000,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
+    county_dic = define_group_dictionary(totalPop=12741080,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
                                       countyGroups=['EMS_0','EMS_1','EMS_2','EMS_3','EMS_4','EMS_5','EMS_6'],
                                       countyGroupScale=[0.68, 0.05, 0.08,  0.04, 0.05,  0.03, 0.06],    ## proportion of total population, based on IL_population_by_Age_2010_2018
                                       initialAs=[2, 2, 2, 2, 2, 2, 2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
                                       )
 
-    generate_locale_emodl_extended(county_dic=county_dic, file_output=os.path.join('locale_extendedmodel_covid_EMS_scaledPop10000.emodl'))
+    generate_locale_emodl_extended(county_dic=county_dic, file_output=os.path.join(emodl_dir,'extendedmodel_cobey_locale_EMS.emodl'))
 
 
