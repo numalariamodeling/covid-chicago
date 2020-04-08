@@ -39,61 +39,68 @@ def define_Species_initial(df, age_dic, ageGroupSet):
     ##  Estimates rescaled to that the sum of scaling factors is 1 (maintains Ki for total population)
 
     if ageGroupSet == '4grp':
-        df['speciesS_ageU5'] = age_dic[0][0]
-        df['speciesS_age5to17'] = age_dic[1][0]
-        df['speciesS_age18to64'] = age_dic[2][0]
-        df['speciesS_age64to100'] = age_dic[3][0]
-
-        df['initialAs_ageU5'] = age_dic[0][1]
-        df['initialAs_age5to17'] = age_dic[1][1]
-        df['initialAs_age18to64'] = age_dic[2][1]
-        df['initialAs_age64to100'] = age_dic[3][1]
-
-    ## COPIED VALUES FROM 4grp - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
-    elif ageGroupSet == '6grp':
         df['speciesS_age0to19'] = age_dic[0][0]
-        df['speciesS_age20to44'] = age_dic[1][0]
-        df['speciesS_age45to54'] = age_dic[2][0]
-        df['speciesS_age55to64'] = age_dic[3][0]
-        df['speciesS_age65to74'] = age_dic[4][0]
-        df['speciesS_age75to84'] = age_dic[5][0]
+        df['speciesS_age20to39'] = age_dic[1][0]
+        df['speciesS_age40to59'] = age_dic[2][0]
+        df['speciesS_age60to100'] = age_dic[3][0]
 
         df['initialAs_age0to19'] = age_dic[0][1]
-        df['initialAs_age20to44'] = age_dic[1][1]
-        df['initialAs_age45to54'] = age_dic[2][1]
-        df['initialAs_age55to64'] = age_dic[3][1]
-        df['initialAs_age65to74'] = age_dic[4][1]
-        df['initialAs_age75to84'] = age_dic[5][1]
+        df['initialAs_age20to39'] = age_dic[1][1]
+        df['initialAs_age40to59'] = age_dic[2][1]
+        df['initialAs_age60to100'] = age_dic[3][1]
+
+    elif ageGroupSet == '8grp':
+        df['speciesS_age0to9'] = age_dic[0][0]
+        df['speciesS_age10to19'] = age_dic[1][0]
+        df['speciesS_age20to29'] = age_dic[2][0]
+        df['speciesS_age30to39'] = age_dic[3][0]
+        df['speciesS_age40to49'] = age_dic[4][0]
+        df['speciesS_age50to59'] = age_dic[5][0]
+        df['speciesS_age60to69'] = age_dic[6][0]
+        df['speciesS_age70to100'] = age_dic[7][0]
+
+        df['initialAs_age0to9'] = age_dic[0][1]
+        df['initialAs_age10to19'] = age_dic[1][1]
+        df['initialAs_age20to29'] = age_dic[2][1]
+        df['initialAs_age30to39'] = age_dic[3][1]
+        df['initialAs_age40to49'] = age_dic[4][1]
+        df['initialAs_age50to59'] = age_dic[5][1]
+        df['initialAs_age60to69'] = age_dic[6][1]
+        df['initialAs_age70to100'] = age_dic[7][1]
 
     return df
 
 def replace_Species_initial(data, df, sample_nr, ageGroupSet) :
 
     if ageGroupSet == '4grp':
-        data = data.replace('@speciesS_ageU5@', str(df.speciesS_ageU5[sample_nr]))
-        data = data.replace('@speciesS_age5to17@', str(df.speciesS_age5to17[sample_nr]))
-        data = data.replace('@speciesS_age18to64@', str(df.speciesS_age18to64[sample_nr]))
-        data = data.replace('@speciesS_age64to100@', str(df.speciesS_age64to100[sample_nr]))
-
-        data = data.replace('@initialAs_ageU5@', str(df.initialAs_ageU5[sample_nr]))
-        data = data.replace('@initialAs_age5to17@', str(df.initialAs_age5to17[sample_nr]))
-        data = data.replace('@initialAs_age18to64@', str(df.initialAs_age18to64[sample_nr]))
-        data = data.replace('@initialAs_age64to100@', str(df.initialAs_age64to100[sample_nr]))
-
-    if ageGroupSet == '6grp':
         data = data.replace('@speciesS_age0to19@', str(df.speciesS_age0to19[sample_nr]))
-        data = data.replace('@speciesS_age20to44@', str(df.speciesS_age20to44[sample_nr]))
-        data = data.replace('@speciesS_age45to54@', str(df.speciesS_age45to54[sample_nr]))
-        data = data.replace('@speciesS_age55to64@', str(df.speciesS_age55to64[sample_nr]))
-        data = data.replace('@speciesS_age65to74@', str(df.speciesS_age65to74[sample_nr]))
-        data = data.replace('@speciesS_age75to84@', str(df.speciesS_age75to84[sample_nr]))
+        data = data.replace('@speciesS_age20to39@', str(df.speciesS_age20to39[sample_nr]))
+        data = data.replace('@speciesS_age40to59@', str(df.speciesS_age40to59[sample_nr]))
+        data = data.replace('@speciesS_age60to100@', str(df.speciesS_age60to100[sample_nr]))
 
         data = data.replace('@initialAs_age0to19@', str(df.initialAs_age0to19[sample_nr]))
-        data = data.replace('@initialAs_age20to44@', str(df.initialAs_age20to44[sample_nr]))
-        data = data.replace('@initialAs_age45to54@', str(df.initialAs_age45to54[sample_nr]))
-        data = data.replace('@initialAs_age55to64@', str(df.initialAs_age55to64[sample_nr]))
-        data = data.replace('@initialAs_age65to74@', str(df.initialAs_age65to74[sample_nr]))
-        data = data.replace('@initialAs_age75to84@', str(df.initialAs_age75to84[sample_nr]))
+        data = data.replace('@initialAs_age20to39@', str(df.initialAs_age20to39[sample_nr]))
+        data = data.replace('@initialAs_age40to59@', str(df.initialAs_age40to59[sample_nr]))
+        data = data.replace('@initialAs_age60to100@', str(df.initialAs_age60to100[sample_nr]))
+
+    if ageGroupSet == '8grp':
+        data = data.replace('@speciesS_age0to9@', str(df.speciesS_age0to9[sample_nr]))
+        data = data.replace('@speciesS_age10to19@', str(df.speciesS_age10to19[sample_nr]))
+        data = data.replace('@speciesS_age20to29@', str(df.speciesS_age20to29[sample_nr]))
+        data = data.replace('@speciesS_age30to39@', str(df.speciesS_age30to39[sample_nr]))
+        data = data.replace('@speciesS_age40to49@', str(df.speciesS_age40to49[sample_nr]))
+        data = data.replace('@speciesS_age50to59@', str(df.speciesS_age50to59[sample_nr]))
+        data = data.replace('@speciesS_age60to69@', str(df.speciesS_age60to69[sample_nr]))
+        data = data.replace('@speciesS_age70to100@', str(df.speciesS_age70to100[sample_nr]))
+
+        data = data.replace('@initialAs_age0to9@', str(df.initialAs_age0to9[sample_nr]))
+        data = data.replace('@initialAs_age10to19@', str(df.initialAs_age10to19[sample_nr]))
+        data = data.replace('@initialAs_age20to29@', str(df.initialAs_age20to29[sample_nr]))
+        data = data.replace('@initialAs_age30to39@', str(df.initialAs_age30to39[sample_nr]))
+        data = data.replace('@initialAs_age40to49@', str(df.initialAs_age40to49[sample_nr]))
+        data = data.replace('@initialAs_age50to59@', str(df.initialAs_age50to59[sample_nr]))
+        data = data.replace('@initialAs_age60to69@', str(df.initialAs_age60to69[sample_nr]))
+        data = data.replace('@initialAs_age70to100@', str(df.initialAs_age70to100[sample_nr]))
     return data
 
 def define_Ki_contact_matrix(df, ageGroupSet):
@@ -119,50 +126,71 @@ def define_Ki_contact_matrix(df, ageGroupSet):
         df['sKi4_3'] = 0.021342113533092
         df['sKi4_4'] = 0.0383623627804992
 
-
-    ## COPIED VALUES FROM 4grp - they do not scale to 1 and for testing only, update with new extractions from contact matrix when available
-    elif ageGroupSet == '4grp' :
-        df['sKi1_6'] = 0.209526849
-        df['sKi1_5'] = 0.039466462
-        df['sKi1_4'] = 0.209526849
-        df['sKi1_3'] = 0.039466462
-        df['sKi1_2'] = 0.037694265
-        df['sKi1_1'] = 0.015909742
-
-        df['sKi2_6'] = 0.051521569
-        df['sKi2_5'] = 0.293093246
-        df['sKi2_4'] = 0.051521569
-        df['sKi2_3'] = 0.293093246
-        df['sKi2_2'] = 0.066737714
-        df['sKi2_1'] = 0.02740285
-
-        df['sKi3_6'] = 0.042740507
-        df['sKi3_5'] = 0.046714807
-        df['sKi3_4'] = 0.042740507
-        df['sKi3_3'] = 0.046714807
-        df['sKi3_2'] = 0.092046263
-        df['sKi3_1'] = 0.027158353
-
-        df['sKi4_6'] = 0.006685113
-        df['sKi4_5'] = 0.004914879
-        df['sKi4_4'] = 0.006685113
-        df['sKi4_3'] = 0.004914879
-        df['sKi4_2'] = 0.007194698
-        df['sKi4_1'] = 0.031192683
-
-        df['sKi5_6'] = 0.006685113
-        df['sKi5_5'] = 0.004914879
-        df['sKi5_4'] = 0.006685113
-        df['sKi5_3'] = 0.004914879
-        df['sKi5_2'] = 0.007194698
-        df['sKi5_1'] = 0.031192683
-
-        df['sKi6_6'] = 0.006685113
-        df['sKi6_5'] = 0.004914879
-        df['sKi6_4'] = 0.006685113
-        df['sKi6_3'] = 0.004914879
-        df['sKi6_2'] = 0.007194698
-        df['sKi6_1'] = 0.031192683
+    elif ageGroupSet == '8grp' :
+        df['sKi1_1'] = 0.0761629361427651
+        df['sKi1_2'] = 0.0196022919639728
+        df['sKi1_3'] = 0.0122112143720089
+        df['sKi1_4'] = 0.0278935737177406
+        df['sKi1_5'] = 0.0152409941053062
+        df['sKi1_6'] = 0.0124700309317769
+        df['sKi1_7'] = 0.00784794976124784
+        df['sKi1_8'] = 0.00153419488422333
+        df['sKi2_1'] = 0.0196022919639728
+        df['sKi2_2'] = 0.177124012111205
+        df['sKi2_3'] = 0.0268368909430618
+        df['sKi2_4'] = 0.0220112298667518
+        df['sKi2_5'] = 0.0315252992632548
+        df['sKi2_6'] = 0.0207071884435741
+        df['sKi2_7'] = 0.00815203379191477
+        df['sKi2_8'] = 0.00128705705722352
+        df['sKi3_1'] = 0.0122112143720089
+        df['sKi3_2'] = 0.0268368909430618
+        df['sKi3_3'] = 0.0864686382964874
+        df['sKi3_4'] = 0.0373676626539042
+        df['sKi3_5'] = 0.0299382199193964
+        df['sKi3_6'] = 0.0259744634520253
+        df['sKi3_7'] = 0.00692222999265651
+        df['sKi3_8'] = 0.00102401728907355
+        df['sKi4_1'] = 0.0278935737177406
+        df['sKi4_2'] = 0.0220112298667518
+        df['sKi4_3'] = 0.0373676626539042
+        df['sKi4_4'] = 0.0663310988174002
+        df['sKi4_5'] = 0.0413586976604434
+        df['sKi4_6'] = 0.0271802508663495
+        df['sKi4_7'] = 0.011027419288813
+        df['sKi4_8'] = 0.00137712068721345
+        df['sKi5_1'] = 0.0152409941053062
+        df['sKi5_2'] = 0.0315252992632548
+        df['sKi5_3'] = 0.0299382199193964
+        df['sKi5_4'] = 0.0413586976604434
+        df['sKi5_5'] = 0.0562560170141427
+        df['sKi5_6'] = 0.031281369718711
+        df['sKi5_7'] = 0.0110586577096286
+        df['sKi5_8'] = 0.00186250480319021
+        df['sKi6_1'] = 0.0124700309317769
+        df['sKi6_2'] = 0.0207071884435741
+        df['sKi6_3'] = 0.0259744634520253
+        df['sKi6_4'] = 0.0271802508663495
+        df['sKi6_5'] = 0.031281369718711
+        df['sKi6_6'] = 0.042605232407188
+        df['sKi6_7'] = 0.0112634068366254
+        df['sKi6_8'] = 0.00232012294128771
+        df['sKi7_1'] = 0.00784794976124784
+        df['sKi7_2'] = 0.00815203379191477
+        df['sKi7_3'] = 0.00692222999265651
+        df['sKi7_4'] = 0.011027419288813
+        df['sKi7_5'] = 0.0110586577096286
+        df['sKi7_6'] = 0.0112634068366254
+        df['sKi7_7'] = 0.021381915764784
+        df['sKi7_8'] = 0.00444056307897012
+        df['sKi8_1'] = 0.00784794976124784
+        df['sKi8_2'] = 0.00815203379191477
+        df['sKi8_3'] = 0.00692222999265651
+        df['sKi8_4'] = 0.011027419288813
+        df['sKi8_5'] = 0.0110586577096286
+        df['sKi8_6'] = 0.0112634068366254
+        df['sKi8_7'] = 0.0102572397143531
+        df['sKi8_8'] = 0.0116962537313286
     return df
 
 def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
@@ -185,43 +213,71 @@ def replace_Ki_contact_param(data, df, sample_nr, ageGroupSet) :
         data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
         data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
 
-    if ageGroupSet == '6grp':
-        data = data.replace('@sKi1_6@', str(df.sKi1_6[sample_nr]))
-        data = data.replace('@sKi1_5@', str(df.sKi1_5[sample_nr]))
-        data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
-        data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
-        data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
+    if ageGroupSet == '8grp' :
         data = data.replace('@sKi1_1@', str(df.sKi1_1[sample_nr]))
-        data = data.replace('@sKi2_6@', str(df.sKi2_6[sample_nr]))
-        data = data.replace('@sKi2_5@', str(df.sKi2_5[sample_nr]))
-        data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
-        data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
-        data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
+        data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
+        data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
+        data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
+        data = data.replace('@sKi1_5@', str(df.sKi1_5[sample_nr]))
+        data = data.replace('@sKi1_6@', str(df.sKi1_6[sample_nr]))
+        data = data.replace('@sKi1_7@', str(df.sKi1_7[sample_nr]))
+        data = data.replace('@sKi1_8@', str(df.sKi1_8[sample_nr]))
         data = data.replace('@sKi2_1@', str(df.sKi2_1[sample_nr]))
-        data = data.replace('@sKi3_6@', str(df.sKi3_6[sample_nr]))
-        data = data.replace('@sKi3_5@', str(df.sKi3_5[sample_nr]))
-        data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
-        data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
-        data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
+        data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
+        data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
+        data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
+        data = data.replace('@sKi2_5@', str(df.sKi2_5[sample_nr]))
+        data = data.replace('@sKi2_6@', str(df.sKi2_6[sample_nr]))
+        data = data.replace('@sKi2_7@', str(df.sKi2_7[sample_nr]))
+        data = data.replace('@sKi2_8@', str(df.sKi2_8[sample_nr]))
         data = data.replace('@sKi3_1@', str(df.sKi3_1[sample_nr]))
-        data = data.replace('@sKi4_6@', str(df.sKi4_6[sample_nr]))
-        data = data.replace('@sKi4_5@', str(df.sKi4_5[sample_nr]))
-        data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
-        data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
-        data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
+        data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
+        data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
+        data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
+        data = data.replace('@sKi3_5@', str(df.sKi3_5[sample_nr]))
+        data = data.replace('@sKi3_6@', str(df.sKi3_6[sample_nr]))
+        data = data.replace('@sKi3_7@', str(df.sKi3_7[sample_nr]))
+        data = data.replace('@sKi3_8@', str(df.sKi3_8[sample_nr]))
         data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
-        data = data.replace('@sKi5_6@', str(df.sKi5_6[sample_nr]))
-        data = data.replace('@sKi5_5@', str(df.sKi5_5[sample_nr]))
-        data = data.replace('@sKi5_4@', str(df.sKi5_4[sample_nr]))
-        data = data.replace('@sKi5_3@', str(df.sKi5_3[sample_nr]))
-        data = data.replace('@sKi5_2@', str(df.sKi5_2[sample_nr]))
+        data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
+        data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
+        data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
+        data = data.replace('@sKi4_5@', str(df.sKi4_5[sample_nr]))
+        data = data.replace('@sKi4_6@', str(df.sKi4_6[sample_nr]))
+        data = data.replace('@sKi4_7@', str(df.sKi4_7[sample_nr]))
+        data = data.replace('@sKi4_8@', str(df.sKi4_8[sample_nr]))
         data = data.replace('@sKi5_1@', str(df.sKi5_1[sample_nr]))
-        data = data.replace('@sKi6_6@', str(df.sKi6_6[sample_nr]))
-        data = data.replace('@sKi6_5@', str(df.sKi6_5[sample_nr]))
-        data = data.replace('@sKi6_4@', str(df.sKi6_4[sample_nr]))
-        data = data.replace('@sKi6_3@', str(df.sKi6_3[sample_nr]))
-        data = data.replace('@sKi6_2@', str(df.sKi6_2[sample_nr]))
+        data = data.replace('@sKi5_2@', str(df.sKi5_2[sample_nr]))
+        data = data.replace('@sKi5_3@', str(df.sKi5_3[sample_nr]))
+        data = data.replace('@sKi5_4@', str(df.sKi5_4[sample_nr]))
+        data = data.replace('@sKi5_5@', str(df.sKi5_5[sample_nr]))
+        data = data.replace('@sKi5_6@', str(df.sKi5_6[sample_nr]))
+        data = data.replace('@sKi5_7@', str(df.sKi5_7[sample_nr]))
+        data = data.replace('@sKi5_8@', str(df.sKi5_8[sample_nr]))
         data = data.replace('@sKi6_1@', str(df.sKi6_1[sample_nr]))
+        data = data.replace('@sKi6_2@', str(df.sKi6_2[sample_nr]))
+        data = data.replace('@sKi6_3@', str(df.sKi6_3[sample_nr]))
+        data = data.replace('@sKi6_4@', str(df.sKi6_4[sample_nr]))
+        data = data.replace('@sKi6_5@', str(df.sKi6_5[sample_nr]))
+        data = data.replace('@sKi6_6@', str(df.sKi6_6[sample_nr]))
+        data = data.replace('@sKi6_7@', str(df.sKi6_7[sample_nr]))
+        data = data.replace('@sKi6_8@', str(df.sKi6_8[sample_nr]))
+        data = data.replace('@sKi7_1@', str(df.sKi7_1[sample_nr]))
+        data = data.replace('@sKi7_2@', str(df.sKi7_2[sample_nr]))
+        data = data.replace('@sKi7_3@', str(df.sKi7_3[sample_nr]))
+        data = data.replace('@sKi7_4@', str(df.sKi7_4[sample_nr]))
+        data = data.replace('@sKi7_5@', str(df.sKi7_5[sample_nr]))
+        data = data.replace('@sKi7_6@', str(df.sKi7_6[sample_nr]))
+        data = data.replace('@sKi7_7@', str(df.sKi7_7[sample_nr]))
+        data = data.replace('@sKi7_8@', str(df.sKi7_8[sample_nr]))
+        data = data.replace('@sKi8_1@', str(df.sKi8_1[sample_nr]))
+        data = data.replace('@sKi8_2@', str(df.sKi8_2[sample_nr]))
+        data = data.replace('@sKi8_3@', str(df.sKi8_3[sample_nr]))
+        data = data.replace('@sKi8_4@', str(df.sKi8_4[sample_nr]))
+        data = data.replace('@sKi8_5@', str(df.sKi8_5[sample_nr]))
+        data = data.replace('@sKi8_6@', str(df.sKi8_6[sample_nr]))
+        data = data.replace('@sKi8_7@', str(df.sKi8_7[sample_nr]))
+        data = data.replace('@sKi8_8@', str(df.sKi8_8[sample_nr]))
     return data
 
 
@@ -363,35 +419,6 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
-def generateSubmissionFile(scen_num,exp_name):
-        file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
-        file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
-            str(scen_num),
-            os.path.join(exe_dir, "compartments.exe"),
-            os.path.join(temp_dir, "model_%%i" + ".cfg"),
-            os.path.join(temp_dir, "simulation_%%i" + ".emodl")
-        ) + "\n ECHO end")
-        file.close()
-
-        # Hardcoded Quest directories for now!
-        # additional parameters , ncores, time, queue...
-        exp_name_short = exp_name[-20:]
-        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 5\n#SBATCH --ntasks-per-node=5'
-        jobname = '#SBATCH	--job-name="'  + exp_name_short +'"'
-        module = '\nmodule load singularity'
-        singularity = '\nsingularity exec /software/singularity/images/singwine-v1.img wine'
-        array = '\n#SBATCH --array=1-' + str(scen_num)
-        email = '\n# SBATCH --mail-user=manuela.runge@northwestern.edu'  ## create input mask or user txt where specified
-        emailtype = '\n# SBATCH --mail-type=ALL'
-        err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
-        out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
-        exe = '\n/home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe'
-        cfg = ' -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg'
-        emodl = ' -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
-        file = open(os.path.join(trajectories_dir,'runSimulations.sh'), 'w')
-        file.write(header + jobname + email + emailtype + array + err + out + module + singularity  + exe + cfg + emodl)
-        file.close()
-
 if __name__ == '__main__' :
 
 
@@ -399,13 +426,13 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    ageGroupSet = '4grp'   # '6grp'
-
-    exp_name = today.strftime("%Y%m%d") + '_TEST_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
+    ageGroupSet = '8grp'
+    ageGroupSet = '4grp'
+    exp_name = today.strftime("%Y%m%d") + '_NMH_age_homogeneous_' + ageGroupSet + '_rn' + str(int(np.random.uniform(10, 99)))
     exp_description = " "
 
     # Simlation setup
-    simulation_population = 315000 #  1000  # 12830632 Illinois   # 2700000  Chicago ## 315000 NMH catchment
+    simulation_population = 2700000 #  1000  # 12830632 Illinois   # 2700000  Chicago ## 315000 NMH catchment
     number_of_samples = 20
     number_of_runs = 3
     duration = 365
@@ -413,9 +440,10 @@ if __name__ == '__main__' :
 
     ## Specify age population
     if ageGroupSet == '4grp':
-        emodlname = 'extendedmodel_cobey_age_4grp.emodl'
-        ageGroups_4grp = ['ageU5', 'age5to17', 'age18to64', 'age64to100']
-        ageGroupScale_4grp = [0.062, 0.203, 0.606, 0.129]
+        emodlname =  'extendedmodel_cobey_age_4grp_homogeneous.emodl' #'extendedmodel_cobey_age_4grp_noS.emodl' #'extendedmodel_cobey_age_4grp.emodl'
+        ageGroups_4grp = ["0to19","20to39","40to59","60to100"]
+        ageGroupScale_4grp = [0.249, 0.306, 0.253,  0.192]  ## NMH catchment area population age distribution
+        # ageGroupScale_4grp = []  ## Update with cook county age distribution for same age group
         initialAs_4grp = [3, 3, 3, 3, 3, 3]
 
         age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
@@ -424,16 +452,17 @@ if __name__ == '__main__' :
                                           initialAs=initialAs_4grp)
 
 
-    elif ageGroupSet == '6grp':
-        emodlname = 'extendedmodel_cobey_age_6grp.emodl'
-        ageGroups_6grp = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74', 'age75to84']
-        ageGroupScale_6grp = [0.226, 0.412, 0.120, 0.112, 0.075, 0.038]
-        initialAs_6grp = [3, 3, 3, 3, 3, 3]
+    elif ageGroupSet == '8grp':
+        emodlname = 'extendedmodel_cobey_age_8grp.emodl'
+        ageGroups_8grp = ["0to9" , "10to19" , "20to29", "30to39", "40to49", "50to59", "60to69", "70to100"]
+        ageGroupScale_8grp = [0.1256 , 0.1233 , 0.1404 , 0.1652 , 0.1338 , 0.1196 , 0.1012 , 0.0909 ]  ## NMH catchment area population age distribution
+        #ageGroupScale_8grp = []  ## Update with cook county age distribution for same age group
+        initialAs_8grp = [3, 3, 3, 3, 3, 3, 3, 3]
 
         age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
-                                          ageGroups=ageGroupScale_6grp,
-                                          ageGroupScale=ageGroupScale_6grp,
-                                          initialAs=initialAs_6grp)
+                                          ageGroups=ageGroupScale_8grp,
+                                          ageGroupScale=ageGroupScale_8grp,
+                                          initialAs=initialAs_8grp)
 
     # Time event
     #startDate = '02.20.2020'
