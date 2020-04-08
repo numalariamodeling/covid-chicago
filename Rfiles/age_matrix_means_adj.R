@@ -13,70 +13,101 @@ user_name = Sys.getenv("USERNAME")
 if(user_name=="mrung") {
   data_dir = file.path("C:/Users",user_name,"Box/NU-malaria-team/projects/covid_chicago/emod_sim/age_contact_matrices")
   git_dir = file.path("C:/Users",user_name,"gitrepos/covid-chicago")
+  input_dir = file.path("C:/Users",user_name,"Box/NU-malaria-team/projects/covid_chicago/cms_sim/inputs")
 }
 
 
-# As described in 20200318_EMODKingCountyCovidInterventions.docx
-age_labels = c("0-4","5-9","10-14","15-19","20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75+")
-age_groups = c("U5","age5to9","age20to64","age65")
-
-#contacts_age_US <- read_excel("Desktop/contacts_age.xlsx", col_names = FALSE)
-contacts_age <- read_excel(file.path(data_dir,"MUestimates_all_locations_2.xlsx"), sheet = "United States of America",col_names = FALSE)
-
-contact_matrix <- data.frame()
-#x ages
-contact_matrix[1:4,1] <- rep(1,4)
-contact_matrix[5:8,1] <- rep(2,4)
-contact_matrix[9:12,1] <- rep(3,4)
-contact_matrix[13:16,1] <- rep(4,4)
-#y ages
-contact_matrix[1:16,2] <- seq(1:4 )
-#grab corresponding cols and row for each age interaction
-#get mean, min, max
-for (i in 1:16){
-  if (i >=1 & i <= 4){columns=1}
-  else if(i >= 5 & i <= 8){columns=2:4}
-  else if(i >= 9 & i <= 12){columns=5:13}
-  else if(i >= 13 & i <= 16){columns=14:16}
-  if (i ==1 |i ==5|i == 9|i ==13 ){rows=1}
-  else if(i ==2 |i ==6|i == 10|i ==14){rows=2:4}
-  else if(i ==3 |i ==7|i == 11|i ==15){rows=5:13}
-  else if (i ==4 |i ==8|i == 12|i ==16){rows=14:16}
-  contact_matrix[i,3] <-mean(unlist(contacts_age[rows,columns]))
-  contact_matrix[i,4] <- min(contacts_age[rows,columns])
-  contact_matrix[i,5] <- max(contacts_age[rows,columns])
-}
-colnames(contact_matrix)[1:5] <- c("x","y","mean","lower_limit","upper_limit")
-
-contact_matrix$age_x = factor(contact_matrix$x, levels=c(1:4), labels=age_groups)
-contact_matrix$age_y = factor(contact_matrix$y, levels=c(1:4), labels=age_groups)
-
-write_csv(contact_matrix,"contact_matrix.csv")
+agegrp = c("grp4", "grp8")[1]  # fix for now
+age_groups4 = c("0to19","20to39","40to59","60to100")
+age_groups8 = c("0to9" , "10to19" , "20to29", "30to39", "40to49", "50to59", "60to69", "70to100")
 
 
-##==========================
-### Add adjustments
-##==========================
+contactlocation= c("location_all", "home","school", "work")
+
+txtfilename = paste0("Ki_contact_snippet_",contactlocation,"_",agegrp,".txt")
+csvfilename = paste0("contact_matrix_",contactlocation,"_",agegrp,".txt")
+
+### Read in contact matrix 
+contact_matrix <- read_csv(file.path(input_dir, csvfilename)) %>%  as.data.frame()
+
+colnames(contact_matrix)[2:length(colnames(contact_matrix))] = c(1:length(age_groups4))
+contact_matrix$x =c(1:length(age_groups4))
+
+
+contact_matrix <- contact_matrix %>% 
+                      select(-row_age_group) %>% 
+                      pivot_longer(cols=-c(x), names_to = "y") %>% 
+                      dplyr::rename(mean = value)
 
 contact_matrix$age_xy = paste0(contact_matrix$x,"_", contact_matrix$y)
 
+
 ### Generate filter variable for symmetric age combinations
 contact_matrix$symmetry=0
-contact_matrix$symmetry[contact_matrix$age_xy %in% c("2_1", "3_1", "3_2", "4_1", "4_2", "4_3")] <- 1
+contact_matrix$age_xy_orig <- contact_matrix$age_xy
 
-### Same xy combination for symmetric contacts
-contact_matrix$age_xy[contact_matrix$age_xy=="2_1"] <- "1_2"
-contact_matrix$age_xy[contact_matrix$age_xy=="3_1"] <- "1_3"
-contact_matrix$age_xy[contact_matrix$age_xy=="3_2"] <- "2_3"
-contact_matrix$age_xy[contact_matrix$age_xy=="4_1"] <- "1_4"
-contact_matrix$age_xy[contact_matrix$age_xy=="4_2"] <- "2_4"
-contact_matrix$age_xy[contact_matrix$age_xy=="4_3"] <- "3_4"
+if(grp=="grp4"){
+  contact_matrix$symmetry[contact_matrix$age_xy %in% c("2_1", "3_1", "3_2", "4_1", "4_2", "4_3")] <- 1
+  
+  ### Same xy combination for symmetric contacts
+  contact_matrix$age_xy[contact_matrix$age_xy=="2_1"] <- "1_2"
+  contact_matrix$age_xy[contact_matrix$age_xy=="3_1"] <- "1_3"
+  contact_matrix$age_xy[contact_matrix$age_xy=="3_2"] <- "2_3"
+  contact_matrix$age_xy[contact_matrix$age_xy=="4_1"] <- "1_4"
+  contact_matrix$age_xy[contact_matrix$age_xy=="4_2"] <- "2_4"
+  contact_matrix$age_xy[contact_matrix$age_xy=="4_3"] <- "3_4"
+}
+if(grp=="grp8"){
+  contact_matrix$symmetry[contact_matrix$age_xy %in% c("2_1", 
+                                                       "3_1", "3_2", 
+                                                       "4_1", "4_2", "4_3",
+                                                       "5_1", "5_2", "5_3","5_4",
+                                                       "6_1", "6_2", "6_3","6_4","6_5",
+                                                       "7_1", "7_2", "7_3","7_4","7_5","7_6",
+                                                       "8_1", "8_2", "8_3","8_4","8_5","8_6")] <- 1
+  
+  ### Same xy combination for symmetric contacts
+  
+  contact_matrix$age_xy_orig <- contact_matrix$age_xy
+  contact_matrix$age_xy[contact_matrix$age_xy=="2_1"] <- "1_2"
+  contact_matrix$age_xy[contact_matrix$age_xy=="3_1"] <- "1_3"
+  contact_matrix$age_xy[contact_matrix$age_xy=="3_2"] <- "2_3"
+  contact_matrix$age_xy[contact_matrix$age_xy=="4_1"] <- "1_4"
+  contact_matrix$age_xy[contact_matrix$age_xy=="4_2"] <- "2_4"
+  contact_matrix$age_xy[contact_matrix$age_xy=="4_3"] <- "3_4"
+  
+  contact_matrix$age_xy[contact_matrix$age_xy=="5_1"] <- "1_5"
+  contact_matrix$age_xy[contact_matrix$age_xy=="5_2"] <- "2_5"
+  contact_matrix$age_xy[contact_matrix$age_xy=="5_3"] <- "3_5"
+  contact_matrix$age_xy[contact_matrix$age_xy=="5_4"] <- "4_5"
+  
+  contact_matrix$age_xy[contact_matrix$age_xy=="6_1"] <- "1_6"
+  contact_matrix$age_xy[contact_matrix$age_xy=="6_2"] <- "2_6"
+  contact_matrix$age_xy[contact_matrix$age_xy=="6_3"] <- "3_6"
+  contact_matrix$age_xy[contact_matrix$age_xy=="6_4"] <- "4_6"
+  contact_matrix$age_xy[contact_matrix$age_xy=="6_5"] <- "5_6"
+  
+  contact_matrix$age_xy[contact_matrix$age_xy=="7_1"] <- "1_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="7_2"] <- "2_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="7_3"] <- "3_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="7_4"] <- "4_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="7_5"] <- "5_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="7_6"] <- "6_7"
+  
+  contact_matrix$age_xy[contact_matrix$age_xy=="8_1"] <- "1_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="8_2"] <- "2_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="8_3"] <- "3_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="8_4"] <- "4_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="8_5"] <- "5_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="8_6"] <- "6_7"
+  contact_matrix$age_xy[contact_matrix$age_xy=="8_6"] <- "6_7"
+}
 
 
 ### Take mean of symmetric contacts (i.e. should be same value for 1_2 and 2_1)
 symmetry_means = contact_matrix %>% 
                         group_by(age_xy) %>% 
-                        summarize_at(.vars=c("mean" ,"lower_limit" ,"upper_limit"),.funs="mean")
+                        summarize_at(.vars=c("mean"),.funs="mean")
 contact_matrix_adj = contact_matrix %>% 
                         select(x, age_xy,symmetry) %>% 
                         left_join(symmetry_means, by="age_xy")
@@ -97,9 +128,13 @@ contact_matrix_out = contact_matrix %>%
 
 
 ### Write parameter snippet  (using mean only)
-sink(file=file.path(git_dir, "snippets", "Ki_contact_snippet_grp4_v1.txt")) 
+sink(file=file.path(git_dir, "snippets", txtfilename)) 
 cat("# Age groups: ", age_groups)
-cat(paste0("\ndf['sKi" , contact_matrix_out$age_xy, "'] = ", contact_matrix_out$mean_scl))
+cat(paste0("\ndf['sKi" , contact_matrix_out$age_xy_orig, "'] = ", contact_matrix_out$mean_scl))
+
+cat("\n\n #Replacement")
+cat(paste0("\ndata = data.replace('@sKi" , contact_matrix_out$age_xy_orig, "@', str(df.sKi", contact_matrix_out$age_xy_orig,"[sample_nr]))"))
 sink()
+
 
 
