@@ -86,7 +86,7 @@ def write_observe(grp):
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, 
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp
            )
     observe_str = observe_str.replace("  ", " ")
@@ -187,46 +187,46 @@ def write_params():
 ### need automatization (parked for now)
 def write_exposure_reaction():
     exposure_reaction_str = """  
-(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_1 S_ageU5 infectious_det_ageU5 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_2 S_ageU5 infectious_det_age5to17 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_3 S_ageU5 infectious_det_age18to64 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_4 S_ageU5 infectious_det_age64to100 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_1 infectious_det_ageU5 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_2 infectious_det_age5to17 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_3 infectious_det_age18to64 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_4 infectious_det_age64to100 reduced_inf_of_det_cases))
 
-(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_1 S_age5to17 infectious_det_ageU5 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_2 S_age5to17 infectious_det_age5to17 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_3 S_age5to17 infectious_det_age18to64 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_4 S_age5to17 infectious_det_age64to100 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_1  infectious_det_ageU5 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_2  infectious_det_age5to17 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_3  infectious_det_age18to64 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_4  infectious_det_age64to100 reduced_inf_of_det_cases))
 
-(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_1 S_age18to64 infectious_det_ageU5 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_2 S_age18to64 infectious_det_age5to17 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_3 S_age18to64 infectious_det_age18to64 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_4 S_age18to64 infectious_det_age64to100 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_1  infectious_det_ageU5 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_2  infectious_det_age5to17 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_3  infectious_det_age18to64 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_4  infectious_det_age64to100 reduced_inf_of_det_cases))
 
-(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_1 S_age64to100 infectious_det_ageU5 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_2 S_age64to100 infectious_det_age5to17 reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_3 S_age64to100 infectious_det_age18to64 reduced_inf_of_det_cases)) 
-(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_4 S_age64to100 infectious_det_age64to100 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_1  infectious_det_ageU5 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_2  infectious_det_age5to17 reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_3  infectious_det_age18to64 reduced_inf_of_det_cases)) 
+(reaction exposure_from_detected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_4  infectious_det_age64to100 reduced_inf_of_det_cases))
 
 
-(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_1 S_ageU5 infectious_undet_ageU5))
-(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_2 S_ageU5 infectious_undet_age5to17))
-(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_3 S_ageU5 infectious_undet_age18to64))
-(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_4 S_ageU5 infectious_undet_age64to100))
+(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_1  infectious_undet_ageU5))
+(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_2  infectious_undet_age5to17))
+(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_3  infectious_undet_age18to64))
+(reaction exposure_from_undetected_ageU5 (S_ageU5) (E_ageU5) (* Ki1_4  infectious_undet_age64to100))
 
-(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_1 S_age5to17 infectious_undet_ageU5))
-(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_2 S_age5to17 infectious_undet_age5to17))
-(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_3 S_age5to17 infectious_undet_age18to64))
-(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_4 S_age5to17 infectious_undet_age64to100))
+(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_1 infectious_undet_ageU5))
+(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_2 infectious_undet_age5to17))
+(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_3 infectious_undet_age18to64))
+(reaction exposure_from_undetected_age5to17 (S_age5to17) (E_age5to17) (* Ki2_4 infectious_undet_age64to100))
 
-(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_1 S_age18to64 infectious_undet_ageU5))
-(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_2 S_age18to64 infectious_undet_age5to17))
-(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_3 S_age18to64 infectious_undet_age18to64))
-(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_4 S_age18to64 infectious_undet_age64to100))
+(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_1 infectious_undet_ageU5))
+(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_2 infectious_undet_age5to17))
+(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_3 infectious_undet_age18to64))
+(reaction exposure_from_undetected_age18to64 (S_age18to64) (E_age18to64) (* Ki3_4 infectious_undet_age64to100))
 
-(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_1 S_age64to100 infectious_undet_ageU5))
-(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_2 S_age64to100 infectious_undet_age5to17))
-(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_3 S_age64to100 infectious_undet_age18to64)) 
-(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_4 S_age64to100 infectious_undet_age64to100))
+(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_1  infectious_undet_ageU5))
+(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_2  infectious_undet_age5to17))
+(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_3  infectious_undet_age18to64)) 
+(reaction exposure_from_undetected_age64to100 (S_age64to100) (E_age64to100) (* Ki4_4  infectious_undet_age64to100))
 """
     return exposure_reaction_str
 
@@ -369,7 +369,7 @@ def write_reactions(grp):
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
            grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, 
+           grp, grp, grp, grp, grp,
            )
 
     #reaction_str = reaction_str.replace("  ", " ")
@@ -465,8 +465,8 @@ def generate_extended_emodl2(grp, file_output):
 
 #if __name__ == '__main__':
 
-age_grp4 = ['ageU5','age5to17','age18to64','age64to100']
+age_grp4 =  ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 generate_extended_emodl(grp=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
 
-age_grp6 = ['age0to19', 'age20to44', 'age45to54', 'age55to64', 'age65to74','age75to84']
-generate_extended_emodl2(grp=age_grp6, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_6grp.emodl'))
+age_grp8 = ["0to9" , "10to19" , "20to29", "30to39", "40to49", "50to59", "60to69", "70to100"]
+generate_extended_emodl2(grp=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_8grp.emodl'))
