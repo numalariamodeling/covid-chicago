@@ -129,7 +129,7 @@ def write_ki_mix(nageGroups, scale=True):
         if scale == False :
             string_i = "(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )" + "\n"
         elif scale == True :
-            string_i = "(param " + ki_dic[i][0] + " (* Ki @s" + ki_dic[i][0] + "@ ))" + "\n"
+            string_i = "(param " + ki_dic[i][0] + " (* Ki @" + ki_dic[i][0] + "@ ))" + "\n"
         ki_mix_param = ki_mix_param + string_i
 
     return ki_mix_param

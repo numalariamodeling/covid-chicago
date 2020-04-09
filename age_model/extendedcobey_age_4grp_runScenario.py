@@ -63,42 +63,42 @@ def replace_Species_initial(data, df, sample_nr):
 def define_Ki_contact_matrix(df):
     ##  20200318_EMODKingCountyCovidInterventions.docx
     ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
-    df['sKi1_1'] = 2.52
-    df['sKi1_2'] = 0.597
-    df['sKi1_3'] = 0.458
-    df['sKi1_4'] = 1.00
-    df['sKi2_1'] = 0.700
-    df['sKi2_2'] = 5.86
-    df['sKi2_3'] = 0.758
-    df['sKi2_4'] = 0.734
-    df['sKi3_1'] = 0.350
-    df['sKi3_2'] = 1.02
-    df['sKi3_3'] = 2.86
-    df['sKi3_4'] = 1.31
-    df['sKi4_1'] = 0.843
-    df['sKi4_2'] = 0.722
-    df['sKi4_3'] = 1.16
-    df['sKi4_4'] = 2.19
+    df['Ki1_1'] = 2.52
+    df['Ki1_2'] = 0.597
+    df['Ki1_3'] = 0.458
+    df['Ki1_4'] = 1.00
+    df['Ki2_1'] = 0.700
+    df['Ki2_2'] = 5.86
+    df['Ki2_3'] = 0.758
+    df['Ki2_4'] = 0.734
+    df['Ki3_1'] = 0.350
+    df['Ki3_2'] = 1.02
+    df['Ki3_3'] = 2.86
+    df['Ki3_4'] = 1.31
+    df['Ki4_1'] = 0.843
+    df['Ki4_2'] = 0.722
+    df['Ki4_3'] = 1.16
+    df['Ki4_4'] = 2.19
     return df
 
 
 def replace_Ki_contact_param(data, df, sample_nr) :
-    data = data.replace('@sKi1_4@', str(df.sKi1_4[sample_nr]))
-    data = data.replace('@sKi1_3@', str(df.sKi1_3[sample_nr]))
-    data = data.replace('@sKi1_2@', str(df.sKi1_2[sample_nr]))
-    data = data.replace('@sKi1_1@', str(df.sKi1_1[sample_nr]))
-    data = data.replace('@sKi2_4@', str(df.sKi2_4[sample_nr]))
-    data = data.replace('@sKi2_3@', str(df.sKi2_3[sample_nr]))
-    data = data.replace('@sKi2_2@', str(df.sKi2_2[sample_nr]))
-    data = data.replace('@sKi2_1@', str(df.sKi2_1[sample_nr]))
-    data = data.replace('@sKi3_4@', str(df.sKi3_4[sample_nr]))
-    data = data.replace('@sKi3_3@', str(df.sKi3_3[sample_nr]))
-    data = data.replace('@sKi3_2@', str(df.sKi3_2[sample_nr]))
-    data = data.replace('@sKi3_1@', str(df.sKi3_1[sample_nr]))
-    data = data.replace('@sKi4_4@', str(df.sKi4_4[sample_nr]))
-    data = data.replace('@sKi4_3@', str(df.sKi4_3[sample_nr]))
-    data = data.replace('@sKi4_2@', str(df.sKi4_2[sample_nr]))
-    data = data.replace('@sKi4_1@', str(df.sKi4_1[sample_nr]))
+    data = data.replace('@Ki1_4@', str(df.Ki1_4[sample_nr]))
+    data = data.replace('@Ki1_3@', str(df.Ki1_3[sample_nr]))
+    data = data.replace('@Ki1_2@', str(df.Ki1_2[sample_nr]))
+    data = data.replace('@Ki1_1@', str(df.Ki1_1[sample_nr]))
+    data = data.replace('@Ki2_4@', str(df.Ki2_4[sample_nr]))
+    data = data.replace('@Ki2_3@', str(df.Ki2_3[sample_nr]))
+    data = data.replace('@Ki2_2@', str(df.Ki2_2[sample_nr]))
+    data = data.replace('@Ki2_1@', str(df.Ki2_1[sample_nr]))
+    data = data.replace('@Ki3_4@', str(df.Ki3_4[sample_nr]))
+    data = data.replace('@Ki3_3@', str(df.Ki3_3[sample_nr]))
+    data = data.replace('@Ki3_2@', str(df.Ki3_2[sample_nr]))
+    data = data.replace('@Ki3_1@', str(df.Ki3_1[sample_nr]))
+    data = data.replace('@Ki4_4@', str(df.Ki4_4[sample_nr]))
+    data = data.replace('@Ki4_3@', str(df.Ki4_3[sample_nr]))
+    data = data.replace('@Ki4_2@', str(df.Ki4_2[sample_nr]))
+    data = data.replace('@Ki4_1@', str(df.Ki4_1[sample_nr]))
     return data
 
 
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     # Experiment design, fitting parameter and population
     # =============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_TEST_4grp_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_TEST_4grp_adjusted_NMHpop_rn' + str(int(np.random.uniform(10, 99)))
 
     # Simlation setup
     simulation_population = 315000  # 1000  # 12830632 Illinois   # 2700000  Chicago ## 315000 NMH catchment
