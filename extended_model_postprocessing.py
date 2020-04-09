@@ -12,7 +12,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
-exp_name = '31032020_extendedModel_base_varyingKi'
+exp_name = '20200408_NMH_age_homogeneous_4grp_rn17'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
@@ -30,7 +30,7 @@ if not os.path.exists(plot_path):
 
 master_channel_list = ['susceptible', 'exposed', 'infectious', 'symptomatic', 'detected',
                        'hospitalized', 'critical', 'deaths', 'recovered']
-first_day = date(2020, 3, 1)
+first_day = date(2020, 2, 28)
 
 
 def count_new(df, curr_ch) :
