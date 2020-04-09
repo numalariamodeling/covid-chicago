@@ -17,25 +17,27 @@ if(user_name=="mrung") {
 }
 
 
-agegrp = c("grp4", "grp8")[1]  # fix for now
+agegrp = c("grp4", "grp8")[2]  # fix for now
 age_groups4 = c("0to19","20to39","40to59","60to100")
 age_groups8 = c("0to9" , "10to19" , "20to29", "30to39", "40to49", "50to59", "60to69", "70to100")
 
+if(agegrp == "grp4")age_groups = age_groups4
+if(agegrp == "grp8")age_groups = age_groups8
 
-contactlocation= c("location_all", "home","school", "work")
+contactlocation= c("locations_all", "home","school", "work")[1]
 
 txtfilename = paste0("Ki_contact_snippet_",contactlocation,"_",agegrp,".txt")
-csvfilename = paste0("contact_matrix_",contactlocation,"_",agegrp,".txt")
+csvfilename = paste0("contact_matrix_",contactlocation,"_",agegrp,".csv")
 
 ### Read in contact matrix 
 contact_matrix <- read_csv(file.path(input_dir, csvfilename)) %>%  as.data.frame()
 
-colnames(contact_matrix)[2:length(colnames(contact_matrix))] = c(1:length(age_groups4))
-contact_matrix$x =c(1:length(age_groups4))
+colnames(contact_matrix)[2:length(colnames(contact_matrix))] = c(1:length(age_groups8))
+contact_matrix$x =c(1:length(age_groups8))
 
 
 contact_matrix <- contact_matrix %>% 
-                      select(-row_age_group) %>% 
+                      dplyr::select(-row_age_group) %>% 
                       pivot_longer(cols=-c(x), names_to = "y") %>% 
                       dplyr::rename(mean = value)
 
@@ -46,7 +48,7 @@ contact_matrix$age_xy = paste0(contact_matrix$x,"_", contact_matrix$y)
 contact_matrix$symmetry=0
 contact_matrix$age_xy_orig <- contact_matrix$age_xy
 
-if(grp=="grp4"){
+if(agegrp=="grp4"){
   contact_matrix$symmetry[contact_matrix$age_xy %in% c("2_1", "3_1", "3_2", "4_1", "4_2", "4_3")] <- 1
   
   ### Same xy combination for symmetric contacts
@@ -57,7 +59,7 @@ if(grp=="grp4"){
   contact_matrix$age_xy[contact_matrix$age_xy=="4_2"] <- "2_4"
   contact_matrix$age_xy[contact_matrix$age_xy=="4_3"] <- "3_4"
 }
-if(grp=="grp8"){
+if(agegrp=="grp8"){
   contact_matrix$symmetry[contact_matrix$age_xy %in% c("2_1", 
                                                        "3_1", "3_2", 
                                                        "4_1", "4_2", "4_3",
@@ -108,32 +110,22 @@ if(grp=="grp8"){
 symmetry_means = contact_matrix %>% 
                         group_by(age_xy) %>% 
                         summarize_at(.vars=c("mean"),.funs="mean")
+
+
 contact_matrix_adj = contact_matrix %>% 
-                        select(x, age_xy,symmetry) %>% 
+                        select(x, age_xy, age_xy_orig,symmetry) %>% 
                         left_join(symmetry_means, by="age_xy")
 
 
-### Rescale to 1s
-contact_matrix_adj_scl = contact_matrix_adj %>% 
-  filter(symmetry!=1) %>% 
-  mutate(mean_scl = mean / sum(mean),
-         #lower_limit_scl = lower_limit / sum(lower_limit),
-         #upper_limit_scl = upper_limit / sum(upper_limit),
-         age_x = factor(x, levels=seq(1:4),labels=age_groups ))  %>%
-  select(age_xy, mean_scl)  #, lower_limit_scl, upper_limit_scl
-
-contact_matrix_out = contact_matrix %>% 
-                      select(x, age_xy,symmetry) %>% 
-                      left_join(contact_matrix_adj_scl, by="age_xy")
 
 
 ### Write parameter snippet  (using mean only)
 sink(file=file.path(git_dir, "snippets", txtfilename)) 
 cat("# Age groups: ", age_groups)
-cat(paste0("\ndf['sKi" , contact_matrix_out$age_xy_orig, "'] = ", contact_matrix_out$mean_scl))
+cat(paste0("\ndf['sKi" , contact_matrix_adj$age_xy_orig, "'] = ", contact_matrix_adj$mean))
 
 cat("\n\n #Replacement")
-cat(paste0("\ndata = data.replace('@sKi" , contact_matrix_out$age_xy_orig, "@', str(df.sKi", contact_matrix_out$age_xy_orig,"[sample_nr]))"))
+cat(paste0("\ndata = data.replace('@sKi" , contact_matrix_adj$age_xy_orig, "@', str(df.sKi", contact_matrix_adj$age_xy_orig,"[sample_nr]))"))
 sink()
 
 
