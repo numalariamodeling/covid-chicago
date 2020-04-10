@@ -153,10 +153,10 @@ if __name__ == '__main__' :
     emodlname = 'extendedmodel_cobey.emodl'
 
     # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
 
     # Simlation setup
-    simulation_population = 315000 #  1000  # 12830632 Illinois   # 2700000  Chicago  ## 315000 NMH catchment
+    simulation_population = 1000 #  315000  # 12830632 Illinois   # 2700000  Chicago  ## 315000 NMH catchment
     number_of_samples = 20
     number_of_runs = 3
     duration = 365
@@ -183,10 +183,10 @@ if __name__ == '__main__' :
                               monitoring_samples = monitoring_samples,
                               modelname=emodlname)
 
-    generateSubmissionFile(nscen, exp_name)
+    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir) #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
   
 if Location == 'Local' :
-    runExp(trajectories_dir=trajectories_dir, Location='Local')
+    runExp(trajectories_dir=trajectories_dir, Location='Local') 
 
     # Once the simulations are done
     combineTrajectories(nscen)

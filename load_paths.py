@@ -9,10 +9,11 @@ def load_box_paths(user_path=None):
             #user_path= 'C:/Users/geickelb1'
             ## idk where to put datapath since i don't have access to NU-malaria-team
             data_path= os.path.join(user_path, 'Box',  'data')
-            project_path= os.path.join(user_path,'Box/covid_chicago/cms_sim/') #was origionally project_path
-            wdir= os.path.join(user_path,'Box/covid_chicago/cms_sim/')
+            project_path= os.path.join(user_path,'Box','covid_chicago') #was origionally project_path
+            wdir= os.path.join(user_path,'Box','covid_chicago','cms_sim')
             exe_dir = os.path.join(user_path, 'Box','compartments')
-            git_dir = os.path.join(user_path, 'iCloudDrive','Documents','GitHub','covid-chicago')
+            git_dir = os.path.join(user_path, 'Documents','GitHub','covid-chicago')
+
         
         else:
         
