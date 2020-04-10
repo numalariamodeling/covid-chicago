@@ -213,29 +213,6 @@ def replace_Ki_contact_param(data, df, sample_nr) :
     data = data.replace('@Ki8_8@', str(df.Ki8_8[sample_nr]))
     return data
 
-
-def makeExperimentFolder():
-    sim_output_path = os.path.join(wdir, 'simulation_output_age', exp_name)
-    plot_path = sim_output_path
-    temp_exp_dir = os.path.join(git_dir, 'age_model', '_temp', exp_name)
-    temp_dir = os.path.join(temp_exp_dir, 'simulations')
-    trajectories_dir = os.path.join(temp_exp_dir, 'trajectories')
-    if not os.path.exists(os.path.join(git_dir, '_temp')):
-        os.makedirs(os.path.join(os.path.join(git_dir, '_temp')))
-    if not os.path.exists(temp_exp_dir):
-        os.makedirs(temp_exp_dir)
-        os.makedirs(temp_dir)
-        os.makedirs(trajectories_dir)
-        os.makedirs(os.path.join(temp_exp_dir, 'log'))
-        os.makedirs(os.path.join(trajectories_dir, 'log'))
-
-    ## Copy emodl and cfg file  to experiment folder
-    shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
-    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
-
-    return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
-
-
 # parameter samples
 def generateParameterSamples(samples, pop, age_dic):
     df = pd.DataFrame()
@@ -372,7 +349,7 @@ if __name__ == '__main__':
     emodlname = 'extendedmodel_cobey_age_8grp.emodl'
 
     # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder( temp_exp_dir = os.path.join(git_dir, 'age_model', '_temp', exp_name))
 
     ### NMH catchment area population  age distribution
     ageGroups_grp = ["0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100"]
