@@ -23,29 +23,6 @@ cfg_dir = os.path.join(git_dir, 'cfg')
 today = date.today()
 
 
-def makeExperimentFolder() :
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = sim_output_path
-    # Create temporary folder for the simulation files
-    # currently allowing to run only 1 experiment at a time locally
-    temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
-    temp_dir = os.path.join(temp_exp_dir, 'simulations')
-    trajectories_dir = os.path.join(temp_exp_dir, 'trajectories')
-    if not os.path.exists(os.path.join(git_dir, '_temp')):
-        os.makedirs(os.path.join(os.path.join(git_dir, '_temp')))
-    if not os.path.exists(temp_exp_dir):
-        os.makedirs(temp_exp_dir)
-        os.makedirs(temp_dir)
-        os.makedirs(trajectories_dir)
-        os.makedirs(os.path.join(temp_exp_dir, 'log'))
-        os.makedirs(os.path.join(trajectories_dir, 'log'))  # location of log file on quest
-
-    ## Copy emodl and cfg file  to experiment folder
-    shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
-    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
-
-    return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
-
 # parameter samples
 def generateParameterSamples(samples, pop):
         df =  pd.DataFrame()
@@ -157,33 +134,6 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     return (scen_num)
 
 
-def plot(adf, allchannels, plot_fname=None):
-    fig = plt.figure(figsize=(8, 6))
-    palette = sns.color_palette('Set1', 10)
-
-    axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
-    fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
-    for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
-        ax = axes[c]
-        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-        ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
-        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
-                        color=palette[c], linewidth=0, alpha=0.2)
-        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
-                        color=palette[c], linewidth=0, alpha=0.4)
-
-        ax.set_title(channel, y=0.8)
-
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, )
-
-    if plot_fname :
-        plt.savefig(os.path.join(plot_path, plot_fname))
-    plt.show()
-
 if __name__ == '__main__' :
 
     master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
@@ -244,6 +194,6 @@ if Location == 'Local' :
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat_50.csv'))
 
     first_day = date(2020, 2, 22)
-    plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
-    plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
-    plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
+    sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
+    sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
+    sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
