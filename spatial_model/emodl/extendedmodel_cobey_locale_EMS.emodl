@@ -326,6 +326,7 @@
 (observe hosp_det_cumul_EMS_0 (+ H1_det3::EMS_0 H2_det3::EMS_0 H3_det3::EMS_0 C2_det3::EMS_0 C3_det3::EMS_0 D3_det3::EMS_0 RH1_det3::EMS_0 RC2_det3::EMS_0))
 (observe crit_cumul_EMS_0 (+ deaths_EMS_0 critical_EMS_0 RC2::EMS_0 RC2_det3::EMS_0))
 (observe crit_det_cumul_EMS_0 (+ C2_det3::EMS_0 C3_det3::EMS_0 D3_det3::EMS_0 RC2_det3::EMS_0))
+(observe crit_det_EMS_0 (+ C2_det3::EMS_0 C3_det3::EMS_0))
 (observe death_det_cumul_EMS_0 D3_det3::EMS_0 )
 (observe detected_cumul_EMS_0 (+ (+ As_det1::EMS_0 Sym_det2::EMS_0 Sys_det3::EMS_0 H1_det3::EMS_0 H2_det3::EMS_0 C2_det3::EMS_0 C3_det3::EMS_0) RAs_det1::EMS_0 RSym_det2::EMS_0 RH1_det3::EMS_0 RC2_det3::EMS_0 D3_det3::EMS_0))
 
@@ -354,6 +355,7 @@
 (observe crit_cumul_EMS_1 (+ deaths_EMS_1 critical_EMS_1 RC2::EMS_1 RC2_det3::EMS_1))
 (observe crit_det_cumul_EMS_1 (+ C2_det3::EMS_1 C3_det3::EMS_1 D3_det3::EMS_1 RC2_det3::EMS_1))
 (observe death_det_cumul_EMS_1 D3_det3::EMS_1 )
+(observe crit_det_EMS_1 (+ C2_det3::EMS_1 C3_det3::EMS_1))
 (observe detected_cumul_EMS_1 (+ (+ As_det1::EMS_1 Sym_det2::EMS_1 Sys_det3::EMS_1 H1_det3::EMS_1 H2_det3::EMS_1 C2_det3::EMS_1 C3_det3::EMS_1) RAs_det1::EMS_1 RSym_det2::EMS_1 RH1_det3::EMS_1 RC2_det3::EMS_1 D3_det3::EMS_1))
 
 (observe detected_EMS_1 (+ As_det1::EMS_1 Sym_det2::EMS_1 Sys_det3::EMS_1 H1_det3::EMS_1 H2_det3::EMS_1 H3_det3::EMS_1 C2_det3::EMS_1 C3_det3::EMS_1))
@@ -380,6 +382,7 @@
 (observe hosp_det_cumul_EMS_2 (+ H1_det3::EMS_2 H2_det3::EMS_2 H3_det3::EMS_2 C2_det3::EMS_2 C3_det3::EMS_2 D3_det3::EMS_2 RH1_det3::EMS_2 RC2_det3::EMS_2))
 (observe crit_cumul_EMS_2 (+ deaths_EMS_2 critical_EMS_2 RC2::EMS_2 RC2_det3::EMS_2))
 (observe crit_det_cumul_EMS_2 (+ C2_det3::EMS_2 C3_det3::EMS_2 D3_det3::EMS_2 RC2_det3::EMS_2))
+(observe crit_det_EMS_2 (+ C2_det3::EMS_2 C3_det3::EMS_2))
 (observe death_det_cumul_EMS_2 D3_det3::EMS_2 )
 (observe detected_cumul_EMS_2 (+ (+ As_det1::EMS_2 Sym_det2::EMS_2 Sys_det3::EMS_2 H1_det3::EMS_2 H2_det3::EMS_2 C2_det3::EMS_2 C3_det3::EMS_2) RAs_det1::EMS_2 RSym_det2::EMS_2 RH1_det3::EMS_2 RC2_det3::EMS_2 D3_det3::EMS_2))
 
@@ -407,6 +410,7 @@
 (observe hosp_det_cumul_EMS_3 (+ H1_det3::EMS_3 H2_det3::EMS_3 H3_det3::EMS_3 C2_det3::EMS_3 C3_det3::EMS_3 D3_det3::EMS_3 RH1_det3::EMS_3 RC2_det3::EMS_3))
 (observe crit_cumul_EMS_3 (+ deaths_EMS_3 critical_EMS_3 RC2::EMS_3 RC2_det3::EMS_3))
 (observe crit_det_cumul_EMS_3 (+ C2_det3::EMS_3 C3_det3::EMS_3 D3_det3::EMS_3 RC2_det3::EMS_3))
+(observe crit_det_EMS_3 (+ C2_det3::EMS_3 C3_det3::EMS_3))
 (observe death_det_cumul_EMS_3 D3_det3::EMS_3 )
 (observe detected_cumul_EMS_3 (+ (+ As_det1::EMS_3 Sym_det2::EMS_3 Sys_det3::EMS_3 H1_det3::EMS_3 H2_det3::EMS_3 C2_det3::EMS_3 C3_det3::EMS_3) RAs_det1::EMS_3 RSym_det2::EMS_3 RH1_det3::EMS_3 RC2_det3::EMS_3 D3_det3::EMS_3))
 
@@ -434,6 +438,7 @@
 (observe hosp_det_cumul_EMS_4 (+ H1_det3::EMS_4 H2_det3::EMS_4 H3_det3::EMS_4 C2_det3::EMS_4 C3_det3::EMS_4 D3_det3::EMS_4 RH1_det3::EMS_4 RC2_det3::EMS_4))
 (observe crit_cumul_EMS_4 (+ deaths_EMS_4 critical_EMS_4 RC2::EMS_4 RC2_det3::EMS_4))
 (observe crit_det_cumul_EMS_4 (+ C2_det3::EMS_4 C3_det3::EMS_4 D3_det3::EMS_4 RC2_det3::EMS_4))
+(observe crit_det_EMS_4 (+ C2_det4::EMS_3 C3_det3::EMS_4))
 (observe death_det_cumul_EMS_4 D3_det3::EMS_4 )
 (observe detected_cumul_EMS_4 (+ (+ As_det1::EMS_4 Sym_det2::EMS_4 Sys_det3::EMS_4 H1_det3::EMS_4 H2_det3::EMS_4 C2_det3::EMS_4 C3_det3::EMS_4) RAs_det1::EMS_4 RSym_det2::EMS_4 RH1_det3::EMS_4 RC2_det3::EMS_4 D3_det3::EMS_4))
 
@@ -461,6 +466,7 @@
 (observe hosp_det_cumul_EMS_5 (+ H1_det3::EMS_5 H2_det3::EMS_5 H3_det3::EMS_5 C2_det3::EMS_5 C3_det3::EMS_5 D3_det3::EMS_5 RH1_det3::EMS_5 RC2_det3::EMS_5))
 (observe crit_cumul_EMS_5 (+ deaths_EMS_5 critical_EMS_5 RC2::EMS_5 RC2_det3::EMS_5))
 (observe crit_det_cumul_EMS_5 (+ C2_det3::EMS_5 C3_det3::EMS_5 D3_det3::EMS_5 RC2_det3::EMS_5))
+(observe crit_det_EMS_5 (+ C2_det3::EMS_5 C3_det3::EMS_5))
 (observe death_det_cumul_EMS_5 D3_det3::EMS_5 )
 (observe detected_cumul_EMS_5 (+ (+ As_det1::EMS_5 Sym_det2::EMS_5 Sys_det3::EMS_5 H1_det3::EMS_5 H2_det3::EMS_5 C2_det3::EMS_5 C3_det3::EMS_5) RAs_det1::EMS_5 RSym_det2::EMS_5 RH1_det3::EMS_5 RC2_det3::EMS_5 D3_det3::EMS_5))
 
@@ -488,6 +494,7 @@
 (observe hosp_det_cumul_EMS_6 (+ H1_det3::EMS_6 H2_det3::EMS_6 H3_det3::EMS_6 C2_det3::EMS_6 C3_det3::EMS_6 D3_det3::EMS_6 RH1_det3::EMS_6 RC2_det3::EMS_6))
 (observe crit_cumul_EMS_6 (+ deaths_EMS_6 critical_EMS_6 RC2::EMS_6 RC2_det3::EMS_6))
 (observe crit_det_cumul_EMS_6 (+ C2_det3::EMS_6 C3_det3::EMS_6 D3_det3::EMS_6 RC2_det3::EMS_6))
+(observe crit_det_EMS_6 (+ C2_det3::EMS_6 C3_det3::EMS_6))
 (observe death_det_cumul_EMS_6 D3_det3::EMS_6 )
 (observe detected_cumul_EMS_6 (+ (+ As_det1::EMS_6 Sym_det2::EMS_6 Sys_det3::EMS_6 H1_det3::EMS_6 H2_det3::EMS_6 C2_det3::EMS_6 C3_det3::EMS_6) RAs_det1::EMS_6 RSym_det2::EMS_6 RH1_det3::EMS_6 RC2_det3::EMS_6 D3_det3::EMS_6))
 
