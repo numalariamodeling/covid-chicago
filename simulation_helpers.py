@@ -2,6 +2,13 @@ import os
 import subprocess
 import shutil
 
+### GE added 04/10/20 to fix "wdir not defined error"
+#import sys
+#sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
+from load_paths import load_box_paths
+datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+
+
 def runExp(trajectories_dir, Location = 'Local' ):
     if Location =='Local' :
         p = os.path.join(trajectories_dir,  'runSimulations.bat')
@@ -82,7 +89,7 @@ def writeTxt(txtdir, filename, textstring) :
     file.close()
 
 
-def generateSubmissionFile(scen_num, exp_name):
+def generateSubmissionFile(scen_num, exp_name, trajectories_dir, temp_dir, temp_exp_dir): #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
     file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
     file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
         str(scen_num),
@@ -115,7 +122,7 @@ def generateSubmissionFile(scen_num, exp_name):
 
 
 
-def makeExperimentFolder(temp_exp_dir=None) :
+def makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir, temp_exp_dir=None) : ## GE 04/10/20 added exp_name, emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
     # Create temporary folder for the simulation files
