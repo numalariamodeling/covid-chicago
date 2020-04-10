@@ -14,8 +14,6 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-first_day = date(2020, 2, 28)
-
 
 def load_sim_data(exp_name) :
 
@@ -52,6 +50,8 @@ def calculate_incidence(adf, output_filename=None) :
                               'new_hospitalized' : count_new(df, 'hosp_cumul'),
                               'new_detected' : count_new(df, 'detected_cumul'),
                               'new_critical' : count_new(df, 'crit_cumul'),
+                              'new_detected_critical' : count_new(df, 'crit_det_cumul'),
+                              'new_detected_deaths' : count_new(df, 'death_det_cumul'),
                               'new_deaths' : count_new(df, 'deaths')
                               })
         sdf['sample_num'] = samp
@@ -74,17 +74,18 @@ def compare_NMH(exp_name) :
     data_channel_names = ['covid pos admissions', 'cumulative admissions', 'inpatient census', 'ICU census']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v1')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=40,
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
                      plot_path=plot_path)
 
     data_channel_names = ['new admits v2', 'cumulative admits positive results v2', 'non ICU v2', 'ICU census v2']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v2')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=40,
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
                      plot_path=plot_path)
 
 
-def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40, plot_path=None) :
+def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(2020, 2, 22),
+                     ymax=40, plot_path=None) :
 
     fig = plt.figure()
     palette = sns.color_palette('husl', len(df['Ki'].unique()))
@@ -92,14 +93,14 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40, plot_pat
     for c, channel in enumerate(channels) :
         ax = fig.add_subplot(2,2,c+1)
 
-        for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
-            mdf = kdf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
-            dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-            ax.plot(dates, mdf['mean'], color=palette[k], label=ki)
-            # ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
-            #                 color=palette[k], linewidth=0, alpha=0.2)
-            ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
-                            color=palette[k], linewidth=0, alpha=0.4)
+        # for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
+        mdf = df.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
+        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
+        ax.plot(dates, mdf['mean'], color=palette[k])
+        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
+                        color=palette[k], linewidth=0, alpha=0.2)
+        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
+                        color=palette[k], linewidth=0, alpha=0.4)
 
         ax.set_title(channel, y=0.8)
         # ax.legend()
@@ -107,14 +108,14 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, ymax=40, plot_pat
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, date(2020, 4, 4))
-        # ax.set_ylim(1,ymax)
+        ax.set_xlim(first_day, date(2020, 4, 9))
+        ax.set_ylim(1,ymax)
         ax.set_yscale('log')
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
     if plot_path :
-        plt.savefig('%s.png' % plot_path)
-        plt.savefig('%s.pdf' % plot_path, format='PDF')
+        plt.savefig('%s_KiCI.png' % plot_path)
+        plt.savefig('%s_KiCI.pdf' % plot_path, format='PDF')
 
 
 def compare_county(exp_name, county_name) :
@@ -139,8 +140,8 @@ def compare_county(exp_name, county_name) :
     ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
     data_channel_names = ['suspected_and_confirmed_covid_icu', 'confirmed_covid_deaths_prev_24h',
                           'confirmed_covid_icu', 'confirmed_covid_on_vents']
-    ref_df = ref_df.groupby('last_update')[data_channel_names].agg(np.sum).reset_index()
-    ref_df['date'] = pd.to_datetime(ref_df['last_update'])
+    ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
+    ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
     df['ventilators'] = df['critical']*0.8
     df['critical_with_suspected'] = df['critical']
@@ -151,8 +152,36 @@ def compare_county(exp_name, county_name) :
     plt.show()
 
 
+def compare_ems(exp_name, ems=0) :
+
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
+    if ems > 0 :
+        ref_df = ref_df[ref_df['region'] == ems]
+    else :
+        ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
+    ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
+    data_channel_names = ['suspected_and_confirmed_covid_icu', 'confirmed_covid_deaths_prev_24h',
+                          'confirmed_covid_icu', 'confirmed_covid_on_vents']
+    ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
+    ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
+
+    df = load_sim_data(exp_name)
+
+    df['ventilators'] = df['critical']*0.8
+    df['critical_with_suspected'] = df['critical']
+    channels = ['critical_with_suspected', 'new_detected_deaths', 'crit_det', 'ventilators']
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
+                     plot_path=plot_path, first_day=date(2020, 2, 13))
+    plt.show()
+
 if __name__ == '__main__' :
 
-    exp_name = '20200407mr_NMH_catchment_JG_run3'
+    # exp_name = '20200407mr_NMH_catchment_updatedTime__rn54'
     # compare_county(exp_name, 'Cook')
-    compare_NMH(exp_name)
+    # compare_NMH(exp_name)
+    exp_name = '20200409_EMS_3_JG_run6'
+    # compare_ems(exp_name, 3)
+
+    exp_name = '20200409_IL_JG_run5'
+    compare_ems(exp_name)
