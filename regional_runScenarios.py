@@ -10,6 +10,7 @@ from datetime import date, timedelta
 import shutil
 from load_paths import load_box_paths
 from processing_helpers import *
+from simulation_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -22,27 +23,6 @@ cfg_dir = os.path.join(git_dir, 'cfg')
 today = date.today()
 
 
-def makeExperimentFolder() :
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = sim_output_path
-    # Create temporary folder for the simulation files
-    # currently allowing to run only 1 experiment at a time locally
-    temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
-    temp_dir = os.path.join(temp_exp_dir, 'simulations')
-    trajectories_dir = os.path.join(temp_exp_dir, 'trajectories')
-    if not os.path.exists(os.path.join(git_dir, '_temp')):
-        os.makedirs(os.path.join(os.path.join(git_dir, '_temp')))
-    if not os.path.exists(temp_exp_dir):
-        os.makedirs(temp_exp_dir)
-        os.makedirs(temp_dir)
-        os.makedirs(trajectories_dir)
-        os.makedirs(os.path.join(temp_exp_dir, 'log'))
-
-    ## Copy emodl and cfg file  to experiment folder
-    shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
-    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
-
-    return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 # parameter samples
 def generateParameterSamples(samples, pop):
@@ -156,136 +136,6 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
-def generateSubmissionFile(scen_num,exp_name):
-        file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
-        file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
-            str(scen_num),
-            os.path.join(exe_dir, "compartments.exe"),
-            os.path.join(temp_dir, "model_%%i" + ".cfg"),
-            os.path.join(temp_dir, "simulation_%%i" + ".emodl")
-        ) + "\n ECHO end")
-        file.close()
-
-        # Hardcoded Quest directories for now!
-        # additional parameters , ncores, time, queue...
-        exp_name_short = exp_name[-20:]
-        header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 5\n#SBATCH --ntasks-per-node=5'
-        jobname = '#SBATCH	--job-name="'  + exp_name_short +'"'
-        module = '\nmodule load singularity'
-        singularity = '\nsingularity exec /software/singularity/images/singwine-v1.img wine'
-        array = '\n#SBATCH --array=1-' + str(scen_num)
-        email = '\n# SBATCH --mail-user=manuela.runge@northwestern.edu'  ## create input mask or user txt where specified
-        emailtype = '\n# SBATCH --mail-type=ALL'
-        err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
-        out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
-        exe = '\n/home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe'
-        cfg = ' -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg'
-        emodl = ' -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
-        file = open(os.path.join(trajectories_dir,'runSimulations.sh'), 'w')
-        file.write(header + jobname + email + emailtype + array + err + out + module + singularity  + exe + cfg + emodl)
-        file.close()
-
-
-def runExp(Location = 'Local'):
-    if Location =='Local' :
-        p = os.path.join(trajectories_dir,  'runSimulations.bat')
-        subprocess.call([p])
-    if Location =='NUCLUSTER' :
-        print('please submit sbatch runSimulations.sh in the terminal')
-
-
-def reprocess(input_fname='trajectories.csv', output_fname=None):
-    fname = input_fname
-    # fname = os.path.join(trajectories_dir, input_fname)
-    row_df = pd.read_csv(fname, skiprows=1)
-    df = row_df.set_index('sampletimes').transpose()
-    num_channels = len([x for x in df.columns.values if '{0}' in x])
-    num_samples = int((len(row_df)) / num_channels)
-
-    df = df.reset_index(drop=False)
-    df = df.rename(columns={'index': 'time'})
-    df['time'] = df['time'].astype(float)
-
-    adf = pd.DataFrame()
-    for sample_num in range(num_samples):
-        channels = [x for x in df.columns.values if '{%d}' % sample_num in x]
-        sdf = df[['time'] + channels]
-        sdf = sdf.rename(columns={
-            x: x.split('{')[0] for x in channels
-        })
-        sdf['sample_num'] = sample_num
-        adf = pd.concat([adf, sdf])
-
-    adf = adf.reset_index()
-    del adf['index']
-    if output_fname:
-        adf.to_csv(os.path.join(temp_exp_dir,output_fname), index=False)
-    return adf
-
-
-def combineTrajectories(Nscenarios, deleteFiles=False):
-    scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
-
-    df_list = []
-    for scen_i in range(Nscenarios):
-        input_name = "trajectories_scen" + str(scen_i+1) + ".csv"
-        try:
-            df_i = reprocess(input_name)
-            df_i['scen_num'] = scen_i
-            df_i = df_i.merge(scendf, on=['scen_num','sample_num'])
-            df_list.append(df_i)
-        except:
-            continue
-
-        if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
-
-    dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
-
-    return dfc
-
-
-def cleanup(delete_temp_dir=True) :
-    # Delete simulation model and emodl files
-    # But keeps per default the trajectories, better solution, zip folders and copy
-    if delete_temp_dir ==True :
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print('temp_dir folder deleted')
-    shutil.copytree(temp_exp_dir, sim_output_path)
-    if not os.path.exists(plot_path):
-        os.makedirs(plot_path)
-    # Delete files after being copied to the project folder
-    if os.path.exists(sim_output_path):
-        shutil.rmtree(temp_exp_dir, ignore_errors=True)
-    elif not os.path.exists(sim_output_path):
-        print('Sim_output_path does not exists')
-
-def plot(adf, allchannels, plot_fname=None):
-    fig = plt.figure(figsize=(8, 6))
-    palette = sns.color_palette('Set1', 10)
-
-    axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
-    fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
-    for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
-        ax = axes[c]
-        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-        ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
-        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
-                        color=palette[c], linewidth=0, alpha=0.2)
-        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
-                        color=palette[c], linewidth=0, alpha=0.4)
-
-        ax.set_title(channel, y=0.8)
-
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, )
-
-    if plot_fname :
-        plt.savefig(os.path.join(plot_path, plot_fname))
-    plt.show()
 
 if __name__ == '__main__' :
 
@@ -353,6 +203,6 @@ if __name__ == '__main__' :
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
     first_day = date(2020, 2, 28)
-    plot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
-    plot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
-    plot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
+    sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
+    sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
+    sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
