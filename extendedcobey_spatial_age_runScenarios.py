@@ -8,6 +8,10 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 import shutil
+import sys
+
+sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
+
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
@@ -15,7 +19,7 @@ from simulation_helpers import *
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 Location = 'Local'  # 'NUCLUSTER'
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
 emodl_dir = os.path.join(git_dir, 'emodl')
 cfg_dir = os.path.join(git_dir, 'cfg')
@@ -150,7 +154,7 @@ if __name__ == '__main__' :
 
 
     # Selected SEIR model
-    emodlname = 'extendedmodel_cobey.emodl'
+    emodlname = 'extendedmodel_cobey_locale_age_2grptest1.emodl'#'extendedmodel_cobey.emodl'
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error

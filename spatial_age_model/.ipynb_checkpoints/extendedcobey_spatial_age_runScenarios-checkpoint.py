@@ -8,6 +8,10 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 import shutil
+import sys
+
+sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
+
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
@@ -150,10 +154,10 @@ if __name__ == '__main__' :
 
 
     # Selected SEIR model
-    emodlname = 'extendedmodel_cobey.emodl'
+    emodlname = 'extendedmodel_cobey_locale_EMS_2grptest1'#'extendedmodel_cobey.emodl'
 
     # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     # Simlation setup
     simulation_population = 1000 #  315000  # 12830632 Illinois   # 2700000  Chicago  ## 315000 NMH catchment
@@ -183,10 +187,10 @@ if __name__ == '__main__' :
                               monitoring_samples = monitoring_samples,
                               modelname=emodlname)
 
-    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir) #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
+    generateSubmissionFile(nscen, exp_name)
   
 if Location == 'Local' :
-    runExp(trajectories_dir=trajectories_dir, Location='Local') 
+    runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
     combineTrajectories(nscen)
