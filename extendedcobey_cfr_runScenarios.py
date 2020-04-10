@@ -22,8 +22,6 @@ cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
 
-
-
 # parameter samples
 def generateParameterSamples(samples, pop):
         df =  pd.DataFrame()
@@ -42,19 +40,16 @@ def generateParameterSamples(samples, pop):
         df['recovery_rate_crit'] = np.random.uniform(25.3, 31.6, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
         df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
-        #df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
-        #df['fraction_critical'] = np.random.uniform(0.15, 0.35, samples)
-        df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
-        df['cfr'] = np.random.uniform(0.01, 0.04, samples)
-        # df['cfr'] = np.random.uniform(0.008, 0.022, samples)
-        #df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
-        #df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
-        # df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
+        df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
+        df['fraction_critical_det'] = df['fraction_critical'] * det_scaling_factor
+        df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
+        df['cfr_det'] = df['cfr'] * det_scaling_factor
         df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
-        df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+        df['fraction_dead_det'] = df.apply(lambda x: x['cfr_det'] / x['fraction_severe'], axis=1)
+        df['fraction_hospitalized'] = df.apply(lambda x: 1 - (x['fraction_critical'] + x['fraction_critical_det']) - (x['fraction_dead'] + x['fraction_dead_det']), axis=1)
         df['reduced_inf_of_det_cases'] = np.random.uniform(0.5, 0.9, samples)
-        df['d_Sym'] = np.random.uniform(0.1, 0.25, samples)
-        df['d_Sys'] = np.random.uniform(0.3, 0.7, samples)
+        df['d_Sym'] = np.random.uniform(0.2, 0.3, samples)
+        df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
         #df['Ki'] = np.random.uniform(2.e-7, 2.5e-7, samples)
 
@@ -62,10 +57,9 @@ def generateParameterSamples(samples, pop):
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
         df['social_multiplier_3'] = np.random.uniform( 0.005 , 0.3, samples) #0.2, 0.6
 
-        mar_12_day = 28 # 13 for EMS_3, NMH
-        df['socialDistance_time1'] = mar_12_day
-        df['socialDistance_time2'] = mar_12_day+5
-        df['socialDistance_time3'] = mar_12_day+9
+        df['socialDistance_time1'] = 32 # 24  ## (+8 for NMH)
+        df['socialDistance_time2'] = 37 # 29  ## (+8 for NMH)
+        df['socialDistance_time3'] = 41 # 33  ## (+8 for NMH)
 
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
@@ -84,8 +78,10 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     data = data.replace('@fraction_symptomatic@', str(df.fraction_symptomatic[sample_nr]))
     data = data.replace('@fraction_severe@', str(df.fraction_severe[sample_nr]))
     data = data.replace('@fraction_critical@', str(df.fraction_critical[sample_nr]))
+    data = data.replace('@fraction_critical_det@', str(df.fraction_critical[sample_nr]))
     data = data.replace('@reduced_inf_of_det_cases@', str(df.reduced_inf_of_det_cases[sample_nr]))
     data = data.replace('@fraction_dead@', str(df.fraction_dead[sample_nr]))
+    data = data.replace('@fraction_dead_det@', str(df.fraction_dead[sample_nr]))
     data = data.replace('@d_As@', str(df.d_As[sample_nr]))
     data = data.replace('@d_Sym@', str(df.d_Sym[sample_nr]))
     data = data.replace('@d_Sys@', str(df.d_Sys[sample_nr]))
@@ -149,40 +145,34 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    region = 'IL'
-    exp_name = today.strftime("%Y%m%d") + '_%s_JG_run5' % region
+    exp_name = today.strftime("%Y%m%d") + '_Test_reducedCFR_whenDet_' + '_rn' + str(int(np.random.uniform(10, 99)))
+    det_scaling_factor = 0.9
 
     # Selected SEIR model
-    emodlname = 'extendedmodel_cobey.emodl'
+    emodlname = 'extendedmodel_cobey_cfr.emodl'
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
 
     # Simlation setup
-    populations = {
-        'IL' : 12830632,
-        'NMH_catchment' : 315000,
-        'Chicago' : 2700000,
-        'EMS_3' : 560165
-    }
-    Kis  = {
-        'NMH_catchment' : np.linspace(1.5e-6,2e-6,3),
-        'Chicago' : np.linspace(2e-7, 3e-7, 3),
-        'EMS_3' : np.linspace(5e-7, 9e-7, 3),
-        'IL' : np.linspace(3.5e-8, 5.3e-8, 3)
-    }
-    simulation_population = populations[region]
-    number_of_samples = 20
-    number_of_runs = 3
+    simulation_population = 315000 #  1000  # 12830632 Illinois   # 2700000  Chicago  ## 315000 NMH catchment
+    number_of_samples = 50
+    number_of_runs = 10
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
     # Time event
-    #startDate = '02.20.2020'
-    #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
+    ### Cook   -
+    # Kivalues  = np.linspace(2.e-7,2.5e-7,5)
+    # startDate = '02.20.2020'
+    # socialDistance_time = [24, 29, 33]
+    ### NMH
+    # Kivalues  = np.linspace(1.5e-6, 2e-6, 3)
+    # startDate = '02.28.2020'
+    # socialDistance_time = [32, 37, 41]
 
     # Parameter values
-    Kivalues = Kis[region]
+    Kivalues =  np.linspace(1.5e-6, 2e-6, 5)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -193,16 +183,16 @@ if __name__ == '__main__' :
                               modelname=emodlname)
 
     generateSubmissionFile(nscen, exp_name)
-
-    # if Location == 'Local' :
-    runExp(Location='Local')
+  
+if Location == 'Local' :
+    runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
-    combineTrajectories(number_of_samples*len(Kivalues))
+    combineTrajectories(nscen)
     cleanup(delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-    first_day = date(2020, 2, 28)
+    first_day = date(2020, 2, 22)
     sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
     sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
     sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
