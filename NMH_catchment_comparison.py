@@ -93,17 +93,17 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
     for c, channel in enumerate(channels) :
         ax = fig.add_subplot(2,2,c+1)
 
-        for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
-            mdf = kdf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
-            dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-            ax.plot(dates, mdf['mean'], color=palette[k], label=ki)
-            # ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
-            #                 color=palette[k], linewidth=0, alpha=0.2)
-            ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
-                            color=palette[k], linewidth=0, alpha=0.4)
+        # for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
+        mdf = df.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
+        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
+        ax.plot(dates, mdf['mean'], color=palette[k])
+        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
+                        color=palette[k], linewidth=0, alpha=0.2)
+        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
+                        color=palette[k], linewidth=0, alpha=0.4)
 
         ax.set_title(channel, y=0.8)
-        ax.legend()
+        # ax.legend()
 
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
@@ -171,8 +171,8 @@ def compare_ems(exp_name, ems=0) :
     df['critical_with_suspected'] = df['critical']
     channels = ['critical_with_suspected', 'new_detected_deaths', 'crit_det', 'ventilators']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
-                     plot_path=plot_path, first_day=date(2020, 2, 28))
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
+                     plot_path=plot_path, first_day=date(2020, 2, 13))
     plt.show()
 
 if __name__ == '__main__' :
@@ -180,8 +180,8 @@ if __name__ == '__main__' :
     # exp_name = '20200407mr_NMH_catchment_updatedTime__rn54'
     # compare_county(exp_name, 'Cook')
     # compare_NMH(exp_name)
-    exp_name = '20200409_EMS_3_JG_run2'
-    compare_ems(exp_name, 3)
+    exp_name = '20200409_EMS_3_JG_run6'
+    # compare_ems(exp_name, 3)
 
-    # exp_name = '20200409_IL_JG_run3'
-    # compare_ems(exp_name)
+    exp_name = '20200409_IL_JG_run5'
+    compare_ems(exp_name)
