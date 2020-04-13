@@ -124,7 +124,10 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             data_cfg = data_cfg.replace('@duration@', str(duration))
             data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
             data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            if Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
+            if not Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
             fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
             fin.write(data_cfg)
@@ -149,7 +152,7 @@ if __name__ == '__main__' :
 
     ### Define setting
     region = 'NMH_catchment'
-    exp_name = today.strftime("%Y%m%d") + '_%s_testBase' % region + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_%s_updatedStartDate' % region + '_rn' + str(int(np.random.uniform(10, 99)))
 
     # Selected SEIR model
     emodlname = 'extendedmodel_cobey.emodl'
@@ -185,6 +188,10 @@ if Location == 'Local' :
     runExp(trajectories_dir=trajectories_dir, Location='Local') 
 
     # Once the simulations are done
+    exp_name="20200413_NMH_corrected_NPI_dates_rn49"
+    sim_output_path = os.path.join(wdir, 'simulation_output/MR', exp_name)
+    plot_path = sim_output_path
+
     combineTrajectories(nscen)
     cleanup(delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))

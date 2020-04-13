@@ -127,7 +127,10 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             data_cfg = data_cfg.replace('@duration@', str(duration))
             data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
             data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            if Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
+            if not Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
             fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
             fin.write(data_cfg)
