@@ -44,6 +44,12 @@ def define_Species_initial(df, age_dic):
     df['initialAs_age20to39'] = age_dic[1][1]
     df['initialAs_age40to59'] = age_dic[2][1]
     df['initialAs_age60to100'] = age_dic[3][1]
+
+    df['N_age0to19'] = df['speciesS_age0to19'] + df['initialAs_age0to19']
+    df['N_age20to39'] =df['speciesS_age20to39'] + df['initialAs_age20to39']
+    df['N_age40to59'] = df['speciesS_age40to59'] + df['initialAs_age40to59']
+    df['N_age60to100'] = df['speciesS_age60to100'] + df['initialAs_age60to100']
+
     return df
 
 
@@ -57,48 +63,53 @@ def replace_Species_initial(data, df, sample_nr):
     data = data.replace('@initialAs_age20to39@', str(df.initialAs_age20to39[sample_nr]))
     data = data.replace('@initialAs_age40to59@', str(df.initialAs_age40to59[sample_nr]))
     data = data.replace('@initialAs_age60to100@', str(df.initialAs_age60to100[sample_nr]))
+
+    data = data.replace('@N_age0to19@', str(df.N_age0to19[sample_nr]))
+    data = data.replace('@N_age20to39@', str(df.N_age20to39[sample_nr]))
+    data = data.replace('@N_age40to59@', str(df.N_age40to59[sample_nr]))
+    data = data.replace('@N_age60to100@', str(df.N_age60to100[sample_nr]))
     return data
 
 
-def define_Ki_contact_matrix(df):
+def define_contact_matrix(df):
     ##  20200318_EMODKingCountyCovidInterventions.docx
     ##  Aggregated mean estimates from MUestimates_all_locations_2.xlsx
-    df['Ki1_1'] = 2.52
-    df['Ki1_2'] = 0.597
-    df['Ki1_3'] = 0.458
-    df['Ki1_4'] = 1.00
-    df['Ki2_1'] = 0.700
-    df['Ki2_2'] = 5.86
-    df['Ki2_3'] = 0.758
-    df['Ki2_4'] = 0.734
-    df['Ki3_1'] = 0.350
-    df['Ki3_2'] = 1.02
-    df['Ki3_3'] = 2.86
-    df['Ki3_4'] = 1.31
-    df['Ki4_1'] = 0.843
-    df['Ki4_2'] = 0.722
-    df['Ki4_3'] = 1.16
-    df['Ki4_4'] = 2.19
+    df['C1_1'] = 0.425
+    df['C1_2'] = 0.109
+    df['C1_3'] = 0.068
+    df['C1_4'] = 0.155
+    df['C2_1'] = 0.109
+    df['C2_2'] = 0.989
+    df['C2_3'] = 0.150
+    df['C2_4'] = 0.122
+    df['C3_1'] = 0.068
+    df['C3_2'] = 0.150
+    df['C3_3'] = 0.483
+    df['C3_4'] = 0.208
+    df['C4_1'] = 0.155
+    df['C4_2'] = 0.122
+    df['C4_3'] = 0.208
+    df['C4_4'] = 0.369
     return df
 
 
-def replace_Ki_contact_param(data, df, sample_nr) :
-    data = data.replace('@Ki1_4@', str(df.Ki1_4[sample_nr]))
-    data = data.replace('@Ki1_3@', str(df.Ki1_3[sample_nr]))
-    data = data.replace('@Ki1_2@', str(df.Ki1_2[sample_nr]))
-    data = data.replace('@Ki1_1@', str(df.Ki1_1[sample_nr]))
-    data = data.replace('@Ki2_4@', str(df.Ki2_4[sample_nr]))
-    data = data.replace('@Ki2_3@', str(df.Ki2_3[sample_nr]))
-    data = data.replace('@Ki2_2@', str(df.Ki2_2[sample_nr]))
-    data = data.replace('@Ki2_1@', str(df.Ki2_1[sample_nr]))
-    data = data.replace('@Ki3_4@', str(df.Ki3_4[sample_nr]))
-    data = data.replace('@Ki3_3@', str(df.Ki3_3[sample_nr]))
-    data = data.replace('@Ki3_2@', str(df.Ki3_2[sample_nr]))
-    data = data.replace('@Ki3_1@', str(df.Ki3_1[sample_nr]))
-    data = data.replace('@Ki4_4@', str(df.Ki4_4[sample_nr]))
-    data = data.replace('@Ki4_3@', str(df.Ki4_3[sample_nr]))
-    data = data.replace('@Ki4_2@', str(df.Ki4_2[sample_nr]))
-    data = data.replace('@Ki4_1@', str(df.Ki4_1[sample_nr]))
+def replace_contact_param(data, df, sample_nr) :
+    data = data.replace('@C1_4@', str(df.C1_4[sample_nr]))
+    data = data.replace('@C1_3@', str(df.C1_3[sample_nr]))
+    data = data.replace('@C1_2@', str(df.C1_2[sample_nr]))
+    data = data.replace('@C1_1@', str(df.C1_1[sample_nr]))
+    data = data.replace('@C2_4@', str(df.C2_4[sample_nr]))
+    data = data.replace('@C2_3@', str(df.C2_3[sample_nr]))
+    data = data.replace('@C2_2@', str(df.C2_2[sample_nr]))
+    data = data.replace('@C2_1@', str(df.C2_1[sample_nr]))
+    data = data.replace('@C3_4@', str(df.C3_4[sample_nr]))
+    data = data.replace('@C3_3@', str(df.C3_3[sample_nr]))
+    data = data.replace('@C3_2@', str(df.C3_2[sample_nr]))
+    data = data.replace('@C3_1@', str(df.C3_1[sample_nr]))
+    data = data.replace('@C4_4@', str(df.C4_4[sample_nr]))
+    data = data.replace('@C4_3@', str(df.C4_3[sample_nr]))
+    data = data.replace('@C4_2@', str(df.C4_2[sample_nr]))
+    data = data.replace('@C4_1@', str(df.C4_1[sample_nr]))
     return data
 
 # parameter samples
@@ -141,7 +152,7 @@ def generateParameterSamples(samples, pop, age_dic):
     df['socialDistance_time2'] = 29
     df['socialDistance_time3'] = 33
 
-    df = define_Ki_contact_matrix(df)
+    df = define_contact_matrix(df)
     df = define_Species_initial(df, age_dic)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
@@ -179,7 +190,7 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, scen_num):
     data = data.replace('@socialDistance_time2@', str(df.socialDistance_time2[sample_nr]))
     data = data.replace('@socialDistance_time3@', str(df.socialDistance_time3[sample_nr]))
 
-    data = replace_Ki_contact_param(data, df, sample_nr)
+    data = replace_contact_param(data, df, sample_nr)
     data = replace_Species_initial(data, df, sample_nr)
 
     fin.close()
@@ -224,7 +235,7 @@ if __name__ == '__main__':
     # Experiment design, fitting parameter and population
     # =============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_TEST_4grp_adjusted_NMHpop_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_TEST_4grp_normalizedContacts_rn' + str(int(np.random.uniform(10, 99)))
 
     # Simlation setup
     simulation_population = 315000  # 1000  # 12830632 Illinois   # 2700000  Chicago ## 315000 NMH catchment
@@ -233,14 +244,17 @@ if __name__ == '__main__':
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
-    ## Specify age population
-    # emodlname = 'extendedmodel_cobey_age_2grp_Moghadas_NMHpop.emodl'
-    # emodlname = 'extendedmodel_cobey_age_Moghadas_V1_NMHpop.emodl'
-    emodlname = 'extendedmodel_cobey_age_4grp_adjusted_NMHpop.emodl'
+    emodlname = 'extendedmodel_cobey_age_4grp.emodl'
 
     # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder( temp_exp_dir = os.path.join(git_dir, 'age_model', '_temp', exp_name))
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
+        cfg_dir=cfg_dir,
+        exp_name=exp_name,
+        emodl_dir=emodl_dir,
+        emodlname=emodlname,
+        temp_exp_dir = os.path.join(git_dir, 'age_model', '_temp', exp_name))
 
+    ## Specify age population
     ageGroups_grp = ["0to19", "20to39", "40to59", "60to100"]
     ageGroupScale_grp = [0.249, 0.306, 0.253, 0.192]  ## NMH catchment area population age distribution
     initialAs_grp = [3, 3, 3, 3, 3, 3]
@@ -262,7 +276,7 @@ if __name__ == '__main__':
     # socialDistance_time = [32, 37, 41]
 
     # Parameter values
-    Kivalues = np.linspace(1.5e-6, 2e-6, 3)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues = np.linspace(1.5e-6, 2e-6, 5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -273,7 +287,8 @@ if __name__ == '__main__':
                               modelname=emodlname,
                               age_dic=age_dic)
 
-    generateSubmissionFile(nscen, exp_name)
+
+    generateSubmissionFile(trajectories_dir=trajectories_dir,temp_dir=temp_dir, temp_exp_dir=temp_exp_dir,scen_num=nscen, exp_name=exp_name)
 
 if Location == 'Local':
 
@@ -282,3 +297,4 @@ if Location == 'Local':
     # Once the simulations are done
     #combineTrajectories(nscen)
     #cleanup(delete_temp_dir=False)
+    #run postprocessing script
