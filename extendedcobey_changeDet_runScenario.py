@@ -11,6 +11,7 @@ import shutil
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
+from simulation_setup import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -24,7 +25,7 @@ today = date.today()
 
 
 # parameter samples
-def generateParameterSamples(samples, pop):
+def generateParameterSamples(samples, pop, first_day):
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
@@ -56,9 +57,9 @@ def generateParameterSamples(samples, pop):
     df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
     df['social_multiplier_3'] = np.random.uniform(0.005, 0.3, samples)  # 0.2, 0.6
 
-    df['socialDistance_time1'] = 32  # 24  ## (+8 for NMH)
-    df['socialDistance_time2'] = 37  # 29  ## (+8 for NMH)
-    df['socialDistance_time3'] = 41  # 33  ## (+8 for NMH)
+    df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 13), startdate=first_day)
+    df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 18), startdate=first_day)
+    df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 22), startdate=first_day)
 
     df['detection_multiplier_1'] = np.random.uniform(0.00170516612048064, 0.00170516612048064, samples)
     df['detection_multiplier_1'] = np.random.uniform(0.00170516612048064, 0.00170516612048064, samples)
@@ -98,42 +99,42 @@ def generateParameterSamples(samples, pop):
     df['detection_multiplier_35'] = np.random.uniform(0.915620920256841, 0.915620920256841, samples)
     df['detection_multiplier_36'] = np.random.uniform(1, 1, samples)
 
-    df['detection_time_1'] = 14
-    df['detection_time_2'] = 15
-    df['detection_time_3'] = 16
-    df['detection_time_4'] = 17
-    df['detection_time_5'] = 18
-    df['detection_time_6'] = 19
-    df['detection_time_7'] = 20
-    df['detection_time_8'] = 21
-    df['detection_time_9'] = 22
-    df['detection_time_10'] = 23
-    df['detection_time_11'] = 24
-    df['detection_time_12'] = 25
-    df['detection_time_13'] = 26
-    df['detection_time_14'] = 27
-    df['detection_time_15'] = 28
-    df['detection_time_16'] = 29
-    df['detection_time_17'] = 30
-    df['detection_time_18'] = 31
-    df['detection_time_19'] = 32
-    df['detection_time_20'] = 33
-    df['detection_time_21'] = 34
-    df['detection_time_22'] = 35
-    df['detection_time_23'] = 36
-    df['detection_time_24'] = 37
-    df['detection_time_25'] = 38
-    df['detection_time_26'] = 39
-    df['detection_time_27'] = 40
-    df['detection_time_28'] = 41
-    df['detection_time_29'] = 42
-    df['detection_time_30'] = 43
-    df['detection_time_31'] = 44
-    df['detection_time_32'] = 45
-    df['detection_time_33'] = 46
-    df['detection_time_34'] = 47
-    df['detection_time_35'] = 48
-    df['detection_time_36'] = 49
+    df['detection_time_1'] = DateToTimestep(date(2020, 3, 13), first_day)
+    df['detection_time_2'] = DateToTimestep(date(2020, 3, 14), first_day)
+    df['detection_time_3'] = DateToTimestep(date(2020, 3, 15), first_day)
+    df['detection_time_4'] = DateToTimestep(date(2020, 3, 16), first_day)
+    df['detection_time_5'] = DateToTimestep(date(2020, 3, 17), first_day)
+    df['detection_time_6'] = DateToTimestep(date(2020, 3, 18), first_day)
+    df['detection_time_7'] = DateToTimestep(date(2020, 3, 19), first_day)
+    df['detection_time_8'] = DateToTimestep(date(2020, 3, 20), first_day)
+    df['detection_time_9'] = DateToTimestep(date(2020, 3, 21), first_day)
+    df['detection_time_10'] = DateToTimestep(date(2020, 3, 22), first_day)
+    df['detection_time_11'] = DateToTimestep(date(2020, 3, 23), first_day)
+    df['detection_time_12'] = DateToTimestep(date(2020, 3, 24), first_day)
+    df['detection_time_13'] = DateToTimestep(date(2020, 3, 25), first_day)
+    df['detection_time_14'] = DateToTimestep(date(2020, 3, 26), first_day)
+    df['detection_time_15'] = DateToTimestep(date(2020, 3, 27), first_day)
+    df['detection_time_16'] = DateToTimestep(date(2020, 3, 28), first_day)
+    df['detection_time_17'] = DateToTimestep(date(2020, 3, 29), first_day)
+    df['detection_time_18'] = DateToTimestep(date(2020, 3, 30), first_day)
+    df['detection_time_19'] = DateToTimestep(date(2020, 3, 31), first_day)
+    df['detection_time_20'] = DateToTimestep(date(2020, 4, 1), first_day)
+    df['detection_time_21'] = DateToTimestep(date(2020, 4, 2), first_day)
+    df['detection_time_22'] = DateToTimestep(date(2020, 4, 3), first_day)
+    df['detection_time_23'] = DateToTimestep(date(2020, 4, 4), first_day)
+    df['detection_time_24'] = DateToTimestep(date(2020, 4, 5), first_day)
+    df['detection_time_25'] = DateToTimestep(date(2020, 4, 6), first_day)
+    df['detection_time_26'] = DateToTimestep(date(2020, 4, 7), first_day)
+    df['detection_time_27'] = DateToTimestep(date(2020, 4, 8), first_day)
+    df['detection_time_28'] = DateToTimestep(date(2020, 4, 9), first_day)
+    df['detection_time_29'] = DateToTimestep(date(2020, 4, 10), first_day)
+    df['detection_time_30'] = DateToTimestep(date(2020, 4, 11), first_day)
+    df['detection_time_31'] = DateToTimestep(date(2020, 4, 12), first_day)
+    df['detection_time_32'] = DateToTimestep(date(2020, 4, 13), first_day)
+    df['detection_time_33'] = DateToTimestep(date(2020, 4, 14), first_day)
+    df['detection_time_34'] = DateToTimestep(date(2020, 4, 15), first_day)
+    df['detection_time_35'] = DateToTimestep(date(2020, 4, 16), first_day)
+    df['detection_time_36'] = DateToTimestep(date(2020, 4, 17), first_day)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     return (df)
@@ -250,10 +251,10 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, scen_num):
     fin.close()
 
 
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples, modelname):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples, modelname, first_day):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
@@ -290,34 +291,30 @@ if __name__ == '__main__':
     # ============================================================
     # Experiment design, fitting parameter and population
     # =============================================================
+    region = 'NMH_catchment'
 
-    exp_name = today.strftime("%Y%m%d") + '_TEST_detection_change' + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_%s_TEST_detection_change' % region + '_rn' + str(int(np.random.uniform(10, 99)))
 
     # Selected SEIR model
     emodlname = 'extendedmodel_cobey_changeDetection.emodl'
 
     # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir)
 
     # Simlation setup
-    simulation_population = 315000  # 1000  # 12830632 Illinois   # 2700000  Chicago  ## 315000 NMH catchment
+    ## function in simulation_setup.py
+    populations, Kis, startdate = load_setting_parameter()
+
+    simulation_population = populations[region]
     number_of_samples = 20
     number_of_runs = 3
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
-    # Time event
-    ### Cook   -
-    # Kivalues  = np.linspace(2.e-7,2.5e-7,5)
-    # startDate = '02.20.2020'
-    # socialDistance_time = [24, 29, 33]
-    ### NMH
-    # Kivalues  = np.linspace(1.5e-6, 2e-6, 3)
-    # startDate = '02.28.2020'
-    # socialDistance_time = [32, 37, 41]
-
     # Parameter values
-    Kivalues = np.linspace(1.5e-6, 2e-6, 5)
+    Kivalues = Kis[region]
+    first_day = startdate[region]
+
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -325,9 +322,10 @@ if __name__ == '__main__':
                               sub_samples=number_of_samples,
                               duration=duration,
                               monitoring_samples=monitoring_samples,
-                              modelname=emodlname)
+                              modelname=emodlname,
+                              first_day=first_day)
 
-    generateSubmissionFile(nscen, exp_name)
+    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir)
 
 if Location == 'Local':
     runExp(trajectories_dir=trajectories_dir, Location='Local')
@@ -337,7 +335,7 @@ if Location == 'Local':
     cleanup(delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-    first_day = date(2020, 2, 28)
+
     sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
     sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
     sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')

@@ -11,6 +11,7 @@ import shutil
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
+from simulation_setup import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -24,7 +25,7 @@ today = date.today()
 
 
 # parameter samples
-def generateParameterSamples(samples, pop):
+def generateParameterSamples(samples, pop, first_day):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -60,9 +61,9 @@ def generateParameterSamples(samples, pop):
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
         df['social_multiplier_3'] = np.random.uniform( 0.005 , 0.3, samples) #0.2, 0.6
 
-        df['socialDistance_time1'] = 32 # 24  ## (+8 for NMH)
-        df['socialDistance_time2'] = 37 # 29  ## (+8 for NMH)
-        df['socialDistance_time3'] = 41 # 33  ## (+8 for NMH)
+        df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 13),startdate= first_day)
+        df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 18),startdate= first_day)
+        df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 22),startdate= first_day)
 
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
@@ -104,10 +105,10 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin.close()
 
     
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname ,first_day):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
@@ -146,8 +147,9 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_TEST' + '_rn' + str(int(np.random.uniform(10, 99)))
-
+    ### Define setting
+    region = 'NMH_catchment'
+    exp_name = today.strftime("%Y%m%d") + '_%s_testBase' % region + '_rn' + str(int(np.random.uniform(10, 99)))
 
     # Selected SEIR model
     emodlname = 'extendedmodel_cobey.emodl'
@@ -155,25 +157,18 @@ if __name__ == '__main__' :
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
 
-    # Simlation setup
-    simulation_population = 1000 #  315000  # 12830632 Illinois   # 2700000  Chicago  ## 315000 NMH catchment
+    ## function in simulation_setup.py
+    populations, Kis, startdate = load_setting_parameter()
+
+    simulation_population = populations[region]
     number_of_samples = 20
     number_of_runs = 3
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
-    # Time event
-    ### Cook   -
-    # Kivalues  = np.linspace(2.e-7,2.5e-7,5)
-    # startDate = '02.20.2020'
-    # socialDistance_time = [24, 29, 33]
-    ### NMH
-    # Kivalues  = np.linspace(1.5e-6, 2e-6, 3)
-    # startDate = '02.28.2020'
-    # socialDistance_time = [32, 37, 41]
-
     # Parameter values
-    Kivalues =  np.linspace(1.5e-6, 2e-6, 5)
+    Kivalues = Kis[region]
+    first_day = startdate[region]
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -181,7 +176,8 @@ if __name__ == '__main__' :
                               sub_samples=number_of_samples,
                               duration = duration,
                               monitoring_samples = monitoring_samples,
-                              modelname=emodlname)
+                              modelname=emodlname,
+                              first_day = first_day)
 
     generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir) #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
   
@@ -193,7 +189,7 @@ if Location == 'Local' :
     cleanup(delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-    first_day = date(2020, 2, 22)
+
     sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
     sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
     sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
