@@ -191,7 +191,7 @@ if Location == 'Local' :
     # Once the simulations are done
     combineTrajectories(nscen)
     cleanup(delete_temp_dir=False)
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat_50.csv'))
+    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
     first_day = date(2020, 2, 22)
     sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
