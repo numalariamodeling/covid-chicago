@@ -12,14 +12,14 @@ from processing_helpers import *
 from load_paths import load_box_paths
 
 mpl.rcParams['pdf.fonttype'] = 42
-testMode = False
+testMode = True
 
-exp_name = '20200407_mr_test_age_4grp_rn59'
+exp_name = '20200412_TEST_simplemodel_4grp__rn94'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
-    sim_output_path = os.path.join(wdir, 'sample_trajectories')
-    plot_path = os.path.join(wdir, 'sample_plots')
+    sim_output_path = os.path.join(git_dir,'age_model', '_temp',exp_name)
+    plot_path = sim_output_path
 else :
     sim_output_path = os.path.join(wdir, 'simulation_output_age', exp_name)
     plot_path = sim_output_path
@@ -36,7 +36,7 @@ detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp
 custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
                        'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-first_day = date(2020, 2, 22)
+first_day = date(2020, 2, 28)
 
 
 def count_new(df, curr_ch) :
@@ -131,3 +131,4 @@ if __name__ == '__main__' :
         plot(adf, age_group, 'plot_withIncidence_%s' % age_group)
 
     # plt.show()
+
