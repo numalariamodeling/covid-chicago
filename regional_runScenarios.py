@@ -128,7 +128,10 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             data_cfg = data_cfg.replace('@duration@', str(duration))
             data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
             data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            if Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
+            if not Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
             fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
             fin.write(data_cfg)
@@ -160,27 +163,10 @@ if __name__ == '__main__' :
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir)
 
-    #populations, Kis, startdate = load_setting_parameter()
+
 
     # Simlation setup
-    populations = {
-        'IL' : 12830632,
-        'NMH_catchment' : 315000,
-        'Chicago' : 2700000,
-        'EMS_3' : 560165
-    }
-    Kis  = {
-        'NMH_catchment' : np.linspace(1.5e-6,2e-6,3),
-        'Chicago' : np.linspace(2e-7, 3e-7, 3),
-        'EMS_3' : np.linspace(5e-7, 9e-7, 3),
-        'IL' : np.linspace(3.5e-8, 5.3e-8, 3)
-    }
-    startdate = {
-        'NMH_catchment': date(2020, 2, 28),
-        'Chicago': date(2020, 2, 20),
-        'EMS_3': date(2020, 2, 28),
-        'IL': date(2020, 2, 28)
-    }
+    populations, Kis, startdate = load_setting_parameter()
 
     simulation_population = populations[region]
     number_of_samples = 20
