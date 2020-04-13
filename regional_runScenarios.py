@@ -11,6 +11,8 @@ import shutil
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
+from simulation_setup import *
+
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -25,7 +27,7 @@ today = date.today()
 
 
 # parameter samples
-def generateParameterSamples(samples, pop):
+def generateParameterSamples(samples, pop, first_day):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -62,7 +64,7 @@ def generateParameterSamples(samples, pop):
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
         df['social_multiplier_3'] = np.random.uniform( 0.005 , 0.3, samples) #0.2, 0.6
 
-        mar_12_day = 28 # 13 for EMS_3, NMH
+        mar_12_day = DateToTimestep(date(2020, 3, 12), startdate=first_day) # 28 # 13 for EMS_3, NMH
         df['socialDistance_time1'] = mar_12_day
         df['socialDistance_time2'] = mar_12_day+5
         df['socialDistance_time3'] = mar_12_day+9
@@ -107,10 +109,10 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin.close()
 
     
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname, first_day):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
@@ -156,7 +158,9 @@ if __name__ == '__main__' :
     emodlname = 'extendedmodel_cobey.emodl'
 
     # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder()
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir)
+
+    #populations, Kis, startdate = load_setting_parameter()
 
     # Simlation setup
     populations = {
@@ -171,18 +175,22 @@ if __name__ == '__main__' :
         'EMS_3' : np.linspace(5e-7, 9e-7, 3),
         'IL' : np.linspace(3.5e-8, 5.3e-8, 3)
     }
+    startdate = {
+        'NMH_catchment': date(2020, 2, 28),
+        'Chicago': date(2020, 2, 20),
+        'EMS_3': date(2020, 2, 28),
+        'IL': date(2020, 2, 28)
+    }
+
     simulation_population = populations[region]
     number_of_samples = 20
     number_of_runs = 3
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
-    # Time event
-    #startDate = '02.20.2020'
-    #socialDistance_time = [24, 29, 33]  # 22 ,  27 , 31
-
     # Parameter values
     Kivalues = Kis[region]
+    first_day = startdate[region] # date(2020, 2, 28)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -190,19 +198,19 @@ if __name__ == '__main__' :
                               sub_samples=number_of_samples,
                               duration = duration,
                               monitoring_samples = monitoring_samples,
-                              modelname=emodlname)
+                              modelname=emodlname,
+                              first_day=first_day)
 
-    generateSubmissionFile(nscen, exp_name)
+    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir)
 
     # if Location == 'Local' :
-    runExp(Location='Local')
+    runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
     combineTrajectories(number_of_samples*len(Kivalues))
     cleanup(delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-    first_day = date(2020, 2, 28)
     sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
     sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
     sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')

@@ -1,12 +1,24 @@
 import os
 import subprocess
 import shutil
+from datetime import date, timedelta
 
 ### GE added 04/10/20 to fix "wdir not defined error"
 #import sys
 #sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
 from load_paths import load_box_paths
 datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+
+
+## To do - make work for multiple dates and timesteps
+def DateToTimestep(dates, startdate) :
+    datediff = dates - startdate
+    timesteps = datediff.days
+    return timesteps
+
+def TimestepToDate(timesteps, startdate) :
+    dates= startdate + timedelta(days=timesteps)
+    return dates
 
 
 def runExp(trajectories_dir, Location = 'Local' ):
