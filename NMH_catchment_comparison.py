@@ -9,6 +9,7 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
+from simulation_setup import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -63,7 +64,7 @@ def calculate_incidence(adf, output_filename=None) :
     return adf
 
 
-def compare_NMH(exp_name) :
+def compare_NMH(exp_name, first_day) :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_chicago', 'NMH', 'Modeling COVID Data NMH_v2_200406_jg.csv'))
     ref_df['date'] = pd.to_datetime(ref_df['date'])
@@ -75,13 +76,13 @@ def compare_NMH(exp_name) :
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v1')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
-                     plot_path=plot_path)
+                     plot_path=plot_path, first_day=first_day)
 
     data_channel_names = ['new admits v2', 'cumulative admits positive results v2', 'non ICU v2', 'ICU census v2']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v2')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
-                     plot_path=plot_path)
+                     plot_path=plot_path, first_day=first_day)
 
 
 def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(2020, 2, 22),
@@ -118,7 +119,7 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
         plt.savefig('%s_KiCI.pdf' % plot_path, format='PDF')
 
 
-def compare_county(exp_name, county_name) :
+def compare_county(exp_name, first_day, county_name) :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200401_aggregated_data_cleaned.csv'))
     ref_df = ref_df[ref_df['county'] == county_name]
@@ -132,7 +133,7 @@ def compare_county(exp_name, county_name) :
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
-                     plot_path=plot_path)
+                     plot_path=plot_path, first_day=first_day)
 
     fname = 'emresource_20200325_20200403.csv'
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH/Corona virus reports', fname))
@@ -148,11 +149,11 @@ def compare_county(exp_name, county_name) :
     channels = ['critical_with_suspected', 'deaths', 'critical', 'ventilators']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
-                     plot_path=plot_path)
+                     plot_path=plot_path, first_day=first_day)
     plt.show()
 
 
-def compare_ems(exp_name, ems=0) :
+def compare_ems(exp_name, first_day, ems=0) :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
     if ems > 0 :
@@ -172,16 +173,24 @@ def compare_ems(exp_name, ems=0) :
     channels = ['critical_with_suspected', 'new_detected_deaths', 'crit_det', 'ventilators']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
-                     plot_path=plot_path, first_day=date(2020, 2, 13))
+                     plot_path=plot_path, first_day=first_day)
     plt.show()
 
 if __name__ == '__main__' :
 
-    # exp_name = '20200407mr_NMH_catchment_updatedTime__rn54'
-    # compare_county(exp_name, 'Cook')
-    # compare_NMH(exp_name)
-    exp_name = '20200409_EMS_3_JG_run6'
-    # compare_ems(exp_name, 3)
+    exp_name = '20200413_NMH_catchment_updatedStartDate_rn16'  ## to to extract region automatically from exp_name
 
-    exp_name = '20200409_IL_JG_run5'
-    compare_ems(exp_name)
+    region = 'NMH_catchment'
+    populations, Kis, startdate = load_setting_parameter()
+    first_day = startdate[region] # date(2020, 2, 28)
+
+    if region == 'NMH_catchment':
+        compare_NMH(exp_name, first_day)
+    elif region == 'Chicago':
+        compare_county(exp_name, first_day, county_name='Cook')
+    elif region == 'EMS_3':
+        #exp_name = '20200409_EMS_3_JG_run6'
+        compare_ems(exp_name, first_day, ems=3)
+    elif region == 'IL':
+        #exp_name = '20200409_IL_JG_run5'
+        compare_ems(exp_name, first_day)
