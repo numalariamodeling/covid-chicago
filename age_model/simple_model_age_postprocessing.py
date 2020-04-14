@@ -14,7 +14,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
 
-exp_name = '20200413_TEST_4grp_normalizedContacts_rn52'
+exp_name = '20200412_TEST_simplemodel_4grp__rn44'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
@@ -30,11 +30,8 @@ if not os.path.exists(sim_output_path):
 if not os.path.exists(plot_path):
     os.makedirs(plot_path)
 
-master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                       'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
-                       'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
+master_channel_list = ['susceptible', 'exposed', 'infectious', 'recovered']
+custom_channel_list = ['susceptible', 'exposed', 'infectious', 'recovered']
 
 first_day = date(2020, 2, 28)
 
@@ -46,29 +43,6 @@ def count_new(df, curr_ch) :
     return diff
 
 
-def calculate_incidence(adf, age_group, output_filename=None) :
-
-    inc_df = pd.DataFrame()
-    for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
-
-        sdf = pd.DataFrame( { 'time' : df['time'],
-                              'new_exposures_%s' % age_group : [-1*x for x in count_new(df, 'susceptible_%s' % age_group)],
-                              'new_asymptomatic_%s' % age_group : count_new(df, 'asymp_cumul_%s' % age_group),
-                              'new_asymptomatic_detected_%s' % age_group : count_new(df, 'asymp_det_cumul_%s' % age_group),
-                              #'new_symptomatic_mild_%s' % age_group : count_new(df, 'symp_mild_cumul_%s' % age_group),
-                              'new_detected_hospitalized_%s' % age_group : count_new(df, 'hosp_det_cumul_%s' % age_group),
-                              'new_detected_%s' % age_group : count_new(df, 'detected_cumul_%s' % age_group),
-                              'new_critical_%s' % age_group : count_new(df, 'crit_cumul_%s' % age_group),
-                              'new_deaths_%s' % age_group : count_new(df, 'deaths_%s' % age_group)
-                              })
-        sdf['sample_num'] = samp
-        sdf['scen_num'] = scen
-        inc_df = pd.concat([inc_df, sdf])
-    adf = pd.merge(left=adf, right=inc_df, on=['sample_num', 'scen_num', 'time'])
-    if output_filename :
-        adf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
-    return adf
-
 
 def calculate_mean_and_CI(adf, channel, output_filename=None) :
 
@@ -79,14 +53,12 @@ def calculate_mean_and_CI(adf, channel, output_filename=None) :
 
 def plot(adf,age_group,filename) :
 
-    fig = plt.figure(figsize=(12,6))
+    fig = plt.figure(figsize=(8,10))
 
     plotchannels = [ '%s_%s' % (x, age_group) for x in [
-        'susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                    'detected', 'hospitalized', 'critical', 'deaths',
-                    'new_detected', 'new_detected_hospitalized', 'new_critical', 'new_deaths']]
+        'susceptible', 'exposed', 'infectious', 'recovered']]
     palette = sns.color_palette('muted', len(plotchannels))
-    axes = [fig.add_subplot(3,4,x+1) for x in range(len(plotchannels))]
+    axes = [fig.add_subplot(4,1,x+1) for x in range(len(plotchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(plotchannels) :
 
@@ -116,6 +88,9 @@ if __name__ == '__main__' :
     base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
     sample_index_names = [x for x in df.columns.values if ('num' in x or 'time' in x)]
 
+    df = df[df['Ki'] == df.Ki.unique()[13]]  #mdf= mdf[mdf['Ki'] == mdf.Ki.unique()[2]]
+    df.Ki.unique()
+
     for col in base_names :
         df['%s_%s' % (col, 'all')] = sum([df['%s_%s' % (col, age_group)] for age_group in suffix_names])
 
@@ -123,12 +98,12 @@ if __name__ == '__main__' :
     for age_group in suffix_names :
         cols = sample_index_names + [ "%s_%s" % (channel, age_group) for channel in base_names]
         adf = df[cols]
-        adf = calculate_incidence(adf, age_group, output_filename='trajectoriesDat_withIncidence_%s.csv' % age_group)
+        #adf = calculate_incidence(adf, age_group, output_filename='trajectoriesDat_withIncidence_%s.csv' % age_group)
         #adf['infections_cumul_%s' % age_group] = adf['asymp_cumul_%s' % age_group] + adf['symp_cumul_%s' % age_group]
         #for channel in ['infections_cumul_%s' % age_group, 'detected_cumul_%s' % age_group] :
         #    calculate_mean_and_CI(adf, channel, output_filename='%s.csv' % (channel, age_group))
 
-        plot(adf, age_group, 'plot_withIncidence_%s' % age_group)
+        plot(adf, age_group, 'plot_withIncidence_Ki_0.15789816_%s' % age_group)
 
     # plt.show()
 

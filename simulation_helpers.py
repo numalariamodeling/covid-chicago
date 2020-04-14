@@ -3,8 +3,31 @@ import os
 import subprocess
 import shutil
 import sys
+from datetime import date, timedelta
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+### GE added 04/10/20 to fix "wdir not defined error"
+#import sys
+#sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
+from load_paths import load_box_paths
+datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
 log = logging.getLogger(__name__)
+
+
+## To do - make work for multiple dates and timesteps
+def DateToTimestep(dates, startdate) :
+    datediff = dates - startdate
+    timesteps = datediff.days
+    return timesteps
+
+
+def TimestepToDate(timesteps, startdate) :
+    dates= startdate + timedelta(days=timesteps)
+    return dates
 
 
 def get_run_cmd(workdir=None):
@@ -29,7 +52,7 @@ def runExp(trajectories_dir, Location = 'Local' ):
         print('please submit sbatch runSimulations.sh in the terminal')
 
 
-def reprocess(trajectories_dir, input_fname='trajectories.csv', output_fname=None):
+def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', output_fname=None):
     fname = os.path.join(trajectories_dir, input_fname)
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
@@ -57,14 +80,14 @@ def reprocess(trajectories_dir, input_fname='trajectories.csv', output_fname=Non
     return adf
 
 
-def combineTrajectories(Nscenarios, deleteFiles=False):
+def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False):
     scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
 
     df_list = []
     for scen_i in range(Nscenarios):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
-            df_i = reprocess(input_name)
+            df_i = reprocess(trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, input_fname=input_name)
             df_i['scen_num'] = scen_i
             df_i = df_i.merge(scendf, on=['scen_num','sample_num'])
             df_list.append(df_i)
@@ -79,7 +102,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
     return dfc
 
 
-def cleanup(delete_temp_dir=True) :
+def cleanup(temp_exp_dir, sim_output_path,plot_path, delete_temp_dir=True) :
     # Delete simulation model and emodl files
     # But keeps per default the trajectories, better solution, zip folders and copy
     if delete_temp_dir ==True :
@@ -101,7 +124,7 @@ def writeTxt(txtdir, filename, textstring) :
     file.close()
 
 
-def generateSubmissionFile(scen_num, exp_name):
+def generateSubmissionFile(scen_num, exp_name, trajectories_dir, temp_dir, temp_exp_dir): #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
     log.debug("Generating submission file in {}".format(trajectories_dir))
     file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
     file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
@@ -132,3 +155,58 @@ def generateSubmissionFile(scen_num, exp_name):
     file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
     file.write(submit_runSimulations)
     file.close()
+
+
+
+def makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir, temp_exp_dir=None) : ## GE 04/10/20 added exp_name, emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    plot_path = sim_output_path
+    # Create temporary folder for the simulation files
+    # currently allowing to run only 1 experiment at a time locally
+    if temp_exp_dir == None :
+        temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
+    temp_dir = os.path.join(temp_exp_dir, 'simulations')
+    trajectories_dir = os.path.join(temp_exp_dir, 'trajectories')
+    if not os.path.exists(os.path.join(git_dir, '_temp')):
+        os.makedirs(os.path.join(os.path.join(git_dir, '_temp')))
+    if not os.path.exists(temp_exp_dir):
+        os.makedirs(temp_exp_dir)
+        os.makedirs(temp_dir)
+        os.makedirs(trajectories_dir)
+        os.makedirs(os.path.join(temp_exp_dir, 'log'))
+        os.makedirs(os.path.join(trajectories_dir, 'log'))  # location of log file on quest
+
+    ## Copy emodl and cfg file  to experiment folder
+    shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
+    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
+
+    return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
+
+
+
+def sampleplot(adf, allchannels, plot_fname=None):
+    fig = plt.figure(figsize=(8, 6))
+    palette = sns.color_palette('Set1', 10)
+
+    axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
+    fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
+    for c, channel in enumerate(allchannels):
+        mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
+        ax = axes[c]
+        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
+        ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
+        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
+                        color=palette[c], linewidth=0, alpha=0.2)
+        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
+                        color=palette[c], linewidth=0, alpha=0.4)
+
+        ax.set_title(channel, y=0.8)
+
+        formatter = mdates.DateFormatter("%m-%d")
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.set_xlim(first_day, )
+
+    if plot_fname :
+        plt.savefig(os.path.join(plot_path, plot_fname))
+    plt.show()

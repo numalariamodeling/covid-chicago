@@ -122,10 +122,10 @@ contact_matrix_adj = contact_matrix %>%
 ### Write parameter snippet  (using mean only)
 sink(file=file.path(git_dir, "snippets", txtfilename)) 
 cat("# Age groups: ", age_groups)
-cat(paste0("\ndf['sKi" , contact_matrix_adj$age_xy_orig, "'] = ", contact_matrix_adj$mean))
+cat(paste0("\ndf['C" , contact_matrix_adj$age_xy_orig, "'] = ", contact_matrix_adj$mean))
 
 cat("\n\n #Replacement")
-cat(paste0("\ndata = data.replace('@sKi" , contact_matrix_adj$age_xy_orig, "@', str(df.sKi", contact_matrix_adj$age_xy_orig,"[sample_nr]))"))
+cat(paste0("\ndata = data.replace('@C" , contact_matrix_adj$age_xy_orig, "@', str(df.C", contact_matrix_adj$age_xy_orig,"[sample_nr]))"))
 sink()
 
 
