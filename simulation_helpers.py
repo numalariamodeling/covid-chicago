@@ -1,9 +1,28 @@
+import logging
 import os
 import subprocess
 import shutil
+import sys
+
+log = logging.getLogger(__name__)
+
+
+def get_run_cmd(workdir=None):
+    if sys.platform in ['win32', 'cygwin']:
+        log.debug("Generating Windows run command")
+        return '"compartments.exe"'
+    else:
+        log.debug("Generating Docker run command for workdir {}".format(workdir))
+        if not workdir:
+            raise TypeError("Must provide `workdir` input for running with Docker")
+        cmd = "docker run -v={workdir}:{workdir} cms -d {workdir}".format(
+            workdir=workdir)
+        return cmd
+
 
 def runExp(trajectories_dir, Location = 'Local' ):
     if Location =='Local' :
+        log.info("Starting experiment.")
         p = os.path.join(trajectories_dir,  'runSimulations.bat')
         subprocess.call([p])
     if Location =='NUCLUSTER' :
@@ -83,10 +102,11 @@ def writeTxt(txtdir, filename, textstring) :
 
 
 def generateSubmissionFile(scen_num, exp_name):
+    log.debug("Generating submission file in {}".format(trajectories_dir))
     file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
     file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
         str(scen_num),
-        os.path.join(exe_dir, "compartments.exe"),
+        os.path.join(exe_dir, get_run_cmd(temp_dir)),
         os.path.join(temp_dir, "model_%%i" + ".cfg"),
         os.path.join(temp_dir, "simulation_%%i" + ".emodl")
     ) + "\n ECHO end")

@@ -1,3 +1,6 @@
+import logging
+import sys
+import stat
 import numpy as np
 import pandas as pd
 import subprocess
@@ -10,10 +13,14 @@ from datetime import date, timedelta
 import shutil
 from load_paths import load_box_paths
 from processing_helpers import *
+import simulation_helpers
+
+log = logging.getLogger(__name__)
+logging.basicConfig(level="DEBUG")
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
-Location = 'Local'  # 'NUCLUSTER'                                                               
+Location = 'Local'  # 'NUCLUSTER'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 emodl_dir = os.path.join(git_dir, 'emodl')
@@ -41,19 +48,19 @@ if not os.path.exists(plot_path):
 
 # Create temporary folder for the simulation files
 # currently allowing to run only 1 experiment at a time locally
-temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
+temp_exp_dir = os.path.join(wdir, '_temp', exp_name)
 temp_dir = os.path.join(temp_exp_dir,  'simulations')
-if not os.path.exists(os.path.join(git_dir, '_temp')):
-    os.makedirs(os.path.join(os.path.join(git_dir, '_temp') ))
+if not os.path.exists(os.path.join(wdir, '_temp')):
+    os.makedirs(os.path.join(os.path.join(wdir, '_temp') ))
 if not os.path.exists(temp_exp_dir):
     os.makedirs(temp_exp_dir)
     os.makedirs(temp_dir)
     os.makedirs(os.path.join(temp_exp_dir, 'log'))  # Required on quest
 
 ## Copy emodl and cfg file  to experiment folder
-                                                                
+
 shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
-                                                                  
+
 shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
 
 master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic', 'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
@@ -104,7 +111,9 @@ def generateParameterSamples(samples, pop=10000, addIntervention = True, interve
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"))
         return(df)
 
-def replaceParameters(df, Ki_i, sample_nr, emodlname, ,  scen_num) :
+
+def replaceParameters(df, Ki_i, sample_nr, emodlname, socialDistance_start, Ki_red_i,
+                      scen_num) :
     fin = open(os.path.join(temp_exp_dir,emodlname), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
@@ -153,15 +162,23 @@ def generateScenarios(Kivalues,socialDistance_start,  Ki_red, sub_samples, model
                 fin.close()
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'socialDistance_start', 'Ki_red'])
     df.to_csv(os.path.join(temp_dir,"scenarios.csv"))
-    return (scen_num)
+    return scen_num
+
+
 def generateSubmissionFile(scen_num,exp_name, Location='Local'):
     if Location =='Local':
+        fname = os.path.join(temp_exp_dir,'runSimulations.bat')
+        log.debug("Generating batch file at %s", fname)
         file = open(os.path.join(temp_exp_dir,'runSimulations.bat'), 'w')
+        if sys.platform not in ["win32", "cygwin"]:
+            file.write("#!/bin/bash\n")
         for i in range(1, scen_num):
-            file.write('\n"' + os.path.join(exe_dir, "compartments.exe") + '" -c "' + os.path.join(temp_dir, "model_" + str(i) + ".cfg") +
-																															 
+            file.write('\n' + simulation_helpers.get_run_cmd(temp_dir) +
+                       ' -c "' + os.path.join(temp_dir, "model_" + str(i) + ".cfg") +
                        '" -m "' + os.path.join(temp_dir, "simulation_" + str(i) + ".emodl") + '"')
         file.close()
+        if sys.platform not in ["win32", "cygwin"]:
+            os.chmod(fname, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
     if Location == 'NUCLUSTER':
         # Hardcoded Quest directories for now!
         # additional parameters , ncores, time, queue...
@@ -175,17 +192,22 @@ def generateSubmissionFile(scen_num,exp_name, Location='Local'):
         exe = '\n/home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe'
         cfg = ' -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg'
         emodl = ' -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/'+exp_name+'/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
-        file = open(os.path.join(temp_exp_dir,'runSimulations.sh'), 'w')
+
+        fname = os.path.join(temp_exp_dir,'runSimulations.sh')
+        file = open(fname, 'w')
         file.write(header + array + err + out + module + singularity  + exe + cfg + emodl)
         file.close()
-def runExp(Location = 'Local'):
+    return fname
+
+
+def runExp(batch_fname=r'runSimulations.bat', Location = 'Local'):
     if Location =='Local' :
-        subprocess.call([r'runSimulations.bat'])
+        subprocess.call([batch_fname])
     if Location =='NUCLUSTER' :
         print('please submit sbatch runSimulations.sh in the terminal')
 
 def reprocess(input_fname='trajectories.csv', output_fname=None):
-    fname = os.path.join(git_dir, input_fname)
+    fname = os.path.join(wdir, input_fname)
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
     num_channels = len([x for x in df.columns.values if '{0}' in x])
@@ -227,7 +249,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
         except:
             continue
 
-        if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
+        if deleteFiles == True: os.remove(os.path.join(wdir, input_name))
 
     dfc = pd.concat(df_list)
     dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"))
@@ -239,7 +261,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
 #        for scen_i in range(1, Nscenarios):
 #            input_name = "trajectories_scen" + str(scen_i) + ".csv"
 #            try:
-#                    os.remove(os.path.join(git_dir, input_name))
+#                    os.remove(os.path.join(wdir, input_name))
 #            except:
 #                continue
 #    os.remove(os.path.join(temp_dir, "simulation_i.emodl"))
@@ -282,7 +304,7 @@ def plot(adf, allchannels=master_channel_list, plot_fname=None):
 # if __name__ == '__main__' :
 
 
-### Intervention scenarios 
+### Intervention scenarios
 def getKiredCMS( i) :
     if i == 0:
         Ki_red_CMS = 0.7
@@ -291,16 +313,17 @@ def getKiredCMS( i) :
     return (Ki_red_CMS)
 
 Kival = 0.7
-Ki_red_perc = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1]  #np.random.uniform(0,0.5, 10)
+#Ki_red_perc = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1]  #np.random.uniform(0,0.5, 10)
+Ki_red_perc = [0.5]  #np.random.uniform(0,0.5, 10)
 Ki_red_CMS = [getKiredCMS(x) for x in Ki_red_perc]
 socialDistance_start = 22
 
 
-nscen = generateScenarios(Kivalues,  socialDistance_start,Ki_red=Ki_red_CMS, sub_samples=50, modelname=emodlname )
-generateSubmissionFile(nscen, exp_name, Location='Local')  # 'NUCLUSTER'
+nscen = generateScenarios(Kivalues,  socialDistance_start,Ki_red=Ki_red_CMS, sub_samples=5, modelname=emodlname )
+submission_fname = generateSubmissionFile(nscen, exp_name, Location='Local')  # 'NUCLUSTER'
 
 if Location == 'Local' :
-    runExp(Location='Local')
+    runExp(batch_fname=submission_fname, Location='Local')
     # Once the simulations are done
     combineTrajectories(nscen)
     #cleanup()

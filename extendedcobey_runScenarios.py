@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import pandas as pd
 import subprocess
@@ -11,6 +12,8 @@ import shutil
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
+
+log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -91,7 +94,7 @@ def generateParameterSamples(samples, pop):
         return(df)
 
 def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
-    fin = open(os.path.join(temp_exp_dir,emodlname), "rt")          
+    fin = open(os.path.join(temp_exp_dir,emodlname), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
     data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
@@ -126,7 +129,7 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin.write(data)
     fin.close()
 
-    
+
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname):
     lst = []
     scen_num = 0
@@ -185,6 +188,7 @@ def plot(adf, allchannels, plot_fname=None):
     plt.show()
 
 if __name__ == '__main__' :
+    logging.basicConfig(level="DEBUG")
 
     master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
                            'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
@@ -234,7 +238,7 @@ if __name__ == '__main__' :
                               modelname=emodlname)
 
     generateSubmissionFile(nscen, exp_name)
-  
+
 if Location == 'Local' :
     runExp(trajectories_dir=trajectories_dir, Location='Local')
 
