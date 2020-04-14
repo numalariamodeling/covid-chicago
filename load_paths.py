@@ -13,9 +13,9 @@ def load_box_paths(user_path=None):
             wdir= os.path.join(user_path,'Box/covid_chicago/cms_sim/')
             exe_dir = os.path.join(user_path, 'Box','compartments')
             git_dir = os.path.join(user_path, 'iCloudDrive','Documents','GitHub','covid-chicago')
-        
+
         else:
-        
+
             if 'jlg1657' in user_path :
                 git_dir = os.path.join('C:/Users/jlg1657', 'Documents/covid-chicago/')
                 user_path = 'E:/'
@@ -31,11 +31,15 @@ def load_box_paths(user_path=None):
                 home_path =os.path.join(user_path,'Box')
                 #data_path = os.path.join(user_path, 'Box',  'data')
                 git_dir = os.path.join(user_path, 'Documents', 'Github', 'covid-chicago')
+            if 'shoover' in user_path:
+                git_dir = os.path.join(user_path, 'src', 'covid-chicago')
+                home_path = os.path.join(user_path, 'NU-covid')
+                data_path = home_path
 
             project_path = os.path.join(home_path, 'covid_chicago')
             wdir = os.path.join(project_path, 'cms_sim')
             exe_dir = os.path.join(home_path, 'binaries', 'compartments')
-        
+
 
     return data_path, project_path, wdir , exe_dir, git_dir
 
