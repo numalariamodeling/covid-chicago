@@ -12,6 +12,7 @@
 ## Compartmental model 
 ### Simple model
 The "simplemodel" includes only the basic S-E-I-R compartments. 
+Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/simplemodel_testing.emodl)
 
 ### Extended model
 The "extendedmodel" imclides additional compartments for asymptomatics, symptomatics, hospitalization, progression to critical and deaths. In addition the detections are tracked as a sum of detected asymptomatics, symptomatics,hospitalized, critical and deaths with group specific detection rates. 
