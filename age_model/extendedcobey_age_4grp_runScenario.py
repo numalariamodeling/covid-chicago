@@ -27,11 +27,11 @@ cfg_dir = os.path.join(git_dir, 'age_model', 'cfg')
 today = date.today()
 
 
-def define_group_dictionary(totalPop, ageGroups, ageGroupScale, initialAs):
+def define_group_dictionary(ageGroups, ageGroupPop, initialAs):
     age_dic = {}
     for i, grp in enumerate(ageGroups):
         print(i, grp)
-        age_dic[i] = [totalPop * ageGroupScale[i], initialAs[i]]
+        age_dic[i] = [ageGroupPop[i]-initialAs[i], initialAs[i]]
     return age_dic
 
 
@@ -147,7 +147,7 @@ def generateParameterSamples(samples, pop, age_dic, first_day):
 
     df['social_multiplier_1'] = np.random.uniform(0.9, 1, samples)
     df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
-    df['social_multiplier_3'] = np.random.uniform(0.005, 0.3, samples)  # 0.2, 0.6
+    df['social_multiplier_3'] = np.random.uniform(0.05, 0.3, samples)  # 0.2, 0.6
 
     df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
     df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
@@ -244,6 +244,7 @@ if __name__ == '__main__':
 
     # Simlation setup (function in simulation_setup.py)
     populations, Kis, startdate = load_setting_parameter()
+    age4grp, age8grp = load_age_groups()
 
     simulation_population = populations[region]
     number_of_samples = 20
@@ -263,13 +264,12 @@ if __name__ == '__main__':
         temp_exp_dir = os.path.join(git_dir, 'age_model', '_temp', exp_name))
 
     ## Specify age population
-    ageGroups_grp = ["0to19", "20to39", "40to59", "60to100"]
-    ageGroupScale_grp = [0.249, 0.306, 0.253, 0.192]  ## NMH catchment area population age distribution
+    ageGroups_name = ["0to19", "20to39", "40to59", "60to100"]
+    ageGroup_pop = age4grp[region]
     initialAs_grp = [3, 3, 3, 3, 3, 3]
 
-    age_dic = define_group_dictionary(totalPop=simulation_population,
-                                      ageGroups=ageGroups_grp,
-                                      ageGroupScale=ageGroupScale_grp,
+    age_dic = define_group_dictionary(ageGroups=ageGroups_name,
+                                      ageGroupPop=ageGroup_pop,
                                       initialAs=initialAs_grp)
 
 
