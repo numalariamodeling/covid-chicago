@@ -27,11 +27,11 @@ cfg_dir = os.path.join(git_dir, 'age_model', 'cfg')
 today = date.today()
 
 
-def define_group_dictionary(totalPop, ageGroups, ageGroupScale, initialAs):
+def define_group_dictionary(ageGroups, ageGroupPop, initialAs):
     age_dic = {}
     for i, grp in enumerate(ageGroups):
         print(i, grp)
-        age_dic[i] = [totalPop * ageGroupScale[i], initialAs[i]]
+        age_dic[i] = [ageGroupPop[i]-initialAs[i], initialAs[i]]
     return age_dic
 
 
@@ -268,7 +268,7 @@ def generateParameterSamples(samples, pop, age_dic,first_day):
 
     df['social_multiplier_1'] = np.random.uniform(0.9, 1, samples)
     df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
-    df['social_multiplier_3'] = np.random.uniform(0.005, 0.3, samples)  # 0.2, 0.6
+    df['social_multiplier_3'] = np.random.uniform(0.05, 0.3, samples)  # 0.2, 0.6
 
     df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
     df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
@@ -365,6 +365,7 @@ if __name__ == '__main__':
 
     # Simlation setup
     populations, Kis, startdate = load_setting_parameter()
+    age4grp, age8grp = load_age_groups()
 
     simulation_population = populations[region]
     number_of_samples = 20
@@ -385,18 +386,14 @@ if __name__ == '__main__':
         temp_exp_dir = os.path.join(git_dir, 'age_model', '_temp', exp_name))
 
     ### NMH catchment area population  age distribution
-    ageGroups_grp = ["0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100"]
-    ageGroupScale_grp = [0.1256, 0.1233, 0.1404, 0.1652, 0.1338, 0.1196, 0.1012, 0.0909]
-
-    ### Cook county age distribution
-    #ageGroupScale_grp = [0.1211, 0.1204, 0.1487, 0.1513, 0.1269, 0.1260, 0.1070, 0.09863]
-
+    ageGroups_name = ["0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100"]
+    ageGroup_pop = age8grp[region]
     initialAs_grp = [3, 3, 3, 3, 3, 3, 3, 3]
 
-    age_dic = define_group_dictionary(totalPop=simulation_population,  # 2700000
-                                      ageGroups=ageGroups_grp,
-                                      ageGroupScale=ageGroupScale_grp,
+    age_dic = define_group_dictionary(ageGroups=ageGroups_name,
+                                      ageGroupPop=ageGroup_pop,
                                       initialAs=initialAs_grp)
+
 
 
     # Parameter values
