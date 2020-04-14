@@ -296,6 +296,6 @@ if Location == 'Local':
     runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
-    #combineTrajectories(nscen)
-    #cleanup(delete_temp_dir=False)
+    #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
+    #cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
     #run postprocessing script
