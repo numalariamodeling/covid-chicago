@@ -55,7 +55,7 @@ def generateParameterSamples(samples, pop, first_day, stop_date):
 
         df['social_multiplier_1'] = np.random.uniform(0.9, 1, samples)
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
-        df['social_multiplier_3'] = np.random.uniform( 0.005 , 0.3, samples) #0.2, 0.6
+        df['social_multiplier_3'] = np.random.uniform( 0.05 , 0.3, samples) #0.2, 0.6
 
         df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
         df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
