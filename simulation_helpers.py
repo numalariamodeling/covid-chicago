@@ -1,12 +1,27 @@
 import os
 import subprocess
 import shutil
+from datetime import date, timedelta
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 ### GE added 04/10/20 to fix "wdir not defined error"
 #import sys
 #sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
 from load_paths import load_box_paths
 datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+
+
+## To do - make work for multiple dates and timesteps
+def DateToTimestep(dates, startdate) :
+    datediff = dates - startdate
+    timesteps = datediff.days
+    return timesteps
+
+def TimestepToDate(timesteps, startdate) :
+    dates= startdate + timedelta(days=timesteps)
+    return dates
 
 
 def runExp(trajectories_dir, Location = 'Local' ):
@@ -17,7 +32,7 @@ def runExp(trajectories_dir, Location = 'Local' ):
         print('please submit sbatch runSimulations.sh in the terminal')
 
 
-def reprocess(trajectories_dir, input_fname='trajectories.csv', output_fname=None):
+def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', output_fname=None):
     fname = os.path.join(trajectories_dir, input_fname)
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
@@ -45,14 +60,14 @@ def reprocess(trajectories_dir, input_fname='trajectories.csv', output_fname=Non
     return adf
 
 
-def combineTrajectories(Nscenarios, deleteFiles=False):
+def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False):
     scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
 
     df_list = []
     for scen_i in range(Nscenarios):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
-            df_i = reprocess(input_name)
+            df_i = reprocess(trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, input_fname=input_name)
             df_i['scen_num'] = scen_i
             df_i = df_i.merge(scendf, on=['scen_num','sample_num'])
             df_list.append(df_i)
@@ -67,7 +82,7 @@ def combineTrajectories(Nscenarios, deleteFiles=False):
     return dfc
 
 
-def cleanup(delete_temp_dir=True) :
+def cleanup(temp_exp_dir, sim_output_path,plot_path, delete_temp_dir=True) :
     # Delete simulation model and emodl files
     # But keeps per default the trajectories, better solution, zip folders and copy
     if delete_temp_dir ==True :

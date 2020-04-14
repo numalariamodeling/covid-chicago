@@ -14,6 +14,7 @@ sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
+from simulation_setup import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -113,7 +114,7 @@ def replace_contact_param(data, df, sample_nr) :
     return data
 
 # parameter samples
-def generateParameterSamples(samples, pop, age_dic):
+def generateParameterSamples(samples, pop, age_dic, first_day):
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
@@ -148,10 +149,9 @@ def generateParameterSamples(samples, pop, age_dic):
     df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
     df['social_multiplier_3'] = np.random.uniform(0.005, 0.3, samples)  # 0.2, 0.6
 
-    df['socialDistance_time1'] = 24
-    df['socialDistance_time2'] = 29
-    df['socialDistance_time3'] = 33
-
+    df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
+    df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
+    df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
     df = define_contact_matrix(df)
     df = define_Species_initial(df, age_dic)
 
@@ -199,10 +199,10 @@ def replaceParameters(df, Ki_i, sample_nr, emodlname, scen_num):
     fin.close()
 
 
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples, modelname, age_dic,):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples, modelname, age_dic,first_day):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population,  age_dic=age_dic)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population,  age_dic=age_dic,first_day=first_day)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
@@ -218,7 +218,10 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             data_cfg = data_cfg.replace('@duration@', str(duration))
             data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
             data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            if Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
+            if not Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
             fin.close()
             fin = open(os.path.join(temp_dir, "model_" + str(scen_num) + ".cfg"), "wt")
             fin.write(data_cfg)
@@ -235,14 +238,19 @@ if __name__ == '__main__':
     # Experiment design, fitting parameter and population
     # =============================================================
 
-    exp_name = today.strftime("%Y%m%d") + '_TEST_4grp_normalizedContacts_rn' + str(int(np.random.uniform(10, 99)))
+    region = 'NMH_catchment'
 
-    # Simlation setup
-    simulation_population = 315000  # 1000  # 12830632 Illinois   # 2700000  Chicago ## 315000 NMH catchment
+    exp_name = today.strftime("%Y%m%d") + '_%s_TEST_4grp_normalizedContacts_rn' % region + '_rn' + str(int(np.random.uniform(10, 99)))
+
+    # Simlation setup (function in simulation_setup.py)
+    populations, Kis, startdate = load_setting_parameter()
+
+    simulation_population = populations[region]
     number_of_samples = 20
     number_of_runs = 3
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
+
 
     emodlname = 'extendedmodel_cobey_age_4grp.emodl'
 
@@ -265,18 +273,10 @@ if __name__ == '__main__':
                                       initialAs=initialAs_grp)
 
 
-    # Time event
-    ### Cook   -
-    # Kivalues  = np.linspace(2.e-7,2.5e-7,5)
-    # startDate = '02.20.2020'
-    # socialDistance_time = [24, 29, 33]
-    ### NMH
-    # Kivalues  = np.linspace(1.5e-6, 2e-6, 3)
-    # startDate = '02.28.2020'
-    # socialDistance_time = [32, 37, 41]
-
     # Parameter values
-    Kivalues = np.linspace(1.5e-6, 2e-6, 5)  # np.linspace(2.e-7,2.5e-7,5) # np.logspace(-8, -4, 4)
+    Kivalues = np.linspace(0.005, 0.015, 5)   # Kis[region]
+    first_day = startdate[region]
+
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -285,7 +285,8 @@ if __name__ == '__main__':
                               duration=duration,
                               monitoring_samples=monitoring_samples,
                               modelname=emodlname,
-                              age_dic=age_dic)
+                              age_dic=age_dic,
+                              first_day=first_day)
 
 
     generateSubmissionFile(trajectories_dir=trajectories_dir,temp_dir=temp_dir, temp_exp_dir=temp_exp_dir,scen_num=nscen, exp_name=exp_name)
@@ -295,6 +296,6 @@ if Location == 'Local':
     runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
-    #combineTrajectories(nscen)
-    #cleanup(delete_temp_dir=False)
+    #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
+    #cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
     #run postprocessing script
