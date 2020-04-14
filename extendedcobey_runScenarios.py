@@ -115,7 +115,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             #print(i)
 
             #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
-            lst.append([sample, scen_num, i])
+            lst.append([sample, scen_num, i , first_day, simulation_population])
             replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
 
             # adjust model.cfg
@@ -133,7 +133,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             fin.write(data_cfg)
             fin.close()
 
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
+    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population'])
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
@@ -151,7 +151,7 @@ if __name__ == '__main__' :
     #=============================================================
 
     ### Define setting
-    region = 'NMH_catchment'
+    region = 'NMH_catchment'  # NMH_catchment  # IL  #EMS_3  # Chicago
     exp_name = today.strftime("%Y%m%d") + '_%s_updatedStartDate' % region + '_rn' + str(int(np.random.uniform(10, 99)))
 
     # Selected SEIR model
@@ -162,6 +162,7 @@ if __name__ == '__main__' :
 
     ## function in simulation_setup.py
     populations, Kis, startdate = load_setting_parameter()
+    #writeTxt(txtdir=temp_exp_dir, filename='setting_parameter.txt', textstring='populations =' + populations + '\nKis = ' + Kis + '\n startdate = ' + startdate)
 
     simulation_population = populations[region]
     number_of_samples = 20
@@ -183,16 +184,13 @@ if __name__ == '__main__' :
                               first_day = first_day)
 
     generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir) #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
-  
+
+
 if Location == 'Local' :
-    runExp(trajectories_dir=trajectories_dir, Location='Local') 
+    runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
-    exp_name="20200413_NMH_corrected_NPI_dates_rn49"
-    sim_output_path = os.path.join(wdir, 'simulation_output/MR', exp_name)
-    plot_path = sim_output_path
-
-    combineTrajectories(nscen)
+    combineTrajectories(Nscenarios=nscen)
     cleanup(delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
