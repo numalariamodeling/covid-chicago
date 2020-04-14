@@ -97,6 +97,7 @@ def write_observe(county):
 (observe hosp_det_cumul_{} (+ H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{} D3_det3::{} RH1_det3::{} RC2_det3::{}))
 (observe crit_cumul_{} (+ deaths_{} critical_{} RC2::{} RC2_det3::{}))
 (observe crit_det_cumul_{} (+ C2_det3::{} C3_det3::{} D3_det3::{} RC2_det3::{}))
+(observe crit_det_{} (+ C2_det3::{} C3_det3::{}))
 (observe death_det_cumul_{} D3_det3::{} )
 (observe detected_cumul_{} (+ (+ As_det1::{} Sym_det2::{} Sys_det3::{} H1_det3::{} H2_det3::{} C2_det3::{} C3_det3::{}) RAs_det1::{} RSym_det2::{} RH1_det3::{} RC2_det3::{} D3_det3::{}))
 

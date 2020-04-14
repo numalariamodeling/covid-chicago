@@ -1,44 +1,134 @@
-# covid-chicago
+# Modelling the COVID-19 pandemic in Chicago
 
-- SEIR model using Institute for Disease Modeling (IDM's) [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html)
+For more information on Covid in Chicago visit the (Chicago Covid Coalition website)[https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0]
 
-- For more information on Covid in Chicago visit the (Chicago Covid Coalition website)[https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0]
+## 1. Software used
+- Modified SEIR model using Institute for Disease Modeling (IDM's) [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html)
 
-## CMS software
 - [input](https://idmod.org/docs/cms/input-files.html) configuration file (cfg)
 - [input](https://idmod.org/docs/cms/input-files.html)  model file (emodl)
 - [output](https://idmod.org/docs/cms/output.html?searchText=output): trajectories.csv (optionally define prefix or suffix)
 
-## Model types
-### Simple SEIR model
+## 2. Compartmental model structure
+### 2.1. Simple model
 The "simplemodel" includes only the basic S-E-I-R compartments. 
+Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/simplemodel_testing.emodl)
 
-### Extended SEIR model
+### 2.2. Extended model
 The "extendedmodel" imclides additional compartments for asymptomatics, symptomatics, hospitalization, progression to critical and deaths. In addition the detections are tracked as a sum of detected asymptomatics, symptomatics,hospitalized, critical and deaths with group specific detection rates. 
+Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_covid.emodl)
 
-### Age model 
+### 2.3. "Extended_cobey" model
+Latest version of the model, including modifications in alignment with the Covid model developed by Sarah Cobeys Team at University of Chicago. 
+Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
+
+## 3. Model types
+## 3.1. Base model
+Assumes one well mixed homogeneous population 
+
+## 3.2. Age-structured model 
 The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. 
 
-### Spatial model 
+### 3.2.1. Age groups
+- Four age grouos: "0to19", "20to39", "40to59", "60to100" 
+  
+[run 4grp model here](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/extendedcobey_age_4grp_runScenarios.py)
+or look at the  [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/emodl/extendedmodel_cobey_age_4grp.emodl)
+-  Eight age groups: "0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100"
+  
+[run 8grp model here](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/extendedcobey_age_8grp_runScenarios.py)
+or look at the [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/emodl/extendedmodel_cobey_age_8grp.emodl)
+
+### 3.2.2. Contact matrix
+The contacts between age groups were previously extracted for running an [EMOD model](https://idmod.org/documentation) from [Prem et al 2017](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697). [Script that extracts the contact matrix values](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/age_contact/age_matrix_reducer.py). 
+
+## 3.3. Spatial model
 The "spatial_model" uses a special syntax as described [here](https://idmod.org/docs/cms/create-spatial-model.html?searchText=spatial). 
 
-## Running simulations
+## 3.4. Spatial age-structured model
+A test verion is available under [spatial_age_model](https://github.com/numalariamodeling/covid-chicago/blob/master/spatial_age_model)
+and the [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/spatial_age_model/emodl/extendedmodel_cobey_locale_EMS_2grptest1.emodl).
 
-### Run single simulations
-To run a single simulation is useful to test changes in the emodl syntax and to rule out technical issues.
+## 4. Running simulations and analyzing predictions
+
+### 4.1. Run single simulations
+To run a single simulation: 
 - Via termianl /bat
 On Windows a single simulation can be run in the terminal or via batch file (i.e. as in [here](https://github.com/numalariamodeling/covid-chicago/blob/master/runModel_testing.bat)
 - Via python (including plotting)
 The [run_and_plot_testing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/run_and_plot_testing.py) file runs the emodl simulations and prododuces a simple plot of the observed channels. 
 
-### Run scenarios (multiple simulations)
+### 4.2. Run scenarios (multiple simulations)
 The [extendedmodel_runScenarios.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extendedmodel_runScenarios.py) 
 - takes one emodl, 
 - optionally replaces parameters if @param@ placeholders are found, 
 - optionally runs for multiple samples per parameter
 - combines multiple trajectories.csv files produced into a trajectoriesDat.csv, that is used for postprocessing. 
 
-## Postprocessing and visualizing results
+## 4.3. Postprocessing and visualizing results
 - latest postprocessing file that calculates incidences for extended SEIR model [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extended_model_postprocessing.py)
+
+## 4.4. Fitting to data
+The [NMH_catchment_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/NMH_catchment_comparison.py) compares the predicted number of new detected hospitalized cases, cumulative detections of hospitalized cases, total number of case hospitalizations and number of critical cases to hospital data and case reports. The starting date and intervention effect size are fixed and the transmission parameter beta, or in CMS called "Ki", in other words the contact rate * transmission probability is fitted to the data. 
+
+
+## 5. Data sources
+- IDPH
+- NMH
+- City of Chicago
+- ...
+
+## 6. Model parameters and uncertainity
+To account for uncertainity and heterogeneity in transmission and disease parameters, all the parameters are sampled from a distribution informed by literature. 
+
+### 6.1. Parameter table of transmission and disease parameters
+
+| Parameter                                       | value (lower) | value (higher) | Source                           |   |
+|-------------------------------------------------|---------------|----------------|----------------------------------|---|
+| Transmission   rate                             |               |                | Fitted to data                   |   |
+|                                                 |               |                |                                  |   |
+| Initial infections                              |  10           | fixed          |                                  |   |
+| Latency period                                  | 1             | 5              |                                  |   |
+| Incubation period                               | 4.2           | 6.63           |                                  |   |
+| Time to hospitalization                         | 2             | 10             | [1]                              |   |
+| Time to critical                                | 4             | 9              | [2]                              |   |
+| Time to death                                   | 3             | 11             | [3]                              |   |
+| Fraction hospitalized                           |               |                | Derived from critical and deaths |   |
+| Fraction symptomatic                            | 0.5           | 0.8            |                                  |   |
+| Fraction critical*                              | 0.049         | 0.115          |                                  |   |
+| Reduced infectiousness of detected cases        | 0.5           | 0.9            |                                  |   |
+| Case fatality rate*                             | 1.8           | 3.4            |                                  |   |
+| Detection rate of mild symptomatic infections   | 0.2           | 0.3            |                                  |   |
+| Detection rate of severe symptomatic infections | 0.7           | 0.9            |                                  |   |
+| Detection rate of asymptomatic infections       | 0             | 0              |                                  |   |
+| Recovery rate of asymptomatic infections        | 6             | 16             | [4]                              |   |
+| Recovery rate mild symptomatic infections       | 19.4          | 21.3           | [4]                              |   |
+| Recovery rate of hospitalized cases             | 19.5          | 21.1           | [4]                              |   |
+| Recovery rate of critical cases                 | 25.3          | 31.6           | [4]                              |   |
+
+
+[1] Report 8: Symptom progression of COVID-19
+[2] Huang, C et al, 2020. Clinical features of patients infected with 2019 novel coronavirus in Wuhan, China. https://doi.org/10.1016/S0140-6736(20)30183-5
+[3] Yang, X., et al 2020. Clinical course and outcomes of critically ill patients with SARS-CoV-2 pneumonia in Wuhan, China […]. https://doi.org/10.1016/S2213-2600(20)30079-5
+[4] Bi, Q.  et al ., 2020. Epidemiology and Transmission of COVID-19 in Shenzhen China […] https://doi.org/10.1101/2020.03.03.20028423
+
+### 6.1. Time-varying parameters
+[...]
+
+### 6.3. Intervention scenarios
+[...]
+
+
+## 7. List of assumptions made (and potential improvements)
+- same case fatality rate for detected and not detected cases
+- no waning of immunity, recovered individuals stay in the recovered compartment
+- fixed effect size of social distancing using step function increase on 13, 17, and 21st of March
+- fixed detection rate over time
+- symmetric contacts between age groups
+- no age-specific disease parameters (in process)
+- homogeneous mixing in spatial model
+- ...
+[...]
+
 
 

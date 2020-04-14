@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 import pandas as pd
 import subprocess
@@ -14,7 +13,6 @@ from processing_helpers import *
 from simulation_helpers import *
 from simulation_setup import *
 
-log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
@@ -28,7 +26,7 @@ today = date.today()
 
 
 # parameter samples
-def generateParameterSamples(samples, pop, first_day):
+def generateParameterSamples(samples, pop, first_day, stop_date):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -46,11 +44,6 @@ def generateParameterSamples(samples, pop, first_day):
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
         df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
         df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
-        #df['fraction_critical'] = np.random.uniform(0.15, 0.35, samples)
-        #df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
-        #df['cfr'] = np.random.uniform(0.008, 0.022, samples)
-        #df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
-        #df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
         df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
         df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
         df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
@@ -68,11 +61,13 @@ def generateParameterSamples(samples, pop, first_day):
         df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
         df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
 
+        df['back_to_normal'] = DateToTimestep(stop_date,startdate= first_day)  # date(2020, 5, 9)
+
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
 
 def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
-    fin = open(os.path.join(temp_exp_dir,emodlname), "rt")
+    fin = open(os.path.join(temp_exp_dir,emodlname), "rt")          
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
     data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
@@ -101,24 +96,25 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     data = data.replace('@socialDistance_time1@',  str(df.socialDistance_time1[sample_nr]))
     data = data.replace('@socialDistance_time2@',  str(df.socialDistance_time2[sample_nr]))
     data = data.replace('@socialDistance_time3@',  str(df.socialDistance_time3[sample_nr]))
+    data = data.replace('@back_to_normal@',  str(df.back_to_normal[sample_nr]))
 
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
     fin.write(data)
     fin.close()
 
-
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples, modelname, first_day):
+    
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname ,first_day , stop_date):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day, stop_date=stop_date)
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
             #print(i)
 
             #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
-            lst.append([sample, scen_num, i , first_day, simulation_population])
+            lst.append([sample, scen_num, i])
             replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
 
             # adjust model.cfg
@@ -136,13 +132,12 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             fin.write(data_cfg)
             fin.close()
 
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population'])
+    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
 
 if __name__ == '__main__' :
-    logging.basicConfig(level="DEBUG")
 
     master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
                            'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
@@ -154,29 +149,28 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    ### Define setting
-    region = 'NMH_catchment'  # NMH_catchment  # IL  #EMS_3  # Chicago
-    exp_name = today.strftime("%Y%m%d") + '_%s_updatedStartDate' % region + '_rn' + str(int(np.random.uniform(10, 99)))
+    region = 'NMH_catchment'
+    exp_name = today.strftime("%Y%m%d") + '_%s_testInterventionStop' % region  + '_rn' + str(int(np.random.uniform(10, 99)))
 
     # Selected SEIR model
-    emodlname = 'extendedmodel_cobey.emodl'
+    emodlname = 'extendedmodel_cobey_interventionStop.emodl'
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
 
     ## function in simulation_setup.py
     populations, Kis, startdate = load_setting_parameter()
-    #writeTxt(txtdir=temp_exp_dir, filename='setting_parameter.txt', textstring='populations =' + populations + '\nKis = ' + Kis + '\n startdate = ' + startdate)
 
     simulation_population = populations[region]
-    number_of_samples = 2
-    number_of_runs = 1
+    number_of_samples = 20
+    number_of_runs = 3
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
     # Parameter values
     Kivalues = Kis[region]
     first_day = startdate[region]
+    stop_date = date(2020, 5, 13)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -185,20 +179,18 @@ if __name__ == '__main__' :
                               duration = duration,
                               monitoring_samples = monitoring_samples,
                               modelname=emodlname,
-                              first_day = first_day)
+                              first_day = first_day,
+                              stop_date=stop_date)
 
-    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir) #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
-
-
+    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir)
+  
 if Location == 'Local' :
-    runExp(trajectories_dir=trajectories_dir, Location='Local')
+    runExp(trajectories_dir=trajectories_dir, Location='Local') 
 
     # Once the simulations are done
-    #number_of_samples*len(Kivalues) == nscen ### to check
     combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
     cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-
+    df = pd.read_csv(os.path.join(temp_exp_dir, 'trajectoriesDat.csv'))
 
     sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
     sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
