@@ -165,8 +165,8 @@ if __name__ == '__main__' :
     #writeTxt(txtdir=temp_exp_dir, filename='setting_parameter.txt', textstring='populations =' + populations + '\nKis = ' + Kis + '\n startdate = ' + startdate)
 
     simulation_population = populations[region]
-    number_of_samples = 20
-    number_of_runs = 3
+    number_of_samples = 2
+    number_of_runs = 1
     duration = 365
     monitoring_samples = 365  # needs to be smaller than duration
 
@@ -190,8 +190,9 @@ if Location == 'Local' :
     runExp(trajectories_dir=trajectories_dir, Location='Local')
 
     # Once the simulations are done
-    combineTrajectories(Nscenarios=nscen)
-    cleanup(delete_temp_dir=False)
+    #number_of_samples*len(Kivalues) == nscen ### to check
+    combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
+    cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
 

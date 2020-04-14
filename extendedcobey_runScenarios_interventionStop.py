@@ -188,8 +188,8 @@ if Location == 'Local' :
     runExp(trajectories_dir=trajectories_dir, Location='Local') 
 
     # Once the simulations are done
-    combineTrajectories(nscen)
-    cleanup(delete_temp_dir=False)
+    combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
+    cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
     df = pd.read_csv(os.path.join(temp_exp_dir, 'trajectoriesDat.csv'))
 
     sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
