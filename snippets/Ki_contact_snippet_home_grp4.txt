@@ -1,0 +1,35 @@
+# Age groups:  0to19 20to39 40to59 60to100
+df['C1_1'] = 0.378679248216777 
+df['C1_2'] = 0.154252938419756 
+df['C1_3'] = 0.11834146574129 
+df['C1_4'] = 0.348726347622178 
+df['C2_1'] = 0.160750358175913 
+df['C2_2'] = 0.593350812582572 
+df['C2_3'] = 0.0736725277956379 
+df['C2_4'] = 0.172226301445878 
+df['C3_1'] = 0.182182449796626 
+df['C3_2'] = 0.108832012851003 
+df['C3_3'] = 0.63034988541004 
+df['C3_4'] = 0.0786356519423311 
+df['C4_1'] = 0.389246381904246 
+df['C4_2'] = 0.184467896272642 
+df['C4_3'] = 0.0570150777936499 
+df['C4_4'] = 0.369270644029462
+
+ #Replacement
+data = data.replace('@C1_1@', str(df.C1_1[sample_nr])) 
+data = data.replace('@C1_2@', str(df.C1_2[sample_nr])) 
+data = data.replace('@C1_3@', str(df.C1_3[sample_nr])) 
+data = data.replace('@C1_4@', str(df.C1_4[sample_nr])) 
+data = data.replace('@C2_1@', str(df.C2_1[sample_nr])) 
+data = data.replace('@C2_2@', str(df.C2_2[sample_nr])) 
+data = data.replace('@C2_3@', str(df.C2_3[sample_nr])) 
+data = data.replace('@C2_4@', str(df.C2_4[sample_nr])) 
+data = data.replace('@C3_1@', str(df.C3_1[sample_nr])) 
+data = data.replace('@C3_2@', str(df.C3_2[sample_nr])) 
+data = data.replace('@C3_3@', str(df.C3_3[sample_nr])) 
+data = data.replace('@C3_4@', str(df.C3_4[sample_nr])) 
+data = data.replace('@C4_1@', str(df.C4_1[sample_nr])) 
+data = data.replace('@C4_2@', str(df.C4_2[sample_nr])) 
+data = data.replace('@C4_3@', str(df.C4_3[sample_nr])) 
+data = data.replace('@C4_4@', str(df.C4_4[sample_nr]))
