@@ -1,17 +1,27 @@
+import logging
 import os
 import subprocess
 import shutil
+import stat
+import sys
 from datetime import date, timedelta
+
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import seaborn as sns
 import numpy as np
+
+from processing_helpers import CI_5, CI_25, CI_75, CI_95
 
 ### GE added 04/10/20 to fix "wdir not defined error"
 #import sys
 #sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
 from load_paths import load_box_paths
-datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+datapath, projectpath, WDIR, EXE_DIR, GIT_DIR = load_box_paths()
+
+log = logging.getLogger(__name__)
 
 
 ## To do - make work for multiple dates and timesteps
@@ -20,13 +30,56 @@ def DateToTimestep(dates, startdate) :
     timesteps = datediff.days
     return timesteps
 
+
 def TimestepToDate(timesteps, startdate) :
     dates= startdate + timedelta(days=timesteps)
     return dates
 
 
+def get_cms_cmd(exe_dir=EXE_DIR, workdir=None, docker_image=None):
+    """Generate the command to invoke the CMS executable
+
+    Cross-platform -- generate the appropriate command on Windows, OS X, or Linux.
+    On OS X or Linux, run either via a Docker container which contains CMS,
+    or with wine.
+
+    Parameters
+    ----------
+    exe_dir : str, optional
+        The directory of your `compartments.exe` executable.
+        Not needed if running via Docker.
+    workdir : str, optional
+        Only needed for non-Windows systems. The working directory, which
+        must contain the config file, the emodl file, and the output location.
+    docker_image : str, optional
+        Only needed for non-Windows systems.
+        If provided, generate a run command which invokes this Docker image.
+        If not provided, generate a run command which invokes `wine` to run
+        `compartments.exe`.
+
+    Returns
+    -------
+    cmd : str
+        A string which can be executed to run CMS
+    """
+
+    if sys.platform in ['win32', 'cygwin']:
+        log.debug("Generating Windows run command")
+        return os.path.join(exe_dir, 'compartments.exe')
+    else:
+        if docker_image:
+            log.debug(f"Generating Docker run command for workdir {workdir}")
+            if not workdir:
+                raise TypeError("Must provide `workdir` input for running via Docker")
+            cmd = f"docker run -v={workdir}:{workdir} {docker_image} -d {workdir}"
+        else:
+            cmd = f"wine {os.path.join(exe_dir, 'compartments.exe')}"
+        return cmd
+
+
 def runExp(trajectories_dir, Location = 'Local' ):
     if Location =='Local' :
+        log.info("Starting experiment.")
         p = os.path.join(trajectories_dir,  'runSimulations.bat')
         subprocess.call([p])
     if Location =='NUCLUSTER' :
@@ -61,7 +114,7 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
     return adf
 
 
-def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False):
+def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False, git_dir=GIT_DIR):
     scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
     sampledf = pd.read_csv(os.path.join(temp_exp_dir,"sampled_parameters.csv"))
 
@@ -88,7 +141,7 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
 def cleanup(temp_exp_dir, sim_output_path,plot_path, delete_temp_dir=True) :
     # Delete simulation model and emodl files
     # But keeps per default the trajectories, better solution, zip folders and copy
-    if delete_temp_dir ==True :
+    if delete_temp_dir:
         shutil.rmtree(temp_dir, ignore_errors=True)
         print('temp_dir folder deleted')
     shutil.copytree(temp_exp_dir, sim_output_path)
@@ -107,15 +160,31 @@ def writeTxt(txtdir, filename, textstring) :
     file.close()
 
 
-def generateSubmissionFile(scen_num, exp_name, trajectories_dir, temp_dir, temp_exp_dir): #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
-    file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
-    file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
-        str(scen_num),
-        os.path.join(exe_dir, "compartments.exe"),
-        os.path.join(temp_dir, "model_%%i" + ".cfg"),
-        os.path.join(temp_dir, "simulation_%%i" + ".emodl")
-    ) + "\n ECHO end")
-    file.close()
+def generateSubmissionFile(scen_num, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
+                           exe_dir=EXE_DIR, docker_image="cms"): #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
+    fname = os.path.join(trajectories_dir, 'runSimulations.bat')
+    log.debug(f"Generating submission file {fname}")
+    with open(fname, 'w') as file:
+        if sys.platform not in ["win32", "cygwin"]:
+            # If this is OSX or Linux, mark the file as executable and
+            # write a bash script
+            os.chmod(fname, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+            cfg_fname = os.path.join(temp_dir, 'model_$i.cfg')
+            emodl_fname = os.path.join(temp_dir, 'simulation_$i.emodl')
+            file.write(f"""#!/bin/bash
+echo start
+for i in {{1..{scen_num}}} 
+  do
+    {get_cms_cmd(exe_dir, temp_exp_dir, docker_image)} -c "{cfg_fname}" -m "{emodl_fname}"
+  done
+echo end""")
+        else:
+            file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
+                str(scen_num),
+                get_cms_cmd(exe_dir, temp_exp_dir),
+                os.path.join(temp_dir, "model_%%i" + ".cfg"),
+                os.path.join(temp_dir, "simulation_%%i" + ".emodl")
+            ) + "\n ECHO end")
 
     # Hardcoded Quest directories for now!
     # additional parameters , ncores, time, queue...
@@ -139,8 +208,8 @@ def generateSubmissionFile(scen_num, exp_name, trajectories_dir, temp_dir, temp_
     file.close()
 
 
-
-def makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir, temp_exp_dir=None) : ## GE 04/10/20 added exp_name, emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, temp_exp_dir=None,
+                         wdir=WDIR, git_dir=GIT_DIR): ## GE 04/10/20 added exp_name, emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
     # Create temporary folder for the simulation files
@@ -165,8 +234,7 @@ def makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir, temp_exp_dir=Non
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 
-
-def sampleplot(adf, allchannels, plot_fname=None):
+def sampleplot(adf, allchannels, first_day, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
 
@@ -189,6 +257,7 @@ def sampleplot(adf, allchannels, plot_fname=None):
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, )
 
-    if plot_fname :
-        plt.savefig(os.path.join(plot_path, plot_fname))
+    if plot_fname:
+        log.info(f"Writing plot to {plot_fname}")
+        plt.savefig(plot_fname)
     plt.show()
