@@ -1,3 +1,4 @@
+import argparse
 import logging
 import numpy as np
 import pandas as pd
@@ -26,19 +27,17 @@ today = date.today()
 
 FUNCTIONS = {'uniform': np.random.uniform}
 
-NUMBER_OF_SAMPLES = 2
-NUMBER_OF_RUNS = 1
-DURATION = 365
-MONITORING_SAMPLES = 365  # needs to be smaller than duration
+DEFAULT_MODEL_SETUP_CONFIG = './model_setup_config.yaml'
+DEFAULT_SAMPLING_PARAMETERS_CONFIG = './extendedcobey.yaml'
 
 
-def generateParameterSamples(samples, pop, first_day, config_name='./extendedcobey.yaml'):
+def generateParameterSamples(samples, pop, first_day, sampling_parameter_config):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechansims.
     Supported functions are in the FUNCTIONS variable.
     """
-    yaml_file = open(config_name)
+    yaml_file = open(sampling_parameter_config)
     config = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
     df = pd.DataFrame()
@@ -91,10 +90,11 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, first_day, Location):
+                      nruns, sub_samples, modelname, first_day, Location, sampling_parameter_config):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
+                                       sampling_parameter_config=sampling_parameter_config)
 
     for sample in range(sub_samples):
         for i in Kivalues:
@@ -130,7 +130,48 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     return scen_num
 
 
+def get_model_parameters(model_setup_config):
+    yaml_file = open(model_setup_config)
+    return yaml.load(yaml_file, Loader=yaml.FullLoader)    
+
+
+def parse_args():
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "--region",
+        type=str,
+        help="Region on which to run simulation. E.g. 'IL'",
+        required=True
+    )
+    parser.add_argument(
+        "--model_setup_config",
+        type=str,
+        help=("Config file (in YAML) containing the basic model setup parameters. "
+              "example: ./model_setup_config.yaml "),
+        required=True
+    )
+    parser.add_argument(
+        "--sampling_parameter_config",
+        type=str,
+        help=("Config file containing the parameters and the sampling functions for each parameter. "
+              "This should be in YAML format."),
+        required=True
+    )
+    parser.add_argument(
+        "--emodl_template",
+        type=str,
+        help="Template emodl file to use",
+        default="extendedmodel_cobey.emodl"
+    )
+
+    return parser.parse_args()
+
+
 if __name__ == '__main__' :
+    args = parse_args()
+
     # Load parameters
     load_dotenv()
 
@@ -160,16 +201,16 @@ if __name__ == '__main__' :
     #   Experiment design, fitting parameter and population
     # =============================================================
 
+    model_parameters = get_model_parameters(args.model_setup_config)
+    print(model_parameters)
     # Define setting
-    region = 'NMH_catchment'  # NMH_catchment  # IL  #EMS_3  # Chicago
+    populations, Kis, startdate = load_setting_parameter()
+    region = args.region
     exp_name = today.strftime("%Y%m%d") + '_%s_updatedStartDate' % region + '_rn' + str(int(np.random.uniform(10, 99)))
-
-    # Selected SEIR model
-    emodl_template = 'extendedmodel_cobey.emodl'
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, emodl_template, cfg_dir, wdir=wdir,
+        exp_name, emodl_dir, args.emodl_template, cfg_dir, wdir=wdir,
         git_dir=git_dir)  # GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
@@ -177,19 +218,19 @@ if __name__ == '__main__' :
               f"sim_output_path = {sim_output_path}\n"
               f"plot_path = {plot_path}")
 
-    populations, Kis, startdate = load_setting_parameter()
-
     simulation_population = populations[region]
-
     # Parameter values
     Kivalues = Kis[region]
     first_day = startdate[region]
 
     nscen = generateScenarios(
         simulation_population, Kivalues,
-        nruns=NUMBER_OF_RUNS, sub_samples=NUMBER_OF_SAMPLES,
-        duration=DURATION, monitoring_samples=MONITORING_SAMPLES,
-        modelname=emodl_template, first_day=first_day, Location=Location)
+        nruns=model_parameters['experiment_setup_parameters']['number_of_runs'],
+        sub_samples=model_parameters['experiment_setup_parameters']['number_of_samples'],
+        duration=model_parameters['experiment_setup_parameters']['duration'],
+        monitoring_samples=model_parameters['experiment_setup_parameters']['monitoring_samples'],
+        modelname=args.emodl_template, first_day=first_day, Location=Location,
+        sampling_parameter_config=args.sampling_parameter_config)
 '''
     generateSubmissionFile(
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
