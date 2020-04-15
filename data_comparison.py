@@ -66,7 +66,7 @@ def calculate_incidence(adf, output_filename=None) :
 
 def compare_NMH(exp_name, first_day) :
 
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_chicago', 'NMH', 'Modeling COVID Data NMH_v2_200406_jg.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_chicago', 'NMH', 'Modeling COVID Data NMH_v1_200415_jg.csv'))
     ref_df['date'] = pd.to_datetime(ref_df['date'])
 
     df = load_sim_data(exp_name)
@@ -78,12 +78,45 @@ def compare_NMH(exp_name, first_day) :
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
                      plot_path=plot_path, first_day=first_day)
 
-    data_channel_names = ['new admits v2', 'cumulative admits positive results v2', 'non ICU v2', 'ICU census v2']
+    #data_channel_names = ['new admits v2', 'cumulative admits positive results v2', 'non ICU v2', 'ICU census v2']
 
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v2')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
-                     plot_path=plot_path, first_day=first_day)
+    #plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v2')
+    #plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
+    #                 plot_path=plot_path, first_day=first_day)
 
+
+def plot_sim_and_ref_Ki(df, ref_df, channels, data_channel_names, first_day=date(2020, 2, 22),
+                     ymax=40, plot_path=None) :
+
+    fig = plt.figure()
+    palette = sns.color_palette('husl', len(df['Ki'].unique()))
+    k = 0
+    for c, channel in enumerate(channels) :
+        ax = fig.add_subplot(2,2,c+1)
+
+        for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
+            mdf = kdf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
+            dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
+            ax.plot(dates, mdf['mean'], color=palette[k], label=ki)
+            ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
+                        color=palette[k], linewidth=0, alpha=0.2)
+            ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
+                        color=palette[k], linewidth=0, alpha=0.4)
+
+            ax.set_title(channel, y=0.8)
+        ax.legend()
+
+        formatter = mdates.DateFormatter("%m-%d")
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.set_xlim(first_day, date(2020, 4, 14))
+        ax.set_ylim(1,ymax)
+        ax.set_yscale('log')
+
+        ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
+    if plot_path :
+        plt.savefig('%s_Kisep.png' % plot_path)
+        plt.savefig('%s_Kisep.pdf' % plot_path, format='PDF')
 
 def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(2020, 2, 22),
                      ymax=40, plot_path=None) :
@@ -94,7 +127,7 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
     for c, channel in enumerate(channels) :
         ax = fig.add_subplot(2,2,c+1)
 
-        # for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
+        #for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
         mdf = df.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
         dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
         ax.plot(dates, mdf['mean'], color=palette[k])
@@ -104,12 +137,12 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
                         color=palette[k], linewidth=0, alpha=0.4)
 
         ax.set_title(channel, y=0.8)
-        # ax.legend()
+        #ax.legend()
 
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, date(2020, 4, 9))
+        ax.set_xlim(first_day, date(2020, 4, 14))
         ax.set_ylim(1,ymax)
         ax.set_yscale('log')
 
@@ -178,7 +211,7 @@ def compare_ems(exp_name, first_day, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200413_NMH_catchment_updatedStartDate_rn16'  ## to to extract region automatically from exp_name
+    exp_name = '20200414_NMH_catchment_mr__rn77'  ## to to extract region automatically from exp_name
 
     region = 'NMH_catchment'
     populations, Kis, startdate = load_setting_parameter()
@@ -188,9 +221,9 @@ if __name__ == '__main__' :
         compare_NMH(exp_name, first_day)
     elif region == 'Chicago':
         compare_county(exp_name, first_day, county_name='Cook')
-    elif region == 'EMS_3':
+    elif region == 'EMS_1':
         #exp_name = '20200409_EMS_3_JG_run6'
-        compare_ems(exp_name, first_day, ems=3)
+        compare_ems(exp_name, first_day, ems=1)
     elif region == 'IL':
         #exp_name = '20200409_IL_JG_run5'
         compare_ems(exp_name, first_day)
