@@ -25,3 +25,4 @@ simple_model/simplemodel_covid_i.emodl
 trajectories.csv
 temp_model.emodl
 _temp/
+.env

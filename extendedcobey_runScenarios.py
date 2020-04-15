@@ -1,14 +1,13 @@
 import logging
 import numpy as np
 import pandas as pd
-import subprocess
-import matplotlib.pyplot as plt
 import os
-import seaborn as sns
 import matplotlib as mpl
-import matplotlib.dates as mdates
 from datetime import date, timedelta
 import shutil
+
+from dotenv import load_dotenv
+
 from load_paths import load_box_paths
 from processing_helpers import *
 from simulation_helpers import *
@@ -17,12 +16,7 @@ from simulation_setup import *
 log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
-testMode = False
 Location = 'Local'  # 'NUCLUSTER'
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
-emodl_dir = os.path.join(git_dir, 'emodl')
-cfg_dir = os.path.join(git_dir, 'cfg')
 
 today = date.today()
 
@@ -108,7 +102,8 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin.close()
 
 
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples, modelname, first_day):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
+                      nruns, sub_samples, modelname, first_day, Location):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
@@ -127,10 +122,18 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             data_cfg = data_cfg.replace('@duration@', str(duration))
             data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
             data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            if Location == 'Local' :
-                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
-            if not Location == 'Local' :
+            if not Location == 'Local':
                 data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            elif sys.platform not in ["win32", "cygwin"]:
+                # When running on Linux or OSX (and not in Quest), assume the
+                # trajectories directory is in the working directory.
+                traj_fname = os.path.join('trajectories',
+                                          'trajectories_scen' + str(scen_num))
+                data_cfg = data_cfg.replace('trajectories', traj_fname)
+            elif Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
+            else:
+                raise RuntimeError("Unable to decide where to put the trajectories file.")
             fin.close()
             fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
             fin.write(data_cfg)
@@ -138,11 +141,31 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population'])
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
-    return (scen_num)
+    return scen_num
 
 
 if __name__ == '__main__' :
     logging.basicConfig(level="DEBUG")
+    logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
+
+    # Load parameters
+    load_dotenv()
+
+    _, _, wdir, exe_dir, git_dir = load_box_paths()
+    Location = os.getenv("LOCATION") or Location
+
+    # Only needed on non-Windows, non-Quest platforms
+    docker_image = os.getenv("DOCKER_IMAGE")
+
+    emodl_dir = os.path.join(git_dir, 'emodl')
+    cfg_dir = os.path.join(git_dir, 'cfg')
+
+    log.debug(f"Running in Location = {Location}")
+    if sys.platform not in ['win32', 'cygwin']:
+        log.debug(f"Running in a non-Windows environment; "
+                  f'docker_image="{docker_image}"')
+    log.debug(f"Working directory: wdir={wdir}")
+    log.debug(f"git_dir={git_dir}")
 
     master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
                            'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
@@ -162,7 +185,13 @@ if __name__ == '__main__' :
     emodlname = 'extendedmodel_cobey.emodl'
 
     # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
+        exp_name,emodl_dir,emodlname, cfg_dir, wdir=wdir, git_dir=git_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+    log.debug(f"temp_dir = {temp_dir}\n"
+              f"temp_exp_dir = {temp_exp_dir}\n"
+              f"trajectories_dir = {trajectories_dir}\n"
+              f"sim_output_path = {sim_output_path}\n"
+              f"plot_path = {plot_path}")
 
     ## function in simulation_setup.py
     populations, Kis, startdate = load_setting_parameter()
@@ -185,21 +214,29 @@ if __name__ == '__main__' :
                               duration = duration,
                               monitoring_samples = monitoring_samples,
                               modelname=emodlname,
-                              first_day = first_day)
+                              first_day = first_day,
+                              Location=Location,
+                              )
 
-    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir) #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
+    generateSubmissionFile(
+        nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
+        exe_dir=exe_dir, docker_image=docker_image)
+
+    if Location == 'Local' :
+        runExp(trajectories_dir=trajectories_dir, Location='Local')
+
+        # Once the simulations are done
+        #number_of_samples*len(Kivalues) == nscen ### to check
+        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                plot_path=plot_path, delete_temp_dir=False)
+        df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
 
-if Location == 'Local' :
-    runExp(trajectories_dir=trajectories_dir, Location='Local')
-
-    # Once the simulations are done
-    #number_of_samples*len(Kivalues) == nscen ### to check
-    combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
-    cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-
-
-    sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
-    sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
-    sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
+        sampleplot(df, allchannels=master_channel_list, first_day=first_day,
+                   plot_fname=os.path.join(plot_path, 'main_channels.png'))
+        sampleplot(df, allchannels=detection_channel_list, first_day=first_day,
+                   plot_fname=os.path.join('detection_channels.png'))
+        sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
+                   plot_fname=os.path.join('cumulative_channels.png'))
