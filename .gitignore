@@ -1,6 +1,7 @@
 *.pyc
 .idea/
 .venv/
+.DS_Store
 COMPS_log.log
 *.png
 *.
