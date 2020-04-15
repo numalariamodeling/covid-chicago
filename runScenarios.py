@@ -5,13 +5,16 @@ import os
 import matplotlib as mpl
 from datetime import date, timedelta
 import shutil
+import sys
+import yaml
+import importlib
 
 from dotenv import load_dotenv
 
 from load_paths import load_box_paths
 from processing_helpers import *
-from simulation_helpers import *
-from simulation_setup import *
+from simulation_helpers import DateToTimestep, makeExperimentFolder
+from simulation_setup import load_setting_parameter
 
 log = logging.getLogger(__name__)
 
@@ -20,52 +23,36 @@ Location = 'Local'  # 'NUCLUSTER'
 
 today = date.today()
 
+FUNCTIONS = {'uniform': np.random.uniform}
+
 
 # parameter samples
-def generateParameterSamples(samples, pop, first_day):
-        df =  pd.DataFrame()
-        df['sample_num'] = range(samples)
-        df['speciesS'] = pop
-        df['initialAs'] = 10 #np.random.uniform(1, 5, samples)
+def generateParameterSamples(samples, pop, first_day, config_name='./extendedcobey.yaml'):
+    yaml_file = open(config_name)
+    config = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
-        df['incubation_pd'] = np.random.uniform(4.2, 6.63, samples)
-        df['time_to_symptoms'] = np.random.uniform(1, 5, samples)
-        df['time_to_hospitalization'] = np.random.uniform(2, 10, samples)
-        df['time_to_critical'] = np.random.uniform(4, 9, samples)
-        df['time_to_death'] = np.random.uniform(3, 11, samples)
-        df['recovery_rate_asymp'] = np.random.uniform(6, 16, samples)
-        df['recovery_rate_mild'] = np.random.uniform(19.4, 21.3, samples)
-        df['recovery_rate_hosp'] = np.random.uniform(19.5, 21.1, samples)
-        df['recovery_rate_crit'] = np.random.uniform(25.3, 31.6, samples)
-        df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
-        df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
-        df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
-        #df['fraction_critical'] = np.random.uniform(0.15, 0.35, samples)
-        #df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
-        #df['cfr'] = np.random.uniform(0.008, 0.022, samples)
-        #df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
-        #df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
-        df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
-        df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
-        df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
-        df['reduced_inf_of_det_cases'] = np.random.uniform(0.5, 0.9, samples)
-        df['d_Sym'] = np.random.uniform(0.2, 0.3, samples)
-        df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
-        df['d_As'] = np.random.uniform(0, 0, samples)
-        #df['Ki'] = np.random.uniform(2.e-7, 2.5e-7, samples)
+    df = pd.DataFrame()
+    df['sample_num'] = range(samples)
+    df['speciesS'] = pop
+    df['initialAs'] = 10
+    
+    for parameter, parameter_function in config['parameters'].items():
+        function_string = parameter_function['replacement_function']
+        function_kwargs = parameter_function['replacement_args']
+        df[parameter] = [FUNCTIONS[function_string](**function_kwargs) for i in range(samples)]
+    
+    df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
+    df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+    df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
+    df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
+    df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
+    
+    df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
+    return(df)
 
-        df['social_multiplier_1'] = np.random.uniform(0.9, 1, samples)
-        df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
-        df['social_multiplier_3'] = np.random.uniform( 0.05 , 0.3, samples) #0.2, 0.6
-
-        df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
-        df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
-        df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
-
-        df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
-        return(df)
 
 def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
+    print( Ki_i,  sample_nr, emodlname,  scen_num)
     fin = open(os.path.join(temp_exp_dir,emodlname), "rt")
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
@@ -100,7 +87,6 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
     fin.write(data)
     fin.close()
-    print(data)
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
@@ -112,9 +98,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     for sample in range(sub_samples):
         for i in Kivalues:
             scen_num += 1
-            #print(i)
 
-            #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
             lst.append([sample, scen_num, i , first_day, simulation_population])
             replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
 
@@ -142,8 +126,13 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             fin.close()
 
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population'])
-    df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
+    df.to_csv(os.path.join(temp_exp_dir, "scenarios.csv"), index=False)
     return scen_num
+
+# notes
+# add two args?
+# arg1 : region
+# arg2 : yaml config
 
 
 if __name__ == '__main__' :
@@ -184,20 +173,20 @@ if __name__ == '__main__' :
     exp_name = today.strftime("%Y%m%d") + '_%s_updatedStartDate' % region + '_rn' + str(int(np.random.uniform(10, 99)))
 
     # Selected SEIR model
-    emodlname = 'extendedmodel_cobey.emodl'
+    emodl_template = 'extendedmodel_cobey.emodl'
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name,emodl_dir,emodlname, cfg_dir, wdir=wdir, git_dir=git_dir) ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+        exp_name, emodl_dir, emodl_template, cfg_dir, wdir=wdir,
+        git_dir=git_dir)  ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
               f"trajectories_dir = {trajectories_dir}\n"
               f"sim_output_path = {sim_output_path}\n"
               f"plot_path = {plot_path}")
 
-    ## function in simulation_setup.py
+    # function in simulation_setup.py
     populations, Kis, startdate = load_setting_parameter()
-    #writeTxt(txtdir=temp_exp_dir, filename='setting_parameter.txt', textstring='populations =' + populations + '\nKis = ' + Kis + '\n startdate = ' + startdate)
 
     simulation_population = populations[region]
     number_of_samples = 2
@@ -215,7 +204,7 @@ if __name__ == '__main__' :
                               sub_samples=number_of_samples,
                               duration = duration,
                               monitoring_samples = monitoring_samples,
-                              modelname=emodlname,
+                              modelname=emodl_template,
                               first_day = first_day,
                               Location=Location,
                               )
