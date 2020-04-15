@@ -59,18 +59,26 @@ On Windows a single simulation can be run in the terminal or via batch file (i.e
 The [run_and_plot_testing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/run_and_plot_testing.py) file runs the emodl simulations and prododuces a simple plot of the observed channels. 
 
 ### 4.2. Run scenarios (multiple simulations)
-The [extendedmodel_runScenarios.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extendedmodel_runScenarios.py) 
+The [extendedcobey_runScenarios.py](extendedcobey_runScenarios.py) 
 - takes one emodl, 
 - optionally replaces parameters if @param@ placeholders are found, 
 - optionally runs for multiple samples per parameter
 - combines multiple trajectories.csv files produced into a trajectoriesDat.csv, that is used for postprocessing. 
 
-## 4.3. Postprocessing and visualizing results
+### 4.3. Postprocessing and visualizing results
 - latest postprocessing file that calculates incidences for extended SEIR model [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extended_model_postprocessing.py)
 
-## 4.4. Fitting to data
+### 4.4. Fitting to data
 The [NMH_catchment_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/NMH_catchment_comparison.py) compares the predicted number of new detected hospitalized cases, cumulative detections of hospitalized cases, total number of case hospitalizations and number of critical cases to hospital data and case reports. The starting date and intervention effect size are fixed and the transmission parameter beta, or in CMS called "Ki", in other words the contact rate * transmission probability is fitted to the data. 
 
+### 4.5. Local environment setup
+Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
+Copy the `sample.env` file to `.env` and edit so that paths point as needed for your system.
+
+### 4.6. Running on OS X or Linux
+The CMS software is provided as a compiled Windows executable, but can be run on Unix-like systems via [`wine`](https://www.winehq.org/).
+If you do not have `wine` installed on your system, you can use the provided [Dockerfile](Dockerfile), which has `wine` baked in.
+To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in your environment or your `.env` file to use it.
 
 ## 5. Data sources
 - IDPH
