@@ -25,7 +25,8 @@ Location = 'Local'  # 'NUCLUSTER'
 
 today = date.today()
 
-FUNCTIONS = {'uniform': np.random.uniform}
+FUNCTIONS = {'uniform': np.random.uniform,
+             'DateToTimestep': DateToTimestep}
 
 DEFAULT_MODEL_SETUP_CONFIG = './model_setup_config.yaml'
 DEFAULT_SAMPLING_PARAMETERS_CONFIG = './extendedcobey.yaml'
@@ -48,13 +49,12 @@ def generateParameterSamples(samples, pop, first_day, sampling_parameter_config)
     for parameter, parameter_function in config['parameters'].items():
         function_string = parameter_function['replacement_function']
         function_kwargs = parameter_function['replacement_args']
+        if function_string == "DateToTimestep":
+            function_kwargs['startdate'] = first_day
         df[parameter] = [FUNCTIONS[function_string](**function_kwargs) for i in range(samples)]
 
     df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
     df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
-    df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
-    df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
-    df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     return(df)
@@ -69,7 +69,6 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     df: pd.DataFrame
         DataFrame containing all the sampled parameters
     Ki_i: float
-        ???
     sample_nr: int
         Sample number of the df to use in generating the emodl file
     emodl_template: str
