@@ -17,6 +17,9 @@ from simulation_helpers import DateToTimestep, makeExperimentFolder
 from simulation_setup import load_setting_parameter
 
 log = logging.getLogger(__name__)
+logging.basicConfig(level="DEBUG")
+logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
+
 
 mpl.rcParams['pdf.fonttype'] = 42
 Location = 'Local'  # 'NUCLUSTER'
@@ -28,6 +31,11 @@ FUNCTIONS = {'uniform': np.random.uniform}
 
 # parameter samples
 def generateParameterSamples(samples, pop, first_day, config_name='./extendedcobey.yaml'):
+    """ Given a yaml configuration file (e.g. ./extendedcobey.yaml), 
+    generate a dataframe of the parameters for a simulation run using the specified 
+    functions/sampling mechansims. 
+    Supported functions are in the FUNCTIONS variable.
+    """
     yaml_file = open(config_name)
     config = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
@@ -51,40 +59,31 @@ def generateParameterSamples(samples, pop, first_day, config_name='./extendedcob
     return(df)
 
 
-def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
-    print( Ki_i,  sample_nr, emodlname,  scen_num)
-    fin = open(os.path.join(temp_exp_dir,emodlname), "rt")
+def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num) :
+    """ Given an emodl template file, replaces the placeholder names
+    (which are bookended by '@') with the sampled parameter value.
+    This is saved as a (temporary) emodl file to be used in simulation runs.
+    Parameters
+    ----------
+    df: pd.DataFrame
+        DataFrame containing all the sampled parameters
+    Ki_i: float
+        ???
+    sample_nr: int
+        Sample number of the df to use in generating the emodl file
+    emodl_template: str
+        File name of the emodl template fileOA
+    scen_num: int
+        Scenario number of the simulation run
+    """
+    print(Ki_i, sample_nr, emodl_template,  scen_num)
+    fin = open(os.path.join(temp_exp_dir, emodl_template), "rt")
     data = fin.read()
-    data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
-    data = data.replace('@initialAs@', str(df.initialAs[sample_nr]))
-    data = data.replace('@incubation_pd@', str(df.incubation_pd[sample_nr]))
-    data = data.replace('@time_to_symptoms@', str(df.time_to_symptoms[sample_nr]))
-    data = data.replace('@time_to_hospitalization@', str(df.time_to_hospitalization[sample_nr]))
-    data = data.replace('@time_to_critical@', str(df.time_to_critical[sample_nr]))
-    data = data.replace('@time_to_death@', str(df.time_to_death[sample_nr]))
-    data = data.replace('@fraction_hospitalized@', str(df.fraction_hospitalized[sample_nr]))
-    data = data.replace('@fraction_symptomatic@', str(df.fraction_symptomatic[sample_nr]))
-    data = data.replace('@fraction_severe@', str(df.fraction_severe[sample_nr]))
-    data = data.replace('@fraction_critical@', str(df.fraction_critical[sample_nr]))
-    data = data.replace('@reduced_inf_of_det_cases@', str(df.reduced_inf_of_det_cases[sample_nr]))
-    data = data.replace('@fraction_dead@', str(df.fraction_dead[sample_nr]))
-    data = data.replace('@d_As@', str(df.d_As[sample_nr]))
-    data = data.replace('@d_Sym@', str(df.d_Sym[sample_nr]))
-    data = data.replace('@d_Sys@', str(df.d_Sys[sample_nr]))
-    data = data.replace('@recovery_rate_asymp@', str(df.recovery_rate_asymp[sample_nr]))
-    data = data.replace('@recovery_rate_mild@', str(df.recovery_rate_mild[sample_nr]))
-    data = data.replace('@recovery_rate_hosp@', str(df.recovery_rate_hosp[sample_nr]))
-    data = data.replace('@recovery_rate_crit@', str(df.recovery_rate_crit[sample_nr]))
-    data = data.replace('@Ki@', '%.09f'% Ki_i)
-    data = data.replace('@social_multiplier_1@',  str(df.social_multiplier_1[sample_nr]))
-    data = data.replace('@social_multiplier_2@',  str(df.social_multiplier_2[sample_nr]))
-    data = data.replace('@social_multiplier_3@',  str(df.social_multiplier_3[sample_nr]))
-    data = data.replace('@socialDistance_time1@',  str(df.socialDistance_time1[sample_nr]))
-    data = data.replace('@socialDistance_time2@',  str(df.socialDistance_time2[sample_nr]))
-    data = data.replace('@socialDistance_time3@',  str(df.socialDistance_time3[sample_nr]))
-
+    for col in df.columns:
+        data = data.replace(f'@{col}@', str(df[col][sample_nr]))
+    data = data.replace('@Ki@', '%.09f' % Ki_i)
     fin.close()
-    fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
+    fin = open(os.path.join(temp_dir, f"simulation_{scen_num}emodl"), "wt")
     fin.write(data)
     fin.close()
 
@@ -100,7 +99,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             scen_num += 1
 
             lst.append([sample, scen_num, i , first_day, simulation_population])
-            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
+            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodl_template=modelname, scen_num=scen_num)
 
             # adjust model.cfg
             fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
@@ -129,16 +128,8 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     df.to_csv(os.path.join(temp_exp_dir, "scenarios.csv"), index=False)
     return scen_num
 
-# notes
-# add two args?
-# arg1 : region
-# arg2 : yaml config
-
 
 if __name__ == '__main__' :
-    logging.basicConfig(level="DEBUG")
-    logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
-
     # Load parameters
     load_dotenv()
 
