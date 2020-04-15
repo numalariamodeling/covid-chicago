@@ -34,8 +34,8 @@ MONITORING_SAMPLES = 365  # needs to be smaller than duration
 
 def generateParameterSamples(samples, pop, first_day, config_name='./extendedcobey.yaml'):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
-    generate a dataframe of the parameters for a simulation run using the specified 
-    functions/sampling mechansims. 
+    generate a dataframe of the parameters for a simulation run using the specified
+    functions/sampling mechansims.
     Supported functions are in the FUNCTIONS variable.
     """
     yaml_file = open(config_name)
@@ -45,23 +45,23 @@ def generateParameterSamples(samples, pop, first_day, config_name='./extendedcob
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = 10
-    
+
     for parameter, parameter_function in config['parameters'].items():
         function_string = parameter_function['replacement_function']
         function_kwargs = parameter_function['replacement_args']
         df[parameter] = [FUNCTIONS[function_string](**function_kwargs) for i in range(samples)]
-    
+
     df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
     df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
     df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
     df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
     df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
-    
+
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     return(df)
 
 
-def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num) :
+def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     """ Given an emodl template file, replaces the placeholder names
     (which are bookended by '@') with the sampled parameter value.
     This is saved as a (temporary) emodl file to be used in simulation runs.
@@ -100,7 +100,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
         for i in Kivalues:
             scen_num += 1
 
-            lst.append([sample, scen_num, i , first_day, simulation_population])
+            lst.append([sample, scen_num, i, first_day, simulation_population])
             replaceParameters(df=dfparam, Ki_i=i, sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
 
             # adjust model.cfg
@@ -116,7 +116,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                 # trajectories directory is in the working directory.
                 traj_fname = os.path.join('trajectories', f'trajectories_scen{scen_num}')
                 data_cfg = data_cfg.replace('trajectories', traj_fname)
-            elif Location == 'Local' :
+            elif Location == 'Local':
                 data_cfg = data_cfg.replace('trajectories', f'./_temp/{exp_name}/trajectories/trajectories_scen{scen_num}')
             else:
                 raise RuntimeError("Unable to decide where to put the trajectories file.")
@@ -170,7 +170,7 @@ if __name__ == '__main__' :
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
         exp_name, emodl_dir, emodl_template, cfg_dir, wdir=wdir,
-        git_dir=git_dir)  ## GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+        git_dir=git_dir)  # GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
               f"trajectories_dir = {trajectories_dir}\n"
