@@ -66,6 +66,4 @@ parameters:
     replacement_args: {'low':0.6, 'high':0.9}
   'social_multiplier_3':
     replacement_function:  uniform
-    replacement_args: {'low':0.05, 'high':0.3}    
-
-
+    replacement_args: {'low':0.05, 'high':0.3}
