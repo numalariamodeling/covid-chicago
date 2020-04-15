@@ -60,3 +60,12 @@ parameters:
   'social_multiplier_3':
     replacement_function: uniform
     replacement_args: {'low':0.05, 'high':0.3}
+  'socialDistance_time1':
+    replacement_function: DateToTimestep
+    replacement_args: {'dates': 2020-03-12}
+  'socialDistance_time2':
+    replacement_function: DateToTimestep
+    replacement_args: {'dates': 2020-03-17}
+  'socialDistance_time3':
+    replacement_function: DateToTimestep
+    replacement_args: {'dates': 2020-03-21}
