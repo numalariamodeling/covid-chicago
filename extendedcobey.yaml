@@ -1,69 +1,62 @@
-#- number of samples
-#- for each thing
-#   - scipy function name
-#   - kwargs dictionary
-#   - map for the number of samples??
-'number_of_samples':
-  10
 parameters:
   'incubation_pd':
     template_name: '@incubation_pd@'
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low': 4.2, 'high': 6.63}
   'time_to_symptoms':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low': 1, 'high':5}
   'time_to_hospitalization':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':2, 'high':10}
   'time_to_critical':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':4, 'high':9}
   'time_to_death':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':3, 'high':11}
   'recovery_rate_asymp':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':6, 'high':16}
   'recovery_rate_mild':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':19.4, 'high':21.3}
   'recovery_rate_hosp':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':19.5, 'high':21.1}
   'recovery_rate_crit':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':25.3, 'high':31.6}
   'fraction_symptomatic':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.5, 'high':0.8}
   'fraction_severe':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.2, 'high':0.5}
   'fraction_critical':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.2, 'high':0.5}
   'cfr':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.002675, 'high':0.007775}
   'reduced_inf_of_det_cases':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.5, 'high':0.9}
   'd_Sym':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.2, 'high':0.3}
   'd_Sys':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.7, 'high':0.9}
   'd_As':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0, 'high':0}
   'social_multiplier_1':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.9, 'high':1}
   'social_multiplier_2':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.6, 'high':0.9}
   'social_multiplier_3':
-    replacement_function:  uniform
+    replacement_function: uniform
     replacement_args: {'low':0.05, 'high':0.3}
