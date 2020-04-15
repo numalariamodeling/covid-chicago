@@ -1,0 +1,11 @@
+- 'sample_num':
+    - range(samples)
+- 'speciesS':
+    - template_name: '@speciesS@'
+    - replacement_function: pop
+- 'initialAs':
+    - template_name: '@initialAs@'
+    - replacement_function: 10
+- 'incubation_pd':
+    - template_name: '@incubation_pd@'
+    - replacement_function:  np.random.uniform(4.2, 6.63, samples)
