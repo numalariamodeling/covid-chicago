@@ -69,7 +69,6 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     scen_num: int
         Scenario number of the simulation run
     """
-    print(Ki_i, sample_nr, emodl_template,  scen_num)
     fin = open(os.path.join(temp_exp_dir, emodl_template), "rt")
     data = fin.read()
     for col in df.columns:
