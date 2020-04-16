@@ -1,23 +1,23 @@
 import argparse
 import logging
+import os
+import sys
+from datetime import date
+
+import matplotlib as mpl
 import numpy as np
 import pandas as pd
-import os
-import matplotlib as mpl
-from datetime import date
-import sys
 import yaml
-
 from dotenv import load_dotenv
 
 from load_paths import load_box_paths
-from simulation_helpers import (DateToTimestep, makeExperimentFolder, generateSubmissionFile,
-                                combineTrajectories, runExp, cleanup, sampleplot)
+from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
+                                generateSubmissionFile, makeExperimentFolder,
+                                runExp, sampleplot)
 
 log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
-Location = 'Local'  # 'NUCLUSTER'
 
 today = date.today()
 
@@ -124,10 +124,8 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 def get_experiment_config(experiment_config_file):
     config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
-    print(config)
     yaml_file = open(experiment_config_file)
     expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
-    print(expt_config)
     for param_type, updated_params in expt_config.items():
         if updated_params:
             config[param_type].update(updated_params)
@@ -147,7 +145,6 @@ def get_fitted_parameters(experiment_config, region):
     fitted = experiment_config['fitted_parameters']
     fitted_parameters = {}
     for param, region_values in fitted.items():
-        print(param)
         region_parameter = region_values[region]
         if 'np' in region_parameter:
             fitted_parameters[param] = getattr(np, region_parameter['np'])(**region_parameter['function_kwargs'])
@@ -158,6 +155,13 @@ def parse_args():
     description = "Simulation run for modeling Covid-19"
     parser = argparse.ArgumentParser(description=description)
 
+    parser.add_argument(
+        "--running_location",
+        type=str,
+        help="Location where the simulation is being run.",
+        choices=["Local", "NUCLUSTER"],
+        required=True
+    )
     parser.add_argument(
         "--region",
         type=str,
@@ -192,7 +196,7 @@ if __name__ == '__main__':
     load_dotenv()
 
     _, _, wdir, exe_dir, git_dir = load_box_paths()
-    Location = os.getenv("LOCATION") or Location
+    Location = os.getenv("LOCATION") or args.running_location
 
     # Only needed on non-Windows, non-Quest platforms
     docker_image = os.getenv("DOCKER_IMAGE")
@@ -217,7 +221,6 @@ if __name__ == '__main__':
     #   Experiment design, fitting parameter and population
     # =============================================================
     experiment_config = get_experiment_config(args.experiment_config)
-    print(experiment_config)
     experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
     np.random.seed(experiment_setup_parameters['random_seed'])
 
