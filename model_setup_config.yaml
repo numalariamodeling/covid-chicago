@@ -1,6 +1,13 @@
-'experiment_setup_parameters':
-  'number_of_samples': 2
-  'number_of_runs': 1
-  'duration': 365
-  'monitoring_samples': 365 # needs to be smaller than duration
+
+  - everything in one file
+  - default config
+  - with over-riding options
+  - emodl template;
+  .format(with teh yaml
+
+- experiment parameters
+- fixed parameters
+    - inc social distancing
+- sampled parameters
+- seed for random number generator
 
