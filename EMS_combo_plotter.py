@@ -9,7 +9,7 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
-from NMH_catchment_comparison import load_sim_data
+from data_comparison import load_sim_data
 
 
 mpl.rcParams['pdf.fonttype'] = 42
@@ -82,7 +82,9 @@ def plot_on_fig(df, channels, axes, color, ems) :
 if __name__ == '__main__' :
 
     stem = '20200414_EMS'
-    plot_name = '200415_TEST_EMS'
+    plot_name = '200415_TEST'
+    plot_first_day = date(2020,3,1)
+    plot_last_day = date(2020,6,1)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
@@ -93,6 +95,8 @@ if __name__ == '__main__' :
     axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
     adf = pd.DataFrame()
+    days_to_plot = plot_last_day - plot_first_day
+    last = {x: [0] * (days_to_plot.days+1) for x in channels}
     for d, exp_name in enumerate(exp_names) :
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         ems = int(exp_name.split('_')[2])
@@ -102,7 +106,7 @@ if __name__ == '__main__' :
         first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
         df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        df = df[(df['date'] >= date(2020, 3, 1)) & (df['date'] <= date(2020, 6, 1))]
+        df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
         df['ems'] = ems
 
         fig_exp = plt.figure(figsize=(8, 8))
@@ -116,7 +120,6 @@ if __name__ == '__main__' :
 
         adf = pd.concat([adf, df[channels + ['date', 'ems']]])
 
-        last = { x : [0]*len(df['date'].unique()) for x in channels }
         for c, channel in enumerate(channels) :
             ax = axes[c]
             mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
