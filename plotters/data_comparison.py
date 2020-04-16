@@ -183,6 +183,7 @@ def compare_county(exp_name, first_day, county_name) :
 def compare_ems(exp_name, first_day, ems=0) :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
+
     if ems > 0 :
         ref_df = ref_df[ref_df['region'] == ems]
     else :
@@ -194,6 +195,8 @@ def compare_ems(exp_name, first_day, ems=0) :
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
     df = load_sim_data(exp_name)
+    #df = df[df['Ki'] >= 6e-8  ]
+    #df = df[df['Ki'] <= 9e-8  ]
 
     df['ventilators'] = df['critical']*0.8
     df['critical_with_suspected'] = df['critical']
@@ -205,9 +208,9 @@ def compare_ems(exp_name, first_day, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200415_EMS_2_mr_ru3'
+    exp_name = '20200416_EMS_11_mr_run4'
 
-    region = 'EMS_2'
+    region = 'EMS_11'
     emsyes = region.split('_')[0]
     ems_nr = region.split('_')[1]
 

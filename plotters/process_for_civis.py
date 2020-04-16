@@ -9,19 +9,22 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
-from NMH_catchment_comparison import load_sim_data
+from simulation_setup import *
+from data_comparison import load_sim_data
 from copy import copy
 
 mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-first_day = date(2020, 2, 20)
+populations, Kis, startdate = load_setting_parameter()
 
 
 if __name__ == '__main__' :
 
-    exp_name = '20200404_cobeyModel_TEST'
+    exp_name = '20200416_EMS_11_mr_run4'
+    region  = "EMS_11"
+    first_day = startdate[region]  # date(2020, 2, 28)
 
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     df = load_sim_data(exp_name)
@@ -29,13 +32,13 @@ if __name__ == '__main__' :
     channels = ['infected', 'deaths', 'hospitalized', 'critical', 'ventilators']
     df['ventilators'] = df['critical']*0.8
 
-    fig = plt.figure(figsize=(12,6))
+    fig = plt.figure(figsize=(8,12))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.07, hspace=0.15)
     palette = sns.color_palette('Set1', len(channels))
 
     adf = pd.DataFrame()
     for c, channel in enumerate(channels) :
-        ax = fig.add_subplot(2,3,c+1)
+        ax = fig.add_subplot(4,2,c+1)
         mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
         mdf['date'] = mdf['time'].apply(lambda x : first_day + timedelta(days=int(x)))
 
