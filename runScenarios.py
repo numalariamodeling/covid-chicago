@@ -16,42 +16,42 @@ from simulation_helpers import (DateToTimestep, makeExperimentFolder, generateSu
 from simulation_setup import load_setting_parameter
 
 log = logging.getLogger(__name__)
-logging.basicConfig(level="DEBUG")
-logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
 
+# TODO: add random seed
 
 mpl.rcParams['pdf.fonttype'] = 42
 Location = 'Local'  # 'NUCLUSTER'
 
 today = date.today()
 
-FUNCTIONS = {'uniform': np.random.uniform,
-             'DateToTimestep': DateToTimestep}
-
-DEFAULT_MODEL_SETUP_CONFIG = './model_setup_config.yaml'
-DEFAULT_SAMPLING_PARAMETERS_CONFIG = './extendedcobey.yaml'
+DEFAULT_CONFIG = './extendedcobey.yaml'
 
 
-def generateParameterSamples(samples, pop, first_day, sampling_parameter_config):
+def generateParameterSamples(samples, pop, first_day, experiment_config):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechansims.
     Supported functions are in the FUNCTIONS variable.
     """
-    yaml_file = open(sampling_parameter_config)
-    config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
+    yaml_file = open(experiment_config)
+    expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    config.update(expt_config)
 
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = 10
 
-    for parameter, parameter_function in config['parameters'].items():
-        function_string = parameter_function['replacement_function']
-        function_kwargs = parameter_function['replacement_args']
-        if function_string == "DateToTimestep":
-            function_kwargs['startdate'] = first_day
-        df[parameter] = [FUNCTIONS[function_string](**function_kwargs) for i in range(samples)]
+    for parameter, parameter_function in config['sampled_parameters'].items():
+        function_kwargs = parameter_function['function_kwargs']
+        if 'np.random' in parameter_function:
+            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs) for i in range(samples)]
+        elif 'custom_function' in parameter_function:
+            function_name = parameter_function['custom_function']
+            if function_name == 'DateToTimestep':
+                function_kwargs['startdate'] = first_day
+            df[parameter]  = [globals()[function_name](**function_kwargs) for i in range(samples)]
 
     df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
     df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
@@ -72,7 +72,7 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     sample_nr: int
         Sample number of the df to use in generating the emodl file
     emodl_template: str
-        File name of the emodl template fileOA
+        File name of the emodl template file
     scen_num: int
         Scenario number of the simulation run
     """
@@ -89,11 +89,11 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, first_day, Location, sampling_parameter_config):
+                      nruns, sub_samples, modelname, first_day, Location, experiment_config):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
-                                       sampling_parameter_config=sampling_parameter_config)
+                                       experiment_config=experiment_config)
 
     for sample in range(sub_samples):
         for i in Kivalues:
@@ -129,9 +129,24 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     return scen_num
 
 
-def get_model_parameters(model_setup_config):
-    yaml_file = open(model_setup_config)
-    return yaml.load(yaml_file, Loader=yaml.FullLoader)    
+def get_experiment_setup_parameters(experiment_config):
+    return experiment_config['experiment_setup_parameters']
+
+
+def get_fixed_parameters(experiment_config, region):
+    fixed = experiment_config['fixed_parameters']
+    return {param: fixed[param][region] for param in fixed}
+
+
+def get_fitted_parameters(experiment_config, region):
+    fitted = experiment_config['fitted_parameters']
+    fitted_parameters = {}
+    for param, region_values in fitted.items():
+        print(param)
+        region_parameter = region_values[region]
+        if 'np' in region_parameter:
+            fitted_parameters[param] = getattr(np, region_parameter['np'])(**region_parameter['function_kwargs'])
+    return fitted_parameters
 
 
 def parse_args():
@@ -145,17 +160,11 @@ def parse_args():
         required=True
     )
     parser.add_argument(
-        "--model_setup_config",
+        "--experiment_config",
         type=str,
-        help=("Config file (in YAML) containing the basic model setup parameters. "
+        help=("Config file (in YAML) containing the parameters to override the default config. "
+              "This file should have the same structure as the default config. "
               "example: ./model_setup_config.yaml "),
-        required=True
-    )
-    parser.add_argument(
-        "--sampling_parameter_config",
-        type=str,
-        help=("Config file containing the parameters and the sampling functions for each parameter. "
-              "This should be in YAML format."),
         required=True
     )
     parser.add_argument(
@@ -169,6 +178,9 @@ def parse_args():
 
 
 if __name__ == '__main__' :
+    logging.basicConfig(level="DEBUG")
+    logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
+
     args = parse_args()
 
     # Load parameters
@@ -199,13 +211,18 @@ if __name__ == '__main__' :
     # =============================================================
     #   Experiment design, fitting parameter and population
     # =============================================================
+    yaml_file = open(args.experiment_config)
+    experiment_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
-    model_parameters = get_model_parameters(args.model_setup_config)
-    print(model_parameters)
-    # Define setting
-    populations, Kis, startdate = load_setting_parameter()
+    experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
+    
     region = args.region
-    exp_name = today.strftime("%Y%m%d") + '_%s_updatedStartDate' % region + '_rn' + str(int(np.random.uniform(10, 99)))
+    fixed_parameters = get_fixed_parameters(experiment_config, region)
+    simulation_population = fixed_parameters['populations']
+    first_day = fixed_parameters['startdate']
+    Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
+    
+    exp_name = f"{today.strftime('%Y%m%d')}_{region}_updatedStartDate_rn{int(np.random.uniform(10, 99))}"
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
@@ -217,20 +234,15 @@ if __name__ == '__main__' :
               f"sim_output_path = {sim_output_path}\n"
               f"plot_path = {plot_path}")
 
-    simulation_population = populations[region]
-    # Parameter values
-    Kivalues = Kis[region]
-    first_day = startdate[region]
-
     nscen = generateScenarios(
         simulation_population, Kivalues,
-        nruns=model_parameters['experiment_setup_parameters']['number_of_runs'],
-        sub_samples=model_parameters['experiment_setup_parameters']['number_of_samples'],
-        duration=model_parameters['experiment_setup_parameters']['duration'],
-        monitoring_samples=model_parameters['experiment_setup_parameters']['monitoring_samples'],
+        nruns=experiment_setup_parameters['number_of_runs'],
+        sub_samples=experiment_setup_parameters['number_of_samples'],
+        duration=experiment_setup_parameters['duration'],
+        monitoring_samples=experiment_setup_parameters['monitoring_samples'],
         modelname=args.emodl_template, first_day=first_day, Location=Location,
-        sampling_parameter_config=args.sampling_parameter_config)
-'''
+        experiment_config=args.experiment_config)
+
     generateSubmissionFile(
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
         exe_dir=exe_dir, docker_image=docker_image)
@@ -252,4 +264,3 @@ if __name__ == '__main__' :
                    plot_fname=os.path.join('detection_channels.png'))
         sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
                    plot_fname=os.path.join('cumulative_channels.png'))
-'''

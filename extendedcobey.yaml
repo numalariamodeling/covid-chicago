@@ -1,71 +1,152 @@
-parameters:
+experiment_setup_parameters:
+  'number_of_samples': 2
+  'number_of_runs': 1
+  'duration': 365
+  'monitoring_samples': 365 # needs to be smaller than duration
+  'random_seed': 19
+fixed_parameters:
+  populations:
+    'IL': 12830632
+    'NMH_catchment': 315000
+    'Chicago': 2700000
+    'EMS_1': 736370
+    'EMS_2': 1124941
+    'EMS_3': 619366
+    'EMS_4': 698886
+    'EMS_5': 417674
+    'EMS_6': 788985
+    'EMS_7': 1814891
+    'EMS_8': 1673408
+    'EMS_9': 1970275
+    'EMS_10': 1052839
+    'EMS_11': 2716921
+  startdate:
+    'NMH_catchment': 2020-02-28
+    'Chicago': 2020-02-20
+    'IL': 2020-02-28
+    'EMS_1': 2020-02-28       
+    'EMS_2': 2020-02-28
+    'EMS_3': 2020-02-28       
+    'EMS_4': 2020-02-28
+    'EMS_5': 2020-02-28       
+    'EMS_6': 2020-02-28
+    'EMS_7': 2020-02-28       
+    'EMS_8': 2020-02-28
+    'EMS_9': 2020-02-28       
+    'EMS_10': 2020-02-28
+    'EMS_11': 2020-02-28       
+sampled_parameters:
   'incubation_pd':
-    template_name: '@incubation_pd@'
-    replacement_function: uniform
-    replacement_args: {'low': 4.2, 'high': 6.63}
+    np.random: uniform
+    function_kwargs: {'low': 4.2, 'high': 6.63}
   'time_to_symptoms':
-    replacement_function: uniform
-    replacement_args: {'low': 1, 'high':5}
+    np.random: uniform
+    function_kwargs: {'low': 1, 'high':5}
   'time_to_hospitalization':
-    replacement_function: uniform
-    replacement_args: {'low':2, 'high':10}
+    np.random: uniform
+    function_kwargs: {'low':2, 'high':10}
   'time_to_critical':
-    replacement_function: uniform
-    replacement_args: {'low':4, 'high':9}
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':9}
   'time_to_death':
-    replacement_function: uniform
-    replacement_args: {'low':3, 'high':11}
+    np.random: uniform
+    function_kwargs: {'low':3, 'high':11}
   'recovery_rate_asymp':
-    replacement_function: uniform
-    replacement_args: {'low':6, 'high':16}
+    np.random: uniform
+    function_kwargs: {'low':6, 'high':16}
   'recovery_rate_mild':
-    replacement_function: uniform
-    replacement_args: {'low':19.4, 'high':21.3}
+    np.random: uniform
+    function_kwargs: {'low':19.4, 'high':21.3}
   'recovery_rate_hosp':
-    replacement_function: uniform
-    replacement_args: {'low':19.5, 'high':21.1}
+    np.random: uniform
+    function_kwargs: {'low':19.5, 'high':21.1}
   'recovery_rate_crit':
-    replacement_function: uniform
-    replacement_args: {'low':25.3, 'high':31.6}
+    np.random: uniform
+    function_kwargs: {'low':25.3, 'high':31.6}
   'fraction_symptomatic':
-    replacement_function: uniform
-    replacement_args: {'low':0.5, 'high':0.8}
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.8}
   'fraction_severe':
-    replacement_function: uniform
-    replacement_args: {'low':0.2, 'high':0.5}
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.5}
   'fraction_critical':
-    replacement_function: uniform
-    replacement_args: {'low':0.2, 'high':0.5}
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.5}
   'cfr':
-    replacement_function: uniform
-    replacement_args: {'low':0.002675, 'high':0.007775}
+    np.random: uniform
+    function_kwargs: {'low':0.002675, 'high':0.007775}
   'reduced_inf_of_det_cases':
-    replacement_function: uniform
-    replacement_args: {'low':0.5, 'high':0.9}
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.9}
   'd_Sym':
-    replacement_function: uniform
-    replacement_args: {'low':0.2, 'high':0.3}
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.3}
   'd_Sys':
-    replacement_function: uniform
-    replacement_args: {'low':0.7, 'high':0.9}
+    np.random: uniform
+    function_kwargs: {'low':0.7, 'high':0.9}
   'd_As':
-    replacement_function: uniform
-    replacement_args: {'low':0, 'high':0}
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0}
   'social_multiplier_1':
-    replacement_function: uniform
-    replacement_args: {'low':0.9, 'high':1}
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
   'social_multiplier_2':
-    replacement_function: uniform
-    replacement_args: {'low':0.6, 'high':0.9}
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
   'social_multiplier_3':
-    replacement_function: uniform
-    replacement_args: {'low':0.05, 'high':0.3}
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
   'socialDistance_time1':
-    replacement_function: DateToTimestep
-    replacement_args: {'dates': 2020-03-12}
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-12}
   'socialDistance_time2':
-    replacement_function: DateToTimestep
-    replacement_args: {'dates': 2020-03-17}
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-17}
   'socialDistance_time3':
-    replacement_function: DateToTimestep
-    replacement_args: {'dates': 2020-03-21}
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-21}
+fitted_parameters:
+  # Note IL, NMH, Chicago and EMS_3 were fitted, the other EMS area Kis need updating/checking
+  Kis:
+    'NMH_catchment':
+      np: linspace
+      function_kwargs: {'start': 1.5e-6, 'stop': 2e-6, 'num': 3}
+    'Chicago':
+      np: linspace
+      function_kwargs: {'start': 2e-7, 'stop': 3e-7, 'num': 3}
+    'IL':
+      np: linspace
+      function_kwargs: {'start': 3.5e-8, 'stop': 5.3e-8, 'num': 3}
+    'EMS_1':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_2':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_3':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_4':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_5':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_6':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_7':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_8':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_9':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_10':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+    'EMS_11':
+      np: linspace
+      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
