@@ -1,4 +1,5 @@
 import argparse
+import re
 import logging
 import numpy as np
 import pandas as pd
@@ -24,6 +25,47 @@ today = date.today()
 DEFAULT_CONFIG = './extendedcobey.yaml'
 
 
+def add_config_parameter_column(df, parameter, parameter_function):
+    if isinstance(parameter_function, int):
+        df[parameter] = parameter_function
+    elif 'matrix' in parameter_function:
+        m = parameter_function['matrix']
+        for i, row in enumerate(m):
+            for j, item in enumerate(row):
+                df[f'{parameter}{i+1}_{j+1}'] = item
+    elif 'np.random' in parameter_function:
+        function_kwargs = parameter_function['function_kwargs']
+        df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
+                         for i in range(len(df))]
+    elif 'custom_function' in parameter_function:
+        function_name = parameter_function['custom_function']
+        function_kwargs = parameter_function['function_kwargs']
+        if function_name == 'DateToTimestep':
+            function_kwargs['startdate'] = first_day
+            df[parameter] = [globals()[function_name](**function_kwargs) for i in range(len(df))]
+            # Note that the custom_function needs to be imported
+        elif function_name == 'subtract':
+            df[parameter] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
+    else:
+        raise ValueError(f"Unknown type of parameter {parameter}")
+    return df
+
+
+def add_fixed_parameters_region_specific(df, config, region):
+    for parameter_group, parameter_group_values in config['fixed_parameters_region_specific'].items():
+        if parameter_group in ('populations', 'startdate'):
+            continue
+        for parameter, parameter_function in parameter_group_values[region].items():
+            df = add_config_parameter_column(df, parameter, parameter_function)
+    return df
+
+
+def add_computed_parameters(df):
+    df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
+    df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+    return df
+
+
 def generateParameterSamples(samples, pop, first_day, config):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
@@ -33,23 +75,17 @@ def generateParameterSamples(samples, pop, first_day, config):
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
-    df['initialAs'] = 10
+    df['initialAs'] = config['experiment_setup_parameters']['initialAs']
 
     for parameter, parameter_function in config['sampled_parameters'].items():
-        function_kwargs = parameter_function['function_kwargs']
-        if 'np.random' in parameter_function:
-            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
-                             for i in range(samples)]
-        elif 'custom_function' in parameter_function:
-            function_name = parameter_function['custom_function']
-            if function_name == 'DateToTimestep':
-                function_kwargs['startdate'] = first_day
-            df[parameter] = [globals()[function_name](**function_kwargs) for i in range(samples)]
-
-    df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
-    df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+        df = add_config_parameter_column(df, parameter, parameter_function)
+    df = add_fixed_parameters_region_specific(df, config, region)
+    for parameter, parameter_function in config['fixed_parameters_global'].items():
+        df = add_config_parameter_column(df, parameter, parameter_function)
+    df = add_computed_parameters(df)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
+    print(df.columns)
     return(df)
 
 
@@ -69,12 +105,15 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     scen_num: int
         Scenario number of the simulation run
     """
-    print(Ki_i, sample_nr, emodl_template,  scen_num)
     fin = open(os.path.join(temp_exp_dir, emodl_template), "rt")
     data = fin.read()
     for col in df.columns:
         data = data.replace(f'@{col}@', str(df[col][sample_nr]))
     data = data.replace('@Ki@', '%.09f' % Ki_i)
+    remaining_placeholders = re.findall(r'@\w+@', data)
+    if remaining_placeholders:
+        raise ValueError("Not all placeholders have been replaced in the template emodl file. "
+                         f"Remaining placeholders: {remaining_placeholders}")
     fin.close()
     fin = open(os.path.join(temp_dir, f"simulation_{scen_num}.emodl"), "wt")
     fin.write(data)
@@ -125,11 +164,11 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 def get_experiment_config(experiment_config_file):
     config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
-    print(config)
     yaml_file = open(experiment_config_file)
     expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
-    print(expt_config)
     for param_type, updated_params in expt_config.items():
+        if not config[param_type]:
+            config[param_type] = {}
         if updated_params:
             config[param_type].update(updated_params)
     return config
@@ -139,8 +178,8 @@ def get_experiment_setup_parameters(experiment_config):
     return experiment_config['experiment_setup_parameters']
 
 
-def get_fixed_parameters(experiment_config, region):
-    fixed = experiment_config['fixed_parameters']
+def get_region_specific_fixed_parameters(experiment_config, region):
+    fixed = experiment_config['fixed_parameters_region_specific']
     return {param: fixed[param][region] for param in fixed}
 
 
@@ -148,7 +187,6 @@ def get_fitted_parameters(experiment_config, region):
     fitted = experiment_config['fitted_parameters']
     fitted_parameters = {}
     for param, region_values in fitted.items():
-        print(param)
         region_parameter = region_values[region]
         if 'np' in region_parameter:
             fitted_parameters[param] = getattr(np, region_parameter['np'])(**region_parameter['function_kwargs'])
@@ -218,12 +256,11 @@ if __name__ == '__main__':
     #   Experiment design, fitting parameter and population
     # =============================================================
     experiment_config = get_experiment_config(args.experiment_config)
-    print(experiment_config)
     experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
     np.random.seed(experiment_setup_parameters['random_seed'])
 
     region = args.region
-    fixed_parameters = get_fixed_parameters(experiment_config, region)
+    fixed_parameters = get_region_specific_fixed_parameters(experiment_config, region)
     simulation_population = fixed_parameters['populations']
     first_day = fixed_parameters['startdate']
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
