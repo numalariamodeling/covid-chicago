@@ -58,12 +58,43 @@ On Windows a single simulation can be run in the terminal or via batch file (i.e
 - Via python (including plotting)
 The [run_and_plot_testing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/run_and_plot_testing.py) file runs the emodl simulations and prododuces a simple plot of the observed channels. 
 
-### 4.2. Run scenarios (multiple simulations)
+### 4.2.1. Run scenarios (multiple simulations)
 The [extendedcobey_runScenarios.py](extendedcobey_runScenarios.py) 
 - takes one emodl, 
 - optionally replaces parameters if @param@ placeholders are found, 
 - optionally runs for multiple samples per parameter
 - combines multiple trajectories.csv files produced into a trajectoriesDat.csv, that is used for postprocessing. 
+
+### 4.2.2. Run scenarios (generic)
+[runScenarios.py](runScenarios.py) is used to run multiple simulations
+given a configuration file with the parameters. The script builds off
+a default configuration file [extendedcobey.yaml](extendedcobey.yaml)
+and substitutes parameters with the values/functions in the
+user-provided configuration file using the `@param@` placeholder. As with
+[extendedcobey_runScenarios.py](extendedcobey_runScenarios.py), it combines multiple trajectories.csv files produced into a trajectoriesDat.csv, that is used for postprocessing.
+
+
+#### Configuration file:
+The configuration file is in YAML format and is divided into 4
+blocks: `experiment_setup_parameters`, `fixed_parameters`,
+`sampled_parameters`, `fitted_parameters`. The sampled parameters need
+the sampling function as well as the arguments to pass into that
+function (`function_kwargs`).
+
+#### Inputs:
+- Region: The region of interest. (e.g. `EMS_1`)
+- Configuration file: The configuration file with the parameters to
+  use for the simulation. If a parameter is not provided, the value in
+  the default configuration will be used. (e.g. [sample_experiment.yaml](sample_experiment.yaml))
+- Emodl template (optional): The template emodl file to substitute in
+  parameter values. The default is extendedmodel_cobey.emodl. emodl
+  files are in the `./emodl` directory.
+
+### Usage examples:
+- Using the default emodl template: `python runScenarios.py  --region
+  IL  --experiment_config sample_experiment.yaml`
+- Using a different emodl template: `python runScenarios.py  --region
+  IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
 
 ### 4.3. Postprocessing and visualizing results
 - latest postprocessing file that calculates incidences for extended SEIR model [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extended_model_postprocessing.py)
