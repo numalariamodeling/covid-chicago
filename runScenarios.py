@@ -38,12 +38,13 @@ def generateParameterSamples(samples, pop, first_day, config):
     for parameter, parameter_function in config['sampled_parameters'].items():
         function_kwargs = parameter_function['function_kwargs']
         if 'np.random' in parameter_function:
-            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs) for i in range(samples)]
+            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
+                             for i in range(samples)]
         elif 'custom_function' in parameter_function:
             function_name = parameter_function['custom_function']
             if function_name == 'DateToTimestep':
                 function_kwargs['startdate'] = first_day
-            df[parameter]  = [globals()[function_name](**function_kwargs) for i in range(samples)]
+            df[parameter] = [globals()[function_name](**function_kwargs) for i in range(samples)]
 
     df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
     df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
@@ -108,7 +109,8 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                 traj_fname = os.path.join('trajectories', f'trajectories_scen{scen_num}')
                 data_cfg = data_cfg.replace('trajectories', traj_fname)
             elif Location == 'Local':
-                data_cfg = data_cfg.replace('trajectories', f'./_temp/{exp_name}/trajectories/trajectories_scen{scen_num}')
+                data_cfg = data_cfg.replace('trajectories',
+                                            f'./_temp/{exp_name}/trajectories/trajectories_scen{scen_num}')
             else:
                 raise RuntimeError("Unable to decide where to put the trajectories file.")
             fin.close()
@@ -181,7 +183,7 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__' :
+if __name__ == '__main__':
     logging.basicConfig(level="DEBUG")
     logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
 
@@ -225,7 +227,7 @@ if __name__ == '__main__' :
     simulation_population = fixed_parameters['populations']
     first_day = fixed_parameters['startdate']
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
-    
+
     exp_name = f"{today.strftime('%Y%m%d')}_{region}_updatedStartDate_rn{int(np.random.uniform(10, 99))}"
 
     # Generate folders and copy required files
@@ -251,7 +253,7 @@ if __name__ == '__main__' :
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
         exe_dir=exe_dir, docker_image=docker_image)
 
-    if Location == 'Local' :
+    if Location == 'Local':
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
         # Once the simulations are done
