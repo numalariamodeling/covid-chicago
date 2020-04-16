@@ -113,40 +113,40 @@ fitted_parameters:
       function_kwargs: {'start': 1.5e-6, 'stop': 2e-6, 'num': 3}
     'Chicago':
       np: linspace
-      function_kwargs: {'start': 2e-7, 'stop': 3e-7, 'num': 3}
+      function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 3}
     'IL':
       np: linspace
       function_kwargs: {'start': 3.5e-8, 'stop': 5.3e-8, 'num': 3}
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_2':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_4':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_5':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_7':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_8':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_10':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 5e-7, 'stop': 9e-7, 'num': 3}
+      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
