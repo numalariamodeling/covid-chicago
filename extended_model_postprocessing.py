@@ -12,7 +12,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
 
-exp_name = '20200408_NMH_age_homogeneous_4grp_rn17'
+exp_name = '20200410_mr_rerun_Cookpop_rn39'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
@@ -33,33 +33,27 @@ master_channel_list = ['susceptible', 'exposed', 'infectious', 'symptomatic', 'd
 first_day = date(2020, 2, 28)
 
 
-def count_new(df, curr_ch) :
-
-    ch_list = list(df[curr_ch].values)
-    diff = [0] + [ch_list[x] - ch_list[x - 1] for x in range(1, len(df))]
-    return diff
-
-
 def calculate_incidence(adf, output_filename=None) :
 
     inc_df = pd.DataFrame()
-    for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
+    for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
 
         sdf = pd.DataFrame( { 'time' : df['time'],
                               'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
                               'new_asymptomatic' : count_new(df, 'asymp_cumul'),
                               'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
-                              'new_symptomatic' : count_new(df, 'symp_cumul'),
-                              'new_symptomatic_detected' : count_new(df, 'symp_det_cumul'),
+                              #'new_symptomatic' : count_new(df, 'symp_cumul'),
+                              #'new_symptomatic_detected' : count_new(df, 'symp_det_cumul'),
                               'new_hospitalized' : count_new(df, 'hosp_cumul'),
                               'new_detected' : count_new(df, 'detected_cumul'),
                               'new_critical' : count_new(df, 'crit_cumul'),
                               'new_deaths' : count_new(df, 'deaths')
                               })
+        sdf['run_num'] = run
         sdf['sample_num'] = samp
         sdf['scen_num'] = scen
         inc_df = pd.concat([inc_df, sdf])
-    adf = pd.merge(left=adf, right=inc_df, on=['sample_num', 'scen_num', 'time'])
+    adf = pd.merge(left=adf, right=inc_df, on=['run_num', 'sample_num', 'scen_num', 'time'])
     if output_filename :
         adf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
     return adf
@@ -76,7 +70,7 @@ def plot(adf) :
 
     fig = plt.figure(figsize=(12,6))
 
-    plotchannels = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic',
+    plotchannels = ['susceptible', 'exposed', 'asymptomatic',
                     'detected', 'hospitalized', 'critical', 'deaths', 'recovered',
                     'new_detected', 'new_hospitalized', 'new_deaths']
     palette = sns.color_palette('muted', len(plotchannels))
@@ -109,7 +103,7 @@ if __name__ == '__main__' :
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     adf = calculate_incidence(df, output_filename='trajectoresDat_withIncidence.csv')
-    adf['infections_cumul'] = adf['asymp_cumul'] + adf['symp_cumul']
-    for channel in ['infections_cumul', 'detected_cumul'] :
-        calculate_mean_and_CI(adf, channel, output_filename='%s.csv' % channel)
+    #adf['infections_cumul'] = adf['asymp_cumul'] + adf['symp_cumul']
+    #for channel in ['infections_cumul', 'detected_cumul'] :
+    #    calculate_mean_and_CI(adf, channel, output_filename='%s.csv' % channel)
     plot(adf)

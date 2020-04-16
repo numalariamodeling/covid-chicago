@@ -14,7 +14,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
 
-exp_name = '20200413_TEST_4grp_normalizedContacts_rn52'
+exp_name = '20200415_NMH_catchment_TEST_4grp_rn_rn69'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if testMode == True :
@@ -39,17 +39,10 @@ custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul',
 first_day = date(2020, 2, 28)
 
 
-def count_new(df, curr_ch) :
-
-    ch_list = list(df[curr_ch].values)
-    diff = [0] + [ch_list[x] - ch_list[x - 1] for x in range(1, len(df))]
-    return diff
-
-
 def calculate_incidence(adf, age_group, output_filename=None) :
 
     inc_df = pd.DataFrame()
-    for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
+    for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
 
         sdf = pd.DataFrame( { 'time' : df['time'],
                               'new_exposures_%s' % age_group : [-1*x for x in count_new(df, 'susceptible_%s' % age_group)],
@@ -61,10 +54,11 @@ def calculate_incidence(adf, age_group, output_filename=None) :
                               'new_critical_%s' % age_group : count_new(df, 'crit_cumul_%s' % age_group),
                               'new_deaths_%s' % age_group : count_new(df, 'deaths_%s' % age_group)
                               })
+        sdf['run_num'] = run
         sdf['sample_num'] = samp
         sdf['scen_num'] = scen
         inc_df = pd.concat([inc_df, sdf])
-    adf = pd.merge(left=adf, right=inc_df, on=['sample_num', 'scen_num', 'time'])
+    adf = pd.merge(left=adf, right=inc_df, on=['run_num', 'sample_num', 'scen_num', 'time'])
     if output_filename :
         adf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
     return adf
