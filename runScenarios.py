@@ -13,11 +13,8 @@ from dotenv import load_dotenv
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, makeExperimentFolder, generateSubmissionFile,
                                 combineTrajectories, runExp, cleanup, sampleplot)
-from simulation_setup import load_setting_parameter
 
 log = logging.getLogger(__name__)
-
-# TODO: add random seed
 
 mpl.rcParams['pdf.fonttype'] = 42
 Location = 'Local'  # 'NUCLUSTER'
@@ -215,7 +212,8 @@ if __name__ == '__main__' :
     experiment_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
     experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
-    
+    np.random.seed(experiment_setup_parameters['random_seed'])
+
     region = args.region
     fixed_parameters = get_fixed_parameters(experiment_config, region)
     simulation_population = fixed_parameters['populations']
@@ -227,7 +225,7 @@ if __name__ == '__main__' :
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
         exp_name, emodl_dir, args.emodl_template, cfg_dir, wdir=wdir,
-        git_dir=git_dir)  # GE 04/10/20 added exp_name,emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+        git_dir=git_dir)  # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
               f"trajectories_dir = {trajectories_dir}\n"
