@@ -109,8 +109,8 @@ def plot_sim_and_ref_Ki(df, ref_df, channels, data_channel_names, first_day=date
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
     if plot_path :
-        plt.savefig('%s_Kisep_d.png' % plot_path)
-        plt.savefig('%s_Kisep_d.pdf' % plot_path, format='PDF')
+        plt.savefig('%s_Kisep.png' % plot_path)
+        plt.savefig('%s_Kisep.pdf' % plot_path, format='PDF')
 
 def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(2020, 2, 22),
                      ymax=40, plot_path=None) :
@@ -142,8 +142,8 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
     if plot_path :
-        plt.savefig('%s_KiCI_firstDay.png' % plot_path)
-        plt.savefig('%s_KiCI_firstDay.pdf' % plot_path, format='PDF')
+        plt.savefig('%s_KiCI.png' % plot_path)
+        plt.savefig('%s_KiCI.pdf' % plot_path, format='PDF')
 
 
 def compare_county(exp_name, first_day, county_name) :
@@ -205,9 +205,9 @@ def compare_ems(exp_name, first_day, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200415_EMS_11_mr_ru3'  ## to to extract region automatically from exp_name
+    exp_name = '20200415_EMS_2_mr_ru3'
 
-    region = 'EMS_11'
+    region = 'EMS_2'
     emsyes = region.split('_')[0]
     ems_nr = region.split('_')[1]
 
@@ -219,8 +219,6 @@ if __name__ == '__main__' :
     elif region == 'Chicago':
         compare_county(exp_name, first_day, county_name='Cook')
     elif emsyes == 'EMS':
-        #exp_name = '20200409_EMS_3_JG_run6'
         compare_ems(exp_name, first_day, ems=int(ems_nr))
     elif region == 'IL':
-        #exp_name = '20200409_IL_JG_run5'
         compare_ems(exp_name, first_day)
