@@ -217,7 +217,11 @@ def parse_args():
         help="Template emodl file to use",
         default="extendedmodel_cobey.emodl"
     )
-
+    parser.add_argument(
+        "--post_process",
+        action='store_true',
+        help="Whether or not to run post-processing functions",
+    )
     return parser.parse_args()
 
 
@@ -245,12 +249,6 @@ if __name__ == '__main__':
                   f'docker_image="{docker_image}"')
     log.debug(f"Working directory: wdir={wdir}")
     log.debug(f"git_dir={git_dir}")
-
-    master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                           'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-    detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-    custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
-                           'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
     # =============================================================
     #   Experiment design, fitting parameter and population
@@ -293,17 +291,24 @@ if __name__ == '__main__':
     if Location == 'Local':
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-        # Once the simulations are done
-        # number_of_samples*len(Kivalues) == nscen ### to check
-        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
-        cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                plot_path=plot_path, delete_temp_dir=False)
-        df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+        if args.post_process:
+            # Once the simulations are done
+            # number_of_samples*len(Kivalues) == nscen ### to check
+            combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+                                temp_exp_dir=temp_exp_dir, deleteFiles=False)
+            cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                    plot_path=plot_path, delete_temp_dir=False)
+            df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-        sampleplot(df, allchannels=master_channel_list, first_day=first_day,
-                   plot_fname=os.path.join(plot_path, 'main_channels.png'))
-        sampleplot(df, allchannels=detection_channel_list, first_day=first_day,
-                   plot_fname=os.path.join('detection_channels.png'))
-        sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
-                   plot_fname=os.path.join('cumulative_channels.png'))
+            master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+                                   'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+            detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
+            custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
+                                   'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
+
+            sampleplot(df, allchannels=master_channel_list, first_day=first_day,
+                       plot_fname=os.path.join(plot_path, 'main_channels.png'))
+            sampleplot(df, allchannels=detection_channel_list, first_day=first_day,
+                       plot_fname=os.path.join('detection_channels.png'))
+            sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
+                       plot_fname=os.path.join('cumulative_channels.png'))
