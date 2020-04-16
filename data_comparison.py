@@ -30,17 +30,10 @@ def load_sim_data(exp_name) :
     return df
 
 
-def count_new(df, curr_ch) :
-
-    ch_list = list(df[curr_ch].values)
-    diff = [0] + [ch_list[x] - ch_list[x - 1] for x in range(1, len(df))]
-    return diff
-
-
 def calculate_incidence(adf, output_filename=None) :
 
     inc_df = pd.DataFrame()
-    for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
+    for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
 
         sdf = pd.DataFrame( { 'time' : df['time'],
                               'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
@@ -55,10 +48,11 @@ def calculate_incidence(adf, output_filename=None) :
                               'new_detected_deaths' : count_new(df, 'death_det_cumul'),
                               'new_deaths' : count_new(df, 'deaths')
                               })
+        sdf['run_num'] = run
         sdf['sample_num'] = samp
         sdf['scen_num'] = scen
         inc_df = pd.concat([inc_df, sdf])
-    adf = pd.merge(left=adf, right=inc_df, on=['sample_num', 'scen_num', 'time'])
+    adf = pd.merge(left=adf, right=inc_df, on=['run_num','sample_num', 'scen_num', 'time'])
     if output_filename :
         adf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
     return adf
@@ -115,8 +109,8 @@ def plot_sim_and_ref_Ki(df, ref_df, channels, data_channel_names, first_day=date
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
     if plot_path :
-        plt.savefig('%s_Kisep.png' % plot_path)
-        plt.savefig('%s_Kisep.pdf' % plot_path, format='PDF')
+        plt.savefig('%s_Kisep_d.png' % plot_path)
+        plt.savefig('%s_Kisep_d.pdf' % plot_path, format='PDF')
 
 def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(2020, 2, 22),
                      ymax=40, plot_path=None) :
@@ -148,8 +142,8 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
     if plot_path :
-        plt.savefig('%s_KiCI.png' % plot_path)
-        plt.savefig('%s_KiCI.pdf' % plot_path, format='PDF')
+        plt.savefig('%s_KiCI_firstDay.png' % plot_path)
+        plt.savefig('%s_KiCI_firstDay.pdf' % plot_path, format='PDF')
 
 
 def compare_county(exp_name, first_day, county_name) :
@@ -181,7 +175,7 @@ def compare_county(exp_name, first_day, county_name) :
     df['critical_with_suspected'] = df['critical']
     channels = ['critical_with_suspected', 'deaths', 'critical', 'ventilators']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
+    plot_sim_and_ref_Ki(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
                      plot_path=plot_path, first_day=first_day)
     plt.show()
 
@@ -211,9 +205,12 @@ def compare_ems(exp_name, first_day, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200414_NMH_catchment_mr__rn77'  ## to to extract region automatically from exp_name
+    exp_name = '20200415_EMS_11_mr_ru3'  ## to to extract region automatically from exp_name
 
-    region = 'NMH_catchment'
+    region = 'EMS_11'
+    emsyes = region.split('_')[0]
+    ems_nr = region.split('_')[1]
+
     populations, Kis, startdate = load_setting_parameter()
     first_day = startdate[region] # date(2020, 2, 28)
 
@@ -221,9 +218,9 @@ if __name__ == '__main__' :
         compare_NMH(exp_name, first_day)
     elif region == 'Chicago':
         compare_county(exp_name, first_day, county_name='Cook')
-    elif region == 'EMS_1':
+    elif emsyes == 'EMS':
         #exp_name = '20200409_EMS_3_JG_run6'
-        compare_ems(exp_name, first_day, ems=1)
+        compare_ems(exp_name, first_day, ems=int(ems_nr))
     elif region == 'IL':
         #exp_name = '20200409_IL_JG_run5'
         compare_ems(exp_name, first_day)
