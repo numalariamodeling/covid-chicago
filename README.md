@@ -79,7 +79,9 @@ The configuration file is in YAML format and is divided into 4
 blocks: `experiment_setup_parameters`, `fixed_parameters`,
 `sampled_parameters`, `fitted_parameters`. The sampled parameters need
 the sampling function as well as the arguments to pass into that
-function (`function_kwargs`).
+function (`function_kwargs`). Currently, only a few
+sampling/calculation functions are supported. More can be added by
+allowing for more libraries in `generateParameterSamples` of [runScenarios.py](runScenarios.py).
 
 #### Inputs:
 - Region: The region of interest. (e.g. `EMS_1`)
