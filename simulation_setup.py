@@ -1,5 +1,6 @@
 import numpy as np
-from datetime import date, timedelta
+from datetime import date
+
 
 # Simlation setup
 def load_setting_parameter ():
@@ -54,7 +55,8 @@ def load_setting_parameter ():
     }
 
     return populations, Kis, startdate
-    
+
+
 def load_age_groups ():
 
     age4grp = {
