@@ -24,17 +24,12 @@ today = date.today()
 DEFAULT_CONFIG = './extendedcobey.yaml'
 
 
-def generateParameterSamples(samples, pop, first_day, experiment_config):
+def generateParameterSamples(samples, pop, first_day, config):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechansims.
     Supported functions are in the FUNCTIONS variable.
     """
-    config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
-    yaml_file = open(experiment_config)
-    expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
-    config.update(expt_config)
-
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
@@ -90,7 +85,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
-                                       experiment_config=experiment_config)
+                                       config=experiment_config)
 
     for sample in range(sub_samples):
         for i in Kivalues:
@@ -124,6 +119,18 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population'])
     df.to_csv(os.path.join(temp_exp_dir, "scenarios.csv"), index=False)
     return scen_num
+
+
+def get_experiment_config(experiment_config_file):
+    config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
+    print(config)
+    yaml_file = open(experiment_config_file)
+    expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    print(expt_config)
+    for param_type, updated_params in expt_config.items():
+        if updated_params:
+            config[param_type].update(updated_params)
+    return config
 
 
 def get_experiment_setup_parameters(experiment_config):
@@ -161,7 +168,7 @@ def parse_args():
         type=str,
         help=("Config file (in YAML) containing the parameters to override the default config. "
               "This file should have the same structure as the default config. "
-              "example: ./model_setup_config.yaml "),
+              "example: ./sample_experiment.yaml "),
         required=True
     )
     parser.add_argument(
@@ -208,9 +215,8 @@ if __name__ == '__main__' :
     # =============================================================
     #   Experiment design, fitting parameter and population
     # =============================================================
-    yaml_file = open(args.experiment_config)
-    experiment_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
-
+    experiment_config = get_experiment_config(args.experiment_config)
+    print(experiment_config)
     experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
     np.random.seed(experiment_setup_parameters['random_seed'])
 
@@ -239,7 +245,7 @@ if __name__ == '__main__' :
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
         modelname=args.emodl_template, first_day=first_day, Location=Location,
-        experiment_config=args.experiment_config)
+        experiment_config=experiment_config)
 
     generateSubmissionFile(
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
