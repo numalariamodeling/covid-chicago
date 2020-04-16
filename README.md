@@ -75,13 +75,17 @@ user-provided configuration file using the `@param@` placeholder. As with
 
 
 #### Configuration file:
-The configuration file is in YAML format and is divided into 4
-blocks: `experiment_setup_parameters`, `fixed_parameters`,
+The configuration file is in YAML format and is divided into 5
+blocks: `experiment_setup_parameters`,
+`fixed_parameters_region_specific`, `fixed_parameters_global`,
 `sampled_parameters`, `fitted_parameters`. The sampled parameters need
 the sampling function as well as the arguments to pass into that
 function (`function_kwargs`). Currently, only a few
 sampling/calculation functions are supported. More can be added by
 allowing for more libraries in `generateParameterSamples` of [runScenarios.py](runScenarios.py).
+
+Note that the user-supplied configuration file is used to provide
+*additional* or *updated* parameters from the base configutation file.
 
 #### Inputs:
 - Region: The region of interest. (e.g. `EMS_1`)
@@ -89,7 +93,7 @@ allowing for more libraries in `generateParameterSamples` of [runScenarios.py](r
   use for the simulation. If a parameter is not provided, the value in
   the default configuration will be used. (e.g. [sample_experiment.yaml](sample_experiment.yaml))
 - Emodl template (optional): The template emodl file to substitute in
-  parameter values. The default is extendedmodel_cobey.emodl. emodl
+  parameter values. The default is [extendedmodel_cobey.emodl](extendedmodel_cobey.emodl). emodl
   files are in the `./emodl` directory.
 
 ### Usage examples:
