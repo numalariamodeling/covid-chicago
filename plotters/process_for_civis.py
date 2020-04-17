@@ -6,25 +6,47 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import seaborn as sns
+import yaml
 from processing_helpers import *
 from simulation_setup import *
 from data_comparison import load_sim_data
-from copy import copy
+
 
 mpl.rcParams['pdf.fonttype'] = 42
+today = datetime.today()
+DEFAULT_CONFIG = './extendedcobey.yaml'
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-populations, Kis, startdate = load_setting_parameter()
+def get_experiment_config(experiment_config_file):
+    #config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
+    config = yaml.load(open(os.path.join(git_dir, DEFAULT_CONFIG)), Loader=yaml.FullLoader)
+    #yaml_file = open(experiment_config_file)
+    yaml_file = open(os.path.join(git_dir, experiment_config_file))
+    expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    for param_type, updated_params in expt_config.items():
+        if updated_params:
+            config[param_type].update(updated_params)
+    return config
 
+
+def get_fixed_parameters(experiment_config, region):
+    fixed = experiment_config['fixed_parameters']
+    return {param: fixed[param][region] for param in fixed}
 
 if __name__ == '__main__' :
 
-    exp_name = '20200416_EMS_11_mr_run4'
-    region  = "EMS_11"
-    first_day = startdate[region]  # date(2020, 2, 28)
+    exp_name = '20200416_EMS_4_mr_run4'
+
+    region = 'EMS_4'  # region = args.region
+
+    experiment_config = "./extendedcobey.yaml"
+    experiment_config = get_experiment_config(experiment_config)
+    fixed_parameters = get_fixed_parameters(experiment_config, region)
+
+    first_day = fixed_parameters['startdate'] # date(2020, 2, 28)
 
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     df = load_sim_data(exp_name)
