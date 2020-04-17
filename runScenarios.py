@@ -1,7 +1,7 @@
 import argparse
-import re
 import logging
 import os
+import re
 import sys
 from datetime import date
 
@@ -25,52 +25,98 @@ today = date.today()
 DEFAULT_CONFIG = './extendedcobey.yaml'
 
 
-def add_config_parameter_column(df, parameter, parameter_function):
-    if isinstance(parameter_function, int):
-        df[parameter] = parameter_function
-    elif 'matrix' in parameter_function:
-        m = parameter_function['matrix']
-        for i, row in enumerate(m):
-            for j, item in enumerate(row):
-                df[f'{parameter}{i+1}_{j+1}'] = item
-    elif 'np.random' in parameter_function:
-        function_kwargs = parameter_function['function_kwargs']
-        df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
-                         for i in range(len(df))]
-    elif 'custom_function' in parameter_function:
-        function_name = parameter_function['custom_function']
-        function_kwargs = parameter_function['function_kwargs']
-        if function_name == 'DateToTimestep':
-            function_kwargs['startdate'] = first_day
-            df[parameter] = [globals()[function_name](**function_kwargs) for i in range(len(df))]
-            # Note that the custom_function needs to be imported
-        elif function_name == 'subtract':
-            df[parameter] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
+    """ Applies the described function and adds the column to the dataframe
+    Parameters
+    ----------
+    df: pd.DataFrame
+        dataframe of the fixed and sampled parameters which is used to generate scenarios
+    parameter: str
+        Name of the parameter to compute and add to the parameters dataframe
+        e.g.: incubation_pd
+    parameter_function: dict
+        A dictionary describing the function or constant to compute for the given parameter.
+        Supported options are:
+        - int: The column will contain a constant value
+          e.g.: initialAs
+        - matrix: Each matrix value is a numeric and the new columns added are of the form "<parameter><row>_<column>".
+          e.g. the contact matrix
+        - sampling: Any of the functions available in np.random can be used to randomly samply values for the parameter.
+          Arguments are passed to the sampling function as kwargs (which are specified in the yaml).
+        - DateToTimestep: This is a custom function that is supported to compute the amount of time
+          from an intervention date. e.g. socialDistance_time
+        - subtract: This subtracts one column in the dataframe (x2) from another (x1).
+          e.g. SpeciesS (given N and initialAs)
+    age_bins: list of str, optional
+        If the parameter is to be expanded by age, the new dataframe with have individual parameters for each bin.
+    Returns
+    -------
+    df: pd.DataFrame
+        dataframe with the additional column(s) added
+    """
+    if parameter_function.get('expand_by_age'):
+        if not age_bins:
+            raise ValueError("Ages bins must be specified if using an age expansion")
+        if 'list' in parameter_function:
+            for bin, val in zip(age_bins, parameter_function['list']):
+                df[f'{parameter}_{bin}'] = val
+        elif 'custom_function' in parameter_function:
+            for bin in age_bins:
+                function_kwargs = parameter_function['function_kwargs']
+                df[f'{parameter}_{bin}'] = df[f'{function_kwargs["x1"]}_{bin}'] - df[f'{function_kwargs["x2"]}_{bin}']
+        else:
+            raise ValueError(f"Unknown type of parameter {parameter}")
     else:
-        raise ValueError(f"Unknown type of parameter {parameter}")
+        if isinstance(parameter_function, int):
+            df[parameter] = parameter_function
+        elif 'matrix' in parameter_function:
+            m = parameter_function['matrix']
+            for i, row in enumerate(m):
+                for j, item in enumerate(row):
+                    df[f'{parameter}{i+1}_{j+1}'] = item
+        elif 'np.random' in parameter_function:
+            function_kwargs = parameter_function['function_kwargs']
+            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
+                             for i in range(len(df))]
+        elif 'custom_function' in parameter_function:
+            function_name = parameter_function['custom_function']
+            function_kwargs = parameter_function['function_kwargs']
+            if function_name == 'DateToTimestep':
+                function_kwargs['startdate'] = first_day
+                df[parameter] = [DateToTimestep(**function_kwargs) for i in range(len(df))]
+            elif function_name == 'subtract':
+                df[parameter] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
+        else:
+            raise ValueError(f"Unknown type of parameter {parameter}")
     return df
 
 
-def add_fixed_parameters_region_specific(df, config, region):
-    for parameter_group, parameter_group_values in config['fixed_parameters_region_specific'].items():
-        if parameter_group in ('populations', 'startdate'):
+def add_fixed_parameters_region_specific(df, config, region, age_bins):
+    """ For each of the region-specific parameters, iteratively add them to the parameters dataframe
+    """
+    for parameter, parameter_function in config['fixed_parameters_region_specific'].items():
+        if parameter in ('populations', 'startdate'):
             continue
-        for parameter, parameter_function in parameter_group_values[region].items():
-            df = add_config_parameter_column(df, parameter, parameter_function)
+        param_func_with_age = {'expand_by_age': parameter_function.get('expand_by_age'),
+                               'list': parameter_function[region]}
+        df = add_config_parameter_column(df, parameter, param_func_with_age, age_bins)
+
     return df
 
 
 def add_computed_parameters(df):
+    """ Parameters that are computed from other parameters are computed and added to the parameters
+    dataframe.
+    """
     df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
     df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
     return df
 
 
-def generateParameterSamples(samples, pop, first_day, config):
+def generateParameterSamples(samples, pop, first_day, config, age_bins):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechansims.
-    Supported functions are in the FUNCTIONS variable.
     """
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
@@ -78,14 +124,15 @@ def generateParameterSamples(samples, pop, first_day, config):
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
 
     for parameter, parameter_function in config['sampled_parameters'].items():
-        df = add_config_parameter_column(df, parameter, parameter_function)
-    df = add_fixed_parameters_region_specific(df, config, region)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+    df = add_fixed_parameters_region_specific(df, config, region, age_bins)
     for parameter, parameter_function in config['fixed_parameters_global'].items():
-        df = add_config_parameter_column(df, parameter, parameter_function)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
     df = add_computed_parameters(df)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     print(df.columns)
+    print(df)
     return(df)
 
 
@@ -121,11 +168,11 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, first_day, Location, experiment_config):
+                      nruns, sub_samples, modelname, first_day, Location, experiment_config, age_bins):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
-                                       config=experiment_config)
+                                       config=experiment_config, age_bins=age_bins)
 
     for sample in range(sub_samples):
         for i in Kivalues:
@@ -289,12 +336,14 @@ if __name__ == '__main__':
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
         modelname=args.emodl_template, first_day=first_day, Location=Location,
-        experiment_config=experiment_config)
+        experiment_config=experiment_config,
+        age_bins=experiment_setup_parameters.get('age_bins'))
 
     generateSubmissionFile(
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
         exe_dir=exe_dir, docker_image=docker_image)
 
+    exit()
     if Location == 'Local':
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
