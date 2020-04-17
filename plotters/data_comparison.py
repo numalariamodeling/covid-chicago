@@ -215,8 +215,8 @@ if __name__ == '__main__' :
     region = 'IL'  # region = args.region
 
     if("EMS" in region) :
-        region = region.split('_')[0]
         ems_nr = region.split('_')[1]
+        region = region.split('_')[0]
 
     if region == 'NMH_catchment':
         compare_NMH(exp_name)
