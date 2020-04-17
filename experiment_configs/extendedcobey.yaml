@@ -35,7 +35,7 @@ fixed_parameters_region_specific:
     'EMS_8': 2020-02-28
     'EMS_9': 2020-02-28       
     'EMS_10': 2020-02-28
-    'EMS_11': 2020-02-28
+    'EMS_11': 2020-02-28        
 fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
@@ -100,13 +100,13 @@ sampled_parameters:
     function_kwargs: {'low':0.05, 'high':0.3}
   'socialDistance_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-12}
+    function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
   'socialDistance_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-17}
+    function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
   'socialDistance_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21}
+    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
 fitted_parameters:
   # Note IL, NMH, Chicago and EMS_3 were fitted, the other EMS area Kis need updating/checking
   Kis:

@@ -1,7 +1,7 @@
 import argparse
-import re
 import logging
 import os
+import re
 import sys
 from datetime import date
 
@@ -22,10 +22,36 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 today = date.today()
 
-DEFAULT_CONFIG = './extendedcobey.yaml'
+BASE_CONFIG = './experiment_configs/extendedcobey.yaml'
 
 
-def add_config_parameter_column(df, parameter, parameter_function):
+def add_config_parameter_column(df, parameter, parameter_function, first_day=None):
+    """ Applies the described function and adds the column to the dataframe
+    Parameters
+    ----------
+    df: pd.DataFrame
+        dataframe of the fixed and sampled parameters which is used to generate scenarios
+    parameter: str
+        Name of the parameter to compute and add to the parameters dataframe
+        e.g.: incubation_pd
+    parameter_function: dict
+        A dictionary describing the function or constant to compute for the given parameter.
+        Supported options are:
+        - int: The column will contain a constant value
+          e.g.: initialAs
+        - matrix: Each matrix value is a numeric and the new columns added are of the form "<parameter><row>_<column>".
+          e.g. the contact matrix
+        - sampling: Any of the functions available in np.random can be used to randomly samply values for the parameter.
+          Arguments are passed to the sampling function as kwargs (which are specified in the yaml).
+        - DateToTimestep: This is a custom function that is supported to compute the amount of time 
+          from an intervention date. e.g. socialDistance_time
+        - subtract: This subtracts one column in the dataframe (x2) from another (x1).
+          e.g. SpeciesS (given N and initialAs)
+    Returns
+    -------
+    df: pd.DataFrame
+        dataframe with the additional column(s) added
+    """
     if isinstance(parameter_function, int):
         df[parameter] = parameter_function
     elif 'matrix' in parameter_function:
@@ -41,9 +67,9 @@ def add_config_parameter_column(df, parameter, parameter_function):
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
-            function_kwargs['startdate'] = first_day
-            df[parameter] = [globals()[function_name](**function_kwargs) for i in range(len(df))]
-            # Note that the custom_function needs to be imported
+            startdate_col = function_kwargs['startdate_col']
+            df[parameter] = [DateToTimestep(function_kwargs['dates'], df[startdate_col][i])
+                             for i in range(len(df))]
         elif function_name == 'subtract':
             df[parameter] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
     else:
@@ -52,6 +78,8 @@ def add_config_parameter_column(df, parameter, parameter_function):
 
 
 def add_fixed_parameters_region_specific(df, config, region):
+    """ For each of the region-specific parameters, iteratively add them to the parameters dataframe
+    """
     for parameter_group, parameter_group_values in config['fixed_parameters_region_specific'].items():
         if parameter_group in ('populations', 'startdate'):
             continue
@@ -61,6 +89,9 @@ def add_fixed_parameters_region_specific(df, config, region):
 
 
 def add_computed_parameters(df):
+    """ Parameters that are computed from other parameters are computed and added to the parameters
+    dataframe. 
+    """
     df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
     df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
     return df
@@ -115,6 +146,10 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
         raise ValueError("Not all placeholders have been replaced in the template emodl file. "
                          f"Remaining placeholders: {remaining_placeholders}")
     fin.close()
+    remaining_placeholders = re.findall(r'@\w+@', data)
+    if remaining_placeholders:
+        raise ValueError("Not all placeholders have been replaced in the template emodl file. "
+                         f"Remaining placeholders: {remaining_placeholders}")
     fin = open(os.path.join(temp_dir, f"simulation_{scen_num}.emodl"), "wt")
     fin.write(data)
     fin.close()
@@ -163,7 +198,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 
 def get_experiment_config(experiment_config_file):
-    config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
+    config = yaml.load(open(BASE_CONFIG), Loader=yaml.FullLoader)
     yaml_file = open(experiment_config_file)
     expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
     for param_type, updated_params in expt_config.items():
@@ -288,9 +323,11 @@ if __name__ == '__main__':
         sub_samples=experiment_setup_parameters['number_of_samples'],
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
-        modelname=args.emodl_template, first_day=first_day, Location=Location,
+        modelname=args.emodl_template,
+        first_day=first_day, Location=Location,
         experiment_config=experiment_config)
 
+    exit()
     generateSubmissionFile(
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
         exe_dir=exe_dir, docker_image=docker_image)

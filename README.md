@@ -100,9 +100,9 @@ Note that the user-supplied configuration file is used to provide
 
 ### Usage examples:
 - Using the default emodl template: `python runScenarios.py
-  --running_location Local --region IL  --experiment_config sample_experiment.yaml`
+  --running_location Local --region IL  --experiment_config ./experiment_configs/sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
-  --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
+  --running_location Local  --region IL  --experiment_config ./experiment_configs/sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
 
 ### 4.3. Postprocessing and visualizing results
 - latest postprocessing file that calculates incidences for extended SEIR model [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extended_model_postprocessing.py)
