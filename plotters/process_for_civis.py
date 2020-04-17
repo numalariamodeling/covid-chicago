@@ -6,28 +6,29 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 from simulation_setup import *
 from data_comparison import load_sim_data
-from copy import copy
+
 
 mpl.rcParams['pdf.fonttype'] = 42
+today = datetime.today()
+
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
-populations, Kis, startdate = load_setting_parameter()
 
 
 if __name__ == '__main__' :
 
-    exp_name = '20200416_EMS_11_mr_run4'
-    region  = "EMS_11"
-    first_day = startdate[region]  # date(2020, 2, 28)
+    exp_name = '20200416_EMS_4_mr_run4'
+
+    region = 'EMS_4'  # region = args.region
 
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     df = load_sim_data(exp_name)
+    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
     channels = ['infected', 'deaths', 'hospitalized', 'critical', 'ventilators']
     df['ventilators'] = df['critical']*0.8

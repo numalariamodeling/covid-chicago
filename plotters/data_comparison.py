@@ -6,15 +6,17 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 from simulation_setup import *
 
+
 mpl.rcParams['pdf.fonttype'] = 42
+today = datetime.today()
+
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
 
 def load_sim_data(exp_name) :
 
@@ -58,12 +60,13 @@ def calculate_incidence(adf, output_filename=None) :
     return adf
 
 
-def compare_NMH(exp_name, first_day) :
+def compare_NMH(exp_name) :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_chicago', 'NMH', 'Modeling COVID Data NMH_v1_200415_jg.csv'))
     ref_df['date'] = pd.to_datetime(ref_df['date'])
 
     df = load_sim_data(exp_name)
+    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
     channels = ['new_detected_hospitalized', 'hosp_det_cumul', 'hospitalized', 'critical']
     data_channel_names = ['covid pos admissions', 'cumulative admissions', 'inpatient census', 'ICU census']
@@ -146,7 +149,7 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
         plt.savefig('%s_KiCI.pdf' % plot_path, format='PDF')
 
 
-def compare_county(exp_name, first_day, county_name) :
+def compare_county(exp_name, county_name) :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200401_aggregated_data_cleaned.csv'))
     ref_df = ref_df[ref_df['county'] == county_name]
@@ -154,6 +157,7 @@ def compare_county(exp_name, first_day, county_name) :
     ref_df = ref_df.rename(columns={'spec_date' : 'date'})
 
     df = load_sim_data(exp_name)
+    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
     channels = ['new_detected', 'new_detected_hospitalized', 'detected_cumul', 'hosp_det_cumul']
     data_channel_names = ['new_case', 'new_hospitalizations', 'total_case', 'total_hospitalizations']
@@ -180,7 +184,7 @@ def compare_county(exp_name, first_day, county_name) :
     plt.show()
 
 
-def compare_ems(exp_name, first_day, ems=0) :
+def compare_ems(exp_name, ems=0) :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
 
@@ -195,8 +199,7 @@ def compare_ems(exp_name, first_day, ems=0) :
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
     df = load_sim_data(exp_name)
-    #df = df[df['Ki'] >= 6e-8  ]
-    #df = df[df['Ki'] <= 9e-8  ]
+    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
     df['ventilators'] = df['critical']*0.8
     df['critical_with_suspected'] = df['critical']
@@ -208,20 +211,18 @@ def compare_ems(exp_name, first_day, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200416_EMS_11_mr_run4'
+    exp_name = 'scenario_1/20200417_IL_scenario1_test'
+    region = 'IL'  # region = args.region
 
-    region = 'EMS_11'
-    emsyes = region.split('_')[0]
-    ems_nr = region.split('_')[1]
-
-    populations, Kis, startdate = load_setting_parameter()
-    first_day = startdate[region] # date(2020, 2, 28)
+    if("EMS" in region) :
+        ems_nr = region.split('_')[1]
+        region = region.split('_')[0]
 
     if region == 'NMH_catchment':
-        compare_NMH(exp_name, first_day)
+        compare_NMH(exp_name)
     elif region == 'Chicago':
-        compare_county(exp_name, first_day, county_name='Cook')
-    elif emsyes == 'EMS':
-        compare_ems(exp_name, first_day, ems=int(ems_nr))
+        compare_county(exp_name,  county_name='Cook')
+    elif region == 'EMS':
+        compare_ems(exp_name,  ems=int(ems_nr))
     elif region == 'IL':
-        compare_ems(exp_name, first_day)
+        compare_ems(exp_name)
