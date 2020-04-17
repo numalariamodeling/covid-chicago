@@ -76,7 +76,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                     df[f'{parameter}{i+1}_{j+1}'] = item
         elif 'np.random' in parameter_function:
             function_kwargs = parameter_function['function_kwargs']
-            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
+            df[parameter] = getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
                              for i in range(len(df))]
         elif 'custom_function' in parameter_function:
             function_name = parameter_function['custom_function']
