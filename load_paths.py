@@ -19,6 +19,14 @@ def load_box_paths(user_path=None):
         wdir= os.path.join(user_path,'Box','covid_chicago','cms_sim')
         exe_dir = os.path.join(user_path, 'Box','compartments')
         git_dir = os.path.join(user_path, 'Documents','GitHub','covid-chicago')
+
+    if 'patri' in user_path:
+        data_path= os.path.join(user_path, 'Box Sync')
+        project_path= os.path.join(user_path,'Box Sync','covid_chicago') #was origionally project_path
+        wdir= os.path.join(user_path,'Box Sync','covid_chicago','cms_sim')
+        exe_dir = os.path.join(user_path, 'Box Sync','compartments')
+        git_dir = os.path.join(user_path, 'Documents','GitHub','covid-chicago')
+
     elif 'jlg1657' in user_path or 'mrung' in user_path or 'geickelb1' in user_path:
 
         if 'jlg1657' in user_path :
