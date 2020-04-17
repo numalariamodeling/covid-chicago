@@ -6,15 +6,35 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 from simulation_setup import *
+import yaml
+#from dotenv import load_dotenv
+
 
 mpl.rcParams['pdf.fonttype'] = 42
+today = datetime.today()
+DEFAULT_CONFIG = './extendedcobey.yaml'
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+def get_experiment_config(experiment_config_file):
+    #config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
+    config = yaml.load(open(os.path.join(git_dir, DEFAULT_CONFIG)), Loader=yaml.FullLoader)
+    #yaml_file = open(experiment_config_file)
+    yaml_file = open(os.path.join(git_dir, experiment_config_file))
+    expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    for param_type, updated_params in expt_config.items():
+        if updated_params:
+            config[param_type].update(updated_params)
+    return config
+
+
+def get_fixed_parameters(experiment_config, region):
+    fixed = experiment_config['fixed_parameters']
+    return {param: fixed[param][region] for param in fixed}
 
 def load_sim_data(exp_name) :
 
@@ -195,8 +215,6 @@ def compare_ems(exp_name, first_day, ems=0) :
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
     df = load_sim_data(exp_name)
-    #df = df[df['Ki'] >= 6e-8  ]
-    #df = df[df['Ki'] <= 9e-8  ]
 
     df['ventilators'] = df['critical']*0.8
     df['critical_with_suspected'] = df['critical']
@@ -208,20 +226,25 @@ def compare_ems(exp_name, first_day, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200416_EMS_11_mr_run4'
+    exp_name = 'scenario_1/20200417_IL_scenario1_test'
+    region = 'IL'  # region = args.region
 
-    region = 'EMS_11'
-    emsyes = region.split('_')[0]
-    ems_nr = region.split('_')[1]
+    experiment_config = "./extendedcobey.yaml"
+    experiment_config = get_experiment_config(experiment_config)
+    fixed_parameters = get_fixed_parameters(experiment_config, region)
+
+    if("EMS" in region) :
+        region = region.split('_')[0]
+        ems_nr = region.split('_')[1]
 
     populations, Kis, startdate = load_setting_parameter()
-    first_day = startdate[region] # date(2020, 2, 28)
+    first_day = fixed_parameters['startdate'] # date(2020, 2, 28)
 
     if region == 'NMH_catchment':
         compare_NMH(exp_name, first_day)
     elif region == 'Chicago':
         compare_county(exp_name, first_day, county_name='Cook')
-    elif emsyes == 'EMS':
+    elif region == 'EMS':
         compare_ems(exp_name, first_day, ems=int(ems_nr))
     elif region == 'IL':
         compare_ems(exp_name, first_day)
