@@ -9,6 +9,7 @@ import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import yaml
+import yamlordereddictloader
 from dotenv import load_dotenv
 
 from load_paths import load_box_paths
@@ -63,7 +64,9 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             function_kwargs = parameter_function['function_kwargs']
             if function_name == 'subtract':
                 for bin in age_bins:
-                    df[f'{parameter}_{bin}'] = df[f'{function_kwargs["x1"]}_{bin}'] - df[f'{function_kwargs["x2"]}_{bin}']
+                    x1_bin = f'{function_kwargs["x1"]}_{bin}'
+                    x2_bin = f'{function_kwargs["x2"]}_{bin}'
+                    df[f'{parameter}_{bin}'] = df[x1_bin] - df[x2_bin]
         else:
             raise ValueError(f"Unknown type of parameter {parameter}")
     else:
@@ -76,7 +79,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                     df[f'{parameter}{i+1}_{j+1}'] = item
         elif 'np.random' in parameter_function:
             function_kwargs = parameter_function['function_kwargs']
-            df[parameter] = getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
+            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
                              for i in range(len(df))]
         elif 'custom_function' in parameter_function:
             function_name = parameter_function['custom_function']
@@ -208,7 +211,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 
 def get_experiment_config(experiment_config_file):
-    config = yaml.load(open(DEFAULT_CONFIG), Loader=yaml.FullLoader)
+    config = yaml.load(open(DEFAULT_CONFIG), Loader=yamlordereddictloader.Loader)
     yaml_file = open(experiment_config_file)
     expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
     for param_type, updated_params in expt_config.items():
