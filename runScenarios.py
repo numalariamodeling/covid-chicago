@@ -24,6 +24,26 @@ mpl.rcParams['pdf.fonttype'] = 42
 DEFAULT_CONFIG = './extendedcobey.yaml'
 
 
+def _parse_config_parameter(df, parameter, parameter_function):
+    print(parameter, parameter_function)
+    if isinstance(parameter_function, (int, float)):
+        return parameter_function
+    elif 'np.random' in parameter_function:
+        function_kwargs = parameter_function['function_kwargs']
+        return [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
+                for i in range(len(df))]
+    elif 'custom_function' in parameter_function:
+        function_name = parameter_function['custom_function']
+        function_kwargs = parameter_function['function_kwargs']
+        if function_name == 'DateToTimestep':
+            function_kwargs['startdate'] = first_day
+            return [DateToTimestep(**function_kwargs) for i in range(len(df))]
+        elif function_name == 'subtract':
+            return df[function_kwargs['x1']] - df[function_kwargs['x2']]
+    else:
+        raise ValueError(f"Unknown type of parameter {parameter}")
+
+
 def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
     """ Applies the described function and adds the column to the dataframe
     Parameters
@@ -58,39 +78,25 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             raise ValueError("Ages bins must be specified if using an age expansion")
         if 'list' in parameter_function:
             for bin, val in zip(age_bins, parameter_function['list']):
-                df[f'{parameter}_{bin}'] = val
+                df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
         elif 'custom_function' in parameter_function:
-            function_name = parameter_function['custom_function']
-            function_kwargs = parameter_function['function_kwargs']
-            if function_name == 'subtract':
+            if parameter_function['custom_function'] == 'subtract':
                 for bin in age_bins:
-                    x1_bin = f'{function_kwargs["x1"]}_{bin}'
-                    x2_bin = f'{function_kwargs["x2"]}_{bin}'
-                    df[f'{parameter}_{bin}'] = df[x1_bin] - df[x2_bin]
+                    df[f'{parameter}_{bin}'] = _parse_config_parameter(
+                        df, parameter,
+                        {'custom_function': 'subtract',
+                         'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
+                                             'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}})
         else:
-            raise ValueError(f"Unknown type of parameter {parameter}")
+            raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
-        if isinstance(parameter_function, int):
-            df[parameter] = parameter_function
-        elif 'matrix' in parameter_function:
+        if 'matrix' in parameter_function:
             m = parameter_function['matrix']
             for i, row in enumerate(m):
                 for j, item in enumerate(row):
-                    df[f'{parameter}{i+1}_{j+1}'] = item
-        elif 'np.random' in parameter_function:
-            function_kwargs = parameter_function['function_kwargs']
-            df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
-                             for i in range(len(df))]
-        elif 'custom_function' in parameter_function:
-            function_name = parameter_function['custom_function']
-            function_kwargs = parameter_function['function_kwargs']
-            if function_name == 'DateToTimestep':
-                function_kwargs['startdate'] = first_day
-                df[parameter] = [DateToTimestep(**function_kwargs) for i in range(len(df))]
-            elif function_name == 'subtract':
-                df[parameter] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
+                    df[f'{parameter}{i+1}_{j+1}'] = _parse_config_parameter(df, parameter, item)
         else:
-            raise ValueError(f"Unknown type of parameter {parameter}")
+            df[parameter] = _parse_config_parameter(df, parameter, parameter_function)
     return df
 
 
