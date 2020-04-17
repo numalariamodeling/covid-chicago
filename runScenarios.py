@@ -2,7 +2,7 @@ import argparse
 import logging
 import os
 import sys
-from datetime import date
+from datetime import datetime
 
 import matplotlib as mpl
 import numpy as np
@@ -18,8 +18,6 @@ from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
 log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
-
-today = date.today()
 
 DEFAULT_CONFIG = './extendedcobey.yaml'
 
@@ -160,15 +158,17 @@ def parse_args():
         type=str,
         help="Location where the simulation is being run.",
         choices=["Local", "NUCLUSTER"],
-        required=True
+        default=None,
     )
     parser.add_argument(
+        "-r",
         "--region",
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
         required=True
     )
     parser.add_argument(
+        "-c",
         "--experiment_config",
         type=str,
         help=("Config file (in YAML) containing the parameters to override the default config. "
@@ -177,6 +177,7 @@ def parse_args():
         required=True
     )
     parser.add_argument(
+        "-e",
         "--emodl_template",
         type=str,
         help="Template emodl file to use",
@@ -197,6 +198,9 @@ if __name__ == '__main__':
 
     _, _, wdir, exe_dir, git_dir = load_box_paths()
     Location = os.getenv("LOCATION") or args.running_location
+    if not Location:
+        raise ValueError("Please provide a running location via environment "
+                         "variable or CLI parameter.")
 
     # Only needed on non-Windows, non-Quest platforms
     docker_image = os.getenv("DOCKER_IMAGE")
@@ -230,7 +234,8 @@ if __name__ == '__main__':
     first_day = fixed_parameters['startdate']
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
-    exp_name = f"{today.strftime('%Y%m%d')}_{region}_updatedStartDate_rn{int(np.random.uniform(10, 99))}"
+    today = datetime.today()
+    exp_name = f"{today.strftime('%Y%m%d')}_{region}_updatedStartDate_rn{str(today.microsecond)[-2:]}"
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
