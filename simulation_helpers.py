@@ -104,7 +104,7 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
         sdf = sdf.rename(columns={
             x: x.split('{')[0] for x in channels
         })
-        sdf['run_index'] = run_num
+        sdf['run_num'] = run_num
         adf = pd.concat([adf, sdf])
 
     adf = adf.reset_index()
