@@ -146,10 +146,10 @@ fitted_parameters:
       function_kwargs: {'start': 3.0e-7, 'stop': 5.5e-7, 'num': 3}
     'EMS_8':
       np: linspace
-      function_kwargs: {'start': 30e-7, 'stop': 7.0e-7, 'num': 3}
+      function_kwargs: {'start': 3.0e-7, 'stop': 7.0e-7, 'num': 3}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 2.5e-7, 'stop': 40e-7, 'num': 3}
+      function_kwargs: {'start': 2.5e-7, 'stop': 4.0e-7, 'num': 3}
     'EMS_10':
       np: linspace
       function_kwargs: {'start': 4.0e-7, 'stop': 7.0e-7, 'num': 3}
