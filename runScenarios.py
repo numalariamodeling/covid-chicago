@@ -298,13 +298,14 @@ if __name__ == '__main__':
     if Location == 'Local':
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
+        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                plot_path=plot_path, delete_temp_dir=False)
+
         if args.post_process:
             # Once the simulations are done
             # number_of_samples*len(Kivalues) == nscen ### to check
-            combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-                                temp_exp_dir=temp_exp_dir, deleteFiles=False)
-            cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                    plot_path=plot_path, delete_temp_dir=False)
             df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
             master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
