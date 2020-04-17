@@ -1,0 +1,26 @@
+---
+title: "histogram"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(data.table)
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/covid_IDPH-selected/Copy of COVID_19Confirmed_Modeling___NW033120_update.csv')
+```
+
+```{r}
+df$SpecCollection = mdy(df$SpecCollection)
+df$OpenDate = mdy(df$OpenDate)
+
+df = df %>% filter(!is.na(SpecCollection) & !is.na(OpenDate))
+df = df %>% gather('SpecCollection', 'OpenDate', key = 'date_type', value = 'date')
+```
+
+```{r}
+ggplot(df, aes(x = date, fill = date_type)) + geom_histogram(alpha = .5, bins = 60, position = 'identity') + scale_fill_discrete(name = 'Date Type')# labels = c('Specimen Date', 'Open Date')) 
+```
+

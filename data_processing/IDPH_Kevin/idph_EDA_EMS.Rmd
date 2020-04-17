@@ -1,0 +1,162 @@
+---
+title: "IDPH Data EDA Visualizations"
+output:
+  pdf_document: default
+  html_document: default
+  fig_width: 12
+  fig_height: 10
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/EMS Region Graphs')
+
+library(data.table)
+library(tidyverse)
+library(Amelia)
+library(lubridate)
+
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/idph_cleaned_dates.csv')
+ems = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Data/EMS Region Crosswalk.csv')
+```
+
+label EMS regions 
+```{r}
+df$county = toupper(df$county) 
+ems$County = toupper(ems$County)
+names(ems)[2] = 'county'
+
+df = inner_join(df, ems)
+```
+
+data prep
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+df$spec_date = as.Date(df$spec_date)
+df$admission_date = as.Date(df$admission_date)
+df$onset_date = as.Date(df$onset_date)
+
+df$date_diff = as.numeric(df$admission_date - df$onset_date)
+
+df$EMS_Region = as.factor(df$EMS_Region)
+```
+
+graph case over time function
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+graph_census = function(df, title, savefile_name)
+{
+  df_time = as.data.frame(df %>% group_by(EMS_Region, spec_date) %>% count() %>% arrange(EMS_Region, spec_date))
+  df_time = df_time %>% group_by(EMS_Region) %>% mutate(cum_count = cumsum(n)) %>% filter(!is.na(spec_date))
+
+  df_time_hos = df %>% filter(hospital_admission == 'Yes') 
+  df_time_hos = as.data.frame(df_time_hos %>% group_by(EMS_Region, spec_date) %>% count() %>% arrange(EMS_Region, spec_date))
+  df_time_hos = df_time_hos %>% group_by(EMS_Region) %>% mutate(cum_count_hos = cumsum(n)) %>% filter(!is.na(spec_date))
+  
+  ggplot(df_time, aes(x = spec_date, y = cum_count, fill = 'orange')) + geom_area(alpha = .5) +
+    geom_line(alpha = .9, color = 'orange') +
+    geom_area(data = df_time_hos, aes(x = spec_date, y = cum_count_hos, fill = 'red'), alpha = .5) +
+    geom_line(data = df_time_hos, aes(x = spec_date, y = cum_count_hos), color = 'red', alpha = .9) +
+    scale_fill_manual(values = c('orange', 'red'), name = 'Counts',
+                      labels = c('Cases Census', 'Hosptialization Census')) + ggtitle(title) + theme_bw() +
+    xlab('Onset Date') + ylab('Number of Cases') + scale_x_date(date_labels = '%b/%d', date_breaks = '2 days') +
+    theme(text = element_text(family = 'Avenir'), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    facet_wrap(~ EMS_Region) + ggsave(savefile_name, width = 16, height = 14)
+}
+```
+
+### Case and Hospitalizations 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# daily census (cases, hopsitalizations)
+graph_census(df, 'Total Census by EMS Region', '1EM-Total Census.png')
+
+# without travel history
+graph_census(df %>% filter(travel == 'No'), 'Census W/O Travel History by EMS Region', '2EM-Census without Travel.png')
+```
+
+### Demographics Comparison b/w Hospitalized and Non-Hospitalized
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+df_demo = df
+df_demo$hospital_admission[is.na(df_demo$hospital_admission)] = 'Unknown'
+df_demo$hospital_admission = factor(df_demo$hospital_admission, levels = c('No', 'Yes', 'Unknown'))
+
+# gender
+ggplot(df_demo, aes(x = sex)) + geom_histogram(alpha = .75, stat= 'count') +  ggtitle('Gender Distribution by EMS Region') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) +
+  ggsave('3EM-Gender Distribution.png', width = 16, height = 14)
+ggplot(df_demo, aes(x = sex, fill = hospital_admission)) + 
+  geom_histogram(position = 'dodge', stat = 'count', alpha = .75) +  ggtitle('Gender Distribution By Admissions by EMS Region') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + scale_fill_discrete(name = 'Admitted to Hospital?') +
+  facet_wrap(~ EMS_Region) + ggsave('8EM-Gender Distribution By Admissions.png', width = 16, height = 14)
+
+# age group
+df_demo$age[df_demo$age == 'Under 21'] = '0-20'
+ggplot(df_demo, aes(x = age)) + geom_histogram(alpha = .75, stat= 'count') +  ggtitle('Age Distribution by EMS Region') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) + 
+  ggsave('4EM-Age Distribution.png', width = 16, height = 14)
+ggplot(df_demo, aes(x = age, fill = hospital_admission)) +
+  geom_histogram(position = 'dodge', stat = 'count', alpha = .75) + ggtitle('Age Distribution By Admissions by EMS Region') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + scale_fill_discrete(name = 'Admitted to Hospital?') +
+  facet_wrap(~ EMS_Region) + ggsave('9EM-Age Distribution By Admissions.png', width = 16, height = 14)
+```
+
+### Days b/w Onset and Hospitalizations
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = date_diff)) +
+  geom_histogram(aes(y = ..density..), alpha = .5, binwidth = .8, color = 'white', bins = 41) +
+  geom_density(aes(x = date_diff), alpha = .2, fill = 'green', color = 'dark green') + 
+  scale_y_continuous(sec.axis = sec_axis(~., name = 'Density')) + theme_bw() +
+  xlab('Days') + ylab('Count') + ggtitle('Distribution Between Onset and Hospitalization by EMS Region') + 
+  theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) + 
+  ggsave('5EM-Day Difference Onset Admission.png', width = 16, height = 14)
+
+# broken down by sex 
+ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = date_diff, color = sex, fill = sex)) +
+  geom_histogram(aes(y = ..density..), alpha = .5, color = 'white', position = 'dodge', bins = 41) +
+  geom_density(aes(x = date_diff), alpha = .2) + 
+  scale_y_continuous(sec.axis = sec_axis(~., name = 'Density')) + theme_bw() +
+  xlab('Days') + ylab('Count') + ggtitle('Distribution Between Onset and Hospitalization by EMS Region') +
+  theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) +
+  ggsave('6EM-Day Difference Onset Admission Gender.png', width = 16, height = 14)
+
+# broken down by age
+df$age[df$age == 'Under 21'] = '0-20'
+ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = age, y = date_diff, color = age)) +
+  geom_boxplot(alpha = .85) + theme_bw() +
+  xlab('Age') + ylab('Date Difference') + ggtitle('Distribution Between Onset and Hospitalization by EMS Region') + theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) + ggsave('7EM-Day Difference Age.png', width = 16, height = 14)
+```
+
+### Additional Breakdown
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+# Testing Reason
+df_testing = df
+df_testing$testing_reason[is.na(df_testing$testing_reason)] = 'Unknown'
+ggplot(df_testing %>% filter(!is.na(testing_reason)), aes(x = testing_reason)) +
+  geom_histogram(stat = 'count', alpha = .75) + coord_flip() + theme_bw() + xlab('Count') + ylab('Testing Reason') + 
+  ggtitle('Testing Reason Breakdown by EMS Region') + theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) +
+  ggsave('10EM-Testing Reason Breakdown.png', width = 16, height = 14)
+
+# Travel 
+df$travel[is.na(df$travel)] = 'Unknown'
+df$travel = factor(df$travel, levels = c('Unknown', 'Yes', 'No'))
+ggplot(df %>% filter(!is.na(travel)), aes(x = travel)) + geom_histogram(stat = 'count', alpha = .75) + coord_flip() +
+  xlab('Count') + ylab('Travel') + ggtitle('Travel Breakdown by EMS Region') + theme(text = element_text(family = 'Avenir')) +
+  facet_wrap(~ EMS_Region) + ggsave('11EM-Travel Breakdown.png', width = 16, height = 14)
+
+# ventilator
+df$ventilator[is.na(df$ventilator)] = 'Unknown'
+df$ventilator = factor(df$ventilator, levels = c('Unknown', 'Yes', 'No'))
+ggplot(df %>% filter(!is.na(ventilator)), aes(x = ventilator)) + geom_histogram(stat = 'count', alpha = .75) +
+  coord_flip() + xlab('Count') + ylab('Ventilator') + ggtitle('Ventilator Use Breakdown by EMS Region') + 
+  theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) + facet_wrap(~ EMS_Region) +
+  ggsave('12EM-Ventilator Breakdown.png', width = 16, height = 14)
+
+# ventilator
+df$icu[is.na(df$icu)] = 'Unknown'
+df$icu = factor(df$icu, levels = c('Unknown', 'Yes', 'No'))
+ggplot(df %>% filter(!is.na(icu)), aes(x = icu)) + geom_histogram(stat = 'count', alpha = .75) +
+  coord_flip() + xlab('Count') + ylab('ICU Usage') + ggtitle('ICU Usage Breakdown by EMS Region') + 
+  theme(text = element_text(family = 'Avenir')) + facet_wrap(~ EMS_Region) + 
+  ggsave('13EM-ICU Breakdown.png', width = 16, height = 14)
+```
