@@ -1,7 +1,8 @@
 experiment_setup_parameters:
   'number_of_samples': 20
   'number_of_runs': 1
-fixed_parameters:
+fixed_parameters_region_specific:
+fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
     np.random: uniform

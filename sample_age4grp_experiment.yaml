@@ -1,87 +1,36 @@
 experiment_setup_parameters:
   'number_of_samples': 2
   'number_of_runs': 1
+  age_bins:
+    - age0to19
+    - age20to39
+    - age40to59
+    - age60to100    
 fixed_parameters_region_specific:
-  N_age_4grp:
-    'NMH_catchment':
-      'N_age0to19': 924766
-      'N_age20to39': 1135240
-      'N_age40to59': 941609
-      'N_age60to100': 713926
-    #'Chicago': , 
+  N:
+    expand_by_age: True
+    'NMH_catchment': [78401,96245,79829,60526]
+    #'Chicago': ,
     #'IL': , 
-    'EMS_1':
-      'N_age0to19': 170342
-      'N_age20to39': 184052
-      'N_age40to59': 203274
-      'N_age60to100': 182064
-    'EMS_2':
-      'N_age0to19': 246836
-      'N_age20to39': 291953
-      'N_age40to59': 311148
-      'N_age60to100': 279459
-    'EMS_3':
-      'N_age0to19': 128558
-      'N_age20to39': 147943
-      'N_age40to59': 181366
-      'N_age60to100': 163605
-    'EMS_4':
-      'N_age0to19': 156230
-      'N_age20to39': 178549
-      'N_age40to59': 199940
-      'N_age60to100': 166815
-    'EMS_5':
-      'N_age0to19': 89601
-      'N_age20to39': 103718
-      'N_age40to59': 113788
-      'N_age60to100': 112211
-    'EMS_6':
-      'N_age0to19': 170529
-      'N_age20to39': 215422
-      'N_age40to59': 212023
-      'N_age60to100': 194309
-    'EMS_7':
-      'N_age0to19': 459863
-      'N_age20to39': 455969
-      'N_age40to59': 532097
-      'N_age60to100': 377955
-    'EMS_8':
-      'N_age0to19': 406488
-      'N_age20to39': 439749
-      'N_age40to59': 492527
-      'N_age60to100': 344784
-    'EMS_9':
-      'N_age0to19': 482757
-      'N_age20to39': 506403
-      'N_age40to59': 591629
-      'N_age60to100': 399718
-    'EMS_10':
-      'N_age0to19': 252497
-      'N_age20to39': 252957
-      'N_age40to59': 313926
-      'N_age60to100': 238921
-    'EMS_11':
-      'N_age0to19': 656456
-      'N_age20to39': 889748
-      'N_age40to59': 697571
-      'N_age60to100': 500905
+    'EMS_1': [170342, 184052, 203274, 182064]
+    'EMS_2': [246836, 291953, 311148, 279459]
+    'EMS_3': [128558, 147943, 181366, 163605]
+    'EMS_4': [156230, 178549, 199940, 166815]
+    'EMS_5': [89601, 103718, 113788, 112211]
+    'EMS_6': [170529, 215422, 212023, 194309]
+    'EMS_7': [459863, 455969, 532097, 377955]
+    'EMS_8': [406488, 439749, 492527, 344784]
+    'EMS_9': [482757, 506403, 591629, 399718]
+    'EMS_10': [252497, 252957, 313926, 238921]
+    'EMS_11': [656456, 889748, 697571, 500905]
 fixed_parameters_global:
-  'initialAs_age0to19': 3
-  'initialAs_age20to39': 3
-  'initialAs_age40to59': 3
-  'initialAs_age60to100': 3
-  'speciesS_age0to19':
+  initialAs:
+    expand_by_age: True
+    list: [3, 3, 3, 3]
+  speciesS:
+    expand_by_age: True
     custom_function: subtract
-    function_kwargs: {'x1': N_age0to19, 'x2': initialAs_age0to19}
-  'speciesS_age20to39':
-    custom_function: subtract
-    function_kwargs: {'x1': N_age20to39, 'x2': initialAs_age20to39}
-  'speciesS_age40to59':
-    custom_function: subtract
-    function_kwargs: {'x1': N_age40to59, 'x2': initialAs_age40to59}
-  'speciesS_age60to100':
-    custom_function: subtract
-    function_kwargs: {'x1': N_age60to100, 'x2': initialAs_age60to100}
+    function_kwargs: {'x1': N, 'x2': initialAs}
   C:
     matrix:
       - [0.425, 0.109, 0.068, 0.155]
