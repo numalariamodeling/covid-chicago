@@ -1,0 +1,117 @@
+---
+title: "Mobility Trends by EMS Regions"
+date: "4/8/2020"
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,echo=FALSE,include=FALSE}
+#Loading the csv file 
+library(dplyr)
+library(stringr)
+data <- read.csv("Mobility_Trend_EMS.csv")
+```
+
+
+```{r,echo=FALSE,include=FALSE}
+colnames(data) <- c("EMS","County", "Retail/Recreation (%)", "Grocery/Pharmacy (%)", "Parks (%)", "Transit Stations (%)", "Workplace (%)", "Residential (%)")
+head(data)
+```
+
+These reports show how visits and length of stay at different places change on compared to a baseline in each EMS region in the State of Illinois. Changes for each day are compared to a baseline value for that day of the week. The baseline is the median value, for the corresponding day of the week, during the 5- week period Jan 3–Feb 6, 2020. Data was extracted on March 29th, 2020. 
+
+###Mobility Change by EMS Region
+```{r,echo=FALSE, warning=FALSE}
+#Summarize by EMS Region
+knitr::kable(data %>% subset(select=c("EMS", "Retail/Recreation (%)", "Grocery/Pharmacy (%)", "Parks (%)", "Transit Stations (%)", "Workplace (%)", "Residential (%)"))%>% group_by(EMS)  %>% summarise_at(vars(c("Retail/Recreation (%)", "Grocery/Pharmacy (%)", "Parks (%)", "Transit Stations (%)", "Workplace (%)", "Residential (%)")), funs(mean(., na.rm=TRUE))) %>% round(digit=2))
+
+```
+
+
+```{r,echo=FALSE, warning=FALSE,include=FALSE}
+library(ggplot2)
+new_data<- data %>% subset(select=c("EMS", "Retail/Recreation (%)", "Grocery/Pharmacy (%)", "Parks (%)", "Transit Stations (%)", "Workplace (%)", "Residential (%)"))%>% group_by(EMS)  %>% summarise_at(vars(c("Retail/Recreation (%)", "Grocery/Pharmacy (%)", "Parks (%)", "Transit Stations (%)", "Workplace (%)", "Residential (%)")), funs(mean(., na.rm=TRUE))) %>% round(digit=2)
+new_data <- as.data.frame(new_data)
+new_data$EMS <-as.factor(new_data$EMS)
+```
+
+
+```{r,echo=FALSE,warning=FALSE,include=FALSE}
+#retail
+library(RColorBrewer)
+library(gridExtra)
+library(ggpubr)
+retail <-ggplot(new_data, aes(x=EMS, y=new_data[,2],fill=EMS)) + geom_bar(stat="identity") +
+theme_bw()+
+scale_x_discrete(labels=c("1", "2", "3","4", "5", "6", "7", "8", "9", "10", "11"))+
+scale_fill_brewer(palette = "Spectral")+
+ylab("")+ggtitle("Retail/Recreation (%)")+
+xlab("")+
+theme(plot.title = element_text(hjust = 0.5))+
+ylim(c(-65,65))+guides(fill=FALSE)
+
+#grocery
+grocery <- ggplot(new_data, aes(x=EMS, y=new_data[,3],fill=EMS)) + geom_bar(stat="identity") +
+theme_bw()+
+scale_x_discrete(labels=c("1", "2", "3","4", "5", "6", "7", "8", "9", "10", "11"))+
+scale_fill_brewer(palette = "Spectral")+
+ylab("")+ggtitle("Grocery/Pharmacy (%)")+
+xlab("")+
+theme(plot.title = element_text(hjust = 0.5))+
+ylim(c(-65,65))+guides(fill=FALSE)
+
+#parks
+parks <- ggplot(new_data, aes(x=EMS, y=new_data[,4],fill=EMS)) + geom_bar(stat="identity") +
+theme_bw()+
+scale_x_discrete(labels=c("1", "2", "3","4", "5", "6", "7", "8", "9", "10", "11"))+
+scale_fill_brewer(palette = "Spectral")+
+ylab("")+ggtitle("Parks (%)")+
+xlab("")+
+theme(plot.title = element_text(hjust = 0.5))+
+ylim(c(-65,65))+guides(fill=FALSE)
+
+#transit
+transit <- ggplot(new_data, aes(x=EMS, y=new_data[,5],fill=EMS)) + geom_bar(stat="identity") +
+theme_bw()+
+scale_x_discrete(labels=c("1", "2", "3","4", "5", "6", "7", "8", "9", "10", "11"))+
+scale_fill_brewer(palette = "Spectral")+
+ylab("")+ ggtitle("Transit Stations (%)")+
+xlab("")+
+theme(plot.title = element_text(hjust = 0.5))+
+ylim(c(-65,65))+guides(fill=FALSE)
+
+#Workplace
+workplace <- ggplot(new_data, aes(x=EMS, y=new_data[,6],fill=EMS)) + geom_bar(stat="identity") +
+theme_bw()+
+scale_x_discrete(labels=c("1", "2", "3","4", "5", "6", "7", "8", "9", "10", "11"))+
+scale_fill_brewer(palette = "Spectral")+
+ylab("")+ ggtitle("Workplace (%)")+
+xlab("EMS Regions")+
+theme(plot.title = element_text(hjust = 0.5))+
+ylim(c(-65,65))+
+  guides(fill=FALSE)
+
+#Residential
+residential <- ggplot(new_data, aes(x=EMS, y=new_data[,7],fill=EMS)) + geom_bar(stat="identity") +
+theme_bw()+
+scale_x_discrete(labels=c("1", "2", "3","4", "5", "6", "7", "8", "9", "10", "11"))+
+scale_fill_brewer(palette = "Spectral")+
+ylab("")+
+ggtitle("Residential (%)")+
+xlab("")+
+theme(plot.title = element_text(hjust = 0.5))+
+ylim(c(-65,65))+
+guides(fill=FALSE)
+
+
+```
+
+###Mobility Change by EMS Region and Public Location
+```{r,echo=FALSE,warning=FALSE}
+figure <- ggarrange(retail, grocery, parks, transit, workplace,residential, nrow=2, ncol=3,common.legend = TRUE,legend="bottom")
+figure
+```
