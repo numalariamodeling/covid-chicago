@@ -131,8 +131,6 @@ def generateParameterSamples(samples, pop, first_day, config, age_bins):
     df = add_computed_parameters(df)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
-    print(df.columns)
-    print(df)
     return(df)
 
 
@@ -343,7 +341,6 @@ if __name__ == '__main__':
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
         exe_dir=exe_dir, docker_image=docker_image)
 
-    exit()
     if Location == 'Local':
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
