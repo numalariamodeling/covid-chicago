@@ -1,0 +1,182 @@
+---
+title: "IDPH Data EDA Visualizations"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/Graphs/')
+
+library(data.table)
+library(Amelia)
+library(lubridate)
+library(tidyverse)
+
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/idph_cleaned_dates.csv')
+
+nyt_df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/NYT Data/nyt_data_by_day_county.csv')
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+df$spec_date = as.Date(df$spec_date)
+df$admission_date = as.Date(df$admission_date)
+df$onset_date = as.Date(df$onset_date)
+
+df$date_diff = as.numeric(df$admission_date - df$onset_date)
+```
+
+```{r}
+# cleaning
+
+df$sex[is.na(df$sex)] = 'Unknown'
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+graph_census = function(df, title, file_name)
+{
+  df_time = as.data.frame(df %>% group_by(spec_date) %>% count() %>% arrange(spec_date))
+  df_time = df_time %>% mutate(cum_count = cumsum(n)) %>% filter(!is.na(spec_date))
+  
+  df_time_hos = df %>% filter(hospital_admission == 'Yes') 
+  df_time_hos = as.data.frame(df_time_hos %>% group_by(spec_date) %>% count() %>% arrange(spec_date))
+  df_time_hos = df_time_hos %>% mutate(cum_count_hos = cumsum(n)) %>% filter(!is.na(spec_date))
+  
+  ggplot(df_time, aes(x = spec_date, y = cum_count, fill = 'orange')) + geom_area(alpha = .5) +
+    geom_line(alpha = .9, color = 'orange') +
+    geom_area(data = df_time_hos, aes(x = spec_date, y = cum_count_hos, fill = 'red'), alpha = .5) +
+    geom_line(data = df_time_hos, aes(x = spec_date, y = cum_count_hos), color = 'red', alpha = .9) +
+    scale_fill_manual(values = c('orange', 'red'), name = 'Counts',
+                      labels = c('Cases Census', 'Hosptialization Census')) +
+    ggtitle(title) + theme_bw() + xlab('Onset Date') + ylab('Number of Cases') +
+    theme(text = element_text(family = 'Avenir')) + ggsave(file_name)
+}
+```
+
+### Case and Hospitalizations 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# daily census (cases, hopsitalizations)
+graph_census(df, 'Total Census', '1-Total Census.png')
+
+# without travel history
+graph_census(df %>% filter(travel == 'No'), 'Census W/O Travel History', '2-Census without Travel.png')
+```
+
+##### Cook County
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+# Daily Census 
+graph_census(df %>% filter(county == 'Cook'), 'Total Census - Cook County', 'cook1-Total Census.png')
+
+# without travel history
+graph_census(df %>% filter(county == 'Cook' & travel == 'No'), 'Census W/O Travel History - Cook County',
+             'cook2-Census without Travel.png')
+```
+
+### Demographics Comparison b/w Hospitalized and Non-Hospitalized
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+df_demo = df
+df_demo$hospital_admission[is.na(df_demo$hospital_admission)] = 'Unknown'
+df_demo$hospital_admission = factor(df_demo$hospital_admission, levels = c('No', 'Yes', 'Unknown'))
+
+# gender
+ggplot(df_demo, aes(x = sex)) + geom_histogram(alpha = .75, stat= 'count') +  ggtitle('Gender Distribution') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + ggsave('3-Gender Distribution.png')
+ggplot(df_demo, aes(x = sex, fill = hospital_admission)) + 
+  geom_histogram(position = 'dodge', stat = 'count', alpha = .75) +  ggtitle('Gender Distribution By Admissions') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + scale_fill_discrete(name = 'Admitted to Hospital?') +
+  ggsave('8-Gender Distribution By Admissions.png')
+
+# age group
+df_demo$age[df_demo$age == 'Under 21'] = '0-20'
+ggplot(df_demo, aes(x = age)) + geom_histogram(alpha = .75, stat= 'count') +  ggtitle('Age Distribution') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + ggsave('4-Age Distribution.png')
+ggplot(df_demo, aes(x = age, fill = hospital_admission)) +
+  geom_histogram(position = 'dodge', stat = 'count', alpha = .75) + ggtitle('Age Distribution By Admissions') +
+  theme_bw() + theme(text = element_text(family = 'Avenir')) + scale_fill_discrete(name = 'Admitted to Hospital?') + 
+  ggsave('9-Age Distribution By Admissions.png')
+```
+
+### Days b/w Onset and Hospitalizations
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = date_diff)) +
+  geom_histogram(aes(y = ..density..), alpha = .5, binwidth = .8, color = 'white', bins = 41) +
+  geom_density(aes(x = date_diff), alpha = .2, fill = 'green', color = 'dark green') + 
+  scale_y_continuous(sec.axis = sec_axis(~., name = 'Density')) + theme_bw() +
+  xlab('Days') + ylab('Count') + ggtitle('Distribution Between Onset and Hospitalization') + 
+  theme(text = element_text(family = 'Avenir')) + ggsave('5-Day Difference Onset Admission.png')
+
+# broken down by sex 
+ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = date_diff, color = sex, fill = sex)) +
+  geom_histogram(aes(y = ..density..), alpha = .5, color = 'white', position = 'dodge', bins = 41) +
+  geom_density(aes(x = date_diff), alpha = .2) + 
+  scale_y_continuous(sec.axis = sec_axis(~., name = 'Density')) + theme_bw() +
+  xlab('Days') + ylab('Count') + ggtitle('Distribution Between Onset and Hospitalization') + 
+  theme(text = element_text(family = 'Avenir')) + ggsave('6-Day Difference Onset Admission Gender.png')
+
+# broken down by age
+df$age[df$age == 'Under 21'] = '0-20'
+ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = age, y = date_diff, color = age)) +
+  geom_boxplot(alpha = .85) + theme_bw() +
+  xlab('Age') + ylab('Date Difference') + ggtitle('Distribution Between Onset and Hospitalization') +
+  theme(text = element_text(family = 'Avenir')) + ggsave('7-Day Difference Age.png')
+```
+
+### Additional Breakdown
+
+```{r echo=FALSE, message=FALSE, warning=FALSE} 
+# Testing Reason
+df_testing = df
+df_testing$testing_reason[is.na(df_testing$testing_reason)] = 'Unknown'
+ggplot(df_testing %>% filter(!is.na(testing_reason)), aes(x = testing_reason)) +
+  geom_histogram(stat = 'count', alpha = .75) + coord_flip() + theme_bw() + xlab('Count') + ylab('Testing Reason') + 
+  ggtitle('Testing Reason Breakdown') + theme(text = element_text(family = 'Avenir')) +
+  ggsave('10-Testing Reason Breakdown.png')
+
+# Travel 
+df$travel[is.na(df$travel)] = 'Unknown'
+df$travel = factor(df$travel, levels = c('Unknown', 'Yes', 'No'))
+ggplot(df %>% filter(!is.na(travel)), aes(x = travel)) + geom_histogram(stat = 'count', alpha = .75) + coord_flip() +
+  xlab('Count') + ylab('Travel') + ggtitle('Travel Breakdown') + theme(text = element_text(family = 'Avenir')) + 
+  ggsave('11-Travel Breakdown.png')
+
+# ventilator
+df$ventilator[is.na(df$ventilator)] = 'Unknown'
+df$ventilator = factor(df$ventilator, levels = c('Unknown', 'Yes', 'No'))
+ggplot(df %>% filter(!is.na(ventilator)), aes(x = ventilator)) + geom_histogram(stat = 'count', alpha = .75) +
+  coord_flip() + xlab('Count') + ylab('Ventilator') + ggtitle('Ventilator Use Breakdown') + 
+  theme(text = element_text(family = 'Avenir')) + ggsave('12-Ventilator Breakdown.png')
+ 
+# ventilator
+df$icu[is.na(df$icu)] = 'Unknown'
+df$icu = factor(df$icu, levels = c('Unknown', 'Yes', 'No'))
+ggplot(df %>% filter(!is.na(icu)), aes(x = icu)) + geom_histogram(stat = 'count', alpha = .75) +
+  coord_flip() + xlab('Count') + ylab('ICU Usage') + ggtitle('ICU Usage Breakdown') + 
+  theme(text = element_text(family = 'Avenir')) + ggsave('13-ICU Breakdown.png')
+```
+
+Age Distribution By All, Hospitalization, ICU, Vent
+```{r}
+all = df %>% group_by(age) %>% count()
+all$category = 'Total'
+hospitalized = df %>% filter(hospital_admission == 'Yes') %>% group_by(age) %>% count()
+hospitalized$category = 'Hospitalized'
+icu = df %>% filter(icu == 'Yes') %>% group_by(age) %>% count()
+icu$category = 'In ICU'
+vent = df %>% filter(ventilator == 'Yes') %>% group_by(age) %>% count()
+vent$category = 'On Ventilator'
+
+final = rbind(all, hospitalized)
+final = rbind(final, icu)
+final = rbind(final, vent)
+final = final %>% filter(age != '#N/A')
+
+ggplot(final, aes(x = age, y = n, fill = category)) + geom_bar(alpha = .75, stat = 'identity') + xlab('Age Group') +
+  ylab('Count') + ggtitle('Age Breakdown by Patient Category') +
+  theme(text = element_text(family = 'Avenir')) + scale_fill_discrete(name = 'Category') + 
+  theme_bw() + facet_wrap(~ category, scales = 'free') + 
+  ggsave('14-Age Distribution by Category.png', width = 10, height = 10)
+```

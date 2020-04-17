@@ -1,0 +1,152 @@
+---
+title: "IDPH_Cleaning_2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output')
+
+library(data.table)
+library(tidyverse)
+library(Amelia)
+library(lubridate)
+library(mice)
+
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/covid_IDPH-selected/Corona Virus Reports/COVID_19Confirmed_Modeling___Northwestern_update0415_v1.csv')
+
+#nyt_df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/NYT Data/nyt_data_by_day_county.csv')
+```
+
+basic cleaning
+```{r}
+# nulls 
+df[df == ''] = NA
+colSums(is.na(df))
+missmap(df)
+
+names(df) = c('ID', 'open_date', 'spec_date', 'sex', 'age', 'county', 'onset_date', 'testing_reason', 'hopsital_facility', 'hospital_admission', 'admission_date', 'outbreak', 'contact', 'travel', 'icu', 'ventilator', 'death_date')
+
+# date conversions
+df$spec_date = mdy(df$spec_date)
+df$open_date = mdy(df$open_date)
+df$onset_date = mdy(df$onset_date)
+df$admission_date = mdy(df$admission_date)
+
+# remove out of state patients
+df = df %>% filter(county != 'Out Of State') 
+```
+
+date imputation
+```{r}
+# date
+year(df$spec_date[df$spec_date < '2020/1/1' &!is.na(df$spec_date)]) = 2020
+year(df$open_date[df$open_date < '2020/1/1' &!is.na(df$open_date)]) = 2020
+year(df$onset_date[df$onset_date < '2020/1/1' &!is.na(df$onset_date)]) = 2020
+year(df$admission_date[df$admission_date < '2020/1/1' &!is.na(df$admission_date)]) = 2020
+
+date_df = df %>% select(matches('date|ID')) %>% select(-admission_date)
+date_df$spec_diff = as.numeric(-(date_df$spec_date - date_df$open_date))
+date_df$onset_diff = as.numeric(-(date_df$onset_date - date_df$open_date))
+date_diff_impute = date_df %>% select(matches('diff'))
+
+date_df_impute = mice(date_diff_impute, m = 5)
+date_df_impute = complete(date_df_impute)
+
+date_df = date_df %>% select(-matches('diff'))
+date_df = cbind(date_df, date_df_impute)
+
+date_df = date_df %>% gather('spec_date', 'onset_date', key = 'date_type', value = 'date')
+date_df = date_df %>% gather('spec_diff', 'onset_diff', key = 'diff_type', value = 'diff')
+
+date_df = date_df %>% filter((date_type == 'spec_date' & diff_type == 'spec_diff') | (date_type == 'onset_date' & diff_type == 'onset_diff'))
+
+date_df$date[is.na(date_df$date)] = date_df$open_date[is.na(date_df$date)] - days(date_df$diff[is.na(date_df$date)])
+date_df = date_df %>% select(-diff_type, - diff) %>% spread('date_type', 'date')
+
+df_admit_date = df %>% select(admission_date)
+df = df %>% select(-matches('date'))
+df = cbind(df, df_admit_date)
+df = inner_join(df, date_df, by = 'ID')
+```
+
+output
+```{r}
+write.csv(df, 'idph_cleaned_dates.csv', row.names = F)
+```
+
+
+cumluation function
+```{r}
+cum_cases = function(df, county_name)
+{
+  df_time = df %>% filter(!is.na(spec_date) & county == county_name)
+  df_time = as.data.frame(df_time %>% group_by(spec_date) %>% count() %>% arrange(spec_date))
+  df_time = df_time %>% mutate(cum_count = cumsum(n)) %>% filter(!is.na(spec_date))
+  return(df_time)
+}
+ 
+cum_hospitalizations = function(df, county_name)
+{
+  df_time = df %>% filter(!is.na(spec_date) & county == county_name & hospital_admission == 'Yes')
+  df_time = as.data.frame(df_time %>% group_by(spec_date) %>% count() %>% arrange(spec_date))
+  
+  return(df_time)
+}
+```
+
+Aggregate Data
+```{r}
+county_list = df %>% filter(!is.na(county)) %>% distinct(county)
+county_list = as.vector(county_list$county)
+
+for (i in 1:length(county_list))
+{
+  df_county = cum_cases(df, county_list[i])
+  df_county$county = county_list[i]
+  if (i == 1)
+  {
+    df_agg = df_county
+  }
+  else
+  {
+    df_agg = rbind(df_agg, df_county)
+  }
+}
+
+county_list = df %>% filter(!is.na(county) & hospital_admission == 'Yes') %>% distinct(county)
+county_list = as.vector(county_list$county)
+
+for (i in 1:length(county_list))
+{
+  df_county = cum_hospitalizations(df, county_list[i])
+  df_county$county = county_list[i]
+  if (i == 1)
+  {
+    df_agg_hos = df_county
+  }
+  else
+  {
+    df_agg_hos = rbind(df_agg_hos, df_county)
+  }
+}
+
+df_agg = df_agg %>% select(-cum_count)
+names(df_agg_hos)[2] = 'hos_n'
+df_agg = merge(df_agg, df_agg_hos, all = T)
+
+# wrangle 
+df_agg$n[is.na(df_agg$n)] = 0
+df_agg$hos_n[is.na(df_agg$hos_n)] = 0
+
+df_agg = df_agg %>% arrange(county, spec_date)
+
+df_agg = df_agg %>% group_by(county) %>% mutate(cum_count = cumsum(n)) 
+df_agg = df_agg %>% group_by(county) %>% mutate(cum_hosptializations = cumsum(hos_n)) 
+
+names(df_agg) = c('spec_date', 'county', 'new_case', 'new_hospitalizations', 'total_case', 'total_hopsitalizations')
+```
+
+output
+```{r}
+write.csv(df_agg, 'aggregated_data_cleaned.csv', row.names = F)
+```
