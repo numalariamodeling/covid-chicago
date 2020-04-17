@@ -43,7 +43,7 @@ def add_config_parameter_column(df, parameter, parameter_function, first_day=Non
           e.g. the contact matrix
         - sampling: Any of the functions available in np.random can be used to randomly samply values for the parameter.
           Arguments are passed to the sampling function as kwargs (which are specified in the yaml).
-        - DateToTimestep: This is a custom function that is supported to compute the amount of time 
+        - DateToTimestep: This is a custom function that is supported to compute the amount of time
           from an intervention date. e.g. socialDistance_time
         - subtract: This subtracts one column in the dataframe (x2) from another (x1).
           e.g. SpeciesS (given N and initialAs)
@@ -90,23 +90,23 @@ def add_fixed_parameters_region_specific(df, config, region):
 
 def add_computed_parameters(df):
     """ Parameters that are computed from other parameters are computed and added to the parameters
-    dataframe. 
+    dataframe.
     """
     df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
     df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
     return df
 
 
-def generateParameterSamples(samples, pop, first_day, config):
+def generateParameterSamples(samples, pop, config):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechansims.
-    Supported functions are in the FUNCTIONS variable.
     """
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
+    df['startdate'] = experiment_config['fixed_parameters_region_specific']['startdate'][region]
 
     for parameter, parameter_function in config['sampled_parameters'].items():
         df = add_config_parameter_column(df, parameter, parameter_function)
@@ -159,7 +159,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                       nruns, sub_samples, modelname, first_day, Location, experiment_config):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population,
                                        config=experiment_config)
 
     for sample in range(sub_samples):
