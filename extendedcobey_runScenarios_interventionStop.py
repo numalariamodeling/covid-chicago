@@ -26,7 +26,7 @@ today = date.today()
 
 
 # parameter samples
-def generateParameterSamples(samples, pop, first_day, stop_date):
+def generateParameterSamples(samples, pop, first_day):
         df =  pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
@@ -55,18 +55,16 @@ def generateParameterSamples(samples, pop, first_day, stop_date):
 
         df['social_multiplier_1'] = np.random.uniform(0.9, 1, samples)
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
-        df['social_multiplier_3'] = np.random.uniform( 0.05 , 0.3, samples) #0.2, 0.6
+        df['social_multiplier_3'] = np.random.uniform(0.05 , 0.3, samples) #0.2, 0.6
 
         df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
         df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
         df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
 
-        df['back_to_normal'] = DateToTimestep(stop_date,startdate= first_day)  # date(2020, 5, 9)
-
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
 
-def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
+def replaceParameters(df, Ki_i,  sample_nr, emodlname, scen_num,  stop_date, backtonormal_multiplier) :
     fin = open(os.path.join(temp_exp_dir,emodlname), "rt")          
     data = fin.read()
     data = data.replace('@speciesS@', str(df.speciesS[sample_nr]))
@@ -96,7 +94,8 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     data = data.replace('@socialDistance_time1@',  str(df.socialDistance_time1[sample_nr]))
     data = data.replace('@socialDistance_time2@',  str(df.socialDistance_time2[sample_nr]))
     data = data.replace('@socialDistance_time3@',  str(df.socialDistance_time3[sample_nr]))
-    data = data.replace('@back_to_normal@',  str(df.back_to_normal[sample_nr]))
+    data = data.replace('@back_to_normal@',  str(DateToTimestep(stop_date,startdate= first_day)))
+    data = data.replace('@backtonormal_multiplier@', str(backtonormal_multiplier))
 
     fin.close()
     fin = open(os.path.join(temp_dir, "simulation_"+str(scen_num)+".emodl"), "wt")
@@ -104,35 +103,37 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin.close()
 
     
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname ,first_day , stop_date):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname ,first_day , stop_dates,backtonormal_multiplier_values):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day, stop_date=stop_date)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
     for sample in range(sub_samples):
         for i in Kivalues:
-            scen_num += 1
-            #print(i)
+            for backtonormal_multiplier in backtonormal_multiplier_values :
+                for stop_date in  stop_dates:
+                    scen_num += 1
+                    #print(i)
 
-            #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
-            lst.append([sample, scen_num, i])
-            replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
+                    #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
+                    lst.append([sample, scen_num, i, backtonormal_multiplier, stop_date])
+                    replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num, stop_date=stop_date, backtonormal_multiplier=backtonormal_multiplier)
 
-            # adjust model.cfg
-            fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
-            data_cfg = fin.read()
-            data_cfg = data_cfg.replace('@duration@', str(duration))
-            data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
-            data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            if Location == 'Local' :
-                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
-            if not Location == 'Local' :
-                data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
-            fin.close()
-            fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
-            fin.write(data_cfg)
-            fin.close()
+                    # adjust model.cfg
+                    fin = open(os.path.join(temp_exp_dir,"model.cfg"), "rt")
+                    data_cfg = fin.read()
+                    data_cfg = data_cfg.replace('@duration@', str(duration))
+                    data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
+                    data_cfg = data_cfg.replace('@nruns@', str(nruns))
+                    if Location == 'Local' :
+                        data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
+                    if not Location == 'Local' :
+                        data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+                    fin.close()
+                    fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
+                    fin.write(data_cfg)
+                    fin.close()
 
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
+    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'backtonormal_multiplier','socialDistance_multiplier'])
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
     return (scen_num)
 
@@ -150,7 +151,7 @@ if __name__ == '__main__' :
     #=============================================================
 
     region = 'NMH_catchment'
-    exp_name = today.strftime("%Y%m%d") + '_%s_testInterventionStop' % region  + '_rn' + str(int(np.random.uniform(10, 99)))
+    exp_name = today.strftime("%Y%m%d") + '_%s_test_SocialDistance' % region  + '_rn' + str(int(np.random.uniform(10, 99)))
 
     # Selected SEIR model
     emodlname = 'extendedmodel_cobey_interventionStop.emodl'
@@ -170,7 +171,8 @@ if __name__ == '__main__' :
     # Parameter values
     Kivalues = Kis[region]
     first_day = startdate[region]
-    stop_date = date(2020, 5, 13)
+    stop_dates = [date(2020, 4, 30), date(2020, 5, 30), date(2020, 6, 30), date(2020, 7, 30)]
+    backtonormal_multiplier_values = np.linspace(0, 1, 6)
 
     nscen = generateScenarios(simulation_population,
                               Kivalues,
@@ -180,7 +182,8 @@ if __name__ == '__main__' :
                               monitoring_samples = monitoring_samples,
                               modelname=emodlname,
                               first_day = first_day,
-                              stop_date=stop_date)
+                              stop_dates=stop_dates,
+                              backtonormal_multiplier_values=backtonormal_multiplier_values)
 
     generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir)
   

@@ -16,7 +16,7 @@ from simulation_setup import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = False
-Location = 'Local'  # 'NUCLUSTER'
+Location = 'NUCLUSTER'  # 'NUCLUSTER'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 emodl_dir = os.path.join(git_dir, 'emodl')
@@ -44,19 +44,18 @@ def generateParameterSamples(samples, pop, first_day):
         df['recovery_rate_crit'] = np.random.uniform(25.3, 31.6, samples)
         df['fraction_symptomatic'] = np.random.uniform(0.5, 0.8, samples)
         df['fraction_severe'] = np.random.uniform(0.2, 0.5, samples)
-        #df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
+        df['fraction_critical'] = np.random.uniform(0.2, 0.5, samples)
         #df['fraction_critical'] = np.random.uniform(0.15, 0.35, samples)
-        df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
-        df['cfr'] = np.random.uniform(0.01, 0.04, samples)
-        # df['cfr'] = np.random.uniform(0.008, 0.022, samples)
+        #df['fraction_critical'] = np.random.uniform(0.15, 0.45, samples)
+        df['cfr'] = np.random.uniform(0.058, 0.22, samples)  #np.random.uniform(0.008, 0.022, samples)
         #df['cfr'] = np.random.uniform(0.0009, 0.0017, samples)
         #df['cfr'] = np.random.uniform(0.00445, 0.01185, samples)
-        # df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
+        #df['cfr'] = np.random.uniform(0.002675, 0.007775, samples)
         df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
         df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
         df['reduced_inf_of_det_cases'] = np.random.uniform(0.5, 0.9, samples)
-        df['d_Sym'] = np.random.uniform(0.1, 0.25, samples)
-        df['d_Sys'] = np.random.uniform(0.3, 0.7, samples)
+        df['d_Sym'] = np.random.uniform(0.2, 0.3, samples)
+        df['d_Sys'] = np.random.uniform(0.7, 0.9, samples)
         df['d_As'] = np.random.uniform(0, 0, samples)
         #df['Ki'] = np.random.uniform(2.e-7, 2.5e-7, samples)
 
@@ -64,10 +63,9 @@ def generateParameterSamples(samples, pop, first_day):
         df['social_multiplier_2'] = np.random.uniform(0.6, 0.9, samples)
         df['social_multiplier_3'] = np.random.uniform( 0.05 , 0.3, samples) #0.2, 0.6
 
-        mar_12_day = DateToTimestep(date(2020, 3, 12), startdate=first_day) # 28 # 13 for EMS_3, NMH
-        df['socialDistance_time1'] = mar_12_day
-        df['socialDistance_time2'] = mar_12_day+5
-        df['socialDistance_time3'] = mar_12_day+9
+        df['socialDistance_time1'] = DateToTimestep(date(2020, 3, 12), startdate=first_day)
+        df['socialDistance_time2'] = DateToTimestep(date(2020, 3, 17), startdate=first_day)
+        df['socialDistance_time3'] = DateToTimestep(date(2020, 3, 21), startdate=first_day)
 
         df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
         return(df)
@@ -109,7 +107,8 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname,  scen_num) :
     fin.close()
 
     
-def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples, nruns, sub_samples,  modelname, first_day):
+def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
+                      nruns, sub_samples, modelname, first_day, Location,region):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day)
@@ -119,7 +118,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             #print(i)
 
             #lst.append([simulation_population, sample, nruns, scen_num, i, Kval])
-            lst.append([sample, scen_num, i])
+            lst.append([sample, scen_num, i , first_day, simulation_population, region])
             replaceParameters(df=dfparam, Ki_i=i, sample_nr= sample, emodlname=modelname, scen_num=scen_num)
 
             # adjust model.cfg
@@ -128,18 +127,26 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             data_cfg = data_cfg.replace('@duration@', str(duration))
             data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
             data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            if Location == 'Local' :
-                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
-            if not Location == 'Local' :
+            if not Location == 'Local':
                 data_cfg = data_cfg.replace('trajectories', 'trajectories_scen' + str(scen_num))
+            elif sys.platform not in ["win32", "cygwin"]:
+                # When running on Linux or OSX (and not in Quest), assume the
+                # trajectories directory is in the working directory.
+                traj_fname = os.path.join('trajectories',
+                                          'trajectories_scen' + str(scen_num))
+                data_cfg = data_cfg.replace('trajectories', traj_fname)
+            elif Location == 'Local' :
+                data_cfg = data_cfg.replace('trajectories', './_temp/'+exp_name+'/trajectories/trajectories_scen' + str(scen_num))
+            else:
+                raise RuntimeError("Unable to decide where to put the trajectories file.")
             fin.close()
             fin = open(os.path.join(temp_dir,"model_"+str(scen_num)+".cfg"), "wt")
             fin.write(data_cfg)
             fin.close()
 
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki'])
+    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population','region'])
     df.to_csv(os.path.join(temp_exp_dir,"scenarios.csv"), index=False)
-    return (scen_num)
+    return scen_num
 
 
 if __name__ == '__main__' :
@@ -154,52 +161,56 @@ if __name__ == '__main__' :
     # Experiment design, fitting parameter and population
     #=============================================================
 
-    region = 'IL'
-    exp_name = today.strftime("%Y%m%d") + '_%s_JG_run5' % region
+    regions = ['EMS_1','EMS_2','EMS_3','EMS_4','EMS_5','EMS_6','EMS_7','EMS_8','EMS_9','EMS_10','EMS_11']
+    #regions = ['EMS_8']
+    for region in regions :
+        exp_name = today.strftime("%Y%m%d") + '_%s_mr_run4' % region
+        # Selected SEIR model
+        emodlname = 'extendedmodel_cobey.emodl'
 
-    # Selected SEIR model
-    emodlname = 'extendedmodel_cobey.emodl'
+        # Generate folders and copy required files
+        temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir)
 
-    # Generate folders and copy required files
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(exp_name,emodl_dir,emodlname, cfg_dir)
+        # Simlation setup
+        populations, Kis, startdate = load_setting_parameter()
+
+        simulation_population = populations[region]
+        number_of_samples = 50
+        number_of_runs = 5
+        duration = 365
+        monitoring_samples = 365  # needs to be smaller than duration
+
+        # Parameter values
+        Kivalues = Kis[region]
+        first_day = startdate[region] # date(2020, 2, 28)
+
+        nscen = generateScenarios(simulation_population,
+                                  Kivalues,
+                                  nruns=number_of_runs,
+                                  sub_samples=number_of_samples,
+                                  duration = duration,
+                                  monitoring_samples = monitoring_samples,
+                                  modelname=emodlname,
+                                  first_day = first_day,
+                                  Location=Location,
+                                  region=region
+                                  )
 
 
+        generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir)
 
-    # Simlation setup
-    populations, Kis, startdate = load_setting_parameter()
 
-    simulation_population = populations[region]
-    number_of_samples = 20
-    number_of_runs = 3
-    duration = 365
-    monitoring_samples = 365  # needs to be smaller than duration
+    if Location == 'Local' :
+        runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-    # Parameter values
-    Kivalues = Kis[region]
-    first_day = startdate[region] # date(2020, 2, 28)
+        # Once the simulations are done
+        #combineTrajectories(number_of_samples*len(Kivalues))
+        #cleanup(delete_temp_dir=False)
+        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
 
-    nscen = generateScenarios(simulation_population,
-                              Kivalues,
-                              nruns=number_of_runs,
-                              sub_samples=number_of_samples,
-                              duration = duration,
-                              monitoring_samples = monitoring_samples,
-                              modelname=emodlname,
-                              first_day=first_day)
+        df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-    generateSubmissionFile(nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir)
-
-    # if Location == 'Local' :
-    runExp(trajectories_dir=trajectories_dir, Location='Local')
-
-    # Once the simulations are done
-    #combineTrajectories(number_of_samples*len(Kivalues))
-    #cleanup(delete_temp_dir=False)
-    combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, deleteFiles=False)
-    cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,plot_path=plot_path, delete_temp_dir=False)
-
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-
-    sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
-    sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
-    sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')
+        sampleplot(df, allchannels=master_channel_list, plot_fname='main_channels.png')
+        sampleplot(df, allchannels=detection_channel_list, plot_fname='detection_channels.png')
+        sampleplot(df, allchannels=custom_channel_list, plot_fname='cumulative_channels.png')

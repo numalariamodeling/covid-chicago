@@ -19,6 +19,14 @@ def load_box_paths(user_path=None):
         wdir= os.path.join(user_path,'Box','covid_chicago','cms_sim')
         exe_dir = os.path.join(user_path, 'Box','compartments')
         git_dir = os.path.join(user_path, 'Documents','GitHub','covid-chicago')
+
+    if 'patri' in user_path:
+        data_path= os.path.join(user_path, 'Box Sync')
+        project_path= os.path.join(user_path,'Box Sync','covid_chicago') #was origionally project_path
+        wdir= os.path.join(user_path,'Box Sync','covid_chicago','cms_sim')
+        exe_dir = os.path.join(user_path, 'Box Sync','compartments')
+        git_dir = os.path.join(user_path, 'Documents','GitHub','covid-chicago')
+
     elif 'jlg1657' in user_path or 'mrung' in user_path or 'geickelb1' in user_path:
 
         if 'jlg1657' in user_path :
@@ -29,6 +37,11 @@ def load_box_paths(user_path=None):
         if 'mrung' in user_path :
             user_path = 'C:/Users/mrung'
             home_path = os.path.join(user_path, 'Box', 'NU-malaria-team','projects')
+            data_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'data')
+            git_dir = os.path.join(user_path, 'gitrepos', 'covid-chicago/')
+        if 'mrm9534' in user_path:
+            user_path = '/home/mrm9534/'
+            home_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'projects')
             data_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'data')
             git_dir = os.path.join(user_path, 'gitrepos', 'covid-chicago/')
         if 'geickelb1' in user_path :

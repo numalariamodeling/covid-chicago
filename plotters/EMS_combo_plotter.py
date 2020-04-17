@@ -81,8 +81,8 @@ def plot_on_fig(df, channels, axes, color, ems) :
 
 if __name__ == '__main__' :
 
-    stem = '20200414_EMS'
-    plot_name = '200415_TEST'
+    stem = '20200416_EMS'
+    plot_name = '200416_TEST'
     plot_first_day = date(2020,3,1)
     plot_last_day = date(2020,6,1)
 
