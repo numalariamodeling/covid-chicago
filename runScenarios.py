@@ -59,9 +59,11 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             for bin, val in zip(age_bins, parameter_function['list']):
                 df[f'{parameter}_{bin}'] = val
         elif 'custom_function' in parameter_function:
-            for bin in age_bins:
-                function_kwargs = parameter_function['function_kwargs']
-                df[f'{parameter}_{bin}'] = df[f'{function_kwargs["x1"]}_{bin}'] - df[f'{function_kwargs["x2"]}_{bin}']
+            function_name = parameter_function['custom_function']
+            function_kwargs = parameter_function['function_kwargs']
+            if function_name == 'subtract':
+                for bin in age_bins:
+                    df[f'{parameter}_{bin}'] = df[f'{function_kwargs["x1"]}_{bin}'] - df[f'{function_kwargs["x2"]}_{bin}']
         else:
             raise ValueError(f"Unknown type of parameter {parameter}")
     else:
