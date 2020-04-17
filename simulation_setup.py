@@ -24,29 +24,29 @@ def load_setting_parameter ():
     Kis = {
         'NMH_catchment': np.linspace(1.5e-6, 2e-6, 3),
         'Chicago': np.linspace(2e-7, 3e-7, 3),
-        'IL': np.linspace(3.5e-8, 5.3e-8, 3),    
-        'EMS_1': np.linspace(5e-7, 9e-7, 3),
-        'EMS_2': np.linspace(5e-7, 9e-7, 3),
-        'EMS_3': np.linspace(5e-7, 9e-7, 3),   
+        'IL': np.linspace(6e-8, 9e-8, 3),
+        'EMS_1': np.linspace(4.5e-7, 9e-7, 3),
+        'EMS_2': np.linspace(2.5e-7, 5e-7, 3),
+        'EMS_3': np.linspace(5e-7, 9e-7, 3),
         'EMS_4': np.linspace(5e-7, 9e-7, 3),
-        'EMS_5': np.linspace(5e-7, 9e-7, 3),
-        'EMS_6': np.linspace(5e-7, 9e-7, 3),       
-        'EMS_7': np.linspace(5e-7, 9e-7, 3),
-        'EMS_8': np.linspace(5e-7, 9e-7, 3),
-        'EMS_9': np.linspace(5e-7, 9e-7, 3),
-        'EMS_10': np.linspace(5e-7, 9e-7, 3),
-        'EMS_11': np.linspace(5e-7, 9e-7, 3)         
+        'EMS_5': np.linspace(4.5e-7, 9e-7, 3),
+        'EMS_6': np.linspace(3e-7, 5.5e-7, 3),
+        'EMS_7': np.linspace(3e-7, 5.5e-7, 3),
+        'EMS_8': np.linspace(3e-7, 7e-7, 3),
+        'EMS_9':  np.linspace(2.5e-7, 4e-7, 3),
+        'EMS_10': np.linspace(4e-7, 7e-7, 3),
+        'EMS_11':np.linspace(3e-7, 4e-7, 3)
     }
     startdate = {
         'NMH_catchment': date(2020, 2, 28),
         'Chicago': date(2020, 2, 20),
         'IL': date(2020, 2, 28),
-        'EMS_1': date(2020, 2, 28),       
+        'EMS_1': date(2020, 3, 1),
         'EMS_2': date(2020, 2, 28),
-        'EMS_3': date(2020, 2, 28),       
-        'EMS_4': date(2020, 2, 28),
-        'EMS_5': date(2020, 2, 28),       
-        'EMS_6': date(2020, 2, 28),
+        'EMS_3': date(2020, 3, 5),
+        'EMS_4': date(2020, 3, 2),
+        'EMS_5': date(2020, 3, 5),
+        'EMS_6': date(2020, 3, 3),
         'EMS_7': date(2020, 2, 28),       
         'EMS_8': date(2020, 2, 28),
         'EMS_9': date(2020, 2, 28),       
@@ -60,8 +60,8 @@ def load_setting_parameter ():
 def load_age_groups ():
 
     age4grp = {
-        'NMH_catchment': [924766, 1135240, 941609, 713926], 
-        #'Chicago': , 
+        'NMH_catchment': [78401,96245,79829,60526],
+        #'Chicago': ,
         #'IL': , 
         'EMS_1': [170342, 184052, 203274, 182064],
         'EMS_2': [246836, 291953, 311148, 279459],
@@ -77,8 +77,9 @@ def load_age_groups ():
     }
     age8grp = {
         'NMH_catchment': [924766, 1135240, 941609, 713926] ,
-        #'Chicago': ,
-        #'IL': ,
+        #'Chicago': [326970, 325080, 401490, 408510, 342630, 340200, 288900, 266301],
+        #'Cook county': [627602, 623977, 769628, 783596, 657620, 652618, 554495, 510957],
+        'IL': [1538721,	1647353,1751282,1720522	,1603097,1689555, 1447163,1343387],
         'EMS_1': [78641,91701,94681	,89371,92396,110878,92988,89076],
         'EMS_2': [114210,132626,150792,141161,140827,170321,143642,135817],
         'EMS_3': [57069,71489,76506,71437,79844,101522,82573,81032],

@@ -1,5 +1,11 @@
 import numpy as np
 
+def count_new(df, curr_ch) :
+
+    ch_list = list(df[curr_ch].values)
+    diff = [0] + [ch_list[x] - ch_list[x - 1] for x in range(1, len(df))]
+    return diff
+
 def CI_5(x) :
 
     return np.percentile(x, 5)

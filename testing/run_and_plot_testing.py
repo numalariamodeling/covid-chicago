@@ -6,6 +6,11 @@ import numpy as np
 import seaborn as sns
 import matplotlib.dates as mdates
 from datetime import date, timedelta
+import sys
+sys.path.append('../')
+from processing_helpers import *
+from simulation_helpers import *
+from simulation_setup import *
 from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
@@ -76,24 +81,6 @@ def runExp_simple(modelname) :
 
     return()
 
-def reprocess(output_fname=None) :
-
-    fname = os.path.join('trajectories.csv')
-    df = pd.read_csv(fname, skiprows=1)
-    df = df.set_index('sampletimes').transpose()
-    df = df.reset_index(drop=False)
-    df = df.rename(columns={'index' : 'time'})
-    df['time'] = df['time'].astype(float)
-
-    channels = [x for x in df.columns.values if '{' in x]
-    df = df.rename(columns={
-        x : x.split('{')[0] for x in channels
-    })
-
-    if output_fname :
-        df.to_csv(os.path.join(temp_dir, output_fname))
-    return df
-
 
 def plot(df) :
 
@@ -134,7 +121,7 @@ def plot_by_channel(adf) :
 if __name__ == '__main__' :
 
     runExp_simple(modelname="locale_extendedmodel_covid.emodl")
-    df = reprocess()
+    df = reprocess(trajectories_dir=os.getcwd(), temp_exp_dir=os.getcwd())
     first_day = date(2020, 3, 1)  # arbitrary selection of starting date
     plot(df)
     plot_by_channel(df)

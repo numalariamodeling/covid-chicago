@@ -1,24 +1,24 @@
 import argparse
 import re
 import logging
+import os
+import sys
+from datetime import date
+
+import matplotlib as mpl
 import numpy as np
 import pandas as pd
-import os
-import matplotlib as mpl
-from datetime import date
-import sys
 import yaml
-
 from dotenv import load_dotenv
 
 from load_paths import load_box_paths
-from simulation_helpers import (DateToTimestep, makeExperimentFolder, generateSubmissionFile,
-                                combineTrajectories, runExp, cleanup, sampleplot)
+from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
+                                generateSubmissionFile, makeExperimentFolder,
+                                runExp, sampleplot)
 
 log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
-Location = 'Local'  # 'NUCLUSTER'
 
 today = date.today()
 
@@ -198,6 +198,13 @@ def parse_args():
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
+        "--running_location",
+        type=str,
+        help="Location where the simulation is being run.",
+        choices=["Local", "NUCLUSTER"],
+        required=True
+    )
+    parser.add_argument(
         "--region",
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
@@ -235,7 +242,7 @@ if __name__ == '__main__':
     load_dotenv()
 
     _, _, wdir, exe_dir, git_dir = load_box_paths()
-    Location = os.getenv("LOCATION") or Location
+    Location = os.getenv("LOCATION") or args.running_location
 
     # Only needed on non-Windows, non-Quest platforms
     docker_image = os.getenv("DOCKER_IMAGE")

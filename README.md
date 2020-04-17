@@ -88,6 +88,8 @@ Note that the user-supplied configuration file is used to provide
 *additional* or *updated* parameters from the base configutation file.
 
 #### Inputs:
+- Running location: Where the simulation is being run (either `Local`
+  or `NUCLUSTER`)
 - Region: The region of interest. (e.g. `EMS_1`)
 - Configuration file: The configuration file with the parameters to
   use for the simulation. If a parameter is not provided, the value in
@@ -97,10 +99,10 @@ Note that the user-supplied configuration file is used to provide
   files are in the `./emodl` directory.
 
 ### Usage examples:
-- Using the default emodl template: `python runScenarios.py  --region
-  IL  --experiment_config sample_experiment.yaml`
-- Using a different emodl template: `python runScenarios.py  --region
-  IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
+- Using the default emodl template: `python runScenarios.py
+  --running_location Local --region IL  --experiment_config sample_experiment.yaml`
+- Using a different emodl template: `python runScenarios.py
+  --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
 
 ### 4.3. Postprocessing and visualizing results
 - latest postprocessing file that calculates incidences for extended SEIR model [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extended_model_postprocessing.py)
