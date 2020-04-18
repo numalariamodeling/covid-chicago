@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
+  'number_of_samples': 50
   'number_of_runs': 5
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
