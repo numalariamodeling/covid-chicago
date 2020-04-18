@@ -1,0 +1,93 @@
+experiment_setup_parameters:
+  'number_of_samples': 10
+  'number_of_runs': 5
+  'duration': 365
+  'monitoring_samples': 365 # needs to be smaller than duration
+  'random_seed': 19
+fixed_parameters:
+  populations: 12830632
+    'IL': 12830632
+  startdate:
+    'IL': 2020-02-28     
+sampled_parameters:
+  'incubation_pd':
+    np.random: uniform
+    function_kwargs: {'low': 4.2, 'high': 6.63}
+  'time_to_symptoms':
+    np.random: uniform
+    function_kwargs: {'low': 1, 'high':5}
+  'time_to_hospitalization':
+    np.random: uniform
+    function_kwargs: {'low':2, 'high':10}
+  'time_to_critical':
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':9}
+  'time_to_death':
+    np.random: uniform
+    function_kwargs: {'low':3, 'high':11}
+  'recovery_rate_asymp':
+    np.random: uniform
+    function_kwargs: {'low':6, 'high':16}
+  'recovery_rate_mild':
+    np.random: uniform
+    function_kwargs: {'low':19.4, 'high':21.3}
+  'recovery_rate_hosp':
+    np.random: uniform
+    function_kwargs: {'low':19.5, 'high':21.1}
+  'recovery_rate_crit':
+    np.random: uniform
+    function_kwargs: {'low':25.3, 'high':31.6}
+  'fraction_symptomatic':
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.8}
+  'fraction_severe':
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.5}
+  'fraction_critical':
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.5}
+  'cfr':
+    np.random: uniform
+    function_kwargs: {'low':0.058, 'high':0.092}
+  'reduced_inf_of_det_cases':
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.9}
+  'd_Sym':
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.3}
+  'd_Sys':
+    np.random: uniform
+    function_kwargs: {'low':0.7, 'high':0.9}
+  'd_As':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0}
+  'social_multiplier_1':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
+  'social_multiplier_2':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+  'social_multiplier_3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
+  'backtonormal_multiplier':
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high':1}
+  'socialDistance_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-12}
+  'socialDistance_time2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-17}
+  'socialDistance_time3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-21}
+  'socialDistanceSTOP_time':
+      custom_function: DateToTimestep
+      function_kwargs: {'dates': 2020-04-24}
+fitted_parameters:
+  # Note IL, NMH, Chicago and EMS_3 were fitted, the other EMS area Kis need updating/checking
+  Kis:
+    'IL':
+      np: linspace
+      function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 3}
