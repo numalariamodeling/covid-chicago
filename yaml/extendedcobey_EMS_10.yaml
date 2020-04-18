@@ -1,6 +1,6 @@
 experiment_setup_parameters:
   'number_of_samples': 10
-  'number_of_runs': 5
+  'number_of_runs': 3
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 19
@@ -66,10 +66,10 @@ sampled_parameters:
     function_kwargs: {'low':0.9, 'high':1}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.7, 'high':0.9}
+    function_kwargs: {'low':0.6, 'high':0.9}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.4}
+    function_kwargs: {'low':0.05, 'high':0.3}
   'backtonormal_multiplier':
     np.random: uniform
     function_kwargs: {'low':0.95, 'high':1}
@@ -90,4 +90,7 @@ fitted_parameters:
   Kis:
     'EMS_10':
       np: linspace
-      function_kwargs: {'start': 4.0e-7, 'stop': 7.0e-7, 'num': 3}
+      function_kwargs: {'start': 4.0e-8, 'stop': 7.0e-8, 'num': 3}
+      
+      
+      
