@@ -66,13 +66,13 @@ sampled_parameters:
     function_kwargs: {'low':0.9, 'high':1}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.7, 'high':0.9}
+    function_kwargs: {'low':0.6, 'high':0.9}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.4}
+    function_kwargs: {'low':0.05, 'high':0.1}
   'backtonormal_multiplier':
     np.random: uniform
-    function_kwargs: {'low':0.95, 'high':1}
+    function_kwargs: {'low':0.05, 'high':0.3}
   'socialDistance_time1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-12}
