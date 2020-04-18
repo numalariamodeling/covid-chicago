@@ -32,8 +32,8 @@ for scen in ['scenario1', 'scenario2', 'scenario3']:
     if scen == 'scenario1' :
         filename = 'nu_EMS_endsip_20200418.csv'
     if scen == 'scenario2':
-        filename = 'nu_EMS_baseline_20200418.csv'
-    if scen == 'scenario3':
         filename = 'nu_EMS_neversip_20200418.csv'
+    if scen == 'scenario3':
+        filename = 'nu_EMS_baseline_20200418.csv'
 
     adf.to_csv(os.path.join(wdir,'simulation_output/_csv', filename), index=False)
