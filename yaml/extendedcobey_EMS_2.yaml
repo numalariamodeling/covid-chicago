@@ -8,7 +8,7 @@ fixed_parameters:
   populations:
     'EMS_2': 1124941
   startdate:   
-    'EMS_2': 2020-02-28 
+    'EMS_2': 2020-02-03 
 sampled_parameters:
   'incubation_pd':
     np.random: uniform
@@ -48,7 +48,7 @@ sampled_parameters:
     function_kwargs: {'low':0.2, 'high':0.5}
   'cfr':
     np.random: uniform
-    function_kwargs: {'low':0.058, 'high':0.092}
+    function_kwargs: {'low':0.068, 'high':0.092}
   'reduced_inf_of_det_cases':
     np.random: uniform
     function_kwargs: {'low':0.5, 'high':0.9}
@@ -63,13 +63,13 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}
   'social_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':0.9, 'high':1}
+    function_kwargs: {'low':0.8, 'high':0.9}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.9}
+    function_kwargs: {'low':0.5, 'high':0.8}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.3}
+    function_kwargs: {'low':0.05, 'high':0.2}
   'backtonormal_multiplier':
     np.random: uniform
     function_kwargs: {'low':0.95, 'high':1}
@@ -90,4 +90,4 @@ fitted_parameters:
   Kis:
     'EMS_2':
       np: linspace
-      function_kwargs: {'start': 2.5e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 3.0e-7, 'stop': 5.0e-7, 'num': 1}
