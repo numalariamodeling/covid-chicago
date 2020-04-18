@@ -66,7 +66,7 @@ sampled_parameters:
     function_kwargs: {'low':0.9, 'high':1}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.9}
+    function_kwargs: {'low':0.6, 'high':0.7}
   'social_multiplier_3':
     np.random: uniform
     function_kwargs: {'low':0.05, 'high':0.3}
@@ -90,4 +90,4 @@ fitted_parameters:
   Kis:
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 2.5e-7, 'stop': 4.0e-7, 'num': 3}
+      function_kwargs: {'start': 2.5e-7, 'stop': 4.0e-7, 'num': 1}
