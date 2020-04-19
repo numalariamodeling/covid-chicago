@@ -8,7 +8,7 @@ fixed_parameters:
   populations:
     'EMS_9': 1970275
   startdate:
-    'EMS_9': 2020-02-28            
+    'EMS_9': 2020-02-26            
 sampled_parameters:
   'incubation_pd':
     np.random: uniform
@@ -63,10 +63,10 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}
   'social_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':0.7, 'high':0.9}
+    function_kwargs: {'low':0.4, 'high':0.5}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.4, 'high':0.6}
+    function_kwargs: {'low':0.2, 'high':0.4}
   'social_multiplier_3':
     np.random: uniform
     function_kwargs: {'low':0.05, 'high':0.2}
@@ -89,4 +89,4 @@ fitted_parameters:
   Kis:
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 2.3e-7, 'stop': 2.3e-7, 'num': 1}
+      function_kwargs: {'start': 3.5e-7, 'stop': 3.5e-7, 'num': 1}
