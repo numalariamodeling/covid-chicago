@@ -85,11 +85,11 @@ def save_plot_csv(scen):
             adf = pd.merge(left=adf, right=mdf, on='date')
 
     if scen =="scenario1":
-        filename = 'nu_illinois_endsip_20200418'
+        filename = 'nu_illinois_endsip_20200419'
     if scen =="scenario2":
-        filename = 'nu_illinois_neversip_20200418'
+        filename = 'nu_illinois_neversip_20200419'
     if scen =="scenario3":
-        filename = 'nu_illinois_baseline_20200418'
+        filename = 'nu_illinois_baseline_20200419'
 
     adf.to_csv(os.path.join(wdir, 'simulation_output/_csv', filename + '.csv'), index=False)
     plt.savefig(os.path.join(wdir, 'simulation_output/_plots/IL', filename + '.png'))
