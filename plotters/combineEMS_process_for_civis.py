@@ -28,8 +28,10 @@ def read_and_combine_data(stem):
         ems = int(exp_name.split('_')[2])
         cdf = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
         #channels = cdf.columns
+        first_day = datetime.strptime(cdf['first_day'].unique()[0], '%Y-%m-%d')
 
         cdf['ems'] = ems
+        cdf['date'] = cdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
         adf = pd.concat([adf, cdf])
 
 
@@ -41,13 +43,12 @@ def read_and_combine_data(stem):
        'hosp_det_cumul', 'crit_cumul', 'crit_det_cumul', 'crit_det',
        'death_det_cumul', 'detected_cumul', 'detected', 'infected']
 
-    mdf = adf.groupby(['time','run_num','scen_num','sample_num'])[sum_channels].agg(np.sum).reset_index()
+    mdf = adf.groupby(['date','run_num','scen_num','sample_num'])[sum_channels].agg(np.sum).reset_index()
 
     return(mdf)
 
 def save_plot_csv(scen):
     df = read_and_combine_data(scen)
-    first_day = date(2020,2,28) #datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
     channels = ['infected', 'deaths', 'hospitalized', 'critical', 'ventilators']
     df['ventilators'] = df['critical']*0.8
@@ -59,8 +60,7 @@ def save_plot_csv(scen):
     adf = pd.DataFrame()
     for c, channel in enumerate(channels) :
         ax = fig.add_subplot(4,2,c+1)
-        mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-        mdf['date'] = mdf['time'].apply(lambda x : first_day + timedelta(days=int(x)))
+        mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
         ax.plot(mdf['date'], mdf['CI_50'], color=palette[c])
         ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
@@ -75,8 +75,11 @@ def save_plot_csv(scen):
         mdf = mdf.rename(columns={'CI_50' : '%s_median' % channel,
                                   'CI_2pt5' : '%s_95CI_lower' % channel,
                                   'CI_97pt5' : '%s_95CI_upper' % channel})
-        mdf = mdf[mdf['time'] >= 22]
-        del mdf['time']
+
+        plot_first_day = date(2020, 3, 13)
+        plot_last_day = date(2020, 7, 31)
+        mdf = mdf[(mdf['date'] >= plot_first_day) & (mdf['date'] <= plot_last_day)]
+
         del mdf['CI_25']
         del mdf['CI_75']
         if adf.empty :
