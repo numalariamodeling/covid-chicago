@@ -14,6 +14,7 @@ from simulation_setup import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
+datetoday = date(today.year, today.month, today.day)
 
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
@@ -106,7 +107,7 @@ def plot_sim_and_ref_Ki(df, ref_df, channels, data_channel_names, first_day=date
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, date(2020, 4, 18))
+        ax.set_xlim(first_day, datetoday)
         ax.set_ylim(1,ymax)
         ax.set_yscale('log')
 
@@ -139,7 +140,7 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, date(2020, 4, 18))
+        ax.set_xlim(first_day, datetoday)
         ax.set_ylim(1,ymax)
         ax.set_yscale('log')
 
@@ -211,9 +212,9 @@ def compare_ems(exp_name, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_names = ['20200418_EMS_2_scenario1_run1b', '20200418_EMS_2_scenario2_run1b', '20200418_EMS_2_scenario3_run1b']
+    exp_names = ['20200419_EMS_8_test5']
     for exp_name in exp_names :
-        region = 'EMS_2'  # region = args.region
+        region = 'EMS_8'  # region = args.region
 
         if("EMS" in region) :
             ems_nr = region.split('_')[1]
