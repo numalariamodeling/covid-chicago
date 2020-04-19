@@ -48,7 +48,7 @@ sampled_parameters:
     function_kwargs: {'low':0.2, 'high':0.5}
   'cfr':
     np.random: uniform
-    function_kwargs: {'low':0.078, 'high':0.092}
+    function_kwargs: {'low':0.078, 'high':0.122}
   'reduced_inf_of_det_cases':
     np.random: uniform
     function_kwargs: {'low':0.5, 'high':0.9}
