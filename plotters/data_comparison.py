@@ -208,17 +208,20 @@ def compare_ems(exp_name, ems=0) :
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
                      plot_path=plot_path, first_day=first_day)
-    plt.show()
+    #plt.show()
 
 if __name__ == '__main__' :
 
-    exp_names = ['20200419_EMS_8_test5']
-    for exp_name in exp_names :
-        region = 'EMS_8'  # region = args.region
+    stem = "run2"
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
-        if("EMS" in region) :
-            ems_nr = region.split('_')[1]
-            region = region.split('_')[0]
+    for exp_name in exp_names :
+
+        region = exp_name.split('_')[1]
+
+        if("EMS" in exp_name) :
+            ems_nr = exp_name.split('_')[2]
+            region = exp_name.split('_')[1]
 
         if region == 'NMH_catchment':
             compare_NMH(exp_name)
