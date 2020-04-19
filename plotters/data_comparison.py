@@ -106,7 +106,7 @@ def plot_sim_and_ref_Ki(df, ref_df, channels, data_channel_names, first_day=date
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, date(2020, 4, 14))
+        ax.set_xlim(first_day, date(2020, 4, 18))
         ax.set_ylim(1,ymax)
         ax.set_yscale('log')
 
@@ -139,7 +139,7 @@ def plot_sim_and_ref(df, ref_df, channels, data_channel_names, first_day=date(20
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, date(2020, 4, 14))
+        ax.set_xlim(first_day, date(2020, 4, 18))
         ax.set_ylim(1,ymax)
         ax.set_yscale('log')
 
@@ -211,18 +211,19 @@ def compare_ems(exp_name, ems=0) :
 
 if __name__ == '__main__' :
 
-    exp_name = 'scenario_1/20200417_IL_scenario1_test'
-    region = 'IL'  # region = args.region
+    exp_names = ['20200418_EMS_2_scenario1_run1b', '20200418_EMS_2_scenario2_run1b', '20200418_EMS_2_scenario3_run1b']
+    for exp_name in exp_names :
+        region = 'EMS_2'  # region = args.region
 
-    if("EMS" in region) :
-        ems_nr = region.split('_')[1]
-        region = region.split('_')[0]
+        if("EMS" in region) :
+            ems_nr = region.split('_')[1]
+            region = region.split('_')[0]
 
-    if region == 'NMH_catchment':
-        compare_NMH(exp_name)
-    elif region == 'Chicago':
-        compare_county(exp_name,  county_name='Cook')
-    elif region == 'EMS':
-        compare_ems(exp_name,  ems=int(ems_nr))
-    elif region == 'IL':
-        compare_ems(exp_name)
+        if region == 'NMH_catchment':
+            compare_NMH(exp_name)
+        elif region == 'Chicago':
+            compare_county(exp_name,  county_name='Cook')
+        elif region == 'EMS':
+            compare_ems(exp_name,  ems=int(ems_nr))
+        elif region == 'IL':
+            compare_ems(exp_name)
