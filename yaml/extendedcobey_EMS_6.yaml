@@ -8,7 +8,7 @@ fixed_parameters:
   populations:
     'EMS_6': 788985
   startdate:    
-    'EMS_6': 2020-03-03    
+    'EMS_6': 2020-02-25   
 sampled_parameters:
   'incubation_pd':
     np.random: uniform
@@ -90,4 +90,4 @@ fitted_parameters:
   Kis:
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 5.5e-7, 'num': 1}
+      function_kwargs: {'start': 4.0e-7, 'stop': 4.5e-7, 'num': 1}
