@@ -15,10 +15,11 @@ for scen in ['scenario1', 'scenario2', 'scenario3']:
     stem = scen
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
-    channels = ['date', 'infected_median', 'infected_95CI_lower', 'infected_95CI_upper', 'deaths_median', 'deaths_95CI_lower',
-                'deaths_95CI_upper', 'hospitalized_median', 'hospitalized_95CI_lower', 'critical_median', 'critical_95CI_lower',
-                'critical_95CI_upper','ventilators_median','ventilators_95CI_lower', 'ventilators_95CI_upper']
-
+    channels = ['date', "infected_median", "infected_95CI_lower", "infected_95CI_upper",
+                "deaths_median", "deaths_95CI_lower","deaths_95CI_upper",
+                "hospitalized_median", "hospitalized_95CI_lower", "hospitalized_95CI_upper",
+                "critical_median", "critical_95CI_lower", "critical_95CI_upper",
+                "ventilators_median", "ventilators_95CI_lower", "ventilators_95CI_upper"]
 
     adf = pd.DataFrame()
     for d, exp_name in enumerate(exp_names):
