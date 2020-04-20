@@ -126,8 +126,8 @@ def add_computed_parameters(df):
     """ Parameters that are computed from other parameters are computed and added to the parameters
     dataframe.
     """
-    df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
-    df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+    df['fraction_dead'] = df['cfr'] / df['fraction_severe']
+    df['fraction_hospitalized'] = 1 - df['fraction_critical'] - df['fraction_dead']
     return df
 
 
