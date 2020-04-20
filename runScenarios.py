@@ -80,6 +80,10 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
         if not age_bins:
             raise ValueError("Ages bins must be specified if using an age expansion")
         if 'list' in parameter_function:
+            n_list = len(parameter_function['list']) 
+            if n_list != len(age_bins):
+                raise ValueError(f"{parameter} has a list with {n_list} elements, "
+                                          f"but there are {len(age_bins)} age bins.")
             for bin, val in zip(age_bins, parameter_function['list']):
                 df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
         elif 'custom_function' in parameter_function:
