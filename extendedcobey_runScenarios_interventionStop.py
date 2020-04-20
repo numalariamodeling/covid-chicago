@@ -94,7 +94,7 @@ def replaceParameters(df, Ki_i,  sample_nr, emodlname, scen_num,  stop_date, bac
     data = data.replace('@socialDistance_time1@',  str(df.socialDistance_time1[sample_nr]))
     data = data.replace('@socialDistance_time2@',  str(df.socialDistance_time2[sample_nr]))
     data = data.replace('@socialDistance_time3@',  str(df.socialDistance_time3[sample_nr]))
-    data = data.replace('@back_to_normal@',  str(DateToTimestep(stop_date,startdate= first_day)))
+    data = data.replace('@socialDistanceSTOP_time@',  str(DateToTimestep(stop_date,startdate= first_day)))
     data = data.replace('@backtonormal_multiplier@', str(backtonormal_multiplier))
 
     fin.close()

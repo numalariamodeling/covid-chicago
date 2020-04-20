@@ -97,12 +97,16 @@ Note that the user-supplied configuration file is used to provide
 - Emodl template (optional): The template emodl file to substitute in
   parameter values. The default is [extendedmodel_cobey.emodl](extendedmodel_cobey.emodl). emodl
   files are in the `./emodl` directory.
-
+- Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
+  parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10__test_rn29`)
+  
 ### Usage examples:
 - Using the default emodl template: `python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
   --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
+- Specifying experiment name suffix and changing running_location : `python runScenarios.py
+  --running_location NUCLUSTER --region IL --experiment_config extendedcobey.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
 
 ### 4.3. Postprocessing and visualizing results
 - latest postprocessing file that calculates incidences for extended SEIR model [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/extended_model_postprocessing.py)

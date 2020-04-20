@@ -1,0 +1,84 @@
+---
+title: "IDPH Resource"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/EMS EMresource Graphs')
+
+library(data.table)
+library(tidyverse)
+library(lubridate)
+
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Data/emresource_by_region.csv')
+```
+
+cleaning 
+```{r}
+df = df %>% select(region, last_update, confirmed_covid_icu, suspected_covid_icu, confirmed_covid_deaths_prev_24h, confirmed_or_pui_covid_prev_24h)
+
+df$last_update = as.Date(df$last_update)
+
+# change nulls to 0
+df[is.na(df)] = 0
+```
+
+graph 
+```{r}
+ICU_graphs = function(df)
+{
+  df = df %>% select(region, last_update, confirmed_covid_icu, suspected_covid_icu) %>% gather('confirmed_covid_icu', 'suspected_covid_icu', key = 'type', value = 'counts')
+  
+  ggplot(df, aes(x = last_update, y = counts, fill = type)) + 
+    geom_area(alpha = .8, position = 'stack') + facet_wrap(~ region) + theme_bw() +
+    ggtitle('COVID in ICU by EMS Region') + 
+    scale_fill_manual(values = c('red', 'orange'), name = 'Counts', labels = c('Confirmed COVID', 'Suspected COVID')) +
+    theme(text = element_text(family = 'Avenir'), axis.text.x = element_text(angle = 45, hjust = 1)) + 
+    scale_x_date(date_labels = '%b/%d', date_breaks = '3 days') + xlab('Date') + ylab('ICU Cases') + 
+    ggsave('1EM - ICU Counts by EMS Region.png')
+}
+
+ICU_graphs(df)
+```
+
+```{r}
+deaths_graphs = function(df)
+{
+  df = df %>% select(region, last_update, confirmed_covid_deaths_prev_24h) %>% group_by(region) %>%
+    mutate(total = cumsum(confirmed_covid_deaths_prev_24h))
+  
+  ggplot(df, aes(x = last_update, y = total, fill = 'a')) + geom_area(alpha = .8) +
+    geom_bar(aes(x = last_update, y = confirmed_covid_deaths_prev_24h, fill = 'b'), stat = 'identity') + 
+    scale_fill_manual(name = 'Deaths', values = c('indianred1', 'indianred3'),
+                      labels = c('Total Deaths', 'Daily Deaths')) +
+    facet_wrap(~ region) + theme_bw() + ggtitle('COVID Deaths by EMS Region') + 
+    theme(text = element_text(family = 'Avenir'), axis.text.x = element_text(angle = 45, hjust = 1)) + 
+    scale_x_date(date_labels = '%b/%d', date_breaks = '3 days') + xlab('Date') + ylab('Deaths') + 
+    ggsave('2EM - COVID Deaths by EMS Region.png')
+}
+
+deaths_graphs(df)
+```
+
+
+```{r}
+counts_graphs = function(df)
+{
+  df = df %>% select(region, last_update, confirmed_or_pui_covid_prev_24h) %>% group_by(region) %>%
+    mutate(total = cumsum(confirmed_or_pui_covid_prev_24h))
+  
+  ggplot(df, aes(x = last_update, y = total, fill = 'a')) + geom_area(alpha = .8) +
+    geom_bar(aes(x = last_update, y = confirmed_or_pui_covid_prev_24h, fill = 'b'), stat = 'identity') + 
+    scale_fill_manual(name = 'Deaths', values = c('chartreuse1', 'chartreuse3'),
+                      labels = c('Total Cases', 'Daily New Cases')) +
+    facet_wrap(~ region) + theme_bw() + ggtitle('COVID/PUI Cases by EMS Region') + 
+    theme(text = element_text(family = 'Avenir'), axis.text.x = element_text(angle = 45, hjust = 1)) + 
+    scale_x_date(date_labels = '%b/%d', date_breaks = '3 days') + xlab('Date') + ylab('Cases') + 
+    ggsave('3EM - New COVID Cases by EMS Region.png')
+}
+
+counts_graphs(df)
+```
+
+
+

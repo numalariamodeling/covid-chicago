@@ -20,7 +20,7 @@ from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
 log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
-
+today = datetime.today()
 DEFAULT_CONFIG = './extendedcobey.yaml'
 
 
@@ -293,6 +293,14 @@ def parse_args():
         action='store_true',
         help="Whether or not to run post-processing functions",
     )
+    parser.add_argument(
+        "-n",
+        "--name_suffix",
+        type=str,
+        help="Adding custom suffix to the experiment name",
+        default= f"_test_rn{str(today.microsecond)[-2:]}"
+    )
+
     return parser.parse_args()
 
 
@@ -337,8 +345,7 @@ if __name__ == '__main__':
     first_day = fixed_parameters['startdate']
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
-    today = datetime.today()
-    exp_name = f"{today.strftime('%Y%m%d')}_{region}_updatedStartDate_rn{str(today.microsecond)[-2:]}"
+    exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
 
     # Generate folders and copy required files
     # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
