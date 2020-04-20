@@ -109,10 +109,10 @@ sampled_parameters:
     function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
   'socialDistance_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21}
+    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
   'socialDistanceSTOP_time':
       custom_function: DateToTimestep
-      function_kwargs: {'dates': 2020-04-24}
+      function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
 fitted_parameters:
   # Note IL, NMH, Chicago and EMS_3 were fitted, the other EMS area Kis need updating/checking
   Kis:
