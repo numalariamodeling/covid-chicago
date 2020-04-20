@@ -39,6 +39,8 @@ def _parse_config_parameter(df, parameter, parameter_function):
             return [DateToTimestep(**function_kwargs) for i in range(len(df))]
         elif function_name == 'subtract':
             return df[function_kwargs['x1']] - df[function_kwargs['x2']]
+        else:
+            raise ValueError(f"Unknown function for parameter {parameter}: {function_name}")
     else:
         raise ValueError(f"Unknown type of parameter {parameter}")
 
@@ -79,6 +81,10 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
         if not age_bins:
             raise ValueError("Ages bins must be specified if using an age expansion")
         if 'list' in parameter_function:
+            n_list = len(parameter_function['list']) 
+            if n_list != len(age_bins):
+                raise ValueError(f"{parameter} has a list with {n_list} elements, "
+                                          f"but there are {len(age_bins)} age bins.")
             for bin, val in zip(age_bins, parameter_function['list']):
                 df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
         elif 'custom_function' in parameter_function:
@@ -119,8 +125,8 @@ def add_computed_parameters(df):
     """ Parameters that are computed from other parameters are computed and added to the parameters
     dataframe.
     """
-    df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
-    df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+    df['fraction_dead'] = df['cfr'] / df['fraction_severe']
+    df['fraction_hospitalized'] = 1 - df['fraction_critical'] - df['fraction_dead']
     return df
 
 
