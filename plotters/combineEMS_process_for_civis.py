@@ -35,7 +35,7 @@ def read_and_combine_data(stem):
         adf = pd.concat([adf, cdf])
 
 
-    sum_channels = [ 'susceptible', 'exposed', 'asymptomatic',
+    sum_channels = ['susceptible', 'exposed', 'asymptomatic',
        'presymptomatic', 'symptomatic_mild', 'symptomatic_severe',
        'hospitalized', 'critical', 'deaths', 'recovered', 'asymp_cumul',
        'asymp_det_cumul', 'symp_mild_cumul', 'symp_mild_det_cumul',
@@ -86,6 +86,23 @@ def save_plot_csv(scen):
             adf = mdf
         else :
             adf = pd.merge(left=adf, right=mdf, on='date')
+
+    adf = adf.rename(columns={"date": "Date",
+                       "infected_median": "Number of Covid-19 infections",
+                       "infected_95CI_lower": "Lower error bound of covid-19 infections",
+                       "infected_95CI_upper": "Upper error bound of covid-19 infections",
+                       "deaths_median": "Number of covid-19 deaths",
+                       "deaths_95CI_lower": "Lower error bound of covid-19 deaths",
+                       "deaths_95CI_upper": "Upper error bound of covid-19 deaths",
+                       "hospitalized_median": "Number of hospital beds occupied",
+                       "hospitalized_95CI_lower": "Lower error bound of number of hospital beds occupied",
+                       "hospitalized_95CI_upper": "Upper error bound of number of hospital beds occupied",
+                       "critical_median": "Number of ICU beds occupied",
+                       "critical_95CI_lower": "Lower error bound of number of ICU beds occupied",
+                       "critical_95CI_upper": "Upper error bound of number of ICU beds occupied",
+                       "ventilators_median": "Number of ventilators used",
+                       "ventilators_95CI_lower": "Lower error bound of number of ventilators used",
+                       "ventilators_95CI_upper": "Upper error bound of number of ventilators used"})
 
     if scen =="scenario1":
         filename = 'nu_illinois_endsip_20200419'
