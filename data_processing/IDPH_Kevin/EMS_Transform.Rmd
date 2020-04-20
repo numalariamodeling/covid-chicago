@@ -1,0 +1,21 @@
+---
+title: "Transform"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Data')
+
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Data/EMS Regions.csv')
+```
+
+
+```{r}
+df = df %>% gather(matches('EMS'), key = 'EMS_Region', value = 'County')
+df = df %>% filter(County != '')
+```
+
+
+```{r}
+write.csv(df, 'EMS Region Crosswalk.csv', row.names = F)
+```

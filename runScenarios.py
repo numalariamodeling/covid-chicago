@@ -3,12 +3,13 @@ import logging
 import os
 import re
 import sys
-from datetime import date
+from datetime import datetime
 
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import yaml
+import yamlordereddictloader
 from dotenv import load_dotenv
 
 from load_paths import load_box_paths
@@ -20,13 +21,36 @@ log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-today = date.today()
+today = datetime.today()
+DEFAULT_CONFIG = './extendedcobey.yaml'
 
-BASE_CONFIG = './experiment_configs/extendedcobey.yaml'
+
+def _parse_config_parameter(df, parameter, parameter_function):
+    if isinstance(parameter_function, (int, float)):
+        return parameter_function
+    elif 'np.random' in parameter_function:
+        function_kwargs = parameter_function['function_kwargs']
+        return getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
+    elif 'custom_function' in parameter_function:
+        function_name = parameter_function['custom_function']
+        function_kwargs = parameter_function['function_kwargs']
+        if function_name == 'DateToTimestep':
+            startdate_col = function_kwargs['startdate_col']
+            df[parameter] = [DateToTimestep(function_kwargs['dates'], df[startdate_col][i])
+                             for i in range(len(df))]
+        elif function_name == 'subtract':
+            return df[function_kwargs['x1']] - df[function_kwargs['x2']]
+        else:
+            raise ValueError(f"Unknown function for parameter {parameter}: {function_name}")
+    else:
+        raise ValueError(f"Unknown type of parameter {parameter}")
 
 
-def add_config_parameter_column(df, parameter, parameter_function, first_day=None):
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
     """ Applies the described function and adds the column to the dataframe
+
+    The input DataFrame will be modified in place.
+
     Parameters
     ----------
     df: pd.DataFrame
@@ -47,44 +71,54 @@ def add_config_parameter_column(df, parameter, parameter_function, first_day=Non
           from an intervention date. e.g. socialDistance_time
         - subtract: This subtracts one column in the dataframe (x2) from another (x1).
           e.g. SpeciesS (given N and initialAs)
+    age_bins: list of str, optional
+        If the parameter is to be expanded by age, the new dataframe with have individual parameters for each bin.
     Returns
     -------
     df: pd.DataFrame
         dataframe with the additional column(s) added
     """
-    if isinstance(parameter_function, int):
-        df[parameter] = parameter_function
-    elif 'matrix' in parameter_function:
-        m = parameter_function['matrix']
-        for i, row in enumerate(m):
-            for j, item in enumerate(row):
-                df[f'{parameter}{i+1}_{j+1}'] = item
-    elif 'np.random' in parameter_function:
-        function_kwargs = parameter_function['function_kwargs']
-        df[parameter] = [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
-                         for i in range(len(df))]
-    elif 'custom_function' in parameter_function:
-        function_name = parameter_function['custom_function']
-        function_kwargs = parameter_function['function_kwargs']
-        if function_name == 'DateToTimestep':
-            startdate_col = function_kwargs['startdate_col']
-            df[parameter] = [DateToTimestep(function_kwargs['dates'], df[startdate_col][i])
-                             for i in range(len(df))]
-        elif function_name == 'subtract':
-            df[parameter] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
+    if parameter_function.get('expand_by_age'):
+        if not age_bins:
+            raise ValueError("Ages bins must be specified if using an age expansion")
+        if 'list' in parameter_function:
+            n_list = len(parameter_function['list'])
+            if n_list != len(age_bins):
+                raise ValueError(f"{parameter} has a list with {n_list} elements, "
+                                 f"but there are {len(age_bins)} age bins.")
+            for bin, val in zip(age_bins, parameter_function['list']):
+                df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
+        elif 'custom_function' in parameter_function:
+            if parameter_function['custom_function'] == 'subtract':
+                for bin in age_bins:
+                    df[f'{parameter}_{bin}'] = _parse_config_parameter(
+                        df, parameter,
+                        {'custom_function': 'subtract',
+                         'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
+                                             'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}})
+        else:
+            raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
-        raise ValueError(f"Unknown type of parameter {parameter}")
+        if 'matrix' in parameter_function:
+            m = parameter_function['matrix']
+            for i, row in enumerate(m):
+                for j, item in enumerate(row):
+                    df[f'{parameter}{i+1}_{j+1}'] = _parse_config_parameter(df, parameter, item)
+        else:
+            df[parameter] = _parse_config_parameter(df, parameter, parameter_function)
     return df
 
 
-def add_fixed_parameters_region_specific(df, config, region):
+def add_fixed_parameters_region_specific(df, config, region, age_bins):
     """ For each of the region-specific parameters, iteratively add them to the parameters dataframe
     """
-    for parameter_group, parameter_group_values in config['fixed_parameters_region_specific'].items():
-        if parameter_group in ('populations', 'startdate'):
+    for parameter, parameter_function in config['fixed_parameters_region_specific'].items():
+        if parameter in ('populations', 'startdate'):
             continue
-        for parameter, parameter_function in parameter_group_values[region].items():
-            df = add_config_parameter_column(df, parameter, parameter_function)
+        param_func_with_age = {'expand_by_age': parameter_function.get('expand_by_age'),
+                               'list': parameter_function[region]}
+        df = add_config_parameter_column(df, parameter, param_func_with_age, age_bins)
+
     return df
 
 
@@ -92,12 +126,12 @@ def add_computed_parameters(df):
     """ Parameters that are computed from other parameters are computed and added to the parameters
     dataframe.
     """
-    df['fraction_dead'] = df.apply(lambda x: x['cfr'] / x['fraction_severe'], axis=1)
-    df['fraction_hospitalized'] = df.apply(lambda x: 1 - x['fraction_critical'] - x['fraction_dead'], axis=1)
+    df['fraction_dead'] = df['cfr'] / df['fraction_severe']
+    df['fraction_hospitalized'] = 1 - df['fraction_critical'] - df['fraction_dead']
     return df
 
 
-def generateParameterSamples(samples, pop, config):
+def generateParameterSamples(samples, pop, first_day, config, age_bins):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechansims.
@@ -109,14 +143,13 @@ def generateParameterSamples(samples, pop, config):
     df['startdate'] = experiment_config['fixed_parameters_region_specific']['startdate'][region]
 
     for parameter, parameter_function in config['sampled_parameters'].items():
-        df = add_config_parameter_column(df, parameter, parameter_function)
-    df = add_fixed_parameters_region_specific(df, config, region)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+    df = add_fixed_parameters_region_specific(df, config, region, age_bins)
     for parameter, parameter_function in config['fixed_parameters_global'].items():
-        df = add_config_parameter_column(df, parameter, parameter_function)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
     df = add_computed_parameters(df)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
-    print(df.columns)
     return(df)
 
 
@@ -156,11 +189,11 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, first_day, Location, experiment_config):
+                      nruns, sub_samples, modelname, first_day, Location, experiment_config, age_bins):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population,
-                                       config=experiment_config)
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
+                                       config=experiment_config, age_bins=age_bins)
 
     for sample in range(sub_samples):
         for i in Kivalues:
@@ -198,7 +231,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 
 def get_experiment_config(experiment_config_file):
-    config = yaml.load(open(BASE_CONFIG), Loader=yaml.FullLoader)
+    config = yaml.load(open(DEFAULT_CONFIG), Loader=yamlordereddictloader.Loader)
     yaml_file = open(experiment_config_file)
     expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
     for param_type, updated_params in expt_config.items():
@@ -237,15 +270,17 @@ def parse_args():
         type=str,
         help="Location where the simulation is being run.",
         choices=["Local", "NUCLUSTER"],
-        required=True
+        default=None,
     )
     parser.add_argument(
+        "-r",
         "--region",
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
         required=True
     )
     parser.add_argument(
+        "-c",
         "--experiment_config",
         type=str,
         help=("Config file (in YAML) containing the parameters to override the default config. "
@@ -254,6 +289,7 @@ def parse_args():
         required=True
     )
     parser.add_argument(
+        "-e",
         "--emodl_template",
         type=str,
         help="Template emodl file to use",
@@ -264,6 +300,14 @@ def parse_args():
         action='store_true',
         help="Whether or not to run post-processing functions",
     )
+    parser.add_argument(
+        "-n",
+        "--name_suffix",
+        type=str,
+        help="Adding custom suffix to the experiment name",
+        default= f"_test_rn{str(today.microsecond)[-2:]}"
+    )
+
     return parser.parse_args()
 
 
@@ -278,6 +322,9 @@ if __name__ == '__main__':
 
     _, _, wdir, exe_dir, git_dir = load_box_paths()
     Location = os.getenv("LOCATION") or args.running_location
+    if not Location:
+        raise ValueError("Please provide a running location via environment "
+                         "variable or CLI parameter.")
 
     # Only needed on non-Windows, non-Quest platforms
     docker_image = os.getenv("DOCKER_IMAGE")
@@ -305,12 +352,13 @@ if __name__ == '__main__':
     first_day = fixed_parameters['startdate']
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
-    exp_name = f"{today.strftime('%Y%m%d')}_{region}_updatedStartDate_rn{int(np.random.uniform(10, 99))}"
+    exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
 
     # Generate folders and copy required files
+    # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
         exp_name, emodl_dir, args.emodl_template, cfg_dir, wdir=wdir,
-        git_dir=git_dir)  # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
+        git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
               f"trajectories_dir = {trajectories_dir}\n"
@@ -323,11 +371,10 @@ if __name__ == '__main__':
         sub_samples=experiment_setup_parameters['number_of_samples'],
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
-        modelname=args.emodl_template,
-        first_day=first_day, Location=Location,
-        experiment_config=experiment_config)
+        modelname=args.emodl_template, first_day=first_day, Location=Location,
+        experiment_config=experiment_config,
+        age_bins=experiment_setup_parameters.get('age_bins'))
 
-    exit()
     generateSubmissionFile(
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
         exe_dir=exe_dir, docker_image=docker_image)
@@ -335,13 +382,14 @@ if __name__ == '__main__':
     if Location == 'Local':
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
+        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                plot_path=plot_path, delete_temp_dir=False)
+
         if args.post_process:
             # Once the simulations are done
             # number_of_samples*len(Kivalues) == nscen ### to check
-            combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-                                temp_exp_dir=temp_exp_dir, deleteFiles=False)
-            cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                    plot_path=plot_path, delete_temp_dir=False)
             df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
             master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
