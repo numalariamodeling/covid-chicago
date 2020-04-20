@@ -47,9 +47,9 @@ def _parse_config_parameter(df, parameter, parameter_function):
 
 def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
     """ Applies the described function and adds the column to the dataframe
-    
+
     The input DataFrame will be modified in place.
-    
+
     Parameters
     ----------
     df: pd.DataFrame
@@ -81,10 +81,10 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
         if not age_bins:
             raise ValueError("Ages bins must be specified if using an age expansion")
         if 'list' in parameter_function:
-            n_list = len(parameter_function['list']) 
+            n_list = len(parameter_function['list'])
             if n_list != len(age_bins):
                 raise ValueError(f"{parameter} has a list with {n_list} elements, "
-                                          f"but there are {len(age_bins)} age bins.")
+                                 f"but there are {len(age_bins)} age bins.")
             for bin, val in zip(age_bins, parameter_function['list']):
                 df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
         elif 'custom_function' in parameter_function:
@@ -342,9 +342,10 @@ if __name__ == '__main__':
     exp_name = f"{today.strftime('%Y%m%d')}_{region}_updatedStartDate_rn{str(today.microsecond)[-2:]}"
 
     # Generate folders and copy required files
+    # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
         exp_name, emodl_dir, args.emodl_template, cfg_dir, wdir=wdir,
-        git_dir=git_dir)  # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
+        git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
               f"trajectories_dir = {trajectories_dir}\n"
