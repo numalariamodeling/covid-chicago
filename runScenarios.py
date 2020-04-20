@@ -25,7 +25,6 @@ DEFAULT_CONFIG = './extendedcobey.yaml'
 
 
 def _parse_config_parameter(df, parameter, parameter_function):
-    print(parameter, parameter_function)
     if isinstance(parameter_function, (int, float)):
         return parameter_function
     elif 'np.random' in parameter_function:
