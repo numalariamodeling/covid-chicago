@@ -36,8 +36,8 @@ def _parse_config_parameter(df, parameter, parameter_function):
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
             startdate_col = function_kwargs['startdate_col']
-            df[parameter] = [DateToTimestep(function_kwargs['dates'], df[startdate_col][i])
-                             for i in range(len(df))]
+            return [DateToTimestep(function_kwargs['dates'], df[startdate_col][i])
+                    for i in range(len(df))]
         elif function_name == 'subtract':
             return df[function_kwargs['x1']] - df[function_kwargs['x2']]
         else:
@@ -78,7 +78,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
     df: pd.DataFrame
         dataframe with the additional column(s) added
     """
-    if parameter_function.get('expand_by_age'):
+    if isinstance(parameter_function, dict) and parameter_function.get('expand_by_age'):
         if not age_bins:
             raise ValueError("Ages bins must be specified if using an age expansion")
         if 'list' in parameter_function:
@@ -99,7 +99,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
         else:
             raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
-        if 'matrix' in parameter_function:
+        if isinstance(parameter_function, dict) and 'matrix' in parameter_function:
             m = parameter_function['matrix']
             for i, row in enumerate(m):
                 for j, item in enumerate(row):

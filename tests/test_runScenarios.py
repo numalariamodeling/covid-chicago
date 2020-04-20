@@ -46,6 +46,7 @@ def test_add_config_parameter_column__datetotimestep():
     new_df = add_config_parameter_column(df, "new_column", f)
     assert new_df.shape == (5, 3)
     assert "new_column" in new_df.columns
+    print(new_df)
     assert set(new_df["new_column"]) == set([10])
 
 
