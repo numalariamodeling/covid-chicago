@@ -4,7 +4,8 @@ experiment_setup_parameters:
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 19
-fixed_parameters:
+  'initialAs': 10
+fixed_parameters_region_specific:
   populations:
     'IL': 12830632
     'NMH_catchment': 315000
@@ -34,7 +35,8 @@ fixed_parameters:
     'EMS_8': 2020-02-28
     'EMS_9': 2020-02-28       
     'EMS_10': 2020-02-28
-    'EMS_11': 2020-02-28        
+    'EMS_11': 2020-02-28
+fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
     np.random: uniform
