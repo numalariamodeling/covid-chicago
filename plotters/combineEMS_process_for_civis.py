@@ -9,8 +9,7 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
-from simulation_setup import *
-from data_comparison import load_sim_data
+from data_comparison import calculate_incidence
 
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
@@ -27,6 +26,7 @@ def read_and_combine_data(stem):
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         ems = int(exp_name.split('_')[2])
         cdf = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+        cdf = calculate_incidence(cdf)
         #channels = cdf.columns
         first_day = datetime.strptime(cdf['first_day'].unique()[0], '%Y-%m-%d')
 
@@ -34,14 +34,16 @@ def read_and_combine_data(stem):
         cdf['date'] = cdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
         adf = pd.concat([adf, cdf])
 
-
     sum_channels = ['susceptible', 'exposed', 'asymptomatic',
-       'presymptomatic', 'symptomatic_mild', 'symptomatic_severe',
+        'presymptomatic', 'symptomatic_mild', 'symptomatic_severe',
        'hospitalized', 'critical', 'deaths', 'recovered', 'asymp_cumul',
        'asymp_det_cumul', 'symp_mild_cumul', 'symp_mild_det_cumul',
        'symp_severe_cumul', 'symp_severe_det_cumul', 'hosp_cumul',
        'hosp_det_cumul', 'crit_cumul', 'crit_det_cumul', 'crit_det',
-       'death_det_cumul', 'detected_cumul', 'detected', 'infected']
+       'death_det_cumul', 'detected_cumul', 'detected', 'infected',
+       'new_exposures', 'new_asymptomatic', 'new_asymptomatic_detected',
+       'new_detected_hospitalized', 'new_hospitalized', 'new_detected', 'new_critical',
+       'new_detected_critical','new_detected_deaths', 'new_deaths']
 
     mdf = adf.groupby(['date','run_num','scen_num','sample_num'])[sum_channels].agg(np.sum).reset_index()
 
@@ -50,7 +52,7 @@ def read_and_combine_data(stem):
 def save_plot_csv(scen):
     df = read_and_combine_data(scen)
 
-    channels = ['infected', 'deaths', 'hospitalized', 'critical', 'ventilators']
+    channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
     df['ventilators'] = df['critical']*0.8
 
     fig = plt.figure(figsize=(18,12))
@@ -91,9 +93,9 @@ def save_plot_csv(scen):
                        "infected_median": "Number of Covid-19 infections",
                        "infected_95CI_lower": "Lower error bound of covid-19 infections",
                        "infected_95CI_upper": "Upper error bound of covid-19 infections",
-                       "deaths_median": "Number of covid-19 deaths",
-                       "deaths_95CI_lower": "Lower error bound of covid-19 deaths",
-                       "deaths_95CI_upper": "Upper error bound of covid-19 deaths",
+                       "new_deaths_median": "Number of new covid-19 deaths",
+                       "new_deaths_95CI_lower": "Lower error bound of new covid-19 deaths",
+                       "new_deaths_95CI_upper": "Upper error bound of new covid-19 deaths",
                        "hospitalized_median": "Number of hospital beds occupied",
                        "hospitalized_95CI_lower": "Lower error bound of number of hospital beds occupied",
                        "hospitalized_95CI_upper": "Upper error bound of number of hospital beds occupied",
@@ -105,11 +107,11 @@ def save_plot_csv(scen):
                        "ventilators_95CI_upper": "Upper error bound of number of ventilators used"})
 
     if scen =="scenario1":
-        filename = 'nu_illinois_endsip_20200419'
+        filename = 'nu_illinois_endsip_20200420'
     if scen =="scenario2":
-        filename = 'nu_illinois_neversip_20200419'
+        filename = 'nu_illinois_neversip_20200420'
     if scen =="scenario3":
-        filename = 'nu_illinois_baseline_20200419'
+        filename = 'nu_illinois_baseline_20200420'
 
     adf.to_csv(os.path.join(wdir, 'simulation_output/_csv', filename + '.csv'), index=False)
     plt.savefig(os.path.join(wdir, 'simulation_output/_plots/IL', filename + '.png'))
