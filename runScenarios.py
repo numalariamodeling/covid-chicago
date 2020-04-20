@@ -29,8 +29,7 @@ def _parse_config_parameter(df, parameter, parameter_function):
         return parameter_function
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
-        return [getattr(np.random, parameter_function['np.random'])(**function_kwargs)
-                for i in range(len(df))]
+        return getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
