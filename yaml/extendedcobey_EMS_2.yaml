@@ -89,4 +89,4 @@ fitted_parameters:
   Kis:
     'EMS_2':
       np: linspace
-      function_kwargs: {'start': 1.75e-7, 'stop': 1.75e-7, 'num': 1}
+      function_kwargs: {'start': 1.5e-7, 'stop': 1.5e-7, 'num': 1}
