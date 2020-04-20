@@ -40,6 +40,8 @@ def _parse_config_parameter(df, parameter, parameter_function):
             return [DateToTimestep(**function_kwargs) for i in range(len(df))]
         elif function_name == 'subtract':
             return df[function_kwargs['x1']] - df[function_kwargs['x2']]
+        else:
+            raise ValueError(f"Unknown function for parameter {parameter}: {function_name}")
     else:
         raise ValueError(f"Unknown type of parameter {parameter}")
 
