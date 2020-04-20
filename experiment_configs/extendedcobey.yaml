@@ -35,7 +35,7 @@ fixed_parameters_region_specific:
     'EMS_8': 2020-02-28
     'EMS_9': 2020-02-28       
     'EMS_10': 2020-02-28
-    'EMS_11': 2020-02-28        
+    'EMS_11': 2020-02-28
 fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
