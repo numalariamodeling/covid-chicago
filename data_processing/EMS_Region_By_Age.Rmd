@@ -1,0 +1,108 @@
+---
+title: "EMS Regions by Age"
+author: "Tracy Guo"
+date: "4/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Loading the csv file from the US Census Bureau
+```{r}
+library(stringr)
+pop <- read.csv("IL_population_by_Age_2010_2018.csv")
+```
+
+We only want to use the latest population data, collected 7/1/2018 
+```{r}
+library(dplyr)
+pop <- as.data.frame(population)
+pop18 <- pop %>% subset( YEAR==11)
+```
+
+Create bins for Age. The bins are slighly different from Manuela's because the dataset already predefined age groups
+Under 5, 5-19, 20-64, 64-100
+```{r}
+#Seems like we need to transpose the age group data first
+pop18_age <- pop18 %>% subset(select=c(COUNTY, CTYNAME, AGEGRP,TOT_POP)) 
+head(pop18_age)
+```
+```{r}
+#Transpose data so that age group changes from long to wide
+library(reshape)
+pop18_age_new <- cast(pop18_age, COUNTY+CTYNAME~AGEGRP)
+head(pop18_age_new)
+```
+
+```{r}
+#Adding new age bin variables
+#Under 5
+pop18_age_new$under5 <- pop18_age_new[,4] 
+
+#Age 5 to 19
+pop18_age_new$age5_19 <- pop18_age_new[,5]+ pop18_age_new[,6] +pop18_age_new[,7]  
+
+#Age 20 to 64
+pop18_age_new$age20_64 <- pop18_age_new[,8]+ pop18_age_new[,9] +pop18_age_new[,10]  + pop18_age_new[,11]+ pop18_age_new[,12] +pop18_age_new[,13]  +pop18_age_new[,14]+ pop18_age_new[,15] +pop18_age_new[,16]  
+  
+#Above 64
+pop18_age_new$above64 <-pop18_age_new[,17]+ pop18_age_new[,18] +pop18_age_new[,19]  + pop18_age_new[,20]+ pop18_age_new[,21] 
+```
+
+```{r}
+#Define a new dataset with age bins
+pop18_agebins <- pop18_age_new %>% subset(select=c(COUNTY, CTYNAME, under5 , age5_19 , age20_64 , above64)) 
+```
+
+```{r}
+head(pop18_agebins)
+pop18_agebins$CTYNAME
+```
+
+Assign Region variables to each county
+```{r}
+
+for (i in c(1:length(pop18_agebins$CTYNAME) ) )
+    {
+  
+  if (pop18_agebins$CTYNAME[i] %in% c("Jo Daviess County", "Stephenson County", "Winnebago County", "Boone County", "Carroll County", "Ogle County","DeKalb County", "Whiteside County", "Lee County" ) ) 
+  { pop18_agebins$Region[i] <- 1}
+  
+  else if (pop18_agebins$CTYNAME[i] %in% c("Rock Island County", "Mercer County", "Henderson County", "Warren County", "McDonough County", "Henry County", "Knox County", "Fulton County", "Bureau County", "Stark County","Putnam County", "Marshall County", "Peoria County", "Woodford County","Tazewell County", "LaSalle County", "Livingston County", "McLean County"  )) 
+    
+  {pop18_agebins$Region[i] <- 2}
+  
+  else if(pop18_agebins$CTYNAME[i] %in% c("Hancock County", "Adams County", "Pike County", "Calhoun County", "Schuyler County", "Brown County", "Scott County", "Greene County", "Jersey County", "Mason County","Menard County", "Cass County", "Morgan County", "Sangamon County","Macoupin County", "Logan County", "Christian County", "Montgomery County"  )) 
+  {pop18_agebins$Region[i] <- 3}
+  
+  else if(pop18_agebins$CTYNAME[i] %in% c("Madison County", "Bond County", "Clinton County", "Washington County", "Randolph County", "Monroe County", "St. Clair County")) 
+  {pop18_agebins$Region[i] <- 4}
+  
+  else if(pop18_agebins$CTYNAME[i] %in% c("Perry County", "Jackson County", "Union County", "Alexander County", "Pulaski County", "Massac County", "Johnson County", "Williamson County", "Franklin County", "Jefferson County", "Marion County", "Wayne County", "Hamilton County", "Saline County", "Pope County", "Hardin County", "Gallatin County", "White County", "Edwards County", "Wabash County")) 
+  {pop18_agebins$Region[i] <- 5}
+  
+  else if(pop18_agebins$CTYNAME[i] %in% c("De Witt County", "Macon County", "Shelby County", "Fayette County", "Piatt County", "Moultrie County", "Effingham County", "Clay County", "Richland County", "Jasper County", "Cumberland County", "Coles County", "Douglas County", "Champaign County", "Ford County", "Iroquois County", "Vermilion County", "Edgar County", "Clark County", "Crawford County", "Lawrence County")) 
+  {pop18_agebins$Region[i] <- 6}
+  
+  #Population from Region 7 to 11 will be 0 for now
+  else (pop18_agebins$Region[i] <- 0)
+      
+}
+
+pop18_agebins$Region <- as.factor(pop18_agebins$Region)
+```
+
+Display Region Population by Age Bins
+```{r}
+pop18_agebins %>% subset(select=c(under5, age5_19, age20_64, above64, Region)) %>% group_by(Region) %>% summarise_at(vars(c(under5, age5_19, age20_64, above64)), funs(sum(., na.rm=TRUE)))
+#pop18_agebins[,c("CTYNAME", "Region")]
+```
+
+Region 7 is Grundy, Will, Kankakee, half of Kendall, and a bit of Cook
+Region 8 is DuPage and bit of Cook
+Region 9 is Kane, McHenry, half of Kendall, a bit of Lake and a bit of Cook
+Region 10 is a bit of Lake and a bit of Cook
+Region 11 is a part of Cook 
+
