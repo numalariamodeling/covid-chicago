@@ -46,6 +46,9 @@ def _parse_config_parameter(df, parameter, parameter_function):
 
 def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
     """ Applies the described function and adds the column to the dataframe
+    
+    The input DataFrame will be modified in place.
+    
     Parameters
     ----------
     df: pd.DataFrame
