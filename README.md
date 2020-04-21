@@ -102,7 +102,7 @@ Note that the user-supplied configuration file is used to provide
   
 ### Usage examples:
 - Using the default emodl template: `python runScenarios.py
-  --running_location Local --region IL  --experiment_config sample_experiment.yaml`
+  --running_location Local --region IL  --experiment_config ./experiment_configs/sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
   --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
 - Specifying experiment name suffix and changing running_location : `python runScenarios.py
