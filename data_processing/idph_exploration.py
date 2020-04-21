@@ -81,7 +81,7 @@ def impute_onset_date() :
     adf['imputed_days_between'] = np.random.choice(observed_days_between, len(adf), replace=True)
     sdf = adf[adf['Onset Date'].isna()]
     sdf['Onset Date imputed'] = sdf['Specimen Collection Date']
-    sdf['Onset Date imputed'] = sdf.apply(lambda x : x['Specimen Collection Date'] + timedelta(days=x['imputed_days_between']), axis=1)
+    sdf['Onset Date imputed'] = sdf.apply(lambda x : x['Specimen Collection Date'] - timedelta(days=x['imputed_days_between']), axis=1)
     sdf = sdf[['ID', 'Onset Date imputed']]
     adf = pd.merge(left=adf, right=sdf, on='ID', how='left')
     adf['Onset Date imputed'].fillna(adf['Onset Date'], inplace=True)
@@ -229,9 +229,10 @@ def plot_days_between_onset_and_specimen() :
 if __name__ == '__main__' :
 
     df = load_cleaned_line_list()
-    df = df.groupby(['Onset Date imputed', 'EMS'])['ID'].agg(len).reset_index()
+    date_col = 'Onset Date imputed'
+    df = df.groupby([date_col, 'EMS'])['ID'].agg(len).reset_index()
     df = df.rename(columns={'ID' : 'cases',
-                            'Onset Date imputed' : 'date'})
+                            date_col : 'date'})
     df = df.sort_values(by=['date', 'EMS'])
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200419_jg_imputed_onset_ems_all_pos.csv'), index=False)
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200419_jg_%s_ems.csv' % date_col), index=False)
 
