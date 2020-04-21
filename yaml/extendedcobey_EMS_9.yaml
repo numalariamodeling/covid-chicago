@@ -4,6 +4,7 @@ experiment_setup_parameters:
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 19
+  'initialAs': 10
 fixed_parameters_region_specific:
   populations:
     'EMS_9': 1970275
@@ -76,16 +77,16 @@ sampled_parameters:
     function_kwargs: {'low':0.95, 'high':1}
   'socialDistance_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-12}
+    function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
   'socialDistance_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-17}
+    function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
   'socialDistance_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21}
+    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
   'socialDistanceSTOP_time':
       custom_function: DateToTimestep
-      function_kwargs: {'dates': 2020-04-24}
+      function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
     'EMS_9':
