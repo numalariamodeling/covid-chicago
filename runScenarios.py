@@ -20,6 +20,7 @@ from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
 log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
+
 today = datetime.today()
 DEFAULT_CONFIG = './extendedcobey.yaml'
 
@@ -34,8 +35,9 @@ def _parse_config_parameter(df, parameter, parameter_function):
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
-            function_kwargs['startdate'] = first_day
-            return [DateToTimestep(**function_kwargs) for i in range(len(df))]
+            startdate_col = function_kwargs['startdate_col']
+            return [DateToTimestep(function_kwargs['dates'], df[startdate_col][i])
+                    for i in range(len(df))]
         elif function_name == 'subtract':
             return df[function_kwargs['x1']] - df[function_kwargs['x2']]
         else:
@@ -76,7 +78,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
     df: pd.DataFrame
         dataframe with the additional column(s) added
     """
-    if parameter_function.get('expand_by_age'):
+    if isinstance(parameter_function, dict) and parameter_function.get('expand_by_age'):
         if not age_bins:
             raise ValueError("Ages bins must be specified if using an age expansion")
         if 'list' in parameter_function:
@@ -97,7 +99,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
         else:
             raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
-        if 'matrix' in parameter_function:
+        if isinstance(parameter_function, dict) and 'matrix' in parameter_function:
             m = parameter_function['matrix']
             for i, row in enumerate(m):
                 for j, item in enumerate(row):
@@ -138,6 +140,7 @@ def generateParameterSamples(samples, pop, first_day, config, age_bins):
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
+    df['startdate'] = experiment_config['fixed_parameters_region_specific']['startdate'][region]
 
     for parameter, parameter_function in config['sampled_parameters'].items():
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
@@ -176,6 +179,10 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
         raise ValueError("Not all placeholders have been replaced in the template emodl file. "
                          f"Remaining placeholders: {remaining_placeholders}")
     fin.close()
+    remaining_placeholders = re.findall(r'@\w+@', data)
+    if remaining_placeholders:
+        raise ValueError("Not all placeholders have been replaced in the template emodl file. "
+                         f"Remaining placeholders: {remaining_placeholders}")
     fin = open(os.path.join(temp_dir, f"simulation_{scen_num}.emodl"), "wt")
     fin.write(data)
     fin.close()
