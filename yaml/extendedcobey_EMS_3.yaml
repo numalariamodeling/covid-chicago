@@ -4,11 +4,12 @@ experiment_setup_parameters:
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 19
-fixed_parameters:
+fixed_parameters_region_specific:
   populations:
     'EMS_3': 619366
   startdate:
     'EMS_3': 2020-03-05         
+fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
     np.random: uniform

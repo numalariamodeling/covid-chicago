@@ -39,54 +39,12 @@ table(trajectoriesDat$stop_date)
 trajectoriesDat$Date <- as.Date(trajectoriesDat$time + startDate)
 trajectoriesDat$effectVar <- (1 - trajectoriesDat$backtonormal_multiplier) * 100
 
-#### Calculate new infections 
 
-count_new <- function(df, curr_ch) {
-  
-  ch_list = df$curr_ch
-  for(x in range(1, dim(df)[1])){
-    diff = 0 + ch_list[x] - ch_list[x - 1] 
-  }
- 
-return (diff)
-}
-
-
-calculate_incidence <- function(adf, output_filename=None) {
-  
-  inc_df = data.frame()
-  
-  adf %>% group_by(sample_num, scen_num) %>% 
-  
-for (samp, scen), df in adf.groupby(['sample_num', 'scen_num']) :
-  
-  sdf = pd.DataFrame( { 'time' : df['time'],
-    'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
-    'new_asymptomatic' : count_new(df, 'asymp_cumul'),
-    'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
-    # 'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
-    'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
-    'new_hospitalized' : count_new(df, 'hosp_cumul'),
-    'new_detected' : count_new(df, 'detected_cumul'),
-    'new_critical' : count_new(df, 'crit_cumul'),
-    'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-    'new_detected_deaths' : count_new(df, 'death_det_cumul'),
-    'new_deaths' : count_new(df, 'deaths')
-  })
-sdf['sample_num'] = samp
-sdf['scen_num'] = scen
-inc_df = pd.concat([inc_df, sdf])
-adf = pd.merge(left=adf, right=inc_df, on=['sample_num', 'scen_num', 'time'])
-if output_filename :
-  adf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
-
-return(adf)
-}
 
 ### Calculate new infections
 ### Aggregate seeds and samples
-aggrDat_exposed <- trajectoriesDat %>% aggrDat(groupVars = c("time", "Date", "backtonormal_multiplier", "effectVar", "stop_date"), valueVar = "exposed", WideToLong = FALSE)
-aggrDat_hosp_cumul <- trajectoriesDat %>% aggrDat(groupVars = c("time", "Date", "backtonormal_multiplier", "effectVar", "stop_date"), valueVar = "hosp_cumul", WideToLong = FALSE)
+aggrDat_exposed <- trajectoriesDat %>% f_aggrDat(groupVars = c("time", "Date", "backtonormal_multiplier", "effectVar", "stop_date"), valueVar = "exposed", WideToLong = FALSE)
+aggrDat_hosp_cumul <- trajectoriesDat %>% f_aggrDat(groupVars = c("time", "Date", "backtonormal_multiplier", "effectVar", "stop_date"), valueVar = "hosp_cumul", WideToLong = FALSE)
 
 
 

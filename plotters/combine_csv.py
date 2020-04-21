@@ -5,7 +5,6 @@ sys.path.append('../')
 from load_paths import load_box_paths
 from datetime import date, timedelta, datetime
 from processing_helpers import *
-from simulation_setup import *
 from data_comparison import load_sim_data
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
