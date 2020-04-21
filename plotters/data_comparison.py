@@ -9,7 +9,6 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
-from simulation_setup import *
 
 
 mpl.rcParams['pdf.fonttype'] = 42
