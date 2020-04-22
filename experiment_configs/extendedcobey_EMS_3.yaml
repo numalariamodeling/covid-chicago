@@ -1,0 +1,94 @@
+experiment_setup_parameters:
+  'number_of_samples': 50
+  'number_of_runs': 5
+  'duration': 365
+  'monitoring_samples': 365 # needs to be smaller than duration
+  'random_seed': 19
+  'initialAs': 10                 
+fixed_parameters_region_specific:
+  populations:
+    'EMS_3': 619366
+  startdate:
+    'EMS_3': 2020-03-05         
+fixed_parameters_global:
+sampled_parameters:
+  'incubation_pd':
+    np.random: uniform
+    function_kwargs: {'low': 4.2, 'high': 6.63}
+  'time_to_symptoms':
+    np.random: uniform
+    function_kwargs: {'low': 3.3, 'high':4}
+  'time_to_hospitalization':
+    np.random: uniform
+    function_kwargs: {'low':3, 'high':6}
+  'time_to_critical':
+    np.random: uniform
+    function_kwargs: {'low':2, 'high':6}
+  'time_to_death':
+    np.random: uniform
+    function_kwargs: {'low':10, 'high':13}
+  'recovery_rate_asymp':
+    np.random: uniform
+    function_kwargs: {'low':7, 'high':20}
+  'recovery_rate_mild':
+    np.random: uniform
+    function_kwargs: {'low':7, 'high':20}
+  'recovery_rate_hosp':
+    np.random: uniform
+    function_kwargs: {'low':5, 'high':7}
+  'recovery_rate_crit':
+    np.random: uniform
+    function_kwargs: {'low':9, 'high':11}
+  'fraction_symptomatic':
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.7}
+  'fraction_severe':
+    np.random: uniform
+    function_kwargs: {'low':0.1, 'high':0.2}
+  'fraction_critical':
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.35}
+  'cfr':
+    np.random: uniform
+    function_kwargs: {'low':0.078, 'high':0.152}
+  'reduced_inf_of_det_cases':
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.9}
+  'd_Sym':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.2} 
+  'd_Sys':
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.5} 
+  'd_As':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0}
+  'social_multiplier_1':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
+  'social_multiplier_2':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+  'social_multiplier_3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
+  'backtonormal_multiplier':
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high':1}
+  'socialDistance_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
+  'socialDistance_time2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
+  'socialDistance_time3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+  'socialDistanceSTOP_time':
+      custom_function: DateToTimestep
+      function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
+fitted_parameters:
+  Kis:
+    'EMS_3':
+      np: linspace
+      function_kwargs: {'start': 5.0e-7, 'stop': 5.0e-7, 'num': 1}

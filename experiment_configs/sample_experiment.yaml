@@ -1,0 +1,10 @@
+experiment_setup_parameters:
+  'number_of_samples': 20
+  'number_of_runs': 1
+fixed_parameters_region_specific:
+fixed_parameters_global:
+sampled_parameters:
+  'incubation_pd':
+    np.random: uniform
+    function_kwargs: {'low': 1, 'high': 2}
+fitted_parameters:

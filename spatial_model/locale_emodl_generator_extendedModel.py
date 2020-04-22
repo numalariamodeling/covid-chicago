@@ -1,42 +1,17 @@
 import os
 import subprocess
+import sys
+sys.path.append('../')
 from load_paths import load_box_paths
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 emodl_dir = os.path.join(git_dir, 'spatial_model', 'emodl')
 
-### FUNCTIONS
-def read_group_dictionary(filename='county_dic.csv',grpname ='county', Testmode=True, ngroups=2):
-    county_dic = {}
-    with open(os.path.join(filename)) as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            county_dic[row[grpname]] = [int(x) for x in row['val_list'].strip('][').split(', ')]
-
-    if Testmode == True:
-        county_dic = {k: county_dic[k] for k in sorted(county_dic.keys())[:ngroups]}
-
-    return county_dic
-
-def define_group_dictionary(totalPop, countyGroups,  countyGroupScale, initialAs) :
-    county_dic = {}
-    for i, grp in enumerate(countyGroups):
-        print(i, grp)
-        county_dic[grp] = [totalPop * countyGroupScale[i], initialAs[i]]
-    return county_dic
-
-
-def write_species_init(county_dic, county):
-    S = "(species S::{} {})".format(county, county_dic[county][0])
-    As = "(species As::{} {})".format(county, county_dic[county][1])
-    species_init_str = S + '\n' + As 
-    species_init_str = species_init_str.replace("  ", " ")
-    return (species_init_str)
-
-
-def write_species(county):
-    county = str(county)
+def write_species(grp):
+    grp = str(grp)
     species_str = """
+(species S::{} @speciesS_{}@)
+(species As::{} @initialAs_{}@)
 (species E::{} 0)
 (species As_det1::{} 0)
 (species P::{} 0)
@@ -64,16 +39,16 @@ def write_species(county):
 (species RH1_det3::{} 0)
 (species RC2::{} 0)
 (species RC2_det3::{} 0)
-""".format(county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
            )
     species_str = species_str.replace("  ", " ")
     return (species_str)
-    
 
-def write_observe(county):
-    county = str(county)
+
+def write_observe(grp):
+    grp = str(grp)
 
     observe_str = """
 (observe susceptible_{} S::{})
@@ -103,21 +78,22 @@ def write_observe(county):
 
 (observe detected_{} (+ As_det1::{} Sym_det2::{} Sys_det3::{} H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{}))
 (observe infected_{} (+ infectious_det_{} infectious_undet_{} H1_det3::{} H2_det3::{} H3_det3::{} C2_det3::{} C3_det3::{}))
-""".format(county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county, 
-           county, county, county, county, county, county, county, county, county, county,county, county, county, 
-           county, county, county, county, county, county, county, county
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
            )
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
-def write_functions(county):
-    county = str(county)
+
+def write_functions(grp):
+    grp = str(grp)
     functions_str = """
 (func asymptomatic_{}  (+ As::{} As_det1::{}))
 (func symptomatic_mild_{}  (+ Sym::{} Sym_det2::{}))
@@ -128,14 +104,15 @@ def write_functions(county):
 (func recovered_{} (+ RAs::{} RSym::{} RH1::{} RC2::{} RAs_det1::{} RSym_det2::{} RH1_det3::{} RC2_det3::{}))
 (func infectious_undet_{} (+ As::{} P::{} Sym::{} Sys::{} H1::{} H2::{} H3::{} C2::{} C3::{}))
 (func infectious_det_{} (+ As_det1::{} Sym_det2::{} Sys_det3::{} ))
-""".format(county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
            )
     functions_str = functions_str.replace("  ", "")
     return (functions_str)
+
 
 ###
 def write_params():
@@ -185,9 +162,10 @@ def write_params():
 
     return (params_str)
 
+
 # Reaction without contact matrix
-def write_reactions(county):
-    county = str(county)
+def write_reactions(grp):
+    grp = str(grp)
 
     reaction_str = """
 (reaction exposure_{}   (S::{}) (E::{}) (* Ki S::{} (+ infectious_undet_{} (* infectious_det_{} reduced_inf_of_det_cases))))
@@ -223,32 +201,33 @@ def write_reactions(county):
 (reaction recovery_Sym_det2_{}   (Sym_det2::{})   (RSym_det2::{})   (* Kr_m  Sym_det2::{}))
 (reaction recovery_H1_det3_{}   (H1_det3::{})   (RH1_det3::{})   (* Kr_h H1_det3::{}))
 (reaction recovery_C2_det3_{}   (C2_det3::{})   (RC2_det3::{})   (* Kr_c C2_det3::{}))
-""".format(county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county, county, county, county,
-           county, county, county, county, county, county, county, county, county, county
+""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
+           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
            )
 
     reaction_str = reaction_str.replace("  ", " ")
     return (reaction_str)
 
+
 ###stringing all of my functions together to make the file:
 
-def generate_locale_emodl_extended(county_dic, file_output):
+def generate_locale_emodl_extended(grp, file_output):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
+    model_name = "seir.emodl"  ### can make this more flexible
+    header_str = "; simplemodel \n\n" + "(import (rnrs) (emodl cmslib)) \n\n" + '(start-model "{}") \n\n'.format(
+        model_name)
+    footer_str = "(end-model)"
 
-    model_name= "seir.emodl" ### can make this more flexible
-    header_str="; simplemodel \n\n"+ "(import (rnrs) (emodl cmslib)) \n\n"+'(start-model "{}") \n\n'.format(model_name)
-    footer_str ="(end-model)"
-    
-    #building up the .emodl string
+    # building up the .emodl string
     total_string = ""
     species_string = ""
     observe_string = ""
@@ -256,21 +235,18 @@ def generate_locale_emodl_extended(county_dic, file_output):
     functions_string = ""
     total_string = total_string + header_str
 
-    for key in county_dic.keys():
-        total_string= total_string+ "\n(locale site-{})\n".format(key)
-        total_string= total_string+ "(set-locale site-{})\n".format(key)
-        species_init = write_species_init(county_dic, county=key)
+    for key in grp:
+        total_string = total_string + "\n(locale site-{})\n".format(key)
+        total_string = total_string + "(set-locale site-{})\n".format(key)
         species = write_species(key)
-        total_string =total_string + species_init + species
-
-    for key in county_dic.keys():
+        total_string = total_string +  species
         observe = write_observe(key)
         reaction = write_reactions(key)
         functions = write_functions(key)
         observe_string = observe_string + observe
         reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
- 
+
     params = write_params()
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
     print(total_string)
@@ -281,13 +257,11 @@ def generate_locale_emodl_extended(county_dic, file_output):
         print("{} file was successfully created".format(file_output))
     else:
         print("{} file was NOT created".format(file_output))
-       
 
-    
-def generate_locale_cfg(cfg_filename,nruns, filepath):
-    
+
+def generate_locale_cfg(cfg_filename, nruns, filepath):
     # generate the CFG file
-    cfg="""{
+    cfg = """{
         "duration" : 60,
         "runs" : %s,
         "samples" : 60,
@@ -302,19 +276,15 @@ def generate_locale_cfg(cfg_filename,nruns, filepath):
         "r-leaping" : {}
     }""" % (nruns, cfg_filename)
 
-    file1 = open(filepath,"w") 
+    file1 = open(filepath, "w")
     file1.write(cfg)
     file1.close()
-    
-    
+
 
 if __name__ == '__main__':
-    county_dic = define_group_dictionary(totalPop=12741080,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
-                                      countyGroups=['EMS_0','EMS_1','EMS_2','EMS_3','EMS_4','EMS_5','EMS_6'],
-                                      countyGroupScale=[0.68, 0.05, 0.08,  0.04, 0.05,  0.03, 0.06],    ## proportion of total population, based on IL_population_by_Age_2010_2018
-                                      initialAs=[2, 2, 2, 2, 2, 2, 2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
-                                      )
-
-    generate_locale_emodl_extended(county_dic=county_dic, file_output=os.path.join(emodl_dir,'extendedmodel_cobey_locale_EMS.emodl'))
+    ems_grp = ['EMS_0', 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
+               'EMS_11']
+    generate_locale_emodl_extended(grp=ems_grp,
+                                   file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS.emodl'))
 
 
