@@ -135,7 +135,7 @@ def write_functions_2grp(age,region):
 (func infectious_undet_{age}_{region} (+ As_{age}::{region} P_{age}::{region} Sym_{age}::{region} Sys_{age}::{region} H1_{age}::{region} H2_{age}::{region} H3_{age}::{region} C2_{age}::{region} C3_{age}::{region}))
 (func infectious_det_{age}_{region} (+ As_det1_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} ))
 
-(param N_{age}_{region} (+  @speciesS_{age}_{region}@   @speciesAs_{age}_{region}@  )
+(param N_{age}_{region} (+  @speciesS_{age}_{region}@   @speciesAs_{age}_{region}@  ))
 """.format(age=age,region=region)
     functions_str = functions_str.replace("  ", "")
     return (functions_str)
@@ -293,12 +293,12 @@ if __name__ == '__main__':
 #     generate_locale_emodl_extended(region_dic=region_dic, file_output=os.path.join(emodl_dir,'extendedmodel_cobey_locale_EMS.emodl'))
 
     ###testing with 1age and 1 locale group:
-    age_list = ['age0to19']#, 'age40to59', 'age60to100']
-    region_list = ['EMS_1']
+    age_list = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
+    region_list = ['EMS_1',  'EMS_2' ] #  ['EMS_0', 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
     #region_dic = define_group_dictionary(totalPop=12741080,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
     #                                 regionGroups=['EMS_0'],
     #                                  regionGroupScale=[0.68],    ## proportion of total population, based on IL_population_by_Age_2010_2018
     #                                  initialAs=[2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
     #                                  )
 
-    generate_locale_emodl_extended_2grp(age_list, region_list, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_age_2grptest1.emodl'))
+    generate_locale_emodl_extended_2grp(age_list, region_list, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_age_6grptest1.emodl'))
