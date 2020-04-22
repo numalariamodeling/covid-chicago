@@ -73,7 +73,7 @@
 (observe detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (observe infected (+ infectious_det infectious_undet H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 
-
+(param N (+ @speciesS@ @initialAs@))
 (param incubation_pd @incubation_pd@)
 (param time_to_symptoms @time_to_symptoms@)
 (param time_to_hospitalization @time_to_hospitalization@)
@@ -113,7 +113,7 @@
 (param Ki_red3 (* Ki @social_multiplier_3@))
 (param Ki_back (* Ki @backtonormal_multiplier@))
 
-(reaction exposure   (S) (E) (* Ki S (+ infectious_undet (* infectious_det reduced_inf_of_det_cases))))
+(reaction exposure   (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))
 (reaction infection_asymp_undet  (E)   (As)   (* Kl E (- 1 d_As)))
 (reaction infection_asymp_det  (E)   (As_det1)   (* Kl E d_As))
 (reaction presymptomatic (E)   (P)   (* Ks E))
