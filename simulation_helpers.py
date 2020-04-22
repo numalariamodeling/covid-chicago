@@ -104,7 +104,7 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
         sdf = sdf.rename(columns={
             x: x.split('{')[0] for x in channels
         })
-        sdf['run_index'] = run_num
+        sdf['run_num'] = run_num
         adf = pd.concat([adf, sdf])
 
     adf = adf.reset_index()
@@ -179,11 +179,12 @@ for i in {{1..{scen_num}}}
   done
 echo end""")
         else:
-            file.write("ECHO start" + "\n" + "FOR /L %%i IN (1,1,{}) DO ( {} -c {} -m {})".format(
+            file.write('ECHO start' + '\n' + 'FOR /L %%i IN (1,1,{}) DO ( "{}" -c "{}" -m "{}") >> {}/trajectories/log/log.txt'.format(
                 str(scen_num),
                 get_cms_cmd(exe_dir, temp_exp_dir),
                 os.path.join(temp_dir, "model_%%i" + ".cfg"),
-                os.path.join(temp_dir, "simulation_%%i" + ".emodl")
+                os.path.join(temp_dir, "simulation_%%i" + ".emodl"),
+                os.path.join(temp_exp_dir)
             ) + "\n ECHO end")
 
     # Hardcoded Quest directories for now!

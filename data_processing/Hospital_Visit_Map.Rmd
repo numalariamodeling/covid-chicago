@@ -1,0 +1,151 @@
+---
+title: "Density Map of COVID-19 Related Visits to EMS Hopitals in the State of Illinois"
+date: "4/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+#import the dataset
+library(stringr)
+data <- read.csv("hospital_zip.csv")
+```
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+#Parse out zipcode and frequency for each month
+
+#January
+data$X2020.01 <- as.character(data$X2020.01)
+data$janzip <- substring(data$X2020.01,1,5)
+data$janfreqtemp<- substring(data$X2020.01,8,12)
+data$jannchar <- nchar(data$janfreqtemp)
+
+for (i in 1:length(data$jannchar)) {
+  
+  if (data$jannchar[i]==5) {data$janfreq[i] <- substring(data$janfreqtemp[i], 1,4)}
+  
+  else if (data$jannchar[i]==4) {data$janfreq[i] <- substring(data$janfreqtemp[i], 1,3)}
+  
+  else if (data$jannchar[i]==3) {data$janfreq[i] <- substring(data$janfreqtemp[i], 1,2)}
+  
+  else if (data$jannchar[i]==2) {data$janfreq[i] <- substring(data$janfreqtemp[i], 1,1)}
+  
+}
+
+data$janfreq<- as.numeric(data$janfreq)
+```
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+#Feburary 
+data$X2020.02 <- as.character(data$X2020.02)
+data$febzip <- substring(data$X2020.02,1,5)
+data$febfreqtemp<- substring(data$X2020.02,8,12)
+data$febnchar <- nchar(data$febfreqtemp)
+
+for (i in 1:length(data$febnchar)) {
+  
+  if (data$febnchar[i]==5) {data$febfreq[i] <- substring(data$febfreqtemp[i], 1,4)}
+  
+  else if (data$febnchar[i]==4) {data$febfreq[i] <- substring(data$febfreqtemp[i], 1,3)}
+  
+  else if (data$febnchar[i]==3) {data$febfreq[i] <- substring(data$febfreqtemp[i], 1,2)}
+  
+  else if (data$febnchar[i]==2) {data$febfreq[i] <- substring(data$febfreqtemp[i], 1,1)}
+  
+}
+
+data$febfreq<- as.numeric(data$febfreq)
+
+```
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+#Drop the temporary columns we created
+datajan<-subset(data, select = -c(X2020.01, X2020.02,janfreqtemp, jannchar,febfreqtemp, febnchar,febzip, febfreq ))
+datafeb<-subset(data, select = -c(X2020.01, X2020.02,janfreqtemp, jannchar,febfreqtemp, febnchar,janzip, janfreq ))
+```
+
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+#Import dataset that matches zipcodes to latitude and longtitude 
+library(data.table)
+zip <- fread('https://gist.githubusercontent.com/erichurst/7882666/raw/5bdc46db47d9515269ab12ed6fb2850377fd869e/US%2520Zip%2520Codes%2520from%25202013%2520Government%2520Data')
+```
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+#Merge this file with the hospital zipcode for Janurary 
+colnames(zip) <- c("janzip", "lat", "long")
+datajan <- merge(datajan, zip, on=janzip, how=inner)
+#Excluding this one zipcode that is outside of IL
+datajan<- datajan[datajan$janzip !="59601",]
+```
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+#Merge this file with the hospital zipcode for Feburary
+colnames(zip) <- c("febzip", "lat", "long")
+datafeb <- merge(datafeb, zip, on=febzip, how=inner)
+datafeb <- datafeb[datafeb$febzip !="23234",]
+
+```
+
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
+library(dplyr)
+library(maptools)
+library(ggmap)
+library(ggplot2)
+library(ggthemes)
+library(viridis)
+
+#Plot the base map of IL with county borders 
+states <- map_data("state")
+IL <- subset(states, region %in% c("illinois"))
+
+counties <- map_data("county")
+IL_county <- subset(counties, region == "illinois")
+
+il_base <- ggplot(data = IL, mapping = aes(x = long, y = lat, group=group)) + 
+  coord_fixed(1.5) + 
+  geom_polygon(color = "black", fill = NA) +theme_map()
+```
+
+#### Key Takeaways:
+1. Visits to hospitals were mostly clustered in urban areas in the Northeastern region of Illinois (EMS 7-11) in both Janurary and Feburary. 
+
+2. Outside of the urban areas, visits to hospitals were also high (visits > 1500) in the following counties in both Janurary and Feburary: Stephenson, Adams, Tazewell, Fraklin, and Vermillion
+
+<br />
+
+#### Density Map of Visits to EMS Hopitals in IL in January 
+```{r,echo=FALSE,warning=FALSE}
+
+#Plot the second layer of map that shows the number of visits to EMS Hospitals in Janurary 
+ggplot() + coord_fixed(1.4) + 
+  geom_polygon(data = IL,  aes(x = long, y = lat, group=group), color = "black", fill = NA) +
+  geom_polygon(data = IL_county, aes(x = long, y = lat,group=group),fill = NA, color = "black")+
+  geom_point(data=datajan,aes(x=long, y=lat,size=janfreq, color=janfreq), alpha=1)+
+  scale_color_gradient2(low="burlywood", mid="gold1", high="firebrick")+
+  labs(color= "Visit Frequency", size="Visit Frequency")+
+  theme_map()+  
+  scale_size(range = c(0, 4))+
+  theme(legend.position="bottom")
+```
+
+#### Density Map of Visits to EMS Hopitals in IL in Feburary 
+```{r,echo=FALSE,warning=FALSE}
+#Plot the second layer of map that shows the number of visits to EMS Hospitals in Feburary
+
+ggplot() + coord_fixed(1.4) + 
+  geom_polygon(data = IL,  aes(x = long, y = lat, group=group), color = "black", fill = NA) +
+  geom_polygon(data = IL_county, aes(x = long, y = lat,group=group),fill = NA, color = "black")+
+  geom_point(data=datafeb,aes(x=long, y=lat,size=febfreq, color=febfreq), alpha=1)+
+  scale_color_gradient2(low="burlywood", mid="gold1", high="firebrick")+
+  labs(color= "Visit Frequency", size="Visit Frequency")+
+  theme_map()+
+  scale_size(range = c(0, 4))+
+  theme(legend.position="bottom")
+```
+
+
