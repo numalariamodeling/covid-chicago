@@ -96,6 +96,8 @@ def write_functions(grp):
 (func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
 (func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
 (func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
+
+(param N_{grp} (+  @speciesS_{grp}@  @initialAs_{grp}@) )
 """.format(grp=grp)
    # functions_str = functions_str.replace("  ", "")
     return (functions_str)
@@ -107,14 +109,11 @@ def write_ki_mix(nageGroups, scale=True):
 
     ki_dic = {}
     for i, xy in enumerate(itertools.product(grp_x, grp_y)):
-        ki_dic[i] = ["Ki" + str(xy[0]) + '_' + str(xy[1])]
+        ki_dic[i] = ["C" + str(xy[0]) + '_' + str(xy[1])]
 
     ki_mix_param = ""
     for i in range(len(ki_dic.keys())):
-        if scale == False :
-            string_i = "(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )" + "\n"
-        elif scale == True :
-            string_i = "(param " + ki_dic[i][0] + " (* Ki @" + ki_dic[i][0] + "@ ))" + "\n"
+        string_i = "(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )" + "\n"
         ki_mix_param = ki_mix_param + string_i
 
     return ki_mix_param
