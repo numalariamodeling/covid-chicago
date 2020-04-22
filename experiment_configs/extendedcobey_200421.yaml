@@ -82,10 +82,10 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0.3}
   'd_Sym':
     np.random: uniform
-    function_kwargs: {'low':0.2, 'high':0.3}
+    function_kwargs: {'low':0.05, 'high':0.2} 
   'd_Sys':
     np.random: uniform
-    function_kwargs: {'low':0.7, 'high':0.9}
+    function_kwargs: {'low':0.2, 'high':0.5} 
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
