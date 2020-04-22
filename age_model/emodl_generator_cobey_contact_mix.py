@@ -1,17 +1,19 @@
 import os
 import itertools
 import sys
+
 sys.path.append('../')
 from load_paths import load_box_paths
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 emodl_dir = os.path.join(git_dir, 'emodl')
+
 
 ### WRITE EMODL CHUNKS
 # eval(" 'age,' * 26") + "age"   ### need to add the number of ages pasted into format automatically depending on n groups
 def write_species(grp):
-   grp = str(grp)
-   species_str = """
+    grp = str(grp)
+    species_str = """
 (species S_{grp} @speciesS_{grp}@)
 (species As_{grp} @initialAs_{grp}@)
 (species E_{grp} 0)
@@ -42,8 +44,8 @@ def write_species(grp):
 (species RC2_{grp} 0)
 (species RC2_det3_{grp} 0)
 """.format(grp=grp)
-   species_str = species_str.replace("  ", " ")
-   return (species_str)
+    species_str = species_str.replace("  ", " ")
+    return (species_str)
 
 
 # eval(" 'age,' * 108") + "age"   ### need to add the number of ages pasted into format automatically depending on n groups
@@ -99,7 +101,7 @@ def write_functions(grp):
 
 (param N_{grp} (+  @speciesS_{grp}@  @initialAs_{grp}@) )
 """.format(grp=grp)
-   # functions_str = functions_str.replace("  ", "")
+    # functions_str = functions_str.replace("  ", "")
     return (functions_str)
 
 
@@ -162,7 +164,7 @@ def write_params():
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
  """
-    #params_str = params_str.replace("  ", " ")
+    # params_str = params_str.replace("  ", " ")
 
     return (params_str)
 
@@ -176,17 +178,18 @@ def write_exposure_reaction_homogeneous():
 (func infectious_det_All (+ infectious_det_age0to19 infectious_det_age20to39 infectious_det_age40to59 infectious_det_age60to100 ))
 (func infectious_undet_All (+ infectious_undet_age0to19 infectious_undet_age20to39 infectious_undet_age40to59 infectious_undet_age60to100 ))
 
-(reaction exposure_from_detected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 infectious_det_All reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 infectious_det_All reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 infectious_det_All reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age60to100 (S_age60to100 ) (E_age60to100) (* Ki S_age60to100 infectious_det_All reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (/ infectious_det_All N_age0to19 ) reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (/ infectious_det_All N_age20to39 ) reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 (/ infectious_det_All N_age40to59 )  reduced_inf_of_det_cases))
+(reaction exposure_from_detected_age60to100 (S_age60to100 ) (E_age60to100) (* Ki S_age60to100 (/ infectious_det_All N_age60to100 ) reduced_inf_of_det_cases))
 
-(reaction exposure_from_undetected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 infectious_undet_All))
-(reaction exposure_from_undetected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 infectious_undet_All))
-(reaction exposure_from_undetected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 infectious_undet_All))
-(reaction exposure_from_undetected_age60to100 (S_age60to100 ) (E_age60to100) (* Ki S_age60to100 infectious_undet_All))
+(reaction exposure_from_undetected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (/ infectious_undet_All N_age0to19 ) ))
+(reaction exposure_from_undetected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (/ infectious_undet_All N_age20to39 )))
+(reaction exposure_from_undetected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 (/ infectious_undet_All N_age40to59 )))
+(reaction exposure_from_undetected_age60to100 (S_age60to100 ) (E_age60to100) (* Ki S_age60to100 (/ infectious_undet_All N_age60to100 )))
 """
     return exposure_reaction_str
+
 
 def write_exposure_reaction():
     exposure_reaction_str = """  
@@ -270,7 +273,7 @@ def write_reactions(grp):
 (reaction recovery_C2_det3_{grp}   (C2_det3_{grp})   (RC2_det3_{grp})   (* Kr_c C2_det3_{grp}))
 """.format(grp=grp)
 
-    #reaction_str = reaction_str.replace("  ", " ")
+    # reaction_str = reaction_str.replace("  ", " ")
     return (reaction_str)
 
 
@@ -305,7 +308,11 @@ def generate_extended_emodl(grp, file_output):
         reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
 
-    reaction_string_combined = write_exposure_reaction() + '\n' + reaction_string
+    if (len(grp) == 4):
+        reaction_string_combined = write_exposure_reaction() + '\n' + reaction_string
+    if (len(grp) == 8):
+        reaction_string_combined = write_exposure_reaction2() + '\n' + reaction_string
+
     params = write_params() + write_ki_mix(len(grp))
 
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
@@ -319,52 +326,11 @@ def generate_extended_emodl(grp, file_output):
         print("{} file was NOT created".format(file_output))
 
 
-def generate_extended_emodl2(grp, file_output):
-    if (os.path.exists(file_output)):
-        os.remove(file_output)
-
-    model_name = "seir.emodl"  ### can make this more flexible
-    header_str = "; simplemodel \n\n" + "(import (rnrs) (emodl cmslib)) \n\n" + '(start-model "{}") \n\n'.format(
-        model_name)
-    footer_str = "(end-model)"
-
-    # building up the .emodl string
-    total_string = ""
-    species_string = ""
-    observe_string = ""
-    reaction_string = ""
-    functions_string = ""
-    total_string = total_string + header_str
-
-    for key in grp:
-        species = write_species(key)
-        observe = write_observe(key)
-        reaction = write_reactions(key)
-        functions = write_functions(key)
-        species_string = species_string + species
-        observe_string = observe_string + observe
-        reaction_string = reaction_string + reaction
-        functions_string = functions_string + functions
-
-    reaction_string_combined = write_exposure_reaction2() + '\n' + reaction_string
-    params = write_params() + write_ki_mix(len(grp))
-
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
-    print(total_string)
-    emodl = open(file_output, "w")  ## again, can make this more dynamic
-    emodl.write(total_string)
-    emodl.close()
-    if (os.path.exists(file_output)):
-        print("{} file was successfully created".format(file_output))
-    else:
-        print("{} file was NOT created".format(file_output))
-
-
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 generate_extended_emodl(grp=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
 
-age_grp8 = ["age0to9" , "age10to19" , "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
-generate_extended_emodl2(grp=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_8grp.emodl'))
+age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
+generate_extended_emodl(grp=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_8grp.emodl'))
