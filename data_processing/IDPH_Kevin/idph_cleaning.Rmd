@@ -1,0 +1,270 @@
+---
+title: "idph_data_cleaning"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output')
+
+library(data.table)
+library(tidyverse)
+library(Amelia)
+library(lubridate)
+
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/covid_IDPH-selected/Corona virus reports/COVID_19Confirmed_Modeling___NW032620_Final.csv')
+
+nyt_df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/NYT Data/nyt_data_by_day_county.csv')
+```
+
+basic cleaning
+```{r}
+# nulls 
+df[df == ''] = NA
+colSums(is.na(df))
+missmap(df)
+
+# name change
+names(df) = c('ID', 'sex', 'age', 'county', 'onset_date', 'testing_reason', 'hopsital_facility', 'hospital_admission', 'admission_date', 'outbreak', 'contact', 'travel', 'icu', 'ventilator')
+
+# date
+df$onset_date = mdy(df$onset_date)
+df$admission_date = mdy(df$admission_date)
+
+# nyt - illinois
+nyt_df = nyt_df %>% filter(state == 'Illinois')
+nyt_df$date = as.Date(nyt_df$date)
+
+# names 
+nyt_df$county[nyt_df$county == 'DuPage'] = 'Dupage'
+nyt_df$county[nyt_df$county == 'St. Clair'] = 'St Clair'
+nyt_df$county[nyt_df$county == 'DeKalb'] = 'Dekalb'
+
+df$county[df$county == 'Out Of State' & is.na(df$onset_date)] = 'Cook'
+
+# remove out of state
+df = df %>% filter(!county == 'Out Of State')
+```
+
+date cleaning
+```{r}
+# change 2019 to 2020
+year(df$onset_date[df$onset_date < '2020/1/1' &!is.na(df$onset_date)]) = 2020
+year(df$admission_date[df$admission_date < '2020/1/1' &!is.na(df$admission_date)]) = 2020
+
+df$date_diff = df$onset_date - df$admission_date
+
+mean_date_diff = mean(df$date_diff, na.rm = T)
+
+df$onset_date[is.na(df$onset_date)] = df$admission_date[is.na(df$onset_date)] - mean_date_diff
+```
+
+preliminary plots - daily cases
+```{r}
+county_name = 'Cook'
+
+# tabulate cumulative cases
+cum_cases = function(df, county_name)
+{
+  df_time = df %>% filter(!is.na(onset_date) & county == county_name)
+  df_time = as.data.frame(df_time %>% group_by(onset_date) %>% count() %>% arrange(onset_date))
+  df_time = df_time %>% mutate(cum_count = cumsum(n)) %>% filter(!is.na(onset_date))
+  return(df_time)
+}
+
+df_time = cum_cases(df, county_name)
+
+comp_plot = function(df_time, nyt_df)
+{
+  ggplot(df_time, aes(x = onset_date, y = log(cum_count), color = 'red')) + geom_line(alpha = .7) +
+    geom_line(data = nyt_df , aes(x = date, y = log(cases), color = 'green')) +
+    geom_line(alpha = .7) + scale_color_discrete(name = 'Data', labels = c('Total Census', 'IDPH Data'))
+}
+
+comp_plot(df_time, nyt_df %>% filter(county == county_name))
+```
+custom imputation
+```{r}
+complete_missing_dates = function(county_name)
+{
+  names(df_time)[1] = 'date'
+  df_impute = left_join(df_time, nyt_df %>% filter(county == county_name)) %>% select(date, cum_count, cases)
+  df_impute = df_impute %>% filter(date < '2020-03-26')
+  df_impute[is.na(df_impute)] = 0
+  df_impute$diff = df_impute$cases - df_impute$cum_count  
+  df_impute$weighted_diff = df_impute$diff / df_impute$cum_count
+  weighted_diff_avg = mean(df_impute$weighted_diff[df_impute$date >= '2020-03-01'])
+  df_impute$weighted_diff_diff = df_impute$weighted_diff - weighted_diff_avg
+  df_impute$weighted_diff_diff[df_impute$weighted_diff_diff < 0 | df_impute$date <= '2020-03-01'] = 0
+  
+  df_impute$weights = df_impute$weighted_diff_diff / sum(df_impute$weighted_diff_diff)
+  df_impute$add_cases_needed = nrow(df[is.na(df$onset_date) & df$county == county_name,])
+  df_impute$add_cases_needed = round(df_impute$add_cases_needed * df_impute$weights, 0)
+  
+  if (sum(df_impute$add_cases_needed) == 0)
+  {
+    df_impute$add_cases_needed[nrow(df_impute)] = 1
+  }
+  
+  df_impute_date = df_impute %>% filter(add_cases_needed > 0) %>% select(date, add_cases_needed)
+  df_impute_date$seqeunce = rownames(df_impute_date)
+  
+  df_missing_dates = df[is.na(df$date) & df$county == county_name, ]
+  df_missing_dates$sq = 1:nrow(df_missing_dates)
+  
+  if (sum(df_impute$add_cases_needed) > nrow(df_missing_dates))
+  {
+    diff = sum(df_impute$add_cases_needed) - nrow(df_missing_dates)
+    sample_date = sample(df_impute_date$date, size = diff)
+    df_impute_date$add_cases_needed[df_impute_date$date %in% sample_date] = 
+      df_impute_date$add_cases_needed[df_impute_date$date %in% sample_date] - 1
+  }
+  
+  sq_list = seq(1,nrow(df_missing_dates), by = 1)
+  
+  # sampling helper function
+  sampler = function(num_patients)
+  {
+    if (length(sq_list) >= num_patients)
+    {
+      sq_sample = sample(sq_list, size = num_patients)
+      sq_list <<- setdiff(sq_list, sq_sample)
+    }
+    else
+    {
+      sq_sample = sample(sq_list, size = num_patients-1)
+      sq_list <<- setdiff(sq_list, sq_sample)
+    }
+    return(sq_sample)
+  }
+  
+  for (i in 1:nrow(df_impute_date))
+  {
+    num_patients = df_impute_date$add_cases_needed[i]
+    sq_sample = sampler(num_patients)
+    df_missing_dates$onset_date[df_missing_dates$sq %in% sq_sample] = df_impute_date$date[i]
+  }
+  
+  df_missing_dates = df_missing_dates %>% select(-sq)
+  print(county_name)
+  print(head(df_missing_dates, 1))
+  
+  df_county = df %>% filter(county == county_name & !is.na(onset_date))
+  print('before')
+  print(nrow(df_county))
+  df_county = rbind(df_county, df_missing_dates)
+  print('after')
+  print(nrow(df_county))
+  
+  return(df_county)
+}
+
+# df_county = complete_missing_dates(county_name)
+# 
+# df_time = cum_cases(df_county, county_name)
+# comp_plot(df_time, nyt_df %>% filter(county == county_name))
+```
+
+```{r}
+# county vector
+county_list = df %>% filter(is.na(onset_date) & !is.na(county)) %>% distinct(county) 
+county_list = as.vector(county_list$county)
+
+for (i in 1:length(county_list))
+{
+  county_name = county_list[i]
+  df_county = complete_missing_dates(county_name)
+  if (i == 1)
+  {
+    df_final = df_county
+  }
+  else
+  {
+    df_final = rbind(df_final, df_county)
+  }
+}
+```
+
+complete final data set
+```{r}
+df_final = rbind(df_final, df)
+
+df_final = df_final %>% filter(!is.na(onset_date)) %>% distinct()
+
+# custom tweaking
+add = df[df$ID %in% setdiff(df$ID, df_final$ID),]
+add$onset_date = as.Date('2020-03-25')
+df_final = rbind(df_final, add)
+```
+
+output new data
+```{r}
+write.csv(df_final, 'idph_df_cleaned_dates.csv', row.names = F)
+```
+
+helper function
+```{r}
+# tabulate cumulative cases
+cum_hospitalizations = function(df, county_name)
+{
+  df_time = df_final %>% filter(!is.na(onset_date) & county == county_name & hospital_admission == 'Yes')
+  df_time = as.data.frame(df_time %>% group_by(onset_date) %>% count() %>% arrange(onset_date))
+  
+  return(df_time)
+}
+```
+
+Aggregate Data
+```{r}
+county_list = df_final %>% filter(!is.na(county)) %>% distinct(county)
+county_list = as.vector(county_list$county)
+
+for (i in 1:length(county_list))
+{
+  df_county = cum_cases(df_final, county_list[i])
+  df_county$county = county_list[i]
+  if (i == 1)
+  {
+    df_agg = df_county
+  }
+  else
+  {
+    df_agg = rbind(df_agg, df_county)
+  }
+}
+
+county_list = df_final %>% filter(!is.na(county) & hospital_admission == 'Yes') %>% distinct(county)
+county_list = as.vector(county_list$county)
+
+for (i in 1:length(county_list))
+{
+  df_county = cum_hospitalizations(df_final, county_list[i])
+  df_county$county = county_list[i]
+  if (i == 1)
+  {
+    df_agg_hos = df_county
+  }
+  else
+  {
+    df_agg_hos = rbind(df_agg_hos, df_county)
+  }
+}
+
+df_agg = df_agg %>% select(-cum_count)
+names(df_agg_hos)[2] = 'hos_n'
+df_agg = merge(df_agg, df_agg_hos, all = T)
+
+# wrangle 
+df_agg$n[is.na(df_agg$n)] = 0
+df_agg$hos_n[is.na(df_agg$hos_n)] = 0
+
+df_agg = df_agg %>% mutate(cum_count = cumsum(n)) 
+df_agg = df_agg %>% mutate(cum_hosptializations = cumsum(hos_n)) 
+
+names(df_agg) = c('onest_date', 'county', 'new_case', 'new_hospitalizations', 'total_case', 'total_hopsitalizations')
+```
+
+output
+```{r}
+write.csv(df_agg, 'aggregated_data_cleaned.csv', row.names = F)
+```
+
