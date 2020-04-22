@@ -90,6 +90,7 @@
 (param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 
+(param N (+ @speciesS@ @initialAs@))
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
@@ -116,7 +117,7 @@
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
-(reaction exposure   (S) (E) (* Ki S (+ infectious_undet (* infectious_det reduced_inf_of_det_cases))))
+(reaction exposure   (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))
 (reaction infection_asymp_undet  (E)   (As)   (* Kl E (- 1 d_As)))
 (reaction infection_asymp_det  (E)   (As_det1)   (* Kl E d_As))
 (reaction presymptomatic (E)   (P)   (* Ks E))

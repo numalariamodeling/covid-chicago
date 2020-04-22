@@ -7,9 +7,9 @@ experiment_setup_parameters:
   'initialAs': 10
 fixed_parameters_region_specific:
   populations:
-    'EMS_5': 417674
-  startdate:
-    'EMS_5': 2020-02-28            
+    'EMS_6': 788985
+  startdate:    
+    'EMS_6': 2020-02-25   
 fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
@@ -17,37 +17,37 @@ sampled_parameters:
     function_kwargs: {'low': 4.2, 'high': 6.63}
   'time_to_symptoms':
     np.random: uniform
-    function_kwargs: {'low': 1, 'high':5}
+    function_kwargs: {'low': 3.3, 'high':4}
   'time_to_hospitalization':
     np.random: uniform
-    function_kwargs: {'low':2, 'high':10}
+    function_kwargs: {'low':3, 'high':6}
   'time_to_critical':
     np.random: uniform
-    function_kwargs: {'low':4, 'high':9}
+    function_kwargs: {'low':2, 'high':6}
   'time_to_death':
     np.random: uniform
-    function_kwargs: {'low':3, 'high':11}
+    function_kwargs: {'low':10, 'high':13}
   'recovery_rate_asymp':
     np.random: uniform
-    function_kwargs: {'low':6, 'high':16}
+    function_kwargs: {'low':7, 'high':20}
   'recovery_rate_mild':
     np.random: uniform
-    function_kwargs: {'low':19.4, 'high':21.3}
+    function_kwargs: {'low':7, 'high':20}
   'recovery_rate_hosp':
     np.random: uniform
-    function_kwargs: {'low':19.5, 'high':21.1}
+    function_kwargs: {'low':5, 'high':7}
   'recovery_rate_crit':
     np.random: uniform
-    function_kwargs: {'low':25.3, 'high':31.6}
+    function_kwargs: {'low':9, 'high':11}
   'fraction_symptomatic':
     np.random: uniform
-    function_kwargs: {'low':0.5, 'high':0.8}
+    function_kwargs: {'low':0.5, 'high':0.7}
   'fraction_severe':
     np.random: uniform
-    function_kwargs: {'low':0.2, 'high':0.5}
+    function_kwargs: {'low':0.1, 'high':0.2}
   'fraction_critical':
     np.random: uniform
-    function_kwargs: {'low':0.2, 'high':0.5}
+    function_kwargs: {'low':0.2, 'high':0.35}
   'cfr':
     np.random: uniform
     function_kwargs: {'low':0.058, 'high':0.092}
@@ -56,10 +56,10 @@ sampled_parameters:
     function_kwargs: {'low':0.5, 'high':0.9}
   'd_Sym':
     np.random: uniform
-    function_kwargs: {'low':0.2, 'high':0.3}
+    function_kwargs: {'low':0.05, 'high':0.2} 
   'd_Sys':
     np.random: uniform
-    function_kwargs: {'low':0.7, 'high':0.9}
+    function_kwargs: {'low':0.2, 'high':0.5} 
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
@@ -89,6 +89,6 @@ sampled_parameters:
       function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
-    'EMS_5':
+    'EMS_6':
       np: linspace
-      function_kwargs: {'start': 4.5e-7, 'stop': 4.5e-7, 'num': 1}
+      function_kwargs: {'start': 4.0e-7, 'stop': 4.0e-7, 'num': 1}
