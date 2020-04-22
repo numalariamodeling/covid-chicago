@@ -1,49 +1,47 @@
 import os
-import csv
 import itertools
+import sys
+sys.path.append('../')
 from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-emodl_dir = os.path.join(git_dir, 'age_model', 'emodl')
+emodl_dir = os.path.join(git_dir, 'emodl')
 
 ### WRITE EMODL CHUNKS
 # eval(" 'age,' * 26") + "age"   ### need to add the number of ages pasted into format automatically depending on n groups
 def write_species(grp):
    grp = str(grp)
    species_str = """
-(species S_{} @speciesS_{}@)
-(species As_{} @initialAs_{}@)
-(species E_{} 0)
-(species As_det1_{} 0)
-(species P_{} 0)
-(species Sym_{} 0)
-(species Sym_det2_{} 0)
-(species Sys_{} 0)
-(species Sys_det3_{} 0)
-(species H1_{} 0)
-(species H2_{} 0)
-(species H3_{} 0)
-(species H1_det3_{} 0)
-(species H2_det3_{} 0)
-(species H3_det3_{} 0)
-(species C2_{} 0)
-(species C3_{} 0)
-(species C2_det3_{} 0)
-(species C3_det3_{} 0)
-(species D3_{} 0)
-(species D3_det3_{} 0)
-(species RAs_{} 0)
-(species RAs_det1_{} 0)
-(species RSym_{} 0)
-(species RSym_det2_{} 0)
-(species RH1_{} 0)
-(species RH1_det3_{} 0)
-(species RC2_{} 0)
-(species RC2_det3_{} 0)
-""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp,grp, grp ,grp, grp
-           )
+(species S_{grp} @speciesS_{grp}@)
+(species As_{grp} @initialAs_{grp}@)
+(species E_{grp} 0)
+(species As_det1_{grp} 0)
+(species P_{grp} 0)
+(species Sym_{grp} 0)
+(species Sym_det2_{grp} 0)
+(species Sys_{grp} 0)
+(species Sys_det3_{grp} 0)
+(species H1_{grp} 0)
+(species H2_{grp} 0)
+(species H3_{grp} 0)
+(species H1_det3_{grp} 0)
+(species H2_det3_{grp} 0)
+(species H3_det3_{grp} 0)
+(species C2_{grp} 0)
+(species C3_{grp} 0)
+(species C2_det3_{grp} 0)
+(species C3_det3_{grp} 0)
+(species D3_{grp} 0)
+(species D3_det3_{grp} 0)
+(species RAs_{grp} 0)
+(species RAs_det1_{grp} 0)
+(species RSym_{grp} 0)
+(species RSym_det2_{grp} 0)
+(species RH1_{grp} 0)
+(species RH1_det3_{grp} 0)
+(species RC2_{grp} 0)
+(species RC2_det3_{grp} 0)
+""".format(grp=grp)
    species_str = species_str.replace("  ", " ")
    return (species_str)
 
@@ -53,43 +51,34 @@ def write_observe(grp):
     grp = str(grp)
 
     observe_str = """
-(observe susceptible_{} S_{})
-(observe exposed_{} E_{})
-(observe asymptomatic_{} asymptomatic_{})
-(observe presymptomatic_{} P_{})
-(observe symptomatic_mild_{} symptomatic_mild_{})
-(observe symptomatic_severe_{} symptomatic_severe_{})
-(observe hospitalized_{} hospitalized_{})
-(observe critical_{} critical_{})
-(observe deaths_{} deaths_{})
-(observe recovered_{} recovered_{})
+(observe susceptible_{grp} S_{grp})
+(observe exposed_{grp} E_{grp})
+(observe asymptomatic_{grp} asymptomatic_{grp})
+(observe presymptomatic_{grp} P_{grp})
+(observe symptomatic_mild_{grp} symptomatic_mild_{grp})
+(observe symptomatic_severe_{grp} symptomatic_severe_{grp})
+(observe hospitalized_{grp} hospitalized_{grp})
+(observe critical_{grp} critical_{grp})
+(observe deaths_{grp} deaths_{grp})
+(observe recovered_{grp} recovered_{grp})
 
-(observe asymp_cumul_{} (+ asymptomatic_{} RAs_{} RAs_det1_{} ))
-(observe asymp_det_cumul_{} (+ As_det1_{} RAs_det1_{}))
-(observe symp_mild_cumul_{} (+ symptomatic_mild_{} RSym_{} RSym_det2_{}))
-(observe symp_mild_det_cumul_{} (+ RSym_det2_{} Sym_det2_{}))
-(observe symp_severe_cumul_{} (+ symptomatic_severe_{} hospitalized_{} critical_{} deaths_{} RH1_{} RC2_{} RH1_det3_{} RC2_det3_{}))
-(observe symp_severe_det_cumul_{} (+ Sys_det3_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{} D3_det3_{} RH1_det3_{} RC2_det3_{}))
-(observe hosp_cumul_{} (+ hospitalized_{} critical_{} deaths_{} RH1_{} RC2_{} RH1_det3_{} RC2_det3_{}))
-(observe hosp_det_cumul_{} (+ H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{} D3_det3_{} RH1_det3_{} RC2_det3_{}))
-(observe crit_cumul_{} (+ deaths_{} critical_{} RC2_{} RC2_det3_{}))
-(observe crit_det_cumul_{} (+ C2_det3_{} C3_det3_{} D3_det3_{} RC2_det3_{}))
-(observe crit_det_{} (+ C2_det3_{} C3_det3_{}))
-(observe detected_cumul_{} (+ (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} C2_det3_{} C3_det3_{}) RAs_det1_{} RSym_det2_{} RH1_det3_{} RC2_det3_{} D3_det3_{}))
-(observe death_det_cumul_{} D3_det3_{} )
+(observe asymp_cumul_{grp} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
+(observe asymp_det_cumul_{grp} (+ As_det1_{grp} RAs_det1_{grp}))
+(observe symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
+(observe symp_mild_det_cumul_{grp} (+ RSym_det2_{grp} Sym_det2_{grp}))
+(observe symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(observe symp_severe_det_cumul_{grp} (+ Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(observe hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(observe hosp_det_cumul_{grp} (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(observe crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2_{grp} RC2_det3_{grp}))
+(observe crit_det_cumul_{grp} (+ C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RC2_det3_{grp}))
+(observe crit_det_{grp} (+ C2_det3_{grp} C3_det3_{grp}))
+(observe detected_cumul_{grp} (+ (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp}) RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
+(observe death_det_cumul_{grp} D3_det3_{grp} )
 
-(observe detected_{} (+ As_det1_{} Sym_det2_{} Sys_det3_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
-(observe infected_{} (+ infectious_det_{} infectious_undet_{} H1_det3_{} H2_det3_{} H3_det3_{} C2_det3_{} C3_det3_{}))
-""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp
-           )
+(observe detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(observe infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+""".format(grp=grp)
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
@@ -98,21 +87,16 @@ def write_observe(grp):
 def write_functions(grp):
     grp = str(grp)
     functions_str = """
-(func asymptomatic_{}  (+ As_{} As_det1_{}))
-(func symptomatic_mild_{}  (+ Sym_{} Sym_det2_{}))
-(func symptomatic_severe_{}  (+ Sys_{} Sys_det3_{}))
-(func hospitalized_{}  (+ H1_{} H2_{} H3_{} H1_det3_{} H2_det3_{} H3_det3_{}))
-(func critical_{} (+ C2_{} C3_{} C2_det3_{} C3_det3_{}))
-(func deaths_{} (+ D3_{} D3_det3_{}))
-(func recovered_{} (+ RAs_{} RSym_{} RH1_{} RC2_{} RAs_det1_{} RSym_det2_{} RH1_det3_{} RC2_det3_{}))
-(func infectious_undet_{} (+ As_{} P_{} Sym_{} Sys_{} H1_{} H2_{} H3_{} C2_{} C3_{}))
-(func infectious_det_{} (+ As_det1_{} Sym_det2_{} Sys_det3_{} ))
-""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp
-           )
+(func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
+(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_det2_{grp}))
+(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_det3_{grp}))
+(func hospitalized_{grp}  (+ H1_{grp} H2_{grp} H3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp}))
+(func critical_{grp} (+ C2_{grp} C3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(func deaths_{grp} (+ D3_{grp} D3_det3_{grp}))
+(func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
+""".format(grp=grp)
    # functions_str = functions_str.replace("  ", "")
     return (functions_str)
 
@@ -246,55 +230,46 @@ def write_exposure_reaction2():
 
 
 # eval(" 'age,' * 105") + "age"   ### need to add the number of ages pasted into format automatically depending on n groups
-# (reaction exposure_from_undetected_{} (S_{}) (E_{}) (* Ki S_{} infectious_undet_{}))
-# (reaction exposure_from_detected_{} (S_{}) (E_{}) (* Ki S_{} infectious_det_{} reduced_inf_of_det_cases))
+# (reaction exposure_from_undetected_{grp} (S_{grp}) (E_{grp}) (* Ki S_{grp} infectious_undet_{grp}))
+# (reaction exposure_from_detected_{grp} (S_{grp}) (E_{grp}) (* Ki S_{grp} infectious_det_{grp} reduced_inf_of_det_cases))
 def write_reactions(grp):
     grp = str(grp)
 
     reaction_str = """
-(reaction infection_asymp_undet_{}  (E_{})   (As_{})   (* Kl E_{} (- 1 d_As)))
-(reaction infection_asymp_det_{}  (E_{})   (As_det1_{})   (* Kl E_{} d_As))
-(reaction presymptomatic_{} (E_{})   (P_{})   (* Ks E_{}))
-(reaction mild_symptomatic_undet_{} (P_{})  (Sym_{}) (* Ksym P_{} (- 1 d_Sym)))
-(reaction mild_symptomatic_det_{} (P_{})  (Sym_det2_{}) (* Ksym P_{} d_Sym))
-(reaction severe_symptomatic_undet_{} (P_{})  (Sys_{})  (* Ksys P_{} (- 1 d_Sys)))
-(reaction severe_symptomatic_det_{} (P_{})  (Sys_det3_{})  (* Ksys P_{} d_Sys))
+(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl E_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl E_{grp} d_As))
+(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks E_{grp}))
+(reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym P_{grp} (- 1 d_Sym)))
+(reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym P_{grp} d_Sym))
+(reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys P_{grp} (- 1 d_Sys)))
+(reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys P_{grp} d_Sys))
 
-(reaction hospitalization_1_{}   (Sys_{})   (H1_{})   (* Kh1 Sys_{}))
-(reaction hospitalization_2_{}   (Sys_{})   (H2_{})   (* Kh2 Sys_{}))
-(reaction hospitalization_3_{}   (Sys_{})   (H3_{})   (* Kh3 Sys_{}))
-(reaction critical_2_{}   (H2_{})   (C2_{})   (* Kc H2_{}))
-(reaction critical_3_{}   (H3_{})   (C3_{})   (* Kc H3_{}))
-(reaction death_{}   (C3_{})   (D3_{})   (* Km C3_{}))
+(reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1 Sys_{grp}))
+(reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2 Sys_{grp}))
+(reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3 Sys_{grp}))
+(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc H2_{grp}))
+(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc H3_{grp}))
+(reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
 
-(reaction recovery_As_{}   (As_{})   (RAs_{})   (* Kr_a As_{}))
-(reaction recovery_Sym_{}   (Sym_{})   (RSym_{})   (* Kr_m  Sym_{}))
-(reaction recovery_H1_{}   (H1_{})   (RH1_{})   (* Kr_h H1_{}))
-(reaction recovery_C2_{}   (C2_{})   (RC2_{})   (* Kr_c C2_{}))
+(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
+(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m  Sym_{grp}))
+(reaction recovery_H1_{grp}   (H1_{grp})   (RH1_{grp})   (* Kr_h H1_{grp}))
+(reaction recovery_C2_{grp}   (C2_{grp})   (RC2_{grp})   (* Kr_c C2_{grp}))
 
 
-(reaction recovery_As_det_{} (As_det1_{})   (RAs_det1_{})   (* Kr_a As_det1_{}))
+(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
 
-(reaction hospitalization_1_det_{}   (Sys_det3_{})   (H1_det3_{})   (* Kh1 Sys_det3_{}))
-(reaction hospitalization_2_det_{}   (Sys_det3_{})   (H2_det3_{})   (* Kh2 Sys_det3_{}))
-(reaction hospitalization_3_det_{}   (Sys_det3_{})   (H3_det3_{})   (* Kh3 Sys_det3_{}))
-(reaction critical_2_det2_{}   (H2_det3_{})   (C2_det3_{})   (* Kc H2_det3_{}))
-(reaction critical_3_det2_{}   (H3_det3_{})   (C3_det3_{})   (* Kc H3_det3_{}))
-(reaction death_det3_{}   (C3_det3_{})   (D3_det3_{})   (* Km C3_det3_{}))
+(reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1 Sys_det3_{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2 Sys_det3_{grp}))
+(reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3 Sys_det3_{grp}))
+(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc H2_det3_{grp}))
+(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
+(reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
-(reaction recovery_Sym_det2_{}   (Sym_det2_{})   (RSym_det2_{})   (* Kr_m  Sym_det2_{}))
-(reaction recovery_H1_det3_{}   (H1_det3_{})   (RH1_det3_{})   (* Kr_h H1_det3_{}))
-(reaction recovery_C2_det3_{}   (C2_det3_{})   (RC2_det3_{})   (* Kr_c C2_det3_{}))
-""".format(grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,grp,grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp, grp,
-           grp, grp, grp, grp, grp,
-           )
+(reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2_{grp}))
+(reaction recovery_H1_det3_{grp}   (H1_det3_{grp})   (RH1_det3_{grp})   (* Kr_h H1_det3_{grp}))
+(reaction recovery_C2_det3_{grp}   (C2_det3_{grp})   (RC2_det3_{grp})   (* Kr_c C2_det3_{grp}))
+""".format(grp=grp)
 
     #reaction_str = reaction_str.replace("  ", " ")
     return (reaction_str)
@@ -363,7 +338,6 @@ def generate_extended_emodl2(grp, file_output):
     total_string = total_string + header_str
 
     for key in grp:
-        # key = 'age0to9'
         species = write_species(key)
         observe = write_observe(key)
         reaction = write_reactions(key)
@@ -389,7 +363,7 @@ def generate_extended_emodl2(grp, file_output):
 
 #if __name__ == '__main__':
 
-age_grp4 =  ['age0to19', 'age20to39', 'age40to59', 'age60to100']
+age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 generate_extended_emodl(grp=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
 
 age_grp8 = ["0to9" , "10to19" , "20to29", "30to39", "40to49", "50to59", "60to69", "70to100"]
