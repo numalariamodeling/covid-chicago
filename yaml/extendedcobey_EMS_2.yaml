@@ -32,7 +32,7 @@ sampled_parameters:
     function_kwargs: {'low':7, 'high':20}
   'recovery_rate_mild':
     np.random: uniform
-    function_kwargs: {'low':19.4, 'high':21.3}
+    function_kwargs: {'low':7, 'high':20}
   'recovery_rate_hosp':
     np.random: uniform
     function_kwargs: {'low':5, 'high':7}
