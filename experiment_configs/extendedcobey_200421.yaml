@@ -74,9 +74,9 @@ sampled_parameters:
   'fraction_critical':
     np.random: uniform
     function_kwargs: {'low':0.2, 'high':0.35}
-  'cfr':
+  'cfr': 
     np.random: uniform
-    function_kwargs: {'low':0.002675, 'high':0.007775}
+    function_kwargs: {'low':0.01, 'high':0.04}
   'reduced_inf_of_det_cases':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0.3}
