@@ -18,9 +18,9 @@ datetoday = date(today.year, today.month, today.day)
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-def load_sim_data(exp_name) :
-
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+def load_sim_data(exp_name, input_wdir=None) :
+    input_wdir = input_wdir or wdir
+    sim_output_path = os.path.join(input_wdir, 'simulation_output', exp_name)
     scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
