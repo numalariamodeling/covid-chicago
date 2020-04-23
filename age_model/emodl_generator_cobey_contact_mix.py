@@ -98,8 +98,6 @@ def write_functions(grp):
 (func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
 (func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
 (func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
-
-(param N_{grp} (+  @speciesS_{grp}@  @initialAs_{grp}@) )
 """.format(grp=grp)
     # functions_str = functions_str.replace("  ", "")
     return (functions_str)
@@ -115,7 +113,7 @@ def write_ki_mix(nageGroups, scale=True):
 
     ki_mix_param = ""
     for i in range(len(ki_dic.keys())):
-        string_i = "(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )" + "\n"
+        string_i = "\n(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )"
         ki_mix_param = ki_mix_param + string_i
 
     return ki_mix_param
@@ -168,30 +166,40 @@ def write_params():
 
     return (params_str)
 
+def write_N_population(grpList) :
+    stringAll=""
+    for key in grpList :
+        string1 = """\n(param N_{grp} (+ @speciesS_{grp}@ @initialAs_{grp}@) )""".format(grp=key)
+        stringAll = stringAll + string1
 
-###  age-specific infection rates and contacts
-### need automatization (parked for now)
+    string2 = "\n(param N_ageAll (+ " + repeat_string_by_grp('N_', grpList) + "))"
+    stringAll = stringAll + string2
+
+    return(stringAll)
+
+def repeat_string_by_grp(fixedstring, grpList):
+    stringAll = ""
+    for grp in grpList:
+        temp_string = " " + fixedstring + grp
+        stringAll = stringAll + temp_string
+
+    return stringAll
+
+
+def write_ageAll(grpList):
+    ageAll_str = "\n(func infectious_undet_ageAll (+ " + repeat_string_by_grp('infectious_undet_', grpList) + ")) \n(func infectious_det_ageAll (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+
+    return (ageAll_str)
 
 ## homogeneous reactions for testing
-def write_exposure_reaction_homogeneous():
-    exposure_reaction_str = """  
-(func infectious_det_All (+ infectious_det_age0to19 infectious_det_age20to39 infectious_det_age40to59 infectious_det_age60to100 ))
-(func infectious_undet_All (+ infectious_undet_age0to19 infectious_undet_age20to39 infectious_undet_age40to59 infectious_undet_age60to100 ))
+def write_exposure_reaction_homogeneous(grp):
+    grp = str(grp)
+    exposure_reaction_str = """\n(reaction exposure_{grp}   (S_{grp}) (E_{grp}) (* Ki S_{grp} (/  (+ infectious_undet_ageAll (* infectious_det_ageAll reduced_inf_of_det_cases)) N_ageAll )))""".format(grp=grp)
 
-(reaction exposure_from_detected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (/ infectious_det_All N_age0to19 ) reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (/ infectious_det_All N_age20to39 ) reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 (/ infectious_det_All N_age40to59 )  reduced_inf_of_det_cases))
-(reaction exposure_from_detected_age60to100 (S_age60to100 ) (E_age60to100) (* Ki S_age60to100 (/ infectious_det_All N_age60to100 ) reduced_inf_of_det_cases))
-
-(reaction exposure_from_undetected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (/ infectious_undet_All N_age0to19 ) ))
-(reaction exposure_from_undetected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (/ infectious_undet_All N_age20to39 )))
-(reaction exposure_from_undetected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 (/ infectious_undet_All N_age40to59 )))
-(reaction exposure_from_undetected_age60to100 (S_age60to100 ) (E_age60to100) (* Ki S_age60to100 (/ infectious_undet_All N_age60to100 )))
-"""
     return exposure_reaction_str
 
 
-def write_exposure_reaction():
+def write_exposure_reaction4():
     exposure_reaction_str = """  
 (reaction exposure_from_detected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (+ (* C1_1 (/ infectious_det_age0to19 N_age0to19)) (* C1_2 (/ infectious_det_age20to39 N_age20to39)) (* C1_3  (/ infectious_det_age40to59 N_age40to59)) (* C1_4 (/ infectious_det_age60to100 N_age60to100)) reduced_inf_of_det_cases )))
 (reaction exposure_from_detected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (+ (* C2_1 (/ infectious_det_age0to19 N_age0to19)) (* C2_2 (/ infectious_det_age20to39 N_age20to39)) (* C2_3 (/  infectious_det_age40to59 N_age40to59)) (* C2_4  (/ infectious_det_age60to100 N_age60to100)) reduced_inf_of_det_cases )))
@@ -206,7 +214,7 @@ def write_exposure_reaction():
     return exposure_reaction_str
 
 
-def write_exposure_reaction2():
+def write_exposure_reaction8():
     exposure_reaction_str = """  
 (reaction exposure_from_detected_age0to9 (S_age0to9) (E_age0to9) (* Ki S_age0to9   (+ (* C1_1 (/ infectious_det_age0to9 N_age0to9)) (* C1_1 (/ infectious_det_age10to19 N_age10to19)) (* C1_3 (/ infectious_det_age20to29 N_age20to29)) (* C1_4 (/ infectious_det_age30to39 N_age30to39)) (* C1_5 (/ infectious_det_age40to49 N_age40to49)) (* C1_6 (/ infectious_det_age50to59 N_age50to59)) (* C1_7 (/ infectious_det_age60to69 N_age60to69)) (* C1_8 (/ infectious_det_age70to100 N_age70to100)) reduced_inf_of_det_cases)))
 (reaction exposure_from_detected_age10to19 (S_age10to19) (E_age10to19) (* Ki S_age10to19 (+ (* C2_1 (/ infectious_det_age0to9 N_age0to9)) (* C2_2 (/ infectious_det_age10to19 N_age10to19)) (* C2_3 (/ infectious_det_age20to29 N_age20to29)) (* C2_4 (/ infectious_det_age30to39 N_age30to39)) (* C2_5 (/ infectious_det_age40to49 N_age40to49)) (* C2_6 (/ infectious_det_age50to59 N_age50to59)) (* C2_7 (/ infectious_det_age60to69 N_age60to69)) (* C2_8 (/ infectious_det_age70to100 N_age70to100)) reduced_inf_of_det_cases)))
@@ -258,7 +266,6 @@ def write_reactions(grp):
 (reaction recovery_H1_{grp}   (H1_{grp})   (RH1_{grp})   (* Kr_h H1_{grp}))
 (reaction recovery_C2_{grp}   (C2_{grp})   (RC2_{grp})   (* Kr_c C2_{grp}))
 
-
 (reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1 Sys_det3_{grp}))
@@ -280,7 +287,7 @@ def write_reactions(grp):
 ###
 
 ###stringing all of the functions together to make the file:
-def generate_extended_emodl(grp, file_output):
+def generate_extended_emodl(grpList, file_output, homogeneous=False):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -297,8 +304,7 @@ def generate_extended_emodl(grp, file_output):
     functions_string = ""
     total_string = total_string + header_str
 
-    for key in grp:
-        # key = 'age0to9'
+    for key in grpList:
         species = write_species(key)
         observe = write_observe(key)
         reaction = write_reactions(key)
@@ -308,12 +314,23 @@ def generate_extended_emodl(grp, file_output):
         reaction_string = reaction_string + reaction
         functions_string = functions_string + functions
 
-    if (len(grp) == 4):
-        reaction_string_combined = write_exposure_reaction() + '\n' + reaction_string
-    if (len(grp) == 8):
-        reaction_string_combined = write_exposure_reaction2() + '\n' + reaction_string
+    if (homogeneous == False):
+        if (len(grpList) == 4):
+            reaction_string_combined = write_exposure_reaction4() + '\n' + reaction_string
+        if (len(grpList) == 8):
+            reaction_string_combined = write_exposure_reaction8() + '\n' + reaction_string
 
-    params = write_params() + write_ki_mix(len(grp))
+    elif (homogeneous == True):
+        reaction_string_combined = ""
+        for key in grpList:
+            temp = write_exposure_reaction_homogeneous(key)
+            reaction_string_combined = reaction_string_combined + temp
+
+        reaction_string_combined = reaction_string_combined + '\n' + reaction_string
+
+
+    params = write_params() + write_ki_mix(len(grpList)) + write_N_population(grpList)
+    functions_string = functions_string + write_ageAll(grpList)
 
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
     print(total_string)
@@ -328,9 +345,11 @@ def generate_extended_emodl(grp, file_output):
 
 # if __name__ == '__main__':
 
+age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
+generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp_homogeneous.emodl'), homogeneous=True)
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-generate_extended_emodl(grp=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
+generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
 
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
-generate_extended_emodl(grp=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_8grp.emodl'))
+generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_8grp.emodl'))
