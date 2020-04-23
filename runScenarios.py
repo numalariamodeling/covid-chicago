@@ -304,8 +304,14 @@ def parse_args():
         "-n",
         "--name_suffix",
         type=str,
-        help="Adding custom suffix to the experiment name",
+        help="Adding custom suffix to the experiment name. Ignored if '--name' specified.",
         default= f"_test_rn{str(today.microsecond)[-2:]}"
+    )
+    parser.add_argument(
+        "--exp-name",
+        type=str,
+        help="Experiment name; also the output directory name",
+        default=None,
     )
 
     return parser.parse_args()
@@ -352,7 +358,7 @@ if __name__ == '__main__':
     first_day = fixed_parameters['startdate']
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
-    exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
+    exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
 
     # Generate folders and copy required files
     # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
