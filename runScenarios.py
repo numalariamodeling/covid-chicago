@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = datetime.today()
-DEFAULT_CONFIG = './extendedcobey.yaml'
+DEFAULT_CONFIG = './experiment_configs/extendedcobey.yaml'
 
 
 def _parse_config_parameter(df, parameter, parameter_function):
@@ -44,6 +44,46 @@ def _parse_config_parameter(df, parameter, parameter_function):
             raise ValueError(f"Unknown function for parameter {parameter}: {function_name}")
     else:
         raise ValueError(f"Unknown type of parameter {parameter}")
+
+
+def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins):
+    """Age-specific parameter sampling from a numpy distribution
+
+    Create a column in the DataFrame for each age bin, and sample from
+    the specified distribution.
+
+    Modifies the input DataFrame in place.
+    """
+    # Error-check and standardize "function_kwargs"
+    kwargs = parameter_function.get('function_kwargs')
+    if isinstance(kwargs, list):
+        if len(kwargs) != len(age_bins):
+            raise ValueError(f"function_kwargs for {parameter} have {len(kwargs)} "
+                             f"entries, but there are {len(age_bins)} age bins.")
+    elif not isinstance(kwargs, dict):
+        raise TypeError(f"Parameter {parameter} must have a list or dict "
+                        f"for function_kwargs.")
+    else:
+        # If a dictionary, use the same dictionary for each age bin.
+        kwargs = len(age_bins) * [kwargs]
+
+    # Error-check and standardize the distribution name
+    distribution = parameter_function['np.random']
+    if isinstance(distribution, list):
+        if len(distribution) != len(age_bins):
+            raise ValueError(f"List of distributions for {parameter} "
+                             f"has {len(distribution)} entries, but there are "
+                             f"{len(age_bins)} age bins.")
+    elif not isinstance(distribution, str):
+        raise TypeError(f"Parameter {parameter} must have a list or a string "
+                        f"for the distribution name.")
+    else:
+        distribution = len(age_bins) * [distribution]
+
+    # Do the sampling
+    for _bin, _dist, _kwargs in zip(age_bins, distribution, kwargs):
+        df[f"{parameter}_{_bin}"] = getattr(np.random, _dist)(size=len(df), **_kwargs)
+    return df
 
 
 def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
@@ -89,13 +129,18 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             for bin, val in zip(age_bins, parameter_function['list']):
                 df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
         elif 'custom_function' in parameter_function:
-            if parameter_function['custom_function'] == 'subtract':
+            function_name = parameter_function['custom_function']
+            if function_name == 'subtract':
                 for bin in age_bins:
                     df[f'{parameter}_{bin}'] = _parse_config_parameter(
                         df, parameter,
                         {'custom_function': 'subtract',
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
                                              'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}})
+            else:
+                raise ValueError(f"Unknown custom function: {function_name}")
+        elif 'np.random' in parameter_function:
+            _parse_age_specific_distribution(df, parameter, parameter_function, age_bins)
         else:
             raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
@@ -131,10 +176,20 @@ def add_computed_parameters(df):
     return df
 
 
-def generateParameterSamples(samples, pop, first_day, config, age_bins):
+def add_sampled_parameters(df, config, region, age_bins):
+    """Append parameters nested under "sampled_parameters" to the DataFrame"""
+    for parameter, parameter_function in config['sampled_parameters'].items():
+        if region in parameter_function:
+            # Check for a distribution specific to this region
+            parameter_function = parameter_function[region]
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+    return df
+
+
+def generateParameterSamples(samples, pop, first_day, config, age_bins, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
-    functions/sampling mechansims.
+    functions/sampling mechanisms.
     """
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
@@ -142,15 +197,14 @@ def generateParameterSamples(samples, pop, first_day, config, age_bins):
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
     df['startdate'] = experiment_config['fixed_parameters_region_specific']['startdate'][region]
 
-    for parameter, parameter_function in config['sampled_parameters'].items():
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+    df = add_sampled_parameters(df, config, region, age_bins)
     df = add_fixed_parameters_region_specific(df, config, region, age_bins)
     for parameter, parameter_function in config['fixed_parameters_global'].items():
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
     df = add_computed_parameters(df)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
-    return(df)
+    return df
 
 
 def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
@@ -189,11 +243,12 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, first_day, Location, experiment_config, age_bins):
+                      nruns, sub_samples, modelname, first_day, Location,
+                      experiment_config, age_bins, region):
     lst = []
     scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
-                                       config=experiment_config, age_bins=age_bins)
+                                       config=experiment_config, age_bins=age_bins, region=region)
 
     for sample in range(sub_samples):
         for i in Kivalues:
@@ -285,7 +340,7 @@ def parse_args():
         type=str,
         help=("Config file (in YAML) containing the parameters to override the default config. "
               "This file should have the same structure as the default config. "
-              "example: ./sample_experiment.yaml "),
+              "example: ./experiment_configs/sample_experiment.yaml "),
         required=True
     )
     parser.add_argument(
@@ -373,7 +428,9 @@ if __name__ == '__main__':
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
         modelname=args.emodl_template, first_day=first_day, Location=Location,
         experiment_config=experiment_config,
-        age_bins=experiment_setup_parameters.get('age_bins'))
+        age_bins=experiment_setup_parameters.get('age_bins'),
+        region=region,
+    )
 
     generateSubmissionFile(
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
@@ -386,6 +443,7 @@ if __name__ == '__main__':
                             temp_exp_dir=temp_exp_dir, deleteFiles=False)
         cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
                 plot_path=plot_path, delete_temp_dir=False)
+        log.info(f"Outputs are in {sim_output_path}")
 
         if args.post_process:
             # Once the simulations are done
