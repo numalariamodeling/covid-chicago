@@ -187,7 +187,32 @@ def repeat_string_by_grp(fixedstring, grpList):
 
 
 def write_ageAll(grpList):
-    ageAll_str = "\n(func infectious_undet_ageAll (+ " + repeat_string_by_grp('infectious_undet_', grpList) + ")) \n(func infectious_det_ageAll (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+    ageAll_str1 = "\n(func asymptomatic_ageAll (+ " + repeat_string_by_grp('asymptomatic_', grpList) + "))"
+    ageAll_str2 = "\n(func symptomatic_mild_ageAll (+ " + repeat_string_by_grp('symptomatic_mild_', grpList) + "))"
+    ageAll_str3 = "\n(func symptomatic_severe_ageAll (+ " + repeat_string_by_grp('symptomatic_severe_', grpList) + "))"
+    ageAll_str4 = "\n(func hospitalized_ageAll (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
+    ageAll_str5 = "\n(func critical_ageAll (+ " + repeat_string_by_grp('critical_', grpList) + "))"
+    ageAll_str6 = "\n(func deaths_ageAll (+ " + repeat_string_by_grp('deaths_', grpList) + "))"
+    ageAll_str7 = "\n(func recovered_ageAll (+ " + repeat_string_by_grp('recovered_', grpList) + "))"
+    ageAll_str8 = "\n(func infectious_det_ageAll (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+    ageAll_str9 = "\n(func infectious_undet_ageAll (+ " + repeat_string_by_grp('infectious_undet_', grpList) + "))"
+    ageAll_str10 = "\n(func S_ageAll (+ " + repeat_string_by_grp('S_', grpList) + "))"
+    ageAll_str11 = "\n(func E_ageAll (+ " + repeat_string_by_grp('E_', grpList) + "))"
+    ageAll_str12 = "\n(func P_ageAll (+ " + repeat_string_by_grp('P_', grpList) + "))"
+    func_ageAll_str = ageAll_str1 + ageAll_str2  + ageAll_str3 + ageAll_str4 + ageAll_str5 + ageAll_str6 + ageAll_str7 + ageAll_str8 + ageAll_str9 + ageAll_str10 + ageAll_str11 + ageAll_str12
+
+    obs_ageAll_str1 = "\n(observe susceptible_ageAll S_ageAll)"
+    obs_ageAll_str2 = "\n(observe exposed_ageAll E_ageAll)"
+    obs_ageAll_str3 = "\n(observe asymptomatic_ageAll (+ " + repeat_string_by_grp('asymptomatic_', grpList) + "))"
+    obs_ageAll_str4 = "\n(observe presymptomatic_ageAll P_ageAll)"
+    obs_ageAll_str5 = "\n(observe hospitalized_ageAll (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
+    obs_ageAll_str6 = "\n(observe critical_ageAll (+ " + repeat_string_by_grp('critical_', grpList) + "))"
+    obs_ageAll_str7 = "\n(observe deaths_ageAll (+ " + repeat_string_by_grp('deaths_', grpList) + "))"
+    obs_ageAll_str8 = "\n(observe recovered_ageAll (+ " + repeat_string_by_grp('recovered_', grpList) + "))"
+
+    obs_ageAll_str = obs_ageAll_str1 + obs_ageAll_str2  + obs_ageAll_str3 + obs_ageAll_str4 + obs_ageAll_str5 + obs_ageAll_str6 + obs_ageAll_str7 + obs_ageAll_str8
+
+    ageAll_str = func_ageAll_str + obs_ageAll_str
 
     return (ageAll_str)
 
