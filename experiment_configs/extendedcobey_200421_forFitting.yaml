@@ -1,6 +1,6 @@
 experiment_setup_parameters:
-  'number_of_samples': 2
-  'number_of_runs': 1
+  'number_of_samples': 20
+  'number_of_runs': 3
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 19
@@ -23,14 +23,14 @@ fixed_parameters_region_specific:
     'EMS_11': 2716921
   startdate:
     'NMH_catchment': 2020-02-28
-    'Chicago': 2020-02-20
+    'Chicago': 2020-02-28
     'IL': 2020-02-28
-    'EMS_1': 2020-03-01       
+    'EMS_1': 2020-02-28       
     'EMS_2': 2020-02-28
-    'EMS_3': 2020-03-05       
-    'EMS_4': 2020-03-02
+    'EMS_3': 2020-02-28       
+    'EMS_4': 2020-02-28
     'EMS_5': 2020-02-28       
-    'EMS_6': 2020-03-03
+    'EMS_6': 2020-02-28
     'EMS_7': 2020-02-28       
     'EMS_8': 2020-02-28
     'EMS_9': 2020-02-28       
@@ -76,10 +76,10 @@ sampled_parameters:
     function_kwargs: {'low':0.2, 'high':0.35}
   'cfr':
     np.random: uniform
-    function_kwargs: {'low':0.002675, 'high':0.007775}
+    function_kwargs: {'low':0.001675, 'high':0.15775}
   'reduced_inf_of_det_cases':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0.3}
+    function_kwargs: {'low':0.0, 'high':0.3}
   'd_Sym':
     np.random: uniform
     function_kwargs: {'low':0.05, 'high':0.2} 
@@ -88,19 +88,19 @@ sampled_parameters:
     function_kwargs: {'low':0.2, 'high':0.5} 
   'd_As':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
+    function_kwargs: {'low':0.0, 'high':0.0}
   'social_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':0.9, 'high':1}
+    function_kwargs: {'low':0.0 ,'high':1.0}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.9}
+    function_kwargs: {'low':0.0, 'high':1.0}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.3}
+    function_kwargs: {'low':0.0 ,'high':1.0}
   'backtonormal_multiplier':
     np.random: uniform
-    function_kwargs: {'low':0.95, 'high':1}
+    function_kwargs: {'low':0.95, 'high':1.0}
   'socialDistance_time1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
@@ -111,50 +111,50 @@ sampled_parameters:
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
   'socialDistanceSTOP_time':
-      custom_function: DateToTimestep
-      function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
 fitted_parameters:
   # Note IL, NMH, Chicago and EMS_3 were fitted, the other EMS area Kis need updating/checking
   Kis:
     'NMH_catchment':
       np: linspace
-      function_kwargs: {'start': 1.5e-6, 'stop': 2.0e-6, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'Chicago':
       np: linspace
-      function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'IL':
       np: linspace
-      function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 4.5e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_2':
       np: linspace
-      function_kwargs: {'start': 2.5e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_4':
       np: linspace
-      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_5':
       np: linspace
-      function_kwargs: {'start': 4.5e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 5.5e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_7':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 5.5e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_8':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 7.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 2.5e-7, 'stop': 4.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_10':
       np: linspace
-      function_kwargs: {'start': 4.0e-7, 'stop': 7.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 4.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.9, 'stop': 0.005, 'num': 10}
