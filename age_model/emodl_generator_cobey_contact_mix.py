@@ -64,22 +64,22 @@ def write_observe(grp):
 (observe deaths_{grp} deaths_{grp})
 (observe recovered_{grp} recovered_{grp})
 
-(observe asymp_cumul_{grp} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
-(observe asymp_det_cumul_{grp} (+ As_det1_{grp} RAs_det1_{grp}))
-(observe symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
-(observe symp_mild_det_cumul_{grp} (+ RSym_det2_{grp} Sym_det2_{grp}))
-(observe symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe symp_severe_det_cumul_{grp} (+ Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe hosp_det_cumul_{grp} (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2_{grp} RC2_det3_{grp}))
-(observe crit_det_cumul_{grp} (+ C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RC2_det3_{grp}))
-(observe crit_det_{grp} (+ C2_det3_{grp} C3_det3_{grp}))
-(observe detected_cumul_{grp} (+ (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp}) RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
-(observe death_det_cumul_{grp} D3_det3_{grp} )
+(observe asymp_cumul_{grp} asymp_cumul_{grp})
+(observe asymp_det_cumul_{grp} asymp_det_cumul_{grp})
+(observe symp_mild_cumul_{grp} symp_mild_cumul_{grp})
+(observe symp_mild_det_cumul_{grp} symp_mild_det_cumul_{grp})
+(observe symp_severe_cumul_{grp} symp_severe_cumul_{grp})
+(observe symp_severe_det_cumul_{grp} symp_severe_det_cumul_{grp})
+(observe hosp_cumul_{grp} hosp_cumul_{grp})
+(observe hosp_det_cumul_{grp} hosp_det_cumul_{grp})
+(observe crit_cumul_{grp} crit_cumul_{grp})
+(observe crit_det_cumul_{grp} crit_det_cumul_{grp})
+(observe crit_det_{grp} crit_det_{grp})
+(observe detected_cumul_{grp} detected_cumul_{grp})
+(observe death_det_cumul_{grp} death_det_cumul_{grp} )
 
-(observe detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-(observe infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(observe detected_{grp} detected_{grp})
+(observe infected_{grp} infected_{grp})
 """.format(grp=grp)
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
@@ -98,6 +98,24 @@ def write_functions(grp):
 (func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
 (func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
 (func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
+
+(func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
+(func asymp_det_cumul_{grp} (+ As_det1_{grp} RAs_det1_{grp}))
+(func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
+(func symp_mild_det_cumul_{grp} (+ RSym_det2_{grp} Sym_det2_{grp}))
+(func symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func symp_severe_det_cumul_{grp} (+ Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func hosp_det_cumul_{grp} (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2_{grp} RC2_det3_{grp}))
+(func crit_det_cumul_{grp} (+ C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RC2_det3_{grp}))
+(func crit_det_{grp} (+ C2_det3_{grp} C3_det3_{grp}))
+(func detected_cumul_{grp} (+ (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp}) RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
+(func death_det_cumul_{grp} D3_det3_{grp} )
+
+(func detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+
 """.format(grp=grp)
     # functions_str = functions_str.replace("  ", "")
     return (functions_str)
@@ -161,21 +179,24 @@ def write_params():
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
+
  """
     # params_str = params_str.replace("  ", " ")
 
     return (params_str)
 
-def write_N_population(grpList) :
-    stringAll=""
-    for key in grpList :
+
+def write_N_population(grpList):
+    stringAll = ""
+    for key in grpList:
         string1 = """\n(param N_{grp} (+ @speciesS_{grp}@ @initialAs_{grp}@) )""".format(grp=key)
         stringAll = stringAll + string1
 
     string2 = "\n(param N_ageAll (+ " + repeat_string_by_grp('N_', grpList) + "))"
     stringAll = stringAll + string2
 
-    return(stringAll)
+    return (stringAll)
+
 
 def repeat_string_by_grp(fixedstring, grpList):
     stringAll = ""
@@ -187,39 +208,59 @@ def repeat_string_by_grp(fixedstring, grpList):
 
 
 def write_ageAll(grpList):
-    ageAll_str1 = "\n(func asymptomatic_ageAll (+ " + repeat_string_by_grp('asymptomatic_', grpList) + "))"
-    ageAll_str2 = "\n(func symptomatic_mild_ageAll (+ " + repeat_string_by_grp('symptomatic_mild_', grpList) + "))"
-    ageAll_str3 = "\n(func symptomatic_severe_ageAll (+ " + repeat_string_by_grp('symptomatic_severe_', grpList) + "))"
-    ageAll_str4 = "\n(func hospitalized_ageAll (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
-    ageAll_str5 = "\n(func critical_ageAll (+ " + repeat_string_by_grp('critical_', grpList) + "))"
-    ageAll_str6 = "\n(func deaths_ageAll (+ " + repeat_string_by_grp('deaths_', grpList) + "))"
-    ageAll_str7 = "\n(func recovered_ageAll (+ " + repeat_string_by_grp('recovered_', grpList) + "))"
-    ageAll_str8 = "\n(func infectious_det_ageAll (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
-    ageAll_str9 = "\n(func infectious_undet_ageAll (+ " + repeat_string_by_grp('infectious_undet_', grpList) + "))"
-    ageAll_str10 = "\n(func S_ageAll (+ " + repeat_string_by_grp('S_', grpList) + "))"
-    ageAll_str11 = "\n(func E_ageAll (+ " + repeat_string_by_grp('E_', grpList) + "))"
-    ageAll_str12 = "\n(func P_ageAll (+ " + repeat_string_by_grp('P_', grpList) + "))"
-    func_ageAll_str = ageAll_str1 + ageAll_str2  + ageAll_str3 + ageAll_str4 + ageAll_str5 + ageAll_str6 + ageAll_str7 + ageAll_str8 + ageAll_str9 + ageAll_str10 + ageAll_str11 + ageAll_str12
+    obs_ageAll_str = ""
+    obs_ageAll_str = obs_ageAll_str + "\n(observe susceptible_ageAll (+ " + repeat_string_by_grp('S_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe exposed_ageAll (+ " + repeat_string_by_grp('E_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe asymptomatic_ageAll (+ " + repeat_string_by_grp('asymptomatic_',
+                                                                                                  grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe presymptomatic_ageAll (+ " + repeat_string_by_grp('P_',
+                                                                                                    grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe symptomatic_mild_ageAll (+ " + repeat_string_by_grp(
+        'symptomatic_mild_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe symptomatic_severe_ageAll (+ " + repeat_string_by_grp(
+        'symptomatic_severe_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe hospitalized_ageAll (+ " + repeat_string_by_grp('hospitalized_',
+                                                                                                  grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe critical_ageAll (+ " + repeat_string_by_grp('critical_',
+                                                                                              grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe deaths_ageAll (+ " + repeat_string_by_grp('deaths_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe recovered_ageAll (+ " + repeat_string_by_grp('recovered_',
+                                                                                               grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe asymp_cumul_ageAll (+ " + repeat_string_by_grp('asymp_cumul_',
+                                                                                                 grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe asymp_det_cumul_ageAll (+ " + repeat_string_by_grp('asymp_det_cumul_',
+                                                                                                     grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe symp_mild_cumul_ageAll (+ " + repeat_string_by_grp('symp_mild_cumul_',
+                                                                                                     grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe symp_mild_det_cumul_ageAll (+ " + repeat_string_by_grp(
+        'symp_mild_det_cumul_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe symp_severe_cumul_ageAll (+ " + repeat_string_by_grp(
+        'symp_severe_cumul_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe symp_severe_det_cumul_ageAll  (+ " + repeat_string_by_grp(
+        'symp_severe_det_cumul_', grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe hosp_cumul_ageAll (+ " + repeat_string_by_grp('hosp_cumul_',
+                                                                                                grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe hosp_det_cumul_ageAll (+ " + repeat_string_by_grp('hosp_det_cumul_',
+                                                                                                    grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe crit_cumul_ageAll (+ " + repeat_string_by_grp('crit_cumul_',
+                                                                                                grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe crit_det_cumul_ageAll (+ " + repeat_string_by_grp('crit_det_cumul_',
+                                                                                                    grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe crit_det_ageAll (+ " + repeat_string_by_grp('crit_det_',
+                                                                                              grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe detected_cumul_ageAll (+ " + repeat_string_by_grp('detected_cumul_',
+                                                                                                    grpList) + "))"
+    obs_ageAll_str = obs_ageAll_str + "\n(observe death_det_cumul_ageAll (+ " + repeat_string_by_grp('death_det_cumul_',
+                                                                                                     grpList) + "))"
 
-    obs_ageAll_str1 = "\n(observe susceptible_ageAll S_ageAll)"
-    obs_ageAll_str2 = "\n(observe exposed_ageAll E_ageAll)"
-    obs_ageAll_str3 = "\n(observe asymptomatic_ageAll (+ " + repeat_string_by_grp('asymptomatic_', grpList) + "))"
-    obs_ageAll_str4 = "\n(observe presymptomatic_ageAll P_ageAll)"
-    obs_ageAll_str5 = "\n(observe hospitalized_ageAll (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
-    obs_ageAll_str6 = "\n(observe critical_ageAll (+ " + repeat_string_by_grp('critical_', grpList) + "))"
-    obs_ageAll_str7 = "\n(observe deaths_ageAll (+ " + repeat_string_by_grp('deaths_', grpList) + "))"
-    obs_ageAll_str8 = "\n(observe recovered_ageAll (+ " + repeat_string_by_grp('recovered_', grpList) + "))"
+    return (obs_ageAll_str)
 
-    obs_ageAll_str = obs_ageAll_str1 + obs_ageAll_str2  + obs_ageAll_str3 + obs_ageAll_str4 + obs_ageAll_str5 + obs_ageAll_str6 + obs_ageAll_str7 + obs_ageAll_str8
-
-    ageAll_str = func_ageAll_str + obs_ageAll_str
-
-    return (ageAll_str)
 
 ## homogeneous reactions for testing
 def write_exposure_reaction_homogeneous(grp):
     grp = str(grp)
-    exposure_reaction_str = """\n(reaction exposure_{grp}   (S_{grp}) (E_{grp}) (* Ki S_{grp} (/  (+ infectious_undet_ageAll (* infectious_det_ageAll reduced_inf_of_det_cases)) N_ageAll )))""".format(grp=grp)
+    exposure_reaction_str = """\n(reaction exposure_{grp}   (S_{grp}) (E_{grp}) (* Ki S_{grp} (/  (+ infectious_undet_ageAll (* infectious_det_ageAll reduced_inf_of_det_cases)) N_ageAll )))""".format(
+        grp=grp)
 
     return exposure_reaction_str
 
@@ -353,7 +394,6 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 
         reaction_string_combined = reaction_string_combined + '\n' + reaction_string
 
-
     params = write_params() + write_ki_mix(len(grpList)) + write_N_population(grpList)
     functions_string = functions_string + write_ageAll(grpList)
 
@@ -371,7 +411,9 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 # if __name__ == '__main__':
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp_homogeneous.emodl'), homogeneous=True)
+generate_extended_emodl(grpList=age_grp4,
+                        file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp_homogeneous.emodl'),
+                        homogeneous=True)
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
