@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = datetime.today()
-DEFAULT_CONFIG = './extendedcobey.yaml'
+DEFAULT_CONFIG = './extendedcobey_200421.yaml'
 
 
 def _parse_config_parameter(df, parameter, parameter_function):
