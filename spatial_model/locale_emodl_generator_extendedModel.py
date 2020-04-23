@@ -12,7 +12,7 @@ def write_species(grp):
     grp = str(grp)
     species_str = """
 (species S::{grp} @speciesS_{grp}@)
-(species As::{grp} @initialAs_{grp}@)
+(species As::{grp} 0)
 (species E::{grp} 0)
 (species As_det1::{grp} 0)
 (species P::{grp} 0)
@@ -138,7 +138,7 @@ def write_params():
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
-(param Ki @Ki@)
+;(param Ki @Ki@)
 (param Kr_a (/ 1 recovery_rate_asymp))
 (param Kr_m (/ 1 recovery_rate_mild))
 (param Kr_h (/ 1 recovery_rate_hosp))
@@ -152,18 +152,35 @@ def write_params():
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
+"""
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
-
- """
     params_str = params_str.replace("  ", " ")
 
     return (params_str)
+
+
+
+def write_grp_params(grp):
+    grp = str(grp)
+    params_str = """
+(param Ki_{grp} @Ki_{grp}@)
+
+(time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
+
+(param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
+(param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
+(param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
+
+
+
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
+""".format(grp=grp)
+    params_str = params_str.replace("  ", " ")
+
+    return (params_str)
+
 
 
 def write_N_population(grpList):
@@ -255,7 +272,7 @@ def write_reactions(grp):
     grp = str(grp)
 
     reaction_str = """
-(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki S::{grp} (/  (+ infectious_undet_regionAll (* infectious_det_regionAll reduced_inf_of_det_cases)) N_regionAll )))
+(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_regionAll (* infectious_det_regionAll reduced_inf_of_det_cases)) N_regionAll )))
 (reaction infection_asymp_undet_{grp}  (E::{grp})   (As::{grp})   (* Kl E::{grp} (- 1 d_As)))
 (reaction infection_asymp_det_{grp}  (E::{grp})   (As_det1::{grp})   (* Kl E::{grp} d_As))
 (reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks E::{grp}))
@@ -309,6 +326,7 @@ def generate_locale_emodl_extended(grp, file_output):
     total_string = ""
     species_string = ""
     observe_string = ""
+    param_string = ""
     reaction_string = ""
     functions_string = ""
     total_string = total_string + header_str
@@ -316,19 +334,17 @@ def generate_locale_emodl_extended(grp, file_output):
     for key in grp:
         total_string = total_string + "\n(locale site-{})\n".format(key)
         total_string = total_string + "(set-locale site-{})\n".format(key)
-        species = write_species(key)
-        total_string = total_string + species
-        observe = write_observe(key)
-        reaction = write_reactions(key)
+        total_string = total_string +  write_species(key)
         functions = write_functions(key)
-        observe_string = observe_string + observe
-        reaction_string = reaction_string + reaction
+        observe_string = observe_string + write_observe(key)
+        reaction_string = reaction_string + write_reactions(key)
         functions_string = functions_string + functions
-
-    params = write_params() + write_N_population(grp)
+        param_string = param_string + write_grp_params(key) 
+        
+    param_string =  write_params() + param_string  +  write_N_population(grp)
     functions_string = functions_string + write_regionAll(grp)
 
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + reaction_string + '\n\n' + footer_str
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
@@ -362,8 +378,7 @@ def generate_locale_cfg(cfg_filename, nruns, filepath):
 
 
 if __name__ == '__main__':
-    ems_grp = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
-               'EMS_11']
+    ems_grp = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
     generate_locale_emodl_extended(grp=ems_grp,
                                    file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS.emodl'))
 
