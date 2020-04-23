@@ -4,7 +4,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output')
+knitr::opts_knit$set(root.dir = '/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/Cleaned_Data')
 
 library(data.table)
 library(tidyverse)
@@ -31,9 +31,18 @@ df$spec_date = mdy(df$spec_date)
 df$open_date = mdy(df$open_date)
 df$onset_date = mdy(df$onset_date)
 df$admission_date = mdy(df$admission_date)
+df$death_date = mdy(df$death_date)
+
+# death_flag
+df$death_flag = 'No'
+df$death_flag[!is.na(df$death_date)] = 'Yes'
 
 # remove out of state patients
 df = df %>% filter(county != 'Out Of State') 
+
+# flag for missing onset_date
+df$missing_onset_date = 0
+df$missing_onset_date[is.na(df$onset_date)] = 1
 ```
 
 date imputation
@@ -49,7 +58,7 @@ date_df$spec_diff = as.numeric(-(date_df$spec_date - date_df$open_date))
 date_df$onset_diff = as.numeric(-(date_df$onset_date - date_df$open_date))
 date_diff_impute = date_df %>% select(matches('diff'))
 
-date_df_impute = mice(date_diff_impute, m = 5)
+date_df_impute = mice(date_diff_impute, m = 1, method = 'pmm')
 date_df_impute = complete(date_df_impute)
 
 date_df = date_df %>% select(-matches('diff'))
@@ -67,13 +76,75 @@ df_admit_date = df %>% select(admission_date)
 df = df %>% select(-matches('date'))
 df = cbind(df, df_admit_date)
 df = inner_join(df, date_df, by = 'ID')
+
+remove(date_df, date_diff_impute, date_df_impute, df_admit_date)
 ```
 
+check missing per week 
+```{r}
+# compare between three areas 
+collar_counties = c('Lake', 'Mchenry', 'Dupage', 'Kendall', 'Grundy', 'Will', 'Kenkakee')
+
+df$area = 'Downstate' 
+df$area[df$county %in% collar_counties] = 'Collar Counties'
+df$area[df$county == 'Cook'] = 'Cook'
+
+df_missing = df %>% select(ID, area, spec_date, missing_onset_date) %>% arrange(spec_date)
+df_missing$week = 1  
+
+min_date = min(df_missing$spec_date)
+max_date = max(df_missing$spec_date)
+i = 1
+
+while(min_date + weeks(i) <= max_date + weeks(1))
+{
+  df_missing$week[df_missing$spec_date >= min_date + weeks(i-1) & df_missing$spec_date < min_date + weeks(i)] = i
+  df_missing$week_date[df_missing$spec_date >= min_date + weeks(i-1) & df_missing$spec_date < min_date + weeks(i)] = as.character(min_date + weeks(i-1))
+  i = i + 1 
+}
+
+df_missing$missing_onset_date = as.numeric(df_missing$missing_onset_date)
+
+df_missing_area = df_missing
+
+setwd('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/')
+
+# total 
+df_week_total = df_missing %>% group_by(week, week_date) %>% count()
+df_missing = df_missing %>% group_by(week, week_date) %>% summarise_at(vars(missing_onset_date), sum)
+df_missing = as.data.frame(inner_join(df_week_total, df_missing))
+names(df_missing)[3] = 'Total'
+df_missing$percentage = df_missing$missing_onset_date / df_missing$Total
+df_missing$percentage_label = paste0(as.character(round(df_missing$percentage,2)*100), '%')
+ggplot(df_missing, aes(x = week_date, y = percentage)) + 
+  geom_bar(stat = 'identity', fill = 'red', alpha = .75) +
+  geom_text(aes(y = percentage + 0.025, label = percentage_label, x = week_date, family = 'Avenir'), color = 'red') +
+  ylab('Percentage Missing') + xlab('Week of Date') + ggtitle('Onset Date Missing by Week') + 
+    theme_bw() + theme(text = element_text(family = 'Avenir')) + scale_y_continuous(breaks = c(0, .25, .5, .75, 1), labels = c('0%', '25%', '50%', '75%', '100%')) + 
+  ggsave('OnsetDate_Missing.png')
+
+# by area
+df_missing_area$area = factor(df$area, levels = c('Cook', 'Collar Counties', 'Downstate'))
+df_week_total = df_missing_area %>% group_by(area, week, week_date) %>% count()
+df_missing_area = df_missing_area %>% group_by(area, week, week_date) %>% summarise_at(vars(missing_onset_date), sum)
+df_missing_area = as.data.frame(inner_join(df_week_total, df_missing_area))
+names(df_missing_area)[4] = 'Total'
+df_missing_area$percentage = df_missing_area$missing_onset_date / df_missing_area$Total
+df_missing_area$percentage_label = paste0(as.character(round(df_missing_area$percentage,2)*100), '%')
+ggplot(df_missing_area, aes(x = week_date, y = percentage)) + 
+  geom_bar(stat = 'identity', fill = 'red', alpha = .75) +
+  geom_text(aes(y = percentage + 0.025, label = percentage_label, x = week_date, family = 'Avenir'), color = 'red') +
+  ylab('Percentage Missing') + xlab('Week of Date') + ggtitle('Onset Date Missing by Week') + 
+  theme_bw() + theme(text = element_text(family = 'Avenir'), axis.text.x = element_text(angle=45, hjust=1)) + 
+  scale_y_continuous(breaks = c(0, .25, .5, .75, 1), labels = c('0%', '25%', '50%', '75%', '100%')) + facet_grid(~area) + 
+  ggsave('OnsetDate_Missing_byArea.png', width = 16)
+```
+s
 output
 ```{r}
-write.csv(df, 'idph_cleaned_dates.csv', row.names = F)
+file_name = paste('idph_LineLevel_imputedDates_', as.character(today()), '.csv', sep = '')
+write.csv(df, file_name, row.names = F)
 ```
-
 
 cumluation function
 ```{r}
@@ -81,13 +152,20 @@ cum_cases = function(df, county_name)
 {
   df_time = df %>% filter(!is.na(spec_date) & county == county_name)
   df_time = as.data.frame(df_time %>% group_by(spec_date) %>% count() %>% arrange(spec_date))
-  df_time = df_time %>% mutate(cum_count = cumsum(n)) %>% filter(!is.na(spec_date))
   return(df_time)
 }
  
 cum_hospitalizations = function(df, county_name)
 {
   df_time = df %>% filter(!is.na(spec_date) & county == county_name & hospital_admission == 'Yes')
+  df_time = as.data.frame(df_time %>% group_by(spec_date) %>% count() %>% arrange(spec_date))
+  
+  return(df_time)
+}
+
+cum_deaths = function(df, county_name)
+{
+  df_time = df %>% filter(!is.na(spec_date) & county == county_name & death_flag == 'Yes')
   df_time = as.data.frame(df_time %>% group_by(spec_date) %>% count() %>% arrange(spec_date))
   
   return(df_time)
@@ -130,23 +208,46 @@ for (i in 1:length(county_list))
   }
 }
 
-df_agg = df_agg %>% select(-cum_count)
 names(df_agg_hos)[2] = 'hos_n'
 df_agg = merge(df_agg, df_agg_hos, all = T)
+
+county_list = df %>% filter(!is.na(county) & death_flag == 'Yes') %>% distinct(county)
+county_list = as.vector(county_list$county)
+
+for (i in 1:length(county_list))
+{
+  df_county = cum_deaths(df, county_list[i])
+  df_county$county = county_list[i]
+  if (i == 1)
+  {
+    df_agg_deaths = df_county
+  }
+  else
+  {
+    df_agg_deaths = rbind(df_agg_deaths, df_county)
+  }
+}
+
+names(df_agg_deaths)[2] = 'deaths_n'
+df_agg = merge(df_agg, df_agg_deaths, all = T)
 
 # wrangle 
 df_agg$n[is.na(df_agg$n)] = 0
 df_agg$hos_n[is.na(df_agg$hos_n)] = 0
+df_agg$deaths_n[is.na(df_agg$deaths_n)] = 0
 
 df_agg = df_agg %>% arrange(county, spec_date)
 
 df_agg = df_agg %>% group_by(county) %>% mutate(cum_count = cumsum(n)) 
 df_agg = df_agg %>% group_by(county) %>% mutate(cum_hosptializations = cumsum(hos_n)) 
+df_agg = df_agg %>% group_by(county) %>% mutate(cum_deaths = cumsum(deaths_n)) 
 
-names(df_agg) = c('spec_date', 'county', 'new_case', 'new_hospitalizations', 'total_case', 'total_hopsitalizations')
+names(df_agg) = c('spec_date', 'county', 'new_case', 'new_hospitalizations', 'new_deaths', 'cumulative_cases', 
+                  'cumulative_hopsitalizations', 'cumulative_deaths')
 ```
 
 output
 ```{r}
+file_name = paste('idph_LineLevel_imputedDates_', as.character(today()), '.csv', sep = '')
 write.csv(df_agg, 'aggregated_data_cleaned.csv', row.names = F)
 ```

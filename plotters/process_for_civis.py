@@ -1,9 +1,11 @@
+import argparse
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
+from dotenv import load_dotenv
 import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
@@ -16,18 +18,35 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+def parse_args():
+    description = "Process simulation outputs to send to Civis"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-s", "--stem",
+        type=str,
+        help="Process only experiment names containing this string",
+        default=None,
+    )
+
+    return parser.parse_args()
 
 
 if __name__ == '__main__' :
-    stem = "run2"
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    # Load parameters
+    load_dotenv(dotenv_path="../.env")
+
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+    args = parse_args()
+
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output'))
+                 if args.stem in x]
 
     for exp_name in exp_names :
         #exp_name = '20200417_EMS_11_scenario2_test'
 
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-        df = load_sim_data(exp_name)
+        df = load_sim_data(exp_name, wdir)
         first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
         channels = ['infected', 'deaths', 'hospitalized', 'critical', 'ventilators']
@@ -64,6 +83,8 @@ if __name__ == '__main__' :
                 adf = mdf
             else :
                 adf = pd.merge(left=adf, right=mdf, on='date')
+
+        print(f'Writing "projection_for_civis.*" files to {sim_output_path}.')
         adf.to_csv(os.path.join(sim_output_path, 'projection_for_civis.csv'), index=False)
         plt.savefig(os.path.join(sim_output_path, 'projection_for_civis.png'))
         plt.savefig(os.path.join(sim_output_path, 'projection_for_civis.pdf'), format='PDF')

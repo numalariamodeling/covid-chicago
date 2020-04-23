@@ -12,11 +12,18 @@ library(data.table)
 library(Amelia)
 library(lubridate)
 library(tidyverse)
+library(ggplot2)
 
-df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/idph_cleaned_dates.csv')
+df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/Cleaned_Data/idph_cleaned_dates.csv')
 
 nyt_df = fread('/Users/Excenity/Documents/CHiP-LOCAL/COVID/NYT Data/nyt_data_by_day_county.csv')
 ```
+
+
+### Data Cleaning 
+1. Convert to date formats
+2. Change age category names for under 21
+3. Make sure patients that are in ICU or ventilators are hospitalized
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 df$spec_date = as.Date(df$spec_date)
@@ -28,9 +35,18 @@ df$date_diff = as.numeric(df$admission_date - df$onset_date)
 
 ```{r}
 # cleaning
-
 df$sex[is.na(df$sex)] = 'Unknown'
+
+df$age[df$age == 'Under 21'] = '0-20'
+
+# hopsitalized cleaning
+df$hospital_admission[df$icu == 'Yes'] = 'Yes'  
+df$hospital_admission[df$ventilator == 'Yes'] = 'Yes'
 ```
+
+### Case and Hospitalizations 
+1. Cases are census numbers of patients in the dataset - Aggregated by date
+2. Hopsitalized are census numbers of hospitalized patients in the dataset - Aggregated by date
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 graph_census = function(df, title, file_name)
@@ -53,8 +69,6 @@ graph_census = function(df, title, file_name)
 }
 ```
 
-### Case and Hospitalizations 
-
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # daily census (cases, hopsitalizations)
 graph_census(df, 'Total Census', '1-Total Census.png')
@@ -64,6 +78,7 @@ graph_census(df %>% filter(travel == 'No'), 'Census W/O Travel History', '2-Cens
 ```
 
 ##### Cook County
+Same graphs for Cook County
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
 # Daily Census 
@@ -75,7 +90,10 @@ graph_census(df %>% filter(county == 'Cook' & travel == 'No'), 'Census W/O Trave
 ```
 
 ### Demographics Comparison b/w Hospitalized and Non-Hospitalized
-
+1. Distribution of Gender of Patients
+2. Distribution of Gender of Patients breakdown by Hospitalization Status
+3. Distribution of Age of Patients
+4. Distribution of Age of Patients breakdown by Hospitalization Status
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 df_demo = df
 df_demo$hospital_admission[is.na(df_demo$hospital_admission)] = 'Unknown'
@@ -100,20 +118,22 @@ ggplot(df_demo, aes(x = age, fill = hospital_admission)) +
 ```
 
 ### Days b/w Onset and Hospitalizations
-
+1. Distribution of difference between onset date and hospitalized dates. Records with missing dates were removed (Histogram + Density Plot)
+2. Distribution of difference between onset date and hospitalized dates breakdown by Gender. Records with missing dates were removed (Histogram + Density Plot) 
+3. Distribution of difference between onset date and hospitalized dates breakdown by Age Group Records with missing dates were removed (Boxplot) 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = date_diff)) +
   geom_histogram(aes(y = ..density..), alpha = .5, binwidth = .8, color = 'white', bins = 41) +
   geom_density(aes(x = date_diff), alpha = .2, fill = 'green', color = 'dark green') + 
-  scale_y_continuous(sec.axis = sec_axis(~., name = 'Density')) + theme_bw() +
+  scale_y_continuous(name = 'Density', labels = scales::percent) + theme_bw() +
   xlab('Days') + ylab('Count') + ggtitle('Distribution Between Onset and Hospitalization') + 
   theme(text = element_text(family = 'Avenir')) + ggsave('5-Day Difference Onset Admission.png')
 
 # broken down by sex 
 ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = date_diff, color = sex, fill = sex)) +
-  geom_histogram(aes(y = ..density..), alpha = .5, color = 'white', position = 'dodge', bins = 41) +
+  geom_histogram(aes(y = ..density..), alpha = .5, position = 'dodge', bins = 41) +
   geom_density(aes(x = date_diff), alpha = .2) + 
-  scale_y_continuous(sec.axis = sec_axis(~., name = 'Density')) + theme_bw() +
+  scale_y_continuous(name = 'Density', labels = scales::percent) + theme_bw() +
   xlab('Days') + ylab('Count') + ggtitle('Distribution Between Onset and Hospitalization') + 
   theme(text = element_text(family = 'Avenir')) + ggsave('6-Day Difference Onset Admission Gender.png')
 
@@ -126,6 +146,7 @@ ggplot(df %>% filter(!is.na(date_diff) & date_diff >= 0), aes(x = age, y = date_
 ```
 
 ### Additional Breakdown
+Histograms of patients' testing reasons, travel history, ventilator use, in ICU
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE} 
 # Testing Reason
@@ -147,10 +168,9 @@ ggplot(df %>% filter(!is.na(travel)), aes(x = travel)) + geom_histogram(stat = '
 df$ventilator[is.na(df$ventilator)] = 'Unknown'
 df$ventilator = factor(df$ventilator, levels = c('Unknown', 'Yes', 'No'))
 ggplot(df %>% filter(!is.na(ventilator)), aes(x = ventilator)) + geom_histogram(stat = 'count', alpha = .75) +
-  coord_flip() + xlab('Count') + ylab('Ventilator') + ggtitle('Ventilator Use Breakdown') + 
-  theme(text = element_text(family = 'Avenir')) + ggsave('12-Ventilator Breakdown.png')
+  coord_flip() + xlab('Count') + ylab('Ventilator') + ggtitle('Ventilator Use Breakdown') + ggsave('12-Ventilator Breakdown.png')
  
-# ventilator
+# ICU
 df$icu[is.na(df$icu)] = 'Unknown'
 df$icu = factor(df$icu, levels = c('Unknown', 'Yes', 'No'))
 ggplot(df %>% filter(!is.na(icu)), aes(x = icu)) + geom_histogram(stat = 'count', alpha = .75) +
@@ -158,8 +178,11 @@ ggplot(df %>% filter(!is.na(icu)), aes(x = icu)) + geom_histogram(stat = 'count'
   theme(text = element_text(family = 'Avenir')) + ggsave('13-ICU Breakdown.png')
 ```
 
-Age Distribution By All, Hospitalization, ICU, Vent
-```{r}
+### Age Distribution By All, Hospitalization, ICU, Vent
+1. Distribution of age groups in patients with different resource utilization statuses 
+2. In each category, only patients that qualify for status is present
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 all = df %>% group_by(age) %>% count()
 all$category = 'Total'
 hospitalized = df %>% filter(hospital_admission == 'Yes') %>% group_by(age) %>% count()
@@ -177,6 +200,100 @@ final = final %>% filter(age != '#N/A')
 ggplot(final, aes(x = age, y = n, fill = category)) + geom_bar(alpha = .75, stat = 'identity') + xlab('Age Group') +
   ylab('Count') + ggtitle('Age Breakdown by Patient Category') +
   theme(text = element_text(family = 'Avenir')) + scale_fill_discrete(name = 'Category') + 
-  theme_bw() + facet_wrap(~ category, scales = 'free') + 
-  ggsave('14-Age Distribution by Category.png', width = 10, height = 10)
+  theme_bw() + facet_wrap(~ category, scales = 'free') #+ 
+  #ggsave('14-Age Distribution by Category.png', width = 10, height = 10)
 ```
+
+### Age Distribution Hospitalization, ICU, Vent
+1. Each category is filtered by the previous category 
+  1. Hospitalized category denominator is all patients count
+  2. ICU category denominator is hospitalized patients count
+  3. Ventilator category denominator is ICU patients count
+2. Histogram (percentage) of yes and no categories by age group
+3. Density plot of yes and no categories by age group
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+all = df %>% select(ID, age, hospital_admission, icu, ventilator)
+names(all)[3:5] = c('Hospital Admission', 'In ICU', 'On Ventilator')
+all[is.na(all)] = 'Unknown'
+
+all = all %>% gather(key = 'category', value = 'Legend', 'Hospital Admission', 'In ICU', 'On Ventilator')
+all$Legend = as.factor(all$Legend)
+all$category = as.factor(all$category)
+all$age = as.factor(all$age)
+all$age_cat = as.numeric(all$age)
+
+unknown_count = all %>% filter(Legend == 'Unknown') %>% group_by(category) %>% count()
+# cleaning 
+all = all %>% filter(age !='#N/A' & Legend != 'Unknown')
+all_line = all
+
+# breakdown by hospitalization
+hos_total = all %>% filter(category == 'Hospital Admission') %>% group_by(category, Legend) %>% count()
+names(hos_total)[3] = 'total'
+hos_counts = all %>% filter(category == 'Hospital Admission') %>% group_by(age, category, Legend) %>% count() 
+hos_counts = inner_join(hos_total, hos_counts)
+
+# breakdown by ICU 
+hospitalized_list = all %>% filter(category == 'Hospital Admission' & Legend == 'Yes') %>% distinct(ID)
+icu_total = all %>% filter(ID %in% hospitalized_list$ID & category == 'In ICU') %>% group_by(category, Legend) %>% count()
+icu_counts = all %>% filter(ID %in% hospitalized_list$ID & category == 'In ICU') %>% group_by(age, category, Legend) %>% count()
+names(icu_total)[3] = 'total'
+icu_counts = inner_join(icu_total, icu_counts)
+
+# breakdown by Ventilator
+ICU_list = all %>% filter(category == 'In ICU' & Legend == 'Yes') %>% distinct(ID)
+vent_total = all %>% filter(ID %in% ICU_list$ID & category == 'On Ventilator') %>% group_by(category, Legend) %>% count()
+vent_counts = all %>% filter(ID %in% ICU_list$ID & category == 'On Ventilator') %>% group_by(age, category, Legend) %>% count()
+names(vent_total)[3] = 'total'
+vent_counts = inner_join(vent_total, vent_counts)
+
+all = rbind(hos_counts, icu_counts)
+all = rbind(all, vent_counts)
+
+all$percentage = all$n / all$total
+
+graph_caption = 'ICU and Ventilator Categories only contain patients that are hospitalized. All Unknowns were removed.'
+
+ggplot() + geom_bar(data = all, aes(x = age, y = percentage, fill = Legend), alpha= .5, stat = 'identity', position = 'dodge') +
+  geom_text(data = all %>% filter(Legend == 'Yes'), aes(x = '0-20', y = 0.35, label = paste0('Yes: ', total)), color = 'cadetblue3', family = 'Avenir', alpha = .5, size = 3, hjust = 0) +
+  geom_text(data = all %>% filter(Legend == 'No'), aes(x = '0-20', y = 0.32, label = paste0('No: ', total)), color = 'coral', family = 'Avenir', alpha = .5, size = 3, hjust = 0) +
+  geom_text(data = unknown_count, aes(x = '0-20', y = 0.29, label = paste0('Unknown: ', n)), color = 'orange', family = 'Avenir', alpha = .75, size = 3, hjust = 0) +
+  geom_density(data = all_line, aes(x = age_cat, fill = Legend, color = Legend), alpha = .25, adjust = 3) + 
+  facet_grid(~category) + theme_bw() +
+  ggtitle('Age Distribution by Patient Category', subtitle = graph_caption) + xlab('Age Category') + ylab('Percentage') + scale_y_continuous(labels = scales::percent, limit = c(0, .4)) + 
+  theme(text = element_text(family = 'Avenir')) + ggsave('14-Age Distribution by Category.png', width = 12)
+
+all_print = all
+names(all_print)[3:5] = c('flag', 'numerator-count', 'denominator-total')
+setwd('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/Cleaned_Data')
+write.csv(all_print, 'age_distribution_byCategory_lineLevelData.csv', row.names = F)
+```
+
+Resource Utilization Distribution by Age
+/*(run chunk above first*/
+1. Use the data output from the previous chunk of code
+2. Calculate fraction of yes and no in each age group by category
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+all = all %>% select(category, Legend, age, n) %>% spread(key = 'Legend', value = 'n')
+all$total = all$No + all$Yes
+all = all %>% gather('No', 'Yes', key = 'Legend', value = 'n')
+all$percentage = round(all$n / all$total,2)
+all$percentage_label = paste0(as.character(all$percentage*100), '%')
+
+subtitles = 'Unknowns removed. Patients filtered by the previous category (Hospitalized -> ICU -> Ventilator)'
+caption = 'Total N for each age category labeled in red in each bar. Percentage indicates percentage for each age category' 
+
+ggplot(all) + geom_bar(aes(x = age, y = percentage, fill = Legend), stat = 'identity', alpha = .5) +
+  geom_text(data = all %>% filter(Legend == 'Yes'), aes(x = age, y = percentage - 0.05, label = percentage_label), color = 'blue', size = 4, alpha = .75, family = 'Avenir') +
+  geom_text(aes(x = age, y = 0.95, label = total), color = 'Coral', alpha =.8, family = 'Avenir', size = 4) + 
+  facet_grid(~category) + theme_bw() + labs(title = 'Resource Utilization Distribution by Age Category', subtitle = subtitles, caption = caption) + xlab('Age Category') + ylab('Percentage') +
+  scale_y_continuous(labels = scales::percent, limit = c(0, 1)) + theme(text = element_text(family = 'Avenir')) + ggsave('15-Resource Utilization Distribution by Age.png', width = 12)
+
+setwd('/Users/Excenity/Documents/CHiP-LOCAL/COVID/IDPH_Data/Output/Cleaned_Data')
+write.csv(all, 'ResourceUtilization_byAge_lineLevelData.csv', row.names = F)
+```
+
+
+
+
+
