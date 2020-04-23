@@ -236,3 +236,5 @@ if __name__ == '__main__' :
     df = df.sort_values(by=['date', 'EMS'])
     df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200419_jg_%s_ems.csv' % date_col), index=False)
 
+    df.loc[df['County at Onset'] == 'St Clair', 'County at Onset'] = 'St. Clair'
+    df.loc[df['County at Onset'] == 'Jodaviess', 'County at Onset'] = 'Jo daviess'
