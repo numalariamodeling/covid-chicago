@@ -106,3 +106,47 @@ p3 <- ggplot(subset(datSIP, var == "cfr")) + theme_cowplot() +
 pout <- plot_grid(p1, p1b, p1c, ncol = 1, rel_heights = c(1, 0.5, 0.5))
 
 ggsave(file.path(projectdir, "inputs/_plots", "20200419_fitted_param.png"), pout, width = 10, height = 8)
+
+
+##----------------------------------------------------------------
+
+### Aggregate for all EMS
+datAggr <- dat %>%
+  select(-run_num, -sample_num, -scen_num, -first_day) %>%
+  dplyr::group_by(ems) %>%
+  dplyr::summarise_all(.funs = "mean")
+
+
+datMean <- dat %>% select(ems,first_day,  social_multiplier_1 ,     social_multiplier_2   ,   social_multiplier_3 ,    
+                          socialDistance_time1  ,   socialDistance_time2  ,   socialDistance_time3   ) %>%
+  dplyr::group_by(ems, first_day) %>%
+  dplyr::summarise_all(.funs = "mean") %>%
+  mutate(stat="mean")
+
+datmin <- dat %>% select(ems, first_day, social_multiplier_1 ,     social_multiplier_2   ,   social_multiplier_3 ,  
+                         socialDistance_time1  ,   socialDistance_time2  ,   socialDistance_time3   ) %>%
+  dplyr::group_by(ems, first_day) %>%
+  dplyr::summarise_all(.funs = "min") %>%
+  mutate(stat="min")
+
+datmax <- dat %>% select(ems,first_day, social_multiplier_1 ,     social_multiplier_2   ,   social_multiplier_3 ,   
+                         socialDistance_time1  ,   socialDistance_time2  ,   socialDistance_time3   ) %>%
+  dplyr::group_by(ems, first_day) %>%
+  dplyr::summarise_all(.funs = "max") %>%
+  mutate(stat="max") %>%
+  rename()
+
+
+dat2 <- rbind(datMean,datmin , datmax) %>% 
+  pivot_longer(cols=-c(ems, stat, first_day)) %>% 
+  mutate(name = gsub("social_multiplier","socialmultiplier",name),
+         name = gsub("_time","time_",name)) %>%
+  separate(name, into=c("sip", "nr"),sep="_") %>% 
+  pivot_wider(names_from = sip, values_from = value) %>%
+  mutate(socialmultiplier = (1-socialmultiplier)*100) %>%
+  pivot_wider(names_from=stat, values_from =c( socialmultiplier))%>%
+  mutate(date = first_day + socialDistancetime ) %>%
+  rename(min=max, max=min) %>%
+  select(ems,date,   mean ,   min  , max   )
+
+write.csv(dat2, "EMS_sip_model_estimates_percentage.csv")

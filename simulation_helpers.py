@@ -119,7 +119,7 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
     sampledf = pd.read_csv(os.path.join(temp_exp_dir,"sampled_parameters.csv"))
 
     df_list = []
-    for scen_i in range(Nscenarios):
+    for scen_i in range(Nscenarios+1):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
             df_i = reprocess(trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, input_fname=input_name)
@@ -134,6 +134,11 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
 
     dfc = pd.concat(df_list)
     dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
+
+    nscenarios = scendf['scen_num'].max()
+    nscenarios_processed = len(dfc['scen_num'].unique())
+    trackScen = "Number of scenarios processed n= " + str(nscenarios_processed) + " out of total N= " + str(nscenarios) + " (" + str(nscenarios_processed/ nscenarios)+ " %)"
+    writeTxt(temp_exp_dir, "Simulation_report.txt" ,trackScen)
 
     return dfc
 

@@ -9,7 +9,7 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
-from NMH_catchment_comparison import load_sim_data
+from data_comparison import load_sim_data
 from copy import copy
 
 mpl.rcParams['pdf.fonttype'] = 42
