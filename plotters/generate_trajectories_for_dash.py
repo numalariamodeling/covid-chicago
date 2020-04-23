@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -11,13 +12,14 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 if __name__ == '__main__' :
 
     stem = 'scenario1'
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    output_dir = os.path.join(wdir, 'simulation_output', 'EMS', '20200419')
+    exp_names = [x for x in os.listdir(output_dir) if stem in x]
 
     adf = pd.DataFrame()
     for d, exp_name in enumerate(exp_names):
-        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        sim_output_path = os.path.join(output_dir, exp_name)
         ems = int(exp_name.split('_')[2])
-        df = load_sim_data(exp_name)
+        df = load_sim_data(exp_name, input_wdir=output_dir)
 
         first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
@@ -25,10 +27,15 @@ if __name__ == '__main__' :
         df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
         adf = pd.concat([adf, df])
 
+    # adf['inf_cumul'] = adf['asymp_cumul'] + adf['symp_mild_cumul'] + adf['symp_severe_cumul']
+    # adf['symp_cumul'] = adf['symp_mild_cumul'] + adf['symp_severe_cumul']
+    # print(np.sum(adf['death_det_cumul'])/np.sum(adf['crit_det_cumul']))
+    # exit()
+
     filename = 'dash_EMS_trajectories_separate_endsip_20200419.csv'
     print(adf.columns.values)
 
-    keep = ['date', 'ems']
+    keep = ['date', 'ems', 'run_num']
     output_channels = ['new_detected_hospitalized', 'new_detected_critical', 'new_detected_deaths', 'new_deaths',
                        'infected']
     params_of_interest = ['d_Sym', 'd_Sys',
