@@ -5,13 +5,13 @@ experiment_setup_parameters:
     - age0to19
     - age20to39
     - age40to59
-    - age60to100    
+    - age60to100
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
     'NMH_catchment': [78401,96245,79829,60526]
     #'Chicago': ,
-    #'IL': , 
+    #'IL': ,
     'EMS_1': [170342, 184052, 203274, 182064]
     'EMS_2': [246836, 291953, 311148, 279459]
     'EMS_3': [128558, 147943, 181366, 163605]
@@ -41,4 +41,39 @@ sampled_parameters:
   'incubation_pd':
     np.random: uniform
     function_kwargs: {'low': 1, 'high': 2}
+  time_to_hospitalization:
+    EMS_11:
+      # Give a region-specific distribution by nesting it under the region name
+      np.random: uniform
+      function_kwargs: {'low':2, 'high':10}
+    EMS_10:
+      # If expanding by age, provide a list of kwargs
+      # (and optionally a list of distribution names)
+      # with the same lengths as the age_bins.
+      # If only a single distribution name is given, it will be used
+      # for all age bins.
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 2, 'high': 4}
+        - {'low': 3, 'high': 5}
+        - {'low': 5, 'high': 7}
+        - {'low': 7, 'high': 9}
+    # Any distribution not nested under a region will be used for regions
+    # which are not otherwise specified.
+    np.random: uniform
+    function_kwargs: {'low':15, 'high':30}
+  recovery_rate_crit:
+    # If "expand_by_age" is True, but only one distribution is provided,
+    # the same distribution will be used for each age group.
+    expand_by_age: True
+    np.random: exponential
+    function_kwargs: {'scale': 0.5}
+  recover_rate_crit_age0to19:
+    # You can manually enter the distribution for an age group.
+    # If it comes after an automatically generated set of age distributions,
+    # as with the default `recovery_rate_crit` above, it will overwrite the default.
+    # NB: Order matters! The last distribution will be used for the age bin.
+    np.random: exponential
+    function_kwargs: {'scale': 1.5}
 fitted_parameters:
