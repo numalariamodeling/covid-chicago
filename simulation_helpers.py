@@ -73,7 +73,7 @@ def get_cms_cmd(exe_dir=EXE_DIR, workdir=None, docker_image=None):
                 raise TypeError("Must provide `workdir` input for running via Docker")
             cmd = f"docker run -v={workdir}:{workdir} {docker_image} -d {workdir}"
         else:
-            cmd = f"wine {os.path.join(exe_dir, 'compartments.exe')}"
+            cmd = f"wine {os.path.join(exe_dir, 'compartments.exe')} -d {workdir}"
         return cmd
 
 
