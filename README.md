@@ -109,6 +109,29 @@ Note that the user-supplied configuration file is used to provide
 - Specifying experiment name suffix and changing running_location : `python runScenarios.py
   --running_location NUCLUSTER --region IL --experiment_config extendedcobey.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
 
+
+### 4.2.3. Define age or region specific inputs 
+
+#### Region specific sample parameters (i.e. for EMS regions)
+- `EMSspecific_sample_parameters.yaml` includes EMS specific parameters (currently in fitting process)
+Example submission lines: 
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_2 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_3 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_4 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_5 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_6 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_7 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_8 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_9 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_10 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scen3"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scen3"
+
+#### Age extension and age specific parameters 
+- `sample_age4grp_experiment.yaml` and  `sample_age8grp_experiment.yaml`
+
+
+
 ### 4.5. Local environment setup
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
 Copy the `sample.env` file to `.env` and edit so that paths point as needed for your system.
