@@ -59,7 +59,7 @@ def pop_age_structure_by_ems(ems_shp, census_tract_shp, agebins, output_fname) :
     adf.to_csv(output_fname, index=False)
 
 
-if __name__ == '__main__' :
+def ems_pop_structure() :
 
     ems_shp = gpd.read_file(os.path.join(shp_path, 'EMS_Regions', 'EMS_Regions.shp'))
     census_tract_shp = gpd.read_file(os.path.join(shp_path, 'tl_2019_17_tract', 'tl_2019_17_tract.shp'))
@@ -71,4 +71,41 @@ if __name__ == '__main__' :
 
     output_fname = os.path.join(datapath, 'EMS Population', 'EMS_population_from_RTI_by_age_4grp.csv')
     pop_age_structure_by_ems(ems_shp, census_tract_shp, agebins, output_fname)
+
+
+def ems_proportional_pop_by_county() :
+
+    ems_pop_structure()
+    ems_shp = gpd.read_file(os.path.join(shp_path, 'EMS_Regions', 'EMS_Regions.shp'))
+    county_shp = gpd.read_file(os.path.join(shp_path, 'IL_BNDY_County', 'IL_BNDY_County_Py.shp'))
+    census_tract_shp = gpd.read_file(os.path.join(shp_path, 'tl_2019_17_tract', 'tl_2019_17_tract.shp'))
+    df = pd.read_csv(os.path.join(pop_path, 'IL2018_Households'))
+
+    def list_in_ems(small_area_shp, small_area_col, ems_poly):
+        small_area_shp['in_ems'] = small_area_shp['geometry'].apply(lambda x: x.intersects(ems_poly))
+        return small_area_shp[small_area_shp['in_ems']][small_area_col].values
+
+    ems_county_df = pd.DataFrame()
+    for ems, ems_poly in zip(ems_shp['REGION'], ems_shp['geometry']) :
+        counties = list_in_ems(county_shp, 'COUNTY_NAM', ems_poly)
+        county_shp_df = county_shp[county_shp['COUNTY_NAM'].isin(counties)]
+        pops = []
+        for county, county_poly in zip(county_shp_df['COUNTY_NAM'], county_shp_df['geometry']) :
+            poly = county_poly.intersection(ems_poly)
+            pops.append(count_total_pop_for_ems(df, poly, census_tract_shp))
+        cdf = pd.DataFrame({ 'county' : counties,
+                             'pop in ems' : pops})
+        cdf['EMS'] = int(ems)
+        ems_county_df = pd.concat([ems_county_df, cdf])
+    ems_county_df.to_csv(os.path.join(datapath, 'EMS Population', 'EMS_population_by_county.csv'), index=False)
+    ems_df = pd.read_csv(os.path.join(datapath, 'EMS Population', 'EMS_population_from_RTI.csv'))
+    ems_df = ems_df.rename(columns={'population' : 'EMS population'})
+    ems_county_df = pd.merge(left=ems_county_df, right=ems_df, on='EMS', how='left')
+    ems_county_df['share_of_ems_pop'] = ems_county_df['pop in ems']/ems_county_df['EMS population']
+    ems_county_df.to_csv(os.path.join(datapath, 'EMS Population', 'EMS_population_by_county.csv'), index=False)
+
+
+if __name__ == '__main__' :
+
+    ems_proportional_pop_by_county()
 
