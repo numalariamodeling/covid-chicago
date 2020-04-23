@@ -63,4 +63,17 @@ sampled_parameters:
     # which are not otherwise specified.
     np.random: uniform
     function_kwargs: {'low':15, 'high':30}
+  recovery_rate_crit:
+    # If "expand_by_age" is True, but only one distribution is provided,
+    # the same distribution will be used for each age group.
+    expand_by_age: True
+    np.random: exponential
+    function_kwargs: {'scale': 0.5}
+  recover_rate_crit_age0to19:
+    # You can manually enter the distribution for an age group.
+    # If it comes after an automatically generated set of age distributions,
+    # as with the default `recovery_rate_crit` above, it will overwrite the default.
+    # NB: Order matters! The last distribution will be used for the age bin.
+    np.random: exponential
+    function_kwargs: {'scale': 1.5}
 fitted_parameters:
