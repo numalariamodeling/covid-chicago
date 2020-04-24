@@ -161,7 +161,7 @@ def write_ki_mix(nageGroups, scale=True):
         ki_mix_param2 = ki_mix_param2 + "\n(param sum8 (+ C81 C82 C83 C84 C85 C86 C87 C88))"
         norm_factor = "\n(param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4) (* sum5  p5) (* sum6  p6) (* sum7  p7) (* sum8  p8)))"
 
-    ki_mix_param = ki_mix_param1 +  "\n" +  ki_mix_param2 +  "\n" + ki_mix_param3 +  "\n" +  norm_factor
+    ki_mix_param = ki_mix_param1 +  "\n" +  ki_mix_param2 +  "\n" +  norm_factor +  "\n" +  ki_mix_param3
     
     return ki_mix_param
    
