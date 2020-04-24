@@ -1,6 +1,7 @@
 import os
 import itertools
 import sys
+import re
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -120,6 +121,9 @@ def write_functions(grp):
     # functions_str = functions_str.replace("  ", "")
     return (functions_str)
 
+def sub(x):
+    xout = re.sub('_','', str(x), count=1)
+    return(xout)
 
 def write_ki_mix(nageGroups, scale=True):
     grp_x = range(1, nageGroups + 1)
@@ -129,13 +133,38 @@ def write_ki_mix(nageGroups, scale=True):
     for i, xy in enumerate(itertools.product(grp_x, grp_y)):
         ki_dic[i] = ["C" + str(xy[0]) + '_' + str(xy[1])]
 
-    ki_mix_param = ""
+    ki_mix_param1 = ""
+    ki_mix_param3 = ""
     for i in range(len(ki_dic.keys())):
-        string_i = "\n(param " + ki_dic[i][0] + " @" + ki_dic[i][0] + "@ )"
-        ki_mix_param = ki_mix_param + string_i
+        string_i = "\n(param " + sub(ki_dic[i][0]) + " @" + ki_dic[i][0] + "@ )"
+        ki_mix_param1 = ki_mix_param1 + string_i
+        
+        string_i = "\n(param " + ki_dic[i][0]  + " (/ " + sub(ki_dic[i][0]) + " norm_factor))"
+        ki_mix_param3 = ki_mix_param3 + string_i
 
+    ## To do - remove hardcoding and if statement
+    if nageGroups ==4 :
+        ki_mix_param2 = "\n(param sum1 (+ C11 C12 C13 C14))"
+        ki_mix_param2 = ki_mix_param2 +  "\n(param sum2  (+ C21 C22 C23 C24))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum3 (+ C31 C32 C33 C34))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum4 (+ C41 C42 C43 C44))"
+        norm_factor = "\n(param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4)))"
+
+    if nageGroups ==8:
+        ki_mix_param2 = "\n(param sum1 (+ C11 C12 C13 C14 C15 C16 C17 C18))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum2 (+ C21 C22 C23 C24 C25 C26 C27 C28))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum3 (+ C31 C32 C33 C34 C35 C36 C37 C38))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum4 (+ C41 C42 C43 C44 C45 C46 C47 C48))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum5 (+ C51 C52 C53 C54 C55 C56 C57 C58))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum6 (+ C61 C62 C63 C64 C65 C66 C67 C68))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum7 (+ C71 C72 C73 C74 C75 C76 C77 C78))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum8 (+ C81 C82 C83 C84 C85 C86 C87 C88))"
+        norm_factor = "\n(param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4) (* sum5  p5) (* sum6  p6) (* sum7  p7) (* sum8  p8)))"
+
+    ki_mix_param = ki_mix_param1 +  "\n" +  ki_mix_param2 +  "\n" +  norm_factor +  "\n" +  ki_mix_param3
+    
     return ki_mix_param
-
+   
 
 # If Ki mix is defined, Ki here can be set to 0 in script that generates the simulation
 def write_params():
@@ -194,6 +223,10 @@ def write_N_population(grpList):
 
     string2 = "\n(param N_ageAll (+ " + repeat_string_by_grp('N_', grpList) + "))"
     stringAll = stringAll + string2
+
+    for i, key in enumerate(grpList):
+        string2 = """\n(param p{i} (/ N_{grp} N_ageAll))""".format(i=i+1, grp=key)
+        stringAll = stringAll + string2
 
     return (stringAll)
 
@@ -394,7 +427,7 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 
         reaction_string_combined = reaction_string_combined + '\n' + reaction_string
 
-    params = write_params() + write_ki_mix(len(grpList)) + write_N_population(grpList)
+    params = write_params() + write_N_population(grpList) + write_ki_mix(len(grpList))
     functions_string = functions_string + write_ageAll(grpList)
 
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str

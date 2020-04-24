@@ -1,0 +1,110 @@
+experiment_setup_parameters:
+fixed_parameters_region_specific:
+fixed_parameters_global:
+sampled_parameters:
+  social_multiplier_1:
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+  social_multiplier_2:
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_3:
+      np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low':0.6, 'high':0.9}
+  social_multiplier_3:
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low':0.05, 'high':0.3}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low':0.00, 'high':0.0}
+
+
+
+
