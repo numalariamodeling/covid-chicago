@@ -273,11 +273,13 @@ def write_regionAll(grpList):
 
 
 # Reaction without contact matrix
+# (reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_regionAll (* infectious_det_regionAll reduced_inf_of_det_cases)) N_regionAll )))
+
 def write_reactions(grp):
     grp = str(grp)
 
     reaction_str = """
-(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_regionAll (* infectious_det_regionAll reduced_inf_of_det_cases)) N_regionAll )))
+(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_{grp} (* infectious_det_{grp} reduced_inf_of_det_cases)) N_{grp} )))
 (reaction infection_asymp_undet_{grp}  (E::{grp})   (As::{grp})   (* Kl E::{grp} (- 1 d_As)))
 (reaction infection_asymp_det_{grp}  (E::{grp})   (As_det1::{grp})   (* Kl E::{grp} d_As))
 (reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks E::{grp}))
