@@ -13,9 +13,11 @@ user_name <- Sys.getenv("USERNAME")
 if (user_name == "mrung") {
   data_dir <- file.path("C:/Users", user_name, "Box/NU-malaria-team/projects/covid_chicago/emod_sim/age_contact_matrices")
   git_dir <- file.path("C:/Users", user_name, "gitrepos/covid-chicago")
-  input_dir <- file.path("C:/Users", user_name, "Box/NU-malaria-team/projects/covid_chicago/cms_sim/inputs")
+  input_dir <- file.path("C:/Users", user_name, "Box/NU-malaria-team/projects/covid_chicago/cms_sim/inputs/contact_matrices/")
 }
 
+
+### add population 
 
 agegrps <- c("grp4", "grp8")
 contactlocations <- c("locations_all", "home", "school", "work")
@@ -119,22 +121,23 @@ for (agegrp in agegrps) {
 
 
     contact_matrix_adj <- contact_matrix %>%
-      select(x, age_xy, age_xy_orig, symmetry) %>%
-      left_join(symmetry_means, by = "age_xy")
-
-    ### Rowise normalization
-    contact_matrix_adj <- contact_matrix_adj %>%
-      dplyr::group_by(x) %>%
-      dplyr::mutate(mean_norm = ifelse(!is.na(mean / sum(mean)) , mean / sum(mean), 0 ))
+      select(x, y,age_xy, symmetry) %>%
+      left_join(symmetry_means, by = "age_xy") %>%
+      select(x, y, mean) %>%
+      mutate(y=paste0("y",y))%>%
+      pivot_wider( values_from = mean, names_from = y) %>% 
+      unite("pintcol", -x, remove = T, sep=", ")
+    
+  
+    ### Leave contact matrix as it is, normalization and population weighting is done in cms, or separate python script
 
 
     ### Write parameter snippet  (using mean only)
     sink(file = file.path(git_dir, "snippets", txtfilename))
     cat("# Age groups: ", age_groups)
-    cat(paste0("\ndf['C", contact_matrix_adj$age_xy_orig, "'] = ", contact_matrix_adj$mean_norm))
+    cat("C: \nmatrix:  # Unnormalized contact matrix ")
+    cat(paste0("\n- [", contact_matrix_adj$pintcol, "]"))
 
-    cat("\n\n #Replacement")
-    cat(paste0("\ndata = data.replace('@C", contact_matrix_adj$age_xy_orig, "@', str(df.C", contact_matrix_adj$age_xy_orig, "[sample_nr]))"))
-    sink()
+    
   }
 }
