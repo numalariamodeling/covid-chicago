@@ -1,6 +1,4 @@
 experiment_setup_parameters:
-  'number_of_samples': 2
-  'number_of_runs': 1
   age_bins:
     - age0to19
     - age20to39
