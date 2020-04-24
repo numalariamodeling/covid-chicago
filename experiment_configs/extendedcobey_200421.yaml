@@ -23,19 +23,19 @@ fixed_parameters_region_specific:
     'EMS_11': 2716921
   startdate:
     'NMH_catchment': 2020-02-28
-    'Chicago': 2020-02-20
-    'IL': 2020-02-28
-    'EMS_1': 2020-03-01       
-    'EMS_2': 2020-02-28
-    'EMS_3': 2020-03-05       
-    'EMS_4': 2020-03-02
-    'EMS_5': 2020-02-28       
-    'EMS_6': 2020-03-03
-    'EMS_7': 2020-02-28       
-    'EMS_8': 2020-02-28
-    'EMS_9': 2020-02-28       
-    'EMS_10': 2020-02-28
-    'EMS_11': 2020-02-28
+    'Chicago': 2020-02-20  
+    'IL': 2020-01-01  # used for spatial model 
+    'EMS_1': 2020-01-17       
+    'EMS_2': 2020-01-20
+    'EMS_3': 2020-01-19       
+    'EMS_4': 2020-01-15
+    'EMS_5': 2020-01-17       
+    'EMS_6': 2020-01-17
+    'EMS_7': 2020-01-14       
+    'EMS_8': 2020-01-14
+    'EMS_9': 2020-01-17       
+    'EMS_10': 2020-02-14
+    'EMS_11': 2020-02-15
 fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
@@ -118,43 +118,43 @@ fitted_parameters:
   Kis:
     'NMH_catchment':
       np: linspace
-      function_kwargs: {'start': 1.5e-6, 'stop': 2.0e-6, 'num': 3}
+      function_kwargs: {'start': 1.5e-6, 'stop': 2.0e-6, 'num': 1}
     'Chicago':
       np: linspace
-      function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 3}
+      function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 1}
     'IL':
       np: linspace
-      function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 3}
+      function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 4.5e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.144, 'stop': 0.144, 'num': 1}
     'EMS_2':
       np: linspace
-      function_kwargs: {'start': 2.5e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.144, 'stop': 0.144, 'num': 1}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.138, 'stop': 0.138, 'num': 1}
     'EMS_4':
       np: linspace
-      function_kwargs: {'start': 5.0e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.138 , 'stop': 0.138, 'num': 1}
     'EMS_5':
       np: linspace
-      function_kwargs: {'start': 4.5e-7, 'stop': 9.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.121, 'stop': 0.121, 'num': 1}
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 5.5e-7, 'num': 3}
+      function_kwargs: {'start': 0.121, 'stop': 0.121, 'num': 1}
     'EMS_7':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 5.5e-7, 'num': 3}
+      function_kwargs: {'start':  0.205, 'stop': 0.205, 'num': 1}
     'EMS_8':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 7.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.198, 'stop': 0.198, 'num': 1}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 2.5e-7, 'stop': 4.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.185, 'stop': 0.185, 'num': 1}
     'EMS_10':
       np: linspace
-      function_kwargs: {'start': 4.0e-7, 'stop': 7.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.181, 'stop': 0.181, 'num': 1}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 3.0e-7, 'stop': 4.0e-7, 'num': 3}
+      function_kwargs: {'start': 0.211, 'stop': 0.211, 'num': 1}
