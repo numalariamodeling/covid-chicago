@@ -14,7 +14,7 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
 
-exp_name = '20200423_EMS_11_age4_test_channels2'
+exp_name = '20200423_EMS_1_test_spatial_full'
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)

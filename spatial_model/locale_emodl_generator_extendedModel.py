@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -12,7 +13,7 @@ def write_species(grp):
     grp = str(grp)
     species_str = """
 (species S::{grp} @speciesS_{grp}@)
-(species As::{grp} @initialAs_{grp}@)
+(species As::{grp} 0)
 (species E::{grp} 0)
 (species As_det1::{grp} 0)
 (species P::{grp} 0)
@@ -44,39 +45,43 @@ def write_species(grp):
     species_str = species_str.replace("  ", " ")
     return (species_str)
 
-
+def sub(x):
+    xout = re.sub('_','-', str(x), count=1)
+    return(xout)
+    
 def write_observe(grp):
     grp = str(grp)
+    grpout = sub(grp)
 
     observe_str = """
-(observe susceptible_{grp} S::{grp})
-(observe exposed_{grp} E::{grp})
-(observe asymptomatic_{grp} asymptomatic_{grp})
-(observe presymptomatic_{grp} P::{grp})
-(observe symptomatic_mild_{grp} symptomatic_mild_{grp})
-(observe symptomatic_severe_{grp} symptomatic_severe_{grp})
-(observe hospitalized_{grp} hospitalized_{grp})
-(observe critical_{grp} critical_{grp})
-(observe deaths_{grp} deaths_{grp})
-(observe recovered_{grp} recovered_{grp})
+(observe susceptible_{grpout} S::{grp})
+(observe exposed_{grpout} E::{grp})
+(observe asymptomatic_{grpout} asymptomatic_{grp})
+(observe presymptomatic_{grpout} P::{grp})
+(observe symptomatic_mild_{grpout} symptomatic_mild_{grp})
+(observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
+(observe hospitalized_{grpout} hospitalized_{grp})
+(observe critical_{grpout} critical_{grp})
+(observe deaths_{grpout} deaths_{grp})
+(observe recovered_{grpout} recovered_{grp})
 
-(observe asymp_cumul_{grp} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
-(observe asymp_det_cumul_{grp} (+ As_det1::{grp} RAs_det1::{grp}))
-(observe symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym::{grp} RSym_det2::{grp}))
-(observe symp_mild_det_cumul_{grp} (+ RSym_det2::{grp} Sym_det2::{grp}))
-(observe symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe symp_severe_det_cumul_{grp} (+ Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe hosp_det_cumul_{grp} (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
-(observe crit_det_cumul_{grp} (+ C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RC2_det3::{grp}))
-(observe crit_det_{grp} (+ C2_det3::{grp} C3_det3::{grp}))
-(observe death_det_cumul_{grp} D3_det3::{grp} )
-(observe detected_cumul_{grp} (+ (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} C2_det3::{grp} C3_det3::{grp}) RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
+(observe asymp_cumul_{grpout} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
+(observe asymp_det_cumul_{grpout} (+ As_det1::{grp} RAs_det1::{grp}))
+(observe symp_mild_cumul_{grpout} (+ symptomatic_mild_{grp} RSym::{grp} RSym_det2::{grp}))
+(observe symp_mild_det_cumul_{grpout} (+ RSym_det2::{grp} Sym_det2::{grp}))
+(observe symp_severe_cumul_{grpout} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe symp_severe_det_cumul_{grpout} (+ Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe hosp_cumul_{grpout} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe hosp_det_cumul_{grpout} (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe crit_cumul_{grpout} (+ deaths_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
+(observe crit_det_cumul_{grpout} (+ C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RC2_det3::{grp}))
+(observe crit_det_{grpout} (+ C2_det3::{grp} C3_det3::{grp}))
+(observe death_det_cumul_{grpout} D3_det3::{grp} )
+(observe detected_cumul_{grpout} (+ (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} C2_det3::{grp} C3_det3::{grp}) RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
 
-(observe detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
-(observe infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
-""".format(grp=grp)
+(observe detected_{grpout} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(observe infected_{grpout} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+""".format(grpout=grpout, grp=grp)
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
@@ -138,7 +143,7 @@ def write_params():
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
-(param Ki @Ki@)
+;(param Ki @Ki@)
 (param Kr_a (/ 1 recovery_rate_asymp))
 (param Kr_m (/ 1 recovery_rate_mild))
 (param Kr_h (/ 1 recovery_rate_hosp))
@@ -152,18 +157,35 @@ def write_params():
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
+"""
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
-
- """
     params_str = params_str.replace("  ", " ")
 
     return (params_str)
+
+
+
+def write_grp_params(grp):
+    grp = str(grp)
+    params_str = """
+(param Ki_{grp} @Ki_{grp}@)
+
+(time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
+
+(param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
+(param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
+(param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
+
+
+
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
+""".format(grp=grp)
+    params_str = params_str.replace("  ", " ")
+
+    return (params_str)
+
 
 
 def write_N_population(grpList):
@@ -255,7 +277,7 @@ def write_reactions(grp):
     grp = str(grp)
 
     reaction_str = """
-(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki S::{grp} (/  (+ infectious_undet_regionAll (* infectious_det_regionAll reduced_inf_of_det_cases)) N_regionAll )))
+(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_regionAll (* infectious_det_regionAll reduced_inf_of_det_cases)) N_regionAll )))
 (reaction infection_asymp_undet_{grp}  (E::{grp})   (As::{grp})   (* Kl E::{grp} (- 1 d_As)))
 (reaction infection_asymp_det_{grp}  (E::{grp})   (As_det1::{grp})   (* Kl E::{grp} d_As))
 (reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks E::{grp}))
@@ -309,6 +331,7 @@ def generate_locale_emodl_extended(grp, file_output):
     total_string = ""
     species_string = ""
     observe_string = ""
+    param_string = ""
     reaction_string = ""
     functions_string = ""
     total_string = total_string + header_str
@@ -316,19 +339,17 @@ def generate_locale_emodl_extended(grp, file_output):
     for key in grp:
         total_string = total_string + "\n(locale site-{})\n".format(key)
         total_string = total_string + "(set-locale site-{})\n".format(key)
-        species = write_species(key)
-        total_string = total_string + species
-        observe = write_observe(key)
-        reaction = write_reactions(key)
+        total_string = total_string +  write_species(key)
         functions = write_functions(key)
-        observe_string = observe_string + observe
-        reaction_string = reaction_string + reaction
+        observe_string = observe_string + write_observe(key)
+        reaction_string = reaction_string + write_reactions(key)
         functions_string = functions_string + functions
-
-    params = write_params() + write_N_population(grp)
+        param_string = param_string + write_grp_params(key) 
+        
+    param_string =  write_params() + param_string  +  write_N_population(grp)
     functions_string = functions_string + write_regionAll(grp)
 
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + reaction_string + '\n\n' + footer_str
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
@@ -362,8 +383,7 @@ def generate_locale_cfg(cfg_filename, nruns, filepath):
 
 
 if __name__ == '__main__':
-    ems_grp = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
-               'EMS_11']
+    ems_grp = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
     generate_locale_emodl_extended(grp=ems_grp,
                                    file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS.emodl'))
 
