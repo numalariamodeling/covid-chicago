@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -44,39 +45,43 @@ def write_species(grp):
     species_str = species_str.replace("  ", " ")
     return (species_str)
 
-
+def sub(x):
+    xout = re.sub('_','-', str(x), count=1)
+    return(xout)
+    
 def write_observe(grp):
     grp = str(grp)
+    grpout = sub(grp)
 
     observe_str = """
-(observe susceptible_{grp} S::{grp})
-(observe exposed_{grp} E::{grp})
-(observe asymptomatic_{grp} asymptomatic_{grp})
-(observe presymptomatic_{grp} P::{grp})
-(observe symptomatic_mild_{grp} symptomatic_mild_{grp})
-(observe symptomatic_severe_{grp} symptomatic_severe_{grp})
-(observe hospitalized_{grp} hospitalized_{grp})
-(observe critical_{grp} critical_{grp})
-(observe deaths_{grp} deaths_{grp})
-(observe recovered_{grp} recovered_{grp})
+(observe susceptible_{grpout} S::{grp})
+(observe exposed_{grpout} E::{grp})
+(observe asymptomatic_{grpout} asymptomatic_{grp})
+(observe presymptomatic_{grpout} P::{grp})
+(observe symptomatic_mild_{grpout} symptomatic_mild_{grp})
+(observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
+(observe hospitalized_{grpout} hospitalized_{grp})
+(observe critical_{grpout} critical_{grp})
+(observe deaths_{grpout} deaths_{grp})
+(observe recovered_{grpout} recovered_{grp})
 
-(observe asymp_cumul_{grp} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
-(observe asymp_det_cumul_{grp} (+ As_det1::{grp} RAs_det1::{grp}))
-(observe symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym::{grp} RSym_det2::{grp}))
-(observe symp_mild_det_cumul_{grp} (+ RSym_det2::{grp} Sym_det2::{grp}))
-(observe symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe symp_severe_det_cumul_{grp} (+ Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe hosp_det_cumul_{grp} (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(observe crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
-(observe crit_det_cumul_{grp} (+ C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RC2_det3::{grp}))
-(observe crit_det_{grp} (+ C2_det3::{grp} C3_det3::{grp}))
-(observe death_det_cumul_{grp} D3_det3::{grp} )
-(observe detected_cumul_{grp} (+ (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} C2_det3::{grp} C3_det3::{grp}) RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
+(observe asymp_cumul_{grpout} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
+(observe asymp_det_cumul_{grpout} (+ As_det1::{grp} RAs_det1::{grp}))
+(observe symp_mild_cumul_{grpout} (+ symptomatic_mild_{grp} RSym::{grp} RSym_det2::{grp}))
+(observe symp_mild_det_cumul_{grpout} (+ RSym_det2::{grp} Sym_det2::{grp}))
+(observe symp_severe_cumul_{grpout} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe symp_severe_det_cumul_{grpout} (+ Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe hosp_cumul_{grpout} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe hosp_det_cumul_{grpout} (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(observe crit_cumul_{grpout} (+ deaths_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
+(observe crit_det_cumul_{grpout} (+ C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RC2_det3::{grp}))
+(observe crit_det_{grpout} (+ C2_det3::{grp} C3_det3::{grp}))
+(observe death_det_cumul_{grpout} D3_det3::{grp} )
+(observe detected_cumul_{grpout} (+ (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} C2_det3::{grp} C3_det3::{grp}) RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
 
-(observe detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
-(observe infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
-""".format(grp=grp)
+(observe detected_{grpout} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(observe infected_{grpout} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+""".format(grpout=grpout, grp=grp)
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
