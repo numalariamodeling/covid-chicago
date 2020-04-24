@@ -48,6 +48,9 @@ def compare_death_plots() :
     df = df.dropna(subset=['Deceased Date'])
     df = df.groupby('Deceased Date')['ID'].agg(len).reset_index()
     df = df.rename(columns={'ID' : 'daily_deaths_line_list'})
+    # df.to_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_line_list_200423.csv'), index=False)
+    # exit()
+
     df['Deceased Date'] = pd.to_datetime(df['Deceased Date'])
 
     ddf = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_comparison_for_jaline.csv'))

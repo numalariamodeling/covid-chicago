@@ -100,3 +100,25 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     if output_filename :
         adf.to_csv(output_filename, index=False)
     return adf
+
+
+def load_capacity(ems) :
+
+    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/EMS_report_2020_03_21.xlsx')
+    ems_df = pd.read_excel(ems_fname)
+    ems_df = ems_df[ems_df['Date'] == '3/27/20']
+    ems_df['ems'] = ems_df['Region'].apply(lambda x : int(x.split('-')[0]))
+    ems_df = ems_df.set_index('ems')
+    if ems > 0 :
+        capacity = {
+            'hospitalized' : ems_df.at[ems, 'Total_Med/_Surg_Beds'],
+            'critical' : ems_df.at[ems, 'Total_Adult_ICU_Beds'],
+            'ventilators' : ems_df.at[ems, 'Total_Vents']
+        }
+    else :
+        capacity = {
+            'hospitalized' : np.sum(ems_df['Total_Med/_Surg_Beds']),
+            'critical' : np.sum(ems_df['Total_Adult_ICU_Beds']),
+            'ventilators' : np.sum(ems_df['Total_Vents'])
+        }
+    return capacity
