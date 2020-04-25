@@ -176,29 +176,16 @@ def write_params():
 (param time_to_death @time_to_death@)
 (param recovery_rate_asymp @recovery_rate_asymp@)
 (param recovery_rate_mild @recovery_rate_mild@)
-(param recovery_rate_hosp @recovery_rate_hosp@)
 (param recovery_rate_crit @recovery_rate_crit@)
-(param fraction_symptomatic @fraction_symptomatic@)
-(param fraction_severe @fraction_severe@)
-(param fraction_hospitalized @fraction_hospitalized@)
-(param fraction_critical @fraction_critical@ )
-(param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
+;(param cfr @cfr@)
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
 (param Ki @Ki@)
 (param Kr_a (/ 1 recovery_rate_asymp))
 (param Kr_m (/ 1 recovery_rate_mild))
-(param Kr_h (/ 1 recovery_rate_hosp))
 (param Kr_c (/ 1 recovery_rate_crit))
-(param Kl (/ (- 1 fraction_symptomatic ) incubation_pd))
-(param Ks (/ fraction_symptomatic  incubation_pd))
-(param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
-(param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization ))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 (param Ki_red1 (* Ki @social_multiplier_1@))
@@ -213,6 +200,34 @@ def write_params():
     # params_str = params_str.replace("  ", " ")
 
     return (params_str)
+
+
+def write_age_specific_param(grp):
+    grp = str(grp)
+    string =  """
+(param fraction_severe_{grp} @fraction_severe_{grp}@)
+(param Ksys{grp} (* fraction_severe_{grp} (/ 1 time_to_symptoms)))
+(param Ksym{grp} (* (- 1 fraction_severe_{grp}) (/ 1 time_to_symptoms))) 
+
+;(param fraction_dead_{grp} (/ cfr fraction_severe_{grp}))
+(param fraction_dead_{grp} @fraction_dead_{grp}@)
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+
+(param fraction_critical_{grp} @fraction_critical_{grp}@ )
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+
+(param fraction_hospitalized_{grp} (/ fraction_critical_{grp} fraction_dead_{grp} ))
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+
+(param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
+(param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) incubation_pd))
+(param Ks{grp} (/ fraction_symptomatic_{grp}  incubation_pd))
+
+(param recovery_rate_hosp_{grp} @recovery_rate_hosp_{grp}@)
+(param Kr_h{grp} (/ 1 recovery_rate_hosp_{grp}))
+
+""".format(grp=grp)        
+    return string
 
 
 def write_N_population(grpList):
@@ -345,37 +360,37 @@ def write_reactions(grp):
     grp = str(grp)
 
     reaction_str = """
-(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl E_{grp} (- 1 d_As)))
-(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl E_{grp} d_As))
-(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks E_{grp}))
-(reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym P_{grp} (- 1 d_Sym)))
-(reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym P_{grp} d_Sym))
-(reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys P_{grp} (- 1 d_Sys)))
-(reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys P_{grp} d_Sys))
+(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
+(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp}))
+(reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym{grp} P_{grp} (- 1 d_Sym)))
+(reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_{grp} d_Sym))
+(reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys{grp} P_{grp} (- 1 d_Sys)))
+(reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_{grp} d_Sys))
 
-(reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1 Sys_{grp}))
-(reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2 Sys_{grp}))
-(reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3 Sys_{grp}))
+(reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1{grp} Sys_{grp}))
+(reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2{grp} Sys_{grp}))
+(reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3{grp} Sys_{grp}))
 (reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc H2_{grp}))
 (reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc H3_{grp}))
 (reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
 
 (reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
 (reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m  Sym_{grp}))
-(reaction recovery_H1_{grp}   (H1_{grp})   (RH1_{grp})   (* Kr_h H1_{grp}))
+(reaction recovery_H1_{grp}   (H1_{grp})   (RH1_{grp})   (* Kr_h{grp} H1_{grp}))
 (reaction recovery_C2_{grp}   (C2_{grp})   (RC2_{grp})   (* Kr_c C2_{grp}))
 
 (reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
 
-(reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1 Sys_det3_{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2 Sys_det3_{grp}))
-(reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3 Sys_det3_{grp}))
+(reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1{grp} Sys_det3_{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3_{grp}))
+(reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3_{grp}))
 (reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc H2_det3_{grp}))
 (reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
 (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
 (reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2_{grp}))
-(reaction recovery_H1_det3_{grp}   (H1_det3_{grp})   (RH1_det3_{grp})   (* Kr_h H1_det3_{grp}))
+(reaction recovery_H1_det3_{grp}   (H1_det3_{grp})   (RH1_det3_{grp})   (* Kr_h{grp} H1_det3_{grp}))
 (reaction recovery_C2_det3_{grp}   (C2_det3_{grp})   (RC2_det3_{grp})   (* Kr_c C2_det3_{grp}))
 """.format(grp=grp)
 
@@ -401,17 +416,15 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
     observe_string = ""
     reaction_string = ""
     functions_string = ""
+    age_specific_param_string = ""
     total_string = total_string + header_str
 
-    for key in grpList:
-        species = write_species(key)
-        observe = write_observe(key)
-        reaction = write_reactions(key)
-        functions = write_functions(key)
-        species_string = species_string + species
-        observe_string = observe_string + observe
-        reaction_string = reaction_string + reaction
-        functions_string = functions_string + functions
+    for key in grpList:    
+        species_string = species_string + write_species(key)
+        observe_string = observe_string + write_observe(key)
+        reaction_string = reaction_string + write_reactions(key)
+        functions_string = functions_string + write_functions(key)
+        age_specific_param_string = age_specific_param_string + write_age_specific_param(key)
 
     if (homogeneous == False):
         if (len(grpList) == 4):
@@ -427,7 +440,7 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 
         reaction_string_combined = reaction_string_combined + '\n' + reaction_string
 
-    params = write_params() + write_N_population(grpList) + write_ki_mix(len(grpList))
+    params = write_params() + age_specific_param_string + write_N_population(grpList) + write_ki_mix(len(grpList)) 
     functions_string = functions_string + write_ageAll(grpList)
 
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
@@ -444,12 +457,7 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 # if __name__ == '__main__':
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-generate_extended_emodl(grpList=age_grp4,
-                        file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'),
-                        homogeneous=True)
-
-age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
+generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_age4 param.emodl'))
 
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
-generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
+generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_param.emodl'))

@@ -1,4 +1,6 @@
 experiment_setup_parameters:
+  'number_of_samples': 2
+  'number_of_runs': 1
   age_bins:
     - age0to19
     - age20to39
@@ -10,15 +12,15 @@ fixed_parameters_region_specific:
     'NMH_catchment': [78401,96245,79829,60526]
     #'Chicago': ,
     #'IL': ,
-    'EMS_1':  [170342, 184052, 203274, 182064]
-    'EMS_2':  [246836, 291953, 311148, 279459]
-    'EMS_3':  [128558, 147943, 181366, 163605]
-    'EMS_4':  [156230, 178549, 199940, 166815]
-    'EMS_5':  [89601, 103718, 113788, 112211]
-    'EMS_6':  [170529, 215422, 212023, 194309]
-    'EMS_7':  [459863, 455969, 532097, 377955]
-    'EMS_8':  [406488, 439749, 492527, 344784]
-    'EMS_9':  [482757, 506403, 591629, 399718]
+    'EMS_1': [170342, 184052, 203274, 182064]
+    'EMS_2': [246836, 291953, 311148, 279459]
+    'EMS_3': [128558, 147943, 181366, 163605]
+    'EMS_4': [156230, 178549, 199940, 166815]
+    'EMS_5': [89601, 103718, 113788, 112211]
+    'EMS_6': [170529, 215422, 212023, 194309]
+    'EMS_7': [459863, 455969, 532097, 377955]
+    'EMS_8': [406488, 439749, 492527, 344784]
+    'EMS_9': [482757, 506403, 591629, 399718]
     'EMS_10': [252497, 252957, 313926, 238921]
     'EMS_11': [656456, 889748, 697571, 500905]
 fixed_parameters_global:
@@ -29,29 +31,49 @@ fixed_parameters_global:
     expand_by_age: True
     custom_function: subtract
     function_kwargs: {'x1': N, 'x2': initialAs}
-  C:  # all locations
-    matrix:  # Unnormalized contact matrix 
-    - [1.14254471871631, 0.126439684412323, 0.0353749597652072, 0.106736939258122] 
-    - [0.126439684412323, 2.88407596706098, 0.12307674904548, 0.0970738335146058] 
-    - [0.0353749597652072, 0.12307674904548, 0.167237414993413, 0.0332514267842826] 
-    - [0.106736939258122, 0.0970738335146058, 0.0332514267842826, 0.0524833539522054]
-#  Cschool:
-#    matrix:  # Unnormalized contact matrix 
-#    - [1.14254471871631, 0.126439684412323, 0.0353749597652072, 0.106736939258122] 
-#    - [0.126439684412323, 2.88407596706098, 0.12307674904548, 0.0970738335146058] 
-#    - [0.0353749597652072, 0.12307674904548, 0.167237414993413, 0.0332514267842826] 
-#    - [0.106736939258122, 0.0970738335146058, 0.0332514267842826, 0.0524833539522054]
-#  Chome:
-#    matrix:  # Unnormalized contact matrix 
-#    - [0.610931252214093, 0.24885953289032, 0.190922793352514, 0.56260760323181] 
-#    - [0.24885953289032, 0.918573418653299, 0.114053312615379, 0.266625576549856] 
-#    - [0.190922793352514, 0.114053312615379, 0.660591407384573, 0.0824082580000743] 
-#    - [0.56260760323181, 0.266625576549856, 0.0824082580000743, 0.533735139591843]
-#   Cwork:
-#    matrix:  # Unnormalized contact matrix 
-#    - [0, 0, 0, 0] 
-#    - [0, 0.193621268796173, 0.212756013206925, 0.158483645323245] 
-#    - [0, 0.212756013206925, 0.86563196820574, 0.693035969997453] 
-#    - [0, 0.158483645323245, 0.693035969997453, 1.00212266817152]
+  C:
+    matrix:
+      - [0.425, 0.109, 0.068, 0.155]
+      - [0.109, 0.989, 0.150, 0.122]
+      - [0.068, 0.150, 0.483, 0.208]
+      - [0.155, 0.122, 0.208, 0.369]
 sampled_parameters:
+  'incubation_pd':
+    np.random: uniform
+    function_kwargs: {'low': 1, 'high': 2}
+  time_to_hospitalization:
+    EMS_11:
+      # Give a region-specific distribution by nesting it under the region name
+      np.random: uniform
+      function_kwargs: {'low':2, 'high':10}
+    EMS_10:
+      # If expanding by age, provide a list of kwargs
+      # (and optionally a list of distribution names)
+      # with the same lengths as the age_bins.
+      # If only a single distribution name is given, it will be used
+      # for all age bins.
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 2, 'high': 4}
+        - {'low': 3, 'high': 5}
+        - {'low': 5, 'high': 7}
+        - {'low': 7, 'high': 9}
+    # Any distribution not nested under a region will be used for regions
+    # which are not otherwise specified.
+    np.random: uniform
+    function_kwargs: {'low':15, 'high':30}
+  recovery_rate_crit:
+    # If "expand_by_age" is True, but only one distribution is provided,
+    # the same distribution will be used for each age group.
+    expand_by_age: True
+    np.random: exponential
+    function_kwargs: {'scale': 0.5}
+  recover_rate_crit_age0to19:
+    # You can manually enter the distribution for an age group.
+    # If it comes after an automatically generated set of age distributions,
+    # as with the default `recovery_rate_crit` above, it will overwrite the default.
+    # NB: Order matters! The last distribution will be used for the age bin.
+    np.random: exponential
+    function_kwargs: {'scale': 1.5}
 fitted_parameters:

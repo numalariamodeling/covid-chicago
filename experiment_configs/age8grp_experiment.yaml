@@ -74,7 +74,124 @@ fixed_parameters_global:
 #    - [2.03848504291307e-06, 0.00512975957240923, 0.0230425829403064, 0.0305663224371847, 0.0348303096842973, 0.0268836599567761, 0.0034875849717547, 1.49795910089621e-05] 
 #    - [2.03848504291307e-06, 0.00512975957240923, 0.0230425829403064, 0.0305663224371847, 0.0348303096842973, 0.0268836599567761, 1.33116561888771e-05, 1.0683428383127e-05]
 sampled_parameters:
-  'incubation_pd':
+  fraction_severe_age0to9:
     np.random: uniform
-    function_kwargs: {'low': 1, 'high': 2}
+    function_kwargs: {'low':0.001, 'high': 0.0029}
+  fraction_severe_age10to19:
+    np.random: uniform
+    function_kwargs: {'low':0.001, 'high': 0.0029}
+  fraction_severe_age20to29:
+    np.random: uniform
+    function_kwargs: {'low':0.006, 'high': 0.0129}
+  fraction_severe_age30to39:
+    np.random: uniform
+    function_kwargs: {'low':0.012, 'high': 0.0243}
+  fraction_severe_age40to49:
+    np.random: uniform
+    function_kwargs: {'low':0.016, 'high': 0.0343}
+  fraction_severe_age50to59:
+    np.random: uniform
+    function_kwargs: {'low':0.03, 'high': 0.067}
+  fraction_severe_age60to69:
+    np.random: uniform
+    function_kwargs: {'low':0.064, 'high': 0.146}
+  fraction_severe_age70to100:
+    np.random: uniform
+    function_kwargs: {'low':0.102, 'high': 0.229}
+  fraction_critical_age0to9:
+    np.random: uniform
+    function_kwargs: {'low':0.11, 'high': 0.164}
+  fraction_critical_age10to19:
+    np.random: uniform
+    function_kwargs: {'low':0.11, 'high': 0.164}
+  fraction_critical_age20to29:
+    np.random: uniform
+    function_kwargs: {'low':0.083, 'high': 0.114}
+  fraction_critical_age30to39:
+    np.random: uniform
+    function_kwargs: {'low':0.128, 'high': 0.155}
+  fraction_critical_age40to49:
+    np.random: uniform
+    function_kwargs: {'low':0.185, 'high': 0.21}
+  fraction_critical_age50to59:
+    np.random: uniform
+    function_kwargs: {'low':0.248, 'high': 0.27}
+  fraction_critical_age60to69:
+    np.random: uniform
+    function_kwargs: {'low':0.286, 'high': 0.308}
+  fraction_critical_age70to100:
+    np.random: uniform
+    function_kwargs: {'low':0.226, 'high': 0.244}
+  fraction_dead_age0to9:
+    np.random: uniform
+    function_kwargs: {'low':0.001, 'high': 0.015}
+  fraction_dead_age10to19:
+    np.random: uniform
+    function_kwargs: {'low':0.001, 'high': 0.015}
+  fraction_dead_age20to29:
+    np.random: uniform
+    function_kwargs: {'low':0.008, 'high': 0.022}
+  fraction_dead_age30to39:
+    np.random: uniform
+    function_kwargs: {'low':0.016, 'high': 0.027}
+  fraction_dead_age40to49:
+    np.random: uniform
+    function_kwargs: {'low':0.03, 'high': 0.042}
+  fraction_dead_age50to59:
+    np.random: uniform
+    function_kwargs: {'low':0.064, 'high': 0.076}
+  fraction_dead_age60to69:
+    np.random: uniform
+    function_kwargs: {'low':0.125, 'high': 0.139}
+  fraction_dead_age70to100:
+    np.random: uniform
+    function_kwargs: {'low':0.223, 'high': 0.241}
+  fraction_symptomatic_age0to9:
+    np.random: uniform
+    function_kwargs: {'low':0.07, 'high': 0.07}
+  fraction_symptomatic_age10to19:
+    np.random: uniform
+    function_kwargs: {'low':0.054, 'high': 0.054}
+  fraction_symptomatic_age20to29:
+    np.random: uniform
+    function_kwargs: {'low':0.294, 'high': 0.294}
+  fraction_symptomatic_age30to39:
+    np.random: uniform
+    function_kwargs: {'low':0.668, 'high': 0.668}
+  fraction_symptomatic_age40to49:
+    np.random: uniform
+    function_kwargs: {'low':0.614, 'high': 0.614}
+  fraction_symptomatic_age50to59:
+    np.random: uniform
+    function_kwargs: {'low':0.83, 'high': 0.83}
+  fraction_symptomatic_age60to69:
+    np.random: uniform
+    function_kwargs: {'low':0.99, 'high': 0.99}
+  fraction_symptomatic_age70to100:
+    np.random: uniform
+    function_kwargs: {'low':0.997, 'high': 0.997}
+  recovery_rate_hosp_age0to9:
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high': 0.95}
+  recovery_rate_hosp_age10to19:
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high': 0.95}
+  recovery_rate_hosp_age20to29:
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high': 0.95}
+  recovery_rate_hosp_age30to39:
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high': 0.95}
+  recovery_rate_hosp_age40to49:
+    np.random: uniform
+    function_kwargs: {'low':0.937, 'high': 0.937}
+  recovery_rate_hosp_age50to59:
+    np.random: uniform
+    function_kwargs: {'low':0.878, 'high': 0.878}
+  recovery_rate_hosp_age60to69:
+    np.random: uniform
+    function_kwargs: {'low':0.726, 'high': 0.726}
+  recovery_rate_hosp_age70to100:
+    np.random: uniform
+    function_kwargs: {'low':0.7135, 'high': 0.7135}
 fitted_parameters:
