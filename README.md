@@ -113,19 +113,7 @@ Note that the user-supplied configuration file is used to provide
 ### 4.2.3. Define age or region specific inputs 
 
 #### Region specific sample parameters (i.e. for EMS regions)
-- `EMSspecific_sample_parameters.yaml` includes EMS specific parameters (currently in fitting process)
-Example submission lines: 
-python runScenarios.py --running_location Local --region EMS_1 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_2 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_3 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_4 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_5 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_6 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_7 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_8 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_9 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_10 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scen3"
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config experiment_configs/EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scen3"
+
 
 #### Age extension and age specific parameters 
 - `sample_age4grp_experiment.yaml` and  `sample_age8grp_experiment.yaml`
@@ -184,28 +172,23 @@ To account for uncertainity and heterogeneity in transmission and disease parame
 ### 7.1. List of parameters
 Updated list on [Box](https://northwestern.app.box.com/file/656414061983)! 
 
-| Parameter                                       |
-|-------------------------------------------------|
-| Transmission   rate                             |
-|                                                 |
-| Initial infections                              |
-| Latency period                                  |
-| Incubation period                               |
-| Time to hospitalization                         |
-| Time to critical                                |
-| Time to death                                   |
-| Fraction hospitalized                           |
-| Fraction symptomatic                            |
-| Fraction critical*                              |
-| Reduced infectiousness of detected cases        |
-| Case fatality rate*                             |
-| Detection rate of mild symptomatic infections   |
-| Detection rate of severe symptomatic infections |
-| Detection rate of asymptomatic infections       |
-| Recovery rate of asymptomatic infections        |
-| Recovery rate mild symptomatic infections       |
-| Recovery rate of hospitalized cases             |
-| Recovery rate of critical cases                 |
+| parameter | name                                                                         | 
+|-----------|------------------------------------------------------------------------------|
+| Ki        | Transmission rate (contact rate * infection  probability)                    | 
+| Ks        | Progression to presymtomatic ( fraction_symptomatic /  incubation_pd))       |  
+| Kl        | Progression to asymptomatic ((1 - fraction_symptomatic ) /   incubation_pd)) | 
+| dAs       | detection rate of asymptomatic infections                                    |   
+| dSym      | detection rate of mild symptomatic infections                                |  
+| dSys      | Detection rate of severe symptomatic infections                              | 
+| Ksym      | Progression to mild symptoms                                                 |  
+| Ksys      | Progression to severe status ( fraction_severe * (1 / time_to_symptoms))     | 
+| Kh        | Hospitalization rate                                                         |  
+| Kr_a      | Recovery rate of asymptomatic infections                                     |  
+| Kr_m      | Recovery rate mild symptomatic infections                                    |  
+| Kr_h      | Recovery rate of hospitalized cases                                          |  
+| Kr_c      | Recovery rate of critical cases                                              |  
+| Kc        | Progression to critical                                                      |  
+| Km        |  Deaths                                                                      |   
 
 
 ### 7.1. Time-varying parameters
@@ -213,18 +196,4 @@ Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
 
 ### 7.3. Intervention scenarios
 [...]
-
-
-## 7. List of assumptions made (and potential improvements)
-- same case fatality rate for detected and not detected cases
-- no waning of immunity, recovered individuals stay in the recovered compartment
-- fixed effect size of social distancing using step function increase on 13, 17, and 21st of March
-- fixed detection rate over time
-- symmetric contacts between age groups
-- no age-specific disease parameters (in process)
-- homogeneous mixing in spatial model
-- ...
-[...]
-
-
 
