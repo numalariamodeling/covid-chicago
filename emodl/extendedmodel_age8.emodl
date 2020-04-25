@@ -858,8 +858,6 @@
 
 (param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4) (* sum5  p5) (* sum6  p6) (* sum7  p7) (* sum8  p8)))
 
-  
-  
 (param C1_8 (/ C18 norm_factor))
 (param C1_7 (/ C17 norm_factor))
 (param C1_6 (/ C16 norm_factor))
@@ -925,7 +923,7 @@
 (param C8_2 (/ C82 norm_factor))
 (param C8_1 (/ C81 norm_factor))
 
-
+  
 (reaction exposure_from_detected_age0to9 (S_age0to9) (E_age0to9) (* Ki S_age0to9   (+ (* C1_1 (/ infectious_det_age0to9 N_age0to9)) (* C1_1 (/ infectious_det_age10to19 N_age10to19)) (* C1_3 (/ infectious_det_age20to29 N_age20to29)) (* C1_4 (/ infectious_det_age30to39 N_age30to39)) (* C1_5 (/ infectious_det_age40to49 N_age40to49)) (* C1_6 (/ infectious_det_age50to59 N_age50to59)) (* C1_7 (/ infectious_det_age60to69 N_age60to69)) (* C1_8 (/ infectious_det_age70to100 N_age70to100)) reduced_inf_of_det_cases)))
 (reaction exposure_from_detected_age10to19 (S_age10to19) (E_age10to19) (* Ki S_age10to19 (+ (* C2_1 (/ infectious_det_age0to9 N_age0to9)) (* C2_2 (/ infectious_det_age10to19 N_age10to19)) (* C2_3 (/ infectious_det_age20to29 N_age20to29)) (* C2_4 (/ infectious_det_age30to39 N_age30to39)) (* C2_5 (/ infectious_det_age40to49 N_age40to49)) (* C2_6 (/ infectious_det_age50to59 N_age50to59)) (* C2_7 (/ infectious_det_age60to69 N_age60to69)) (* C2_8 (/ infectious_det_age70to100 N_age70to100)) reduced_inf_of_det_cases)))
 (reaction exposure_from_detected_age20to29 (S_age20to29) (E_age20to29) (* Ki S_age20to29 (+ (* C3_1 (/ infectious_det_age0to9 N_age0to9)) (* C3_2 (/ infectious_det_age10to19 N_age10to19)) (* C3_3 (/ infectious_det_age20to29 N_age20to29)) (* C3_4 (/ infectious_det_age30to39 N_age30to39)) (* C3_5 (/ infectious_det_age40to49 N_age40to49)) (* C3_6 (/ infectious_det_age50to59 N_age50to59)) (* C3_7 (/ infectious_det_age60to69 N_age60to69)) (* C3_8 (/ infectious_det_age70to100 N_age70to100)) reduced_inf_of_det_cases)))

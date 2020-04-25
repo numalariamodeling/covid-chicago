@@ -1,6 +1,6 @@
 experiment_setup_parameters:
-  'number_of_samples': 2
-  'number_of_runs': 1
+  'number_of_samples': 10
+  'number_of_runs': 3
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 19
@@ -98,9 +98,6 @@ sampled_parameters:
   'social_multiplier_3':
     np.random: uniform
     function_kwargs: {'low':0.05, 'high':0.3}
-  'backtonormal_multiplier':
-    np.random: uniform
-    function_kwargs: {'low':0.95, 'high':1}
   'socialDistance_time1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
@@ -110,11 +107,44 @@ sampled_parameters:
   'socialDistance_time3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+  ### Reset Ki to defined proporions of it's initial value  
+  ### (only used if corresponding emodl is defined)    
+  'backtonormal_multiplier':
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high':1}
   'socialDistanceSTOP_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
+  ### Change in detection rates 
+  ### (only used if corresponding emodl is defined)    
+  'd_Sym_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
+  'd_Sym_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+  'd_Sym_change3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
+  'd_Sys_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
+  'd_Sys_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+  'd_Sys_change3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
+  'detection_change_time_1':
       custom_function: DateToTimestep
-      function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
+      function_kwargs: {'dates': 2020-03-08, 'startdate_col': 'startdate'}
+  'detection_change_time_2':
+      custom_function: DateToTimestep
+      function_kwargs: {'dates': 2020-03-15, 'startdate_col': 'startdate'}
+  'detection_change_time_3':
+      custom_function: DateToTimestep
+      function_kwargs: {'dates': 2020-03-22, 'startdate_col': 'startdate'}
 fitted_parameters:
-  # Note IL, NMH, Chicago and EMS_3 were fitted, the other EMS area Kis need updating/checking
   Kis:
     'NMH_catchment':
       np: linspace
