@@ -197,17 +197,3 @@ Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
 ### 7.3. Intervention scenarios
 [...]
 
-
-## 7. List of assumptions made (and potential improvements)
-- same case fatality rate for detected and not detected cases
-- no waning of immunity, recovered individuals stay in the recovered compartment
-- fixed effect size of social distancing using step function increase on 13, 17, and 21st of March
-- fixed detection rate over time
-- symmetric contacts between age groups
-- no age-specific disease parameters (in process)
-- homogeneous mixing in spatial model
-- ...
-[...]
-
-
-
