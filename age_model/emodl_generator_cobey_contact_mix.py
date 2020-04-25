@@ -445,11 +445,11 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 generate_extended_emodl(grpList=age_grp4,
-                        file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp_homogeneous.emodl'),
+                        file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'),
                         homogeneous=True)
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_4grp.emodl'))
+generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
 
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
-generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_age_8grp.emodl'))
+generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
