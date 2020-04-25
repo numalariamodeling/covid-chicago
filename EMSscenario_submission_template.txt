@@ -67,3 +67,10 @@ python runScenarios.py --running_location Local --region EMS_11 --experiment_con
 
 
 
+
+#### Spatial model 
+
+python runScenarios.py --running_location Local --region IL --experiment_config experiment_configs/spatial_EMS_experiment.yaml --emodl_template extendedmodel_cobey_locale_EMS.emodl --name_suffix "EMS_local_test"
+
+
+
