@@ -111,13 +111,17 @@ Note that the user-supplied configuration file is used to provide
 
 
 ### 4.2.3. Define age or region specific inputs 
+View [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) for current custom scenarios that are being used. 
 
-#### Region specific sample parameters (i.e. for EMS regions)
+#### Fitting emodl and yaml 
+Varying sample parameters for all regions are included in  `extendedcobey_200421.yaml`, for fitting purposes
+a separate yaml file is used with wider `extendedcobey_200421_forFitting.yaml`
 
+#### Region specific sample parameters (i.e. using estimates parameters per EMS regions)
+-  `EMSspecific_sample_parameters.yaml`  (needs to be updated with fitted parameter estimates)
 
-#### Age extension and age specific parameters 
+####  Age extension and age specific parameters 
 - `sample_age4grp_experiment.yaml` and  `sample_age8grp_experiment.yaml`
-
 
 
 ### 4.5. Local environment setup
