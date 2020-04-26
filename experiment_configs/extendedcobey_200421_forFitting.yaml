@@ -1,0 +1,190 @@
+experiment_setup_parameters:
+  'number_of_samples': 10
+  'number_of_runs': 3
+  'duration': 365
+  'monitoring_samples': 365 # needs to be smaller than duration
+  'random_seed': 19
+  'initialAs': 10
+fixed_parameters_region_specific:
+  populations:
+    'IL': 12830632
+    'NMH_catchment': 315000
+    'Chicago': 2700000
+    'EMS_1': 736370
+    'EMS_2': 1124941
+    'EMS_3': 619366
+    'EMS_4': 698886
+    'EMS_5': 417674
+    'EMS_6': 788985
+    'EMS_7': 1814891
+    'EMS_8': 1673408
+    'EMS_9': 1970275
+    'EMS_10': 1052839
+    'EMS_11': 2716921
+  startdate:
+    'NMH_catchment': 2020-02-28
+    'Chicago': 2020-02-20  
+    'IL': 2020-01-01  # used for spatial model 
+    'EMS_1': 2020-01-17       
+    'EMS_2': 2020-01-20
+    'EMS_3': 2020-01-19       
+    'EMS_4': 2020-01-15
+    'EMS_5': 2020-01-17       
+    'EMS_6': 2020-01-17
+    'EMS_7': 2020-01-14       
+    'EMS_8': 2020-01-14
+    'EMS_9': 2020-01-17       
+    'EMS_10': 2020-02-14
+    'EMS_11': 2020-02-15
+fixed_parameters_global:
+sampled_parameters:
+  'incubation_pd':
+    np.random: uniform
+    function_kwargs: {'low': 4.2, 'high': 6.63}
+  'time_to_symptoms':
+    np.random: uniform
+    function_kwargs: {'low': 3.3, 'high':4}
+  'time_to_hospitalization':
+    np.random: uniform
+    function_kwargs: {'low':3, 'high':6}
+  'time_to_critical':
+    np.random: uniform
+    function_kwargs: {'low':2, 'high':6}
+  'time_to_death':
+    np.random: uniform
+    function_kwargs: {'low':10, 'high':13}
+  'recovery_rate_asymp':
+    np.random: uniform
+    function_kwargs: {'low':7, 'high':20}
+  'recovery_rate_mild':
+    np.random: uniform
+    function_kwargs: {'low':7, 'high':20}
+  'recovery_rate_hosp':
+    np.random: uniform
+    function_kwargs: {'low':5, 'high':7}
+  'recovery_rate_crit':
+    np.random: uniform
+    function_kwargs: {'low':9, 'high':11}
+  'fraction_symptomatic':
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.7}
+  'fraction_severe':
+    np.random: uniform
+    function_kwargs: {'low':0.1, 'high':0.2}
+  'fraction_critical':
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.35}
+  'cfr': 
+    np.random: uniform
+    function_kwargs: {'low':0.01, 'high':0.04}
+  'reduced_inf_of_det_cases':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0.3}
+  'd_Sym':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.2} 
+  'd_Sys':
+    np.random: uniform
+    function_kwargs: {'low':0.2, 'high':0.5} 
+  'd_As':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0}
+  'social_multiplier_1':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
+  'social_multiplier_2':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+  'social_multiplier_3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
+  'socialDistance_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
+  'socialDistance_time2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
+  'socialDistance_time3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+  ### Reset Ki to defined proporions of it's initial value  
+  ### (only used if corresponding emodl is defined)    
+  'backtonormal_multiplier':
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high':1}
+  'socialDistanceSTOP_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
+  ### Change in detection rates 
+  ### (only used if corresponding emodl is defined)    
+  'd_Sym_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
+  'd_Sym_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+  'd_Sym_change3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
+  'd_Sys_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':1}
+  'd_Sys_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.9}
+  'd_Sys_change3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.3}
+  'detection_change_time_1':
+      custom_function: DateToTimestep
+      function_kwargs: {'dates': 2020-03-08, 'startdate_col': 'startdate'}
+  'detection_change_time_2':
+      custom_function: DateToTimestep
+      function_kwargs: {'dates': 2020-03-15, 'startdate_col': 'startdate'}
+  'detection_change_time_3':
+      custom_function: DateToTimestep
+      function_kwargs: {'dates': 2020-03-22, 'startdate_col': 'startdate'}
+fitted_parameters:
+  Kis:
+    'NMH_catchment':
+      np: linspace
+      function_kwargs: {'start': 1.5e-6, 'stop': 2.0e-6, 'num': 1}
+    'Chicago':
+      np: linspace
+      function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 1}
+    'IL':
+      np: linspace
+      function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
+    'EMS_1':
+      np: linspace
+      function_kwargs: {'start': 0.144, 'stop': 0.144, 'num': 1}
+    'EMS_2':
+      np: linspace
+      function_kwargs: {'start': 0.144, 'stop': 0.144, 'num': 1}
+    'EMS_3':
+      np: linspace
+      function_kwargs: {'start': 0.138, 'stop': 0.138, 'num': 1}
+    'EMS_4':
+      np: linspace
+      function_kwargs: {'start': 0.138 , 'stop': 0.138, 'num': 1}
+    'EMS_5':
+      np: linspace
+      function_kwargs: {'start': 0.121, 'stop': 0.121, 'num': 1}
+    'EMS_6':
+      np: linspace
+      function_kwargs: {'start': 0.121, 'stop': 0.121, 'num': 1}
+    'EMS_7':
+      np: linspace
+      function_kwargs: {'start':  0.205, 'stop': 0.205, 'num': 1}
+    'EMS_8':
+      np: linspace
+      function_kwargs: {'start': 0.198, 'stop': 0.198, 'num': 1}
+    'EMS_9':
+      np: linspace
+      function_kwargs: {'start': 0.185, 'stop': 0.185, 'num': 1}
+    'EMS_10':
+      np: linspace
+      function_kwargs: {'start': 0.181, 'stop': 0.181, 'num': 1}
+    'EMS_11':
+      np: linspace
+      function_kwargs: {'start': 0.211, 'stop': 0.211, 'num': 1}
