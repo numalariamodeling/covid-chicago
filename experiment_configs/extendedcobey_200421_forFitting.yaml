@@ -38,9 +38,6 @@ fixed_parameters_region_specific:
     'EMS_11': 2020-01-01
 fixed_parameters_global:
 sampled_parameters:
-  'detection_change_time_1':  # Relative to generic startdate set for IL 
-    np.random: uniform
-    function_kwargs: {'low': 15.0, 'high': 60.0}
   'incubation_pd':
     np.random: uniform
     function_kwargs: {'low': 5.4, 'high': 5.4}
@@ -85,10 +82,10 @@ sampled_parameters:
     function_kwargs: {'low':0.15, 'high':0.15}
   'd_Sym':
     np.random: uniform
-    function_kwargs: {'low':0.125, 'high':0.125} 
+    function_kwargs: {'low':0.01, 'high':0.05}
   'd_Sys':
     np.random: uniform
-    function_kwargs: {'low':0.35, 'high':0.35} 
+    function_kwargs: {'low':0.01, 'high':0.05} 
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
