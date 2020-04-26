@@ -131,34 +131,34 @@ fitted_parameters:
   Kis:
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_2':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_4':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_5':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_7':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_8':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_10':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 0, 'stop': 2, 'num': 50}
+      function_kwargs: {'start': 0, 'stop': 2, 'num': 25}
