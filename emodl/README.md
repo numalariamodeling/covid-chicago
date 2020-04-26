@@ -1,13 +1,10 @@
-<<<<<<< HEAD
 ### Description 
-=======
 
->>>>>>> updated reaction exposire in scenario specific extencedmodel_cobey, and added brief readme for emodl files
 The emodl file contains all information that defines the mathematical model itself. 
 For example, it defines the species, the transition rates, incubation time, daily recovery rate, and many other parameters specific to the disease being modeled. 
 The model file is in EMODL format; the syntax and available parameters are described in [Model file syntax](https://idmod.org/docs/cms/model-file.html).
 
-<<<<<<< HEAD
+
 There are 4 types of models: 1) base, 2) age, 3) spatial, and 4) spatial-age. 
 The base emodl file is edited per hand, whereas for the other types so called "emodl-generator" scripts are availabble. 
 Note the term 'cobey' was removed from age and spatial file names to shorten the filename. 
@@ -18,26 +15,6 @@ the model was further improved inspired from the compartmental model used at the
 ## Master file
 
 ### extendedmodel_cobey.emodl 
-- master emodl file (base)
-=======
-
-# Master emodl file 
-- extendedmodel_cobey.emodl
-
-Brief description: The model started with a simple SEIR model and was since then extended with additional compartments.
-Hence the "extended" term in the file name. After some further model adjustment,
-i.e. that separated Hospitalized in hospitalized detected Covid cases and undetected hospitalized covid cases, 
-the model was further improved inspired from the compartmental model used at the University of Chicago and Sarah Cobeys group, hence the "cobey" term in the filename. 
-
-
-## Description by model type
-There are 4 types of models: 1) base, 2) age, 3) spatial, and 4) spatial-age. 
-The base emodl file is edited per hand, whereas for the other types so called "emodl-generator" scripts are availabble. 
-
-
-###  Base: 
-Current master file (description see above): 
-- extendedmodel_cobey.emodl
 
 Note: the master file includes per default social distancing time events:
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
