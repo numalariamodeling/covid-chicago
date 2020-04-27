@@ -381,7 +381,7 @@ if __name__ == '__main__':
     # Load parameters
     load_dotenv()
 
-    _, _, wdir, exe_dir, git_dir = load_box_paths()
+    _, _, wdir, exe_dir, git_dir = load_box_paths(Location=args.running_location)
     Location = os.getenv("LOCATION") or args.running_location
     if not Location:
         raise ValueError("Please provide a running location via environment "
