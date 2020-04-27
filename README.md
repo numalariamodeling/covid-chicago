@@ -133,6 +133,26 @@ The CMS software is provided as a compiled Windows executable, but can be run on
 If you do not have `wine` installed on your system, you can use the provided [Dockerfile](Dockerfile), which has `wine` baked in.
 To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in your environment or your `.env` file to use it.
 
+### 4.7 Running on Quest (NUCLUSTER) 
+A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
+
+#### Requirements on quest 
+All the modules need to be installed on the personal quest environment 
+- use pip install ... in your terminal 
+- install `dotenv` and `yamlordereddictloader`
+`conda create --name dotenv-py37 -c conda-forge python-yamlordereddictloader python=3.7 --yes`
+`source activate dotenv-py37`
+`conda install -c conda-forge yamlordereddictloader`
+
+The `source activate dotenv-py37` needs to be run before runnung the `runScenarios.py`
+
+#### Submit job 
+`cd /projects/p30781/covidproject/covid-chicago/`
+`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200421.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "quest_run_<your initial>"`
+
+The experiments will go to the _temp folder on the quest gitrepository. To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
+
+
 ## 5 Postprocessing 
 
 ### 5.1 Visualizing results
