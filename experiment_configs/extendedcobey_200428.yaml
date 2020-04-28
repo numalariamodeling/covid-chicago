@@ -40,7 +40,7 @@ fixed_parameters_global:
 sampled_parameters:
   'incubation_pd':
     np.random: uniform
-    function_kwargs: {'low': 4.2, 'high': 6.63}
+    function_kwargs: {'low': 2.4, 'high': 3.3}
   'time_to_symptoms':
     np.random: uniform
     function_kwargs: {'low': 3.3, 'high':4}
@@ -49,28 +49,28 @@ sampled_parameters:
     function_kwargs: {'low':3, 'high':6}
   'time_to_critical':
     np.random: uniform
-    function_kwargs: {'low':2, 'high':6}
+    function_kwargs: {'low':1, 'high':3}
   'time_to_death':
     np.random: uniform
-    function_kwargs: {'low':10, 'high':13}
+    function_kwargs: {'low':4, 'high':6}
   'recovery_rate_asymp':
     np.random: uniform
-    function_kwargs: {'low':7, 'high':20}
+    function_kwargs: {'low':7, 'high':10}
   'recovery_rate_mild':
     np.random: uniform
-    function_kwargs: {'low':7, 'high':20}
+    function_kwargs: {'low':7, 'high':10}
   'recovery_rate_hosp':
     np.random: uniform
-    function_kwargs: {'low':5, 'high':7}
+    function_kwargs: {'low':4, 'high':6}
   'recovery_rate_crit':
     np.random: uniform
-    function_kwargs: {'low':9, 'high':11}
+    function_kwargs: {'low':8, 'high':10}
   'fraction_symptomatic':
     np.random: uniform
     function_kwargs: {'low':0.5, 'high':0.7}
   'fraction_severe':
     np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.2}
+    function_kwargs: {'low':0.02, 'high':0.1}
   'fraction_critical':
     np.random: uniform
     function_kwargs: {'low':0.2, 'high':0.35}
@@ -89,6 +89,8 @@ sampled_parameters:
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
+  ### TIME-VARYING PARAMETER
+  ### Reduce Ki due to stay-at-home policy
   'social_multiplier_1':
     np.random: uniform
     function_kwargs: {'low':0.9, 'high':1}
@@ -123,6 +125,7 @@ sampled_parameters:
   'd_Sys_incr2':
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.43}
+  ### Use fixed dates or define detection time relative to  socialDistance_time3
   #'detection_time_1':
   #  custom_function: DateToTimestep
   #  function_kwargs: {'dates': 2020-03-15, 'startdate_col': 'startdate'}
