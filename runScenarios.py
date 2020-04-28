@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = datetime.today()
-DEFAULT_CONFIG = './experiment_configs/extendedcobey_200421.yaml'
+DEFAULT_CONFIG = 'extendedcobey_200421.yaml'
 
 
 def _parse_config_parameter(df, parameter, parameter_function):
@@ -286,8 +286,8 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 
 def get_experiment_config(experiment_config_file):
-    config = yaml.load(open(DEFAULT_CONFIG), Loader=yamlordereddictloader.Loader)
-    yaml_file = open(experiment_config_file)
+    config = yaml.load(open(os.path.join('./experiment_configs', DEFAULT_CONFIG)), Loader=yamlordereddictloader.Loader)
+    yaml_file = open(os.path.join('./experiment_configs',experiment_config_file))
     expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
     for param_type, updated_params in expt_config.items():
         if not config[param_type]:
@@ -381,7 +381,7 @@ if __name__ == '__main__':
     # Load parameters
     load_dotenv()
 
-    _, _, wdir, exe_dir, git_dir = load_box_paths()
+    _, _, wdir, exe_dir, git_dir = load_box_paths(Location=args.running_location)
     Location = os.getenv("LOCATION") or args.running_location
     if not Location:
         raise ValueError("Please provide a running location via environment "
@@ -392,6 +392,7 @@ if __name__ == '__main__':
 
     emodl_dir = os.path.join(git_dir, 'emodl')
     cfg_dir = os.path.join(git_dir, 'cfg')
+    yaml_dir = os.path.join(git_dir, 'experiment_configs')
 
     log.debug(f"Running in Location = {Location}")
     if sys.platform not in ['win32', 'cygwin']:
@@ -418,7 +419,7 @@ if __name__ == '__main__':
     # Generate folders and copy required files
     # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, args.emodl_template, cfg_dir, wdir=wdir,
+        exp_name, emodl_dir, args.emodl_template, cfg_dir, yaml_dir, args.experiment_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
