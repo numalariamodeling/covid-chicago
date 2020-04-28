@@ -420,6 +420,8 @@
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
  
 (param N_age0to19 (+ @speciesS_age0to19@ @initialAs_age0to19@) )
 (param N_age20to39 (+ @speciesS_age20to39@ @initialAs_age20to39@) )
