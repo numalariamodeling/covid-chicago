@@ -209,7 +209,7 @@ echo end""")
     file.close()
 
     submit_runSimulations = 'cd /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
-    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.txt'), 'w')
     file.write(submit_runSimulations)
     file.close()
 
