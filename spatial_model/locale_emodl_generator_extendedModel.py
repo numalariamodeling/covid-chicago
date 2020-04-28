@@ -387,6 +387,6 @@ def generate_locale_cfg(cfg_filename, nruns, filepath):
 if __name__ == '__main__':
     ems_grp = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
     generate_locale_emodl_extended(grp=ems_grp,
-                                   file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS.emodl'))
+                                   file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS.emodl'))
 
 
