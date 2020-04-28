@@ -380,23 +380,23 @@
 
 
 
-(param incubation_pd @incubation_pd@)
+(param time_to_infectious @time_to_infectious@)
 (param time_to_symptoms @time_to_symptoms@)
 (param time_to_hospitalization @time_to_hospitalization@)
 (param time_to_critical @time_to_critical@)
 (param time_to_death @time_to_death@)
-(param recovery_rate_asymp @recovery_rate_asymp@)
-(param recovery_rate_mild @recovery_rate_mild@)
-(param recovery_rate_crit @recovery_rate_crit@)
+(param recovery_time_asymp @recovery_time_asymp@)
+(param recovery_time_mild @recovery_time_mild@)
+(param recovery_time_crit @recovery_time_crit@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 ;(param cfr @cfr@)
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
 (param Ki @Ki@)
-(param Kr_a (/ 1 recovery_rate_asymp))
-(param Kr_m (/ 1 recovery_rate_mild))
-(param Kr_c (/ 1 recovery_rate_crit))
+(param Kr_a (/ 1 recovery_time_asymp))
+(param Kr_m (/ 1 recovery_time_mild))
+(param Kr_c (/ 1 recovery_time_crit))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 (param Ki_red1 (* Ki @social_multiplier_1@))
@@ -423,11 +423,11 @@
 (param Kh1age0to19 (/ fraction_hospitalized_age0to19 time_to_hospitalization))
 
 (param fraction_symptomatic_age0to19 @fraction_symptomatic_age0to19@)
-(param Klage0to19 (/ (- 1 fraction_symptomatic_age0to19 ) incubation_pd))
-(param Ksage0to19 (/ fraction_symptomatic_age0to19  incubation_pd))
+(param Klage0to19 (/ (- 1 fraction_symptomatic_age0to19 ) time_to_infectious))
+(param Ksage0to19 (/ fraction_symptomatic_age0to19  time_to_infectious))
 
-(param recovery_rate_hosp_age0to19 @recovery_rate_hosp_age0to19@)
-(param Kr_hage0to19 (/ 1 recovery_rate_hosp_age0to19))
+(param recovery_time_hosp_age0to19 @recovery_time_hosp_age0to19@)
+(param Kr_hage0to19 (/ 1 recovery_time_hosp_age0to19))
 
 
 (param fraction_severe_age20to39 @fraction_severe_age20to39@)
@@ -445,11 +445,11 @@
 (param Kh1age20to39 (/ fraction_hospitalized_age20to39 time_to_hospitalization))
 
 (param fraction_symptomatic_age20to39 @fraction_symptomatic_age20to39@)
-(param Klage20to39 (/ (- 1 fraction_symptomatic_age20to39 ) incubation_pd))
-(param Ksage20to39 (/ fraction_symptomatic_age20to39  incubation_pd))
+(param Klage20to39 (/ (- 1 fraction_symptomatic_age20to39 ) time_to_infectious))
+(param Ksage20to39 (/ fraction_symptomatic_age20to39  time_to_infectious))
 
-(param recovery_rate_hosp_age20to39 @recovery_rate_hosp_age20to39@)
-(param Kr_hage20to39 (/ 1 recovery_rate_hosp_age20to39))
+(param recovery_time_hosp_age20to39 @recovery_time_hosp_age20to39@)
+(param Kr_hage20to39 (/ 1 recovery_time_hosp_age20to39))
 
 
 (param fraction_severe_age40to59 @fraction_severe_age40to59@)
@@ -467,11 +467,11 @@
 (param Kh1age40to59 (/ fraction_hospitalized_age40to59 time_to_hospitalization))
 
 (param fraction_symptomatic_age40to59 @fraction_symptomatic_age40to59@)
-(param Klage40to59 (/ (- 1 fraction_symptomatic_age40to59 ) incubation_pd))
-(param Ksage40to59 (/ fraction_symptomatic_age40to59  incubation_pd))
+(param Klage40to59 (/ (- 1 fraction_symptomatic_age40to59 ) time_to_infectious))
+(param Ksage40to59 (/ fraction_symptomatic_age40to59  time_to_infectious))
 
-(param recovery_rate_hosp_age40to59 @recovery_rate_hosp_age40to59@)
-(param Kr_hage40to59 (/ 1 recovery_rate_hosp_age40to59))
+(param recovery_time_hosp_age40to59 @recovery_time_hosp_age40to59@)
+(param Kr_hage40to59 (/ 1 recovery_time_hosp_age40to59))
 
 
 (param fraction_severe_age60to100 @fraction_severe_age60to100@)
@@ -489,11 +489,11 @@
 (param Kh1age60to100 (/ fraction_hospitalized_age60to100 time_to_hospitalization))
 
 (param fraction_symptomatic_age60to100 @fraction_symptomatic_age60to100@)
-(param Klage60to100 (/ (- 1 fraction_symptomatic_age60to100 ) incubation_pd))
-(param Ksage60to100 (/ fraction_symptomatic_age60to100  incubation_pd))
+(param Klage60to100 (/ (- 1 fraction_symptomatic_age60to100 ) time_to_infectious))
+(param Ksage60to100 (/ fraction_symptomatic_age60to100  time_to_infectious))
 
-(param recovery_rate_hosp_age60to100 @recovery_rate_hosp_age60to100@)
-(param Kr_hage60to100 (/ 1 recovery_rate_hosp_age60to100))
+(param recovery_time_hosp_age60to100 @recovery_time_hosp_age60to100@)
+(param Kr_hage60to100 (/ 1 recovery_time_hosp_age60to100))
 
 
 (param N_age0to19 (+ @speciesS_age0to19@ @initialAs_age0to19@) )
