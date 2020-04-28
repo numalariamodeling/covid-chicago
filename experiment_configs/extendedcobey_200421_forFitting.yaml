@@ -38,7 +38,7 @@ fixed_parameters_region_specific:
     'EMS_11': 2020-01-01
 fixed_parameters_global:
 sampled_parameters:
-  'incubation_pd':
+  'time_to_infectious':
     np.random: uniform
     function_kwargs: {'low': 5.4, 'high': 5.4}
   'time_to_symptoms':
@@ -53,16 +53,16 @@ sampled_parameters:
   'time_to_death':
     np.random: uniform
     function_kwargs: {'low':11.5, 'high':11.5}
-  'recovery_rate_asymp':
+  'recovery_time_asymp':
     np.random: uniform
     function_kwargs: {'low':13.5, 'high':13.5}
-  'recovery_rate_mild':
+  'recovery_time_mild':
     np.random: uniform
     function_kwargs: {'low':13.5, 'high':13.5}
-  'recovery_rate_hosp':
+  'recovery_time_hosp':
     np.random: uniform
     function_kwargs: {'low':6, 'high':6}
-  'recovery_rate_crit':
+  'recovery_time_crit':
     np.random: uniform
     function_kwargs: {'low':10, 'high':10}
   'fraction_symptomatic':
