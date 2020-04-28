@@ -102,16 +102,16 @@ sampled_parameters:
   fraction_symptomatic_age60to100:
     np.random: uniform
     function_kwargs: {'low':0.939, 'high': 0.939}
-  recovery_rate_hosp_age0to19:
+  recovery_time_hosp_age0to19:
     np.random: uniform
     function_kwargs: {'low':0.95, 'high': 0.95}
-  recovery_rate_hosp_age20to39:
+  recovery_time_hosp_age20to39:
     np.random: uniform
     function_kwargs: {'low':0.945666667, 'high': 0.945666667}
-  recovery_rate_hosp_age40to59:
+  recovery_time_hosp_age40to59:
     np.random: uniform
     function_kwargs: {'low':0.937, 'high': 0.937}
-  recovery_rate_hosp_age60to100:
+  recovery_time_hosp_age60to100:
     np.random: uniform
     function_kwargs: {'low':0.677833333, 'high': 0.677833333}
 fitted_parameters:
