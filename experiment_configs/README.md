@@ -3,13 +3,19 @@ The yaml file contains all input parameter and simulation settings.
 
 ## Master 
 
-### extendedcobey_200421.yaml (current master file) 
+### extendedcobey_200428.yaml (current master file) 
 - extendedmodel_cobey.emodl 
 - extendedmodel_cobey_interventionStop.emodl  
 - extendedmodel_cobey_noSIP.emodl
 - extendedmodel_cobey_changeDetection.emodl
 
-### extendedcobey.yaml (outdated)
+### extendedcobey_forFitting.yaml 
+- wider sample ranges for Ki, SIP and SIP-date parameter for fitting.
+- other sampled parameters were reduced to 1 parameter 
+
+### Previous parameter sets 
+- extendedcobey_200421.yaml 
+- extendedcobey_200419.yaml 
 
 ## Extensions 
 
