@@ -157,6 +157,9 @@ def write_params():
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
+
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
 """
 
     params_str = params_str.replace("  ", " ")
@@ -175,8 +178,6 @@ def write_grp_params(grp):
 (param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
 (param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
 (param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
-
-
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
