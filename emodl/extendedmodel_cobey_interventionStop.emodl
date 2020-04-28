@@ -90,12 +90,13 @@
 (param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 
+(param N (+ @speciesS@ @initialAs@))											 
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
 (param Ki @Ki@)
 
-(param N (+ @speciesS@ @initialAs@))
+
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
 (param Kr_h (/ 1 recovery_time_hosp))
