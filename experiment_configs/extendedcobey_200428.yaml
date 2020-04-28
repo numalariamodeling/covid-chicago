@@ -116,7 +116,7 @@ sampled_parameters:
     function_kwargs: {'low':0.95, 'high':1}
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-24, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-05-30, 'startdate_col': 'startdate'}
   ### Change in detection rates 
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
