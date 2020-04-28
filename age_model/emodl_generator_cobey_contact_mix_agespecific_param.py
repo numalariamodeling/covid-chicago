@@ -169,23 +169,23 @@ def write_ki_mix(nageGroups, scale=True):
 # If Ki mix is defined, Ki here can be set to 0 in script that generates the simulation
 def write_params():
     params_str = """
-(param incubation_pd @incubation_pd@)
+(param time_to_infectious @time_to_infectious@)
 (param time_to_symptoms @time_to_symptoms@)
 (param time_to_hospitalization @time_to_hospitalization@)
 (param time_to_critical @time_to_critical@)
 (param time_to_death @time_to_death@)
-(param recovery_rate_asymp @recovery_rate_asymp@)
-(param recovery_rate_mild @recovery_rate_mild@)
-(param recovery_rate_crit @recovery_rate_crit@)
+(param recovery_time_asymp @recovery_time_asymp@)
+(param recovery_time_mild @recovery_time_mild@)
+(param recovery_time_crit @recovery_time_crit@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 ;(param cfr @cfr@)
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
 (param Ki @Ki@)
-(param Kr_a (/ 1 recovery_rate_asymp))
-(param Kr_m (/ 1 recovery_rate_mild))
-(param Kr_c (/ 1 recovery_rate_crit))
+(param Kr_a (/ 1 recovery_time_asymp))
+(param Kr_m (/ 1 recovery_time_mild))
+(param Kr_c (/ 1 recovery_time_crit))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 (param Ki_red1 (* Ki @social_multiplier_1@))
@@ -220,11 +220,11 @@ def write_age_specific_param(grp):
 (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
 
 (param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
-(param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) incubation_pd))
-(param Ks{grp} (/ fraction_symptomatic_{grp}  incubation_pd))
+(param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) time_to_infectious))
+(param Ks{grp} (/ fraction_symptomatic_{grp}  time_to_infectious))
 
-(param recovery_rate_hosp_{grp} @recovery_rate_hosp_{grp}@)
-(param Kr_h{grp} (/ 1 recovery_rate_hosp_{grp}))
+(param recovery_time_hosp_{grp} @recovery_time_hosp_{grp}@)
+(param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))
 
 """.format(grp=grp)        
     return string

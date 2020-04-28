@@ -123,7 +123,7 @@ Note that the user-supplied configuration file is used to provide
   parameter values. The default is [extendedmodel_cobey.emodl](extendedmodel_cobey.emodl). emodl
   files are in the `./emodl` directory.
 - Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
-  parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10__test_rn29`)
+  parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
   
 ### Usage examples:
 - Using the default emodl template: `python runScenarios.py
@@ -138,8 +138,8 @@ Note that the user-supplied configuration file is used to provide
 View [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) for current custom scenarios that are being used. 
 
 #### Fitting emodl and yaml 
-Varying sample parameters for all regions are included in  `extendedcobey_200421.yaml`, for fitting purposes
-a separate yaml file is used with wider `extendedcobey_200421_forFitting.yaml`
+Varying sample parameters for all regions are included in  `extendedcobey_200428.yaml`, for fitting purposes
+a separate yaml file is used with wider `extendedcobey_forFitting.yaml`
 
 #### Region specific sample parameters (i.e. using estimates parameters per EMS regions)
 -  `EMSspecific_sample_parameters.yaml`  (needs to be updated with fitted parameter estimates)
@@ -172,7 +172,7 @@ The `source activate dotenv-py37` needs to be run before runnung the `runScenari
 
 #### Submit job 
 `cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200421.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "quest_run_<your initial>"`
+`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "quest_run_<your initial>"`
 
 The experiments will go to the _temp folder on the quest gitrepository. To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
 
@@ -227,8 +227,8 @@ Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
 | parameter | name                                                                         | 
 |-----------|------------------------------------------------------------------------------|
 | Ki        | Transmission rate (contact rate * infection  probability)                    | 
-| Ks        | Progression to presymtomatic ( fraction_symptomatic /  incubation_pd))       |  
-| Kl        | Progression to asymptomatic ((1 - fraction_symptomatic ) /   incubation_pd)) | 
+| Ks        | Progression to presymtomatic ( fraction_symptomatic /  time_to_infectious))       |  
+| Kl        | Progression to asymptomatic ((1 - fraction_symptomatic ) /   time_to_infectious)) | 
 | dAs       | detection rate of asymptomatic infections                                    |   
 | dSym      | detection rate of mild symptomatic infections                                |  
 | dSys      | Detection rate of severe symptomatic infections                              | 
@@ -240,7 +240,7 @@ Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
 | Kr_h      | Recovery rate of hospitalized cases                                          |  
 | Kr_c      | Recovery rate of critical cases                                              |  
 | Kc        | Progression to critical                                                      |  
-| Km        |  Deaths                                                                      |   
+| Km        | Deaths                                                                      |   
 
 
 ### 7.1. Time-varying parameters

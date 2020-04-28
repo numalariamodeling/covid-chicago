@@ -4,7 +4,7 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
 fixed_parameters_global:
 sampled_parameters:
-  'incubation_pd':
+  'time_to_infectious':
     np.random: uniform
     function_kwargs: {'low': 1, 'high': 2}
 fitted_parameters:

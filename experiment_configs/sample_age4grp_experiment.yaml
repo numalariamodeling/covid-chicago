@@ -36,7 +36,7 @@ fixed_parameters_global:
     - [0.0353749597652072, 0.12307674904548, 0.167237414993413, 0.0332514267842826] 
     - [0.106736939258122, 0.0970738335146058, 0.0332514267842826, 0.0524833539522054]
 sampled_parameters:
-  'incubation_pd':
+  'time_to_infectious':
     np.random: uniform
     function_kwargs: {'low': 1, 'high': 2}
   time_to_hospitalization:
@@ -61,7 +61,7 @@ sampled_parameters:
     # which are not otherwise specified.
     np.random: uniform
     function_kwargs: {'low':15, 'high':30}
-  recovery_rate_crit:
+  recovery_time_crit:
     # If "expand_by_age" is True, but only one distribution is provided,
     # the same distribution will be used for each age group.
     expand_by_age: True
@@ -70,7 +70,7 @@ sampled_parameters:
   recover_rate_crit_age0to19:
     # You can manually enter the distribution for an age group.
     # If it comes after an automatically generated set of age distributions,
-    # as with the default `recovery_rate_crit` above, it will overwrite the default.
+    # as with the default `recovery_time_crit` above, it will overwrite the default.
     # NB: Order matters! The last distribution will be used for the age bin.
     np.random: exponential
     function_kwargs: {'scale': 1.5}
