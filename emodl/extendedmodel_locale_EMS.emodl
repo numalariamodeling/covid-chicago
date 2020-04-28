@@ -1063,6 +1063,9 @@
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@))) 
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+
 (param Ki_EMS_1 @Ki_EMS_1@)
 
 (time-event time_infection_import @time_infection_import_EMS_1@ ((As::EMS_1 @initialAs_EMS_1@) (S::EMS_1 (- S::EMS_1 @initialAs_EMS_1@))))
@@ -1070,8 +1073,6 @@
 (param Ki_red1_EMS_1 (* Ki_EMS_1 @social_multiplier_1_EMS_1@))
 (param Ki_red2_EMS_1 (* Ki_EMS_1 @social_multiplier_2_EMS_1@))
 (param Ki_red3_EMS_1 (* Ki_EMS_1 @social_multiplier_3_EMS_1@))
-
-
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_1 Ki_red1_EMS_1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_1 Ki_red2_EMS_1)))
@@ -1085,8 +1086,6 @@
 (param Ki_red2_EMS_2 (* Ki_EMS_2 @social_multiplier_2_EMS_2@))
 (param Ki_red3_EMS_2 (* Ki_EMS_2 @social_multiplier_3_EMS_2@))
 
-
-
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_2 Ki_red1_EMS_2)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_2 Ki_red2_EMS_2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_2 Ki_red3_EMS_2)))
@@ -1098,8 +1097,6 @@
 (param Ki_red1_EMS_3 (* Ki_EMS_3 @social_multiplier_1_EMS_3@))
 (param Ki_red2_EMS_3 (* Ki_EMS_3 @social_multiplier_2_EMS_3@))
 (param Ki_red3_EMS_3 (* Ki_EMS_3 @social_multiplier_3_EMS_3@))
-
-
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_3 Ki_red1_EMS_3)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_3 Ki_red2_EMS_3)))
@@ -1113,8 +1110,6 @@
 (param Ki_red2_EMS_4 (* Ki_EMS_4 @social_multiplier_2_EMS_4@))
 (param Ki_red3_EMS_4 (* Ki_EMS_4 @social_multiplier_3_EMS_4@))
 
-
-
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_4 Ki_red1_EMS_4)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_4 Ki_red2_EMS_4)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_4 Ki_red3_EMS_4)))
@@ -1126,8 +1121,6 @@
 (param Ki_red1_EMS_5 (* Ki_EMS_5 @social_multiplier_1_EMS_5@))
 (param Ki_red2_EMS_5 (* Ki_EMS_5 @social_multiplier_2_EMS_5@))
 (param Ki_red3_EMS_5 (* Ki_EMS_5 @social_multiplier_3_EMS_5@))
-
-
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_5 Ki_red1_EMS_5)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_5 Ki_red2_EMS_5)))
@@ -1141,8 +1134,6 @@
 (param Ki_red2_EMS_6 (* Ki_EMS_6 @social_multiplier_2_EMS_6@))
 (param Ki_red3_EMS_6 (* Ki_EMS_6 @social_multiplier_3_EMS_6@))
 
-
-
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_6 Ki_red1_EMS_6)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_6 Ki_red2_EMS_6)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_6 Ki_red3_EMS_6)))
@@ -1154,8 +1145,6 @@
 (param Ki_red1_EMS_7 (* Ki_EMS_7 @social_multiplier_1_EMS_7@))
 (param Ki_red2_EMS_7 (* Ki_EMS_7 @social_multiplier_2_EMS_7@))
 (param Ki_red3_EMS_7 (* Ki_EMS_7 @social_multiplier_3_EMS_7@))
-
-
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_7 Ki_red1_EMS_7)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_7 Ki_red2_EMS_7)))
@@ -1169,8 +1158,6 @@
 (param Ki_red2_EMS_8 (* Ki_EMS_8 @social_multiplier_2_EMS_8@))
 (param Ki_red3_EMS_8 (* Ki_EMS_8 @social_multiplier_3_EMS_8@))
 
-
-
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_8 Ki_red1_EMS_8)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_8 Ki_red2_EMS_8)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_8 Ki_red3_EMS_8)))
@@ -1182,8 +1169,6 @@
 (param Ki_red1_EMS_9 (* Ki_EMS_9 @social_multiplier_1_EMS_9@))
 (param Ki_red2_EMS_9 (* Ki_EMS_9 @social_multiplier_2_EMS_9@))
 (param Ki_red3_EMS_9 (* Ki_EMS_9 @social_multiplier_3_EMS_9@))
-
-
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_9 Ki_red1_EMS_9)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_9 Ki_red2_EMS_9)))
@@ -1197,8 +1182,6 @@
 (param Ki_red2_EMS_10 (* Ki_EMS_10 @social_multiplier_2_EMS_10@))
 (param Ki_red3_EMS_10 (* Ki_EMS_10 @social_multiplier_3_EMS_10@))
 
-
-
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_10 Ki_red1_EMS_10)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_10 Ki_red2_EMS_10)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_10 Ki_red3_EMS_10)))
@@ -1210,8 +1193,6 @@
 (param Ki_red1_EMS_11 (* Ki_EMS_11 @social_multiplier_1_EMS_11@))
 (param Ki_red2_EMS_11 (* Ki_EMS_11 @social_multiplier_2_EMS_11@))
 (param Ki_red3_EMS_11 (* Ki_EMS_11 @social_multiplier_3_EMS_11@))
-
-
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_11 Ki_red1_EMS_11)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_11 Ki_red2_EMS_11)))

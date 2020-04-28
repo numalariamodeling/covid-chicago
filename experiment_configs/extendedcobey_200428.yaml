@@ -126,12 +126,12 @@ sampled_parameters:
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.43}
   ### Use fixed dates or define detection time relative to  socialDistance_time3
-  #'detection_time_1':
-  #  custom_function: DateToTimestep
-  #  function_kwargs: {'dates': 2020-03-15, 'startdate_col': 'startdate'}
-  #'detection_time_2':
-  #  custom_function: DateToTimestep
-  #  function_kwargs: {'dates': 2020-03-22, 'startdate_col': 'startdate'}
+  'detection_time_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-15, 'startdate_col': 'startdate'}
+  'detection_time_2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-22, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
     'NMH_catchment':
