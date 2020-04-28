@@ -2,23 +2,47 @@
 
 For more information on Covid in Chicago visit the (Chicago Covid Coalition website)[https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0]
 
-## 1. Software used
+## 1. File and folder structure
+In general we keep code on GitHub, files on Box, and use slack to communicate with each other. 
+
+### 1.1. Data and documents (Box) 
+The Box has a one project folder  "covid-chicago" and two data folders "covid-chicago" and "covid_IDPH". 
+Some folder locations to point out: 
+- `covid_chicago\cms_sim` includes files related to the modelling input and output (note the project covid-chicago folder) 
+- `covid_chicago\project_notes` includes a description of the simulation, a collection of shared slide decks and figures
+- `covid_IDPH`  includes data files used for fitting the EMS areas and is almost daily updated
+- `covid_chicago\civis` includes files related to deliverables and requests of the model 
+- `covid_chicago\Plots + Graphs` from data analysis
+
+### 1.2. Code (GitHub)
+- All the code is included in this gitrepository.  
+To contribute to the gitrepository, you need a git account and then fork the git repository to your personal git account. 
+Then clone the repository using https://github.com/numalariamodeling/covid-chicago.git to your local machine or your home directory on quest. 
+To upload code, push to the cloned repository, and create a pull request to include your changes to the main repository. 
+This documentation includes a description of the files used in this gitrepository. 
+
+### 1.3. Communication (Slack)
+There are two main channels on slack one "covid-chicago" and one "w7-epidemiological modelling" 
+- "covid-chicago": is used for the day to day updates on the workflow, technical details, managing modelling taks and sharing updates and issues.
+-  "w7-epidemiological modelling": is used for 'higher level' communication around modelling and the data requirements from collaborators. 
+
+## 2. Software used
 - Modified SEIR model using Institute for Disease Modeling (IDM's)
 [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html)
 - [input](https://idmod.org/docs/cms/input-files.html) configuration file (cfg)
 - [input](https://idmod.org/docs/cms/input-files.html)  model file (emodl)
 - [output](https://idmod.org/docs/cms/output.html?searchText=output): trajectories.csv (optionally define prefix or suffix)
 
-## 2. Compartmental model structure
-### 2.1. Simple model
+## 2.2. Compartmental model structure
+### Simple model
 The "simplemodel" includes only the basic S-E-I-R compartments. 
 Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/simplemodel_testing.emodl)
 
-### 2.2. Extended model
+### Extended model
 The "extendedmodel" imclides additional compartments for asymptomatics, symptomatics, hospitalization, progression to critical and deaths. In addition the detections are tracked as a sum of detected asymptomatics, symptomatics,hospitalized, critical and deaths with group specific detection rates. 
 Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_covid.emodl)
 
-### 2.3. "Extended_cobey" model
+### "Extended_cobey" model
 Latest version of the model, including modifications in alignment with the Covid model developed by Sarah Cobeys Team at University of Chicago. 
 Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
 
@@ -133,6 +157,30 @@ The CMS software is provided as a compiled Windows executable, but can be run on
 If you do not have `wine` installed on your system, you can use the provided [Dockerfile](Dockerfile), which has `wine` baked in.
 To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in your environment or your `.env` file to use it.
 
+### 4.7 Running on Quest (NUCLUSTER) 
+A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
+
+#### Requirements on quest 
+All the modules need to be installed on the personal quest environment 
+- use pip install ... in your terminal 
+- install `dotenv` and `yamlordereddictloader`
+`conda create --name dotenv-py37 -c conda-forge python-yamlordereddictloader python=3.7 --yes`
+`source activate dotenv-py37`
+`conda install -c conda-forge yamlordereddictloader`
+
+The `source activate dotenv-py37` needs to be run before runnung the `runScenarios.py`
+
+#### Submit job 
+`cd /projects/p30781/covidproject/covid-chicago/`
+`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200421.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "quest_run_<your initial>"`
+
+The experiments will go to the _temp folder on the quest gitrepository. To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
+
+Next step copy the content of the submit_runSimulations.sh (should be a simple txt file) to the terminal to run:
+- `cd /projects/p30781/covidproject/covid-chicago/_temp/<exp_name>/trajectories/`
+- `dos2unix runSimulations.sh`  # converts windows format to linux format
+- `sbatch runSimulations.sh`  # submits the simulations as an array job , note maximum array <5000 scenarios. 
+
 ## 5 Postprocessing 
 
 ### 5.1 Visualizing results
@@ -196,8 +244,14 @@ Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
 
 
 ### 7.1. Time-varying parameters
-[...]
+The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-event) option in cms allows to change a paramter at a given time point (days) (which will stay constant afterwards if not resetted using a second time-event).
+Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
+The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
 
 ### 7.3. Intervention scenarios
-[...]
+Current scenarios include:
+- Scenario 1: Stop stay-at-home order  ‘next Friday’ 
+- Scenario 2: No stay-at-home (counterfactual)
+- Scenario 3: Continue stay-at-home
+
 

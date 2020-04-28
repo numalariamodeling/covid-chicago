@@ -166,7 +166,7 @@ def writeTxt(txtdir, filename, textstring) :
 
 
 def generateSubmissionFile(scen_num, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
-                           exe_dir=EXE_DIR, docker_image="cms"): #GE 04/10/20 added trajectories_dir,temp_dir, temp_exp_dir to fix not defined error
+                           exe_dir=EXE_DIR, docker_image="cms"):
     fname = os.path.join(trajectories_dir, 'runSimulations.bat')
     log.debug(f"Generating submission file {fname}")
     with open(fname, 'w') as file:
@@ -198,23 +198,23 @@ echo end""")
     header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 1\n#SBATCH --ntasks-per-node=1'
     jobname = '\n#SBATCH	--job-name="' + exp_name_short + '"'
     array = '\n#SBATCH --array=1-' + str(scen_num)
-    email = '\n# SBATCH --mail-user=manuela.runge@northwestern.edu'  ## create input mask or user txt where specified
-    emailtype = '\n# SBATCH --mail-type=ALL'
+    #email = '\n# SBATCH --mail-user=manuela.runge@northwestern.edu'  ## create input mask or user txt where specified
+    #emailtype = '\n# SBATCH --mail-type=ALL'
     err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
     out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
     module = '\n\nmodule load singularity'
-    singularity = '\n\nsingularity exec /software/singularity/images/singwine-v1.img wine /home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe  -c /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg  -m /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
+    singularity = '\n\nsingularity exec /software/singularity/images/singwine-v1.img wine /projects/p30781/covidproject/binaries/compartments/compartments.exe  -c /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg  -m /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
     file = open(os.path.join(trajectories_dir, 'runSimulations.sh'), 'w')
-    file.write(header + jobname + email + emailtype + array + err + out + module + singularity)
+    file.write(header + jobname + array + err + out + module + singularity)
     file.close()
 
-    submit_runSimulations = 'cd /home/mrm9534/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/' + exp_name + '/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
-    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
+    submit_runSimulations = 'cd /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
+    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.txt'), 'w')
     file.write(submit_runSimulations)
     file.close()
 
 
-def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, temp_exp_dir=None,
+def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, yaml_dir, experiment_config, temp_exp_dir=None,
                          wdir=WDIR, git_dir=GIT_DIR): ## GE 04/10/20 added exp_name, emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
@@ -236,6 +236,7 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, temp_exp_dir=N
     ## Copy emodl and cfg file  to experiment folder
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
     shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
+    shutil.copyfile(os.path.join(yaml_dir, experiment_config), os.path.join(temp_exp_dir, experiment_config))
 
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
