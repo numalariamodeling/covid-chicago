@@ -1,0 +1,3 @@
+[submodule "plotly_dash"]
+	path = plotly_dash
+	url = /plotly_dash
