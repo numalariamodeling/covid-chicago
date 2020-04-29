@@ -214,7 +214,7 @@ echo end""")
     file.close()
 
 
-def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, yaml_dir, DEFAULT_CONFIG, experiment_config, temp_exp_dir=None,
+def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml_dir, DEFAULT_CONFIG, experiment_config, temp_exp_dir=None,
                          wdir=WDIR, git_dir=GIT_DIR): ## GE 04/10/20 added exp_name, emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
@@ -235,7 +235,7 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, yaml_dir, DEFA
 
     ## Copy emodl and cfg file  to experiment folder
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
-    shutil.copyfile(os.path.join(cfg_dir, 'model.cfg'), os.path.join(temp_exp_dir, 'model.cfg'))
+    shutil.copyfile(os.path.join(cfg_dir, cfg_file), os.path.join(temp_exp_dir, cfg_file))
     shutil.copyfile(os.path.join(yaml_dir, experiment_config), os.path.join(temp_exp_dir, experiment_config))
     if DEFAULT_CONFIG != experiment_config :
         shutil.copyfile(os.path.join(yaml_dir, DEFAULT_CONFIG), os.path.join(temp_exp_dir, DEFAULT_CONFIG))
