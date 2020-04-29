@@ -184,34 +184,56 @@ def compare_county(exp_name, county_name) :
     plt.show()
 
 
-def compare_ems(exp_name, ems=0) :
+def compare_ems(exp_name, ems=0, source='EMR') :
+    if source == 'EMR':
+        ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
 
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
+        if ems > 0 :
+            ref_df = ref_df[ref_df['region'] == ems]
+        else :
+            ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
+        ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
+        data_channel_names = ['suspected_and_confirmed_covid_icu', 'confirmed_covid_deaths_prev_24h',
+                              'confirmed_covid_icu', 'confirmed_covid_on_vents']
+        ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
+        ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
-    if ems > 0 :
-        ref_df = ref_df[ref_df['region'] == ems]
-    else :
-        ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
-    ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
-    data_channel_names = ['suspected_and_confirmed_covid_icu', 'confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'confirmed_covid_on_vents']
-    ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
-    ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
+        df = load_sim_data(exp_name)
+        first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
-    df = load_sim_data(exp_name)
-    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
-
-    df['ventilators'] = df['critical']*0.8
-    df['critical_with_suspected'] = df['critical']
-    channels = ['critical_with_suspected', 'new_detected_deaths', 'crit_det', 'ventilators']
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
-                     plot_path=plot_path, first_day=first_day)
+        df['ventilators'] = df['critical']*0.8
+        df['critical_with_suspected'] = df['critical']
+        channels = ['critical_with_suspected', 'new_detected_deaths', 'crit_det', 'ventilators']
+        plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
+        plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
+                         plot_path=plot_path, first_day=first_day)
     #plt.show()
+    elif source == 'line_list':
+        ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200428_jg_Deceased Date_ems.csv'))
+        ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200428_jg_Admission Date_ems.csv'))
+        if ems > 0 :
+            ref_df1 = ref_df1[ref_df1['EMS'] == ems]
+            ref_df2 = ref_df2[ref_df2['EMS'] == ems]
+        else :
+            ref_df1 = ref_df1.groupby('date').agg(np.sum).reset_index()
+            ref_df2 = ref_df2.groupby('date').agg(np.sum).reset_index()
+        ref_df1 = ref_df1.rename(columns={'cases': 'deaths'})
+        ref_df2 = ref_df2.rename(columns={'cases': 'admissions'})
+        
+        ref_df = pd.merge(left=ref_df1, left_on='date', right=ref_df2, right_on='date')
+        ref_df['date'] = pd.to_datetime(ref_df['date'])
+        data_channel_names = ['deaths', 'deaths', 'admissions']    
+        
+        df = load_sim_data(exp_name)
+        first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+        channels = ['new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
+        plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_line_list')
+        plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
+                         plot_path=plot_path, first_day=first_day)
 
 if __name__ == '__main__' :
 
-    stem = "prelimFit_run1"
+    stem = "20200429_EMS_11_testparam_v6b"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names :
@@ -227,6 +249,8 @@ if __name__ == '__main__' :
         elif region == 'Chicago':
             compare_county(exp_name,  county_name='Cook')
         elif region == 'EMS':
-            compare_ems(exp_name,  ems=int(ems_nr))
+            compare_ems(exp_name,  ems=int(ems_nr), source='line_list')
+            compare_ems(exp_name,  ems=int(ems_nr), source='EMR')
         elif region == 'IL':
-            compare_ems(exp_name)
+            compare_ems(exp_name, source='line_list')
+            compare_ems(exp_name, source='EMR')
