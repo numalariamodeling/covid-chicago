@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 30
+  'number_of_samples': 10
   'number_of_runs': 3
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
@@ -160,7 +160,7 @@ fitted_parameters:
       function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 0.363, 'stop': 0.363, 'num': 1}
+      function_kwargs: {'start': 0.373, 'stop': 0.373, 'num': 1}
     'EMS_7':
       np: linspace
       function_kwargs: {'start': 0.714, 'stop': 0.714, 'num': 1}
