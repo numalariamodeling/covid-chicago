@@ -24,7 +24,6 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
-
 def _parse_config_parameter(df, parameter, parameter_function):
     if isinstance(parameter_function, (int, float)):
         return parameter_function
@@ -243,7 +242,7 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, first_day, Location,
+                      nruns, sub_samples, modelname, cfg_file, first_day, Location,
                       experiment_config, age_bins, region):
     lst = []
     scen_num = 0
@@ -258,7 +257,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
             replaceParameters(df=dfparam, Ki_i=i, sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
 
             # adjust model.cfg
-            fin = open(os.path.join(temp_exp_dir, "model.cfg"), "rt")
+            fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
             data_cfg = fin.read()
             data_cfg = data_cfg.replace('@duration@', str(duration))
             data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
@@ -351,6 +350,13 @@ def parse_args():
         default="extendedmodel_cobey.emodl"
     )
     parser.add_argument(
+        "-cfg",
+        "--cfg_template",
+        type=str,
+        help="Template cfg file to use",
+        default="model.cfg"
+    )
+    parser.add_argument(
         "--post_process",
         action='store_true',
         help="Whether or not to run post-processing functions",
@@ -419,7 +425,7 @@ if __name__ == '__main__':
     # Generate folders and copy required files
     # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, args.emodl_template, cfg_dir, yaml_dir, args.experiment_config, wdir=wdir,
+        exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir, DEFAULT_CONFIG, args.experiment_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
@@ -434,6 +440,7 @@ if __name__ == '__main__':
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
         modelname=args.emodl_template, first_day=first_day, Location=Location,
+        cfg_file=args.cfg_template,
         experiment_config=experiment_config,
         age_bins=experiment_setup_parameters.get('age_bins'),
         region=region,
@@ -448,8 +455,8 @@ if __name__ == '__main__':
 
         combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
                             temp_exp_dir=temp_exp_dir, deleteFiles=False)
-        cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                plot_path=plot_path, delete_temp_dir=False)
+        cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                plot_path=plot_path, delete_temp_dir=True)
         log.info(f"Outputs are in {sim_output_path}")
 
         if args.post_process:
