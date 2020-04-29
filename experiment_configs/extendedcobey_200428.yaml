@@ -1,6 +1,6 @@
 experiment_setup_parameters:
-  'number_of_samples': 5
-  'number_of_runs': 2
+  'number_of_samples': 30
+  'number_of_runs': 3
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 19
@@ -25,17 +25,17 @@ fixed_parameters_region_specific:
     'NMH_catchment': 2020-02-28
     'Chicago': 2020-02-20  
     'IL': 2020-01-01  # used for spatial model 
-    'EMS_1': 2020-01-17       
-    'EMS_2': 2020-01-20
-    'EMS_3': 2020-01-19       
-    'EMS_4': 2020-01-15
-    'EMS_5': 2020-01-17       
-    'EMS_6': 2020-01-17
-    'EMS_7': 2020-01-14       
-    'EMS_8': 2020-01-14
-    'EMS_9': 2020-01-17       
-    'EMS_10': 2020-02-14
-    'EMS_11': 2020-02-15
+    'EMS_1': 2020-02-29       
+    'EMS_2': 2020-02-29  
+    'EMS_3': 2020-02-13     
+    'EMS_4': 2020-02-26  
+    'EMS_5': 2020-02-28     
+    'EMS_6': 2020-02-24  
+    'EMS_7': 2020-02-22           
+    'EMS_8': 2020-02-29       
+    'EMS_9': 2020-02-28        
+    'EMS_10': 2020-02-26      
+    'EMS_11': 2020-02-28       
 fixed_parameters_global:
 sampled_parameters:
   'time_to_infectious':
@@ -93,13 +93,13 @@ sampled_parameters:
   ### Reduce Ki due to stay-at-home policy
   'social_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':0.9, 'high':1}
+    function_kwargs: {'low':1, 'high':1}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.9}
+    function_kwargs: {'low':1, 'high':1}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.3}
+    function_kwargs: {'low':0.5, 'high':0.6}
   'socialDistance_time1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
@@ -145,34 +145,34 @@ fitted_parameters:
       function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 0.144, 'stop': 0.144, 'num': 1}
+      function_kwargs: {'start': 0.589, 'stop': 0.589, 'num': 1}
     'EMS_2':
       np: linspace
-      function_kwargs: {'start': 0.144, 'stop': 0.144, 'num': 1}
+      function_kwargs: {'start': 0.654, 'stop': 0.654, 'num': 1}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 0.138, 'stop': 0.138, 'num': 1}
+      function_kwargs: {'start': 0.285, 'stop': 0.285, 'num': 1}
     'EMS_4':
       np: linspace
-      function_kwargs: {'start': 0.138 , 'stop': 0.138, 'num': 1}
+      function_kwargs: {'start': 0.571, 'stop': 0.571, 'num': 1}
     'EMS_5':
       np: linspace
-      function_kwargs: {'start': 0.121, 'stop': 0.121, 'num': 1}
+      function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 0.121, 'stop': 0.121, 'num': 1}
+      function_kwargs: {'start': 0.363, 'stop': 0.363, 'num': 1}
     'EMS_7':
       np: linspace
-      function_kwargs: {'start':  0.205, 'stop': 0.205, 'num': 1}
+      function_kwargs: {'start': 0.714, 'stop': 0.714, 'num': 1}
     'EMS_8':
       np: linspace
-      function_kwargs: {'start': 0.198, 'stop': 0.198, 'num': 1}
+      function_kwargs: {'start': 0.897, 'stop': 0.897, 'num': 1}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 0.185, 'stop': 0.185, 'num': 1}
+      function_kwargs: {'start': 0.857, 'stop': 0.857, 'num': 1}
     'EMS_10':
       np: linspace
-      function_kwargs: {'start': 0.181, 'stop': 0.181, 'num': 1}
+      function_kwargs: {'start': 0.754, 'stop': 0.754, 'num': 1}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 0.211, 'stop': 0.211, 'num': 1}
+      function_kwargs: {'start': 1.01, 'stop': 1.01, 'num': 1}
