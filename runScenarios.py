@@ -419,7 +419,7 @@ if __name__ == '__main__':
     # Generate folders and copy required files
     # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, args.emodl_template, cfg_dir, yaml_dir, args.experiment_config, wdir=wdir,
+        exp_name, emodl_dir, args.emodl_template, cfg_dir, yaml_dir, DEFAULT_CONFIG, args.experiment_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
