@@ -33,7 +33,7 @@ There are two main channels on slack one "covid-chicago" and one "w7-epidemiolog
 - [input](https://idmod.org/docs/cms/input-files.html)  model file (emodl)
 - [output](https://idmod.org/docs/cms/output.html?searchText=output): trajectories.csv (optionally define prefix or suffix)
 
-## 2.2. Compartmental model structure
+## 2.2. Compartmental model structure (emodl file)
 ### Simple model
 The "simplemodel" includes only the basic S-E-I-R compartments. 
 Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/simplemodel_testing.emodl)
@@ -127,17 +127,22 @@ Note that the user-supplied configuration file is used to provide
   
 ### Usage examples:
 - Using the default emodl template: `python runScenarios.py
-  --running_location Local --region IL  --experiment_config ./experiment_configs/sample_experiment.yaml`
+  --running_location Local --region IL  --experiment_config sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
   --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
 - Specifying experiment name suffix and changing running_location : `python runScenarios.py
   --running_location NUCLUSTER --region IL --experiment_config extendedcobey.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
+- Specifiying cms configuration file and solver:`python runScenarios.py
+  --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
 
+#### Specifiy solver 
+If not specified the [Tau leaping](https://idmod.org/docs/cms/tau-leaping.html) will be used as default. 
+CMS configuration files are in the [cfg](https://github.com/numalariamodeling/covid-chicago/tree/master/cfg) folder. 
 
 ### 4.2.3. Define age or region specific inputs 
 View [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) for current custom scenarios that are being used. 
 
-#### Fitting emodl and yaml 
+#### Emodl and yaml files for parameter fitting
 Varying sample parameters for all regions are included in  `extendedcobey_200428.yaml`, for fitting purposes
 a separate yaml file is used with wider `extendedcobey_forFitting.yaml`
 
