@@ -14,9 +14,9 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling'
 line_list_fname = os.path.join(idph_data_path,
-                               'COVID_19Confirmed_Modeling___Northwestern_update0417_v1.xlsx')
+                               'COVID_19Confirmed_Modeling___northwestern_0428.xlsx')
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'line_list_200419_jgcleaned.csv')
+                                       'line_list_200428_jgcleaned.csv')
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs')
@@ -25,7 +25,7 @@ shp_path = os.path.join(box_data_path, 'shapefiles')
 
 def load_line_list() :
 
-    df = pd.read_excel(line_list_fname, sheet_name='Data0413')
+    df = pd.read_excel(line_list_fname, sheet_name='NW0428')
     return df
 
 def load_cleaned_line_list() :
@@ -48,12 +48,12 @@ def compare_death_plots() :
     df = df.dropna(subset=['Deceased Date'])
     df = df.groupby('Deceased Date')['ID'].agg(len).reset_index()
     df = df.rename(columns={'ID' : 'daily_deaths_line_list'})
-    # df.to_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_line_list_200423.csv'), index=False)
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_line_list_200427.csv'), index=False)
     # exit()
 
     df['Deceased Date'] = pd.to_datetime(df['Deceased Date'])
 
-    ddf = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_comparison_for_jaline.csv'))
+    ddf = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_comparison_for_jaline_2.csv'))
     ddf['date'] = pd.to_datetime(ddf['date'])
 
     ddf = pd.merge(left=ddf, right=df, left_on='date', right_on='Deceased Date', how='outer')
@@ -166,10 +166,16 @@ def get_ems_counties_and_zips() :
     ems_county_df = ems_county_df.sort_values(by='county')
     ems_zip_df = pd.concat([ems_zip_df, pd.DataFrame( { 'zip' : [60434, 60418, 60303, 60161, 60690, 61615, 60499,
                                                                  60024, 61101, 61701, 62559, 60168, 62881, 60079,
-                                                                 60732, 62711, 60116, 61604, 60598],
+                                                                 60732, 62711, 60116, 61604, 60598, 61764, 62353,
+                                                                 61032, 62233, 62526, 61603, 61832, 62901, 61525,
+                                                                 62259, 62650, 60197, 60864, 62702, 60206, 60801,
+                                                                 60822],
                                                         'ems' : [7, 7, 8, 8, 11, 2, 7,
                                                                  10, 1, 2, 3, 8, 5, 10,
-                                                                 7, 3, 9, 2, 8]})], sort=True)
+                                                                 7, 3, 9, 2, 8, 2, 3,
+                                                                 1, 4, 6, 2, 6, 5, 2,
+                                                                 4, 3, 8, 8, 3, 10, 8,
+                                                                 8]})], sort=True)
     ems_zip_df['zip'] = ems_zip_df['zip'].astype(int)
     ems_zip_df = ems_zip_df.sort_values(by='zip')
 
@@ -203,7 +209,7 @@ def apply_ems() :
             return np.nan
 
     df['EMS'] = df.apply(lambda x : set_ems_in_line_list(x['County at Onset'],
-                                                         x['ZIP of Patient'],
+                                                         x['Patient Home Zip'],
                                                          ems_county_df,
                                                          ems_zip_df), axis=1)
     df.to_csv(cleaned_line_list_fname, index=False)
@@ -232,12 +238,12 @@ def plot_days_between_onset_and_specimen() :
 if __name__ == '__main__' :
 
     df = load_cleaned_line_list()
-    date_col = 'Onset Date imputed'
+    date_col = 'Deceased Date'
     df = df.groupby([date_col, 'EMS'])['ID'].agg(len).reset_index()
     df = df.rename(columns={'ID' : 'cases',
                             date_col : 'date'})
     df = df.sort_values(by=['date', 'EMS'])
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200419_jg_%s_ems.csv' % date_col), index=False)
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200428_jg_%s_ems.csv' % date_col), index=False)
 
-    df.loc[df['County at Onset'] == 'St Clair', 'County at Onset'] = 'St. Clair'
-    df.loc[df['County at Onset'] == 'Jodaviess', 'County at Onset'] = 'Jo daviess'
+    # df.loc[df['County at Onset'] == 'St Clair', 'County at Onset'] = 'St. Clair'
+    # df.loc[df['County at Onset'] == 'Jodaviess', 'County at Onset'] = 'Jo daviess'
