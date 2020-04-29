@@ -455,8 +455,8 @@ if __name__ == '__main__':
 
         combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
                             temp_exp_dir=temp_exp_dir, deleteFiles=False)
-        cleanup(temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                plot_path=plot_path, delete_temp_dir=False)
+        cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                plot_path=plot_path, delete_temp_dir=True)
         log.info(f"Outputs are in {sim_output_path}")
 
         if args.post_process:
