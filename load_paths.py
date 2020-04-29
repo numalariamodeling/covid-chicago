@@ -36,7 +36,7 @@ def load_box_paths(user_path=None, Location ='Local'):
         wdir = os.path.join(project_path, 'cms_sim')
         exe_dir = os.path.join(home_path, 'binaries', 'compartments')
         
-    elif 'jlg1657' in user_path or 'mrung' in user_path or 'geickelb1' in user_path:
+    else:
 
         if 'jlg1657' in user_path :
             git_dir = os.path.join('C:/Users/jlg1657', 'Documents/covid-chicago/')
