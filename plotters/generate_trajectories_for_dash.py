@@ -11,7 +11,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if __name__ == '__main__' :
 
-    stem = 'scenario1'
+    stem = 'scenario3'
     output_dir = os.path.join(wdir, 'simulation_output', 'EMS', '20200419')
     exp_names = [x for x in os.listdir(output_dir) if stem in x]
 
@@ -32,12 +32,13 @@ if __name__ == '__main__' :
     # print(np.sum(adf['death_det_cumul'])/np.sum(adf['crit_det_cumul']))
     # exit()
 
-    filename = 'dash_EMS_trajectories_separate_endsip_20200419.csv'
+    filename = 'dash_EMS_trajectories_separate_sip_20200419.csv'
     print(adf.columns.values)
 
     keep = ['date', 'ems', 'run_num']
     output_channels = ['new_detected_hospitalized', 'new_detected_critical', 'new_detected_deaths', 'new_deaths',
-                       'infected']
+                       'infected', 'new_detected', 'detected', 'new_symptomatic_mild', 'new_symptomatic_severe',
+                       'symptomatic_mild', 'symptomatic_severe']
     params_of_interest = ['d_Sym', 'd_Sys',
                           'fraction_symptomatic',
                           'fraction_severe',
