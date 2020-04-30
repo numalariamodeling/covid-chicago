@@ -59,17 +59,18 @@ def plot_on_fig(df, channels, axes, color, ems) :
 
 if __name__ == '__main__' :
 
-    stem = '20200416_EMS'
-    plot_name = '200416_TEST'
+    stem = 'scenario2'
+    plot_name = '200429_scen2_v2'
     plot_first_day = date(2020,3,1)
-    plot_last_day = date(2020,6,1)
+    plot_last_day = date(2020,8,1)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    exp_names = exp_names[2:] + exp_names[:2]   ## workaround to get right order 1-11
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     fig = plt.figure(figsize=(8, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
-    palette = sns.color_palette('hls', len(exp_names))
+    palette = sns.color_palette('coolwarm', len(exp_names))
     axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
     adf = pd.DataFrame()
