@@ -16,16 +16,17 @@ today = datetime.today()
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+
 def read_and_combine_data(stem):
    #stem = 'scenario1'
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output/EMS/20200429_scenarios/')) if stem in x]
 
     adf = pd.DataFrame()
     for d, exp_name in enumerate(exp_names):
 
-        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        sim_output_path = os.path.join(wdir, 'simulation_output/EMS/20200429_scenarios/', exp_name)
         ems = int(exp_name.split('_')[2])
-        cdf = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+        cdf = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat_test.csv'))
         cdf = calculate_incidence(cdf)
         #channels = cdf.columns
         first_day = datetime.strptime(cdf['first_day'].unique()[0], '%Y-%m-%d')
@@ -79,7 +80,7 @@ def save_plot_csv(scen):
                                   'CI_97pt5' : '%s_95CI_upper' % channel})
 
         plot_first_day = date(2020, 3, 13)
-        plot_last_day = date(2020, 7, 31)
+        plot_last_day = date(2020, 8, 1)
         mdf = mdf[(mdf['date'] >= plot_first_day) & (mdf['date'] <= plot_last_day)]
 
         del mdf['CI_25']
@@ -107,17 +108,18 @@ def save_plot_csv(scen):
                        "ventilators_95CI_upper": "Upper error bound of number of ventilators used"})
 
     if scen =="scenario1":
-        filename = 'nu_illinois_endsip_20200420'
+        filename = 'nu_illinois_endsip_20200429'
     if scen =="scenario2":
-        filename = 'nu_illinois_neversip_20200420'
+        filename = 'nu_illinois_neversip_20200429'
     if scen =="scenario3":
-        filename = 'nu_illinois_baseline_20200420'
+        filename = 'nu_illinois_baseline_20200429'
 
-    adf.to_csv(os.path.join(wdir, 'simulation_output/_csv', filename + '.csv'), index=False)
-    plt.savefig(os.path.join(wdir, 'simulation_output/_plots/IL', filename + '.png'))
-    plt.savefig(os.path.join(wdir, 'simulation_output/_plots/IL', filename + '.pdf'), format='PDF')
+    adf.to_csv(os.path.join(projectpath,'NU_civis_outputs/20200429/csv/', filename + '.csv'), index=False)
+    plt.savefig(os.path.join(projectpath,'NU_civis_outputs/20200429/plots/', filename + '.png'))
+    plt.savefig(os.path.join(projectpath,'NU_civis_outputs/20200429/plots/', filename + '.pdf'), format='PDF')
     #plt.show()
     return()
+
 
 
 if __name__ == '__main__' :
