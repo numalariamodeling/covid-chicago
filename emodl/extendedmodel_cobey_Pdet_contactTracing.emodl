@@ -140,10 +140,8 @@
 (reaction severe_symptomatic_undet (P)  (Sys)  (* Ksys P (- 1 d_Sys)))
 (reaction severe_symptomatic_det (P)  (Sys_det3)  (* Ksys P d_Sys))
 
-(reaction mild_symptomatic_undet (P_det)  (Sym) (* Ksym P_det (- 1 d_Sym)))
-(reaction mild_symptomatic_det (P_det)  (Sym_det2) (* Ksym P_det d_Sym))
-(reaction severe_symptomatic_undet (P_det)  (Sys)  (* Ksys P_det (- 1 d_Sys)))
-(reaction severe_symptomatic_det (P_det)  (Sys_det3)  (* Ksys P_det d_Sys))
+(reaction mild_symptomatic_det (P_det)  (Sym_det2) (* Ksym P_det))
+(reaction severe_symptomatic_det (P_det)  (Sys_det3)  (* Ksys P_det ))
 
 
 (reaction hospitalization_1   (Sys)   (H1)   (* Kh1 Sys))
