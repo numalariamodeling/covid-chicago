@@ -54,9 +54,13 @@ python runScenarios.py --running_location Local --region EMS_10 --experiment_con
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_forFitting.yaml --emodl_template extendedmodel_cobey_forFitting.emodl --name_suffix "fit_test1"
 
 #### Parameter comparison 
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200419.yaml --emodl_template extendedmodel_cobey_old.emodl --name_suffix "param_200419_v2"
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200421.yaml --emodl_template extendedmodel_cobey_old.emodl --name_suffix "param_200421_v2"
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel_cobey_old.emodl --name_suffix "param_200428_v2"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200419.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200419_v2"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200421.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200421_v2"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200428_v2"
+
+
+#### Contact tracing
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl --name_suffix "ct_test"
 
 
 #### Spatial model 
