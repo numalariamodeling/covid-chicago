@@ -49,7 +49,7 @@ sampled_parameters:
     function_kwargs: {'low':3, 'high':6}
   'time_to_critical':
     np.random: uniform
-    function_kwargs: {'low':1, 'high':3}
+    function_kwargs: {'low':4, 'high':6}
   'time_to_death':
     np.random: uniform
     function_kwargs: {'low':4, 'high':6}
