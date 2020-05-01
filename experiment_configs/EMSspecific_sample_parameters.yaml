@@ -35,7 +35,7 @@ sampled_parameters:
       function_kwargs: {'low':0.118, 'high':0.118}
     EMS_11:
       np.random: uniform
-      function_kwargs: {'low':0.120, 'high':0.120}
+      function_kwargs: {'low':0.08, 'high':0.08}
   'cfr': 
     EMS_1:
       np.random: uniform
