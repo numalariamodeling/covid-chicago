@@ -89,8 +89,11 @@ sampled_parameters:
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
+  'd_P':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0}    
   ### TIME-VARYING PARAMETER
-  ### Reduce Ki due to stay-at-home policy
+  ### stay-at-home policy - reduced Ki 
   'social_multiplier_1':
     np.random: uniform
     function_kwargs: {'low':1, 'high':1}
@@ -117,7 +120,7 @@ sampled_parameters:
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-05-30, 'startdate_col': 'startdate'}
-  ### Change in detection rates 
+  ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
     np.random: uniform
@@ -132,6 +135,22 @@ sampled_parameters:
   'detection_time_2':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-22, 'startdate_col': 'startdate'}
+  ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
+  ### Note detection of asymptomatic and presymptomatic assumed to be the same
+  ### (only used if corresponding emodl is defined)    
+  'd_As_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0.70, 'high':0.70}
+  'd_Sym_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0.70, 'high':0.70}
+  ### Use fixed dates or define detection time relative to  socialDistance_time3
+  'contact_tracing_start_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-10, 'startdate_col': 'startdate'}
+  'contact_tracing_stop1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-14, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
     'NMH_catchment':
