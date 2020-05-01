@@ -1,8 +1,7 @@
 # Modelling the COVID-19 pandemic in Chicago
 
-For more information on Covid in Chicago visit the (Chicago Covid Coalition website)[https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0]
 
-## 1. File and folder structure
+## 1. Project organization
 In general we keep code on GitHub, files on Box, and use slack to communicate with each other. 
 
 ### 1.1. Data and documents (Box) 
@@ -26,35 +25,74 @@ There are two main channels on slack one "covid-chicago" and one "w7-epidemiolog
 - "covid-chicago": is used for the day to day updates on the workflow, technical details, managing modelling taks and sharing updates and issues.
 -  "w7-epidemiological modelling": is used for 'higher level' communication around modelling and the data requirements from collaborators. 
 
-## 2. Software used
+## 1.4. Software used
 - Modified SEIR model using Institute for Disease Modeling (IDM's)
 [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html)
 - [input](https://idmod.org/docs/cms/input-files.html) configuration file (cfg)
 - [input](https://idmod.org/docs/cms/input-files.html)  model file (emodl)
 - [output](https://idmod.org/docs/cms/output.html?searchText=output): trajectories.csv (optionally define prefix or suffix)
 
-## 2.2. Compartmental model structure (emodl file)
-### Simple model
+### Compartmental model structure (emodl file)
 The "simplemodel" includes only the basic S-E-I-R compartments. 
 Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/simplemodel_testing.emodl)
-
-### Extended model
-The "extendedmodel" imclides additional compartments for asymptomatics, symptomatics, hospitalization, progression to critical and deaths. In addition the detections are tracked as a sum of detected asymptomatics, symptomatics,hospitalized, critical and deaths with group specific detection rates. 
-Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_covid.emodl)
-
-### "Extended_cobey" model
 Latest version of the model, including modifications in alignment with the Covid model developed by Sarah Cobeys Team at University of Chicago. 
 Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
+Or for more details read the [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
 
-## 3. Model types
-## 3.1. Base model
-Assumes one well mixed homogeneous population 
+### Resources 
+For more information on Covid in Chicago visit the [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 
-## 3.2. Age-structured model 
+
+## 3. Model 
+
+### 3.1. Base model
+Assumes one well mixed homogeneous population. 
+![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure.png)
+
+#### List of parameters
+The starting date and intervention effect size are fixed and the transmission parameter "Ki"are fitted to the data.
+All other parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. model from [UChicago](https://github.com/cobeylab/covid_IL))
+
+| parameter | name                                                                         | 
+|-----------|------------------------------------------------------------------------------|
+| Ki        | Transmission rate (contact rate * infection  probability)                    | 
+| Ks        | Progression to presymtomatic ( fraction_symptomatic /  time_to_infectious))       |  
+| Kl        | Progression to asymptomatic ((1 - fraction_symptomatic ) /   time_to_infectious)) | 
+| dAs       | detection rate of asymptomatic infections                                    |   
+| dSym      | detection rate of mild symptomatic infections                                |  
+| dSys      | Detection rate of severe symptomatic infections                              | 
+| Ksym      | Progression to mild symptoms                                                 |  
+| Ksys      | Progression to severe status ( fraction_severe * (1 / time_to_symptoms))     | 
+| Kh        | Hospitalization rate                                                         |  
+| Kr_a      | Recovery rate of asymptomatic infections                                     |  
+| Kr_m      | Recovery rate mild symptomatic infections                                    |  
+| Kr_h      | Recovery rate of hospitalized cases                                          |  
+| Kr_c      | Recovery rate of critical cases                                              |  
+| Kc        | Progression to critical                                                      |  
+| Km        | Deaths                                                                      |   
+
+Note: Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
+
+#### Model parameters and uncertainity
+To account for uncertainity and heterogeneity in transmission and disease parameters, all the parameters are sampled from a distribution informed by literature. 
+
+#### Time-varying parameters
+The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-event) option in cms allows to change a paramter at a given time point (days) (which will stay constant afterwards if not resetted using a second time-event).
+Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
+The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
+
+#### Intervention scenarios
+Current scenarios include:
+- Scenario 1: Stop stay-at-home order  ‘next Friday’ 
+- Scenario 2: No stay-at-home (counterfactual)
+- Scenario 3: Continue stay-at-home
+
+
+### 3.2. Age-structured model 
 The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. 
 
 ### 3.2.1. Age groups
-- Four age grouos: "0to19", "20to39", "40to59", "60to100" 
+- Four age groups: "0to19", "20to39", "40to59", "60to100" 
 [look at the 4grp emodl here](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/emodl/extendedmodel_cobey_age_4grp.emodl)
 -  Eight age groups: "0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100" 
 [look at the 8grp emodl here](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/emodl/extendedmodel_cobey_age_8grp.emodl)
@@ -68,7 +106,6 @@ The "spatial_model" uses a special syntax as described [here](https://idmod.org/
 To generate or modify the emodl files use the [locale specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/spatial_model/locale_emodl_generator_extendedModel.py )
 - View the [EMS specific emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_locale_EMS.emodl)
 - View a [simple text emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/example_locale.emodl)
-
 
 ## 3.4. Spatial age-structured model
 A test verion is available under [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/spatial_age_model/emodl/extendedmodel_cobey_locale_EMS_2grptest1.emodl).
@@ -98,7 +135,6 @@ and substitutes parameters with the values/functions in the
 user-provided configuration file using the `@param@` placeholder. As with
 [extendedcobey_runScenarios.py](extendedcobey_runScenarios.py), it combines multiple trajectories.csv files produced into a trajectoriesDat.csv, that is used for postprocessing.
 
-
 #### Configuration file:
 The configuration file is in YAML format and is divided into 5
 blocks: `experiment_setup_parameters`,
@@ -125,7 +161,7 @@ Note that the user-supplied configuration file is used to provide
 - Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
   parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
   
-### Usage examples:
+#### Usage examples:
 - Using the default emodl template: `python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
@@ -186,77 +222,6 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - `dos2unix runSimulations.sh`  # converts windows format to linux format
 - `sbatch runSimulations.sh`  # submits the simulations as an array job , note maximum array <5000 scenarios. 
 
-## 5 Postprocessing 
-
-### 5.1 Visualizing results
-
--  [process_for_civis.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis.py)
-The stem argument allows to process only experiments that contain this string in the name.
-`python plotters/process_for_civis.py --stem 'test'`
-
-- [extended_model_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/archive_not_used/extended_model_postprocessing.py) (deprecated)
-Postprocessing file that calculates incidences for extended SEIR model 
-
-- [data_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison.py) 
-compares the predicted number of new detected hospitalized cases, cumulative detections of hospitalized cases, total number of case hospitalizations and number of critical cases to hospital data and case reports.  
-
-- [plot_split_by_param](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param.py)
-Takes two experiment simulations and compares generates a plot comparing the trajectories of both
-
-- [combineEMS_process_for_civis.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/combineEMS_process_for_civis.py)
-Reads in several EMS specific simulation experiments and sums the trajectores to be representative for the total area.
-Initially designed to produce one trajectoriesDat for IL for 3 defined scenarios.
-
-- [combine_csv.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/combine_csv.py)
-Reads in trajectoriesDat from several simulation experiments and appends the dataframe without aggregating them. 
-
-- [EMS_combo_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/EMS_combo_plotter.py)
-Generates a plot showing the trajectories for all EMS together.
-
-### 5.2 Fitting to data
-The starting date and intervention effect size are fixed and the transmission parameter "Ki"are fitted to the data.
-[in process]
-
-## 6. Data sources
-- IDPH
-- NMH
-- City of Chicago
-- ...
-
-## 7. Model parameters and uncertainity
-To account for uncertainity and heterogeneity in transmission and disease parameters, all the parameters are sampled from a distribution informed by literature. 
-
-### 7.1. List of parameters
-Updated list on [Box](https://northwestern.app.box.com/file/656414061983)! 
-
-| parameter | name                                                                         | 
-|-----------|------------------------------------------------------------------------------|
-| Ki        | Transmission rate (contact rate * infection  probability)                    | 
-| Ks        | Progression to presymtomatic ( fraction_symptomatic /  time_to_infectious))       |  
-| Kl        | Progression to asymptomatic ((1 - fraction_symptomatic ) /   time_to_infectious)) | 
-| dAs       | detection rate of asymptomatic infections                                    |   
-| dSym      | detection rate of mild symptomatic infections                                |  
-| dSys      | Detection rate of severe symptomatic infections                              | 
-| Ksym      | Progression to mild symptoms                                                 |  
-| Ksys      | Progression to severe status ( fraction_severe * (1 / time_to_symptoms))     | 
-| Kh        | Hospitalization rate                                                         |  
-| Kr_a      | Recovery rate of asymptomatic infections                                     |  
-| Kr_m      | Recovery rate mild symptomatic infections                                    |  
-| Kr_h      | Recovery rate of hospitalized cases                                          |  
-| Kr_c      | Recovery rate of critical cases                                              |  
-| Kc        | Progression to critical                                                      |  
-| Km        | Deaths                                                                      |   
-
-
-### 7.1. Time-varying parameters
-The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-event) option in cms allows to change a paramter at a given time point (days) (which will stay constant afterwards if not resetted using a second time-event).
-Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
-The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
-
-### 7.3. Intervention scenarios
-Current scenarios include:
-- Scenario 1: Stop stay-at-home order  ‘next Friday’ 
-- Scenario 2: No stay-at-home (counterfactual)
-- Scenario 3: Continue stay-at-home
-
+### 5 Visualizing results
+- see [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/)
 
