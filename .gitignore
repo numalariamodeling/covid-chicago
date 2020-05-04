@@ -1,28 +1,9 @@
+
+venv
 *.pyc
-.idea/
-.venv/
-.DS_Store
-COMPS_log.log
-*.
-wo.json
-ClimateGenerator_Log.log
-SpatialClusteripdfng_BF/SpatialClustering_BF.html
-*.Rhistory
-*.html
-simulation/itn_calibration/banfora_ITN_year_reduction_no_net.pdf
-simulation/itn_calibration/banfora_ITN_year_reduction_no_net_block_061.pdf
-simulation/itn_calibration/banfora_ITN_year_reduction_no_net_block_086.pdf
-simulation/itn_calibration/banfora_ITN_year_reduction_old.pdf
-simulation/itn_calibration/banfora_ITN_year_reduction_old_block_071.pdf
-Code to compare string/.RData
-Code to compare string/compare_string.R
-.Rproj.user
-age_model_covid_i.emodl
-extendedmodel_covid_i.emodl
-simple_model/simplemodel_i.cfg
-simple_model/scenarios.csv
-simple_model/simplemodel_covid_i.emodl
-trajectories.csv
-temp_model.emodl
-_temp/
+.DS_store
 .env
+*.ipynb
+*.csv
+data/*
+
