@@ -42,11 +42,11 @@ def plot_on_fig(df, channels, axes, color, label) :
 
 if __name__ == '__main__' :
 
-    exp_names = ['20200413_NMH_catchment_JG_run1',
-                 '20200413_NMH_catchment_JG_run2']
+    exp_names = ['20200430_EMS_11_RR_crit1to3',
+                 '20200430_EMS_11_RR_crit4to6']
     capacity = {
-        'hospitalized' : 466,
-        'critical' : 203
+        'hospitalized' : 0,
+        'critical' : 0
     }
 
     fig = plt.figure(figsize=(8, 8))

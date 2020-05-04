@@ -60,7 +60,7 @@ def load_box_paths(user_path=None, Location ='Local'):
             git_dir = os.path.join(user_path, 'Documents', 'Github', 'covid-chicago')
         if 'Ibis' in user_path:
             #user_path = r'\~/'
-            git_dir = os.path.join(user_path, 'Documents', 'COVID19', 'model', 'covid-chicago')
+            git_dir = os.path.join(user_path, 'Documents', 'GitHub', 'covid-chicago')
             home_path = os.path.join(user_path, 'Box')
             data_path = os.path.join(user_path, 'Box')
             #project_path = os.path.join(home_path, 'Box', 'covid_chicago')

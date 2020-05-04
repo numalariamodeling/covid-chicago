@@ -1,9 +1,9 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
-  'number_of_runs': 3
+  'number_of_samples': 30
+  'number_of_runs': 1
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
-  'random_seed': 19
+  'random_seed': 18
   'initialAs': 10
 fixed_parameters_region_specific:
   populations:
@@ -25,17 +25,17 @@ fixed_parameters_region_specific:
     'NMH_catchment': 2020-02-28
     'Chicago': 2020-02-20  
     'IL': 2020-01-01  # used for spatial model 
-    'EMS_1': 2020-02-29       
-    'EMS_2': 2020-02-29  
-    'EMS_3': 2020-02-13     
-    'EMS_4': 2020-02-26  
+    'EMS_1': 2020-02-23       
+    'EMS_2': 2020-02-24  
+    'EMS_3': 2020-02-20     
+    'EMS_4': 2020-02-21  
     'EMS_5': 2020-02-28     
-    'EMS_6': 2020-02-24  
-    'EMS_7': 2020-02-22           
-    'EMS_8': 2020-02-29       
-    'EMS_9': 2020-02-28        
-    'EMS_10': 2020-02-26      
-    'EMS_11': 2020-02-28       
+    'EMS_6': 2020-02-14  
+    'EMS_7': 2020-02-16           
+    'EMS_8': 2020-02-22       
+    'EMS_9': 2020-02-23        
+    'EMS_10': 2020-02-20      
+    'EMS_11': 2020-02-21       
 fixed_parameters_global:
 sampled_parameters:
   'time_to_infectious':
@@ -49,7 +49,7 @@ sampled_parameters:
     function_kwargs: {'low':3, 'high':6}
   'time_to_critical':
     np.random: uniform
-    function_kwargs: {'low':1, 'high':3}
+    function_kwargs: {'low':4, 'high':6}
   'time_to_death':
     np.random: uniform
     function_kwargs: {'low':4, 'high':6}
@@ -93,13 +93,13 @@ sampled_parameters:
   ### Reduce Ki due to stay-at-home policy
   'social_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':1, 'high':1}
+    function_kwargs: {'low':0.7, 'high':0.9}
   'social_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':1, 'high':1}
+    function_kwargs: {'low':0.2, 'high':0.5}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.5, 'high':0.6}
+    function_kwargs: {'low':0.08, 'high':0.08}
   'socialDistance_time1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
@@ -151,7 +151,7 @@ fitted_parameters:
       function_kwargs: {'start': 0.654, 'stop': 0.654, 'num': 1}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 0.285, 'stop': 0.285, 'num': 1}
+      function_kwargs: {'start': 0.373, 'stop': 0.373, 'num': 1}
     'EMS_4':
       np: linspace
       function_kwargs: {'start': 0.571, 'stop': 0.571, 'num': 1}
