@@ -1,0 +1,134 @@
+
+.js-plotly-plot .plotly .modebar {
+  padding-top: 5%;
+  margin-right: 3.5%;
+}
+
+body {
+  background-color: #f2f2f2;
+  margin: 2%;
+}
+
+.two.columns {
+  width: 16.25%;
+}
+
+.column,
+.columns {
+  margin-left: 0.5%;
+}
+
+/* Container Settings */
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.pretty_container {
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin: 5px;
+  padding: 5px;
+  position: relative;
+  box-shadow: 2px 2px 2px lightgrey;
+  font-size: 8px;
+}
+
+.chartContainer {
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  position: relative;
+  margin: 5px;
+  padding: 2px;
+  box-shadow: 2px 2px 2px lightgrey;
+}
+
+.chartContainerDiv {
+  flex: 1;
+  /* border-radius: 5px; */
+  margin: 2px;
+  /* position: absolute; */
+  /* max-width: 100%; */
+  /* padding: 1px; */
+  /* display: flex; */
+}
+
+.graphDiv {
+  flex: 1;
+  font-size: 8px;
+}
+
+.mini_container {
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin: 10px;
+  padding: 15px;
+  position: relative;
+  box-shadow: 2px 2px 2px lightgrey;
+}
+
+
+
+
+.dcc_control {
+  margin: 0;
+  padding: 5px;
+  width: calc(100%-40px);
+  /* font-size: 8px; */
+}
+
+.control_label {
+  margin: 0;
+  padding: 5px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  width: calc(100%-40px);
+  font-size: 15px;
+}
+/* Set the slider marks to 8px */
+.rc-slider-mark {
+  font-size: 10px;
+}
+
+.rc-slider {
+  margin-left: 0px;
+  padding-left: 0px;
+}
+
+.flex-display {
+  display: flex;
+}
+
+.container-display {
+  display: flex;
+}
+
+
+
+#header {
+  text-align: center;
+}
+
+
+#title {
+  text-align: center;
+  margin-bottom: 10px; 
+  color:#1B998B;
+  border-radius: 5px;
+  
+}
+#subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: #1B998B;
+  border-radius: 5px;
+}
+
+
+#footer {
+  text-align: right;
+  color: #1B998B;
+  font-size: 10px;
+}
+
+
