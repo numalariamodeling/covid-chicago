@@ -29,79 +29,79 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
-        - {'low': 0.9, 'high': 1}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
   social_multiplier_2:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.9}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5} 
   social_multiplier_3:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-        - {'low': 0.05, 'high': 0.3}
-  Ki:
+        - {'low': 0.5, 'high': 0.5}
+        - {'low': 0.4, 'high': 0.4}
+        - {'low': 0.3, 'high': 0.3}
+        - {'low': 0.4, 'high': 0.4}
+        - {'low': 0.4, 'high': 0.4}
+        - {'low': 0.3, 'high': 0.3}
+        - {'low': 0.152, 'high': 0.152}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.124, 'high': 0.124}
+        - {'low': 0.220, 'high': 0.220}
+        - {'low': 0.124, 'high': 0.124}  
+  Ki:  
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.144, 'high': 0.144}
-        - {'low': 0.144, 'high': 0.144}
-        - {'low': 0.138, 'high': 0.138}
-        - {'low': 0.138, 'high': 0.138}
-        - {'low': 0.121, 'high': 0.121}
-        - {'low': 0.121, 'high': 0.121}
-        - {'low': 0.205, 'high': 0.205}
-        - {'low': 0.198, 'high': 0.198}
-        - {'low': 0.185, 'high': 0.185}
-        - {'low': 0.181, 'high': 0.181}
-        - {'low': 0.211, 'high': 0.211}
+        - {'low': 0.589, 'high': 0.589}
+        - {'low': 0.654, 'high': 0.654}
+        - {'low': 0.373, 'high': 0.373}
+        - {'low': 0.571, 'high': 0.571}
+        - {'low': 0.501, 'high': 0.501}
+        - {'low': 0.373, 'high': 0.373}
+        - {'low': 0.714, 'high': 0.714}
+        - {'low': 0.897, 'high': 0.897}
+        - {'low': 0.857, 'high': 0.857}
+        - {'low': 0.754, 'high': 0.754}
+        - {'low': 1.01, 'high': 1.01} 
   time_infection_import:  # Relative to generic startdate set for IL 
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 16.0, 'high': 16.0}
-        - {'low': 19.0, 'high': 19.0}
-        - {'low': 18.0, 'high': 18.0}
-        - {'low': 14.0, 'high': 14.0}
-        - {'low': 16.0, 'high': 16.0}
-        - {'low': 16.0, 'high': 16.0}
-        - {'low': 13.0, 'high': 13.0}
-        - {'low': 13.0, 'high': 13.0}
-        - {'low': 16.0, 'high': 16.0}
-        - {'low': 13.0, 'high': 13.0}
-        - {'low': 14.0, 'high': 14.0}               
+        - {'low': 10.0, 'high': 10.0}
+        - {'low': 11.0, 'high': 11.0}
+        - {'low': 7.0, 'high':  7.0}
+        - {'low': 8.0, 'high':  8.0}
+        - {'low': 15.0, 'high': 15.0}
+        - {'low': 1.0, 'high':  1.0}
+        - {'low': 3.0, 'high':  3.0}
+        - {'low': 9.0, 'high':  9.0}
+        - {'low': 10.0, 'high': 10.0}
+        - {'low': 7.0, 'high':  7.0}
+        - {'low': 8.0, 'high':  8.0}    
 fitted_parameters:

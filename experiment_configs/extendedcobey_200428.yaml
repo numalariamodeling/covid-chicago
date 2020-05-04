@@ -1,6 +1,6 @@
 experiment_setup_parameters:
-  'number_of_samples': 30
-  'number_of_runs': 1
+  'number_of_samples': 10
+  'number_of_runs': 3
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 18
@@ -89,6 +89,9 @@ sampled_parameters:
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
+  'd_P':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0}    
   ### TIME-VARYING PARAMETER
   ### Reduce Ki due to stay-at-home policy
   'social_multiplier_1':
@@ -113,11 +116,36 @@ sampled_parameters:
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
     np.random: uniform
-    function_kwargs: {'low':0.95, 'high':1}
+    function_kwargs: {'low':0.90, 'high':0.90}
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-30, 'startdate_col': 'startdate'}
-  ### Change in detection rates 
+    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
+  ### Gradual reopening (time-wise)
+  'reopening_multiplier_1':
+    np.random: uniform
+    function_kwargs: {'low':0.3, 'high':0.3}
+  'reopening_multiplier_2':
+    np.random: uniform
+    function_kwargs: {'low':0.5, 'high':0.5}
+  'reopening_multiplier_3':
+    np.random: uniform
+    function_kwargs: {'low':0.7, 'high':0.7}
+  'reopening_multiplier_4':
+    np.random: uniform
+    function_kwargs: {'low':0.90, 'high':0.90}
+  'gradual_reopening_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
+  'gradual_reopening_time2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}        
+  'gradual_reopening_time3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}    
+  'gradual_reopening_time4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}  
+  ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
     np.random: uniform
@@ -132,6 +160,22 @@ sampled_parameters:
   'detection_time_2':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-22, 'startdate_col': 'startdate'}
+  ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
+  ### Note detection of asymptomatic and presymptomatic assumed to be the same
+  ### (only used if corresponding emodl is defined)    
+  'd_As_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0.30, 'high':0.30}
+  'd_Sym_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0.30, 'high':0.30}
+  ### Use fixed dates or define detection time relative to  socialDistance_time3
+  'contact_tracing_start_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-10, 'startdate_col': 'startdate'}
+  'contact_tracing_stop1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-14, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
     'NMH_catchment':

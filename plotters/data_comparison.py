@@ -27,6 +27,9 @@ def load_sim_data(exp_name, input_wdir=None) :
     if 'Ki' not in df.columns.values :
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
 
+    if 'ageAll' in df.columns.values:
+        df.columns = df.columns.str.replace(r'_ageAll$', '')
+
     df = calculate_incidence(df)
 
     return df
