@@ -116,6 +116,7 @@
 (param Ki_back1 (* Ki @reopening_multiplier_1@))
 (param Ki_back2 (* Ki @reopening_multiplier_2@))
 (param Ki_back3 (* Ki @reopening_multiplier_3@))
+(param Ki_back4 (* Ki @reopening_multiplier_4@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
@@ -124,6 +125,7 @@
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
