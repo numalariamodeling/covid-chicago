@@ -241,6 +241,8 @@
 (func infected_age60to100 (+ infectious_det_age60to100 infectious_undet_age60to100 H1_det3_age60to100 H2_det3_age60to100 H3_det3_age60to100 C2_det3_age60to100 C3_det3_age60to100))
 
 
+(func infectious_undet_ageAll (+  infectious_undet_age0to19 infectious_undet_age20to39 infectious_undet_age40to59 infectious_undet_age60to100))
+(func infectious_det_ageAll (+  infectious_det_age0to19 infectious_det_age20to39 infectious_det_age40to59 infectious_det_age60to100))
 (observe susceptible_ageAll (+  S_age0to19 S_age20to39 S_age40to59 S_age60to100))
 (observe exposed_ageAll (+  E_age0to19 E_age20to39 E_age40to59 E_age60to100))
 (observe asymptomatic_ageAll (+  asymptomatic_age0to19 asymptomatic_age20to39 asymptomatic_age40to59 asymptomatic_age60to100))
@@ -422,6 +424,7 @@
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
  
 (param N_age0to19 (+ @speciesS_age0to19@ @initialAs_age0to19@) )
 (param N_age20to39 (+ @speciesS_age20to39@ @initialAs_age20to39@) )
