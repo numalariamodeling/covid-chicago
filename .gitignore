@@ -3,7 +3,6 @@
 .venv/
 .DS_Store
 COMPS_log.log
-*.png
 *.
 wo.json
 ClimateGenerator_Log.log
