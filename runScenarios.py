@@ -320,6 +320,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
+        "-rl",
         "--running_location",
         type=str,
         help="Location where the simulation is being run.",
