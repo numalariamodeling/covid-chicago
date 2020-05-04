@@ -119,7 +119,8 @@
 
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
 
 (reaction exposure   (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))
 (reaction infection_asymp_undet  (E)   (As)   (* Kl E (- 1 d_As)))
