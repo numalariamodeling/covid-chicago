@@ -85,7 +85,7 @@ sampled_parameters:
     function_kwargs: {'low':0.01, 'high':0.05}
   'd_Sys':
     np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.05} 
+    function_kwargs: {'low':0.00, 'high':0.025} 
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
@@ -149,17 +149,23 @@ sampled_parameters:
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.15}
+    function_kwargs: {'low':0.062, 'high':0.121}
   'd_Sys_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.43}
+    function_kwargs: {'low':0.286, 'high':0.457}
+  'd_Sys_incr3':
+    np.random: uniform
+    function_kwargs: {'low':0.447, 'high':0.683}
   ### Use fixed dates or define detection time relative to  socialDistance_time3
   'detection_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-15, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-03-14, 'startdate_col': 'startdate'}
   'detection_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-22, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+  'detection_time_3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-28, 'startdate_col': 'startdate'}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)    
