@@ -197,13 +197,13 @@
 
 (reaction recovery_As_det (As_det1)   (RAs_det1)   (* Kr_a As_det1))
 
-(reaction hospitalization_1_det   (Sys_det3a)   (H1_det3)   (* Kh1 Sys_det3a))
-(reaction hospitalization_2_det   (Sys_det3a)   (H2_det3)   (* Kh2 Sys_det3a))
-(reaction hospitalization_3_det   (Sys_det3a)   (H3_det3)   (* Kh3 Sys_det3a))
+(reaction hospitalization_1_det   (Sys_det3a)   (H1_det3)   (* Kh1_D Sys_det3a))
+(reaction hospitalization_2_det   (Sys_det3a)   (H2_det3)   (* Kh2_D Sys_det3a))
+(reaction hospitalization_3_det   (Sys_det3a)   (H3_det3)   (* Kh3_D Sys_det3a))
 
-(reaction hospitalization_1_det   (Sys_det3b)   (H1_det3)   (* Kh1_D Sys_det3b))
-(reaction hospitalization_2_det   (Sys_det3b)   (H2_det3)   (* Kh2_D Sys_det3b))
-(reaction hospitalization_3_det   (Sys_det3b)   (H3_det3)   (* Kh3_D Sys_det3b))
+(reaction hospitalization_1_det   (Sys_det3b)   (H1_det3)   (* Kh1 Sys_det3b))
+(reaction hospitalization_2_det   (Sys_det3b)   (H2_det3)   (* Kh2 Sys_det3b))
+(reaction hospitalization_3_det   (Sys_det3b)   (H3_det3)   (* Kh3 Sys_det3b))
 
 
 (reaction critical_2_det2   (H2_det3)   (C2_det3)   (* Kc H2_det3))
