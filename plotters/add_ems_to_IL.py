@@ -25,6 +25,9 @@ if __name__ == '__main__' :
         "infected_median": "Number of Covid-19 infections",
         "infected_95CI_lower": "Lower error bound of covid-19 infections",
         "infected_95CI_upper": "Upper error bound of covid-19 infections",
+        "symptomatic_median": "Number of Covid-19 symptomatic",
+        "symptomatic_95CI_lower": "Lower error bound of covid-19 symptomatic",
+        "symptomatic_95CI_upper": "Upper error bound of covid-19 symptomatic",
         "new_deaths_median": "Number of covid-19 deaths",
         "new_deaths_95CI_lower": "Lower error bound of covid-19 deaths",
         "new_deaths_95CI_upper": "Upper error bound of covid-19 deaths",
@@ -39,7 +42,7 @@ if __name__ == '__main__' :
         "ventilators_95CI_upper": "Upper error bound of number of ventilators used"
     }
     col_names = {value: key for key, value in col_names.items()}
-    channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+    channels = ['infected', 'new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
     plot_first_day = date(2020, 3, 13)
     plot_last_day = date(2020, 7, 31)
 
