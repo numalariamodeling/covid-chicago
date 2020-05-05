@@ -42,7 +42,7 @@ if __name__ == '__main__' :
         "ventilators_95CI_upper": "Upper error bound of number of ventilators used"
     }
     col_names = {value: key for key, value in col_names.items()}
-    channels = ['infected', 'symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+    channels = ['infected', 'new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
     plot_first_day = date(2020, 3, 13)
     plot_last_day = date(2020, 7, 31)
 
