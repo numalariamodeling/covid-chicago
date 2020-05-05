@@ -108,7 +108,11 @@
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
-(param Ki @Ki@)
+(param Ki  @Ki@)
+(param d_As_ct1 @d_As_ct1@)
+(param d_Sym_ct1 @d_Sym_ct1@)
+(param d_SQ @d_SQ@)
+
 
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
@@ -150,10 +154,10 @@
 (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
 
 
-(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As @Ki@) (d_P @Ki@) (d_Sym @Ki@)  ))
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
 (time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
 
-(time-event contact_tracing_start @contact_tracing_start_1@ ((S (* S (- 1 @d_As_ct1@))) (Q (* S @d_As_ct1@))))
+(time-event contact_tracing_start @contact_tracing_start_1@ ((S (* S (- 1 d_SQ))) (Q (* S d_SQ))))
 (time-event contact_tracing_end @contact_tracing_stop1@ ((S (+ S Q)) (Q 0)))
 
 
