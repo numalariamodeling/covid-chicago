@@ -453,8 +453,10 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 
 # if __name__ == '__main__':
 
-age_grp4 =  ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
-generate_extended_emodl(grpList=age_grp4,
-                        file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_homogeneous.emodl'),
-                        homogeneous=True)
+age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
+generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
+generate_extended_emodl(grpList=age_grp4,file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'), homogeneous=True)
 
+age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
+generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
+generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_homogeneous.emodl'), homogeneous=True)
