@@ -168,13 +168,17 @@ sampled_parameters:
     function_kwargs: {'dates': 2020-03-28, 'startdate_col': 'startdate'}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
-  ### (only used if corresponding emodl is defined)    
+  ### (only used if corresponding emodl is defined)   
+  ## d_SQ proportion of susceptibles that get temporarily reinfected
   'd_As_ct1':
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.30}
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.30}
+  'd_SQ':
+    np.random: uniform
+    function_kwargs: {'low':0.30, 'high':0.30}    
   ### Use fixed dates or define detection time relative to  socialDistance_time3
   'contact_tracing_start_1':
     custom_function: DateToTimestep
