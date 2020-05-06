@@ -15,8 +15,6 @@ from data_comparison import load_sim_data
 mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-plotdir = os.path.join(wdir, 'simulation_output', '_plots')
-
 
 def load_ems(ems) :
 
@@ -59,65 +57,90 @@ def plot_on_fig(df, channels, axes, color, ems) :
 
 if __name__ == '__main__' :
 
-    stem = 'scenario2'
-    plot_name = '200429_scen2_v2'
-    plot_first_day = date(2020,3,1)
-    plot_last_day = date(2020,8,1)
-
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    exp_names = exp_names[2:] + exp_names[:2]   ## workaround to get right order 1-11
+    mixed_scenarios = False
+    simdate = "20200504"
+    plot_first_day = date(2020, 3, 1)
+    plot_last_day = date(2020, 8, 1)
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
-    fig = plt.figure(figsize=(8, 8))
-    fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
-    palette = sns.color_palette('coolwarm', len(exp_names))
-    axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
+    if mixed_scenarios == False :
+        sim_path = os.path.join(wdir, 'simulation_output')
+        plotdir = os.path.join(sim_path, '_plots')
+        stem = 'scenario3'
+        plot_name = simdate + '_' + stem + '_test'
+        sim_scenarios = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+        sim_scenarios = sim_scenarios[2:] + sim_scenarios[:2]   ## workaround to get right order 1-11
 
-    adf = pd.DataFrame()
-    days_to_plot = plot_last_day - plot_first_day
-    last = {x: [0] * (days_to_plot.days+1) for x in channels}
-    for d, exp_name in enumerate(exp_names) :
-        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-        ems = int(exp_name.split('_')[2])
-        df = load_sim_data(exp_name)
+    if mixed_scenarios == True :
+        sim_path = os.path.join(wdir, 'simulation_output', simdate + 'mixed_reopening')
+        plotdir = os.path.join(sim_path, 'plots')
 
-        df['ventilators'] = df['critical']*0.8
-        first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+        Northwest, Northeast, Central, Southern = loadEMSregions()
+        exp_suffix = ['reopening_May15', 'reopening_June1', 'reopening_June15', 'reopening_July1', 'scenario3','reopening_gradual']
+        sim_scenarios_1 = [get_exp_name(x, 0,simdate) for x in Northwest] + [get_exp_name(x, 2,simdate) for x in Central] + [get_exp_name(x, 1,simdate) for  x in Northeast] + [get_exp_name(x, 3,simdate) for x in Southern]
+        sim_scenarios_2 = [get_exp_name(x, 5,simdate) for x in Northwest] + [get_exp_name(x, 5,simdate) for x in Central] + [get_exp_name(x, 5,simdate) for x in Northeast] + [get_exp_name(x, 5,simdate) for x in Southern]
+        sim_scenarios_3 = [get_exp_name(x, 5,simdate) for x in Northwest] + [get_exp_name(x, 4,simdate) for x in Central] + [get_exp_name(x, 5,simdate) for  x in   Northeast] + [ get_exp_name(x, 5,simdate) for x in Southern]
+        # Combine multiple mixed scenarios if required
+        sim_scenarios = [sim_scenarios_1, sim_scenarios_2, sim_scenarios_3]
 
-        df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
-        df['ems'] = ems
+    for num, exp_names in enumerate(sim_scenarios):
 
-        fig_exp = plt.figure(figsize=(8, 8))
-        fig_exp.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
-        axes_exp = [fig_exp.add_subplot(3, 2, x + 1) for x in range(len(channels))]
+        if mixed_scenarios == True :
+            exp_names = exp_names[:3] + exp_names[9:] + exp_names[3:9]  ## workaround to get right order 1-11
+            plot_name = 'set' + str(num) + '_test'
+        elif mixed_scenarios == False :
+            exp_names = sim_scenarios
 
-        plot_on_fig(df, channels, axes_exp, color=palette[d], ems=ems)
-        fig_exp.savefig(os.path.join(plotdir, '%s_EMS%d.png' % (plot_name, ems)))
-        fig_exp.savefig(os.path.join(plotdir, '%s_EMS%d.pdf' % (plot_name, ems)), format='PDF')
-        plt.close(fig_exp)
+        fig = plt.figure(figsize=(8, 8))
+        fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
+        palette = sns.color_palette('coolwarm', len(exp_names))
+        axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
-        adf = pd.concat([adf, df[channels + ['date', 'ems']]])
+        adf = pd.DataFrame()
+        days_to_plot = plot_last_day - plot_first_day
+        last = {x: [0] * (days_to_plot.days+1) for x in channels}
+        for d, exp_name in enumerate(exp_names) :
+            sim_output_path = os.path.join(sim_path, exp_name)
+            ems = int(exp_name.split('_')[2])
+            df = load_sim_data(exp_name)
 
-        for c, channel in enumerate(channels) :
-            ax = axes[c]
-            mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+            df['ventilators'] = df['critical']*0.8
+            first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
-            ax.fill_between(mdf['date'].values, last[channel],
-                            [x + y for x, y in zip(last[channel], mdf['CI_50'].values)],
-                            color=palette[d], label='EMS %d' % ems,
-                            linewidth=0)
-            last[channel] = [x + y for x, y in zip(last[channel], mdf['CI_50'].values)]
+            df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+            df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
+            df['ems'] = ems
 
-            if d == 0 :
-                ax.set_title(' '.join(channel.split('_')), y=0.85)
-                formatter = mdates.DateFormatter("%m-%d")
-                ax.xaxis.set_major_formatter(formatter)
-                ax.xaxis.set_major_locator(mdates.MonthLocator())
+            fig_exp = plt.figure(figsize=(8, 8))
+            fig_exp.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
+            axes_exp = [fig_exp.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
-    axes[-1].legend()
-    fig.savefig(os.path.join(plotdir, '%s_all.png' % plot_name))
-    fig.savefig(os.path.join(plotdir, '%s_all.pdf' % plot_name), format='PDF')
+            plot_on_fig(df, channels, axes_exp, color=palette[d], ems=ems)
+            fig_exp.savefig(os.path.join(plotdir, '%s_EMS%d.png' % (plot_name, ems)))
+            fig_exp.savefig(os.path.join(plotdir, '%s_EMS%d.pdf' % (plot_name, ems)), format='PDF')
+            plt.close(fig_exp)
 
-    plt.show()
+            adf = pd.concat([adf, df[channels + ['date', 'ems']]])
+
+            for c, channel in enumerate(channels) :
+                ax = axes[c]
+                mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+
+                ax.fill_between(mdf['date'].values, last[channel],
+                                [x + y for x, y in zip(last[channel], mdf['CI_50'].values)],
+                                color=palette[d], label='EMS %d' % ems,
+                                linewidth=0)
+                last[channel] = [x + y for x, y in zip(last[channel], mdf['CI_50'].values)]
+
+                if d == 0 :
+                    ax.set_title(' '.join(channel.split('_')), y=0.85)
+                    formatter = mdates.DateFormatter("%m-%d")
+                    ax.xaxis.set_major_formatter(formatter)
+                    ax.xaxis.set_major_locator(mdates.MonthLocator())
+
+        axes[-1].legend()
+        fig.savefig(os.path.join(plotdir, '%s_all.png' % plot_name))
+        fig.savefig(os.path.join(plotdir, '%s_all.pdf' % plot_name), format='PDF')
+
+        plt.show()
 
