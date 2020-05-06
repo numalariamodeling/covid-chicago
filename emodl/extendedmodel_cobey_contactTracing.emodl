@@ -9,6 +9,7 @@
 (species As @initialAs@)
 (species As_det1 0)
 (species P 0)
+(species P_det 0)
 (species Sym 0)
 (species Sym_det2 0)
 (species Sys 0)
@@ -37,6 +38,7 @@
 (observe susceptible S)
 (observe exposed E)
 (func asymptomatic  (+ As As_det1))
+(func presymptomatic  (+ P P_det))
 (func symptomatic_mild  (+ Sym Sym_det2))
 (func symptomatic_severe  (+ Sys Sys_det3))
 (func hospitalized  (+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
@@ -45,7 +47,7 @@
 (func recovered (+ RAs RSym RH1 RC2 RAs_det1 RSym_det2 RH1_det3 RC2_det3))
 
 (observe asymptomatic asymptomatic)
-(observe presymptomatic P)
+(observe presymptomatic presymptomatic)
 (observe symptomatic_mild symptomatic_mild)
 (observe symptomatic_severe symptomatic_severe)
 (observe hospitalized hospitalized)
@@ -65,10 +67,10 @@
 (observe crit_det_cumul (+ C2_det3 C3_det3 D3_det3 RC2_det3))
 (observe crit_det (+ C2_det3 C3_det3))
 (observe death_det_cumul D3_det3 )
-(observe detected_cumul (+ (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
+(observe detected_cumul (+ (+ As_det1 P_det Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
 
 (func infectious_undet (+ As P Sym Sys H1 H2 H3 C2 C3))
-(func infectious_det (+ As_det1 Sym_det2 Sys_det3))
+(func infectious_det (+ As_det1 P_det Sym_det2 Sys_det3))
 
 (observe detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (observe infected (+ infectious_det infectious_undet H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
@@ -91,10 +93,13 @@
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 
 (param N (+ @speciesS@ @initialAs@))
+(param d_P @d_P@)
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
 (param Ki @Ki@)
+(param d_As_ct1 @d_As_ct1@)
+(param d_Sym_ct1 @d_Sym_ct1@)						   
 
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
@@ -119,16 +124,28 @@
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 																   
+
+
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
+(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+
 
 (reaction exposure   (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))
 (reaction infection_asymp_undet  (E)   (As)   (* Kl E (- 1 d_As)))
 (reaction infection_asymp_det  (E)   (As_det1)   (* Kl E d_As))
-(reaction presymptomatic (E)   (P)   (* Ks E))
+
+(reaction presymptomatic (E)   (P)   (* Ks E (- 1 d_P)))
+(reaction presymptomatic (E)   (P_det)   (* Ks E d_P))
+
 (reaction mild_symptomatic_undet (P)  (Sym) (* Ksym P (- 1 d_Sym)))
 (reaction mild_symptomatic_det (P)  (Sym_det2) (* Ksym P d_Sym))
 (reaction severe_symptomatic_undet (P)  (Sys)  (* Ksys P (- 1 d_Sys)))
 (reaction severe_symptomatic_det (P)  (Sys_det3)  (* Ksys P d_Sys))
+
+(reaction mild_symptomatic_det (P_det)  (Sym_det2) (* Ksym P_det))
+(reaction severe_symptomatic_det (P_det)  (Sys_det3)  (* Ksys P_det ))
+
 
 (reaction hospitalization_1   (Sys)   (H1)   (* Kh1 Sys))
 (reaction hospitalization_2   (Sys)   (H2)   (* Kh2 Sys))
