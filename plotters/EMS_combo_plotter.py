@@ -57,7 +57,7 @@ def plot_on_fig(df, channels, axes, color, ems) :
 
 if __name__ == '__main__' :
 
-    mixed_scenarios = False
+    mixed_scenarios = True
     simdate = "20200504"
     plot_first_day = date(2020, 3, 1)
     plot_last_day = date(2020, 8, 1)
@@ -72,8 +72,8 @@ if __name__ == '__main__' :
         sim_scenarios = sim_scenarios[2:] + sim_scenarios[:2]   ## workaround to get right order 1-11
 
     if mixed_scenarios == True :
-        sim_path = os.path.join(wdir, 'simulation_output', simdate + 'mixed_reopening')
-        plotdir = os.path.join(sim_path, 'plots')
+        sim_path = os.path.join(wdir, 'simulation_output', simdate + '_mixed_reopening', 'simulations')
+        plotdir = os.path.join(wdir, 'simulation_output', simdate + '_mixed_reopening', 'plots')
 
         Northwest, Northeast, Central, Southern = loadEMSregions()
         exp_suffix = ['reopening_May15', 'reopening_June1', 'reopening_June15', 'reopening_July1', 'scenario3','reopening_gradual']
@@ -102,7 +102,7 @@ if __name__ == '__main__' :
         for d, exp_name in enumerate(exp_names) :
             sim_output_path = os.path.join(sim_path, exp_name)
             ems = int(exp_name.split('_')[2])
-            df = load_sim_data(exp_name)
+            df = load_sim_data(exp_name, input_sim_output_path = sim_output_path)
 
             df['ventilators'] = df['critical']*0.8
             first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
