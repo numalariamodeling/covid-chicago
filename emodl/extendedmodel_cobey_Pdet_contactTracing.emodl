@@ -46,16 +46,15 @@
 
 (func asymptomatic  (+ As As_det1))
 (func presymptomatic  (+ P P_det))
-(func symptomatic_mild  (+ Sym Sym_det2a Sym_det2b))
-(func symptomatic_severe  (+ Sys Sys_det3a Sys_det3b))
+(func symptomatic_mild  (+ Sym Sym_preD Sym_det2a Sym_det2b))
+(func symptomatic_severe  (+ Sys Sys_preD Sys_det3a Sys_det3b))
 (func hospitalized  (+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
 (func critical (+ C2 C3 C2_det3 C3_det3))
 (func deaths (+ D3 D3_det3))
 (func recovered (+ RAs RSym RH1 RC2 RAs_det1 RSym_det2 RH1_det3 RC2_det3))
-(func population (+ S Q E Sym As As_det1  P P_det Sys Sys_det3a Sys_det3b H1 H2 H3 H1_det3 H2_det3 H3_det3 C2 C3 C2_det3 C3_det3 D3 D3_det3 RAs RSym RH1 RC2 RAs_det1 RSym_det2 RH1_det3 RC2_det3))
+(func population (+ S Q E As As_det1  P P_det Sym Sym_preD Sym_det2a Sym_det2b Sys Sys_preD Sys_det3a Sys_det3b H1 H2 H3 H1_det3 H2_det3 H3_det3 C2 C3 C2_det3 C3_det3 D3 D3_det3 RAs RSym RH1 RC2 RAs_det1 RSym_det2 RH1_det3 RC2_det3))
 
 (observe population population )
-
 
 (observe asymptomatic asymptomatic)
 (observe presymptomatic presymptomatic)
@@ -157,8 +156,8 @@
 (time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
 (time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
 
-(time-event contact_tracing_start @contact_tracing_start_1@ ((S (* S (- 1 d_SQ))) (Q (* S d_SQ))))
-(time-event contact_tracing_end @contact_tracing_stop1@ ((S (+ S Q)) (Q 0)))
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S (* S (- 1 d_SQ))) (Q (* S d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S (+ S Q)) (Q 0)))
 
 
 (reaction exposure   (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))
