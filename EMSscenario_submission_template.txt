@@ -27,50 +27,50 @@ python runScenarios.py --running_location Local --region EMS_10 --experiment_con
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_noSIP.emodl --name_suffix "scenario2"
 
 ##### Scenario 3 - constant mitigation
-python runScenarios.py --running_location NUCLUSTER --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_5 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_6 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_7 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_8 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_9 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_10 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scenario3"
-python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_5 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_6 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_7 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_8 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_9 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_10 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "scenario3"
 
-##### Scenario 4 - contact tracing (testing in process)
-python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_5 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_6 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_7 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_8 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_9 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl  --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_10 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl --name_suffix "contact_tracing"
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_Pdet_contactTracing.emodl --name_suffix "contact_tracing"
+##### Scenario x - contact tracing (without considering testing delay, and assumes by deafault stop in SIP - check yaml file )
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_5 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_6 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_7 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_8 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_9 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl  --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_10 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl --name_suffix "contact_tracing"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl --name_suffix "contact_tracing"
 
-##### Scenario 5 - gradual reopening -v1  (testing in process)
-python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_5 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_6 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_7 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_8 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_9 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_10 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl --name_suffix "reopening"
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl --name_suffix "reopening"
-
-
-python runScenarios.py --running_location NUCLUSTER --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_1.emodl  --name_suffix "reopening_May15"
-python runScenarios.py --running_location NUCLUSTER --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_2.emodl  --name_suffix "reopening_June1"
-python runScenarios.py --running_location NUCLUSTER --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_3.emodl  --name_suffix "reopening_June15"
-python runScenarios.py --running_location NUCLUSTER --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_4.emodl  --name_suffix "reopening_July1"
+##### Scenario x - gradual reopening 
 python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_5 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_6 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_7 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_8 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_9 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl  --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_10 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl --name_suffix "reopening_gradual"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_gradual_reopening.emodl --name_suffix "reopening_gradual"
+
+##### Scenario x - mixed reopening - example for EMS 1 (need changing stop date in yaml file !!!! ) 
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_1.emodl  --name_suffix "reopening_May15"
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_2.emodl  --name_suffix "reopening_June1"
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_3.emodl  --name_suffix "reopening_June15"
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop_4.emodl  --name_suffix "reopening_July1"
+
 
 ### For fitting
 python runScenarios.py --running_location Local --region EMS_1 --experiment_config extendedcobey_forFitting.yaml --emodl_template extendedmodel_cobey_forFitting.emodl  --name_suffix "fit_test1"
@@ -90,6 +90,13 @@ python runScenarios.py --running_location Local --region EMS_11 --experiment_con
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200421.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200421_v2"
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200428_v2"
 
+
+#### Emodl comparison (i.e. for testDelay and contact tracing)
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "base"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_noSIP.emodl --name_suffix "base_SIPstop"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay_contactTracing.emodl --name_suffix "testDelay_contactTracing"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl --name_suffix "contactTracing"
 
 ### All EMS model (non spatial, grouped by EMS - testing in process)
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_homogeneous.emodl --cfg_template model_B.cfg --name_suffix "_EMSall_testB"

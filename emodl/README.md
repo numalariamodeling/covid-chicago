@@ -28,10 +28,20 @@ Same file as the master file including intervention stop
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
 
 ### extendedmodel_cobey_noSIP.emodl
-base without intervention 
+- base without intervention 
 
 ### extendedmodel_cobey_changeDetection.emodl
-base with additional change in detection rates 
+- base with additional change in detection rates 
+
+### extendedmodel_cobey_contactTracing.emodl
+- base with intervention stop accompanied with contact tracing 
+
+### extendedmodel_cobey_testDelay.emodl
+- base with delay in testing 
+
+### extendedmodel_cobey_testDelay_contactTracing.emodl
+- base with intervention stop accompanied with contact tracing and delay in testing 
+
 
 ## Age grp 4 
 - corresponding yaml for all age8 grp emodls: age4grp_experiment.yaml
