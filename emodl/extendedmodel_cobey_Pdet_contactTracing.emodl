@@ -79,7 +79,7 @@
 (observe death_det_cumul D3_det3 )
 (observe detected_cumul (+ (+ As_det1 P_det Sym_det2a Sym_det2b Sys_det3a Sys_det3b H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
 
-(func infectious_undet (+ As P Sym Sys H1 H2 H3 C2 C3))
+(func infectious_undet (+ As P Sym Sym_preD Sys Sys_preD H1 H2 H3 C2 C3))
 (func infectious_det (+ As_det1 P_det Sym_det2a Sym_det2b Sys_det3a Sys_det3b))
 
 (observe detected (+ As_det1 Sym_det2a Sym_det2b Sys_det3a Sys_det3b H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
