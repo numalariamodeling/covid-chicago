@@ -143,10 +143,12 @@
 (param Ki_red1 (* Ki @social_multiplier_1@))
 (param Ki_red2 (* Ki @social_multiplier_2@))
 (param Ki_red3 (* Ki @social_multiplier_3@))
+(param Ki_back (* Ki @backtonormal_multiplier@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
