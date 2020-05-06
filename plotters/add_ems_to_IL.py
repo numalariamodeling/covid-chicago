@@ -15,7 +15,13 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-scen_dir = os.path.join(projectpath, 'NU_civis_outputs', '20200429')
+mixed_scenarios = True
+simdate = '20200506'
+
+scen_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate)
+if mixed_scenarios == True :
+    scen_dir = os.path.join(wdir, 'simulation_output', simdate + '_mixed_reopening')
+
 csv_dir = os.path.join(scen_dir, 'csv')
 plot_dir = os.path.join(scen_dir, 'plots')
 
@@ -25,9 +31,9 @@ if __name__ == '__main__' :
         "infected_median": "Number of Covid-19 infections",
         "infected_95CI_lower": "Lower error bound of covid-19 infections",
         "infected_95CI_upper": "Upper error bound of covid-19 infections",
-        "symptomatic_median": "Number of Covid-19 symptomatic",
-        "symptomatic_95CI_lower": "Lower error bound of covid-19 symptomatic",
-        "symptomatic_95CI_upper": "Upper error bound of covid-19 symptomatic",
+        "new_symptomatic_median": "Number of Covid-19 symptomatic",
+        "new_symptomatic_95CI_lower": "Lower error bound of covid-19 symptomatic",
+        "new_symptomatic_95CI_upper": "Upper error bound of covid-19 symptomatic",
         "new_deaths_median": "Number of covid-19 deaths",
         "new_deaths_95CI_lower": "Lower error bound of covid-19 deaths",
         "new_deaths_95CI_upper": "Upper error bound of covid-19 deaths",

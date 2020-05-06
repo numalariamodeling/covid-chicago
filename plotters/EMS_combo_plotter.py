@@ -58,7 +58,7 @@ def plot_on_fig(df, channels, axes, color, ems) :
 if __name__ == '__main__' :
 
     mixed_scenarios = True
-    simdate = "20200504"
+    simdate = "20200506"
     plot_first_day = date(2020, 3, 1)
     plot_last_day = date(2020, 8, 1)
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
