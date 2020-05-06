@@ -213,8 +213,8 @@
 (reaction critical_3_det2   (H3_det3)   (C3_det3)   (* Kc H3_det3))
 (reaction death_det3   (C3_det3)   (D3_det3)   (* Km C3_det3))
 
-(reaction recovery_Sym_det2   (Sym_det2a)   (RSym_det2)   (* Kr_m  Sym_det2a))
-(reaction recovery_Sym_det2b   (Sym_det2b)   (RSym_det2)   (* Kr_m_D  Sym_det2b))
+(reaction recovery_Sym_det2   (Sym_det2a)   (RSym_det2)   (* Kr_m_D  Sym_det2a))
+(reaction recovery_Sym_det2b   (Sym_det2b)   (RSym_det2)   (* Kr_m  Sym_det2b))
 
 (reaction recovery_H1_det3   (H1_det3)   (RH1_det3)   (* Kr_h H1_det3))
 (reaction recovery_C2_det3   (C2_det3)   (RC2_det3)   (* Kr_c C2_det3))
