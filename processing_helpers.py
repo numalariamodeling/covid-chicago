@@ -6,18 +6,6 @@ from load_paths import load_box_paths
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 
-def loadEMSregions() :
-    Northwest = ['EMS_1', 'EMS_2']
-    Northeast = ['EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
-    Central = ['EMS_3', 'EMS_6']
-    Southern = ['EMS_4', 'EMS_5']
-    return Northwest, Northeast, Central, Southern
-
-def get_exp_name(x, i, simdate , exp_suffix = None):
-    if exp_suffix == None :
-        exp_suffix = ['reopening_May15', 'reopening_June1', 'reopening_June15', 'reopening_July1', 'scenario3', 'reopening_gradual']
-    return (simdate + "_" + x + "_" + exp_suffix[i])
-
 def count_new(df, curr_ch) :
 
     ch_list = list(df[curr_ch].values)
