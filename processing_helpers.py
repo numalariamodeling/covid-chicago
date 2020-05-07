@@ -15,7 +15,7 @@ def loadEMSregions() :
 
 def get_exp_name(x, i, simdate , exp_suffix = None):
     if exp_suffix == None :
-        exp_suffix = ['reopening_May15', 'reopening_June1', 'reopening_June15', 'reopening_July1', 'scenario3', 'reopening_gradual']
+        exp_suffix = ['reopening_May15', 'reopening_June1', 'reopening_June15', 'reopening_July1', 'scenario3','reopening_gradual', 'scenario2', 'reopening_gradual_ct80redinfect0', 'reopening_gradual_ct80', 'reopening_gradual_ct30']
     return (simdate + "_" + x + "_" + exp_suffix[i])
 
 def count_new(df, curr_ch) :

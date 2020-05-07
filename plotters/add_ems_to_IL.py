@@ -49,12 +49,12 @@ if __name__ == '__main__' :
     }
     col_names = {value: key for key, value in col_names.items()}
     channels = ['infected', 'new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
-    plot_first_day = date(2020, 3, 13)
-    plot_last_day = date(2020, 7, 31)
+    plot_first_day = date(2020, 3, 1)
+    plot_last_day = date(2020, 10, 1)
 
     ems_fnames = [x for x in os.listdir(csv_dir) if 'ems' in x]
     for fname in ems_fnames :
-        il_fname = fname.replace('ems', 'illinois')
+        il_fname = fname.replace('ems', 'illinois_v1')
         adf = pd.read_csv(os.path.join(csv_dir, fname))
         adf['Date'] = pd.to_datetime(adf['Date'])
         adf = adf[(adf['Date'] >= plot_first_day) & (adf['Date'] <= plot_last_day)]
@@ -62,8 +62,8 @@ if __name__ == '__main__' :
         df = adf.groupby('Date').agg(np.sum).reset_index()
         del df['ems']
 
-        df.to_csv(os.path.join(csv_dir, il_fname), index=False)
-        adf.to_csv(os.path.join(csv_dir, fname), index=False)
+        #df.to_csv(os.path.join(csv_dir, il_fname), index=False)
+        #adf.to_csv(os.path.join(csv_dir, fname), index=False)
 
         df = df.rename(columns=col_names)
 
@@ -78,6 +78,16 @@ if __name__ == '__main__' :
             ax.fill_between(df['Date'].values, df['%s_95CI_lower' % channel],
                             df['%s_95CI_upper' % channel],
                             color=palette[c], linewidth=0, alpha=0.2)
+
+            lower_bound = 0
+            if channel == "infected": upper_bound = 5500000
+            if channel == "new_deaths": upper_bound = 10000
+            if channel == "critical": upper_bound = 110000
+            if channel == "new_symptomatic": upper_bound = 460000
+            if channel == "hospitalized": upper_bound = 150000
+            if channel == "ventilators": upper_bound = 86000
+            plt.ylim([lower_bound, upper_bound])
+
             ax.set_title(channel, y=0.85)
             formatter = mdates.DateFormatter("%m-%d")
             ax.xaxis.set_major_formatter(formatter)
@@ -85,5 +95,7 @@ if __name__ == '__main__' :
 
         plt.savefig(os.path.join(plot_dir, il_fname.replace('csv', 'pdf')), format='PDF')
         plt.close(fig)
+
+
 
 
