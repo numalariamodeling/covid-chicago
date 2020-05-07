@@ -9,8 +9,8 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
+from scenario_sets import *
 from data_comparison import load_sim_data
-
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -60,7 +60,7 @@ if __name__ == '__main__' :
     mixed_scenarios = True
     simdate = "20200506"
     plot_first_day = date(2020, 3, 1)
-    plot_last_day = date(2020, 8, 1)
+    plot_last_day = date(2020, 10, 1)
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     if mixed_scenarios == False :
@@ -74,24 +74,18 @@ if __name__ == '__main__' :
     if mixed_scenarios == True :
         sim_path = os.path.join(wdir, 'simulation_output', simdate + '_mixed_reopening', 'simulations')
         plotdir = os.path.join(wdir, 'simulation_output', simdate + '_mixed_reopening', 'plots')
-
-        Northwest, Northeast, Central, Southern = loadEMSregions()
-        exp_suffix = ['reopening_May15', 'reopening_June1', 'reopening_June15', 'reopening_July1', 'scenario3','reopening_gradual']
-        sim_scenarios_1 = [get_exp_name(x, 0,simdate) for x in Northwest] + [get_exp_name(x, 2,simdate) for x in Central] + [get_exp_name(x, 1,simdate) for  x in Northeast] + [get_exp_name(x, 3,simdate) for x in Southern]
-        sim_scenarios_2 = [get_exp_name(x, 5,simdate) for x in Northwest] + [get_exp_name(x, 5,simdate) for x in Central] + [get_exp_name(x, 5,simdate) for x in Northeast] + [get_exp_name(x, 5,simdate) for x in Southern]
-        sim_scenarios_3 = [get_exp_name(x, 5,simdate) for x in Northwest] + [get_exp_name(x, 4,simdate) for x in Central] + [get_exp_name(x, 5,simdate) for  x in   Northeast] + [ get_exp_name(x, 5,simdate) for x in Southern]
-        # Combine multiple mixed scenarios if required
-        sim_scenarios = [sim_scenarios_1, sim_scenarios_2, sim_scenarios_3]
+        sim_scenarios, sim_label, intervention_label = def_scenario_set(simdate)
 
     for num, exp_names in enumerate(sim_scenarios):
 
         if mixed_scenarios == True :
-            exp_names = exp_names[:3] + exp_names[9:] + exp_names[3:9]  ## workaround to get right order 1-11
-            plot_name = 'set' + str(num) + '_test'
+            exp_names = exp_names[:2] + [exp_names[7]] + exp_names[9:11] + [exp_names[8]] + exp_names[2:7] ## workaround to get right order 1-11
+            plot_name = 'set' + str(num+1) + '_test'
+
         elif mixed_scenarios == False :
             exp_names = sim_scenarios
 
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=(10, 8))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
         palette = sns.color_palette('coolwarm', len(exp_names))
         axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
