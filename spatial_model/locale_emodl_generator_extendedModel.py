@@ -159,7 +159,8 @@ def write_params():
 (param Km (/ 1 time_to_death))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
 """
 
     params_str = params_str.replace("  ", " ")
