@@ -52,9 +52,17 @@ else:
     output_list = [col for col in df if col.startswith('output')]
 
 
-
-# Helper Functions
+# Setup 
 #******************************************************************************************
+
+# Week Filter Setup
+# Generate datetime to get weeks for slider
+df['date']= pd.to_datetime(df['date'])
+# Get week of date
+df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
+
+dateList = sorted(df['week'].unique())
+
 
 # RangeSlider Factory
 def generateRangeSlider (param, numMarks):
@@ -103,7 +111,9 @@ def generateRangeSlider (param, numMarks):
     )
 
 
+
 # Main App Layout
+#############################################################################
 app.layout = html.Div(
     children = [
         # Header
@@ -131,6 +141,25 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
+                        # Week Selector
+                        # html.Div(
+                        #     [
+                        #         html.P(
+                        #             "Filter Graphs by Week:",
+                        #             className="control_label",
+                        #         ),
+                        #         dcc.RangeSlider(
+                        #             id="weekSlider",
+                        #             min=dateList[0],
+                        #             max=dateList[-1],
+                        #             value=[dateList[0], dateList[0]],
+                        #             marks= {v: np.datetime_as_string(v, unit='D') for v in dateList},
+                        #             allowCross=False,
+                        #             className="dcc_control",
+                        #         ),
+                        #     ], 
+
+                        # ),
                         # Sliders - Generate 3x3 Slider matrix
                         html.Div(
                             [
@@ -249,10 +278,9 @@ app.layout = html.Div(
     ],
 
     [
-        # TODO: Make this more formulaic
-        # The number of params are handled by dff
         Input("emsDropdown", "value"),
-        *[Input(params_list[i] + "Slider", "value") for i in range(len(params_list))]
+        # Unpack the elements of the list using *
+        *[Input(param + "Slider", "value") for param in params_list]
     ],
 )
 def generateOutput(emsValue, *paramValues):
@@ -261,7 +289,7 @@ def generateOutput(emsValue, *paramValues):
     colors = {
         'sf': '#1798c1',
         'green': '#416165', # Color for plots & text
-        'beige': '#F7F7FF', #Color for gridlines
+        'beige': '#F7F7FF', #Color for gridlinesgit 
     }
 
     def makeChart (outputVar):
@@ -324,7 +352,7 @@ if __name__ == '__main__':
 
 
 # TODOS
-# Update Title & Subtitle
+# ----- DONE Update Title & Subtitle
 # Add note for refresh timing
 # Add ability to choose multiple EMS groups (checkbox or multi-select dropdown)
 # Add toggle for all traces or only median / percentiles
