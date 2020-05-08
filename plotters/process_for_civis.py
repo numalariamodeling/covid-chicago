@@ -49,8 +49,9 @@ if __name__ == '__main__' :
         df = load_sim_data(exp_name, wdir)
         first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
-        channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+        channels = ['infected','new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
         df['ventilators'] = df['critical']*0.8
+        df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
 
         fig = plt.figure(figsize=(12,12))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.07, hspace=0.15)

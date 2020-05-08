@@ -211,6 +211,7 @@ def write_params():
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
  """
     # params_str = params_str.replace("  ", " ")
 
@@ -288,7 +289,14 @@ def write_ageAll(grpList):
     obs_ageAll_str = obs_ageAll_str + "\n(observe death_det_cumul_ageAll (+ " + repeat_string_by_grp('death_det_cumul_',
                                                                                                      grpList) + "))"
 
-    return (obs_ageAll_str)
+    ### add one function required for homogeneous model - assuming all can infect all (across age groups)
+    func_str = ""
+    func_str = func_str + "\n(func infectious_undet_ageAll (+ " + repeat_string_by_grp('infectious_undet_', grpList) + "))"
+    func_str = func_str + "\n(func infectious_det_ageAll (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+
+    out_str = func_str + obs_ageAll_str
+
+    return (out_str)
 
 
 ## homogeneous reactions for testing
@@ -446,12 +454,9 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 # if __name__ == '__main__':
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-generate_extended_emodl(grpList=age_grp4,
-                        file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'),
-                        homogeneous=True)
-
-age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
+generate_extended_emodl(grpList=age_grp4,file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'), homogeneous=True)
 
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
 generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
+generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_homogeneous.emodl'), homogeneous=True)
