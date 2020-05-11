@@ -1,4 +1,0 @@
-python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_changeDetection.emodl --name_suffix "RR_fitting_round_4"
-python runScenarios.py --running_location Local --region EMS_6 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_changeDetection.emodl --name_suffix "RR_fitting_round_4"
-python runScenarios.py --running_location Local --region EMS_7 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_changeDetection.emodl --name_suffix "RR_fitting_round_4"
-python runScenarios.py --running_location Local --region EMS_9 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_changeDetection.emodl --name_suffix "RR_fitting_round_4"

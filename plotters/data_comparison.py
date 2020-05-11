@@ -18,14 +18,13 @@ datetoday = date(today.year, today.month, today.day)
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-def load_sim_data(exp_name, input_wdir=None, input_sim_output_path =None) :
+def load_sim_data(exp_name, input_wdir=None) :
     input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
+    sim_output_path = os.path.join(input_wdir,'simulation_output', exp_name)
+    scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     if 'Ki' not in df.columns.values :
-        scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
 
     #if 'ageAll' in df.columns.values:
@@ -34,6 +33,34 @@ def load_sim_data(exp_name, input_wdir=None, input_sim_output_path =None) :
     df = calculate_incidence(df)
 
     return df
+
+
+def calculate_incidence(adf, output_filename=None) :
+    #print(adf)
+    inc_df = pd.DataFrame()
+    for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
+
+        sdf = pd.DataFrame( { 'time' : df['time'],
+                              'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
+                              'new_asymptomatic' : count_new(df, 'asymp_cumul'),
+                              'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
+                              # 'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
+                              'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
+                              'new_hospitalized' : count_new(df, 'hosp_cumul'),
+                              'new_detected' : count_new(df, 'detected_cumul'),
+                              'new_critical' : count_new(df, 'crit_cumul'),
+                              'new_detected_critical' : count_new(df, 'crit_det_cumul'),
+                              'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                              'new_deaths' : count_new(df, 'deaths')
+                              })
+        sdf['run_num'] = run
+        sdf['sample_num'] = samp
+        sdf['scen_num'] = scen
+        inc_df = pd.concat([inc_df, sdf])
+    adf = pd.merge(left=adf, right=inc_df, on=['run_num','sample_num', 'scen_num', 'time'])
+    if output_filename :
+        adf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
+    return adf
 
 
 def compare_NMH(exp_name) :
@@ -223,7 +250,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
 
 if __name__ == '__main__' :
 
-    stem = "age"
+    stem = "RR_17"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names :
