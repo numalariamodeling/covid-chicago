@@ -28,7 +28,6 @@ def load_sim_data(exp_name, input_wdir=None, input_sim_output_path =None) :
         scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
 
-    df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
     #if 'ageAll' in df.columns.values:
     #    df.columns = df.columns.str.replace('_ageAll', '')
     df.columns = df.columns.str.replace('_ageAll', '')
