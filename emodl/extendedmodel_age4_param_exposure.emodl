@@ -409,6 +409,7 @@
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
  
 (param fraction_severe_age0to19 @fraction_severe_age0to19@)
 (param Ksysage0to19 (* fraction_severe_age0to19 (/ 1 time_to_symptoms)))
@@ -549,16 +550,10 @@
 (param C4_1 (/ C41 norm_factor))
 
   
-;(reaction exposure_from_detected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (+ (* C1_1 (/ infectious_det_age0to19 N_age0to19)) (* C1_2 (/ infectious_det_age20to39 N_age20to39)) (* C1_3  (/ infectious_det_age40to59 N_age40to59)) (* C1_4 (/ infectious_det_age60to100 N_age60to100)) reduced_inf_of_det_cases )))
-;(reaction exposure_from_detected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (+ (* C2_1 (/ infectious_det_age0to19 N_age0to19)) (* C2_2 (/ infectious_det_age20to39 N_age20to39)) (* C2_3 (/  infectious_det_age40to59 N_age40to59)) (* C2_4  (/ infectious_det_age60to100 N_age60to100)) reduced_inf_of_det_cases )))
-;(reaction exposure_from_detected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 (+ (* C3_1 (/ infectious_det_age0to19 N_age0to19)) (* C3_2 (/ infectious_det_age20to39 N_age20to39)) (* C3_3 (/  infectious_det_age40to59 N_age40to59)) (* C3_4  (/ infectious_det_age60to100 N_age60to100)) reduced_inf_of_det_cases )))
-;(reaction exposure_from_detected_age60to100 (S_age60to100 ) (E_age60to100) (* Ki S_age60to100 (+ (* C4_1 (/ infectious_det_age0to19 N_age0to19)) (* C4_2 (/ infectious_det_age20to39 N_age20to39)) (* C4_3 (/ infectious_det_age40to59 N_age40to59)) (* C4_4  (/ infectious_det_age60to100 N_age60to100)) reduced_inf_of_det_cases )))
-
-(reaction exposure_from_undetected_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (+ (* C1_1 (/ infectious_undet_age0to19 N_age0to19)) (* C1_2 (/ infectious_undet_age20to39 N_age20to39)) (* C1_3  (/ infectious_undet_age40to59 N_age40to59)) (* C1_4 (/ infectious_undet_age60to100 N_age60to100)))))
-(reaction exposure_from_undetected_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (+ (* C2_1 (/ infectious_undet_age0to19 N_age0to19)) (* C2_2 (/ infectious_undet_age20to39 N_age20to39)) (* C2_3 (/  infectious_undet_age40to59 N_age40to59)) (* C2_4  (/ infectious_undet_age60to100 N_age60to100)) )))
-(reaction exposure_from_undetected_age40to59 (S_age40to59 ) (E_age40to59 ) (* Ki S_age40to59 (+ (* C3_1 (/ infectious_undet_age0to19 N_age0to19)) (* C3_2 (/ infectious_undet_age20to39 N_age20to39)) (* C3_3 (/  infectious_undet_age40to59 N_age40to59)) (* C3_4  (/ infectious_undet_age60to100 N_age60to100)) )))
-(reaction exposure_from_undetected_age60to100 (S_age60to100 ) (E_age60to100 ) (* Ki S_age60to100 (+ (* C4_1 (/ infectious_undet_age0to19 N_age0to19)) (* C4_2 (/ infectious_undet_age20to39 N_age20to39)) (* C4_3 (/ infectious_undet_age40to59 N_age40to59)) (* C4_4  (/ infectious_undet_age60to100 N_age60to100)) )))
-
+(reaction exposure_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (+ (* C1_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C1_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C1_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C1_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
+(reaction exposure_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (+ (* C2_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C2_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C2_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C2_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
+(reaction exposure_age40to59 (S_age40to59) (E_age40to59) (* Ki S_age40to59 (+ (* C3_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C3_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C3_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C3_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
+(reaction exposure_age60to100 (S_age60to100) (E_age60to100) (* Ki S_age60to100 (+ (* C4_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C4_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C4_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C4_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
 
 (reaction infection_asymp_undet_age0to19  (E_age0to19)   (As_age0to19)   (* Klage0to19 E_age0to19 (- 1 d_As)))
 (reaction infection_asymp_det_age0to19  (E_age0to19)   (As_det1_age0to19)   (* Klage0to19 E_age0to19 d_As))
