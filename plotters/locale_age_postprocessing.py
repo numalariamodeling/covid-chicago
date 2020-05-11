@@ -77,9 +77,11 @@ if __name__ == '__main__' :
     plot_last_day = date(2020, 8, 1)
     df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
 
-    channels = ['infected', 'new_detected', 'new_deaths',
-                'asymptomatic', 'symptomatic_mild', 'symptomatic_severe',
-                'hospitalized', 'critical', 'ventilators']
+    #channels = ['infected', 'new_detected', 'new_deaths',
+    #           'asymptomatic', 'symptomatic_mild', 'symptomatic_severe',
+    #           'hospitalized', 'critical', 'ventilators']
+    # Same channels as in process for civis
+    channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
