@@ -6,5 +6,6 @@ venv
 *.ipynb
 *.csv
 data/*
+.idea/
 
 _temp/
