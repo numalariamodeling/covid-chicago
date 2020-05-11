@@ -20,7 +20,7 @@ if (user_name == "mrung") {
 ### add population 
 
 agegrps <- c("grp4", "grp8")
-contactlocations <- c("locations_all", "home", "school", "work")
+contactlocations <- c("locations_all", "home", "school", "work", "locations_other")
 
 
 for (agegrp in agegrps) {
@@ -137,7 +137,7 @@ for (agegrp in agegrps) {
     cat("# Age groups: ", age_groups)
     cat("C: \nmatrix:  # Unnormalized contact matrix ")
     cat(paste0("\n- [", contact_matrix_adj$pintcol, "]"))
-
+    sink()
     
   }
 }
