@@ -55,7 +55,7 @@ else:
 # Setup 
 #******************************************************************************************
 
-# Week Filter Setup
+# Filter out timeframes for graphs
 # Generate datetime to get weeks for slider
 df['date']= pd.to_datetime(df['date'])
 # Get week of date
@@ -64,13 +64,27 @@ df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
 dateList = sorted(df['week'].unique())
 
 
-# RangeSlider Factory
-def generateRangeSlider (param, numMarks):
-    """
-    Given a parameter from the dataframe, generates the divs for range sliders
+# RangeSlider values need to be ints - convert to unix timestamp
+def dtToUnix (dt):
+    ''' Convert datetime to Unix Milliseconds 
+        https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#from-timestamps-to-epoch
+    '''
+    unixTime = (dt - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')
+    return unixTime
 
-    Returns the div + range slider
-    """
+# Convert unix Time back to datetime
+def unixToDt (unixTime):
+    ''' Convert Unix milliseconds to datetime '''  
+    return pd.to_datetime(unixTime, unit='s')
+
+
+
+
+# Parameter Filtering -> RangeSlider Factory
+def generateRangeSlider (param, numMarks):
+    ''' Given a parameter from the dataframe, generates the divs for range sliders
+        Returns the div + range slider
+    '''
 
     def markFormatter (val):
             if val < 1:
@@ -132,6 +146,10 @@ app.layout = html.Div(
                     [   # EMS Selector
                         html.Div(
                             [
+                                html.P(
+                                    "Select EMS Region:",
+                                    className="control_label",
+                                ),
                                 dcc.Dropdown(
                                     options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
                                     multi=False,
@@ -142,24 +160,24 @@ app.layout = html.Div(
                             ],
                         ),
                         # Week Selector
-                        # html.Div(
-                        #     [
-                        #         html.P(
-                        #             "Filter Graphs by Week:",
-                        #             className="control_label",
-                        #         ),
-                        #         dcc.RangeSlider(
-                        #             id="weekSlider",
-                        #             min=dateList[0],
-                        #             max=dateList[-1],
-                        #             value=[dateList[0], dateList[0]],
-                        #             marks= {v: np.datetime_as_string(v, unit='D') for v in dateList},
-                        #             allowCross=False,
-                        #             className="dcc_control",
-                        #         ),
-                        #     ], 
-
-                        # ),
+                        html.Div(
+                            [
+                                html.P(
+                                    "Filter Graphs by Week:",
+                                    className="control_label",
+                                ),
+                                dcc.RangeSlider(
+                                    id="timeSlider",
+                                    min=dtToUnix(dateList[0]),
+                                    max=dtToUnix(dateList[-1]),
+                                    value=[dtToUnix(dateList[0]), dtToUnix(dateList[-1])],
+                                    marks= {dtToUnix(dt): np.datetime_as_string(dt, unit='D') for dt in dateList},
+                                    allowCross=False,
+                                    className="dcc_control",
+                                ),
+                            ], 
+                            className="pretty-container",
+                        ),
                         # Sliders - Generate 3x3 Slider matrix
                         html.Div(
                             [
@@ -270,20 +288,21 @@ app.layout = html.Div(
 # Callback inputs will all be the same
 @app.callback(
     [
-        Output("outputLineChart0", "figure"),
-        Output("outputLineChart1", "figure"),
-        Output("outputLineChart2", "figure"),
-        Output("outputLineChart3", "figure"),
-        Output("outputLineChart4", "figure"),
+        Output('outputLineChart0', 'figure'),
+        Output('outputLineChart1', 'figure'),
+        Output('outputLineChart2', 'figure'),
+        Output('outputLineChart3', 'figure'),
+        Output('outputLineChart4', 'figure'),
     ],
 
     [
-        Input("emsDropdown", "value"),
+        Input('emsDropdown', 'value'),
+        Input('timeSlider', 'value'),
         # Unpack the elements of the list using *
-        *[Input(param + "Slider", "value") for param in params_list]
+        *[Input(param + 'Slider', 'value') for param in params_list]
     ],
 )
-def generateOutput(emsValue, *paramValues):
+def generateOutput(emsValue, timeValues, *paramValues):
 
     # Setup Color Options
     colors = {
@@ -294,12 +313,15 @@ def generateOutput(emsValue, *paramValues):
 
     def makeChart (outputVar):
         # Generate query string for EMS value and range of sliders
-        emsString = '({0} == {1})'.format('ems', emsValue)
+        emsString = "({0} == {1})".format('ems', emsValue)
         # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
-        # Filter the df to find values within the selected range (e.g. between bottom and top)
-        # each index of paramValues will be a list that needs to be unpacked
-        paramString = ' & '.join(['({0} >= {1}) & ({0} <= {2})'.format(param, value[0], value[1]) for param, value in zip(params_list, paramValues)])
-        queryString = emsString + ' & ' + paramString
+        # Filter RangeSlider for timeValues - inclusive of selected timeframe
+        timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
+        # Filter RangeSlider for Parameter Values
+        paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)])
+        
+        strings = [emsString, timeString, paramString]
+        queryString = " & ".join(strings)
         # Filter data frame given the slider inputs
         dff = df.query(queryString)
 
