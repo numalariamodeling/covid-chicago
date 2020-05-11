@@ -1,6 +1,6 @@
 experiment_setup_parameters:
   'number_of_samples': 10
-  'number_of_runs': 3
+  'number_of_runs': 1
   'duration': 365
   'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 18
