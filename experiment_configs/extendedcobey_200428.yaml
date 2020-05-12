@@ -25,17 +25,17 @@ fixed_parameters_region_specific:
     'NMH_catchment': 2020-02-28
     'Chicago': 2020-02-20  
     'IL': 2020-01-01  # used for spatial model 
-    'EMS_1': 2020-02-23       
+    'EMS_1': 2020-02-26       
     'EMS_2': 2020-02-24  
     'EMS_3': 2020-02-20     
     'EMS_4': 2020-02-21  
     'EMS_5': 2020-02-28     
     'EMS_6': 2020-02-14  
     'EMS_7': 2020-02-16           
-    'EMS_8': 2020-02-22       
+    'EMS_8': 2020-02-23       
     'EMS_9': 2020-02-23        
     'EMS_10': 2020-02-20      
-    'EMS_11': 2020-02-21       
+    'EMS_11': 2020-02-23       
 fixed_parameters_global:
 sampled_parameters:
   'time_to_infectious':
