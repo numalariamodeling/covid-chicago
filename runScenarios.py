@@ -194,7 +194,7 @@ def generateParameterSamples(samples, pop, first_day, config, age_bins, region):
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
-    df['startdate'] = experiment_config['fixed_parameters_region_specific']['startdate'][region]
+    df['startdate'] = first_day
 
     df = add_sampled_parameters(df, config, region, age_bins)
     df = add_fixed_parameters_region_specific(df, config, region, age_bins)
