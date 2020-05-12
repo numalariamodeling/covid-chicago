@@ -93,15 +93,15 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 10.0, 'high': 10.0}
+        - {'low': 13.0, 'high': 13.0}
         - {'low': 11.0, 'high': 11.0}
         - {'low': 7.0, 'high':  7.0}
         - {'low': 8.0, 'high':  8.0}
         - {'low': 15.0, 'high': 15.0}
         - {'low': 1.0, 'high':  1.0}
         - {'low': 3.0, 'high':  3.0}
-        - {'low': 9.0, 'high':  9.0}
+        - {'low': 10.0, 'high':  10.0}
         - {'low': 10.0, 'high': 10.0}
         - {'low': 7.0, 'high':  7.0}
-        - {'low': 8.0, 'high':  8.0}    
+        - {'low': 10.0, 'high':  10.0}    
 fitted_parameters:
