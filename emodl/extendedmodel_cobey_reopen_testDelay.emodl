@@ -159,17 +159,9 @@
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
 (time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
 
-
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
 (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
-
-
-(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
-
-;(time-event contact_tracing_start @contact_tracing_start_1@ ((S (* S (- 1 d_SQ))) (Q (* S d_SQ))))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((S (+ S Q)) (Q 0)))
 
 
 (reaction exposure   (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))

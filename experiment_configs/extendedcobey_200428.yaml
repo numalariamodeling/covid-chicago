@@ -24,7 +24,7 @@ fixed_parameters_region_specific:
   startdate:
     'NMH_catchment': 2020-02-28
     'Chicago': 2020-02-20  
-    'IL': 2020-01-01  # used for spatial model 
+    'IL': 2020-02-13  # used for spatial model 
     'EMS_1': 2020-02-26       
     'EMS_2': 2020-02-24  
     'EMS_3': 2020-02-20     
