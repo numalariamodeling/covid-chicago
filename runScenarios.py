@@ -423,7 +423,6 @@ if __name__ == '__main__':
 
     exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
 
-    # TODO: How long does each iteration take? Should/could we parallelize?
     for first_day in first_days:
         log.info(f"first_day={first_day}")
 
