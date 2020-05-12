@@ -418,62 +418,66 @@ if __name__ == '__main__':
     region = args.region
     fixed_parameters = get_region_specific_fixed_parameters(experiment_config, region)
     simulation_population = fixed_parameters['populations']
-    first_day = fixed_parameters['startdate']
+    first_days = fixed_parameters['startdate']
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
     exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
 
-    # Generate folders and copy required files
-    # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
-    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir, DEFAULT_CONFIG, args.experiment_config, wdir=wdir,
-        git_dir=git_dir)
-    log.debug(f"temp_dir = {temp_dir}\n"
-              f"temp_exp_dir = {temp_exp_dir}\n"
-              f"trajectories_dir = {trajectories_dir}\n"
-              f"sim_output_path = {sim_output_path}\n"
-              f"plot_path = {plot_path}")
+    # TODO: How long does each iteration take? Should/could we parallelize?
+    for first_day in first_days:
+        log.info(f"first_day={first_day}")
 
-    nscen = generateScenarios(
-        simulation_population, Kivalues,
-        nruns=experiment_setup_parameters['number_of_runs'],
-        sub_samples=experiment_setup_parameters['number_of_samples'],
-        duration=experiment_setup_parameters['duration'],
-        monitoring_samples=experiment_setup_parameters['monitoring_samples'],
-        modelname=args.emodl_template, first_day=first_day, Location=Location,
-        cfg_file=args.cfg_template,
-        experiment_config=experiment_config,
-        age_bins=experiment_setup_parameters.get('age_bins'),
-        region=region,
-    )
+        # Generate folders and copy required files
+        # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
+        temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
+            exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir, DEFAULT_CONFIG, args.experiment_config, wdir=wdir,
+            git_dir=git_dir)
+        log.debug(f"temp_dir = {temp_dir}\n"
+                  f"temp_exp_dir = {temp_exp_dir}\n"
+                  f"trajectories_dir = {trajectories_dir}\n"
+                  f"sim_output_path = {sim_output_path}\n"
+                  f"plot_path = {plot_path}")
 
-    generateSubmissionFile(
-        nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
-        exe_dir=exe_dir, docker_image=docker_image)
+        nscen = generateScenarios(
+            simulation_population, Kivalues,
+            nruns=experiment_setup_parameters['number_of_runs'],
+            sub_samples=experiment_setup_parameters['number_of_samples'],
+            duration=experiment_setup_parameters['duration'],
+            monitoring_samples=experiment_setup_parameters['monitoring_samples'],
+            modelname=args.emodl_template, first_day=first_day, Location=Location,
+            cfg_file=args.cfg_template,
+            experiment_config=experiment_config,
+            age_bins=experiment_setup_parameters.get('age_bins'),
+            region=region,
+        )
 
-    if Location == 'Local':
-        runExp(trajectories_dir=trajectories_dir, Location='Local')
+        generateSubmissionFile(
+            nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
+            exe_dir=exe_dir, docker_image=docker_image)
 
-        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
-        cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                plot_path=plot_path, delete_temp_dir=True)
-        log.info(f"Outputs are in {sim_output_path}")
+        if Location == 'Local':
+            runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-        if args.post_process:
-            # Once the simulations are done
-            # number_of_samples*len(Kivalues) == nscen ### to check
-            df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+            combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+                                temp_exp_dir=temp_exp_dir, deleteFiles=False)
+            cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                    plot_path=plot_path, delete_temp_dir=True)
+            log.info(f"Outputs are in {sim_output_path}")
 
-            master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                                   'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-            detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-            custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
-                                   'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
+            if args.post_process:
+                # Once the simulations are done
+                # number_of_samples*len(Kivalues) == nscen ### to check
+                df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-            sampleplot(df, allchannels=master_channel_list, first_day=first_day,
-                       plot_fname=os.path.join(plot_path, 'main_channels.png'))
-            sampleplot(df, allchannels=detection_channel_list, first_day=first_day,
-                       plot_fname=os.path.join('detection_channels.png'))
-            sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
-                       plot_fname=os.path.join('cumulative_channels.png'))
+                master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+                                       'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+                detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
+                custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
+                                       'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
+
+                sampleplot(df, allchannels=master_channel_list, first_day=first_day,
+                           plot_fname=os.path.join(plot_path, 'main_channels.png'))
+                sampleplot(df, allchannels=detection_channel_list, first_day=first_day,
+                           plot_fname=os.path.join('detection_channels.png'))
+                sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
+                           plot_fname=os.path.join('cumulative_channels.png'))
