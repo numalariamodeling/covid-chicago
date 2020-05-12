@@ -5,7 +5,7 @@ sampled_parameters:
   social_multiplier_3:
     EMS_1:
       np.random: uniform
-      function_kwargs: {'low':0.152, 'high':0.152}
+      function_kwargs: {'low':0.220, 'high':0.220}
     EMS_2:
       np.random: uniform
       function_kwargs: {'low':0.152, 'high':0.152}
@@ -26,7 +26,7 @@ sampled_parameters:
       function_kwargs: {'low':0.122, 'high':0.122}
     EMS_8:
       np.random: uniform
-      function_kwargs: {'low':0.081, 'high':0.081}
+      function_kwargs: {'low':0.100, 'high':0.100}
     EMS_9:
       np.random: uniform
       function_kwargs: {'low':0.120, 'high':0.120}
@@ -35,7 +35,7 @@ sampled_parameters:
       function_kwargs: {'low':0.118, 'high':0.118}
     EMS_11:
       np.random: uniform
-      function_kwargs: {'low':0.08, 'high':0.08}
+      function_kwargs: {'low':0.100, 'high':0.100}
   'cfr': 
     EMS_1:
       np.random: uniform
