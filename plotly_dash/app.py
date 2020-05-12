@@ -141,71 +141,90 @@ app.layout = html.Div(
         ),
         # EMS Selector and Sliders
         html.Div(
-            [
+            [   
+                # EMS Selector
                 html.Div(
-                    [   # EMS Selector
+                    [
+                        html.P(
+                            "Select EMS Region:",
+                            className="control_label",
+                        ),
+                        dcc.Dropdown(
+                            options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
+                            multi=False,
+                            placeholder="Choose EMS Region",
+                            id="emsDropdown",
+                            className="dcc_control",
+                        ),
+                    ],
+                    className="time-container",
+                ),
+                # Week Selector
+                html.Div(
+                    [
+                        html.P(
+                            "Filter Graphs by Week:",
+                            className="control_label",
+                        ),
+                        dcc.RangeSlider(
+                            id="timeSlider",
+                            min=dtToUnix(dateList[0]),
+                            max=dtToUnix(dateList[-1]),
+                            value=[dtToUnix(dateList[0]), dtToUnix(dateList[-1])],
+                            marks= {#dtToUnix(dt): np.datetime_as_string(dt, unit='D') for i, dt in enumerate(dateList)},
+                                dtToUnix(dt): {
+                                    'label': np.datetime_as_string(dt, unit='D'),
+                                    'style': {
+                                        'transform':'rotate(45deg)',
+                                        'font-size':'8px',
+                                    }
+                                } for i, dt in enumerate(dateList) #if i %2 == 0
+                            },
+                            #dots=True,
+                            allowCross=False,
+                            className="",
+                        ),
+                    ], 
+                    className="time-container",
+                ),
+                # Sliders - Generate 3x3 Slider matrix
+                html.Div(
+                    [
                         html.Div(
                             [
                                 html.P(
-                                    "Select EMS Region:",
+                                    "Filter Graphs by Model Parameters:",
                                     className="control_label",
-                                ),
-                                dcc.Dropdown(
-                                    options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
-                                    multi=False,
-                                    placeholder="Choose EMS Region",
-                                    id="emsDropdown",
-                                    className="dcc_control",
-                                ),
+                                ),      
                             ],
                         ),
-                        # Week Selector
-                        html.Div(
-                            [
-                                html.P(
-                                    "Filter Graphs by Week:",
-                                    className="control_label",
-                                ),
-                                dcc.RangeSlider(
-                                    id="timeSlider",
-                                    min=dtToUnix(dateList[0]),
-                                    max=dtToUnix(dateList[-1]),
-                                    value=[dtToUnix(dateList[0]), dtToUnix(dateList[-1])],
-                                    marks= {dtToUnix(dt): np.datetime_as_string(dt, unit='D') for dt in dateList},
-                                    allowCross=False,
-                                    className="dcc_control",
-                                ),
-                            ], 
-                            className="pretty-container",
-                        ),
-                        # Sliders - Generate 3x3 Slider matrix
                         html.Div(
                             [
                                 html.Div(
                                     # Generate a set of sliders for each param
                                     # Name of each slider is "[param] + _"slider"
                                     [generateRangeSlider(i, 5) for i in
-                                     params_list[:len(params_list)//3]],
+                                        params_list[:len(params_list)//3]],
                                     className="one-third columns",
                                     id="",
                                 ),
                                 html.Div(
                                     [generateRangeSlider(i, 5) for i in
-                                     params_list[len(params_list)//3: 2*len(params_list)//3]],
+                                        params_list[len(params_list)//3: 2*len(params_list)//3]],
                                     className="one-third columns",
                                     id="",
                                 ),
                                 html.Div(
                                     [generateRangeSlider(i, 5) for i in
-                                     params_list[2*len(params_list)//3:]],
+                                        params_list[2*len(params_list)//3:]],
                                     className="one-third columns",
                                     id="",
                                 ),
                             ],
-                            className="pretty_container flex-display",
+                            className="flex-display",
                         ),
                     ],
-                    className="pretty-container"
+                    className="time-container",
                 ),
             ],
             className=""
@@ -318,10 +337,10 @@ def generateOutput(emsValue, timeValues, *paramValues):
         # Filter RangeSlider for timeValues - inclusive of selected timeframe
         timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
         # Filter RangeSlider for Parameter Values
-        paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)])
-        
+        paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)]) 
         strings = [emsString, timeString, paramString]
         queryString = " & ".join(strings)
+        
         # Filter data frame given the slider inputs
         dff = df.query(queryString)
 
