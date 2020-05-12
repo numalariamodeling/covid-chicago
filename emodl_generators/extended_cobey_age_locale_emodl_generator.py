@@ -183,6 +183,9 @@ def write_params():
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
  """
     params_str = params_str.replace("  ", " ")
 
@@ -284,21 +287,8 @@ def generate_locale_emodl_extended_2grp(age_list, region_dic, file_output):
 
         
 if __name__ == '__main__':
-#     region_dic = define_group_dictionary(totalPop=12741080,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
-#                                       regionGroups=['EMS_0','EMS_1','EMS_2','EMS_3','EMS_4','EMS_5','EMS_6'],
-#                                       regionGroupScale=[0.68, 0.05, 0.08,  0.04, 0.05,  0.03, 0.06],    ## proportion of total population, based on IL_population_by_Age_2010_2018
-#                                       initialAs=[2, 2, 2, 2, 2, 2, 2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
-#                                       )
 
-#     generate_locale_emodl_extended(region_dic=region_dic, file_output=os.path.join(emodl_dir,'extendedmodel_cobey_locale_EMS.emodl'))
-
-    ###testing with 1age and 1 locale group:
     age_list = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-    region_list = ['EMS_1',  'EMS_2' ] #  ['EMS_0', 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
-    #region_dic = define_group_dictionary(totalPop=12741080,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
-    #                                 regionGroups=['EMS_0'],
-    #                                  regionGroupScale=[0.68],    ## proportion of total population, based on IL_population_by_Age_2010_2018
-    #                                  initialAs=[2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
-    #                                  )
+    region_list = ['EMS_1', 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
 
-    generate_locale_emodl_extended_2grp(age_list, region_list, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_age_6grptest1.emodl'))
+    generate_locale_emodl_extended_2grp(age_list, region_list, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_age_test.emodl'))
