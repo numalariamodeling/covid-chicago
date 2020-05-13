@@ -1,9 +1,9 @@
 import argparse
+import datetime
 import logging
 import os
 import re
 import sys
-from datetime import datetime
 
 import matplotlib as mpl
 import numpy as np
@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-today = datetime.today()
+today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
 def _parse_config_parameter(df, parameter, parameter_function):
@@ -287,7 +287,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 def get_experiment_config(experiment_config_file):
     config = yaml.load(open(os.path.join('./experiment_configs', DEFAULT_CONFIG)), Loader=yamlordereddictloader.Loader)
     yaml_file = open(os.path.join('./experiment_configs',experiment_config_file))
-    expt_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    expt_config = yaml.safe_load(yaml_file)
     for param_type, updated_params in expt_config.items():
         if not config[param_type]:
             config[param_type] = {}
@@ -313,6 +313,23 @@ def get_fitted_parameters(experiment_config, region):
         if 'np' in region_parameter:
             fitted_parameters[param] = getattr(np, region_parameter['np'])(**region_parameter['function_kwargs'])
     return fitted_parameters
+
+
+def get_first_days(first_day):
+    if isinstance(first_day, str):
+        return [first_day]
+    elif isinstance(first_day, list):
+        # `first_day` is a list of exactly two datetime.date objects,
+        # representing the range of first days we want.
+        start_date, end_date = first_day
+        n_days = (end_date - start_date).days + 1
+        return [start_date + datetime.timedelta(days=delta)
+                for delta in range(n_days)]
+    else:
+        raise ValueError(
+            "first_day must be either a single date or a range of dates "
+            f"specified by [start_date, end_date]: {first_day}"
+        )
 
 
 def parse_args():
@@ -418,7 +435,7 @@ if __name__ == '__main__':
     region = args.region
     fixed_parameters = get_region_specific_fixed_parameters(experiment_config, region)
     simulation_population = fixed_parameters['populations']
-    first_days = fixed_parameters['startdate']
+    first_days = get_first_days(fixed_parameters['startdate'])
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
     exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
