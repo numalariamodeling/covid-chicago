@@ -201,13 +201,6 @@ def write_params():
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
@@ -377,11 +370,61 @@ def write_reactions(grp):
     # reaction_str = reaction_str.replace("  ", " ")
     return (reaction_str)
 
+def write_interventions(grpList, total_string, scenarioName) :
 
-###
+    continuedSIP_str = """
+(param Ki_red1 (* Ki @social_multiplier_1@))
+(param Ki_red2 (* Ki @ social_multiplier_2@))
+(param Ki_red3 (* Ki @social_multiplier_3@))
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
+ """
+
+    interventiopnSTOP_str = """
+(param Ki_back (* Ki @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+    """
+
+    gradual_reopening_str =  """
+(param Ki_back1 (* Ki @reopening_multiplier_1@))
+(param Ki_back2 (* Ki @reopening_multiplier_2@))
+(param Ki_back3 (* Ki @reopening_multiplier_3@))
+(param Ki_back4 (* Ki @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
+    """
+
+    ### Note contact tracing might work differently in the age model, modifying detections per age group and making use of contact matrix,
+    ### here included as placeholder
+    ### contact tracing not working yet, as P_det is missing in emodl structure
+    contactTracing_str =  ""
+
+    for grp in grpList:
+        temp_str = """
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_{grp} (* S_{grp} (- 1 d_SQ))) (Q (* S_{grp} d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_{grp} (+ S_{grp} Q_{grp})) (Q_{grp} 0)))
+        """.format(grp=grp)
+        contactTracing_str = contactTracing_str +  temp_str
+
+    if scenarioName == "interventionStop" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
+    if scenarioName == "gradual_reopening" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str)
+    if scenarioName == "contactTracing" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + contactTracing_str)
+    if scenarioName == "continuedSIP" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
+
+    return (total_string)
+
 
 ###stringing all of the functions together to make the file:
-def generate_extended_emodl(grpList, file_output, homogeneous=False):
+def generate_extended_emodl(grpList, file_output, homogeneous=False,  add_interventions):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -424,8 +467,16 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 
     params = write_params() + write_N_population(grpList) + write_ki_mix(len(grpList))
     functions_string = functions_string + write_ageAll(grpList)
+    intervention_string = ";[INTERVENTIONS]"
 
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string_combined + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params  + '\n\n' + intervention_string + '\n\n' + reaction_string_combined + '\n\n' + footer_str
+
+
+    ### Add interventions (optional)
+    if add_interventions != None :
+        total_string = write_interventions(grpList, total_string, add_interventions)
+
+
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
@@ -439,13 +490,15 @@ def generate_extended_emodl(grpList, file_output, homogeneous=False):
 # if __name__ == '__main__':
 
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-generate_extended_emodl(grpList=age_grp4, file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
-generate_extended_emodl(grpList=age_grp4,file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'), homogeneous=True)
+generate_extended_emodl(grpList=age_grp4, add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age4_neverSIP.emodl'))
+generate_extended_emodl(grpList=age_grp4, add_interventions='continuedSIP',   file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
+generate_extended_emodl(grpList=age_grp4, add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'), homogeneous=True)
+generate_extended_emodl(grpList=age_grp4, add_interventions='interventiopnStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_interventionStop.emodl'))
+generate_extended_emodl(grpList=age_grp4, add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_gradual_reopening.emodl'))
 
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
-generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
-generate_extended_emodl(grpList=age_grp8, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_homogeneous.emodl'), homogeneous=True)
-
-### Using same framework for  EMS
-region_list = ['EMS_1', 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
-generate_extended_emodl(grpList=region_list,file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_homogeneous.emodl'), homogeneous=True)
+generate_extended_emodl(grpList=age_grp8, add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_neverSIP.emodl'))
+generate_extended_emodl(grpList=age_grp8, add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
+generate_extended_emodl(grpList=age_grp8, add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8_homogeneous.emodl'), homogeneous=True)
+generate_extended_emodl(grpList=age_grp8, add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_interventionStop.emodl'))
+generate_extended_emodl(grpList=age_grp8, add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_gradual_reopening.emodl'))
