@@ -47,6 +47,9 @@ sampled_parameters:
   'time_to_symptoms':
     np.random: uniform
     function_kwargs: {'low': 2.4, 'high': 3.5}
+  'time_to_detection':
+    np.random: uniform
+    function_kwargs: {'low':0.1, 'high':5.9}
   'time_to_hospitalization':
     np.random: uniform
     function_kwargs: {'low':3, 'high':6}

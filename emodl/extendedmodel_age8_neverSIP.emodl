@@ -921,14 +921,7 @@
 (param C8_2 (/ C82 norm_factor))
 (param C8_1 (/ C81 norm_factor))
 
-
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @ social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
- 
+;[INTERVENTIONS]
 
   
 (reaction exposure_age0to9 (S_age0to9) (E_age0to9) (* Ki S_age0to9 (+ (* C1_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C1_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C1_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C1_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C1_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C1_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C1_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C1_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
