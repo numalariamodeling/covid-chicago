@@ -18,7 +18,7 @@ fixed_parameters_region_specific:
 fixed_parameters_global:
   initialAs:
     expand_by_age: True
-    list: [10, 10, 10, 10,10, 10, 10, 10,10,10,10]
+    list: [10, 10, 10, 10,10, 9, 10, 10,10,10,10]
   speciesS:
     expand_by_age: True
     custom_function: subtract

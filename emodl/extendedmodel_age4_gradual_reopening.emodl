@@ -477,6 +477,15 @@
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
  
+(param Ki_back1 (* Ki @reopening_multiplier_1@))
+(param Ki_back2 (* Ki @reopening_multiplier_2@))
+(param Ki_back3 (* Ki @reopening_multiplier_3@))
+(param Ki_back4 (* Ki @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
+    
 
   
 (reaction exposure_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (+ (* C1_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C1_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C1_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C1_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))

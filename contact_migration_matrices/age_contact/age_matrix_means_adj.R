@@ -133,7 +133,7 @@ for (agegrp in agegrps) {
 
 
     ### Write parameter snippet  (using mean only)
-    sink(file = file.path(git_dir, "age_model/age_contact", txtfilename))
+    sink(file = file.path(git_dir, "contact_migration_matrices/age_contact", txtfilename))
     cat("# Age groups: ", age_groups)
     cat("C: \nmatrix:  # Unnormalized contact matrix ")
     cat(paste0("\n- [", contact_matrix_adj$pintcol, "]"))
