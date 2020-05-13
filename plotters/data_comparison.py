@@ -31,6 +31,7 @@ def load_sim_data(exp_name, input_wdir=None, input_sim_output_path =None) :
     #if 'ageAll' in df.columns.values:
     #    df.columns = df.columns.str.replace('_ageAll', '')
     df.columns = df.columns.str.replace('_ageAll', '')
+    df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
     df = calculate_incidence(df)
 
     return df
