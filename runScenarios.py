@@ -316,9 +316,7 @@ def get_fitted_parameters(experiment_config, region):
 
 
 def get_first_days(first_day):
-    if isinstance(first_day, str):
-        return [first_day]
-    elif isinstance(first_day, list):
+    if isinstance(first_day, list):
         # `first_day` is a list of exactly two datetime.date objects,
         # representing the range of first days we want.
         start_date, end_date = first_day
@@ -326,10 +324,8 @@ def get_first_days(first_day):
         return [start_date + datetime.timedelta(days=delta)
                 for delta in range(n_days)]
     else:
-        raise ValueError(
-            "first_day must be either a single date or a range of dates "
-            f"specified by [start_date, end_date]: {first_day}"
-        )
+        # Assume `first_day` is a single datetime.date object.
+        return [first_day]
 
 
 def parse_args():
