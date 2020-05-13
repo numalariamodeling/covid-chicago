@@ -104,6 +104,8 @@ python runScenarios.py --running_location Local --region IL --experiment_config 
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_gradual_reopening.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_reopen"
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_interventionStop"
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_neverSIP"
+### Test delay
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_testDelay.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_testDelay"
 
 #### Spatial model 
 # Region must be IL , the EMS parameter are defined in  spatial_EMS_experiment.yaml
