@@ -194,7 +194,7 @@ def add_startdate(df, first_days):
     result = pd.DataFrame()
     for first_day in first_days:
         df["startdate"] = first_day
-        result.append(df)
+        result.append(df, ignore_index=True)
     return result
 
 
