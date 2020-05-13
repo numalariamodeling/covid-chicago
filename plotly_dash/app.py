@@ -60,8 +60,10 @@ else:
 df['date']= pd.to_datetime(df['date'])
 # Get week of date
 df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
+# Get month of date
+df['month'] = df['date'].values.astype('datetime64[M]')
 
-dateList = sorted(df['week'].unique())
+dateList = sorted(df['month'].unique())
 
 
 # RangeSlider values need to be ints - convert to unix timestamp
@@ -139,153 +141,165 @@ app.layout = html.Div(
             id="pageTitleContainer",
             className="pretty_container title",
         ),
-        # EMS Selector and Sliders
+        # Container holding selectors on left and charts on right
         html.Div(
             [   
-                # EMS Selector
                 html.Div(
                     [
-                        html.P(
-                            "Select EMS Region:",
-                            className="control_label",
-                        ),
-                        dcc.Dropdown(
-                            options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
-                            multi=False,
-                            placeholder="Choose EMS Region",
-                            id="emsDropdown",
-                            className="dcc_control",
-                        ),
-                    ],
-                    className="time-container",
-                ),
-                # Week Selector
-                html.Div(
-                    [
-                        html.P(
-                            "Filter Graphs by Week:",
-                            className="control_label",
-                        ),
-                        dcc.RangeSlider(
-                            id="timeSlider",
-                            min=dtToUnix(dateList[0]),
-                            max=dtToUnix(dateList[-1]),
-                            value=[dtToUnix(dateList[0]), dtToUnix(dateList[-1])],
-                            marks= {#dtToUnix(dt): np.datetime_as_string(dt, unit='D') for i, dt in enumerate(dateList)},
-                                dtToUnix(dt): {
-                                    'label': np.datetime_as_string(dt, unit='D'),
-                                    'style': {
-                                        'transform':'rotate(45deg)',
-                                        'font-size':'8px',
-                                    }
-                                } for i, dt in enumerate(dateList) #if i %2 == 0
-                            },
-                            #dots=True,
-                            allowCross=False,
-                            className="",
-                        ),
-                    ], 
-                    className="time-container",
-                ),
-                # Sliders - Generate 3x3 Slider matrix
-                html.Div(
-                    [
+                        # EMS Selector
                         html.Div(
                             [
                                 html.P(
-                                    "Filter Graphs by Model Parameters:",
+                                    "Select EMS Region:",
                                     className="control_label",
-                                ),      
+                                ),
+                                dcc.Dropdown(
+                                    options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
+                                    multi=False,
+                                    placeholder="Choose EMS Region",
+                                    id="emsDropdown",
+                                    className="dcc_control",
+                                ),
                             ],
+                            className="time-container",
                         ),
+                        # Week Selector
+                        html.Div(
+                            [
+                                html.P(
+                                    "Filter Graphs by Week:",
+                                    className="control_label",
+                                ),
+                                dcc.RangeSlider(
+                                    id="timeSlider",
+                                    min=dtToUnix(dateList[0]),
+                                    max=dtToUnix(dateList[-1]),
+                                    value=[dtToUnix(dateList[0]), dtToUnix(dateList[-1])],
+                                    marks= {
+                                        dtToUnix(dt): {
+                                            'label': np.datetime_as_string(dt, unit='M'),
+                                            'style': {
+                                                'transform':'rotate(45deg)',
+                                                'font-size':'8px',
+                                            }
+                                        } for i, dt in enumerate(dateList)
+                                    },
+                                    #dots=True,
+                                    allowCross=False,
+                                    className="",
+                                ),
+                            ], 
+                            className="time-container",
+                        ),
+                        # Sliders - Generate 3x3 Slider matrix
                         html.Div(
                             [
                                 html.Div(
-                                    # Generate a set of sliders for each param
-                                    # Name of each slider is "[param] + _"slider"
-                                    [generateRangeSlider(i, 5) for i in
-                                        params_list[:len(params_list)//3]],
-                                    className="one-third columns",
-                                    id="",
+                                    [
+                                        html.P(
+                                            "Filter Graphs by Model Parameters:",
+                                            className="control_label",
+                                        ),      
+                                    ],
                                 ),
                                 html.Div(
-                                    [generateRangeSlider(i, 5) for i in
-                                        params_list[len(params_list)//3: 2*len(params_list)//3]],
-                                    className="one-third columns",
-                                    id="",
-                                ),
-                                html.Div(
-                                    [generateRangeSlider(i, 5) for i in
-                                        params_list[2*len(params_list)//3:]],
-                                    className="one-third columns",
-                                    id="",
+                                    [
+                                        html.Div(
+                                            # Generate a set of sliders for each param
+                                            # Name of each slider is "[param] + _"slider"
+                                            [generateRangeSlider(i, 5) for i in params_list],
+                                            className="dcc_control",
+                                            id="",
+                                        ),
+                                    ],
+                                    className="",
                                 ),
                             ],
-                            className="flex-display",
+                            className="time-container",
                         ),
                     ],
-                    className="time-container",
-                ),
-            ],
-            className=""
-        ),
-        # Container for all 5 Output Charts
-        html.Div(
-            [
-                # Top 3 Chart Container
+                    className="four columns"
+                ), 
+                # Container for all Output Charts
                 html.Div(
                     [
-                        # Chart 0
+                        # Rendered Warning
                         html.Div(
                             [
-                                dcc.Graph(id="outputLineChart0")
+                                html.P(
+                                "Note: rendering may take a few seconds after adjusting parameters",
+                                className="control_label",
+                                ),
                             ],
-                            #className="one-third columns",
-                            className="graphDiv",
                         ),
-                        # Chart 1
+                        # 3 x 2 Arrangement
                         html.Div(
                             [
-                                dcc.Graph(id="outputLineChart1")
+                                # Top 3 Chart Container
+                                html.Div(
+                                    [
+                                        # Chart 0
+                                        html.Div(
+                                            [
+                                                dcc.Graph(id="outputLineChart0")
+                                            ],
+                                            #className="one-third columns",
+                                            className="graphDiv",
+                                        ),
+                                        # Chart 1
+                                        html.Div(
+                                            [
+                                                dcc.Graph(id="outputLineChart1")
+                                            ],
+                                            #className="one-third columns",
+                                            className="graphDiv",
+                                        ),
+                                        # Chart 2...
+                                        html.Div(
+                                            [
+                                                dcc.Graph(id="outputLineChart2")
+                                            ],
+                                            #className="one-third columns",
+                                            className="graphDiv",
+                                        ),
+                                    ],
+                                    className="flex-display chartContainerDiv "
+                                ),
+                                # Remaining two charts
+                                html.Div(
+                                    [
+                                        html.Div(
+                                            [
+                                                dcc.Graph(id="outputLineChart3")
+                                            ],
+                                            #className="one-third columns",
+                                            className="graphDiv",
+                                        ),
+                                        html.Div(
+                                            [
+                                                dcc.Graph(id="outputLineChart4")
+                                            ],
+                                            #className="one-third columns",
+                                            className="graphDiv",
+                                        ),
+                                        html.Div(
+                                            [
+                                                # Placeholder for 6th 
+                                            ],
+                                            #className="one-third columns",
+                                            className="graphDiv",
+                                        ),
+                                    ],
+                                    className="flex-display chartContainerDiv "
+                                ),
                             ],
-                            #className="one-third columns",
-                            className="graphDiv",
-                        ),
-                        # Chart 2...
-                        html.Div(
-                            [
-                                dcc.Graph(id="outputLineChart2")
-                            ],
-                            #className="one-third columns",
-                            className="graphDiv",
-                        ),
-                    ],
-                    className="flex-display chartContainerDiv "
-                ),
-                # Remaining two charts
-                html.Div(
-                    [
-                        html.Div(
-                            [
-                                dcc.Graph(id="outputLineChart3")
-                            ],
-                            #className="one-third columns",
-                            className="graphDiv",
-                        ),
-                        html.Div(
-                            [
-                                dcc.Graph(id="outputLineChart4")
-                            ],
-                            #className="one-third columns",
-                            className="graphDiv",
-                        ),
-                    ],
-                    #className="flex-display chartContainerDiv "
-                    className="flex-display chartContainerDiv "
+                            className="chartContainer",
+                        ),       
+                    ], 
+                    className="eight columns"
                 ),
             ],
-           # id="CONTAINER HOLDING ALL 5 CHARTS",
-            className="chartContainer",
+            className="flex-display"
         ),
         # Footer Info
         html.Div(
@@ -296,7 +310,7 @@ app.layout = html.Div(
                 ),
             ],
             className="pretty-container"
-        )
+        ),
     ],
     className="mainContainer",
     id="",
