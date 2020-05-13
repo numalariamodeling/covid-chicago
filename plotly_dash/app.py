@@ -146,22 +146,47 @@ app.layout = html.Div(
             [   
                 html.Div(
                     [
-                        # EMS Selector
                         html.Div(
                             [
-                                html.P(
-                                    "Select EMS Region:",
-                                    className="control_label",
+                                # EMS Selector
+                                html.Div(
+                                    [
+                                        html.P(
+                                            "Select EMS Region:",
+                                            className="control_label",
+                                        ),
+                                        dcc.Dropdown(
+                                            options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
+                                            multi=False,
+                                            placeholder="Choose EMS Region",
+                                            id="emsDropdown",
+                                            className="dcc_control",
+                                        ),
+                                    ],
+                                    className="time-container one-half column",
                                 ),
-                                dcc.Dropdown(
-                                    options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
-                                    multi=False,
-                                    placeholder="Choose EMS Region",
-                                    id="emsDropdown",
-                                    className="dcc_control",
+                                # Toggle For Charts
+                                html.Div(
+                                    [
+                                        html.P(
+                                            "This could be radio or dropdown:",
+                                            className="control_label",
+                                        ),
+                                        dcc.RadioItems(
+                                            options=[
+                                                {'label': 'New York City', 'value': 'NYC'},
+                                                {'label': 'Montréal', 'value': 'MTL'},
+                                                {'label': 'San Francisco', 'value': 'SF'}
+                                            ],
+                                            value='MTL',
+                                            id="chartToggle",
+                                            className="dcc_control",
+                                        ),
+                                    ],
+                                    className="time-container one-half column",
                                 ),
                             ],
-                            className="time-container",
+                            className="flex-display"
                         ),
                         # Week Selector
                         html.Div(
