@@ -5,50 +5,58 @@ import sys
 sys.path.append('../')
 from load_paths import load_box_paths
 from datetime import date, timedelta, datetime
-from data_comparison import load_sim_data
+from processing_helpers import calculate_incidence
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 if __name__ == '__main__' :
 
-    stem = 'scenario3'
-    output_dir = os.path.join(wdir, 'simulation_output', 'EMS', '20200419')
-    exp_names = [x for x in os.listdir(output_dir) if stem in x]
+    output_dir = os.path.join(wdir, '..', 'NU_civis_outputs', '20200506', 'trajectories')
+    exp_name = 'Trajectories_set5'
+    adf = pd.read_csv(os.path.join(output_dir, '%s.csv' % exp_name))
 
-    adf = pd.DataFrame()
-    for d, exp_name in enumerate(exp_names):
-        sim_output_path = os.path.join(output_dir, exp_name)
-        ems = int(exp_name.split('_')[2])
-        df = load_sim_data(exp_name, input_wdir=output_dir)
-
-        first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
-
-        df['ems'] = ems
-        df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        adf = pd.concat([adf, df])
-
-    # adf['inf_cumul'] = adf['asymp_cumul'] + adf['symp_mild_cumul'] + adf['symp_severe_cumul']
-    # adf['symp_cumul'] = adf['symp_mild_cumul'] + adf['symp_severe_cumul']
-    # print(np.sum(adf['death_det_cumul'])/np.sum(adf['crit_det_cumul']))
+    # adf['date'] = pd.to_datetime(adf['date'])
+    # adf = adf[adf['date'] == date(2020,5,7)]
+    # adf = adf[['susceptible', 'exposed', 'infected', 'recovered', 'deaths', 'ems']]
+    # df = adf.groupby('ems').agg(np.mean).reset_index()
+    # print(np.sum(df['recovered']))
+    # print(np.sum(df['recovered'])/sum([np.sum(df[x]) for x in df.columns.values if x != 'ems']))
     # exit()
+    adf = calculate_incidence(adf)
 
-    filename = 'dash_EMS_trajectories_separate_sip_20200419.csv'
+    filename = 'dash_EMS_trajectories_set5_200506.csv'
     print(adf.columns.values)
 
     keep = ['date', 'ems', 'run_num']
-    output_channels = ['new_detected_hospitalized', 'new_detected_critical', 'new_detected_deaths', 'new_deaths',
-                       'infected', 'new_detected', 'detected', 'new_symptomatic_mild', 'new_symptomatic_severe',
-                       'symptomatic_mild', 'symptomatic_severe']
-    params_of_interest = ['d_Sym', 'd_Sys',
+    output_channels = ['infected', 'recovered', 'new_critical',
+                       'new_symptomatic_mild', 'new_symptomatic_severe', 'new_deaths']
+    params_of_interest = ['d_Sym', 'd_Sys', 'd_As',
                           'fraction_symptomatic',
                           'fraction_severe',
-                          'cfr',
+                          'fraction_dead',
                           'reduced_inf_of_det_cases',
-                          'recovery_rate_hosp', 'recovery_rate_crit',
                           'social_multiplier_3']
-
     adf = adf[keep + output_channels + params_of_interest]
-    adf = adf.rename(columns={ x : 'param_%s' % x for x in params_of_interest})
-    adf = adf.rename(columns={ x : 'output_%s' % x for x in output_channels})
+
+    output_mapping = {'infected' : 'number currently infectious',
+                              'recovered' : 'number recovered',
+                              'new_critical' : 'daily new ICU cases',
+                              'new_symptomatic_mild' : 'daily new mild symptomatic cases',
+                              'new_symptomatic_severe' : 'daily new severe symptomatic cases',
+                              'new_deaths' : 'daily new deaths'}
+    param_mapping = {'d_Sym' : 'fraction mild symptomatic cases detected',
+                     'd_As' : 'fraction asymptomatic cases detected',
+                     'd_Sys' : 'fraction severe cases detected',
+                     'fraction_symptomatic' : 'fraction of infections that are symptomatic',
+                     'fraction_severe' : 'fraction of symptomatic cases that are severe',
+                     'fraction_dead' : 'fraction of severe cases that die',
+                     'reduced_inf_of_det_cases' : 'reduced infectiousness of detected cases',
+                     'social_multiplier_3' : 'reduced contact after stay at home'}
+
+    adf = adf.rename(columns=output_mapping)
+    adf = adf.rename(columns=param_mapping)
+
+    adf = adf.rename(columns={ x : 'param_%s' % x for k,x in param_mapping.items()})
+    adf = adf.rename(columns={ x : 'output_%s' % x for k,x in output_mapping.items()})
     adf.to_csv(os.path.join(wdir,'simulation_output/_csv', filename),
                index=False)
