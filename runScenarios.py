@@ -190,7 +190,15 @@ def add_sampled_parameters(df, config, region, age_bins):
     return df
 
 
-def generateParameterSamples(samples, pop, config, age_bins, region):
+def add_startdate(df, first_days):
+    result = pd.DataFrame()
+    for first_day in first_days:
+        df["startdate"] = first_day
+        result.append(df)
+    return result
+
+
+def generateParameterSamples(samples, pop, first_days, config, age_bins, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
@@ -205,6 +213,7 @@ def generateParameterSamples(samples, pop, config, age_bins, region):
     for parameter, parameter_function in config['fixed_parameters_global'].items():
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
     df = add_computed_parameters(df)
+    df = add_startdate(df, first_days)
 
     df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     return df
@@ -250,7 +259,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                       experiment_config, age_bins, region):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population,
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_days=first_days,
                                        config=experiment_config, age_bins=age_bins, region=region)
 
     full_factorial = itertools.product(first_days, range(sub_samples), Kivalues)
