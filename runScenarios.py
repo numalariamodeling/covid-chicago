@@ -193,8 +193,9 @@ def add_sampled_parameters(df, config, region, age_bins):
 def add_startdate(df, first_days):
     result = pd.DataFrame()
     for first_day in first_days:
-        df["startdate"] = first_day
-        result.append(df, ignore_index=True)
+        df_copy = df.copy()
+        df_copy["startdate"] = first_day
+        result.append(df_copy, ignore_index=True)
     return result
 
 
