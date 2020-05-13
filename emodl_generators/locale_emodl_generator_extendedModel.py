@@ -45,6 +45,8 @@ def write_species(grp):
     species_str = species_str.replace("  ", " ")
     return (species_str)
 
+## For postprocessing that splits by '_', it is easier if EMS are names EMS-1 not EMS_1
+## This might change depending on the postprocessing
 def sub(x):
     xout = re.sub('_','-', str(x), count=1)
     return(xout)
@@ -173,16 +175,7 @@ def write_grp_params(grp):
     grp = str(grp)
     params_str = """
 (param Ki_{grp} @Ki_{grp}@)
-
 (time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
-
-(param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
-(param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
-(param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
 """.format(grp=grp)
     params_str = params_str.replace("  ", " ")
 
@@ -213,61 +206,32 @@ def repeat_string_by_grp(fixedstring, grpList):
 
 def write_regionAll(grpList):
     obs_regionAll_str = ""
-    obs_regionAll_str = obs_regionAll_str + "\n(observe susceptible_regionAll (+ " + repeat_string_by_grp('S::',
-                                                                                                          grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe exposed_regionAll (+ " + repeat_string_by_grp('E::',
-                                                                                                      grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe asymptomatic_regionAll (+ " + repeat_string_by_grp(
-        'asymptomatic_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe presymptomatic_regionAll (+ " + repeat_string_by_grp('P::',
-                                                                                                             grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe symptomatic_mild_regionAll (+ " + repeat_string_by_grp(
-        'symptomatic_mild_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe symptomatic_severe_regionAll (+ " + repeat_string_by_grp(
-        'symptomatic_severe_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe hospitalized_regionAll (+ " + repeat_string_by_grp(
-        'hospitalized_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe critical_regionAll (+ " + repeat_string_by_grp('critical_',
-                                                                                                       grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe deaths_regionAll (+ " + repeat_string_by_grp('deaths_',
-                                                                                                     grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe recovered_regionAll (+ " + repeat_string_by_grp('recovered_',
-                                                                                                        grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe asymp_cumul_regionAll (+ " + repeat_string_by_grp(
-        'asymp_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe asymp_det_cumul_regionAll (+ " + repeat_string_by_grp(
-        'asymp_det_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_mild_cumul_regionAll (+ " + repeat_string_by_grp(
-        'symp_mild_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_mild_det_cumul_regionAll (+ " + repeat_string_by_grp(
-        'symp_mild_det_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_severe_cumul_regionAll (+ " + repeat_string_by_grp(
-        'symp_severe_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_severe_det_cumul_regionAll  (+ " + repeat_string_by_grp(
-        'symp_severe_det_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe hosp_cumul_regionAll (+ " + repeat_string_by_grp('hosp_cumul_',
-                                                                                                         grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe hosp_det_cumul_regionAll (+ " + repeat_string_by_grp(
-        'hosp_det_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe crit_cumul_regionAll (+ " + repeat_string_by_grp('crit_cumul_',
-                                                                                                         grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe crit_det_cumul_regionAll (+ " + repeat_string_by_grp(
-        'crit_det_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe crit_det_regionAll (+ " + repeat_string_by_grp('crit_det_',
-                                                                                                       grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe detected_cumul_regionAll (+ " + repeat_string_by_grp(
-        'detected_cumul_', grpList) + "))"
-    obs_regionAll_str = obs_regionAll_str + "\n(observe death_det_cumul_regionAll (+ " + repeat_string_by_grp(
-        'death_det_cumul_', grpList) + "))"
-
-    obs_regionAll_str = obs_regionAll_str + "\n(func infectious_det_regionAll (+ " + repeat_string_by_grp(
-        'infectious_det_', grpList) + "))"
-
-    obs_regionAll_str = obs_regionAll_str + "\n(func infectious_undet_regionAll (+ " + repeat_string_by_grp(
-        'infectious_undet_', grpList) + "))"
-
+    obs_regionAll_str = obs_regionAll_str + "\n(observe susceptible_regionAll (+ " + repeat_string_by_grp('S::', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe exposed_regionAll (+ " + repeat_string_by_grp('E::',  grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe asymptomatic_regionAll (+ " + repeat_string_by_grp( 'asymptomatic_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe presymptomatic_regionAll (+ " + repeat_string_by_grp('P::', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe symptomatic_mild_regionAll (+ " + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe symptomatic_severe_regionAll (+ " + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe hospitalized_regionAll (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe critical_regionAll (+ " + repeat_string_by_grp('critical_',    grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe deaths_regionAll (+ " + repeat_string_by_grp('deaths_',   grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe recovered_regionAll (+ " + repeat_string_by_grp('recovered_',    grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe asymp_cumul_regionAll (+ " + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe asymp_det_cumul_regionAll (+ " + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_mild_cumul_regionAll (+ " + repeat_string_by_grp( 'symp_mild_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_mild_det_cumul_regionAll (+ " + repeat_string_by_grp( 'symp_mild_det_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_severe_cumul_regionAll (+ " + repeat_string_by_grp( 'symp_severe_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe symp_severe_det_cumul_regionAll  (+ " + repeat_string_by_grp(  'symp_severe_det_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe hosp_cumul_regionAll (+ " + repeat_string_by_grp('hosp_cumul_',  grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe hosp_det_cumul_regionAll (+ " + repeat_string_by_grp( 'hosp_det_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe crit_cumul_regionAll (+ " + repeat_string_by_grp('crit_cumul_',   grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe crit_det_cumul_regionAll (+ " + repeat_string_by_grp(  'crit_det_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe crit_det_regionAll (+ " + repeat_string_by_grp('crit_det_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe detected_cumul_regionAll (+ " + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(observe death_det_cumul_regionAll (+ " + repeat_string_by_grp('death_det_cumul_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(func infectious_det_regionAll (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+    obs_regionAll_str = obs_regionAll_str + "\n(func infectious_undet_regionAll (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
     obs_regionAll_str = obs_regionAll_str + "\n(observe infectious_det_regionAll infectious_det_regionAll)"
-
     obs_regionAll_str = obs_regionAll_str + "\n(observe infectious_undet_regionAll infectious_undet_regionAll)"
 
 
@@ -319,10 +283,71 @@ def write_reactions(grp):
     reaction_str = reaction_str.replace("  ", " ")
     return (reaction_str)
 
+def write_interventions(grpList, total_string, scenarioName) :
+
+    continuedSIP_str = ""
+    for grp in grpList:
+        temp_str = """
+(param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
+(param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
+(param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
+
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
+            """.format(grp=grp)
+        continuedSIP_str = continuedSIP_str + temp_str
+
+    interventiopnSTOP_str = ""
+    for grp in grpList :
+        temp_str = """
+(param Ki_back_{grp} (* Ki_{grp} @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
+        """.format(grp=grp)
+        interventiopnSTOP_str = interventiopnSTOP_str + temp_str
+
+    gradual_reopening_str = ""
+    for grp in grpList:
+        temp_str = """
+(param Ki_back1_{grp} (* Ki_{grp} @reopening_multiplier_1@))
+(param Ki_back2_{grp} (* Ki_{grp} @reopening_multiplier_2@))
+(param Ki_back3_{grp} (* Ki_{grp} @reopening_multiplier_3@))
+(param Ki_back4_{grp} (* Ki_{grp} @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_{grp} Ki_back4_{grp})))
+    """.format(grp=grp)
+        gradual_reopening_str = gradual_reopening_str + temp_str
+
+    ### contact tracing not working yet, as P_det is missing in emodl structure
+    ### placeholder only
+    contactTracing_str = """
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+    """
+    for grp in grpList:
+        temp_str = """
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_{grp} (* S_{grp} (- 1 d_SQ))) (Q (* S_{grp} d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_{grp} (+ S_{grp} Q_{grp})) (Q_{grp} 0)))
+        """.format(grp=grp)
+        contactTracing_str = contactTracing_str +  temp_str
+
+    if scenarioName == "interventionStop" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
+    if scenarioName == "gradual_reopening" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str)
+    if scenarioName == "contactTracing" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + contactTracing_str)
+    if scenarioName == "continuedSIP" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
+
+    return (total_string)
+
 
 ###stringing all of my functions together to make the file:
 
-def generate_locale_emodl_extended(grp, file_output):
+def generate_locale_emodl_extended(grpList, file_output, add_interventions):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -340,20 +365,26 @@ def generate_locale_emodl_extended(grp, file_output):
     functions_string = ""
     total_string = total_string + header_str
 
-    for key in grp:
-        total_string = total_string + "\n(locale site-{})\n".format(key)
-        total_string = total_string + "(set-locale site-{})\n".format(key)
-        total_string = total_string +  write_species(key)
-        functions = write_functions(key)
-        observe_string = observe_string + write_observe(key)
-        reaction_string = reaction_string + write_reactions(key)
+    for grp in grpList:
+        total_string = total_string + "\n(locale site-{})\n".format(grp)
+        total_string = total_string + "(set-locale site-{})\n".format(grp)
+        total_string = total_string +  write_species(grp)
+        functions = write_functions(grp)
+        observe_string = observe_string + write_observe(grp)
+        reaction_string = reaction_string + write_reactions(grp)
         functions_string = functions_string + functions
-        param_string = param_string + write_grp_params(key) 
+        param_string = param_string + write_grp_params(grp)
         
-    param_string =  write_params() + param_string  +  write_N_population(grp)
-    functions_string = functions_string + write_regionAll(grp)
+    param_string =  write_params() + param_string  +  write_N_population(grpList)
+    functions_string = functions_string + write_regionAll(grpList)
+    intervention_string = ";[INTERVENTIONS]"
 
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + reaction_string + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string +  '\n\n' + reaction_string + '\n\n' + footer_str
+
+    ### Add interventions (optional)
+    if add_interventions != None :
+        total_string = write_interventions(grpList, total_string, add_interventions)
+
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
     emodl.write(total_string)
@@ -366,6 +397,8 @@ def generate_locale_emodl_extended(grp, file_output):
 
 if __name__ == '__main__':
     ems_grp = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
-    generate_locale_emodl_extended(grp=ems_grp,  file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS.emodl'))
-
+    generate_locale_emodl_extended(grpList=ems_grp, add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS_neverSIP.emodl'))
+    generate_locale_emodl_extended(grpList=ems_grp, add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS.emodl'))
+    generate_locale_emodl_extended(grpList=ems_grp, add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS_interventionStop.emodl'))
+    generate_locale_emodl_extended(grpList=ems_grp, add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_EMS_reopening.emodl'))
 

@@ -1169,6 +1169,39 @@
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_11 Ki_red2_EMS_11)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_11 Ki_red3_EMS_11)))
             
+(param Ki_back_EMS_1 (* Ki_EMS_1 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_1 Ki_back_EMS_1)))
+        
+(param Ki_back_EMS_2 (* Ki_EMS_2 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_2 Ki_back_EMS_2)))
+        
+(param Ki_back_EMS_3 (* Ki_EMS_3 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_3 Ki_back_EMS_3)))
+        
+(param Ki_back_EMS_4 (* Ki_EMS_4 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_4 Ki_back_EMS_4)))
+        
+(param Ki_back_EMS_5 (* Ki_EMS_5 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_5 Ki_back_EMS_5)))
+        
+(param Ki_back_EMS_6 (* Ki_EMS_6 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_6 Ki_back_EMS_6)))
+        
+(param Ki_back_EMS_7 (* Ki_EMS_7 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_7 Ki_back_EMS_7)))
+        
+(param Ki_back_EMS_8 (* Ki_EMS_8 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_8 Ki_back_EMS_8)))
+        
+(param Ki_back_EMS_9 (* Ki_EMS_9 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_9 Ki_back_EMS_9)))
+        
+(param Ki_back_EMS_10 (* Ki_EMS_10 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_10 Ki_back_EMS_10)))
+        
+(param Ki_back_EMS_11 (* Ki_EMS_11 @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_11 Ki_back_EMS_11)))
+        
 
 
 (reaction exposure_EMS_1  (S_EMS_1) (E_EMS_1) (* Ki_EMS_1 S_EMS_1 (/ (+ infectious_undet_EMS_1 (* infectious_det_EMS_1 reduced_inf_of_det_cases)) N_EMS_1 )))
