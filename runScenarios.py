@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import itertools
 import logging
 import os
 import re
@@ -189,7 +190,7 @@ def add_sampled_parameters(df, config, region, age_bins):
     return df
 
 
-def generateParameterSamples(samples, pop, first_day, config, age_bins, region):
+def generateParameterSamples(samples, pop, config, age_bins, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
@@ -198,7 +199,6 @@ def generateParameterSamples(samples, pop, first_day, config, age_bins, region):
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
-    df['startdate'] = first_day
 
     df = add_sampled_parameters(df, config, region, age_bins)
     df = add_fixed_parameters_region_specific(df, config, region, age_bins)
@@ -246,42 +246,43 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, cfg_file, first_day, Location,
+                      nruns, sub_samples, modelname, cfg_file, first_days, Location,
                       experiment_config, age_bins, region):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_day=first_day,
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population,
                                        config=experiment_config, age_bins=age_bins, region=region)
 
-    for sample in range(sub_samples):
-        for i in Kivalues:
-            scen_num += 1
+    full_factorial = itertools.product(first_days, range(sub_samples), Kivalues)
 
-            lst.append([sample, scen_num, i, first_day, simulation_population])
-            replaceParameters(df=dfparam, Ki_i=i, sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
+    for first_day, sample, Ki in full_factorial:
+        scen_num += 1
 
-            # adjust model.cfg
-            fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
-            data_cfg = fin.read()
-            data_cfg = data_cfg.replace('@duration@', str(duration))
-            data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
-            data_cfg = data_cfg.replace('@nruns@', str(nruns))
-            if not Location == 'Local':
-                data_cfg = data_cfg.replace('trajectories', f'trajectories_scen{scen_num}')
-            elif sys.platform not in ["win32", "cygwin"]:
-                # When running on Linux or OSX (and not in Quest), assume the
-                # trajectories directory is in the working directory.
-                traj_fname = os.path.join('trajectories', f'trajectories_scen{scen_num}')
-                data_cfg = data_cfg.replace('trajectories', traj_fname)
-            elif Location == 'Local':
-                data_cfg = data_cfg.replace('trajectories',
-                                            f'./_temp/{exp_name}/trajectories/trajectories_scen{scen_num}')
-            else:
-                raise RuntimeError("Unable to decide where to put the trajectories file.")
-            fin.close()
-            fin = open(os.path.join(temp_dir, "model_"+str(scen_num)+".cfg"), "wt")
-            fin.write(data_cfg)
-            fin.close()
+        lst.append([sample, scen_num, Ki, first_day, simulation_population])
+        replaceParameters(df=dfparam, Ki_i=Ki, sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
+
+        # adjust model.cfg
+        fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
+        data_cfg = fin.read()
+        data_cfg = data_cfg.replace('@duration@', str(duration))
+        data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
+        data_cfg = data_cfg.replace('@nruns@', str(nruns))
+        if not Location == 'Local':
+            data_cfg = data_cfg.replace('trajectories', f'trajectories_scen{scen_num}')
+        elif sys.platform not in ["win32", "cygwin"]:
+            # When running on Linux or OSX (and not in Quest), assume the
+            # trajectories directory is in the working directory.
+            traj_fname = os.path.join('trajectories', f'trajectories_scen{scen_num}')
+            data_cfg = data_cfg.replace('trajectories', traj_fname)
+        elif Location == 'Local':
+            data_cfg = data_cfg.replace('trajectories',
+                                        f'./_temp/{exp_name}/trajectories/trajectories_scen{scen_num}')
+        else:
+            raise RuntimeError("Unable to decide where to put the trajectories file.")
+        fin.close()
+        fin = open(os.path.join(temp_dir, "model_"+str(scen_num)+".cfg"), "wt")
+        fin.write(data_cfg)
+        fin.close()
 
     df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population'])
     df.to_csv(os.path.join(temp_exp_dir, "scenarios.csv"), index=False)
@@ -440,60 +441,58 @@ if __name__ == '__main__':
 
     exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
 
-    for first_day in first_days:
-        log.info(f"first_day={first_day}")
+    # Generate folders and copy required files
+    # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
+    temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
+        exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir, DEFAULT_CONFIG, args.experiment_config, wdir=wdir,
+        git_dir=git_dir)
+    log.debug(f"temp_dir = {temp_dir}\n"
+              f"temp_exp_dir = {temp_exp_dir}\n"
+              f"trajectories_dir = {trajectories_dir}\n"
+              f"sim_output_path = {sim_output_path}\n"
+              f"plot_path = {plot_path}")
 
-        # Generate folders and copy required files
-        # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
-        temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-            exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir, DEFAULT_CONFIG, args.experiment_config, wdir=wdir,
-            git_dir=git_dir)
-        log.debug(f"temp_dir = {temp_dir}\n"
-                  f"temp_exp_dir = {temp_exp_dir}\n"
-                  f"trajectories_dir = {trajectories_dir}\n"
-                  f"sim_output_path = {sim_output_path}\n"
-                  f"plot_path = {plot_path}")
+    nscen = generateScenarios(
+        simulation_population, Kivalues,
+        nruns=experiment_setup_parameters['number_of_runs'],
+        sub_samples=experiment_setup_parameters['number_of_samples'],
+        duration=experiment_setup_parameters['duration'],
+        monitoring_samples=experiment_setup_parameters['monitoring_samples'],
+        modelname=args.emodl_template, first_days=first_days, Location=Location,
+        cfg_file=args.cfg_template,
+        experiment_config=experiment_config,
+        age_bins=experiment_setup_parameters.get('age_bins'),
+        region=region,
+    )
 
-        nscen = generateScenarios(
-            simulation_population, Kivalues,
-            nruns=experiment_setup_parameters['number_of_runs'],
-            sub_samples=experiment_setup_parameters['number_of_samples'],
-            duration=experiment_setup_parameters['duration'],
-            monitoring_samples=experiment_setup_parameters['monitoring_samples'],
-            modelname=args.emodl_template, first_day=first_day, Location=Location,
-            cfg_file=args.cfg_template,
-            experiment_config=experiment_config,
-            age_bins=experiment_setup_parameters.get('age_bins'),
-            region=region,
-        )
+    generateSubmissionFile(
+        nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
+        exe_dir=exe_dir, docker_image=docker_image)
 
-        generateSubmissionFile(
-            nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
-            exe_dir=exe_dir, docker_image=docker_image)
+    if Location == 'Local':
+        runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-        if Location == 'Local':
-            runExp(trajectories_dir=trajectories_dir, Location='Local')
+        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
+                plot_path=plot_path, delete_temp_dir=True)
+        log.info(f"Outputs are in {sim_output_path}")
 
-            combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-                                temp_exp_dir=temp_exp_dir, deleteFiles=False)
-            cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                    plot_path=plot_path, delete_temp_dir=True)
-            log.info(f"Outputs are in {sim_output_path}")
+        if args.post_process:
+            # Once the simulations are done
+            # number_of_samples*len(Kivalues) == nscen ### to check
+            df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-            if args.post_process:
-                # Once the simulations are done
-                # number_of_samples*len(Kivalues) == nscen ### to check
-                df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+            master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+                                   'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+            detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
+            custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
+                                   'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-                master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                                       'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-                detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-                custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
-                                       'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
-
+            for first_day in first_days:
                 sampleplot(df, allchannels=master_channel_list, first_day=first_day,
-                           plot_fname=os.path.join(plot_path, 'main_channels.png'))
+                           plot_fname=os.path.join(plot_path, f'main_channels_{first_day}.png'))
                 sampleplot(df, allchannels=detection_channel_list, first_day=first_day,
-                           plot_fname=os.path.join('detection_channels.png'))
+                           plot_fname=os.path.join(f'detection_channels_{first_day}.png'))
                 sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
-                           plot_fname=os.path.join('cumulative_channels.png'))
+                           plot_fname=os.path.join(f'cumulative_channels_{first_day}.png'))
