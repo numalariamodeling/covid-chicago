@@ -174,7 +174,7 @@ def add_computed_parameters(df):
     df['fraction_hospitalized'] = 1 - df['fraction_critical'] - df['fraction_dead']
 
     ##If due to random sampling  time_to_detection > time_to_hospitalization, set to at least one day before hospitalization
-    df['time_to_detection'][df.time_to_detection > df.time_to_hospitalization] = df['time_to_hospitalization'][df.time_to_detection > df.time_to_hospitalization] -1
+    ##df['time_to_detection'][df.time_to_detection > df.time_to_hospitalization] = df['time_to_hospitalization'][df.time_to_detection > df.time_to_hospitalization] -1
 
     return df
 
