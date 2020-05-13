@@ -183,6 +183,9 @@ def write_params():
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
  """
     params_str = params_str.replace("  ", " ")
 
@@ -231,10 +234,52 @@ def write_reactions_2grp(age,region):
     return (reaction_str)
 
 
+def write_interventions(age_list, region_list, total_string, scenarioName) :
+
+    interventiopnSTOP_str = """
+(param Ki_back ( * Ki @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+    """
+
+    gradual_reopening_str =  """
+(param Ki_back1 (* Ki @reopening_multiplier_1@))
+(param Ki_back2 (* Ki @reopening_multiplier_2@))
+(param Ki_back3 (* Ki @reopening_multiplier_3@))
+(param Ki_back4 (* Ki @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
+    """
+
+    ### Note contact tracing might work differently in the age model, modifying detections per age group and making use of contact matrix,
+    ### here included as placeholder
+    ### contact tracing not working yet, as P_det is missing in emodl structure
+    contactTracing_str =  ""
+
+    for grp in grpList:
+        temp_str = """
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_{grp} (* S_{grp} (- 1 d_SQ))) (Q (* S_{grp} d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_{grp} (+ S_{grp} Q_{grp})) (Q_{grp} 0)))
+        """.format(grp=grp)
+        contactTracing_str = contactTracing_str +  temp_str
+
+    if scenarioName == "interventiopnStop" :
+        total_string = total_string.replace(';[INTERVENTIONS]', interventiopnSTOP_str)
+    if scenarioName == "gradual_reopening" :
+        total_string = total_string.replace(';[INTERVENTIONS]', gradual_reopening_str)
+    if scenarioName == "contactTracing" :
+        total_string = total_string.replace(';[INTERVENTIONS]', contactTracing_str)
+
+    return (total_string)
+
+
 ######stringing all of my functions together to make the file:###
 
 ## modifying for 2group:
-def generate_locale_emodl_extended_2grp(age_list, region_dic, file_output):
+def generate_locale_emodl_extended_2grp(age_list, region_list, file_output, add_interventions=None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -270,7 +315,14 @@ def generate_locale_emodl_extended_2grp(age_list, region_dic, file_output):
             functions_string = functions_string + functions
  
     params = write_params()
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
+    intervention_string = ";[INTERVENTIONS]"
+
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + intervention_string + '\n\n' + params + '\n\n' + reaction_string + '\n\n' + footer_str
+
+    ### Add interventions (optional)
+    if add_interventions != None:
+        total_string = write_interventions(grpList, total_string, add_interventions)
+
     print(total_string)
     
     
@@ -284,21 +336,9 @@ def generate_locale_emodl_extended_2grp(age_list, region_dic, file_output):
 
         
 if __name__ == '__main__':
-#     region_dic = define_group_dictionary(totalPop=12741080,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
-#                                       regionGroups=['EMS_0','EMS_1','EMS_2','EMS_3','EMS_4','EMS_5','EMS_6'],
-#                                       regionGroupScale=[0.68, 0.05, 0.08,  0.04, 0.05,  0.03, 0.06],    ## proportion of total population, based on IL_population_by_Age_2010_2018
-#                                       initialAs=[2, 2, 2, 2, 2, 2, 2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
-#                                       )
 
-#     generate_locale_emodl_extended(region_dic=region_dic, file_output=os.path.join(emodl_dir,'extendedmodel_cobey_locale_EMS.emodl'))
-
-    ###testing with 1age and 1 locale group:
     age_list = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
-    region_list = ['EMS_1',  'EMS_2' ] #  ['EMS_0', 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
-    #region_dic = define_group_dictionary(totalPop=12741080,  #  12741080 based on IL_population_by_Age_2010_2018 (shared in w7 channel)
-    #                                 regionGroups=['EMS_0'],
-    #                                  regionGroupScale=[0.68],    ## proportion of total population, based on IL_population_by_Age_2010_2018
-    #                                  initialAs=[2]  # homogeneous distribution of inital cases ? Or "hot spot" in one area?
-    #                                  )
+    region_list = ['EMS_1', 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
 
-    generate_locale_emodl_extended_2grp(age_list, region_list, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_age_6grptest1.emodl'))
+    generate_locale_emodl_extended_2grp(age_list, region_list, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_age_test.emodl'))
+    generate_locale_emodl_extended_2grp(age_list, add_interventions='interventiopnStop', region_list, file_output=os.path.join(emodl_dir, 'extendedmodel_cobey_locale_age_test_interventiopnStop.emodl'))

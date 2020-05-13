@@ -27,7 +27,7 @@ python runScenarios.py --running_location Local --region EMS_10 --experiment_con
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_noSIP.emodl --name_suffix "scenario2"
 
 ##### Scenario 3 - constant mitigation
-python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "test2"
 python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
 python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
 python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
@@ -85,11 +85,49 @@ python runScenarios.py --running_location Local --region EMS_9 --experiment_conf
 python runScenarios.py --running_location Local --region EMS_10 --experiment_config extendedcobey_forFitting.yaml --emodl_template extendedmodel_cobey_forFitting.emodl --name_suffix "fit_test1"
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_forFitting.yaml --emodl_template extendedmodel_cobey_forFitting.emodl --name_suffix "fit_test1"
 
+
+python runScenarios.py --running_location Local --region EMS_1  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_2  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_3  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_4  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_5  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_6  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_7  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_8  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_9  --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_10 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay.emodl --name_suffix "testDelay_fit"
+
+
+### All EMS model (non spatial, grouped by EMS)
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_scenario3"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_gradual_reopening.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_reopen"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_interventionStop"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_neverSIP"
+
+#### Spatial model 
+# Region must be IL , the EMS parameter are defined in  spatial_EMS_experiment.yaml
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_cobey_locale_EMS.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_scenario3"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_cobey_locale_gradual_EMS_reopening.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_reopen"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_cobey_locale_EMS_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_interventionStop"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_cobey_locale_EMS_EMS_grp_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_neverSIP"
+
+#### Age  model 
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_homogeneous.emodl --cfg_template model_B.cfg --name_suffix "age4_homogeneous_scenario3"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4.emodl --cfg_template model_B.cfg --name_suffix "age4_scenario3"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_gradual_reopening.emodl --cfg_template model_B.cfg --name_suffix "age4_reopen"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "age4_interventionStop"
+
+
+## With age specific parameter 
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_param.emodl --cfg_template model_B.cfg --name_suffix "age4_ageparam_test"
+python runScenarios.py --running_location Local --region EMS_11 --experiment_config age8grp_experiment.yaml --emodl_template extendedmodel_age8_param.emodl --name_suffix "age8_test"
+
+
 #### Parameter comparison 
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200419.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200419_v2"
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200421.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200421_v2"
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "param_200428_v2"
-
 
 #### Emodl comparison (i.e. for testDelay and contact tracing)
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "base"
@@ -97,26 +135,5 @@ python runScenarios.py --running_location Local --region EMS_11 --experiment_con
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_noSIP.emodl --name_suffix "base_SIPstop"
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_testDelay_contactTracing.emodl --name_suffix "testDelay_contactTracing"
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_contactTracing.emodl --name_suffix "contactTracing"
-
-### All EMS model (non spatial, grouped by EMS - testing in process)
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_homogeneous.emodl --cfg_template model_B.cfg --name_suffix "_EMSall_testB"
-
-#### Spatial model 
-# Region must be IL , the EMS parameter are defined in  spatial_EMS_experiment.yaml
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_cobey_locale_EMS.emodl --cfg_template model_B.cfg --name_suffix "_localeB_test"
-
-
-#### Age  model 
-### homogeneous mixing
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_homogeneous.emodl --cfg_template model_B.cfg --name_suffix "age4_homogeneous2"
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_homogeneous.emodl --cfg_template model_B.cfg --name_suffix "age4_homogeneous"
-
-### all location contact matrix 
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4.emodl --cfg_template model_B.cfg --name_suffix "age4_generic_test"
-
-## With age specific parameter 
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_param.emodl --cfg_template model_B.cfg --name_suffix "age4_ageparam_test"
-python runScenarios.py --running_location Local --region EMS_11 --experiment_config age8grp_experiment.yaml --emodl_template extendedmodel_age8_param.emodl --name_suffix "age8_test"
-
 
 
