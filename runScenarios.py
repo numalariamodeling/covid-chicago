@@ -11,7 +11,10 @@ import numpy as np
 import pandas as pd
 import yaml
 import yamlordereddictloader
+
+# Need to load dotenv before simulation_helpers
 from dotenv import load_dotenv
+load_dotenv()
 
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
@@ -412,9 +415,6 @@ if __name__ == '__main__':
     logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
 
     args = parse_args()
-
-    # Load parameters
-    load_dotenv()
 
     _, _, wdir, exe_dir, git_dir = load_box_paths(Location=args.running_location)
     Location = os.getenv("LOCATION") or args.running_location

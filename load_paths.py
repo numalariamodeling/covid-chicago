@@ -2,6 +2,7 @@ import os
 
 
 def load_box_paths(user_path=None, Location ='Local'):
+    home_path = os.getenv("HOME_PATH")
     data_path = os.getenv("DATA_PATH")
     project_path = os.getenv("PROJECT_PATH")
     wdir = os.getenv("WDIR")
