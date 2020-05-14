@@ -13,6 +13,7 @@ import yaml
 import yamlordereddictloader
 
 # Need to load dotenv before simulation_helpers
+# simulation_helpers globally calls load_box_paths
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -193,34 +194,30 @@ def add_sampled_parameters(df, config, region, age_bins):
     return df
 
 
-def add_startdate(df, first_days):
-    result = pd.DataFrame()
-    for first_day in first_days:
-        df_copy = df.copy()
-        df_copy["startdate"] = first_day
-        result.append(df_copy, ignore_index=True)
-    return result
-
-
 def generateParameterSamples(samples, pop, first_days, config, age_bins, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
     """
-    df = pd.DataFrame()
-    df['sample_num'] = range(samples)
-    df['speciesS'] = pop
-    df['initialAs'] = config['experiment_setup_parameters']['initialAs']
+    result = pd.DataFrame()
 
-    df = add_sampled_parameters(df, config, region, age_bins)
-    df = add_fixed_parameters_region_specific(df, config, region, age_bins)
-    for parameter, parameter_function in config['fixed_parameters_global'].items():
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
-    df = add_computed_parameters(df)
-    df = add_startdate(df, first_days)
+    for first_day in first_days:
+        df = pd.DataFrame()
+        df['sample_num'] = range(samples)
+        df['speciesS'] = pop
+        df['initialAs'] = config['experiment_setup_parameters']['initialAs']
+        df['startdate'] = first_day
 
-    df.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
-    return df
+        df = add_sampled_parameters(df, config, region, age_bins)
+        df = add_fixed_parameters_region_specific(df, config, region, age_bins)
+        for parameter, parameter_function in config['fixed_parameters_global'].items():
+            df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+        df = add_computed_parameters(df)
+
+        result.append(df, ignore_index=True)
+
+    result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
+    return result
 
 
 def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
