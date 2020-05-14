@@ -414,13 +414,6 @@
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
@@ -475,6 +468,15 @@
 (param C4_3 (/ C43 norm_factor))
 (param C4_2 (/ C42 norm_factor))
 (param C4_1 (/ C41 norm_factor))
+
+
+(param Ki_red1 (* Ki @social_multiplier_1@))
+(param Ki_red2 (* Ki @ social_multiplier_2@))
+(param Ki_red3 (* Ki @social_multiplier_3@))
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
+ 
 
 
 (reaction exposure_age0to19   (S_age0to19) (E_age0to19) (* Ki S_age0to19 (/  (+ infectious_undet_ageAll (* infectious_det_ageAll reduced_inf_of_det_cases)) N_ageAll )))
