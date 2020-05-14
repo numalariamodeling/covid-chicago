@@ -337,6 +337,7 @@ def write_reactions(grp, expandModel=None):
     if expandModel ==None :
        expand_str = """
 (reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks E_{grp}))
+(reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym P_{grp} (- 1 d_Sym)))
 (reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym P_{grp} d_Sym))
 (reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys P_{grp} (- 1 d_Sys)))
 (reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys P_{grp} d_Sys))
@@ -397,12 +398,13 @@ def write_reactions(grp, expandModel=None):
 (reaction presymptomatic (E_{grp})   (P_{grp})   (* Ks E_{grp} (- 1 d_P)))
 (reaction presymptomatic (E_{grp})   (P_det_{grp})   (* Ks E_{grp} d_P))
 
-(reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2_{grp}) (* Ksym P_det_{grp}))
-(reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3_{grp})  (* Ksys P_det_{grp} ))
+(reaction mild_symptomatic_undet (P_{grp})  (Sym_{grp}) (* Ksym P_{grp} (- 1 d_Sym)))
+(reaction mild_symptomatic_det (P_{grp})  (Sym_det2_{grp}) (* Ksym P_{grp} d_Sym))
+(reaction severe_symptomatic_undet (P_{grp})  (Sys_{grp})  (* Ksys P_{grp} (- 1 d_Sys)))
+(reaction severe_symptomatic_det (P_{grp})  (Sys_det3_{grp})  (* Ksys P_{grp} d_Sys))
 
-(reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym P_{grp} d_Sym))
-(reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys P_{grp} (- 1 d_Sys)))
-(reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys P_{grp} d_Sys))
+(reaction mild_symptomatic_det (P_det_{grp})  (Sym_det2_{grp}) (* Ksym P_det_{grp}))
+(reaction severe_symptomatic_det (P_det_{grp})  (Sys_det3_{grp})  (* Ksys P_det_{grp} ))
 
 (reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1 Sys_{grp}))
 (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2 Sys_{grp}))
