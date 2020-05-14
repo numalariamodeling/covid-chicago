@@ -61,10 +61,6 @@ if __name__ == '__main__' :
             adf = df[model_col + observe_col].copy()
             adf.columns = adf.columns.str.replace('_'+ grp , "")
 
-            #df['infected_cumul_%s' % age_group] = df['infected_%s' % age_group]  + df['recovered_%s' % age_group]  + df['deaths_%s' % age_group]
-            adf['infected'] = adf['asymptomatic'] + adf['presymptomatic'] + adf['symptomatic_mild'] + adf['symptomatic_severe'] +  adf['hospitalized'] + adf['critical']
-            adf['infected_cumul'] = adf['infected'] + adf['recovered'] + adf['deaths']
-
             adf = calculate_incidence(adf)
             adf['ems'] = grp
 
@@ -134,7 +130,7 @@ if __name__ == '__main__' :
         #adf.to_csv(os.path.join(out_dir, filename), index=False)
 
         for ems in suffix_names :
-            if not ems == "regionAll" :
+            if not ems == "All" :
                 ems_nr = int(ems.split("-")[1])
                 capacity = load_capacity(ems_nr)
 
