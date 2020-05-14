@@ -39,6 +39,7 @@ the model was further improved inspired from the compartmental model used at the
 | spatial-grp    | no migration                    | none                     | never SIP             | extendedmodel_EMS_grp_neverSIP.emodl                   |
 | spatial-grp    | no migration                    | none                     | immediate stop of SIP | extendedmodel_EMS_grp_interventionStop.emodl           |
 | spatial-grp    | no migration                    | none                     | gradual reopen        | extendedmodel_EMS_grp_gradual_reopening.emodl          |
+| spatial-grp    | no migration                    | testDelay                | continued SIP         | extendedmodel_EMS_grp_testDelay.emodl          |
 |                |                                 |                          |                       |                                                        |
 | spatial-locale | no migration                    | none                     | continued SIP         | extendedmodel_cobey_locale_EMS.emodl                   |
 | spatial-locale | no migration                    | none                     | never SIP             | extendedmodel_cobey_locale_EMS_neverSIP.emodl          |
