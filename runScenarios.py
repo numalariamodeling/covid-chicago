@@ -214,7 +214,7 @@ def generateParameterSamples(samples, pop, first_days, config, age_bins, region)
             df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
         df = add_computed_parameters(df)
 
-        result.append(df, ignore_index=True)
+        result = result.append(df, ignore_index=True)
 
     result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     return result
