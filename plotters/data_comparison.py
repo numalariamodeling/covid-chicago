@@ -18,18 +18,19 @@ datetoday = date(today.year, today.month, today.day)
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-def load_sim_data(exp_name, input_wdir=None) :
+def load_sim_data(exp_name, input_wdir=None, input_sim_output_path =None) :
     input_wdir = input_wdir or wdir
-    sim_output_path = os.path.join(input_wdir,'simulation_output', exp_name)
-    scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
+    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
+    sim_output_path = input_sim_output_path or sim_output_path_base
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     if 'Ki' not in df.columns.values :
+        scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
 
-    if 'ageAll' in df.columns.values:
-        df.columns = df.columns.str.replace(r'_ageAll$', '')
-
+    #if 'ageAll' in df.columns.values:
+    #    df.columns = df.columns.str.replace('_ageAll', '')
+    df.columns = df.columns.str.replace('_ageAll', '')
     df = calculate_incidence(df)
 
     return df
@@ -175,9 +176,11 @@ def compare_ems(exp_name, ems=0, source='EMR') :
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
     df = load_sim_data(exp_name)
+    #for x in df.columns:
+    #   print(x)
     first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
-    df['ventilators'] = df['critical']*0.8
+    df['ventilators'] = df['crit_det']*0.8
     df['critical_with_suspected'] = df['critical']
     channels = ['new_detected_deaths', 'crit_det', 'ventilators']
     ref_df_emr = ref_df
@@ -220,7 +223,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
 
 if __name__ == '__main__' :
 
-    stem = "testparam_v6"
+    stem = "age"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names :

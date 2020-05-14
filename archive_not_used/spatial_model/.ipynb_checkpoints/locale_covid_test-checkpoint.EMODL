@@ -1,0 +1,65 @@
+; simplemodel
+
+(import (rnrs) (emodl cmslib))
+
+(start-model "seir.emodl")
+
+(locale site-1)
+(set-locale site-1)
+(species S::1 5223719)
+(species E::1 0)
+(species I::1 1)
+(species R::1 0)
+
+(locale site-2)
+(set-locale site-2)
+(species S::2 931743)
+(species E::2 0)
+(species I::2 1)
+(species R::2 0)
+
+(locale site-3)
+(set-locale site-3)
+(species S::3 12671809)
+(species E::3 0)
+(species I::3 12)
+(species R::3 0)
+
+
+(observe susceptible_Cook S::1)
+(observe exposed_Cook    E::1)
+(observe infectious_Cook  I::1)
+(observe recovered_Cook   R::1)
+
+(observe susceptible_DuPage S::2)
+(observe exposed_DuPage   E::2)
+(observe infectious_DuPage  I::2)
+(observe recovered_DuPage   R::2)
+
+(observe susceptible_Illinois S::3)
+(observe exposed_Illinois   E::3)
+(observe infectious_Illinois  I::3)
+(observe recovered_Illinois   R::3)
+
+(param Ki 4.45e-6)
+(param incubation_pd 6.63)
+(param Kl (/ 1 incubation_pd))
+(param recovery_rate 16)
+(param Kr (/ 1 recovery_rate))
+(param waning 180)
+(param Kw (/ 1 waning))
+
+(reaction exposure_Cook   (S::1) (E::1) (* Ki S::1 I::1))
+(reaction infection_Cook  (E::1)   (I::1)   (* Kl E::1))
+(reaction recovery_Cook   (I::1)   (R::1)   (* Kr I::1))
+
+(reaction exposure_DuPage   (S::2) (E::2) (* Ki S::2 I::2))
+(reaction infection_DuPage (E::2)   (I::2)   (* Kl E::2))
+(reaction recovery_DuPage   (I::2)   (R::2)   (* Kr I::2))
+
+(reaction exposure_Illinois   (S::3) (E::3) (* Ki S::3 I::3))
+(reaction infection_Illinois (E::3)   (I::3)   (* Kl E::3))
+(reaction recovery_Illinois   (I::3)   (R::3)   (* Kr I::3))
+
+
+(end-model)
