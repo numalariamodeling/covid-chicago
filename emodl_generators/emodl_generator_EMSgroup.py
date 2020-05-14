@@ -97,45 +97,39 @@ def write_observe(grp, expandModel=None):
 (observe deaths_{grpout} deaths_{grp})
 (observe recovered_{grpout} recovered_{grp})
 
-(observe asymp_cumul_{grpout} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
-(observe asymp_det_cumul_{grpout} (+ As_det1_{grp} RAs_det1_{grp}))
-(observe symp_mild_cumul_{grpout} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
-(observe symp_severe_cumul_{grpout} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe hosp_cumul_{grpout} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe hosp_det_cumul_{grpout} (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe crit_cumul_{grpout} (+ deaths_{grp} critical_{grp} RC2_{grp} RC2_det3_{grp}))
-(observe crit_det_cumul_{grpout} (+ C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RC2_det3_{grp}))
-(observe crit_det_{grpout} (+ C2_det3_{grp} C3_det3_{grp}))
-(observe death_det_cumul_{grpout} D3_det3_{grp} )
+(observe asymp_cumul_{grpout} asymp_cumul_{grp} )
+(observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
+(observe symp_mild_cumul_{grpout} symp_mild_cumul_{grp})
+(observe symp_severe_cumul_{grpout} symp_severe_cumul_{grp})
+(observe hosp_cumul_{grpout} hosp_cumul_{grp})
+(observe hosp_det_cumul_{grpout} hosp_det_cumul_{grp} )
+(observe crit_cumul_{grpout} crit_cumul_{grp})
+(observe crit_det_cumul_{grpout} crit_det_cumul_{grp})
+(observe crit_det_{grpout} crit_det_{grp})
+(observe death_det_cumul_{grpout} death_det_cumul_{grp} )
 
-(observe infected_{grpout} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(observe infected_{grpout} infected_{grp})
+(observe infected_cumul_{grpout} infected_cumul_{grp})
+
+(observe symp_mild_det_cumul_{grpout} symp_mild_det_cumul_{grp})
+(observe symp_severe_det_cumul_{grpout} symp_severe_det_cumul_{grp})
+(observe detected_{grpout} detected_{grp})
+(observe detected_cumul_{grpout} detected_cumul_{grp} )
 """.format(grpout=grpout, grp=grp)
 
     
     expand_base_str = """
 (observe presymptomatic_{grpout} P_{grp})
-(observe symp_mild_det_cumul_{grpout} (+ RSym_det2_{grp} Sym_det2_{grp}))
-(observe symp_severe_det_cumul_{grpout} (+ Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe detected_{grpout} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-(observe detected_cumul_{grpout} (+ (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp}) RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
 """.format(grpout=grpout, grp=grp)
 
     expand_contactTracing_str = """
 ;(observe quarantined Q_{grpout})
 (observe presymptomatic_{grpout} presymptomatic_{grp})
-(observe symp_mild_det_cumul_{grpout} (+ RSym_det2_{grp} Sym_det2_{grp}))
-(observe symp_severe_det_cumul_{grpout} (+ Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe detected_{grpout} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-(observe detected_cumul_{grpout} (+ (+ As_det1_{grp} P_det_{grp}  Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp}) RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
 """.format(grpout=grpout, grp=grp)
 
     expand_testDelay_contactTracing_str = """
 ;(observe quarantined Q_{grpout})
 (observe presymptomatic_{grpout} presymptomatic_{grp})
-(observe symp_mild_det_cumul_{grpout} (+ RSym_det2_{grp} Sym_det2a_{grp} Sym_det2b_{grp}))
-(observe symp_severe_det_cumul_{grpout} (+ Sys_det3a_{grp} Sys_det3b_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-(observe detected_{grpout} (+ As_det1_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-(observe detected_cumul_{grpout} (+ (+ As_det1_{grp} P_det_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp}) RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
 """.format(grpout=grpout, grp=grp)
 
     if expandModel == None :
@@ -176,6 +170,7 @@ def write_functions(grp, expandModel=None):
 
 (func detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
 (func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
 """.format(grp=grp)
     functions_str = functions_str.replace("  ", "")
     
@@ -347,6 +342,7 @@ def write_All(grpList):
     obs_All_str = obs_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp( 'hospitalized_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe critical_All (+ " + repeat_string_by_grp('critical_',  grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe deaths_All (+ " + repeat_string_by_grp('deaths_',   grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe infected_All (+ " + repeat_string_by_grp('infected_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',   grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe asymp_cumul_All (+ " + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe asymp_det_cumul_All (+ " + repeat_string_by_grp('asymp_det_cumul_', grpList) + "))"
@@ -360,10 +356,11 @@ def write_All(grpList):
     obs_All_str = obs_All_str + "\n(observe crit_det_cumul_All (+ " + repeat_string_by_grp(  'crit_det_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe crit_det_All (+ " + repeat_string_by_grp('crit_det_',    grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe detected_cumul_All (+ " + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe death_det_cumul_All (+ " + repeat_string_by_grp(    'death_det_cumul_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe death_det_cumul_All (+ " + repeat_string_by_grp('death_det_cumul_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe infected_cumul_All (+ " + repeat_string_by_grp('infected_cumul_', grpList) + "))"
 
     obs_All_str = obs_All_str + "\n(func infectious_det_All (+ " + repeat_string_by_grp( 'infectious_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(func infectious_undet_All (+ " + repeat_string_by_grp(   'infectious_undet_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(func infectious_undet_All (+ " + repeat_string_by_grp('infectious_undet_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe infectious_det_All infectious_det_All)"
     obs_All_str = obs_All_str + "\n(observe infectious_undet_All infectious_undet_All)"
 
@@ -672,5 +669,5 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="testDelay_contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_contactTracing.emodl'))
 
     
-    
-    
+    ltcf_grp = ['staff', 'residents', 'visitors']
+    generate_emodl(grpList=ltcf_grp, expandModel="testDelay_contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_ltcf_contactTracing.emodl'))
