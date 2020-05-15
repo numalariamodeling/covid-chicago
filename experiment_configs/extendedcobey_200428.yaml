@@ -46,7 +46,7 @@ sampled_parameters:
     function_kwargs: {'low': 2.4, 'high': 3.5}
   'time_to_detection':
     np.random: uniform
-    function_kwargs: {'low':0.1, 'high':5.9}
+    function_kwargs: {'low':2.9, 'high':2.9}
   'time_to_hospitalization':
     np.random: uniform
     function_kwargs: {'low':3, 'high':6}
@@ -122,7 +122,7 @@ sampled_parameters:
     function_kwargs: {'low':0.90, 'high':0.90}
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
     np.random: uniform
@@ -180,9 +180,9 @@ sampled_parameters:
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.30}
-  #'d_SQ':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.80, 'high':0.80}    
+  'd_SQ':
+    np.random: uniform
+    function_kwargs: {'low':0.80, 'high':0.80}    
   ### Use fixed dates or define detection time relative to  socialDistance_time3
   'contact_tracing_start_1':
     custom_function: DateToTimestep
