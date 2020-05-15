@@ -52,8 +52,8 @@ def calculate_incidence(adf, output_filename=None) :
 
         sdf = pd.DataFrame( { 'time' : df['time'],
                               'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
-                              #'new_infected': count_new(df, 'infected_cumul'),
-                              #'new_infected_detected': count_new(df, 'infected_det_cumul'),
+                              'new_infected': count_new(df, 'infected_cumul'),
+                            #'new_infected_detected': count_new(df, 'infected_det_cumul'),
                               'new_asymptomatic' : count_new(df, 'asymp_cumul'),
                               'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
                               'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
