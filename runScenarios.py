@@ -497,10 +497,11 @@ if __name__ == '__main__':
             custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
                                    'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-            for first_day in first_days:
-                sampleplot(df, allchannels=master_channel_list, first_day=first_day,
-                           plot_fname=os.path.join(plot_path, f'main_channels_{first_day}.png'))
-                sampleplot(df, allchannels=detection_channel_list, first_day=first_day,
-                           plot_fname=os.path.join(f'detection_channels_{first_day}.png'))
-                sampleplot(df, allchannels=custom_channel_list, first_day=first_day,
-                           plot_fname=os.path.join(f'cumulative_channels_{first_day}.png'))
+            # FIXME: Timesteps shouldn't be all relative to first_days[0],
+            #    especially when we have multiple first days.
+            sampleplot(df, allchannels=master_channel_list, first_day=first_days[0],
+                       plot_fname=os.path.join(plot_path, f'main_channels.png'))
+            sampleplot(df, allchannels=detection_channel_list, first_day=first_days[0],
+                       plot_fname=os.path.join(f'detection_channels.png'))
+            sampleplot(df, allchannels=custom_channel_list, first_day=first_days[0],
+                       plot_fname=os.path.join(f'cumulative_channels.png'))
