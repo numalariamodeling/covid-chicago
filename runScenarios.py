@@ -24,12 +24,15 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
+_RNG = np.random.default_rng(seed=42)
+
+
 def _parse_config_parameter(df, parameter, parameter_function):
     if isinstance(parameter_function, (int, float)):
         return parameter_function
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
-        return getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
+        return getattr(_RNG, parameter_function['np.random'])(size=len(df), **function_kwargs)
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
