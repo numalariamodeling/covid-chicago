@@ -218,7 +218,7 @@ def generateParameterSamples(samples, pop, first_days, config, age_bins, region)
     return result
 
 
-def replaceParameters(df, Ki_i, emodl_template, scen_num):
+def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     """ Given an emodl template file, replaces the placeholder names
     (which are bookended by '@') with the sampled parameter value.
     This is saved as a (temporary) emodl file to be used in simulation runs.
@@ -228,6 +228,8 @@ def replaceParameters(df, Ki_i, emodl_template, scen_num):
     df: pd.DataFrame
         DataFrame containing all the sampled parameters
     Ki_i: float
+    sample_nr: int
+        Sample number of the df to use in generating the emodl file
     emodl_template: str
         File name of the emodl template file
     scen_num: int
@@ -236,7 +238,7 @@ def replaceParameters(df, Ki_i, emodl_template, scen_num):
     fin = open(os.path.join(temp_exp_dir, emodl_template), "rt")
     data = fin.read()
     for col in df.columns:
-        data = data.replace(f'@{col}@', str(df[col][scen_num - 1]))
+        data = data.replace(f'@{col}@', str(df[col][sample_nr]))
     data = data.replace('@Ki@', '%.09f' % Ki_i)
     remaining_placeholders = re.findall(r'@\w+@', data)
     if remaining_placeholders:
@@ -266,7 +268,9 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
         scen_num += 1
 
         lst.append([sample, scen_num, Ki, first_day, simulation_population])
-        replaceParameters(df=dfparam, Ki_i=Ki, emodl_template=modelname, scen_num=scen_num)
+
+        dfparam_first_day = dfparam[dfparam["startdate"] == first_day].reset_index()
+        replaceParameters(df=dfparam_first_day, Ki_i=Ki,  sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
 
         # adjust model.cfg
         fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
