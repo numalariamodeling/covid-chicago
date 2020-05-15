@@ -556,6 +556,14 @@ def write_interventions(grpList, total_string, scenarioName) :
         """.format(grp=grp)
         interventiopnSTOP_str = interventiopnSTOP_str + temp_str
 
+    interventionSTOP_adj_str = ""
+    for grp in grpList :
+        temp_str = """
+(param Ki_back_{grp} (+ Ki_red3_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red3_{grp}))))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
+        """.format(grp=grp)
+        interventionSTOP_adj_str = interventionSTOP_adj_str + temp_str
+        
     gradual_reopening_str = ""
     for grp in grpList:
         temp_str = """
@@ -585,6 +593,8 @@ def write_interventions(grpList, total_string, scenarioName) :
 
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
+    if scenarioName == "interventionSTOP_adj" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str)
     if scenarioName == "gradual_reopening" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str)
     if scenarioName == "continuedSIP" :
@@ -660,10 +670,13 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel=None, add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_gradual_reopening.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_contactTracing.emodl'))
 
-    generate_emodl(grpList=ems_grp, expandModel="testDelay",  add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel=None,  add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_interventionSTOPadj.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_neverSIP.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionStop',  file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_interventionStop.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_gradual_reopening.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_contactTracing.emodl'))
+
+
+
