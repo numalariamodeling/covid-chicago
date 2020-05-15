@@ -500,8 +500,8 @@ if __name__ == '__main__':
             # FIXME: Timesteps shouldn't be all relative to first_days[0],
             #    especially when we have multiple first days.
             sampleplot(df, allchannels=master_channel_list, first_day=first_days[0],
-                       plot_fname=os.path.join(plot_path, f'main_channels.png'))
+                       plot_fname=os.path.join(plot_path, 'main_channels.png'))
             sampleplot(df, allchannels=detection_channel_list, first_day=first_days[0],
-                       plot_fname=os.path.join(f'detection_channels.png'))
+                       plot_fname=os.path.join('detection_channels.png'))
             sampleplot(df, allchannels=custom_channel_list, first_day=first_days[0],
-                       plot_fname=os.path.join(f'cumulative_channels.png'))
+                       plot_fname=os.path.join('cumulative_channels.png'))
