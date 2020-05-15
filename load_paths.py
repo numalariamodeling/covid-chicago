@@ -1,5 +1,8 @@
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 
 def load_box_paths(user_path=None, Location ='Local'):
     home_path = os.getenv("HOME_PATH")
