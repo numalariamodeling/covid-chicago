@@ -53,7 +53,7 @@ else:
 
 
 # Setup 
-#******************************************************************************************
+#############################################################################
 
 # Filter out timeframes for graphs
 # Generate datetime to get weeks for slider
@@ -260,7 +260,7 @@ app.layout = html.Div(
                         # 3 x 2 Arrangement
                         html.Div(
                             [
-                                # Top 3 Chart Container
+                                # Top 2 Charts
                                 html.Div(
                                     [
                                         # Chart 0
@@ -268,7 +268,6 @@ app.layout = html.Div(
                                             [
                                                 dcc.Graph(id="outputLineChart0")
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                         # Chart 1
@@ -276,42 +275,42 @@ app.layout = html.Div(
                                             [
                                                 dcc.Graph(id="outputLineChart1")
                                             ],
-                                            #className="one-third columns",
-                                            className="graphDiv",
-                                        ),
-                                        # Chart 2...
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart2")
-                                            ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                     ],
                                     className="flex-display chartContainerDiv "
                                 ),
-                                # Remaining two charts
+                                # Middle two charts
                                 html.Div(
                                     [
                                         html.Div(
                                             [
-                                                dcc.Graph(id="outputLineChart3")
+                                                dcc.Graph(id="outputLineChart2")
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
+                                        html.Div(
+                                            [
+                                                dcc.Graph(id="outputLineChart3")
+                                            ],
+                                            className="graphDiv",
+                                        ),                                    
+                                    ],
+                                    className="flex-display chartContainerDiv "
+                                ),
+                                # Bottom two charts
+                                html.Div(
+                                    [
                                         html.Div(
                                             [
                                                 dcc.Graph(id="outputLineChart4")
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                         html.Div(
                                             [
-                                                # Placeholder for 6th 
+                                                # Placeholder for 6th chart
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                     ],
@@ -342,7 +341,9 @@ app.layout = html.Div(
 )
 
 
-# Selector for First Output Chart
+# Callback 
+#############################################################################
+
 # Callback inputs will all be the same
 @app.callback(
     [
