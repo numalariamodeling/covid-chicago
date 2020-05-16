@@ -24,15 +24,13 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
-_RNG = np.random.default_rng(seed=42)
-
 
 def _parse_config_parameter(df, parameter, parameter_function):
     if isinstance(parameter_function, (int, float)):
         return parameter_function
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
-        return getattr(_RNG, parameter_function['np.random'])(size=len(df), **function_kwargs)
+        return getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
@@ -197,21 +195,21 @@ def generateParameterSamples(samples, pop, first_days, config, age_bins, region)
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
     """
-    result = pd.DataFrame()
+    df = pd.DataFrame()
+    df['sample_num'] = range(samples)
+    df['speciesS'] = pop
+    df['initialAs'] = config['experiment_setup_parameters']['initialAs']
+    df['startdate'] = first_days[0]
 
-    for first_day in first_days:
-        df = pd.DataFrame()
-        df['sample_num'] = range(samples)
-        df['speciesS'] = pop
-        df['initialAs'] = config['experiment_setup_parameters']['initialAs']
+    df = add_sampled_parameters(df, config, region, age_bins)
+    df = add_fixed_parameters_region_specific(df, config, region, age_bins)
+    for parameter, parameter_function in config['fixed_parameters_global'].items():
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+    df = add_computed_parameters(df)
+
+    result = df.copy()
+    for first_day in first_days[1:]:
         df['startdate'] = first_day
-
-        df = add_sampled_parameters(df, config, region, age_bins)
-        df = add_fixed_parameters_region_specific(df, config, region, age_bins)
-        for parameter, parameter_function in config['fixed_parameters_global'].items():
-            df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
-        df = add_computed_parameters(df)
-
         result = result.append(df, ignore_index=True)
 
     result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
