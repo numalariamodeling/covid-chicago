@@ -763,9 +763,9 @@
 (param Kr_hage0to9 (/ 1 recovery_time_hosp_age0to9))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization))
+(param Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization ))
+(param Kh3age0to9 (/ fraction_dead_age0to9  time_to_hospitalization))
 
 (param fraction_severe_age10to19 @fraction_severe_age10to19@)
 (param Ksysage10to19 (* fraction_severe_age10to19 (/ 1 time_to_symptoms)))
@@ -785,9 +785,9 @@
 (param Kr_hage10to19 (/ 1 recovery_time_hosp_age10to19))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization))
+(param Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization ))
+(param Kh3age10to19 (/ fraction_dead_age10to19  time_to_hospitalization))
 
 (param fraction_severe_age20to29 @fraction_severe_age20to29@)
 (param Ksysage20to29 (* fraction_severe_age20to29 (/ 1 time_to_symptoms)))
@@ -807,9 +807,9 @@
 (param Kr_hage20to29 (/ 1 recovery_time_hosp_age20to29))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization))
+(param Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization ))
+(param Kh3age20to29 (/ fraction_dead_age20to29  time_to_hospitalization))
 
 (param fraction_severe_age30to39 @fraction_severe_age30to39@)
 (param Ksysage30to39 (* fraction_severe_age30to39 (/ 1 time_to_symptoms)))
@@ -829,9 +829,9 @@
 (param Kr_hage30to39 (/ 1 recovery_time_hosp_age30to39))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization))
+(param Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization ))
+(param Kh3age30to39 (/ fraction_dead_age30to39  time_to_hospitalization))
 
 (param fraction_severe_age40to49 @fraction_severe_age40to49@)
 (param Ksysage40to49 (* fraction_severe_age40to49 (/ 1 time_to_symptoms)))
@@ -851,9 +851,9 @@
 (param Kr_hage40to49 (/ 1 recovery_time_hosp_age40to49))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization))
+(param Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization ))
+(param Kh3age40to49 (/ fraction_dead_age40to49  time_to_hospitalization))
 
 (param fraction_severe_age50to59 @fraction_severe_age50to59@)
 (param Ksysage50to59 (* fraction_severe_age50to59 (/ 1 time_to_symptoms)))
@@ -873,9 +873,9 @@
 (param Kr_hage50to59 (/ 1 recovery_time_hosp_age50to59))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization))
+(param Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization ))
+(param Kh3age50to59 (/ fraction_dead_age50to59  time_to_hospitalization))
 
 (param fraction_severe_age60to69 @fraction_severe_age60to69@)
 (param Ksysage60to69 (* fraction_severe_age60to69 (/ 1 time_to_symptoms)))
@@ -895,9 +895,9 @@
 (param Kr_hage60to69 (/ 1 recovery_time_hosp_age60to69))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization))
+(param Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization ))
+(param Kh3age60to69 (/ fraction_dead_age60to69  time_to_hospitalization))
 
 (param fraction_severe_age70to100 @fraction_severe_age70to100@)
 (param Ksysage70to100 (* fraction_severe_age70to100 (/ 1 time_to_symptoms)))
@@ -917,9 +917,9 @@
 (param Kr_hage70to100 (/ 1 recovery_time_hosp_age70to100))
 
 
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization))
+(param Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization ))
+(param Kh3age70to100 (/ fraction_dead_age70to100  time_to_hospitalization))
 
 (param N_age0to9 (+ @speciesS_age0to9@ @initialAs_age0to9@) )
 (param N_age10to19 (+ @speciesS_age10to19@ @initialAs_age10to19@) )
