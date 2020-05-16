@@ -279,7 +279,7 @@ def write_age_specific_param(grp, expandModel):
 (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
 (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
 (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-"""
+""".format(grp=grp)   
 
 
     expand_testDelay_str = """
@@ -289,7 +289,7 @@ def write_age_specific_param(grp, expandModel):
 (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
 (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
 (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
-"""
+""".format(grp=grp)   
 
     if expandModel == None:
         params_str = params_str + expand_base_str
