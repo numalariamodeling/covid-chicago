@@ -66,6 +66,7 @@ def write_observe(grp, expandModel=None):
 (observe susceptible_{grp} S_{grp})
 (observe exposed_{grp} E_{grp})
 (observe asymptomatic_{grp} asymptomatic_{grp})
+                                      
 (observe symptomatic_mild_{grp} symptomatic_mild_{grp})
 (observe symptomatic_severe_{grp} symptomatic_severe_{grp})
 (observe hospitalized_{grp} hospitalized_{grp})
@@ -73,22 +74,24 @@ def write_observe(grp, expandModel=None):
 (observe deaths_{grp} deaths_{grp})
 (observe recovered_{grp} recovered_{grp})
 
-(observe asymp_cumul_{grp} asymp_cumul_{grp})
+(observe asymp_cumul_{grp} asymp_cumul_{grp} )
 (observe asymp_det_cumul_{grp} asymp_det_cumul_{grp})
 (observe symp_mild_cumul_{grp} symp_mild_cumul_{grp})
-(observe symp_mild_det_cumul_{grp} symp_mild_det_cumul_{grp})
 (observe symp_severe_cumul_{grp} symp_severe_cumul_{grp})
-(observe symp_severe_det_cumul_{grp} symp_severe_det_cumul_{grp})
 (observe hosp_cumul_{grp} hosp_cumul_{grp})
-(observe hosp_det_cumul_{grp} hosp_det_cumul_{grp})
+(observe hosp_det_cumul_{grp} hosp_det_cumul_{grp} )
 (observe crit_cumul_{grp} crit_cumul_{grp})
 (observe crit_det_cumul_{grp} crit_det_cumul_{grp})
 (observe crit_det_{grp} crit_det_{grp})
-(observe detected_cumul_{grp} detected_cumul_{grp})
 (observe death_det_cumul_{grp} death_det_cumul_{grp} )
 
-(observe detected_{grp} detected_{grp})
 (observe infected_{grp} infected_{grp})
+(observe infected_cumul_{grp} infected_cumul_{grp})
+
+(observe symp_mild_det_cumul_{grp} symp_mild_det_cumul_{grp})
+(observe symp_severe_det_cumul_{grp} symp_severe_det_cumul_{grp})
+(observe detected_{grp} detected_{grp})
+(observe detected_cumul_{grp} detected_cumul_{grp} )
 """.format(grp=grp)
     observe_str = observe_str.replace("  ", " ")
     
@@ -111,7 +114,7 @@ def write_functions(grp, expandModel=None):
 (func critical_{grp} (+ C2_{grp} C3_{grp} C2_det3_{grp} C3_det3_{grp}))
 (func deaths_{grp} (+ D3_{grp} D3_det3_{grp}))
 (func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
- 
+
 (func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
 (func asymp_det_cumul_{grp} (+ As_det1_{grp} RAs_det1_{grp}))
 (func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
@@ -128,27 +131,52 @@ def write_functions(grp, expandModel=None):
 
 (func detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
 (func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
 """.format(grp=grp)
     functions_str = functions_str.replace("  ", "")
     
-    if expandModel ==None :
-       expand_str = """
+
+    expand_base_str = """
 (func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_det2_{grp}))
 (func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_det3_{grp}))
 (func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
 (func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
 """.format(grp=grp)
 
-    if expandModel =="testDelay" :
-       expand_str = """
+
+    expand_testDelay_str = """
 (func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2_{grp}))
 (func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3_{grp}))
 (func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_preD_{grp} Sym_{grp} Sys_preD_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
 (func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
 """.format(grp=grp)
-        
-    functions_str = expand_str + functions_str
-        
+
+
+    expand_contactTracing_str = """
+(func presymptomatic_{grp}  (+ P_{grp} P_det_{grp}))
+(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_det2_{grp}))
+(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_det3_{grp}))
+(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
+""".format(grp=grp)
+
+    expand_testDelay_contactTracing_str = """
+(func presymptomatic_{grp}  (+ P_{grp} P_det_{grp}))
+(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2a_{grp} Sym_det2b_{grp}))
+(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
+(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sym_preD_{grp} Sys_{grp} Sys_preD_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
+""".format(grp=grp)
+
+    if expandModel == None:
+        functions_str = expand_base_str + functions_str
+    if expandModel =="testDelay" :
+        functions_str =  expand_testDelay_str + functions_str
+    if expandModel == "contactTracing":
+        functions_str = expand_contactTracing_str + functions_str
+    if expandModel == "testDelay_contactTracing":
+        functions_str = expand_testDelay_contactTracing_str + functions_str
+
     return (functions_str)
 
 def sub(x):
@@ -279,7 +307,7 @@ def write_age_specific_param(grp, expandModel):
 (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
 (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
 (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-"""
+""".format(grp=grp)   
 
 
     expand_testDelay_str = """
@@ -289,7 +317,7 @@ def write_age_specific_param(grp, expandModel):
 (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
 (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
 (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
-"""
+""".format(grp=grp)   
 
     if expandModel == None:
         params_str = params_str + expand_base_str
