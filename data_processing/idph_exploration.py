@@ -16,7 +16,7 @@ idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling'
 line_list_fname = os.path.join(idph_data_path,
                                'COVID_19Confirmed_Modeling___northwestern_0428.xlsx')
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'line_list_200428_jgcleaned.csv')
+                                       'LL_200515.csv')
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs')
@@ -44,11 +44,12 @@ def print_num_missing_rows() :
 
 def compare_death_plots() :
 
-    df = load_line_list()
-    df = df.dropna(subset=['Deceased Date'])
-    df = df.groupby('Deceased Date')['ID'].agg(len).reset_index()
-    df = df.rename(columns={'ID' : 'daily_deaths_line_list'})
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_line_list_200427.csv'), index=False)
+    df = load_cleaned_line_list()
+    df = df.dropna(subset=['deceased_date'])
+    df = df.groupby('deceased_date')['id'].agg(len).reset_index()
+    df = df.rename(columns={'id' : 'daily_deaths_line_list',
+                            'deceased_date' : 'Deceased Date'})
+    # df.to_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_line_list_200515.csv'), index=False)
     # exit()
 
     df['Deceased Date'] = pd.to_datetime(df['Deceased Date'])
@@ -237,13 +238,17 @@ def plot_days_between_onset_and_specimen() :
 
 if __name__ == '__main__' :
 
+    df = compare_death_plots()
+    exit()
+
     df = load_cleaned_line_list()
-    date_col = 'Deceased Date'
-    df = df.groupby([date_col, 'EMS'])['ID'].agg(len).reset_index()
-    df = df.rename(columns={'ID' : 'cases',
-                            date_col : 'date'})
+    date_col = 'deceased_date'
+    df = df.groupby([date_col, 'ems_region'])['ID'].agg(len).reset_index()
+    df = df.rename(columns={'id' : 'cases',
+                            date_col : 'date',
+                            'ems_region' : 'EMS'})
     df = df.sort_values(by=['date', 'EMS'])
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200428_jg_%s_ems.csv' % date_col), index=False)
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200515_jg_%s_ems.csv' % date_col), index=False)
 
     # df.loc[df['County at Onset'] == 'St Clair', 'County at Onset'] = 'St. Clair'
     # df.loc[df['County at Onset'] == 'Jodaviess', 'County at Onset'] = 'Jo daviess'
