@@ -92,6 +92,6 @@ def plot_cases_by_county() :
 
 if __name__ == '__main__' :
 
-    plot_IL_cases()
-    # plot_cases_by_county()
+    # plot_IL_cases()
+    plot_cases_by_county()
     plt.show()
