@@ -60,7 +60,7 @@ if __name__ == '__main__' :
         df = load_sim_data(exp_name)
 
         df['symptomatic_census'] = df['symptomatic_mild'] + df['symptomatic_severe']
-        df['ventilators'] = df['critical']*0.8
+        df['ventilators'] = get_vents(df['crit_det'].values)
 
         plot_on_fig(df, channels, axes, color=palette[d], label=exp_name)
     axes[-1].legend()
