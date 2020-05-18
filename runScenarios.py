@@ -25,7 +25,7 @@ today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
 
-def _parse_config_parameter(df, parameter, parameter_function):
+def _parse_config_parameter(df, parameter, parameter_function, first_day=None):
     if isinstance(parameter_function, (int, float)):
         return parameter_function
     elif 'np.random' in parameter_function:
@@ -36,7 +36,7 @@ def _parse_config_parameter(df, parameter, parameter_function):
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
             startdate_col = function_kwargs['startdate_col']
-            return [DateToTimestep(function_kwargs['dates'], df[startdate_col][i])
+            return [DateToTimestep(function_kwargs['dates'], first_day or df[startdate_col][i])
                     for i in range(len(df))]
         elif function_name == 'subtract':
             return df[function_kwargs['x1']] - df[function_kwargs['x2']]
@@ -86,7 +86,7 @@ def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins
     return df
 
 
-def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, first_day=None):
     """ Applies the described function and adds the column to the dataframe
 
     The input DataFrame will be modified in place.
@@ -113,6 +113,10 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
           e.g. SpeciesS (given N and initialAs)
     age_bins: list of str, optional
         If the parameter is to be expanded by age, the new dataframe with have individual parameters for each bin.
+    first_day: datetime.date, optional
+        Timesteps are relative to this first day. If not provided, use what's
+        given in the dataframe.
+
     Returns
     -------
     df: pd.DataFrame
@@ -136,7 +140,9 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                         df, parameter,
                         {'custom_function': 'subtract',
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
-                                             'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}})
+                                             'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}},
+                        first_day,
+                    )
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
         elif 'np.random' in parameter_function:
@@ -180,13 +186,13 @@ def add_computed_parameters(df):
     return df
 
 
-def add_sampled_parameters(df, config, region, age_bins):
+def add_sampled_parameters(df, config, region, age_bins, first_day):
     """Append parameters nested under "sampled_parameters" to the DataFrame"""
     for parameter, parameter_function in config['sampled_parameters'].items():
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, first_day)
     return df
 
 
@@ -195,23 +201,26 @@ def generateParameterSamples(samples, pop, first_days, config, age_bins, region)
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
     """
+    # Time-independent parameters.
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
-    df['startdate'] = first_days[0]
-
-    df = add_sampled_parameters(df, config, region, age_bins)
     df = add_fixed_parameters_region_specific(df, config, region, age_bins)
     for parameter, parameter_function in config['fixed_parameters_global'].items():
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
-    df = add_computed_parameters(df)
 
-    result = df.copy()
-    for first_day in first_days[1:]:
-        df['startdate'] = first_day
-        result = result.append(df, ignore_index=True)
+    dfs = []
 
+    # Time-varying parameters for each first day.
+    for first_day in first_days:
+        df_copy = df.copy()
+        df_copy['startdate'] = first_day
+        df_copy = add_sampled_parameters(df_copy, config, region, age_bins, first_day)
+        df_copy = add_computed_parameters(df_copy)
+        dfs.append(df_copy)
+
+    result = pd.concat(dfs, ignore_index=True)
     result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     return result
 
