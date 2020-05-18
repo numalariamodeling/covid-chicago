@@ -28,7 +28,7 @@ def load_sim_data(exp_name, ems_nr,  input_wdir=None, input_sim_output_path=None
         scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
 
-    df.columns = df.columns.str.replace('_ageAll', '')
+    df.columns = df.columns.str.replace('_All', '')
     df.columns = df.columns.str.replace('_EMS-' +str(ems_nr), '')
     df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
     df = calculate_incidence(df)
