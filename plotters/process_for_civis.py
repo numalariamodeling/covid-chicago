@@ -50,7 +50,7 @@ if __name__ == '__main__' :
         first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
         channels = ['infected','new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
-        df['ventilators'] = df['critical']*0.8
+        df['ventilators'] = get_vents(df['crit_det'].values)
         df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
 
         fig = plt.figure(figsize=(12,12))

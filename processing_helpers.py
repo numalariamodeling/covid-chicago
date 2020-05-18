@@ -5,6 +5,11 @@ from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+def get_vents(crit_det_array):
+
+	vent_frac_global = 0.660
+	
+	return crit_det_array * vent_frac_global
 
 def count_new(df, curr_ch) :
 
