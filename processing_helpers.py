@@ -6,6 +6,19 @@ from load_paths import load_box_paths
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 
+def loadEMSregions(regionname) :
+    regions = {'northcentral' : ['EMS_1', 'EMS_2'],
+               'northeast' : ['EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11'],
+               'central' : ['EMS_3', 'EMS_6'],
+               'southern': ['EMS_4', 'EMS_5']
+    }
+
+    if regionname != "all" :
+        out = regions[regionname]
+    elif regionname == "all" :
+        out = regions
+    return out
+
 def count_new(df, curr_ch) :
 
     ch_list = list(df[curr_ch].values)
