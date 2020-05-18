@@ -1,7 +1,7 @@
 ### Note specify running_location either Local or NUCLUSTER, if NUCLUSTER 
 
 ##### Scenario 1 - stop mitigation
-python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop.emodl  --name_suffix "test_multipleDates"
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop.emodl  --name_suffix "scenario1"
 python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop.emodl  --name_suffix "scenario1"
 python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop.emodl  --name_suffix "scenario1"
 python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_interventionStop.emodl  --name_suffix "scenario1"
@@ -27,7 +27,7 @@ python runScenarios.py --running_location Local --region EMS_10 --experiment_con
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey_noSIP.emodl --name_suffix "scenario2"
 
 ##### Scenario 3 - constant mitigation
-python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "test2"
+python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
 python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
 python runScenarios.py --running_location Local --region EMS_3 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
 python runScenarios.py --running_location Local --region EMS_4 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
