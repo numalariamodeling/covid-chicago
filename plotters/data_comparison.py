@@ -179,7 +179,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
     #   print(x)
     first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
 
-    df['ventilators'] = df['crit_det']*0.8
+    df['ventilators'] = get_vents(df['crit_det'].values)
     df['critical_with_suspected'] = df['critical']
     channels = ['new_detected_deaths', 'crit_det', 'ventilators']
     ref_df_emr = ref_df
@@ -222,7 +222,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
 
 if __name__ == '__main__' :
 
-    stem = "age"
+    stem = "RR_fitting_round_1"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names :

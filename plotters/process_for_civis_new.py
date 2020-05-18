@@ -20,7 +20,7 @@ plot_last_day = pd.to_datetime('2020/10/1')
 
 if __name__ == '__main__' :
 
-    stem = "20200512_IL"
+    stem = "20200515_IL_RR_fitting_round_5"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     #exp_name = "20200512_IL__EMSgrp_scenario3"
 
@@ -71,7 +71,7 @@ if __name__ == '__main__' :
         pd.crosstab(index=dfAll["ems"],  columns="count")
         channels = ['infected','new_infected', 'new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
 
-        dfAll['ventilators'] = dfAll['critical'] * 0.8
+        dfAll['ventilators'] = get_vents(dfAll['crit_det'].values)
         dfAll['new_symptomatic'] = dfAll['new_symptomatic_severe'] + dfAll['new_symptomatic_mild'] + dfAll['new_detected_symptomatic_severe'] + dfAll['new_detected_symptomatic_mild']
 
         adf = pd.DataFrame()
