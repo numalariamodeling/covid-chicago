@@ -55,6 +55,15 @@ else:
 # Setup 
 #############################################################################
 
+# Preset EMS Groups
+# EMS Groupings
+emsMapping_list = [(1,2), (3,6), (4,5), (7, 8, 9, 10, 11)]
+# Map EMS to Groupings 
+emsMapping_dict = {x: (i+1) for i, v in enumerate(emsMapping_list) for x in v}
+# Create a column for later filtering
+df['emsGroup'] = df['ems'].map(emsMapping_dict)
+
+
 # Filter out timeframes for graphs
 # Generate datetime to get weeks for slider
 df['date']= pd.to_datetime(df['date'])
@@ -156,7 +165,7 @@ app.layout = html.Div(
                                             className="control_label",
                                         ),
                                         dcc.Dropdown(
-                                            options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
+                                            options=[{'label': 'EMS: {0}-{1}'.format(v[0], v[-1]), 'value': (i+1)} for i,v in enumerate(emsMapping_list)],
                                             multi=False,
                                             placeholder="Choose EMS Region",
                                             id="emsDropdown",
@@ -372,7 +381,7 @@ def generateOutput(emsValue, timeValues, *paramValues):
 
     def makeChart (outputVar):
         # Generate query string for EMS value and range of sliders
-        emsString = "({0} == {1})".format('ems', emsValue)
+        emsString = "({0} == {1})".format('emsGroup', emsValue)
         # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
         # Filter RangeSlider for timeValues - inclusive of selected timeframe
         timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
@@ -385,13 +394,13 @@ def generateOutput(emsValue, timeValues, *paramValues):
         dff = df.query(queryString)
 
         # Generate list of columns to group by:
-        groupbyList =  ['ems', 'run_num'] + params_list
+        groupByList = ['ems', 'run_num', *params_list]
 
         # Generate Figure for plotting
         figure = go.Figure()
 
         # This plot will create # of runs * parameter combo traces
-        for name, group in dff.groupby(groupbyList):
+        for name, group in dff.groupby(groupByList):
             figure.add_trace(go.Scatter(
                         x=group['date'],
                         y=group[outputVar], # Variable for each output chart
