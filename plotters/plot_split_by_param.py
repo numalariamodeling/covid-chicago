@@ -28,7 +28,7 @@ def plot_on_fig(df, channels, axes, color, label) :
         mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
         mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        mdf = mdf[(mdf['date'] >= date(2020, 3, 1)) & (mdf['date'] <= date(2020, 6, 1))]
+        mdf = mdf[(mdf['date'] >= date(2020, 5, 1)) & (mdf['date'] <= date(2020, 10, 1))]
         ax.plot(mdf['date'], mdf['CI_50'], color=color, label=label)
         # ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
         #                 color=color, linewidth=0, alpha=0.2)
@@ -60,14 +60,14 @@ if __name__ == '__main__' :
         df = load_sim_data(exp_name)
 
         df['symptomatic_census'] = df['symptomatic_mild'] + df['symptomatic_severe']
-        df['ventilators'] = df['critical']*0.8
+        df['ventilators'] = get_vents(df['crit_det'].values)
 
         plot_on_fig(df, channels, axes, color=palette[d], label=exp_name)
     axes[-1].legend()
     for c, channel in enumerate(channels) :
         if channel in capacity.keys() :
             ax = axes[c]
-            ax.plot([date(2020, 3, 1), date(2020, 6, 1)],
+            ax.plot([date(2020, 5, 1), date(2020, 10, 1)],
                     [capacity[channel], capacity[channel]], '--', linewidth=2, color='k')
 
     plt.savefig(os.path.join(sim_output_path, 'projection.png'))

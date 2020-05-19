@@ -24,6 +24,13 @@ body {
   flex-direction: column;
 }
 
+.time-container {
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  padding: 0px 20px 35px;
+}
+
 .pretty_container {
   border-radius: 5px;
   background-color: #f9f9f9;
@@ -78,9 +85,9 @@ body {
 }
 
 .control_label {
-  margin: 0;
+  margin: 2;
   padding: 5px;
-  padding-bottom: 0px;
+  padding-bottom: 2px;
   margin-bottom: 0px;
   width: calc(100%-40px);
   font-size: 15px;
@@ -113,14 +120,14 @@ body {
 #title {
   text-align: center;
   margin-bottom: 10px; 
-  color:#1B998B;
+  color:#4E2A84;
   border-radius: 5px;
   
 }
 #subtitle {
   text-align: center;
   font-size: 12px;
-  color: #1B998B;
+  color:#4E2A84;
   border-radius: 5px;
 }
 

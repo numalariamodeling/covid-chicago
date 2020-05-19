@@ -5,6 +5,24 @@ from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+def get_vents(crit_det_array):
+
+	vent_frac_global = 0.660
+	
+	return crit_det_array * vent_frac_global
+
+def loadEMSregions(regionname) :
+    regions = {'northcentral' : ['EMS_1', 'EMS_2'],
+               'northeast' : ['EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11'],
+               'central' : ['EMS_3', 'EMS_6'],
+               'southern': ['EMS_4', 'EMS_5']
+    }
+
+    if regionname != "all" :
+        out = regions[regionname]
+    elif regionname == "all" :
+        out = regions
+    return out
 
 def count_new(df, curr_ch) :
 
@@ -52,8 +70,8 @@ def calculate_incidence(adf, output_filename=None) :
 
         sdf = pd.DataFrame( { 'time' : df['time'],
                               'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
-                              #'new_infected': count_new(df, 'infected_cumul'),
-                              #'new_infected_detected': count_new(df, 'infected_det_cumul'),
+                              'new_infected': count_new(df, 'infected_cumul'),
+                            #'new_infected_detected': count_new(df, 'infected_det_cumul'),
                               'new_asymptomatic' : count_new(df, 'asymp_cumul'),
                               'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
                               'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),

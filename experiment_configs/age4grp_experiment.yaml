@@ -138,14 +138,14 @@ sampled_parameters:
     function_kwargs: {'low':0.939, 'high': 0.939}
   recovery_time_hosp_age0to19:
     np.random: uniform
-    function_kwargs: {'low':0.95, 'high': 0.95}
+    function_kwargs: {'low':4, 'high':6}
   recovery_time_hosp_age20to39:
     np.random: uniform
-    function_kwargs: {'low':0.945666667, 'high': 0.945666667}
+    function_kwargs: {'low':4, 'high':6}
   recovery_time_hosp_age40to59:
     np.random: uniform
-    function_kwargs: {'low':0.937, 'high': 0.937}
+    function_kwargs: {'low':4, 'high':6}
   recovery_time_hosp_age60to100:
     np.random: uniform
-    function_kwargs: {'low':0.677833333, 'high': 0.677833333}
+    function_kwargs: {'low':4, 'high':6}
 fitted_parameters:
