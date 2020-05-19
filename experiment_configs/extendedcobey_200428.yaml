@@ -28,7 +28,7 @@ fixed_parameters_region_specific:
     # To specify a range of dates instead of a single date:
     # 'EMS_1': [2020-02-26, 2020-02-28]
     # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.
-    'EMS_1': [2020-02-26, 2020-02-28]
+    'EMS_1': 2020-02-26
     'EMS_2': 2020-02-24  
     'EMS_3': 2020-02-20     
     'EMS_4': 2020-02-21  
