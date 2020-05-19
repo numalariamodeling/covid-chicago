@@ -148,3 +148,35 @@ def load_capacity(ems) :
             'ventilators' : np.sum(ems_df['Total_Vents'])
         }
     return capacity
+
+
+def civis_colnames(reverse=False) :
+    colnames = {"date": "Date",
+     "ems": "geography_modeled",
+     "infected_median": "Number of Covid-19 infections",
+     "infected_95CI_lower": "Lower error bound of covid-19 infections",
+     "infected_95CI_upper": "Upper error bound of covid-19 infections",
+     "new_infected_95CI_upper": "Upper error bound of covid-19 new infections",
+     "new_infected_median": "Number of Covid-19 new infections",
+     "new_infected_95CI_lower": "Lower error bound of covid-19 new infections",
+     "new_symptomatic_median": "Number of Covid-19 symptomatic",
+     "new_symptomatic_95CI_lower": "Lower error bound of covid-19 symptomatic",
+     "new_symptomatic_95CI_upper": "Upper error bound of covid-19 symptomatic",
+     "new_deaths_median": "Number of covid-19 deaths",
+     "new_deaths_95CI_lower": "Lower error bound of covid-19 deaths",
+     "new_deaths_95CI_upper": "Upper error bound of covid-19 deaths",
+     "hospitalized_median": "Number of hospital beds occupied",
+     "hospitalized_95CI_lower": "Lower error bound of number of hospital beds occupied",
+     "hospitalized_95CI_upper": "Upper error bound of number of hospital beds occupied",
+     "critical_median": "Number of ICU beds occupied",
+     "critical_95CI_lower": "Lower error bound of number of ICU beds occupied",
+     "critical_95CI_upper": "Upper error bound of number of ICU beds occupied",
+     "ventilators_median": "Number of ventilators used",
+     "ventilators_95CI_lower": "Lower error bound of number of ventilators used",
+     "ventilators_95CI_upper": "Upper error bound of number of ventilators used",
+     "recovered_median": "Total recovered",
+     "recovered_95CI_lower": "Lower error bound on recovered",
+     "recovered_95CI_upper": "Upper error bound on recovered"}
+
+    if reverse == True : colnames = {value: key for key, value in col_names.items()}
+    return(colnames)
