@@ -186,9 +186,11 @@ def add_computed_parameters(df):
     return df
 
 
-def add_sampled_parameters(df, config, region, age_bins, first_day):
-    """Append parameters nested under "sampled_parameters" to the DataFrame"""
-    for parameter, parameter_function in config['sampled_parameters'].items():
+def add_parameters(df, parameter_type, config, region, age_bins, first_day=None):
+    """Append parameters to the DataFrame"""
+    if parameter_type not in ("time_parameters", "intervention_parameters", "sampled_parameters"):
+        raise ValueError(f"Unrecognized parameter type: {parameter_type}")
+    for parameter, parameter_function in config[parameter_type].items():
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
@@ -207,6 +209,8 @@ def generateParameterSamples(samples, pop, first_days, config, age_bins, region)
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
     df = add_fixed_parameters_region_specific(df, config, region, age_bins)
+    df = add_parameters(df, "sampled_parameters", config, region, age_bins)
+    df = add_parameters(df, "intervention_parameters", config, region, age_bins)
     for parameter, parameter_function in config['fixed_parameters_global'].items():
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
 
@@ -216,7 +220,7 @@ def generateParameterSamples(samples, pop, first_days, config, age_bins, region)
     for first_day in first_days:
         df_copy = df.copy()
         df_copy['startdate'] = first_day
-        df_copy = add_sampled_parameters(df_copy, config, region, age_bins, first_day)
+        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins, first_day)
         df_copy = add_computed_parameters(df_copy)
         dfs.append(df_copy)
 
