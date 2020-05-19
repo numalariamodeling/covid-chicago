@@ -263,7 +263,7 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 
-def sampleplot(adf, allchannels, first_day, plot_fname=None):
+def sampleplot(adf, allchannels, start_date, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
 
@@ -272,7 +272,7 @@ def sampleplot(adf, allchannels, first_day, plot_fname=None):
     for c, channel in enumerate(allchannels):
         mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
         ax = axes[c]
-        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
+        dates = [start_date + timedelta(days=int(x)) for x in mdf['time']]
         ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
         ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
                         color=palette[c], linewidth=0, alpha=0.2)
@@ -284,7 +284,7 @@ def sampleplot(adf, allchannels, first_day, plot_fname=None):
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, )
+        ax.set_xlim(start_date, )
 
     if plot_fname:
         log.info(f"Writing plot to {plot_fname}")

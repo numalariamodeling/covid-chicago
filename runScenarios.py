@@ -25,7 +25,7 @@ today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
 
-def _parse_config_parameter(df, parameter, parameter_function, first_day=None):
+def _parse_config_parameter(df, parameter, parameter_function, start_date=None):
     if isinstance(parameter_function, (int, float)):
         return parameter_function
     elif 'np.random' in parameter_function:
@@ -36,7 +36,7 @@ def _parse_config_parameter(df, parameter, parameter_function, first_day=None):
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
             startdate_col = function_kwargs['startdate_col']
-            return [DateToTimestep(function_kwargs['dates'], first_day or df[startdate_col][i])
+            return [DateToTimestep(function_kwargs['dates'], start_date or df[startdate_col][i])
                     for i in range(len(df))]
         elif function_name == 'subtract':
             return df[function_kwargs['x1']] - df[function_kwargs['x2']]
@@ -86,7 +86,7 @@ def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins
     return df
 
 
-def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, first_day=None):
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, start_date=None):
     """ Applies the described function and adds the column to the dataframe
 
     The input DataFrame will be modified in place.
@@ -113,7 +113,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
           e.g. SpeciesS (given N and initialAs)
     age_bins: list of str, optional
         If the parameter is to be expanded by age, the new dataframe with have individual parameters for each bin.
-    first_day: datetime.date, optional
+    start_date: datetime.date, optional
         Timesteps are relative to this first day. If not provided, use what's
         given in the dataframe.
 
@@ -141,7 +141,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                         {'custom_function': 'subtract',
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
                                              'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}},
-                        first_day,
+                        start_date,
                     )
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
@@ -186,7 +186,7 @@ def add_computed_parameters(df):
     return df
 
 
-def add_parameters(df, parameter_type, config, region, age_bins, first_day=None):
+def add_parameters(df, parameter_type, config, region, age_bins, start_date=None):
     """Append parameters to the DataFrame"""
     if parameter_type not in ("time_parameters", "intervention_parameters", "sampled_parameters"):
         raise ValueError(f"Unrecognized parameter type: {parameter_type}")
@@ -194,11 +194,11 @@ def add_parameters(df, parameter_type, config, region, age_bins, first_day=None)
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, first_day)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, start_date)
     return df
 
 
-def generateParameterSamples(samples, pop, first_days, config, age_bins, region):
+def generateParameterSamples(samples, pop, start_dates, config, age_bins, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
@@ -216,11 +216,11 @@ def generateParameterSamples(samples, pop, first_days, config, age_bins, region)
 
     dfs = []
 
-    # Time-varying parameters for each first day.
-    for first_day in first_days:
+    # Time-varying parameters for each start date.
+    for start_date in start_dates:
         df_copy = df.copy()
-        df_copy['startdate'] = first_day
-        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins, first_day)
+        df_copy['startdate'] = start_date
+        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins, start_date)
         df_copy = add_computed_parameters(df_copy)
         dfs.append(df_copy)
 
@@ -266,22 +266,20 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
-                      nruns, sub_samples, modelname, cfg_file, first_days, Location,
+                      nruns, sub_samples, modelname, cfg_file, start_dates, Location,
                       experiment_config, age_bins, region):
     lst = []
     scen_num = 0
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, first_days=first_days,
+    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
                                        config=experiment_config, age_bins=age_bins, region=region)
 
-    full_factorial = itertools.product(first_days, range(sub_samples), Kivalues)
+    full_factorial = itertools.product(range(sub_samples), Kivalues)
 
-    for first_day, sample, Ki in full_factorial:
+    for sample, Ki in full_factorial:
         scen_num += 1
 
-        lst.append([sample, scen_num, Ki, first_day, simulation_population])
-
-        dfparam_first_day = dfparam[dfparam["startdate"] == first_day].reset_index()
-        replaceParameters(df=dfparam_first_day, Ki_i=Ki,  sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
+        lst.append([sample, scen_num, Ki, simulation_population])
+        replaceParameters(df=dfparam, Ki_i=Ki,  sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
 
         # adjust model.cfg
         fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
@@ -306,7 +304,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
         fin.write(data_cfg)
         fin.close()
 
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'first_day', 'simulation_population'])
+    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'simulation_population'])
     df.to_csv(os.path.join(temp_exp_dir, "scenarios.csv"), index=False)
     return scen_num
 
@@ -342,17 +340,17 @@ def get_fitted_parameters(experiment_config, region):
     return fitted_parameters
 
 
-def get_first_days(first_day):
-    if isinstance(first_day, list):
-        # `first_day` is a list of exactly two datetime.date objects,
-        # representing the range of first days we want.
-        start_date, end_date = first_day
+def get_start_dates(start_date):
+    if isinstance(start_date, list):
+        # `start_date` is a list of exactly two datetime.date objects,
+        # representing the range of the start dates we want.
+        start_date, end_date = start_date
         n_days = (end_date - start_date).days + 1
         return [start_date + datetime.timedelta(days=delta)
                 for delta in range(n_days)]
     else:
-        # Assume `first_day` is a single datetime.date object.
-        return [first_day]
+        # Assume `start_date` is a single datetime.date object.
+        return [start_date]
 
 
 def parse_args():
@@ -455,7 +453,7 @@ if __name__ == '__main__':
     region = args.region
     fixed_parameters = get_region_specific_fixed_parameters(experiment_config, region)
     simulation_population = fixed_parameters['populations']
-    first_days = get_first_days(fixed_parameters['startdate'])
+    start_dates = get_start_dates(fixed_parameters['startdate'])
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
     exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
@@ -477,7 +475,7 @@ if __name__ == '__main__':
         sub_samples=experiment_setup_parameters['number_of_samples'],
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
-        modelname=args.emodl_template, first_days=first_days, Location=Location,
+        modelname=args.emodl_template, start_dates=start_dates, Location=Location,
         cfg_file=args.cfg_template,
         experiment_config=experiment_config,
         age_bins=experiment_setup_parameters.get('age_bins'),
@@ -508,11 +506,11 @@ if __name__ == '__main__':
             custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
                                    'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-            # FIXME: Timesteps shouldn't be all relative to first_days[0],
+            # FIXME: Timesteps shouldn't be all relative to start_dates[0],
             #    especially when we have multiple first days.
-            sampleplot(df, allchannels=master_channel_list, first_day=first_days[0],
+            sampleplot(df, allchannels=master_channel_list, start_date=start_dates[0],
                        plot_fname=os.path.join(plot_path, 'main_channels.png'))
-            sampleplot(df, allchannels=detection_channel_list, first_day=first_days[0],
+            sampleplot(df, allchannels=detection_channel_list, start_date=start_dates[0],
                        plot_fname=os.path.join('detection_channels.png'))
-            sampleplot(df, allchannels=custom_channel_list, first_day=first_days[0],
+            sampleplot(df, allchannels=custom_channel_list, start_date=start_dates[0],
                        plot_fname=os.path.join('cumulative_channels.png'))
