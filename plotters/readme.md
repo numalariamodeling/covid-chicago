@@ -41,7 +41,7 @@ Reads in several EMS specific simulation experiments and sums the trajectores to
 - [add_ems_to_IL.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/add_ems_to_IL.py)
 
 
-#### rocess-for-civis scripts that generate custom outputs in the format requested by civis - using EMS grouped model 
+#### Process-for-civis scripts that generate custom outputs in the format requested by civis - using EMS grouped model 
 -  [process_for_civis_EMSgrp.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py)
 
 
