@@ -74,6 +74,13 @@ df['month'] = df['date'].values.astype('datetime64[M]')
 
 dateList = sorted(df['month'].unique())
 
+# Color Options 
+colors = {
+    'sf': '#1798c1',
+    'green': '#416165', # Color for plots & text
+    'beige': '#F7F7FF', #Color for gridlinesgit 
+}
+
 
 # RangeSlider values need to be ints - convert to unix timestamp
 def dtToUnix (dt):
@@ -372,43 +379,39 @@ app.layout = html.Div(
 )
 def generateOutput(emsValue, timeValues, *paramValues):
 
-    # Setup Color Options
-    colors = {
-        'sf': '#1798c1',
-        'green': '#416165', # Color for plots & text
-        'beige': '#F7F7FF', #Color for gridlinesgit 
-    }
+
+
+    # Generate query string for EMS value and range of sliders
+    emsString = "({0} == {1})".format('emsGroup', emsValue)
+    # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
+    # Filter RangeSlider for timeValues - inclusive of selected timeframe
+    timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
+    # Filter RangeSlider for Parameter Values
+    paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)]) 
+    strings = [emsString, timeString, paramString]
+    queryString = " & ".join(strings)
+    
+    # Filter data frame given the slider inputs
+    dff = df.query(queryString)
+
+    # List of columns to group by
+    groupbyList = ['date']
+    
+    def getQuantile(n):
+        ''' Function to generate quantiles for groupby, returns quantile '''
+        def _getQuantile(x):
+            return x.quantile(n)
+        _getQuantile.__name__ = 'quantile_{:2.2f}'.format(n*100)
+        return _getQuantile
+
+    # Function list passed to aggregation
+    func_list = ['mean', 'sum', getQuantile(.025), getQuantile(.975), getQuantile(.25), getQuantile(.75)]
+
+    #dfg[[output_list[0]]].mean().reset_index()['date']
+    dfg = dff.groupby(groupbyList)[output_list].agg(func_list).reset_index()
+
 
     def makeChart (outputVar):
-        # Generate query string for EMS value and range of sliders
-        emsString = "({0} == {1})".format('emsGroup', emsValue)
-        # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
-        # Filter RangeSlider for timeValues - inclusive of selected timeframe
-        timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
-        # Filter RangeSlider for Parameter Values
-        paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)]) 
-        strings = [emsString, timeString, paramString]
-        queryString = " & ".join(strings)
-        
-        # Filter data frame given the slider inputs
-        dff = df.query(queryString)
-
-        # List of columns to group by
-        groupbyList = ['date']
-        
-        def getQuantile(n):
-            ''' Function to generate quantiles for groupby, returns quantile '''
-            def _getQuantile(x):
-                return x.quantile(n)
-            _getQuantile.__name__ = 'quantile_{:2.2f}'.format(n*100)
-            return _getQuantile
-
-        # Function list passed to aggregation
-        func_list = ['mean', 'sum', getQuantile(.025), getQuantile(.975), getQuantile(.25), getQuantile(.75)]
-
-        #dfg[[output_list[0]]].mean().reset_index()['date']
-        dfg = dff.groupby(groupbyList)[output_list].agg(func_list).reset_index()
-
 
         # Generate Figure for plotting
         figure = go.Figure()
@@ -489,8 +492,6 @@ if __name__ == '__main__':
 
 # TODOS
 # ----- DONE Update Title & Subtitle
-# Add note for refresh timing
-# Add ability to choose multiple EMS groups (checkbox or multi-select dropdown)
-# Add toggle for all traces or only median / percentiles
-# Add slider for Week-chooser
-# Show Today's date on graph
+# ----- DONE Add note for refresh timing
+# ----- DONE Add ability to choose multiple EMS groups (checkbox or multi-select dropdown)
+# ----- DONE Add slider for Week-chooser
