@@ -172,7 +172,7 @@ app.layout = html.Div(
                                             className="control_label",
                                         ),
                                         dcc.Dropdown(
-                                            options=[{'label': name, 'value': name} for name in emsMapping]
+                                            options=[{'label': name, 'value': name} for name in emsMapping],
                                             multi=False,
                                             placeholder="Choose EMS Region",
                                             id="emsDropdown",
