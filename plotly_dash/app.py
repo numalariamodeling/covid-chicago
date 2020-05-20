@@ -393,22 +393,68 @@ def generateOutput(emsValue, timeValues, *paramValues):
         # Filter data frame given the slider inputs
         dff = df.query(queryString)
 
-        # Generate list of columns to group by:
-        groupByList = ['ems', 'run_num', *params_list]
+        # List of columns to group by
+        groupbyList = ['date']
+        
+        def getQuantile(n):
+            ''' Function to generate quantiles for groupby, returns quantile '''
+            def _getQuantile(x):
+                return x.quantile(n)
+            _getQuantile.__name__ = 'quantile_{:2.2f}'.format(n*100)
+            return _getQuantile
+
+        # Function list passed to aggregation
+        func_list = ['mean', 'sum', getQuantile(.025), getQuantile(.975), getQuantile(.25), getQuantile(.75)]
+
+        #dfg[[output_list[0]]].mean().reset_index()['date']
+        dfg = dff.groupby(groupbyList)[output_list].agg(func_list).reset_index()
+
 
         # Generate Figure for plotting
         figure = go.Figure()
 
-        # This plot will create # of runs * parameter combo traces
-        for name, group in dff.groupby(groupByList):
-            figure.add_trace(go.Scatter(
-                        x=group['date'],
-                        y=group[outputVar], # Variable for each output chart
-                        mode='lines',
-                        opacity=0.3,
-                        line=dict(color=colors['green'], width=1)
-                    )
+        # Add traces - shades between IQR and 2.5-97.5
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_2.50')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0), 
+                    fill=None,
                 )
+            )
+
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_97.50')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0),
+                    fill='tonexty', # fill area between this and previous trace
+                )
+            )
+
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_25.00')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0), 
+                    fill=None,
+                )
+            )
+
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_75.00')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0),
+                    fill='tonexty',
+                    
+                )
+            )
+
         figure.update_layout(
             font=dict(
                 family="Open Sans, monospace",
