@@ -718,6 +718,7 @@
 (func infectious_undet_regionAll (+  infectious_undet_EMS_1 infectious_undet_EMS_2 infectious_undet_EMS_3 infectious_undet_EMS_4 infectious_undet_EMS_5 infectious_undet_EMS_6 infectious_undet_EMS_7 infectious_undet_EMS_8 infectious_undet_EMS_9 infectious_undet_EMS_10 infectious_undet_EMS_11))
 (observe infectious_det_regionAll infectious_det_regionAll)
 (observe infectious_undet_regionAll infectious_undet_regionAll)
+(observe symptomatic_mild_All (+  symptomatic_mild_EMS_1 symptomatic_mild_EMS_2 symptomatic_mild_EMS_3 symptomatic_mild_EMS_4 symptomatic_mild_EMS_5 symptomatic_mild_EMS_6 symptomatic_mild_EMS_7 symptomatic_mild_EMS_8 symptomatic_mild_EMS_9 symptomatic_mild_EMS_10 symptomatic_mild_EMS_11))
 
 
 (observe susceptible_EMS-1 S::EMS_1)
@@ -1528,7 +1529,7 @@
 (reaction E_travel_EMS_11to3  (E::EMS_11) (E::EMS_3) (* E::EMS_11 toEMS_3_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to3  (As::EMS_1) (As::EMS_3) (* As::EMS_1 toEMS_3_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to3  (As::EMS_2) (As::EMS_3) (* As::EMS_2 toEMS_3_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to3  (As::EMS_2) (As::EMS_3) (* As::EMS_2 toEMS_3_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_4to3  (As::EMS_4) (As::EMS_3) (* As::EMS_4 toEMS_3_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_5to3  (As::EMS_5) (As::EMS_3) (* As::EMS_5 toEMS_3_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
 (reaction As_travel_EMS_6to3  (As::EMS_6) (As::EMS_3) (* As::EMS_6 toEMS_3_from_EMS_6 (/ N_EMS_6 (+ S::EMS_6 E::EMS_6 As::EMS_6 P::EMS_6 recovered_EMS_6))))
@@ -1607,7 +1608,7 @@
 (reaction E_travel_EMS_11to4  (E::EMS_11) (E::EMS_4) (* E::EMS_11 toEMS_4_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to4  (As::EMS_1) (As::EMS_4) (* As::EMS_1 toEMS_4_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to4  (As::EMS_2) (As::EMS_4) (* As::EMS_2 toEMS_4_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to4  (As::EMS_2) (As::EMS_4) (* As::EMS_2 toEMS_4_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to4  (As::EMS_3) (As::EMS_4) (* As::EMS_3 toEMS_4_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_5to4  (As::EMS_5) (As::EMS_4) (* As::EMS_5 toEMS_4_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
 (reaction As_travel_EMS_6to4  (As::EMS_6) (As::EMS_4) (* As::EMS_6 toEMS_4_from_EMS_6 (/ N_EMS_6 (+ S::EMS_6 E::EMS_6 As::EMS_6 P::EMS_6 recovered_EMS_6))))
@@ -1686,7 +1687,7 @@
 (reaction E_travel_EMS_11to5  (E::EMS_11) (E::EMS_5) (* E::EMS_11 toEMS_5_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to5  (As::EMS_1) (As::EMS_5) (* As::EMS_1 toEMS_5_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to5  (As::EMS_2) (As::EMS_5) (* As::EMS_2 toEMS_5_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to5  (As::EMS_2) (As::EMS_5) (* As::EMS_2 toEMS_5_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to5  (As::EMS_3) (As::EMS_5) (* As::EMS_3 toEMS_5_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_4to5  (As::EMS_4) (As::EMS_5) (* As::EMS_4 toEMS_5_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_6to5  (As::EMS_6) (As::EMS_5) (* As::EMS_6 toEMS_5_from_EMS_6 (/ N_EMS_6 (+ S::EMS_6 E::EMS_6 As::EMS_6 P::EMS_6 recovered_EMS_6))))
@@ -1766,7 +1767,7 @@
 (reaction E_travel_EMS_11to6  (E::EMS_11) (E::EMS_6) (* E::EMS_11 toEMS_6_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to6  (As::EMS_1) (As::EMS_6) (* As::EMS_1 toEMS_6_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to6  (As::EMS_2) (As::EMS_6) (* As::EMS_2 toEMS_6_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to6  (As::EMS_2) (As::EMS_6) (* As::EMS_2 toEMS_6_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to6  (As::EMS_3) (As::EMS_6) (* As::EMS_3 toEMS_6_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_4to6  (As::EMS_4) (As::EMS_6) (* As::EMS_4 toEMS_6_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_5to6  (As::EMS_5) (As::EMS_6) (* As::EMS_5 toEMS_6_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
@@ -1846,7 +1847,7 @@
 (reaction E_travel_EMS_11to7  (E::EMS_11) (E::EMS_7) (* E::EMS_11 toEMS_7_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to7  (As::EMS_1) (As::EMS_7) (* As::EMS_1 toEMS_7_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to7  (As::EMS_2) (As::EMS_7) (* As::EMS_2 toEMS_7_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to7  (As::EMS_2) (As::EMS_7) (* As::EMS_2 toEMS_7_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to7  (As::EMS_3) (As::EMS_7) (* As::EMS_3 toEMS_7_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_4to7  (As::EMS_4) (As::EMS_7) (* As::EMS_4 toEMS_7_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_5to7  (As::EMS_5) (As::EMS_7) (* As::EMS_5 toEMS_7_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
@@ -1926,7 +1927,7 @@
 (reaction E_travel_EMS_11to8  (E::EMS_11) (E::EMS_8) (* E::EMS_11 toEMS_8_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to8  (As::EMS_1) (As::EMS_8) (* As::EMS_1 toEMS_8_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to8  (As::EMS_2) (As::EMS_8) (* As::EMS_2 toEMS_8_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to8  (As::EMS_2) (As::EMS_8) (* As::EMS_2 toEMS_8_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to8  (As::EMS_3) (As::EMS_8) (* As::EMS_3 toEMS_8_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_4to8  (As::EMS_4) (As::EMS_8) (* As::EMS_4 toEMS_8_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_5to8  (As::EMS_5) (As::EMS_8) (* As::EMS_5 toEMS_8_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
@@ -2005,7 +2006,7 @@
 (reaction E_travel_EMS_11to9  (E::EMS_11) (E::EMS_9) (* E::EMS_11 toEMS_9_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to9  (As::EMS_1) (As::EMS_9) (* As::EMS_1 toEMS_9_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to9  (As::EMS_2) (As::EMS_9) (* As::EMS_2 toEMS_9_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to9  (As::EMS_2) (As::EMS_9) (* As::EMS_2 toEMS_9_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to9  (As::EMS_3) (As::EMS_9) (* As::EMS_3 toEMS_9_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_4to9  (As::EMS_4) (As::EMS_9) (* As::EMS_4 toEMS_9_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_5to9  (As::EMS_5) (As::EMS_9) (* As::EMS_5 toEMS_9_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
@@ -2085,7 +2086,7 @@
 (reaction E_travel_EMS_11to10  (E::EMS_11) (E::EMS_10) (* E::EMS_11 toEMS_10_from_EMS_11 (/ N_EMS_11 (+ S::EMS_11 E::EMS_11 As::EMS_11 P::EMS_11 recovered_EMS_11))))
 
 (reaction As_travel_EMS_1to10  (As::EMS_1) (As::EMS_10) (* As::EMS_1 toEMS_10_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to10  (As::EMS_2) (As::EMS_10) (* As::EMS_2 toEMS_10_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to10  (As::EMS_2) (As::EMS_10) (* As::EMS_2 toEMS_10_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to10  (As::EMS_3) (As::EMS_10) (* As::EMS_3 toEMS_10_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_4to10  (As::EMS_4) (As::EMS_10) (* As::EMS_4 toEMS_10_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_5to10  (As::EMS_5) (As::EMS_10) (* As::EMS_5 toEMS_10_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
@@ -2165,7 +2166,7 @@
 (reaction E_travel_EMS_10to11  (E::EMS_10) (E::EMS_11) (* E::EMS_10 toEMS_11_from_EMS_10 (/ N_EMS_10 (+ S::EMS_10 E::EMS_10 As::EMS_10 P::EMS_10 recovered_EMS_10))))
 
 (reaction As_travel_EMS_1to11  (As::EMS_1) (As::EMS_11) (* As::EMS_1 toEMS_11_from_EMS_1 (/ N_EMS_1 (+ S::EMS_1 E::EMS_1 As::EMS_1 P::EMS_1 recovered_EMS_1))))
-(reaction As_travel_EMS_2to11  (As::EMS_2) (As::EMS_11) (* As::EMS_2 toEMS_11_from_EMS_2 (/ N_EMS_3 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
+(reaction As_travel_EMS_2to11  (As::EMS_2) (As::EMS_11) (* As::EMS_2 toEMS_11_from_EMS_2 (/ N_EMS_2 (+ S::EMS_2 E::EMS_2 As::EMS_2 P::EMS_2 recovered_EMS_2))))
 (reaction As_travel_EMS_3to11  (As::EMS_3) (As::EMS_11) (* As::EMS_3 toEMS_11_from_EMS_3 (/ N_EMS_3 (+ S::EMS_3 E::EMS_3 As::EMS_3 P::EMS_3 recovered_EMS_3))))
 (reaction As_travel_EMS_4to11  (As::EMS_4) (As::EMS_11) (* As::EMS_4 toEMS_11_from_EMS_4 (/ N_EMS_4 (+ S::EMS_4 E::EMS_4 As::EMS_4 P::EMS_4 recovered_EMS_4))))
 (reaction As_travel_EMS_5to11  (As::EMS_5) (As::EMS_11) (* As::EMS_5 toEMS_11_from_EMS_5 (/ N_EMS_5 (+ S::EMS_5 E::EMS_5 As::EMS_5 P::EMS_5 recovered_EMS_5))))
