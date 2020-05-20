@@ -1,0 +1,93 @@
+experiment_setup_parameters:
+  age_bins:
+    - residents_in
+    - staff_in
+    - visitors_in
+    - residents_out
+    - staff_out
+    - visitors_out
+fixed_parameters_region_specific:
+  N:
+    expand_by_age: True
+    'EMS_1':  [250,0,0,0,300,600]
+    'EMS_2':  [250,0,0,0,300,600]
+    'EMS_3':  [250,0,0,0,300,600]
+    'EMS_4':  [250,0,0,0,300,600]
+    'EMS_5':  [250,0,0,0,300,600]
+    'EMS_6':  [250,0,0,0,300,600]
+    'EMS_7':  [250,0,0,0,300,600]
+    'EMS_8':  [250,0,0,0,300,600]
+    'EMS_9':  [250,0,0,0,300,600]
+    'EMS_10': [250,0,0,0,300,600]
+    'IL': [250,0,0,0,300,600]
+  
+  
+fixed_parameters_global:
+  initialAs:
+    expand_by_age: True
+    list: [0, 0, 0, 0 ,1, 2]
+  speciesS:
+    expand_by_age: True
+    custom_function: subtract
+    function_kwargs: {'x1': N, 'x2': initialAs}
+  C:  # inside (outside is homogenerous, so no contact matrix)
+    matrix:  # Unnormalized contact matrix 
+      - [1.6,0.21,1.0]
+      - [0.21,0.116,0]
+      - [1.0,0,0]
+
+  
+sampled_parameters:
+  'time_to_infectious':
+    np.random: uniform
+    function_kwargs: {'low': 1, 'high': 2}
+  social_multiplier_4:
+    np.random: uniform
+    function_kwargs: {'low':0.14, 'high':0.82}
+  fraction_severe_residents:
+    np.random: uniform
+    function_kwargs: {'low':0.102, 'high': 0.229}
+  fraction_severe_staff:
+    np.random: uniform
+    function_kwargs: {'low':0.012, 'high': 0.146}
+  fraction_severe_visitors:
+    np.random: uniform
+    function_kwargs: {'low':0.016, 'high': 0.146}
+  fraction_critical_residents:
+    np.random: uniform
+    function_kwargs: {'low':0.226, 'high': 0.308}
+  fraction_critical_staff:
+    np.random: uniform
+    function_kwargs: {'low':0.128, 'high': 0.308}
+  fraction_critical_visitors:
+    np.random: uniform
+    function_kwargs: {'low':0.185, 'high': 0.308}
+  fraction_dead_residents:
+    np.random: uniform
+    function_kwargs: {'low':0.223, 'high': 0.241}
+  fraction_dead_staff:
+    np.random: uniform
+    function_kwargs: {'low':0.016, 'high': 0.139}
+  fraction_dead_visitors:
+    np.random: uniform
+    function_kwargs: {'low':0.03, 'high': 0.139}
+  fraction_symptomatic_residents:
+    np.random: uniform
+    function_kwargs: {'low':0.997, 'high': 0.997}
+  fraction_symptomatic_staff:
+    np.random: uniform
+    function_kwargs: {'low':0.668, 'high': 0.99}
+  fraction_symptomatic_visitors:
+    np.random: uniform
+    function_kwargs: {'low':0.614, 'high': 0.99}
+  recovery_time_hosp_residents:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high': 6}
+  recovery_time_hosp_staff:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high': 6}
+  recovery_time_hosp_visitors:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high': 6}
+
+fitted_parameters:
