@@ -57,11 +57,11 @@ else:
 
 # Preset EMS Groups
 # EMS Groupings
-emsMapping_list = [(1,2), (3,6), (4,5), (7, 8, 9, 10, 11)]
+emsMapping = {"North-Central": (1,2), "Central": (3,6), "Southern": (4,5), "Northeast": (7, 8, 9, 10, 11)}
 # Map EMS to Groupings 
-emsMapping_dict = {x: (i+1) for i, v in enumerate(emsMapping_list) for x in v}
+ems_to_region_mapping = {x: name for name, v in emsMapping.items() for x in v}
 # Create a column for later filtering
-df['emsGroup'] = df['ems'].map(emsMapping_dict)
+df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
 
 
 # Filter out timeframes for graphs
@@ -172,7 +172,7 @@ app.layout = html.Div(
                                             className="control_label",
                                         ),
                                         dcc.Dropdown(
-                                            options=[{'label': 'EMS: {0}-{1}'.format(v[0], v[-1]), 'value': (i+1)} for i,v in enumerate(emsMapping_list)],
+                                            options=[{'label': name, 'value': name} for name in emsMapping]
                                             multi=False,
                                             placeholder="Choose EMS Region",
                                             id="emsDropdown",
