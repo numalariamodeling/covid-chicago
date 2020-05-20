@@ -25,7 +25,7 @@ def load_sim_data(exp_name, ems_nr,  input_wdir=None, input_sim_output_path=None
 
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
     if 'Ki' not in df.columns.values:
-        scen_df = pd.read_csv(os.path.join(sim_output_path, 'scenarios.csv'))
+        scen_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
 
     df.columns = df.columns.str.replace('_All', '')

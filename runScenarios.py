@@ -1,6 +1,5 @@
 import argparse
 import datetime
-import itertools
 import logging
 import os
 import re
@@ -198,7 +197,7 @@ def add_parameters(df, parameter_type, config, region, age_bins, start_date=None
     return df
 
 
-def generateParameterSamples(samples, pop, start_dates, config, age_bins, region):
+def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
@@ -214,9 +213,16 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, region
     for parameter, parameter_function in config['fixed_parameters_global'].items():
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
 
+    # For a given start date, cross all Ki values with df for full factorial.
     dfs = []
+    for Kivalue in Kivalues:
+        df_copy = df.copy()
+        df_copy['Ki'] = Kivalue
+        dfs.append(df_copy)
+    df = pd.concat(dfs, ignore_index=True)
 
     # Time-varying parameters for each start date.
+    dfs = []
     for start_date in start_dates:
         df_copy = df.copy()
         df_copy['startdate'] = start_date
@@ -225,11 +231,12 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, region
         dfs.append(df_copy)
 
     result = pd.concat(dfs, ignore_index=True)
+    result["scen_num"] = range(1, len(result) + 1)
     result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     return result
 
 
-def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
+def replaceParameters(df, row_i, Ki_i, emodl_template, scen_num):
     """ Given an emodl template file, replaces the placeholder names
     (which are bookended by '@') with the sampled parameter value.
     This is saved as a (temporary) emodl file to be used in simulation runs.
@@ -238,9 +245,9 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     ----------
     df: pd.DataFrame
         DataFrame containing all the sampled parameters
+    row_i : int
+        Index of which row in df we are handling
     Ki_i: float
-    sample_nr: int
-        Sample number of the df to use in generating the emodl file
     emodl_template: str
         File name of the emodl template file
     scen_num: int
@@ -249,7 +256,7 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
     fin = open(os.path.join(temp_exp_dir, emodl_template), "rt")
     data = fin.read()
     for col in df.columns:
-        data = data.replace(f'@{col}@', str(df[col][sample_nr]))
+        data = data.replace(f'@{col}@', str(df[col][row_i]))
     data = data.replace('@Ki@', '%.09f' % Ki_i)
     remaining_placeholders = re.findall(r'@\w+@', data)
     if remaining_placeholders:
@@ -268,18 +275,13 @@ def replaceParameters(df, Ki_i, sample_nr, emodl_template, scen_num):
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
                       nruns, sub_samples, modelname, cfg_file, start_dates, Location,
                       experiment_config, age_bins, region):
-    lst = []
-    scen_num = 0
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
-                                       config=experiment_config, age_bins=age_bins, region=region)
+                                       config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region)
 
-    full_factorial = itertools.product(range(sub_samples), Kivalues)
+    for row_i, Ki in enumerate(dfparam.Ki):
+        scen_num = row_i + 1
 
-    for sample, Ki in full_factorial:
-        scen_num += 1
-
-        lst.append([sample, scen_num, Ki, simulation_population])
-        replaceParameters(df=dfparam, Ki_i=Ki,  sample_nr=sample, emodl_template=modelname, scen_num=scen_num)
+        replaceParameters(df=dfparam, row_i=row_i, Ki_i=Ki,  emodl_template=modelname, scen_num=scen_num)
 
         # adjust model.cfg
         fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
@@ -304,9 +306,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
         fin.write(data_cfg)
         fin.close()
 
-    df = pd.DataFrame(lst, columns=['sample_num', 'scen_num', 'Ki', 'simulation_population'])
-    df.to_csv(os.path.join(temp_exp_dir, "scenarios.csv"), index=False)
-    return scen_num
+    return len(dfparam)
 
 
 def get_experiment_config(experiment_config_file):

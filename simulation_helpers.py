@@ -4,14 +4,13 @@ import subprocess
 import shutil
 import stat
 import sys
-from datetime import date, timedelta
+from datetime import timedelta
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
-import numpy as np
 
 from processing_helpers import CI_5, CI_25, CI_75, CI_95
 
@@ -115,7 +114,6 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
 
 
 def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False, git_dir=GIT_DIR):
-    scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
     sampledf = pd.read_csv(os.path.join(temp_exp_dir,"sampled_parameters.csv"))
 
     df_list = []
@@ -124,7 +122,6 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
         try:
             df_i = reprocess(trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, input_fname=input_name)
             df_i['scen_num'] = scen_i
-            df_i = df_i.merge(scendf, on=['scen_num'])
             df_i = df_i.merge(sampledf, on=['sample_num'])
             df_list.append(df_i)
         except:
@@ -135,7 +132,7 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
     dfc = pd.concat(df_list)
     dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
 
-    nscenarios = scendf['scen_num'].max()
+    nscenarios = len(sampledf)
     nscenarios_processed = len(dfc['scen_num'].unique())
     trackScen = "Number of scenarios processed n= " + str(nscenarios_processed) + " out of total N= " + str(nscenarios) + " (" + str(nscenarios_processed/ nscenarios)+ " %)"
     writeTxt(temp_exp_dir, "Simulation_report.txt" ,trackScen)
