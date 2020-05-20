@@ -1,10 +1,12 @@
 import os
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
+import matplotlib.patches as patches
 import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import seaborn as sns
@@ -58,7 +60,6 @@ def plot_il_scenarios(results_path, fname, log=False) :
 
     df = load_model_results(results_path, fname)
     channel = 'icu'
-    restore_regions = [x for x in df['geography_modeled'].unique() if 'restore' in x]
 
     df = df[df['geography_modeled'] == 'illinois']
     savename = 'illinois' if not log else 'illinois_log'
@@ -136,17 +137,88 @@ def plot_regional_scenarios(results_path, fname, log=False) :
     plt.savefig(os.path.join(results_path, '%s_%s.pdf' % (savename, channel)), format='PDF')
 
 
-if __name__ == '__main__' :
+def plot_overall_nums(results_path, fname, geog) :
 
-    print(load_capacity(0))
-    exit()
+    df = load_model_results(results_path, fname)
+
+    num_geog = len(df['geography_modeled'].unique())
+    num_scen = len(df['scenario_name'].unique())
+    num_groups = len(df['model_team'].unique())
+
+    df = df[df['geography_modeled'] == geog]
+    df = df[df['date'] >= date(2020,6,1)]
+
+    colors = {
+        'uiuc' : '#00b9f2',
+        'nu' : '#00a875',
+        'uchicago' : '#f7941d'
+    }
+
+    fig = plt.figure(geog, figsize=(14,6))
+    axes = [fig.add_subplot(1,3,x+1) for x in range(3)]
+    ylabels = []
+
+    for s, (scen, sdf) in enumerate(df.groupby('scenario_name')) :
+        for g, (gn, gdf) in enumerate(sdf.groupby('model_team')) :
+
+            yval = s*num_groups + g
+            ylabels.append('%s %s' % (scen, gn))
+
+            ax = axes[0]
+            channel = 'deaths'
+            med = int(np.sum(gdf['%s_median' % channel]))
+            lb = int(np.sum(gdf['%s_lower' % channel]))
+            ub = int(np.sum(gdf['%s_upper' % channel]))
+
+            ax.plot([lb, ub], [yval]*2, '-k', linewidth=0.5)
+            ax.plot([med], [yval], "D", color=colors[gn])
+
+            ax.set_xlabel('cumulative deaths')
+            ax.set_yticklabels([])
+
+            ax = axes[1]
+            channel = 'icu'
+            med = int(np.max(gdf['%s_median' % channel]))
+            lb = int(np.max(gdf['%s_lower' % channel]))
+            ub = int(np.max(gdf['%s_upper' % channel]))
+
+            ax.plot([lb, ub], [yval]*2, '-k', linewidth=0.5)
+            ax.plot([med], [yval], "D", color=colors[gn])
+
+            ax.set_xlabel('peak ICU')
+            ax.set_yticklabels([])
+
+            ax = axes[2]
+            channel = 'cases'
+            med = int(np.max(gdf['%s_median' % channel]))
+            lb = int(np.max(gdf['%s_lower' % channel]))
+            ub = int(np.max(gdf['%s_upper' % channel]))
+
+            ax.plot([lb, ub], [yval]*2, '-k', linewidth=0.5)
+            ax.plot([med], [yval], "D", color=colors[gn])
+
+            ax.set_xlabel('peak cases')
+            ax.set_yticklabels([])
+
+    if geog == 'illinois' :
+        rect = patches.Rectangle((2000, 0), 1000, 8, linewidth=0, facecolor='k', alpha=0.2)
+        axes[1].add_patch(rect)
+    axes[0].set_yticks(range(9))
+    axes[0].set_yticklabels(ylabels)
+
+    plt.savefig(os.path.join(results_path, 'overall_jun_oct_numbers_%s.pdf' % geog), format='PDF')
+
+
+if __name__ == '__main__' :
 
     results_path = os.path.join(projectpath, 'civis', '200515_combined_model_results')
     fname = 'combined_model_results_20200515.csv'
     # plot_with_ref_data(results_path, fname)
-    plot_il_scenarios(results_path, fname, log=False)
+    # plot_il_scenarios(results_path, fname, log=False)
     # plot_regional_scenarios(results_path, fname, log=False)
     # plot_regional_scenarios(results_path, fname, log=True)
+
+    for geog in ['illinois', 'restore_southern', 'restore_central', 'restore_northcentral', 'restore_northeast'] :
+        plot_overall_nums(results_path, fname, geog)
+
     plt.show()
-
-
