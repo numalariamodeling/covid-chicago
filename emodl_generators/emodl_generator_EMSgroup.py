@@ -123,12 +123,12 @@ def write_observe(grp, expandModel=None):
 """.format(grpout=grpout, grp=grp)
 
     expand_contactTracing_str = """
-;(observe quarantined Q_{grpout})
+;(observe quarantined_{grpout} Q_{grp})
 (observe presymptomatic_{grpout} presymptomatic_{grp})
 """.format(grpout=grpout, grp=grp)
 
     expand_testDelay_contactTracing_str = """
-;(observe quarantined Q_{grpout})
+;(observe quarantined_{grpout} Q_{grp})
 (observe presymptomatic_{grpout} presymptomatic_{grp})
 """.format(grpout=grpout, grp=grp)
 
@@ -671,6 +671,7 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_contactTracing.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel=None,  add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_interventionSTOPadj.emodl'))
+    generate_emodl(grpList=ems_grp,  expandModel="testDelay", add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_interventionSTOPadj.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_neverSIP.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp.emodl'))
