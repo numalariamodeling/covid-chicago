@@ -372,10 +372,11 @@
 
 
 
+(func presymptomatic_EMS_1  (+ P::EMS_1 P_det::EMS_1))
 (func symptomatic_mild_EMS_1  (+ Sym::EMS_1 Sym_det2::EMS_1))
 (func symptomatic_severe_EMS_1  (+ Sys::EMS_1 Sys_det3::EMS_1))
-(func infectious_undet_EMS_1 (+ As::EMS_1 P::EMS_1 Sym_EMS_1 Sys::EMS_1 H1::EMS_1 H2::EMS_1 H3::EMS_1 C2::EMS_1 C3::EMS_1))
-(func infectious_det_EMS_1 (+ As_det1::EMS_1 Sym_det2::EMS_1 Sys_det3::EMS_1 ))
+(func infectious_undet_EMS_1 (+ As::EMS_1 P_EMS_1 Sym::EMS_1 Sys::EMS_1 H1::EMS_1 H2::EMS_1 H3::EMS_1 C2::EMS_1 C3::EMS_1))
+(func infectious_det_EMS_1 (+ As_det1::EMS_1 P_det::EMS_1 Sym_det2::EMS_1 Sys_det3::EMS_1 ))
 
 (func asymptomatic_EMS_1(+ As::EMS_1 As_det1::EMS_1))
 (func symptomatic_mild_EMS_1(+ Sym::EMS_1 Sym_det2::EMS_1))
@@ -405,10 +406,11 @@
 (func infected_EMS_1 (+ infectious_det_EMS_1 infectious_undet_EMS_1 H1_det3::EMS_1 H2_det3::EMS_1 H3_det3::EMS_1 C2_det3::EMS_1 C3_det3::EMS_1))
 (func infected_cumul_EMS_1 (+ infected_EMS_1 recovered_EMS_1 deaths_EMS_1))
 
+(func presymptomatic_EMS_2  (+ P::EMS_2 P_det::EMS_2))
 (func symptomatic_mild_EMS_2  (+ Sym::EMS_2 Sym_det2::EMS_2))
 (func symptomatic_severe_EMS_2  (+ Sys::EMS_2 Sys_det3::EMS_2))
-(func infectious_undet_EMS_2 (+ As::EMS_2 P::EMS_2 Sym_EMS_2 Sys::EMS_2 H1::EMS_2 H2::EMS_2 H3::EMS_2 C2::EMS_2 C3::EMS_2))
-(func infectious_det_EMS_2 (+ As_det1::EMS_2 Sym_det2::EMS_2 Sys_det3::EMS_2 ))
+(func infectious_undet_EMS_2 (+ As::EMS_2 P_EMS_2 Sym::EMS_2 Sys::EMS_2 H1::EMS_2 H2::EMS_2 H3::EMS_2 C2::EMS_2 C3::EMS_2))
+(func infectious_det_EMS_2 (+ As_det1::EMS_2 P_det::EMS_2 Sym_det2::EMS_2 Sys_det3::EMS_2 ))
 
 (func asymptomatic_EMS_2(+ As::EMS_2 As_det1::EMS_2))
 (func symptomatic_mild_EMS_2(+ Sym::EMS_2 Sym_det2::EMS_2))
@@ -438,10 +440,11 @@
 (func infected_EMS_2 (+ infectious_det_EMS_2 infectious_undet_EMS_2 H1_det3::EMS_2 H2_det3::EMS_2 H3_det3::EMS_2 C2_det3::EMS_2 C3_det3::EMS_2))
 (func infected_cumul_EMS_2 (+ infected_EMS_2 recovered_EMS_2 deaths_EMS_2))
 
+(func presymptomatic_EMS_3  (+ P::EMS_3 P_det::EMS_3))
 (func symptomatic_mild_EMS_3  (+ Sym::EMS_3 Sym_det2::EMS_3))
 (func symptomatic_severe_EMS_3  (+ Sys::EMS_3 Sys_det3::EMS_3))
-(func infectious_undet_EMS_3 (+ As::EMS_3 P::EMS_3 Sym_EMS_3 Sys::EMS_3 H1::EMS_3 H2::EMS_3 H3::EMS_3 C2::EMS_3 C3::EMS_3))
-(func infectious_det_EMS_3 (+ As_det1::EMS_3 Sym_det2::EMS_3 Sys_det3::EMS_3 ))
+(func infectious_undet_EMS_3 (+ As::EMS_3 P_EMS_3 Sym::EMS_3 Sys::EMS_3 H1::EMS_3 H2::EMS_3 H3::EMS_3 C2::EMS_3 C3::EMS_3))
+(func infectious_det_EMS_3 (+ As_det1::EMS_3 P_det::EMS_3 Sym_det2::EMS_3 Sys_det3::EMS_3 ))
 
 (func asymptomatic_EMS_3(+ As::EMS_3 As_det1::EMS_3))
 (func symptomatic_mild_EMS_3(+ Sym::EMS_3 Sym_det2::EMS_3))
@@ -471,10 +474,11 @@
 (func infected_EMS_3 (+ infectious_det_EMS_3 infectious_undet_EMS_3 H1_det3::EMS_3 H2_det3::EMS_3 H3_det3::EMS_3 C2_det3::EMS_3 C3_det3::EMS_3))
 (func infected_cumul_EMS_3 (+ infected_EMS_3 recovered_EMS_3 deaths_EMS_3))
 
+(func presymptomatic_EMS_4  (+ P::EMS_4 P_det::EMS_4))
 (func symptomatic_mild_EMS_4  (+ Sym::EMS_4 Sym_det2::EMS_4))
 (func symptomatic_severe_EMS_4  (+ Sys::EMS_4 Sys_det3::EMS_4))
-(func infectious_undet_EMS_4 (+ As::EMS_4 P::EMS_4 Sym_EMS_4 Sys::EMS_4 H1::EMS_4 H2::EMS_4 H3::EMS_4 C2::EMS_4 C3::EMS_4))
-(func infectious_det_EMS_4 (+ As_det1::EMS_4 Sym_det2::EMS_4 Sys_det3::EMS_4 ))
+(func infectious_undet_EMS_4 (+ As::EMS_4 P_EMS_4 Sym::EMS_4 Sys::EMS_4 H1::EMS_4 H2::EMS_4 H3::EMS_4 C2::EMS_4 C3::EMS_4))
+(func infectious_det_EMS_4 (+ As_det1::EMS_4 P_det::EMS_4 Sym_det2::EMS_4 Sys_det3::EMS_4 ))
 
 (func asymptomatic_EMS_4(+ As::EMS_4 As_det1::EMS_4))
 (func symptomatic_mild_EMS_4(+ Sym::EMS_4 Sym_det2::EMS_4))
@@ -504,10 +508,11 @@
 (func infected_EMS_4 (+ infectious_det_EMS_4 infectious_undet_EMS_4 H1_det3::EMS_4 H2_det3::EMS_4 H3_det3::EMS_4 C2_det3::EMS_4 C3_det3::EMS_4))
 (func infected_cumul_EMS_4 (+ infected_EMS_4 recovered_EMS_4 deaths_EMS_4))
 
+(func presymptomatic_EMS_5  (+ P::EMS_5 P_det::EMS_5))
 (func symptomatic_mild_EMS_5  (+ Sym::EMS_5 Sym_det2::EMS_5))
 (func symptomatic_severe_EMS_5  (+ Sys::EMS_5 Sys_det3::EMS_5))
-(func infectious_undet_EMS_5 (+ As::EMS_5 P::EMS_5 Sym_EMS_5 Sys::EMS_5 H1::EMS_5 H2::EMS_5 H3::EMS_5 C2::EMS_5 C3::EMS_5))
-(func infectious_det_EMS_5 (+ As_det1::EMS_5 Sym_det2::EMS_5 Sys_det3::EMS_5 ))
+(func infectious_undet_EMS_5 (+ As::EMS_5 P_EMS_5 Sym::EMS_5 Sys::EMS_5 H1::EMS_5 H2::EMS_5 H3::EMS_5 C2::EMS_5 C3::EMS_5))
+(func infectious_det_EMS_5 (+ As_det1::EMS_5 P_det::EMS_5 Sym_det2::EMS_5 Sys_det3::EMS_5 ))
 
 (func asymptomatic_EMS_5(+ As::EMS_5 As_det1::EMS_5))
 (func symptomatic_mild_EMS_5(+ Sym::EMS_5 Sym_det2::EMS_5))
@@ -537,10 +542,11 @@
 (func infected_EMS_5 (+ infectious_det_EMS_5 infectious_undet_EMS_5 H1_det3::EMS_5 H2_det3::EMS_5 H3_det3::EMS_5 C2_det3::EMS_5 C3_det3::EMS_5))
 (func infected_cumul_EMS_5 (+ infected_EMS_5 recovered_EMS_5 deaths_EMS_5))
 
+(func presymptomatic_EMS_6  (+ P::EMS_6 P_det::EMS_6))
 (func symptomatic_mild_EMS_6  (+ Sym::EMS_6 Sym_det2::EMS_6))
 (func symptomatic_severe_EMS_6  (+ Sys::EMS_6 Sys_det3::EMS_6))
-(func infectious_undet_EMS_6 (+ As::EMS_6 P::EMS_6 Sym_EMS_6 Sys::EMS_6 H1::EMS_6 H2::EMS_6 H3::EMS_6 C2::EMS_6 C3::EMS_6))
-(func infectious_det_EMS_6 (+ As_det1::EMS_6 Sym_det2::EMS_6 Sys_det3::EMS_6 ))
+(func infectious_undet_EMS_6 (+ As::EMS_6 P_EMS_6 Sym::EMS_6 Sys::EMS_6 H1::EMS_6 H2::EMS_6 H3::EMS_6 C2::EMS_6 C3::EMS_6))
+(func infectious_det_EMS_6 (+ As_det1::EMS_6 P_det::EMS_6 Sym_det2::EMS_6 Sys_det3::EMS_6 ))
 
 (func asymptomatic_EMS_6(+ As::EMS_6 As_det1::EMS_6))
 (func symptomatic_mild_EMS_6(+ Sym::EMS_6 Sym_det2::EMS_6))
@@ -570,10 +576,11 @@
 (func infected_EMS_6 (+ infectious_det_EMS_6 infectious_undet_EMS_6 H1_det3::EMS_6 H2_det3::EMS_6 H3_det3::EMS_6 C2_det3::EMS_6 C3_det3::EMS_6))
 (func infected_cumul_EMS_6 (+ infected_EMS_6 recovered_EMS_6 deaths_EMS_6))
 
+(func presymptomatic_EMS_7  (+ P::EMS_7 P_det::EMS_7))
 (func symptomatic_mild_EMS_7  (+ Sym::EMS_7 Sym_det2::EMS_7))
 (func symptomatic_severe_EMS_7  (+ Sys::EMS_7 Sys_det3::EMS_7))
-(func infectious_undet_EMS_7 (+ As::EMS_7 P::EMS_7 Sym_EMS_7 Sys::EMS_7 H1::EMS_7 H2::EMS_7 H3::EMS_7 C2::EMS_7 C3::EMS_7))
-(func infectious_det_EMS_7 (+ As_det1::EMS_7 Sym_det2::EMS_7 Sys_det3::EMS_7 ))
+(func infectious_undet_EMS_7 (+ As::EMS_7 P_EMS_7 Sym::EMS_7 Sys::EMS_7 H1::EMS_7 H2::EMS_7 H3::EMS_7 C2::EMS_7 C3::EMS_7))
+(func infectious_det_EMS_7 (+ As_det1::EMS_7 P_det::EMS_7 Sym_det2::EMS_7 Sys_det3::EMS_7 ))
 
 (func asymptomatic_EMS_7(+ As::EMS_7 As_det1::EMS_7))
 (func symptomatic_mild_EMS_7(+ Sym::EMS_7 Sym_det2::EMS_7))
@@ -603,10 +610,11 @@
 (func infected_EMS_7 (+ infectious_det_EMS_7 infectious_undet_EMS_7 H1_det3::EMS_7 H2_det3::EMS_7 H3_det3::EMS_7 C2_det3::EMS_7 C3_det3::EMS_7))
 (func infected_cumul_EMS_7 (+ infected_EMS_7 recovered_EMS_7 deaths_EMS_7))
 
+(func presymptomatic_EMS_8  (+ P::EMS_8 P_det::EMS_8))
 (func symptomatic_mild_EMS_8  (+ Sym::EMS_8 Sym_det2::EMS_8))
 (func symptomatic_severe_EMS_8  (+ Sys::EMS_8 Sys_det3::EMS_8))
-(func infectious_undet_EMS_8 (+ As::EMS_8 P::EMS_8 Sym_EMS_8 Sys::EMS_8 H1::EMS_8 H2::EMS_8 H3::EMS_8 C2::EMS_8 C3::EMS_8))
-(func infectious_det_EMS_8 (+ As_det1::EMS_8 Sym_det2::EMS_8 Sys_det3::EMS_8 ))
+(func infectious_undet_EMS_8 (+ As::EMS_8 P_EMS_8 Sym::EMS_8 Sys::EMS_8 H1::EMS_8 H2::EMS_8 H3::EMS_8 C2::EMS_8 C3::EMS_8))
+(func infectious_det_EMS_8 (+ As_det1::EMS_8 P_det::EMS_8 Sym_det2::EMS_8 Sys_det3::EMS_8 ))
 
 (func asymptomatic_EMS_8(+ As::EMS_8 As_det1::EMS_8))
 (func symptomatic_mild_EMS_8(+ Sym::EMS_8 Sym_det2::EMS_8))
@@ -636,10 +644,11 @@
 (func infected_EMS_8 (+ infectious_det_EMS_8 infectious_undet_EMS_8 H1_det3::EMS_8 H2_det3::EMS_8 H3_det3::EMS_8 C2_det3::EMS_8 C3_det3::EMS_8))
 (func infected_cumul_EMS_8 (+ infected_EMS_8 recovered_EMS_8 deaths_EMS_8))
 
+(func presymptomatic_EMS_9  (+ P::EMS_9 P_det::EMS_9))
 (func symptomatic_mild_EMS_9  (+ Sym::EMS_9 Sym_det2::EMS_9))
 (func symptomatic_severe_EMS_9  (+ Sys::EMS_9 Sys_det3::EMS_9))
-(func infectious_undet_EMS_9 (+ As::EMS_9 P::EMS_9 Sym_EMS_9 Sys::EMS_9 H1::EMS_9 H2::EMS_9 H3::EMS_9 C2::EMS_9 C3::EMS_9))
-(func infectious_det_EMS_9 (+ As_det1::EMS_9 Sym_det2::EMS_9 Sys_det3::EMS_9 ))
+(func infectious_undet_EMS_9 (+ As::EMS_9 P_EMS_9 Sym::EMS_9 Sys::EMS_9 H1::EMS_9 H2::EMS_9 H3::EMS_9 C2::EMS_9 C3::EMS_9))
+(func infectious_det_EMS_9 (+ As_det1::EMS_9 P_det::EMS_9 Sym_det2::EMS_9 Sys_det3::EMS_9 ))
 
 (func asymptomatic_EMS_9(+ As::EMS_9 As_det1::EMS_9))
 (func symptomatic_mild_EMS_9(+ Sym::EMS_9 Sym_det2::EMS_9))
@@ -669,10 +678,11 @@
 (func infected_EMS_9 (+ infectious_det_EMS_9 infectious_undet_EMS_9 H1_det3::EMS_9 H2_det3::EMS_9 H3_det3::EMS_9 C2_det3::EMS_9 C3_det3::EMS_9))
 (func infected_cumul_EMS_9 (+ infected_EMS_9 recovered_EMS_9 deaths_EMS_9))
 
+(func presymptomatic_EMS_10  (+ P::EMS_10 P_det::EMS_10))
 (func symptomatic_mild_EMS_10  (+ Sym::EMS_10 Sym_det2::EMS_10))
 (func symptomatic_severe_EMS_10  (+ Sys::EMS_10 Sys_det3::EMS_10))
-(func infectious_undet_EMS_10 (+ As::EMS_10 P::EMS_10 Sym_EMS_10 Sys::EMS_10 H1::EMS_10 H2::EMS_10 H3::EMS_10 C2::EMS_10 C3::EMS_10))
-(func infectious_det_EMS_10 (+ As_det1::EMS_10 Sym_det2::EMS_10 Sys_det3::EMS_10 ))
+(func infectious_undet_EMS_10 (+ As::EMS_10 P_EMS_10 Sym::EMS_10 Sys::EMS_10 H1::EMS_10 H2::EMS_10 H3::EMS_10 C2::EMS_10 C3::EMS_10))
+(func infectious_det_EMS_10 (+ As_det1::EMS_10 P_det::EMS_10 Sym_det2::EMS_10 Sys_det3::EMS_10 ))
 
 (func asymptomatic_EMS_10(+ As::EMS_10 As_det1::EMS_10))
 (func symptomatic_mild_EMS_10(+ Sym::EMS_10 Sym_det2::EMS_10))
@@ -702,10 +712,11 @@
 (func infected_EMS_10 (+ infectious_det_EMS_10 infectious_undet_EMS_10 H1_det3::EMS_10 H2_det3::EMS_10 H3_det3::EMS_10 C2_det3::EMS_10 C3_det3::EMS_10))
 (func infected_cumul_EMS_10 (+ infected_EMS_10 recovered_EMS_10 deaths_EMS_10))
 
+(func presymptomatic_EMS_11  (+ P::EMS_11 P_det::EMS_11))
 (func symptomatic_mild_EMS_11  (+ Sym::EMS_11 Sym_det2::EMS_11))
 (func symptomatic_severe_EMS_11  (+ Sys::EMS_11 Sys_det3::EMS_11))
-(func infectious_undet_EMS_11 (+ As::EMS_11 P::EMS_11 Sym_EMS_11 Sys::EMS_11 H1::EMS_11 H2::EMS_11 H3::EMS_11 C2::EMS_11 C3::EMS_11))
-(func infectious_det_EMS_11 (+ As_det1::EMS_11 Sym_det2::EMS_11 Sys_det3::EMS_11 ))
+(func infectious_undet_EMS_11 (+ As::EMS_11 P_EMS_11 Sym::EMS_11 Sys::EMS_11 H1::EMS_11 H2::EMS_11 H3::EMS_11 C2::EMS_11 C3::EMS_11))
+(func infectious_det_EMS_11 (+ As_det1::EMS_11 P_det::EMS_11 Sym_det2::EMS_11 Sys_det3::EMS_11 ))
 
 (func asymptomatic_EMS_11(+ As::EMS_11 As_det1::EMS_11))
 (func symptomatic_mild_EMS_11(+ Sym::EMS_11 Sym_det2::EMS_11))
@@ -798,7 +809,8 @@
 (observe detected_EMS-1 detected_EMS_1)
 (observe detected_cumul_EMS-1 detected_cumul_EMS_1 )
 
-(observe presymptomatic_EMS-1 P::EMS_1)
+;(observe quarantined_EMS-1 Q::EMS_1)
+(observe presymptomatic_EMS-1 presymptomatic_EMS_1)
 
 (observe susceptible_EMS-2 S::EMS_2)
 (observe exposed_EMS-2 E::EMS_2)
@@ -832,7 +844,8 @@
 (observe detected_EMS-2 detected_EMS_2)
 (observe detected_cumul_EMS-2 detected_cumul_EMS_2 )
 
-(observe presymptomatic_EMS-2 P::EMS_2)
+;(observe quarantined_EMS-2 Q::EMS_2)
+(observe presymptomatic_EMS-2 presymptomatic_EMS_2)
 
 (observe susceptible_EMS-3 S::EMS_3)
 (observe exposed_EMS-3 E::EMS_3)
@@ -866,7 +879,8 @@
 (observe detected_EMS-3 detected_EMS_3)
 (observe detected_cumul_EMS-3 detected_cumul_EMS_3 )
 
-(observe presymptomatic_EMS-3 P::EMS_3)
+;(observe quarantined_EMS-3 Q::EMS_3)
+(observe presymptomatic_EMS-3 presymptomatic_EMS_3)
 
 (observe susceptible_EMS-4 S::EMS_4)
 (observe exposed_EMS-4 E::EMS_4)
@@ -900,7 +914,8 @@
 (observe detected_EMS-4 detected_EMS_4)
 (observe detected_cumul_EMS-4 detected_cumul_EMS_4 )
 
-(observe presymptomatic_EMS-4 P::EMS_4)
+;(observe quarantined_EMS-4 Q::EMS_4)
+(observe presymptomatic_EMS-4 presymptomatic_EMS_4)
 
 (observe susceptible_EMS-5 S::EMS_5)
 (observe exposed_EMS-5 E::EMS_5)
@@ -934,7 +949,8 @@
 (observe detected_EMS-5 detected_EMS_5)
 (observe detected_cumul_EMS-5 detected_cumul_EMS_5 )
 
-(observe presymptomatic_EMS-5 P::EMS_5)
+;(observe quarantined_EMS-5 Q::EMS_5)
+(observe presymptomatic_EMS-5 presymptomatic_EMS_5)
 
 (observe susceptible_EMS-6 S::EMS_6)
 (observe exposed_EMS-6 E::EMS_6)
@@ -968,7 +984,8 @@
 (observe detected_EMS-6 detected_EMS_6)
 (observe detected_cumul_EMS-6 detected_cumul_EMS_6 )
 
-(observe presymptomatic_EMS-6 P::EMS_6)
+;(observe quarantined_EMS-6 Q::EMS_6)
+(observe presymptomatic_EMS-6 presymptomatic_EMS_6)
 
 (observe susceptible_EMS-7 S::EMS_7)
 (observe exposed_EMS-7 E::EMS_7)
@@ -1002,7 +1019,8 @@
 (observe detected_EMS-7 detected_EMS_7)
 (observe detected_cumul_EMS-7 detected_cumul_EMS_7 )
 
-(observe presymptomatic_EMS-7 P::EMS_7)
+;(observe quarantined_EMS-7 Q::EMS_7)
+(observe presymptomatic_EMS-7 presymptomatic_EMS_7)
 
 (observe susceptible_EMS-8 S::EMS_8)
 (observe exposed_EMS-8 E::EMS_8)
@@ -1036,7 +1054,8 @@
 (observe detected_EMS-8 detected_EMS_8)
 (observe detected_cumul_EMS-8 detected_cumul_EMS_8 )
 
-(observe presymptomatic_EMS-8 P::EMS_8)
+;(observe quarantined_EMS-8 Q::EMS_8)
+(observe presymptomatic_EMS-8 presymptomatic_EMS_8)
 
 (observe susceptible_EMS-9 S::EMS_9)
 (observe exposed_EMS-9 E::EMS_9)
@@ -1070,7 +1089,8 @@
 (observe detected_EMS-9 detected_EMS_9)
 (observe detected_cumul_EMS-9 detected_cumul_EMS_9 )
 
-(observe presymptomatic_EMS-9 P::EMS_9)
+;(observe quarantined_EMS-9 Q::EMS_9)
+(observe presymptomatic_EMS-9 presymptomatic_EMS_9)
 
 (observe susceptible_EMS-10 S::EMS_10)
 (observe exposed_EMS-10 E::EMS_10)
@@ -1104,7 +1124,8 @@
 (observe detected_EMS-10 detected_EMS_10)
 (observe detected_cumul_EMS-10 detected_cumul_EMS_10 )
 
-(observe presymptomatic_EMS-10 P::EMS_10)
+;(observe quarantined_EMS-10 Q::EMS_10)
+(observe presymptomatic_EMS-10 presymptomatic_EMS_10)
 
 (observe susceptible_EMS-11 S::EMS_11)
 (observe exposed_EMS-11 E::EMS_11)
@@ -1138,7 +1159,8 @@
 (observe detected_EMS-11 detected_EMS_11)
 (observe detected_cumul_EMS-11 detected_cumul_EMS_11 )
 
-(observe presymptomatic_EMS-11 P::EMS_11)
+;(observe quarantined_EMS-11 Q::EMS_11)
+(observe presymptomatic_EMS-11 presymptomatic_EMS_11)
 
 
 
@@ -1179,6 +1201,11 @@
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead time_to_hospitalization))
+
+;(param d_SQ @d_SQ@)
+(param d_P @d_P@)
+(param d_As_ct1 @d_As_ct1@)
+(param d_Sym_ct1 @d_Sym_ct1@)
 
 (param Ki_EMS_1 @Ki_EMS_1@)
 (time-event time_infection_import @time_infection_import_EMS_1@ ((As::EMS_1 @initialAs_EMS_1@) (S::EMS_1 (- S::EMS_1 @initialAs_EMS_1@))))
@@ -1447,6 +1474,141 @@
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_11 Ki_red2_EMS_11)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_11 Ki_red3_EMS_11)))
             
+(param Ki_back1_EMS_1 (* Ki_EMS_1 @reopening_multiplier_1@))
+(param Ki_back2_EMS_1 (* Ki_EMS_1 @reopening_multiplier_2@))
+(param Ki_back3_EMS_1 (* Ki_EMS_1 @reopening_multiplier_3@))
+(param Ki_back4_EMS_1 (* Ki_EMS_1 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_1 Ki_back1_EMS_1)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_1 Ki_back2_EMS_1)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_1 Ki_back3_EMS_1)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_1 Ki_back4_EMS_1)))
+    
+(param Ki_back1_EMS_2 (* Ki_EMS_2 @reopening_multiplier_1@))
+(param Ki_back2_EMS_2 (* Ki_EMS_2 @reopening_multiplier_2@))
+(param Ki_back3_EMS_2 (* Ki_EMS_2 @reopening_multiplier_3@))
+(param Ki_back4_EMS_2 (* Ki_EMS_2 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_2 Ki_back1_EMS_2)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_2 Ki_back2_EMS_2)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_2 Ki_back3_EMS_2)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_2 Ki_back4_EMS_2)))
+    
+(param Ki_back1_EMS_3 (* Ki_EMS_3 @reopening_multiplier_1@))
+(param Ki_back2_EMS_3 (* Ki_EMS_3 @reopening_multiplier_2@))
+(param Ki_back3_EMS_3 (* Ki_EMS_3 @reopening_multiplier_3@))
+(param Ki_back4_EMS_3 (* Ki_EMS_3 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_3 Ki_back1_EMS_3)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_3 Ki_back2_EMS_3)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_3 Ki_back3_EMS_3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_3 Ki_back4_EMS_3)))
+    
+(param Ki_back1_EMS_4 (* Ki_EMS_4 @reopening_multiplier_1@))
+(param Ki_back2_EMS_4 (* Ki_EMS_4 @reopening_multiplier_2@))
+(param Ki_back3_EMS_4 (* Ki_EMS_4 @reopening_multiplier_3@))
+(param Ki_back4_EMS_4 (* Ki_EMS_4 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_4 Ki_back1_EMS_4)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_4 Ki_back2_EMS_4)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_4 Ki_back3_EMS_4)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_4 Ki_back4_EMS_4)))
+    
+(param Ki_back1_EMS_5 (* Ki_EMS_5 @reopening_multiplier_1@))
+(param Ki_back2_EMS_5 (* Ki_EMS_5 @reopening_multiplier_2@))
+(param Ki_back3_EMS_5 (* Ki_EMS_5 @reopening_multiplier_3@))
+(param Ki_back4_EMS_5 (* Ki_EMS_5 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_5 Ki_back1_EMS_5)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_5 Ki_back2_EMS_5)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_5 Ki_back3_EMS_5)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_5 Ki_back4_EMS_5)))
+    
+(param Ki_back1_EMS_6 (* Ki_EMS_6 @reopening_multiplier_1@))
+(param Ki_back2_EMS_6 (* Ki_EMS_6 @reopening_multiplier_2@))
+(param Ki_back3_EMS_6 (* Ki_EMS_6 @reopening_multiplier_3@))
+(param Ki_back4_EMS_6 (* Ki_EMS_6 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_6 Ki_back1_EMS_6)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_6 Ki_back2_EMS_6)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_6 Ki_back3_EMS_6)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_6 Ki_back4_EMS_6)))
+    
+(param Ki_back1_EMS_7 (* Ki_EMS_7 @reopening_multiplier_1@))
+(param Ki_back2_EMS_7 (* Ki_EMS_7 @reopening_multiplier_2@))
+(param Ki_back3_EMS_7 (* Ki_EMS_7 @reopening_multiplier_3@))
+(param Ki_back4_EMS_7 (* Ki_EMS_7 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_7 Ki_back1_EMS_7)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_7 Ki_back2_EMS_7)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_7 Ki_back3_EMS_7)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_7 Ki_back4_EMS_7)))
+    
+(param Ki_back1_EMS_8 (* Ki_EMS_8 @reopening_multiplier_1@))
+(param Ki_back2_EMS_8 (* Ki_EMS_8 @reopening_multiplier_2@))
+(param Ki_back3_EMS_8 (* Ki_EMS_8 @reopening_multiplier_3@))
+(param Ki_back4_EMS_8 (* Ki_EMS_8 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_8 Ki_back1_EMS_8)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_8 Ki_back2_EMS_8)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_8 Ki_back3_EMS_8)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_8 Ki_back4_EMS_8)))
+    
+(param Ki_back1_EMS_9 (* Ki_EMS_9 @reopening_multiplier_1@))
+(param Ki_back2_EMS_9 (* Ki_EMS_9 @reopening_multiplier_2@))
+(param Ki_back3_EMS_9 (* Ki_EMS_9 @reopening_multiplier_3@))
+(param Ki_back4_EMS_9 (* Ki_EMS_9 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_9 Ki_back1_EMS_9)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_9 Ki_back2_EMS_9)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_9 Ki_back3_EMS_9)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_9 Ki_back4_EMS_9)))
+    
+(param Ki_back1_EMS_10 (* Ki_EMS_10 @reopening_multiplier_1@))
+(param Ki_back2_EMS_10 (* Ki_EMS_10 @reopening_multiplier_2@))
+(param Ki_back3_EMS_10 (* Ki_EMS_10 @reopening_multiplier_3@))
+(param Ki_back4_EMS_10 (* Ki_EMS_10 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_10 Ki_back1_EMS_10)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_10 Ki_back2_EMS_10)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_10 Ki_back3_EMS_10)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_10 Ki_back4_EMS_10)))
+    
+(param Ki_back1_EMS_11 (* Ki_EMS_11 @reopening_multiplier_1@))
+(param Ki_back2_EMS_11 (* Ki_EMS_11 @reopening_multiplier_2@))
+(param Ki_back3_EMS_11 (* Ki_EMS_11 @reopening_multiplier_3@))
+(param Ki_back4_EMS_11 (* Ki_EMS_11 @reopening_multiplier_4@))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_11 Ki_back1_EMS_11)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_11 Ki_back2_EMS_11)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_11 Ki_back3_EMS_11)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_11 Ki_back4_EMS_11)))
+    
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_11 (* S_EMS_11 (- 1 d_SQ))) (Q (* S_EMS_11 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_11 (+ S_EMS_11 Q_EMS_11)) (Q_EMS_11 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_10 (* S_EMS_10 (- 1 d_SQ))) (Q (* S_EMS_10 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_10 (+ S_EMS_10 Q_EMS_10)) (Q_EMS_10 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_9 (* S_EMS_9 (- 1 d_SQ))) (Q (* S_EMS_9 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_9 (+ S_EMS_9 Q_EMS_9)) (Q_EMS_9 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_8 (* S_EMS_8 (- 1 d_SQ))) (Q (* S_EMS_8 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_8 (+ S_EMS_8 Q_EMS_8)) (Q_EMS_8 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_7 (* S_EMS_7 (- 1 d_SQ))) (Q (* S_EMS_7 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_7 (+ S_EMS_7 Q_EMS_7)) (Q_EMS_7 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_6 (* S_EMS_6 (- 1 d_SQ))) (Q (* S_EMS_6 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_6 (+ S_EMS_6 Q_EMS_6)) (Q_EMS_6 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_5 (* S_EMS_5 (- 1 d_SQ))) (Q (* S_EMS_5 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_5 (+ S_EMS_5 Q_EMS_5)) (Q_EMS_5 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_4 (* S_EMS_4 (- 1 d_SQ))) (Q (* S_EMS_4 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_4 (+ S_EMS_4 Q_EMS_4)) (Q_EMS_4 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_3 (* S_EMS_3 (- 1 d_SQ))) (Q (* S_EMS_3 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_3 (+ S_EMS_3 Q_EMS_3)) (Q_EMS_3 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_2 (* S_EMS_2 (- 1 d_SQ))) (Q (* S_EMS_2 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_2 (+ S_EMS_2 Q_EMS_2)) (Q_EMS_2 0)))
+        
+;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_EMS_1 (* S_EMS_1 (- 1 d_SQ))) (Q (* S_EMS_1 d_SQ))))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_EMS_1 (+ S_EMS_1 Q_EMS_1)) (Q_EMS_1 0)))
+        
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+    
 
 
 
@@ -1497,11 +1659,16 @@
 (reaction infection_asymp_undet_EMS_1 (E::EMS_1)  (As::EMS_1)  (* Kl E::EMS_1 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_1 (E::EMS_1)  (As_det1::EMS_1)  (* Kl E::EMS_1 d_As))
 
-(reaction presymptomatic_EMS_1 (E::EMS_1)  (P::EMS_1)  (* Ks E::EMS_1))
+(reaction presymptomatic_EMS_1 (E::EMS_1)  (P::EMS_1)  (* Ks E::EMS_1 (- 1 d_P)))
+(reaction presymptomatic_EMS_1 (E::EMS_1)  (P_det::EMS_1)  (* Ks E::EMS_1 d_P))
+
 (reaction mild_symptomatic_undet_EMS_1 (P::EMS_1) (Sym::EMS_1) (* Ksym P::EMS_1 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_1 (P::EMS_1) (Sym_det2::EMS_1) (* Ksym P::EMS_1 d_Sym))
 (reaction severe_symptomatic_undet_EMS_1 (P::EMS_1) (Sys::EMS_1) (* Ksys P::EMS_1 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_1 (P::EMS_1) (Sys_det3::EMS_1) (* Ksys P::EMS_1 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_1 (P_det::EMS_1) (Sym_det2::EMS_1) (* Ksym P_det::EMS_1))
+(reaction severe_symptomatic_det_EMS_1 (P_det::EMS_1) (Sys_det3::EMS_1) (* Ksys P_det::EMS_1 ))
 
 (reaction hospitalization_1_EMS_1  (Sys::EMS_1)  (H1::EMS_1)  (* Kh1 Sys::EMS_1))
 (reaction hospitalization_2_EMS_1  (Sys::EMS_1)  (H2::EMS_1)  (* Kh2 Sys::EMS_1))
@@ -1575,11 +1742,16 @@
 (reaction infection_asymp_undet_EMS_2 (E::EMS_2)  (As::EMS_2)  (* Kl E::EMS_2 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_2 (E::EMS_2)  (As_det1::EMS_2)  (* Kl E::EMS_2 d_As))
 
-(reaction presymptomatic_EMS_2 (E::EMS_2)  (P::EMS_2)  (* Ks E::EMS_2))
+(reaction presymptomatic_EMS_2 (E::EMS_2)  (P::EMS_2)  (* Ks E::EMS_2 (- 1 d_P)))
+(reaction presymptomatic_EMS_2 (E::EMS_2)  (P_det::EMS_2)  (* Ks E::EMS_2 d_P))
+
 (reaction mild_symptomatic_undet_EMS_2 (P::EMS_2) (Sym::EMS_2) (* Ksym P::EMS_2 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_2 (P::EMS_2) (Sym_det2::EMS_2) (* Ksym P::EMS_2 d_Sym))
 (reaction severe_symptomatic_undet_EMS_2 (P::EMS_2) (Sys::EMS_2) (* Ksys P::EMS_2 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_2 (P::EMS_2) (Sys_det3::EMS_2) (* Ksys P::EMS_2 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_2 (P_det::EMS_2) (Sym_det2::EMS_2) (* Ksym P_det::EMS_2))
+(reaction severe_symptomatic_det_EMS_2 (P_det::EMS_2) (Sys_det3::EMS_2) (* Ksys P_det::EMS_2 ))
 
 (reaction hospitalization_1_EMS_2  (Sys::EMS_2)  (H1::EMS_2)  (* Kh1 Sys::EMS_2))
 (reaction hospitalization_2_EMS_2  (Sys::EMS_2)  (H2::EMS_2)  (* Kh2 Sys::EMS_2))
@@ -1653,11 +1825,16 @@
 (reaction infection_asymp_undet_EMS_3 (E::EMS_3)  (As::EMS_3)  (* Kl E::EMS_3 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_3 (E::EMS_3)  (As_det1::EMS_3)  (* Kl E::EMS_3 d_As))
 
-(reaction presymptomatic_EMS_3 (E::EMS_3)  (P::EMS_3)  (* Ks E::EMS_3))
+(reaction presymptomatic_EMS_3 (E::EMS_3)  (P::EMS_3)  (* Ks E::EMS_3 (- 1 d_P)))
+(reaction presymptomatic_EMS_3 (E::EMS_3)  (P_det::EMS_3)  (* Ks E::EMS_3 d_P))
+
 (reaction mild_symptomatic_undet_EMS_3 (P::EMS_3) (Sym::EMS_3) (* Ksym P::EMS_3 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_3 (P::EMS_3) (Sym_det2::EMS_3) (* Ksym P::EMS_3 d_Sym))
 (reaction severe_symptomatic_undet_EMS_3 (P::EMS_3) (Sys::EMS_3) (* Ksys P::EMS_3 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_3 (P::EMS_3) (Sys_det3::EMS_3) (* Ksys P::EMS_3 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_3 (P_det::EMS_3) (Sym_det2::EMS_3) (* Ksym P_det::EMS_3))
+(reaction severe_symptomatic_det_EMS_3 (P_det::EMS_3) (Sys_det3::EMS_3) (* Ksys P_det::EMS_3 ))
 
 (reaction hospitalization_1_EMS_3  (Sys::EMS_3)  (H1::EMS_3)  (* Kh1 Sys::EMS_3))
 (reaction hospitalization_2_EMS_3  (Sys::EMS_3)  (H2::EMS_3)  (* Kh2 Sys::EMS_3))
@@ -1731,11 +1908,16 @@
 (reaction infection_asymp_undet_EMS_4 (E::EMS_4)  (As::EMS_4)  (* Kl E::EMS_4 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_4 (E::EMS_4)  (As_det1::EMS_4)  (* Kl E::EMS_4 d_As))
 
-(reaction presymptomatic_EMS_4 (E::EMS_4)  (P::EMS_4)  (* Ks E::EMS_4))
+(reaction presymptomatic_EMS_4 (E::EMS_4)  (P::EMS_4)  (* Ks E::EMS_4 (- 1 d_P)))
+(reaction presymptomatic_EMS_4 (E::EMS_4)  (P_det::EMS_4)  (* Ks E::EMS_4 d_P))
+
 (reaction mild_symptomatic_undet_EMS_4 (P::EMS_4) (Sym::EMS_4) (* Ksym P::EMS_4 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_4 (P::EMS_4) (Sym_det2::EMS_4) (* Ksym P::EMS_4 d_Sym))
 (reaction severe_symptomatic_undet_EMS_4 (P::EMS_4) (Sys::EMS_4) (* Ksys P::EMS_4 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_4 (P::EMS_4) (Sys_det3::EMS_4) (* Ksys P::EMS_4 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_4 (P_det::EMS_4) (Sym_det2::EMS_4) (* Ksym P_det::EMS_4))
+(reaction severe_symptomatic_det_EMS_4 (P_det::EMS_4) (Sys_det3::EMS_4) (* Ksys P_det::EMS_4 ))
 
 (reaction hospitalization_1_EMS_4  (Sys::EMS_4)  (H1::EMS_4)  (* Kh1 Sys::EMS_4))
 (reaction hospitalization_2_EMS_4  (Sys::EMS_4)  (H2::EMS_4)  (* Kh2 Sys::EMS_4))
@@ -1809,11 +1991,16 @@
 (reaction infection_asymp_undet_EMS_5 (E::EMS_5)  (As::EMS_5)  (* Kl E::EMS_5 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_5 (E::EMS_5)  (As_det1::EMS_5)  (* Kl E::EMS_5 d_As))
 
-(reaction presymptomatic_EMS_5 (E::EMS_5)  (P::EMS_5)  (* Ks E::EMS_5))
+(reaction presymptomatic_EMS_5 (E::EMS_5)  (P::EMS_5)  (* Ks E::EMS_5 (- 1 d_P)))
+(reaction presymptomatic_EMS_5 (E::EMS_5)  (P_det::EMS_5)  (* Ks E::EMS_5 d_P))
+
 (reaction mild_symptomatic_undet_EMS_5 (P::EMS_5) (Sym::EMS_5) (* Ksym P::EMS_5 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_5 (P::EMS_5) (Sym_det2::EMS_5) (* Ksym P::EMS_5 d_Sym))
 (reaction severe_symptomatic_undet_EMS_5 (P::EMS_5) (Sys::EMS_5) (* Ksys P::EMS_5 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_5 (P::EMS_5) (Sys_det3::EMS_5) (* Ksys P::EMS_5 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_5 (P_det::EMS_5) (Sym_det2::EMS_5) (* Ksym P_det::EMS_5))
+(reaction severe_symptomatic_det_EMS_5 (P_det::EMS_5) (Sys_det3::EMS_5) (* Ksys P_det::EMS_5 ))
 
 (reaction hospitalization_1_EMS_5  (Sys::EMS_5)  (H1::EMS_5)  (* Kh1 Sys::EMS_5))
 (reaction hospitalization_2_EMS_5  (Sys::EMS_5)  (H2::EMS_5)  (* Kh2 Sys::EMS_5))
@@ -1887,11 +2074,16 @@
 (reaction infection_asymp_undet_EMS_6 (E::EMS_6)  (As::EMS_6)  (* Kl E::EMS_6 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_6 (E::EMS_6)  (As_det1::EMS_6)  (* Kl E::EMS_6 d_As))
 
-(reaction presymptomatic_EMS_6 (E::EMS_6)  (P::EMS_6)  (* Ks E::EMS_6))
+(reaction presymptomatic_EMS_6 (E::EMS_6)  (P::EMS_6)  (* Ks E::EMS_6 (- 1 d_P)))
+(reaction presymptomatic_EMS_6 (E::EMS_6)  (P_det::EMS_6)  (* Ks E::EMS_6 d_P))
+
 (reaction mild_symptomatic_undet_EMS_6 (P::EMS_6) (Sym::EMS_6) (* Ksym P::EMS_6 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_6 (P::EMS_6) (Sym_det2::EMS_6) (* Ksym P::EMS_6 d_Sym))
 (reaction severe_symptomatic_undet_EMS_6 (P::EMS_6) (Sys::EMS_6) (* Ksys P::EMS_6 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_6 (P::EMS_6) (Sys_det3::EMS_6) (* Ksys P::EMS_6 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_6 (P_det::EMS_6) (Sym_det2::EMS_6) (* Ksym P_det::EMS_6))
+(reaction severe_symptomatic_det_EMS_6 (P_det::EMS_6) (Sys_det3::EMS_6) (* Ksys P_det::EMS_6 ))
 
 (reaction hospitalization_1_EMS_6  (Sys::EMS_6)  (H1::EMS_6)  (* Kh1 Sys::EMS_6))
 (reaction hospitalization_2_EMS_6  (Sys::EMS_6)  (H2::EMS_6)  (* Kh2 Sys::EMS_6))
@@ -1965,11 +2157,16 @@
 (reaction infection_asymp_undet_EMS_7 (E::EMS_7)  (As::EMS_7)  (* Kl E::EMS_7 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_7 (E::EMS_7)  (As_det1::EMS_7)  (* Kl E::EMS_7 d_As))
 
-(reaction presymptomatic_EMS_7 (E::EMS_7)  (P::EMS_7)  (* Ks E::EMS_7))
+(reaction presymptomatic_EMS_7 (E::EMS_7)  (P::EMS_7)  (* Ks E::EMS_7 (- 1 d_P)))
+(reaction presymptomatic_EMS_7 (E::EMS_7)  (P_det::EMS_7)  (* Ks E::EMS_7 d_P))
+
 (reaction mild_symptomatic_undet_EMS_7 (P::EMS_7) (Sym::EMS_7) (* Ksym P::EMS_7 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_7 (P::EMS_7) (Sym_det2::EMS_7) (* Ksym P::EMS_7 d_Sym))
 (reaction severe_symptomatic_undet_EMS_7 (P::EMS_7) (Sys::EMS_7) (* Ksys P::EMS_7 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_7 (P::EMS_7) (Sys_det3::EMS_7) (* Ksys P::EMS_7 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_7 (P_det::EMS_7) (Sym_det2::EMS_7) (* Ksym P_det::EMS_7))
+(reaction severe_symptomatic_det_EMS_7 (P_det::EMS_7) (Sys_det3::EMS_7) (* Ksys P_det::EMS_7 ))
 
 (reaction hospitalization_1_EMS_7  (Sys::EMS_7)  (H1::EMS_7)  (* Kh1 Sys::EMS_7))
 (reaction hospitalization_2_EMS_7  (Sys::EMS_7)  (H2::EMS_7)  (* Kh2 Sys::EMS_7))
@@ -2043,11 +2240,16 @@
 (reaction infection_asymp_undet_EMS_8 (E::EMS_8)  (As::EMS_8)  (* Kl E::EMS_8 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_8 (E::EMS_8)  (As_det1::EMS_8)  (* Kl E::EMS_8 d_As))
 
-(reaction presymptomatic_EMS_8 (E::EMS_8)  (P::EMS_8)  (* Ks E::EMS_8))
+(reaction presymptomatic_EMS_8 (E::EMS_8)  (P::EMS_8)  (* Ks E::EMS_8 (- 1 d_P)))
+(reaction presymptomatic_EMS_8 (E::EMS_8)  (P_det::EMS_8)  (* Ks E::EMS_8 d_P))
+
 (reaction mild_symptomatic_undet_EMS_8 (P::EMS_8) (Sym::EMS_8) (* Ksym P::EMS_8 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_8 (P::EMS_8) (Sym_det2::EMS_8) (* Ksym P::EMS_8 d_Sym))
 (reaction severe_symptomatic_undet_EMS_8 (P::EMS_8) (Sys::EMS_8) (* Ksys P::EMS_8 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_8 (P::EMS_8) (Sys_det3::EMS_8) (* Ksys P::EMS_8 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_8 (P_det::EMS_8) (Sym_det2::EMS_8) (* Ksym P_det::EMS_8))
+(reaction severe_symptomatic_det_EMS_8 (P_det::EMS_8) (Sys_det3::EMS_8) (* Ksys P_det::EMS_8 ))
 
 (reaction hospitalization_1_EMS_8  (Sys::EMS_8)  (H1::EMS_8)  (* Kh1 Sys::EMS_8))
 (reaction hospitalization_2_EMS_8  (Sys::EMS_8)  (H2::EMS_8)  (* Kh2 Sys::EMS_8))
@@ -2121,11 +2323,16 @@
 (reaction infection_asymp_undet_EMS_9 (E::EMS_9)  (As::EMS_9)  (* Kl E::EMS_9 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_9 (E::EMS_9)  (As_det1::EMS_9)  (* Kl E::EMS_9 d_As))
 
-(reaction presymptomatic_EMS_9 (E::EMS_9)  (P::EMS_9)  (* Ks E::EMS_9))
+(reaction presymptomatic_EMS_9 (E::EMS_9)  (P::EMS_9)  (* Ks E::EMS_9 (- 1 d_P)))
+(reaction presymptomatic_EMS_9 (E::EMS_9)  (P_det::EMS_9)  (* Ks E::EMS_9 d_P))
+
 (reaction mild_symptomatic_undet_EMS_9 (P::EMS_9) (Sym::EMS_9) (* Ksym P::EMS_9 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_9 (P::EMS_9) (Sym_det2::EMS_9) (* Ksym P::EMS_9 d_Sym))
 (reaction severe_symptomatic_undet_EMS_9 (P::EMS_9) (Sys::EMS_9) (* Ksys P::EMS_9 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_9 (P::EMS_9) (Sys_det3::EMS_9) (* Ksys P::EMS_9 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_9 (P_det::EMS_9) (Sym_det2::EMS_9) (* Ksym P_det::EMS_9))
+(reaction severe_symptomatic_det_EMS_9 (P_det::EMS_9) (Sys_det3::EMS_9) (* Ksys P_det::EMS_9 ))
 
 (reaction hospitalization_1_EMS_9  (Sys::EMS_9)  (H1::EMS_9)  (* Kh1 Sys::EMS_9))
 (reaction hospitalization_2_EMS_9  (Sys::EMS_9)  (H2::EMS_9)  (* Kh2 Sys::EMS_9))
@@ -2199,11 +2406,16 @@
 (reaction infection_asymp_undet_EMS_10 (E::EMS_10)  (As::EMS_10)  (* Kl E::EMS_10 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_10 (E::EMS_10)  (As_det1::EMS_10)  (* Kl E::EMS_10 d_As))
 
-(reaction presymptomatic_EMS_10 (E::EMS_10)  (P::EMS_10)  (* Ks E::EMS_10))
+(reaction presymptomatic_EMS_10 (E::EMS_10)  (P::EMS_10)  (* Ks E::EMS_10 (- 1 d_P)))
+(reaction presymptomatic_EMS_10 (E::EMS_10)  (P_det::EMS_10)  (* Ks E::EMS_10 d_P))
+
 (reaction mild_symptomatic_undet_EMS_10 (P::EMS_10) (Sym::EMS_10) (* Ksym P::EMS_10 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_10 (P::EMS_10) (Sym_det2::EMS_10) (* Ksym P::EMS_10 d_Sym))
 (reaction severe_symptomatic_undet_EMS_10 (P::EMS_10) (Sys::EMS_10) (* Ksys P::EMS_10 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_10 (P::EMS_10) (Sys_det3::EMS_10) (* Ksys P::EMS_10 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_10 (P_det::EMS_10) (Sym_det2::EMS_10) (* Ksym P_det::EMS_10))
+(reaction severe_symptomatic_det_EMS_10 (P_det::EMS_10) (Sys_det3::EMS_10) (* Ksys P_det::EMS_10 ))
 
 (reaction hospitalization_1_EMS_10  (Sys::EMS_10)  (H1::EMS_10)  (* Kh1 Sys::EMS_10))
 (reaction hospitalization_2_EMS_10  (Sys::EMS_10)  (H2::EMS_10)  (* Kh2 Sys::EMS_10))
@@ -2277,11 +2489,16 @@
 (reaction infection_asymp_undet_EMS_11 (E::EMS_11)  (As::EMS_11)  (* Kl E::EMS_11 (- 1 d_As)))
 (reaction infection_asymp_det_EMS_11 (E::EMS_11)  (As_det1::EMS_11)  (* Kl E::EMS_11 d_As))
 
-(reaction presymptomatic_EMS_11 (E::EMS_11)  (P::EMS_11)  (* Ks E::EMS_11))
+(reaction presymptomatic_EMS_11 (E::EMS_11)  (P::EMS_11)  (* Ks E::EMS_11 (- 1 d_P)))
+(reaction presymptomatic_EMS_11 (E::EMS_11)  (P_det::EMS_11)  (* Ks E::EMS_11 d_P))
+
 (reaction mild_symptomatic_undet_EMS_11 (P::EMS_11) (Sym::EMS_11) (* Ksym P::EMS_11 (- 1 d_Sym)))
 (reaction mild_symptomatic_det_EMS_11 (P::EMS_11) (Sym_det2::EMS_11) (* Ksym P::EMS_11 d_Sym))
 (reaction severe_symptomatic_undet_EMS_11 (P::EMS_11) (Sys::EMS_11) (* Ksys P::EMS_11 (- 1 d_Sys)))
 (reaction severe_symptomatic_det_EMS_11 (P::EMS_11) (Sys_det3::EMS_11) (* Ksys P::EMS_11 d_Sys))
+
+(reaction mild_symptomatic_det_EMS_11 (P_det::EMS_11) (Sym_det2::EMS_11) (* Ksym P_det::EMS_11))
+(reaction severe_symptomatic_det_EMS_11 (P_det::EMS_11) (Sys_det3::EMS_11) (* Ksys P_det::EMS_11 ))
 
 (reaction hospitalization_1_EMS_11  (Sys::EMS_11)  (H1::EMS_11)  (* Kh1 Sys::EMS_11))
 (reaction hospitalization_2_EMS_11  (Sys::EMS_11)  (H2::EMS_11)  (* Kh2 Sys::EMS_11))
