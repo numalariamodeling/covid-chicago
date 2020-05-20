@@ -95,9 +95,6 @@ def unixToDt (unixTime):
     ''' Convert Unix milliseconds to datetime '''  
     return pd.to_datetime(unixTime, unit='s')
 
-
-
-
 # Parameter Filtering -> RangeSlider Factory
 def generateRangeSlider (param, numMarks):
     ''' Given a parameter from the dataframe, generates the divs for range sliders
@@ -382,7 +379,7 @@ def generateOutput(emsValue, timeValues, *paramValues):
 
 
     # Generate query string for EMS value and range of sliders
-    emsString = "({0} == {1})".format('emsGroup', emsValue)
+    emsString = "({0} == '{1}')".format('emsGroup', emsValue)
     # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
     # Filter RangeSlider for timeValues - inclusive of selected timeframe
     timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
