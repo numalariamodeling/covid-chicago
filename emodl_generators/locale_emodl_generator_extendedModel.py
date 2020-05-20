@@ -150,14 +150,10 @@ def write_functions(grp, expandModel=None):
     grp = str(grp)
     functions_str = """
 (func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
-(func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
-(func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
 (func hospitalized_{grp}  (+ H1::{grp} H2::{grp} H3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
 (func critical_{grp} (+ C2::{grp} C3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func deaths_{grp} (+ D3::{grp} D3_det3::{grp}))
 (func recovered_{grp} (+ RAs::{grp} RSym::{grp} RH1::{grp} RC2::{grp} RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
-(func infectious_det_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 
 (func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
 (func asymp_det_cumul_{grp} (+ As_det1::{grp} RAs_det1::{grp}))
@@ -183,7 +179,7 @@ def write_functions(grp, expandModel=None):
     expand_base_str = """
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
-(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 """.format(grp=grp)
 
@@ -208,7 +204,7 @@ def write_functions(grp, expandModel=None):
 (func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
-(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_{grp} Sym_preD_{grp} Sys_{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sym_preD_{grp} Sys_{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 """.format(grp=grp)
 
@@ -425,7 +421,7 @@ def write_reactions(grp, expandModel=None):
     grp = str(grp)
 
     reaction_str_I = """
-(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki::{grp} S::{grp} (/  (+ infectious_undet_{grp} (* infectious_det_{grp} reduced_inf_of_det_cases)) N::{grp} )))
+(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_{grp} (* infectious_det_{grp} reduced_inf_of_det_cases)) N_{grp} )))
 (reaction infection_asymp_undet_{grp}  (E::{grp})   (As::{grp})   (* Kl E::{grp} (- 1 d_As)))
 (reaction infection_asymp_det_{grp}  (E::{grp})   (As_det1::{grp})   (* Kl E::{grp} d_As))
 """.format(grp=grp)
@@ -684,7 +680,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
     for grp in grpList:
         total_string = total_string + "\n(locale site-{})\n".format(grp)
         total_string = total_string + "(set-locale site-{})\n".format(grp)
-        total_string = total_string +  write_species(grp)
+        total_string = total_string +  write_species(grp, expandModel)
         functions = write_functions(grp, expandModel)
         observe_string = observe_string + write_observe(grp, expandModel)
         if (add_migration):
@@ -732,6 +728,7 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS_contactTracing.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel=None,  add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS_interventionSTOPadj.emodl'))
+    generate_emodl(grpList=ems_grp,  expandModel="testDelay",  add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_locale_EMS_interventionSTOPadj.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_locale_EMS_neverSIP.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_locale_EMS.emodl'))
