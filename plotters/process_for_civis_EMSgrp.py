@@ -97,8 +97,8 @@ def plot_sim(dat, suffix) :
         plotname = scenarioName +"_" + ems
         if ems == "All": ems = "IL"
         filename = 'nu_' + scenarioName + '_' + ems
-        plt.savefig(os.path.join(sim_output_path, plotname + '.png'))
-        plt.savefig(os.path.join(sim_output_path, plotname + '.pdf'), format='PDF')
+        plt.savefig(os.path.join(plot_path, plotname + '.png'))
+        plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
         # plt.show()
 
 
