@@ -14,10 +14,10 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
-simdate = "20200517"
+simdate = "20200520"
 
 plot_first_day = pd.to_datetime('2020/3/1')
-plot_last_day = pd.to_datetime('2020/10/1')
+plot_last_day = pd.to_datetime('2021/4/1')
 
 def get_scenarioName(exp_suffix) :
     scenarioName = "plot"
@@ -72,12 +72,12 @@ def plot_sim(dat, suffix) :
             capacity = load_capacity(ems_nr)
 
         dfsub = dat[dat['ems'] == ems]
-        fig = plt.figure(figsize=(12, 12))
+        fig = plt.figure(figsize=(18, 12))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.07, hspace=0.15)
         palette = sns.color_palette('Set1', len(channels))
 
         for c, channel in enumerate(channels):
-            ax = fig.add_subplot(4, 2, c + 1)
+            ax = fig.add_subplot(3, 3, c + 1)
             mdf = dfsub.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
             mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
 
@@ -97,7 +97,7 @@ def plot_sim(dat, suffix) :
             ax.xaxis.set_major_formatter(formatter)
             ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-        plotname = 'projection_for_civis_' + ems
+        plotname = scenarioName +"_" + ems
         if ems == "All": ems = "IL"
         filename = 'nu_' + scenarioName + '_' + ems
         plt.savefig(os.path.join(sim_output_path, plotname + '.png'))
@@ -107,7 +107,7 @@ def plot_sim(dat, suffix) :
 
 if __name__ == '__main__' :
 
-    stem = "20200517_IL_tD_EMSgrp_reopen"
+    stem = "interventionSTOPadj10"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     #exp_name = "20200517_IL_tD_EMSgrp_reopen"
 
@@ -132,7 +132,7 @@ if __name__ == '__main__' :
         filename = "nu_region_" + scenarioName + '_' + simdate + ".csv"
         dfAll.to_csv(os.path.join(sim_output_path, filename), index=False)
 
-        channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
+        channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
         adf = pd.DataFrame()
         for c, channel in enumerate(channels) :
             mdf = dfAll.groupby(['time','ems'])[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
