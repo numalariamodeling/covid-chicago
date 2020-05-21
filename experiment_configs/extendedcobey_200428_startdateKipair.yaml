@@ -1,8 +1,8 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
-  'number_of_runs': 1
-  'duration': 370
-  'monitoring_samples': 370 # needs to be smaller than duration
+  'number_of_samples': 3
+  'number_of_runs': 3
+  'duration': 365
+  'monitoring_samples': 365 # needs to be smaller than duration
   'random_seed': 18
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -28,17 +28,17 @@ fixed_parameters_region_specific:
     # To specify a range of dates instead of a single date:
     # 'EMS_1': [2020-02-26, 2020-02-28]
     # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.
-    'EMS_1': 2020-02-26
-    'EMS_2': 2020-02-24  
-    'EMS_3': 2020-02-20     
-    'EMS_4': 2020-02-21  
-    'EMS_5': 2020-02-28     
-    'EMS_6': 2020-02-14  
-    'EMS_7': 2020-02-16           
-    'EMS_8': 2020-02-23       
-    'EMS_9': 2020-02-23        
-    'EMS_10': 2020-02-20      
-    'EMS_11': 2020-02-23       
+    'EMS_1': [2020-01-21, 2020-02-28]
+    'EMS_2': [2020-01-24, 2020-02-29]
+    'EMS_3': [2020-01-28, 2020-02-28]
+    'EMS_4': [2020-01-20, 2020-02-29]
+    'EMS_5': [2020-01-27, 2020-02-27]
+    'EMS_6': [2020-01-28, 2020-02-28]
+    'EMS_7': [2020-02-01, 2020-02-29]
+    'EMS_8': [2020-02-01, 2020-02-26]
+    'EMS_9': [2020-02-01, 2020-02-28]
+    'EMS_10': [2020-02-03, 2020-02-22]
+    'EMS_11': [2020-01-25, 2020-02-28]
 fixed_parameters_global:
 sampled_parameters:
   'time_to_infectious':
@@ -201,52 +201,43 @@ time_parameters:
   ### (only used if corresponding emodl is defined)
   'contact_tracing_start_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
   ## stop after simulation end to simulate indefinite contact tracing
   'contact_tracing_stop1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2022-05-30, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2021-05-30, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
-    'NMH_catchment':
-      np: linspace
-      function_kwargs: {'start': 1.5e-6, 'stop': 2.0e-6, 'num': 1}
-    'Chicago':
-      np: linspace
-      function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 1}
-    'IL':
-      np: linspace
-      function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
-    'EMS_1':
-      np: linspace
-      function_kwargs: {'start': 0.589, 'stop': 0.589, 'num': 1}
-    'EMS_2':
-      np: linspace
-      function_kwargs: {'start': 0.654, 'stop': 0.654, 'num': 1}
-    'EMS_3':
-      np: linspace
-      function_kwargs: {'start': 0.373, 'stop': 0.373, 'num': 1}
-    'EMS_4':
-      np: linspace
-      function_kwargs: {'start': 0.571, 'stop': 0.571, 'num': 1}
-    'EMS_5':
-      np: linspace
-      function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
-    'EMS_6':
-      np: linspace
-      function_kwargs: {'start': 0.373, 'stop': 0.373, 'num': 1}
-    'EMS_7':
-      np: linspace
-      function_kwargs: {'start': 0.714, 'stop': 0.714, 'num': 1}
-    'EMS_8':
-      np: linspace
-      function_kwargs: {'start': 0.897, 'stop': 0.897, 'num': 1}
-    'EMS_9':
-      np: linspace
-      function_kwargs: {'start': 0.857, 'stop': 0.857, 'num': 1}
-    'EMS_10':
-      np: linspace
-      function_kwargs: {'start': 0.754, 'stop': 0.754, 'num': 1}
-    'EMS_11':
-      np: linspace
-      function_kwargs: {'start': 1.01, 'stop': 1.01, 'num': 1}
+   'EMS_1':
+     np: linspace 
+     function_kwargs: {'start': 0.25, 'stop': 0.583333333333333, 'num': 3}
+   'EMS_2':
+     np: linspace 
+     function_kwargs: {'start': 0.28571428571428603, 'stop': 0.7142857142857142, 'num': 3}
+   'EMS_3':
+     np: linspace 
+     function_kwargs: {'start': 0.28571428571428603, 'stop': 0.5714285714285711, 'num': 3}
+   'EMS_4':
+     np: linspace 
+     function_kwargs: {'start': 0.28571428571428603, 'stop': 0.7142857142857142, 'num': 3}
+   'EMS_5':
+     np: linspace 
+     function_kwargs: {'start': 0.28571428571428603, 'stop': 1.28571428571429, 'num': 3}
+   'EMS_6':
+     np: linspace 
+     function_kwargs: {'start': 0.28571428571428603, 'stop': 0.5714285714285711, 'num': 3}
+   'EMS_7':
+     np: linspace 
+     function_kwargs: {'start': 0.42857142857142894, 'stop': 1.0, 'num': 3}
+   'EMS_8':
+     np: linspace 
+     function_kwargs: {'start': 0.42857142857142894, 'stop': 1.0, 'num': 3}
+   'EMS_9':
+     np: linspace 
+     function_kwargs: {'start': 0.42857142857142894, 'stop': 1.0, 'num': 3}
+   'EMS_10':
+     np: linspace 
+     function_kwargs: {'start': 0.42857142857142894, 'stop': 0.7142857142857142, 'num': 3}
+   'EMS_11':
+     np: linspace 
+     function_kwargs: {'start': 0.42857142857142894, 'stop': 1.14285714285714, 'num': 3}

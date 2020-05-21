@@ -27,27 +27,8 @@ plot_dir = os.path.join(scen_dir, 'plots')
 
 if __name__ == '__main__' :
 
-    col_names = {
-        "infected_median": "Number of Covid-19 infections",
-        "infected_95CI_lower": "Lower error bound of covid-19 infections",
-        "infected_95CI_upper": "Upper error bound of covid-19 infections",
-        "new_symptomatic_median": "Number of Covid-19 symptomatic",
-        "new_symptomatic_95CI_lower": "Lower error bound of covid-19 symptomatic",
-        "new_symptomatic_95CI_upper": "Upper error bound of covid-19 symptomatic",
-        "new_deaths_median": "Number of covid-19 deaths",
-        "new_deaths_95CI_lower": "Lower error bound of covid-19 deaths",
-        "new_deaths_95CI_upper": "Upper error bound of covid-19 deaths",
-        "hospitalized_median": "Number of hospital beds occupied",
-        "hospitalized_95CI_lower": "Lower error bound of number of hospital beds occupied",
-        "hospitalized_95CI_upper": "Upper error bound of number of hospital beds occupied",
-        "critical_median": "Number of ICU beds occupied",
-        "critical_95CI_lower": "Lower error bound of number of ICU beds occupied",
-        "critical_95CI_upper": "Upper error bound of number of ICU beds occupied",
-        "ventilators_median": "Number of ventilators used",
-        "ventilators_95CI_lower": "Lower error bound of number of ventilators used",
-        "ventilators_95CI_upper": "Upper error bound of number of ventilators used"
-    }
-    col_names = {value: key for key, value in col_names.items()}
+
+    col_names = civis_colnames(reverse=True)
     channels = ['infected', 'new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
     plot_first_day = date(2020, 3, 1)
     plot_last_day = date(2020, 10, 1)
