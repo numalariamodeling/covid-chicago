@@ -47,9 +47,6 @@ def append_data_byGroup(dat, suffix) :
     for grp in suffix:
         observe_col = [col for col in dat.columns if grp == col.split('_')[-1]]
         model_col = ['time', 'run_num', 'scen_num', 'sample_num']
-        if suffix == 'EMS-1':
-            observe_col = observe_col[:25]
-
         adf = dat[model_col + observe_col].copy()
         adf.columns = adf.columns.str.replace('_' + grp, "")
         adf = calculate_incidence(adf)
