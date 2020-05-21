@@ -122,23 +122,23 @@ sampled_parameters:
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
     np.random: uniform
-    function_kwargs: {'low':0.90, 'high':0.90}
+    function_kwargs: {'low':0.30, 'high':0.30}
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':0.3, 'high':0.3}
+    function_kwargs: {'low':0.1, 'high':0.1}
   'reopening_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.5, 'high':0.5}
+    function_kwargs: {'low':0.3, 'high':0.3}
   'reopening_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.7, 'high':0.7}
+    function_kwargs: {'low':0.6, 'high':0.6}
   'reopening_multiplier_4':
     np.random: uniform
-    function_kwargs: {'low':0.90, 'high':0.90}
+    function_kwargs: {'low':0.9, 'high':0.9}
   'gradual_reopening_time1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
