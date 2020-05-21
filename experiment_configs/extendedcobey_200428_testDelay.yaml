@@ -1,8 +1,8 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
+  'number_of_samples': 50
   'number_of_runs': 1
-  'duration': 365
-  'monitoring_samples': 365 # needs to be smaller than duration
+  'duration': 370
+  'monitoring_samples': 370 # needs to be smaller than duration
   'random_seed': 18
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -115,6 +115,9 @@ sampled_parameters:
   'socialDistance_time3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+  'socialDistance_time4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-21, 'startdate_col': 'startdate'}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
@@ -138,16 +141,16 @@ sampled_parameters:
     function_kwargs: {'low':0.90, 'high':0.90}
   'gradual_reopening_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
   'gradual_reopening_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}        
+    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}        
   'gradual_reopening_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}    
+    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}    
   'gradual_reopening_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}  
+    function_kwargs: {'dates': 2020-07-15, 'startdate_col': 'startdate'}  
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
@@ -186,11 +189,11 @@ sampled_parameters:
   ### Use fixed dates or define detection time relative to  socialDistance_time3
   'contact_tracing_start_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
   ## stop after simulation end to simulate indefinite contact tracing
   'contact_tracing_stop1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-05-30, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2022-05-30, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
     'NMH_catchment':
