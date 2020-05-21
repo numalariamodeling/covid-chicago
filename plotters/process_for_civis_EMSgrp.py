@@ -45,7 +45,7 @@ def load_trajectoriesDat(sim_output_path, plot_first_day=None, plot_last_day=Non
 def append_data_byGroup(dat, suffix) :
     dfAll = pd.DataFrame()
     for grp in suffix:
-        observe_col = [col for col in df.columns if grp in col]
+        observe_col = [col for col in dat.columns if grp == col.split('_')[-1]]
         model_col = ['time', 'run_num', 'scen_num', 'sample_num']
         if suffix == 'EMS-1':
             observe_col = observe_col[:25]
