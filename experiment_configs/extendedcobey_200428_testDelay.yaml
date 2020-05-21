@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
+  'number_of_samples': 50
   'number_of_runs': 1
   'duration': 370
   'monitoring_samples': 370 # needs to be smaller than duration
@@ -115,6 +115,9 @@ sampled_parameters:
   'socialDistance_time3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+  'socialDistance_time4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-21, 'startdate_col': 'startdate'}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
