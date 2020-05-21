@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Operational Libs
+import collections
 import logging
 import os
-import glob
 
 # Dash Libs
 import dash
@@ -19,37 +19,55 @@ import math
 LOG = logging.getLogger(__name__)
 logging.basicConfig(level="INFO")
 
+# Where the CSV data files are found.
+CIVIS_PROJECT_ID = 135876
+
+LOCAL_DATA_DIR = "data"
+DEV_CSV_FILENAME = "dash_EMS_trajectories_set5_200506.csv"
+
+# To be instantiated by the user's selection.
+DF: pd.DataFrame = None
+
+DATES = [np.datetime64('2020-05-01'), np.datetime64('2020-07-01')]
+
+PARAMS = """
+param_fraction asymptomatic cases detected
+param_fraction mild symptomatic cases detected
+param_fraction of infections that are symptomatic
+param_fraction of severe cases that die
+param_fraction of symptomatic cases that are severe
+param_fraction severe cases detected
+param_reduced contact after stay at home
+param_reduced infectiousness of detected cases
+""".strip().split("\n")
+
+OUTPUTS = """
+output_daily new ICU cases
+output_daily new deaths
+output_daily new mild symptomatic cases
+output_daily new severe symptomatic cases
+output_number currently infectious
+output_number recovered
+""".strip().split("\n")
+
 app = dash.Dash(__name__ )
 
 # Mark the correct server for Heroku or Civis deployment
 server = app.server
 
-# Import datafile to begin setting parameter limits
 if os.getenv("CIVIS_SERVICE_VERSION"):
     # This environment variable will be set when deployed in Civis
     import civis
-    CIVIS_FILE_ID = 100315314
-    logging.info(f"Downloading data from Civis File {CIVIS_FILE_ID}.")
-    df = civis.io.file_to_dataframe(CIVIS_FILE_ID)
-    logging.info(f"Downloaded {len(df)} rows.")
-    # TEMP HARDCODING
-    output_list = ['infected', 'hospitalized',
-                'critical', 'deaths', 'recovered']
-    params_list = ['time_to_death', 'fraction_symptomatic', 'fraction_severe',
-                'fraction_critical', 'cfr', 'reduced_inf_of_det_cases',
-                'social_multiplier_3', 'fraction_dead', 'fraction_hospitalized']
-    df = df[['date', 'ems', 'run_num'] + params_list + output_list].copy()
+
+    client = civis.APIClient()
+    CSV_FILES = civis.find(
+        client.projects.get(CIVIS_PROJECT_ID).files,
+        file_name=lambda filename: filename.endswith(".csv"),
+    )
+    logging.info("%d CSV files found", len(CSV_FILES))
 else:
-    path_name = "data"
-    f_name = "dash_EMS_trajectories_separate_endsip_20200419.csv"
-    file_location = os.path.join(path_name, f_name)
-
-    # Read in file
-    df = pd.read_csv(file_location)
-
-    # USE LOCAL FILE 
-    params_list = [col for col in df if col.startswith('param')]
-    output_list = [col for col in df if col.startswith('output')]
+    CSVFile = collections.namedtuple("CSVFile", ("id", "file_name"))
+    CSV_FILES = [CSVFile(id=None, file_name=DEV_CSV_FILENAME)]
 
 
 # Setup 
@@ -57,22 +75,7 @@ else:
 
 # Preset EMS Groups
 # EMS Groupings
-emsMapping = {"North-Central": (1,2), "Central": (3,6), "Southern": (4,5), "Northeast": (7, 8, 9, 10, 11)}
-# Map EMS to Groupings 
-ems_to_region_mapping = {x: name for name, v in emsMapping.items() for x in v}
-# Create a column for later filtering
-df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
-
-
-# Filter out timeframes for graphs
-# Generate datetime to get weeks for slider
-df['date']= pd.to_datetime(df['date'])
-# Get week of date
-df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
-# Get month of date
-df['month'] = df['date'].values.astype('datetime64[M]')
-
-dateList = sorted(df['month'].unique())
+EMS_MAPPING = {"North-Central": (1, 2), "Central": (3, 6), "Southern": (4, 5), "Northeast": (7, 8, 9, 10, 11)}
 
 # Color Options 
 colors = {
@@ -90,10 +93,12 @@ def dtToUnix (dt):
     unixTime = (dt - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')
     return unixTime
 
+
 # Convert unix Time back to datetime
 def unixToDt (unixTime):
     ''' Convert Unix milliseconds to datetime '''  
     return pd.to_datetime(unixTime, unit='s')
+
 
 # Parameter Filtering -> RangeSlider Factory
 def generateRangeSlider (param, numMarks):
@@ -110,8 +115,11 @@ def generateRangeSlider (param, numMarks):
     def setMarks():
 
         # Inherit parameter from function
-        minMark = df[param].min()
-        maxMark = df[param].max()
+        # TODO
+        # minMark = DF[param].min()
+        # maxMark = DF[param].max()
+        minMark = 0
+        maxMark = 100
         # linspace returns evenly spaced list. Rounded to capture all values
         markRange =  np.linspace(math.floor(minMark * 1000) / 1000, math.ceil(maxMark * 1000) / 1000, numMarks)
 
@@ -145,6 +153,7 @@ def generateRangeSlider (param, numMarks):
 #############################################################################
 app.layout = html.Div(
     children = [
+        html.Div(id="hidden-div", style={"display": "none"}),
         # Header
         html.Div(
             children =[
@@ -159,6 +168,26 @@ app.layout = html.Div(
             [   
                 html.Div(
                     [
+                        # CSV File Selector
+                        html.Div(
+                            [
+                                html.P(
+                                    "Select CSV File:",
+                                    className="control_label",
+                                ),
+                                dcc.Dropdown(
+                                    options=[
+                                        {"label": f.file_name,
+                                         "value": f.file_name}
+                                        for f in CSV_FILES],
+                                    multi=False,
+                                    placeholder="Choose CSV File",
+                                    id="csvDropdown",
+                                    className="dcc_control",
+                                ),
+                            ],
+                            className="time-container",
+                        ),
                         html.Div(
                             [
                                 # EMS Selector
@@ -169,7 +198,7 @@ app.layout = html.Div(
                                             className="control_label",
                                         ),
                                         dcc.Dropdown(
-                                            options=[{'label': name, 'value': name} for name in emsMapping],
+                                            options=[{'label': name, 'value': name} for name in EMS_MAPPING],
                                             multi=False,
                                             placeholder="Choose EMS Region",
                                             id="emsDropdown",
@@ -210,9 +239,9 @@ app.layout = html.Div(
                                 ),
                                 dcc.RangeSlider(
                                     id="timeSlider",
-                                    min=dtToUnix(dateList[0]),
-                                    max=dtToUnix(dateList[-1]),
-                                    value=[dtToUnix(dateList[0]), dtToUnix(dateList[-1])],
+                                    min=dtToUnix(DATES[0]),
+                                    max=dtToUnix(DATES[-1]),
+                                    value=[dtToUnix(DATES[0]), dtToUnix(DATES[-1])],
                                     marks= {
                                         dtToUnix(dt): {
                                             'label': np.datetime_as_string(dt, unit='M'),
@@ -220,7 +249,7 @@ app.layout = html.Div(
                                                 'transform':'rotate(45deg)',
                                                 'font-size':'8px',
                                             }
-                                        } for i, dt in enumerate(dateList)
+                                        } for i, dt in enumerate(DATES)
                                     },
                                     #dots=True,
                                     allowCross=False,
@@ -245,7 +274,7 @@ app.layout = html.Div(
                                         html.Div(
                                             # Generate a set of sliders for each param
                                             # Name of each slider is "[param] + _"slider"
-                                            [generateRangeSlider(i, 5) for i in params_list],
+                                            [generateRangeSlider(i, 5) for i in PARAMS],
                                             className="dcc_control",
                                             id="",
                                         ),
@@ -357,6 +386,65 @@ app.layout = html.Div(
 # Callback 
 #############################################################################
 
+
+@app.callback(
+    Output("hidden-div", "children"),
+    [Input("csvDropdown", "value")],
+)
+def get_df(csv_filename):
+    """Instantiate the global pandas dataframe.
+
+    Parameters
+    ----------
+    csv_filename : str
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+    global DF
+    csv_path = os.path.join(LOCAL_DATA_DIR, csv_filename)
+
+    # If the specified CSV already exists on disk, just use it.
+    if os.path.exists(csv_path):
+        DF = preprocess_df(pd.read_csv(csv_path))
+        return
+
+    file_id = civis.find_one(CSV_FILES, file_name=csv_filename)
+    if file_id is None:
+        raise ValueError(f"CSV file not retrievable without a Civis file ID")
+
+    with open(csv_path, "wb") as f:
+        civis.io.civis_to_file(file_id, f)
+    DF = preprocess_df(pd.read_csv(csv_path))
+    return ""
+
+
+def preprocess_df(df):
+    """Preprocess the dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+    # Filter out timeframes for graphs
+    # Generate datetime to get weeks for slider
+    df['date'] = pd.to_datetime(df['date'])
+    # Get week of date
+    df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
+    # Get month of date
+    df['month'] = df['date'].values.astype('datetime64[M]')
+    # Map EMS to Groupings
+    ems_to_region_mapping = {x: region for region, v in EMS_MAPPING.items() for x in v}
+    # Create a column for later filtering
+    df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
+    return df
+
+
 # Callback inputs will all be the same
 @app.callback(
     [
@@ -371,7 +459,7 @@ app.layout = html.Div(
         Input('emsDropdown', 'value'),
         Input('timeSlider', 'value'),
         # Unpack the elements of the list using *
-        *[Input(param + 'Slider', 'value') for param in params_list]
+        *[Input(param + 'Slider', 'value') for param in PARAMS]
     ],
 )
 def generateOutput(emsValue, timeValues, *paramValues):
@@ -384,12 +472,12 @@ def generateOutput(emsValue, timeValues, *paramValues):
     # Filter RangeSlider for timeValues - inclusive of selected timeframe
     timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
     # Filter RangeSlider for Parameter Values
-    paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)]) 
+    paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(PARAMS, paramValues)])
     strings = [emsString, timeString, paramString]
     queryString = " & ".join(strings)
     
     # Filter data frame given the slider inputs
-    dff = df.query(queryString)
+    dff = DF.query(queryString)
 
     # List of columns to group by
     groupbyList = ['date']
@@ -405,7 +493,7 @@ def generateOutput(emsValue, timeValues, *paramValues):
     func_list = ['mean', 'sum', getQuantile(.025), getQuantile(.975), getQuantile(.25), getQuantile(.75)]
 
     #dfg[[output_list[0]]].mean().reset_index()['date']
-    dfg = dff.groupby(groupbyList)[output_list].agg(func_list).reset_index()
+    dfg = dff.groupby(groupbyList)[OUTPUTS].agg(func_list).reset_index()
 
 
     def makeChart (outputVar):
@@ -478,8 +566,7 @@ def generateOutput(emsValue, timeValues, *paramValues):
         return figure
 
     # Return a list of figures to feed callback
-    return [makeChart(output) for output in output_list]
-
+    return [makeChart(output) for output in OUTPUTS]
 
 
 if __name__ == '__main__':
