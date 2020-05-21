@@ -541,10 +541,13 @@ def write_interventions(grpList, total_string, scenarioName) :
 (param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
 (param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
 (param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
+(param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
+
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
+(time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
             """.format(grp=grp)
         continuedSIP_str = continuedSIP_str + temp_str
 
