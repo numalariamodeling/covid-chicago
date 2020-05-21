@@ -25,10 +25,35 @@ CIVIS_PROJECT_ID = 135876
 LOCAL_DATA_DIR = "data"
 DEV_CSV_FILENAME = "dash_trajectoriesDat_baseline.csv"  # file ID: 103222548
 
-# To be instantiated by the user's selection.
-DF: pd.DataFrame = None
+EMS_MAPPING = {"North-Central": (1, 2), "Central": (3, 6), "Southern": (4, 5), "Northeast": (7, 8, 9, 10, 11)}
 
-DATES = [np.datetime64('2020-05-01'), np.datetime64('2020-07-01')]
+
+def preprocess_df(df):
+    """Preprocess the dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+    # Filter out timeframes for graphs
+    # Generate datetime to get weeks for slider
+    df['date'] = pd.to_datetime(df['date'])
+    # Get week of date
+    df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
+    # Get month of date
+    df['month'] = df['date'].values.astype('datetime64[M]')
+    # Map EMS to Groupings
+    ems_to_region_mapping = {x: region for region, v in EMS_MAPPING.items() for x in v}
+    # Create a column for later filtering
+    df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
+    return df
+
+
+DATES = [np.datetime64('2020-02-01'), np.datetime64('2021-03-01')]
 
 PARAMS = """
 param_fraction asymptomatic cases detected
@@ -49,6 +74,19 @@ output_daily new severe symptomatic cases
 output_number currently infectious
 output_number recovered
 """.strip().split("\n")
+
+# A dummy dataframe to not crash the dashboard when it first spins up.
+INITIAL_DF = preprocess_df(
+    pd.DataFrame(
+        {
+            "date": ["2020-02-01"],
+            "ems": [1],
+            "run_num": [0],
+            **{param: [0] for param in PARAMS},
+            **{output: [0] for output in OUTPUTS},
+        }
+    )
+)
 
 app = dash.Dash(__name__ )
 
@@ -72,10 +110,6 @@ else:
 
 # Setup 
 #############################################################################
-
-# Preset EMS Groups
-# EMS Groupings
-EMS_MAPPING = {"North-Central": (1, 2), "Central": (3, 6), "Southern": (4, 5), "Northeast": (7, 8, 9, 10, 11)}
 
 # Color Options 
 colors = {
@@ -153,7 +187,7 @@ def generateRangeSlider (param, numMarks):
 #############################################################################
 app.layout = html.Div(
     children = [
-        html.Div(id="hidden-div", style={"display": "none"}),
+        html.Div(id="df-hidden-div", style={"display": "none"}),
         # Header
         html.Div(
             children =[
@@ -351,7 +385,7 @@ app.layout = html.Div(
                                         ),
                                         html.Div(
                                             [
-                                                # Placeholder for 6th chart
+                                                dcc.Graph(id="outputLineChart5")
                                             ],
                                             className="graphDiv",
                                         ),
@@ -388,11 +422,11 @@ app.layout = html.Div(
 
 
 @app.callback(
-    Output("hidden-div", "children"),
+    Output("df-hidden-div", "children"),
     [Input("csvDropdown", "value")],
 )
 def get_df(csv_filename):
-    """Instantiate the global pandas dataframe.
+    """Get the pandas dataframe from CSV.
 
     Parameters
     ----------
@@ -400,49 +434,28 @@ def get_df(csv_filename):
 
     Returns
     -------
-    pd.DataFrame
+    str
+        JSON-ified pandas dataframe
     """
-    global DF
+    if csv_filename is None:
+        # csv_filename is None when the dashboard app spins up.
+        return INITIAL_DF.to_json()
+
     csv_path = os.path.join(LOCAL_DATA_DIR, csv_filename)
 
-    # If the specified CSV already exists on disk, just use it.
     if os.path.exists(csv_path):
-        DF = preprocess_df(pd.read_csv(csv_path))
-        return
+        # If the CSV already exists on disk (during dev), just use it.
+        pass
+    else:
+        # The CSV has to come from Civis Platform.
+        file_id = civis.find_one(CSV_FILES, file_name=csv_filename)
+        if file_id is None:
+            raise ValueError(f"CSV file not retrievable without a Civis file ID")
+        with open(csv_path, "wb") as f:
+            civis.io.civis_to_file(file_id, f)
+    df = preprocess_df(pd.read_csv(csv_path))
 
-    file_id = civis.find_one(CSV_FILES, file_name=csv_filename)
-    if file_id is None:
-        raise ValueError(f"CSV file not retrievable without a Civis file ID")
-
-    with open(csv_path, "wb") as f:
-        civis.io.civis_to_file(file_id, f)
-    DF = preprocess_df(pd.read_csv(csv_path))
-    return ""
-
-
-def preprocess_df(df):
-    """Preprocess the dataframe.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-
-    Returns
-    -------
-    pd.DataFrame
-    """
-    # Filter out timeframes for graphs
-    # Generate datetime to get weeks for slider
-    df['date'] = pd.to_datetime(df['date'])
-    # Get week of date
-    df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
-    # Get month of date
-    df['month'] = df['date'].values.astype('datetime64[M]')
-    # Map EMS to Groupings
-    ems_to_region_mapping = {x: region for region, v in EMS_MAPPING.items() for x in v}
-    # Create a column for later filtering
-    df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
-    return df
+    return df.to_json()
 
 
 # Callback inputs will all be the same
@@ -453,18 +466,19 @@ def preprocess_df(df):
         Output('outputLineChart2', 'figure'),
         Output('outputLineChart3', 'figure'),
         Output('outputLineChart4', 'figure'),
+        Output('outputLineChart5', 'figure'),
     ],
 
     [
+        Input('df-hidden-div', 'children'),
         Input('emsDropdown', 'value'),
         Input('timeSlider', 'value'),
         # Unpack the elements of the list using *
         *[Input(param + 'Slider', 'value') for param in PARAMS]
     ],
 )
-def generateOutput(emsValue, timeValues, *paramValues):
-
-
+def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
+    df = pd.read_json(jsonified_df)
 
     # Generate query string for EMS value and range of sliders
     emsString = "({0} == '{1}')".format('emsGroup', emsValue)
@@ -472,12 +486,12 @@ def generateOutput(emsValue, timeValues, *paramValues):
     # Filter RangeSlider for timeValues - inclusive of selected timeframe
     timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
     # Filter RangeSlider for Parameter Values
-    paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(PARAMS, paramValues)])
+    paramString = " & ".join(["(`{0}` >= {1}) & (`{0}` <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(PARAMS, paramValues)])
     strings = [emsString, timeString, paramString]
     queryString = " & ".join(strings)
-    
+
     # Filter data frame given the slider inputs
-    dff = DF.query(queryString)
+    dff = df.query(queryString)
 
     # List of columns to group by
     groupbyList = ['date']
