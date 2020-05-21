@@ -1,14 +1,14 @@
 ### Note specify running_location either Local or NUCLUSTER, if NUCLUSTER 
 
 #### Current scenarios to submit for civis
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment_testDelay.yaml --emodl_template extendedmodeltestDelay_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "tD_EMSgrp_scenario3"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment_testDelay.yaml --emodl_template extendedmodeltestDelay_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "tD_EMSgrp_interventionSTOPadj10"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment_testDelay.yaml --emodl_template extendedmodeltestDelay_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "tD_EMSgrp_interventionSTOPadj30"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_scenario3"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment_testDelay.yaml --emodl_template extendedmodeltestDelay_EMS_grp.emodl --cfg_template model_B.cfg --name_suffix "tD_EMSgrp_scenario3"						  
 
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_scenario3"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_interventionSTOPadj10"
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_interventionSTOPadj30"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment_testDelay.yaml --emodl_template extendedmodeltestDelay_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_interventionSTOPadj30"
 
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_interventionSTOPadj10"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment_testDelay.yaml --emodl_template extendedmodeltestDelay_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "tD_EMSgrp_interventionSTOPadj10"
 
 
 
