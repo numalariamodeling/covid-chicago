@@ -38,6 +38,7 @@ fixed_parameters_region_specific:
     'EMS_8': [2020-02-01, 2020-02-26]
     'EMS_9': [2020-02-01, 2020-02-28]
     'EMS_10': [2020-02-03, 2020-02-22]
+    'EMS_11': [2020-01-25, 2020-02-28]
 fixed_parameters_global:
 sampled_parameters:
   'time_to_infectious':
@@ -237,3 +238,6 @@ fitted_parameters:
    'EMS_10':
      np: linspace 
      function_kwargs: {'start': 0.42857142857142894, 'stop': 0.7142857142857142, 'num': 3}
+   'EMS_11':
+     np: linspace 
+     function_kwargs: {'start': 0.42857142857142894, 'stop': 1.14285714285714, 'num': 3}

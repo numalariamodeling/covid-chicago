@@ -14,7 +14,7 @@ today = datetime.today()
 mixed_scenarios = True
 simdate = "20200506"
 plot_first_day = pd.to_datetime('2020/3/1')
-plot_last_day = pd.to_datetime('2020/10/1')
+plot_last_day = pd.to_datetime('2021/4/1')
 channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
 if mixed_scenarios == False:
