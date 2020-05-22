@@ -33,7 +33,7 @@ def get_scenarioName(exp_suffix) :
 
 def load_trajectoriesDat(sim_output_path, plot_first_day=None, plot_last_day=None) :
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     df['Date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df['Date'] = pd.to_datetime(df['Date'])
 
