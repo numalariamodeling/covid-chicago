@@ -41,7 +41,7 @@ def compare_NMH(exp_name) :
     ref_df['date'] = pd.to_datetime(ref_df['date'])
 
     df = load_sim_data(exp_name)
-    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
     channels = ['new_detected_hospitalized', 'hosp_det_cumul', 'hospitalized', 'critical']
     data_channel_names = ['covid pos admissions', 'cumulative admissions', 'inpatient census', 'ICU census']
@@ -134,7 +134,7 @@ def compare_county(exp_name, county_name) :
     ref_df = ref_df.rename(columns={'spec_date' : 'date'})
 
     df = load_sim_data(exp_name)
-    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
     channels = ['new_detected', 'new_detected_hospitalized', 'detected_cumul', 'hosp_det_cumul']
     data_channel_names = ['new_case', 'new_hospitalizations', 'total_case', 'total_hospitalizations']
@@ -177,7 +177,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
     df = load_sim_data(exp_name)
     #for x in df.columns:
     #   print(x)
-    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
     df['ventilators'] = get_vents(df['crit_det'].values)
     df['critical_with_suspected'] = df['critical']
@@ -202,7 +202,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
     ref_df['date'] = pd.to_datetime(ref_df['date'])
     data_channel_names = ['deaths', 'deaths', 'admissions']    
 
-    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     channels = ['new_detected_deaths', 'new_deaths', 'new_hospitalized']
     ref_df_ll = ref_df
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_line_list')
@@ -222,7 +222,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
 
 if __name__ == '__main__' :
 
-    stem = "20200520_IL_mr_EMSlocale_scenario3_test3"
+    stem = "20200522_EMS_1_scenario1_test"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names :

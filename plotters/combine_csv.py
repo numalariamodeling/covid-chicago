@@ -36,7 +36,7 @@ for num, exp_names in enumerate(sim_scenarios):
         ems = int(exp_name.split('_')[2])
         df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-        first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+        first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
         df['ems'] = ems
         df['exp_name'] = exp_name

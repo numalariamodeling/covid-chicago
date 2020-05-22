@@ -49,7 +49,7 @@ for num, exp_names in enumerate(sim_scenarios):
         ems = int(exp_name.split('_')[2])
         df = pd.read_csv(os.path.join(sim_output_path, 'projection_for_civis.csv'))
 
-        #first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+        #first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
         df = df.rename(columns={"date": "Date",
                        "infected_median": "Number of Covid-19 infections",
                        "infected_95CI_lower": "Lower error bound of covid-19 infections",
