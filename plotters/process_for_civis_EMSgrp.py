@@ -20,8 +20,9 @@ plot_first_day = pd.to_datetime('2020/3/1')
 plot_last_day = pd.to_datetime('2021/4/1')
 
 def get_scenarioName(exp_suffix) :
-    scenarioName = "plot"
-    if exp_suffix == "reopen": scenarioName = "reopen"
+    scenarioName = exp_suffix
+    if exp_suffix == "reopen": scenarioName = "reopen_gradual"
+    if exp_suffix == "gradual": scenarioName = "reopen_gradual"
     if exp_suffix == "interventionStop": scenarioName = "endsip"
     if exp_suffix == "scenario3": scenarioName = "baseline"
     if exp_suffix == "neverSIP": scenarioName = "neversip"
