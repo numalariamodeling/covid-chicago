@@ -442,6 +442,8 @@ def set_df(csv_filename):
         # csv_filename is None when the dashboard app spins up.
         return INITIAL_DF.to_json()
 
+    if not os.path.exists(LOCAL_DATA_DIR):
+        os.mkdir(LOCAL_DATA_DIR)
     csv_path = os.path.join(LOCAL_DATA_DIR, csv_filename)
 
     if os.path.exists(csv_path):
@@ -449,7 +451,7 @@ def set_df(csv_filename):
         pass
     else:
         # The CSV has to come from Civis Platform.
-        file_id = civis.find_one(CSV_FILES, file_name=csv_filename)
+        file_id = civis.find_one(CSV_FILES, file_name=csv_filename).id
         if file_id is None:
             raise ValueError(f"CSV file not retrievable without a Civis file ID")
         with open(csv_path, "wb") as f:
