@@ -53,7 +53,7 @@ def preprocess_df(df):
     return df
 
 
-DATES = [np.datetime64('2020-02-01'), np.datetime64('2021-03-01')]
+DATES = np.arange('2020-02', '2021-03', dtype='datetime64[M]')
 
 PARAMS = """
 param_fraction asymptomatic cases detected
@@ -79,14 +79,16 @@ output_number recovered
 INITIAL_DF = preprocess_df(
     pd.DataFrame(
         {
-            "date": ["2020-02-01"],
-            "ems": [1],
-            "run_num": [0],
-            **{param: [0] for param in PARAMS},
-            **{output: [0] for output in OUTPUTS},
+            "date": ["2020-02-01", "2020-02-02"],
+            "ems": [1, 2],
+            "run_num": [0, 0],
+            **{param: [0.01, 0.99] for param in PARAMS},
+            **{output: [1, 2] for output in OUTPUTS},
         }
     )
 )
+
+N_SLIDER_MARKS = 5
 
 app = dash.Dash(__name__ )
 
@@ -134,36 +136,10 @@ def unixToDt (unixTime):
     return pd.to_datetime(unixTime, unit='s')
 
 
-# Parameter Filtering -> RangeSlider Factory
-def generateRangeSlider (param, numMarks):
-    ''' Given a parameter from the dataframe, generates the divs for range sliders
-        Returns the div + range slider
-    '''
-
-    def markFormatter (val):
-            if val < 1:
-                return "{:.1%}".format(val)
-            else:
-                return "{:.2f}".format(val)
-
-    def setMarks():
-
-        # Inherit parameter from function
-        # TODO
-        # minMark = DF[param].min()
-        # maxMark = DF[param].max()
-        minMark = 0
-        maxMark = 100
-        # linspace returns evenly spaced list. Rounded to capture all values
-        markRange =  np.linspace(math.floor(minMark * 1000) / 1000, math.ceil(maxMark * 1000) / 1000, numMarks)
-
-        return markRange
-
-    rangeList = setMarks()
-
-    return html.Div (
-        style = {"margin": "25px 5px 30px 0px"},
-        children = [
+def _get_param_slider(param, marks):
+    return html.Div(
+        style={"margin": "25px 5px 30px 0px"},
+        children=[
             html.Div(
                 style={"margin-left": "5px"},
                 children=[
@@ -171,10 +147,13 @@ def generateRangeSlider (param, numMarks):
                     dcc.RangeSlider(
                         id=param + "Slider",
                         step=None,
-                        marks = {v: markFormatter(v)  for v in rangeList},
-                        min=rangeList[0],
-                        max=rangeList[-1],
-                        value=[rangeList[0], rangeList[-1]]
+                        marks={
+                            m: "{:.1%}".format(m) if m < 1 else "{:.2f}".format(m)
+                            for m in marks
+                        },
+                        min=marks[0],
+                        max=marks[-1],
+                        value=[marks[0], marks[-1]],
                     )
                 ]
             )
@@ -182,12 +161,31 @@ def generateRangeSlider (param, numMarks):
     )
 
 
+@app.callback(
+    Output("param-sliders", "children"),
+    [Input("div-df", "children")],
+)
+def set_param_sliders(jsonified_df):
+    df = preprocess_df(pd.read_json(jsonified_df))
+    sliders = []
+
+    for param in PARAMS:
+        marks = np.linspace(
+            math.floor(df[param].min() * 1000) / 1000,
+            math.ceil(df[param].max() * 1000) / 1000,
+            N_SLIDER_MARKS,
+        )
+        slider = _get_param_slider(param, marks)
+        sliders.append(slider)
+
+    return sliders
+
 
 # Main App Layout
 #############################################################################
 app.layout = html.Div(
     children = [
-        html.Div(id="df-hidden-div", style={"display": "none"}),
+        html.Div(id="div-df", style={"display": "none"}),
         # Header
         html.Div(
             children =[
@@ -306,11 +304,14 @@ app.layout = html.Div(
                                 html.Div(
                                     [
                                         html.Div(
-                                            # Generate a set of sliders for each param
-                                            # Name of each slider is "[param] + _"slider"
-                                            [generateRangeSlider(i, 5) for i in PARAMS],
+                                            # The `children` kwarg is dynamically reset
+                                            # by set_param_sliders.
+                                            children=[
+                                                _get_param_slider(param, [0, 1])
+                                                for param in PARAMS
+                                            ],
                                             className="dcc_control",
-                                            id="",
+                                            id="param-sliders",
                                         ),
                                     ],
                                     className="",
@@ -422,11 +423,11 @@ app.layout = html.Div(
 
 
 @app.callback(
-    Output("df-hidden-div", "children"),
+    Output("div-df", "children"),
     [Input("csvDropdown", "value")],
 )
-def get_df(csv_filename):
-    """Get the pandas dataframe from CSV.
+def set_df(csv_filename):
+    """Set the pandas dataframe from CSV.
 
     Parameters
     ----------
@@ -470,7 +471,7 @@ def get_df(csv_filename):
     ],
 
     [
-        Input('df-hidden-div', 'children'),
+        Input('div-df', 'children'),
         Input('emsDropdown', 'value'),
         Input('timeSlider', 'value'),
         # Unpack the elements of the list using *
