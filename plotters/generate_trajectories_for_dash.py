@@ -17,7 +17,7 @@ if __name__ == '__main__' :
     adf = pd.read_csv(os.path.join(output_dir, '%s.csv' % exp_name))
     suffix_names = [x.split('_')[1] for x in adf.columns.values if 'susceptible' in x and 'All' not in x]
     print(adf.columns.values)
-    first_day = datetime.strptime(adf['first_day'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(adf['startdate'].unique()[0], '%Y-%m-%d')
     df = append_data_byGroup(adf, suffix_names)
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df['ems'] = df['ems'].apply(lambda x : int(x.split('-')[-1]))
