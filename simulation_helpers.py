@@ -4,14 +4,13 @@ import subprocess
 import shutil
 import stat
 import sys
-from datetime import date, timedelta
+from datetime import timedelta
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
-import numpy as np
 
 from processing_helpers import CI_5, CI_25, CI_75, CI_95
 
@@ -115,7 +114,6 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
 
 
 def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False, git_dir=GIT_DIR):
-    scendf = pd.read_csv(os.path.join(temp_exp_dir,"scenarios.csv"))
     sampledf = pd.read_csv(os.path.join(temp_exp_dir,"sampled_parameters.csv"))
 
     df_list = []
@@ -124,8 +122,7 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
         try:
             df_i = reprocess(trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, input_fname=input_name)
             df_i['scen_num'] = scen_i
-            df_i = df_i.merge(scendf, on=['scen_num'])
-            df_i = df_i.merge(sampledf, on=['sample_num'])
+            df_i = df_i.merge(sampledf, on=['scen_num'])
             df_list.append(df_i)
         except:
             continue
@@ -135,7 +132,7 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
     dfc = pd.concat(df_list)
     dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
 
-    nscenarios = scendf['scen_num'].max()
+    nscenarios = sampledf['scen_num'].max()
     nscenarios_processed = len(dfc['scen_num'].unique())
     trackScen = "Number of scenarios processed n= " + str(nscenarios_processed) + " out of total N= " + str(nscenarios) + " (" + str(nscenarios_processed/ nscenarios)+ " %)"
     writeTxt(temp_exp_dir, "Simulation_report.txt" ,trackScen)
@@ -263,7 +260,7 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 
-def sampleplot(adf, allchannels, first_day, plot_fname=None):
+def sampleplot(adf, allchannels, start_date, plot_fname=None):
     fig = plt.figure(figsize=(8, 6))
     palette = sns.color_palette('Set1', 10)
 
@@ -272,7 +269,7 @@ def sampleplot(adf, allchannels, first_day, plot_fname=None):
     for c, channel in enumerate(allchannels):
         mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
         ax = axes[c]
-        dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
+        dates = [start_date + timedelta(days=int(x)) for x in mdf['time']]
         ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
         ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
                         color=palette[c], linewidth=0, alpha=0.2)
@@ -284,7 +281,7 @@ def sampleplot(adf, allchannels, first_day, plot_fname=None):
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_day, )
+        ax.set_xlim(start_date, )
 
     if plot_fname:
         log.info(f"Writing plot to {plot_fname}")
