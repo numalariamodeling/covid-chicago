@@ -256,7 +256,7 @@ def replaceParameters(df, row_i, Ki_i, emodl_template, scen_num):
     fin = open(os.path.join(temp_exp_dir, emodl_template), "rt")
     data = fin.read()
     for col in df.columns:
-        data = data.replace(f'@{col}@', str(df[col][row_i]))
+        data = data.replace(f'@{col}@', str(df.iloc[row_i][col]))
     data = data.replace('@Ki@', '%.09f' % Ki_i)
     remaining_placeholders = re.findall(r'@\w+@', data)
     if remaining_placeholders:
@@ -278,8 +278,9 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
                                        config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region)
 
-    for row_i, Ki in enumerate(dfparam.Ki):
-        scen_num = row_i + 1
+    for row_i, row in dfparam.iterrows():
+        Ki = row['Ki']
+        scen_num = row['scen_num']
 
         replaceParameters(df=dfparam, row_i=row_i, Ki_i=Ki,  emodl_template=modelname, scen_num=scen_num)
 
