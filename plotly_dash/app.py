@@ -478,7 +478,7 @@ def get_df(csv_filename):
     ],
 )
 def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
-    df = pd.read_json(jsonified_df)
+    df = preprocess_df(pd.read_json(jsonified_df))
 
     # Generate query string for EMS value and range of sliders
     emsString = "({0} == '{1}')".format('emsGroup', emsValue)
