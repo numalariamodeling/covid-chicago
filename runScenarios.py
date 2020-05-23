@@ -30,6 +30,7 @@ def _parse_config_parameter(df, parameter, parameter_function, column_name, star
         return df
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
+        params = getattr(np.random, parameter_function['np.random'])(**function_kwargs)
         df[column_name] = getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
         return df
     elif 'custom_function' in parameter_function:
@@ -152,7 +153,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
         elif 'np.random' in parameter_function:
-            _parse_age_specific_distribution(df, parameter, parameter_function, age_bins)
+            df = _parse_age_specific_distribution(df, parameter, parameter_function, age_bins)
         else:
             raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
