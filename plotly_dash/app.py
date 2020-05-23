@@ -144,7 +144,10 @@ def get_param_slider(param, marks):
             html.Div(
                 style={"margin-left": "5px"},
                 children=[
-                    html.P(param.upper(), className="control_label",),
+                    html.P(
+                        param.replace("param_", "").upper(),
+                        className="control_label",
+                    ),
                     dcc.RangeSlider(
                         id=param + "Slider",
                         step=None,
@@ -582,7 +585,7 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
                 size=14,
                 color=colors['green']
             ),
-            title=outputVar.upper() + " by Date",
+            title=outputVar.replace("output_", "").upper() + " by Date",
             showlegend=False,
             yaxis=dict(
                 tickformat="<,f",
