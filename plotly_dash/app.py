@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Operational Libs
 import collections
+import functools
 import logging
 import os
 
@@ -136,7 +137,7 @@ def unixToDt (unixTime):
     return pd.to_datetime(unixTime, unit='s')
 
 
-def _get_param_slider(param, marks):
+def get_param_slider(param, marks):
     return html.Div(
         style={"margin": "25px 5px 30px 0px"},
         children=[
@@ -161,24 +162,19 @@ def _get_param_slider(param, marks):
     )
 
 
-@app.callback(
-    Output("param-sliders", "children"),
-    [Input("div-df", "children")],
-)
-def set_param_sliders(jsonified_df):
-    df = preprocess_df(pd.read_json(jsonified_df))
-    sliders = []
+@functools.lru_cache()
+def pd_read_json_cached(jsonified_df):
+    """pd.read_json with caching.
 
-    for param in PARAMS:
-        marks = np.linspace(
-            math.floor(df[param].min() * 1000) / 1000,
-            math.ceil(df[param].max() * 1000) / 1000,
-            N_SLIDER_MARKS,
-        )
-        slider = _get_param_slider(param, marks)
-        sliders.append(slider)
+    Parameters
+    ----------
+    jsonified_df : str
 
-    return sliders
+    Returns
+    -------
+    pd.DataFrame
+    """
+    return pd.read_json(jsonified_df)
 
 
 # Main App Layout
@@ -307,7 +303,7 @@ app.layout = html.Div(
                                             # The `children` kwarg is dynamically reset
                                             # by set_param_sliders.
                                             children=[
-                                                _get_param_slider(param, [0, 1])
+                                                get_param_slider(param, [0, 1])
                                                 for param in PARAMS
                                             ],
                                             className="dcc_control",
@@ -421,11 +417,31 @@ app.layout = html.Div(
 # Callback 
 #############################################################################
 
+@app.callback(
+    Output("param-sliders", "children"),
+    [Input("div-df", "children")],
+)
+def set_param_sliders(jsonified_df):
+    df = preprocess_df(pd_read_json_cached(jsonified_df))
+    sliders = []
+
+    for param in PARAMS:
+        marks = np.linspace(
+            math.floor(df[param].min() * 1000) / 1000,
+            math.ceil(df[param].max() * 1000) / 1000,
+            N_SLIDER_MARKS,
+        )
+        slider = get_param_slider(param, marks)
+        sliders.append(slider)
+
+    return sliders
+
 
 @app.callback(
     Output("div-df", "children"),
     [Input("csvDropdown", "value")],
 )
+@functools.lru_cache()
 def set_df(csv_filename):
     """Set the pandas dataframe from CSV.
 
@@ -481,7 +497,7 @@ def set_df(csv_filename):
     ],
 )
 def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
-    df = preprocess_df(pd.read_json(jsonified_df))
+    df = preprocess_df(pd_read_json_cached(jsonified_df))
 
     # Generate query string for EMS value and range of sliders
     emsString = "({0} == '{1}')".format('emsGroup', emsValue)
