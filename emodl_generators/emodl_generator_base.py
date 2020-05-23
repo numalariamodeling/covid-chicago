@@ -13,8 +13,8 @@ def write_species( expandModel=None):
    
     species_str = """
 (species S @speciesS@)
-(species As 0)
 (species E 0)
+(species As @initialAs@)
 (species As_det1 0)
 (species P 0)
 (species Sym 0)
