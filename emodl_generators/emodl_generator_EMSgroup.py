@@ -123,12 +123,12 @@ def write_observe(grp, expandModel=None):
 """.format(grpout=grpout, grp=grp)
 
     expand_contactTracing_str = """
-;(observe quarantined Q_{grpout})
+;(observe quarantined_{grpout} Q_{grp})
 (observe presymptomatic_{grpout} presymptomatic_{grp})
 """.format(grpout=grpout, grp=grp)
 
     expand_testDelay_contactTracing_str = """
-;(observe quarantined Q_{grpout})
+;(observe quarantined_{grpout} Q_{grp})
 (observe presymptomatic_{grpout} presymptomatic_{grp})
 """.format(grpout=grpout, grp=grp)
 
@@ -541,10 +541,13 @@ def write_interventions(grpList, total_string, scenarioName) :
 (param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
 (param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
 (param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
+(param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
+
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
+(time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
             """.format(grp=grp)
         continuedSIP_str = continuedSIP_str + temp_str
 
@@ -567,10 +570,10 @@ def write_interventions(grpList, total_string, scenarioName) :
     gradual_reopening_str = ""
     for grp in grpList:
         temp_str = """
-(param Ki_back1_{grp} (* Ki_{grp} @reopening_multiplier_1@))
-(param Ki_back2_{grp} (* Ki_{grp} @reopening_multiplier_2@))
-(param Ki_back3_{grp} (* Ki_{grp} @reopening_multiplier_3@))
-(param Ki_back4_{grp} (* Ki_{grp} @reopening_multiplier_4@))
+(param Ki_back1_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_1@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back2_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_2@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back3_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_3@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back4_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_4@ (- Ki_{grp} Ki_red3_{grp}))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
@@ -600,12 +603,11 @@ def write_interventions(grpList, total_string, scenarioName) :
     if scenarioName == "continuedSIP" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
     if scenarioName == "contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
+        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)
     if scenarioName == "testDelay_contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
-
+        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)       
     return (total_string)
 
 
@@ -671,6 +673,7 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_contactTracing.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel=None,  add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_interventionSTOPadj.emodl'))
+    generate_emodl(grpList=ems_grp,  expandModel="testDelay", add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_interventionSTOPadj.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp_neverSIP.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodelTestDelay_EMS_grp.emodl'))

@@ -18,7 +18,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 
 def plot_on_fig(df, channels, axes, color, label) :
-    first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
     for c, channel in enumerate(channels) :
         ax = axes[c]

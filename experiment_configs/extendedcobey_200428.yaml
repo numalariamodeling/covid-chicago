@@ -1,8 +1,8 @@
 experiment_setup_parameters:
   'number_of_samples': 10
   'number_of_runs': 1
-  'duration': 365
-  'monitoring_samples': 365 # needs to be smaller than duration
+  'duration': 370
+  'monitoring_samples': 370 # needs to be smaller than duration
   'random_seed': 18
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -23,9 +23,12 @@ fixed_parameters_region_specific:
     'EMS_11': 2716921
   startdate:
     'NMH_catchment': 2020-02-28
-    'Chicago': 2020-02-20  
-    'IL': 2020-02-13  # used for spatial model 
-    'EMS_1': 2020-02-26       
+    'Chicago': 2020-02-20
+    'IL': 2020-02-13  # used for spatial model
+    # To specify a range of dates instead of a single date:
+    # 'EMS_1': [2020-02-26, 2020-02-28]
+    # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.
+    'EMS_1': 2020-02-26
     'EMS_2': 2020-02-24  
     'EMS_3': 2020-02-20     
     'EMS_4': 2020-02-21  
@@ -94,8 +97,9 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}
   'd_P':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}    
-  ### TIME-VARYING PARAMETER
+    function_kwargs: {'low':0, 'high':0}
+intervention_parameters:
+  ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reduce Ki due to stay-at-home policy
   'social_multiplier_1':
     np.random: uniform
@@ -106,23 +110,11 @@ sampled_parameters:
   'social_multiplier_3':
     np.random: uniform
     function_kwargs: {'low':0.08, 'high':0.08}
-  'socialDistance_time1':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
-  'socialDistance_time2':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
-  'socialDistance_time3':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
-  ### Reset Ki to defined proporions of it's initial value  
+  ### Reset Ki to defined proporions of it's initial value
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
     np.random: uniform
     function_kwargs: {'low':0.90, 'high':0.90}
-  'socialDistanceSTOP_time':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
     np.random: uniform
@@ -136,18 +128,6 @@ sampled_parameters:
   'reopening_multiplier_4':
     np.random: uniform
     function_kwargs: {'low':0.90, 'high':0.90}
-  'gradual_reopening_time1':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
-  'gradual_reopening_time2':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}        
-  'gradual_reopening_time3':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}    
-  'gradual_reopening_time4':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}  
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
@@ -159,6 +139,53 @@ sampled_parameters:
   'd_Sys_incr3':
     np.random: uniform
     function_kwargs: {'low':0.447, 'high':0.683}
+  ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
+  ### Note detection of asymptomatic and presymptomatic assumed to be the same
+  ### (only used if corresponding emodl is defined)
+  ## d_SQ proportion of susceptibles that get temporarily quarantined (disabled)
+  ## d_SQ if used, it should be proportional to cases rather than fixed fraction
+  'd_As_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0.80, 'high':0.80}
+  'd_Sym_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0.80, 'high':0.80}
+  'd_SQ':
+    np.random: uniform
+    function_kwargs: {'low':0.80, 'high':0.80}
+  ## Use fixed dates or define detection time relative to  socialDistance_time3
+time_parameters:
+  ### TIME-VARYING PARAMETER  - DATES
+  ### Reduce Ki due to stay-at-home policy
+  'socialDistance_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
+  'socialDistance_time2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
+  'socialDistance_time3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+  ### Reset Ki to defined proporions of it's initial value
+  ### (only used if corresponding emodl is defined)
+  'socialDistanceSTOP_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
+  ### Gradual reopening (time-wise)
+  'gradual_reopening_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
+  'gradual_reopening_time2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}
+  'gradual_reopening_time3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}
+  'gradual_reopening_time4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-15, 'startdate_col': 'startdate'}
+  ### Increased testing - increased detectioon of severe symptomatic infections
+  ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3
   'detection_time_1':
     custom_function: DateToTimestep
@@ -171,26 +198,14 @@ sampled_parameters:
     function_kwargs: {'dates': 2020-03-28, 'startdate_col': 'startdate'}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
-  ### (only used if corresponding emodl is defined)   
-  ## d_SQ proportion of susceptibles that get temporarily quarantined (disabled)
-  ## d_SQ if used, it should be proportional to cases rather than fixed fraction
-  'd_As_ct1':
-    np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.30}
-  'd_Sym_ct1':
-    np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.30}
-  'd_SQ':
-    np.random: uniform
-    function_kwargs: {'low':0.80, 'high':0.80}    
-  ### Use fixed dates or define detection time relative to  socialDistance_time3
+  ### (only used if corresponding emodl is defined)
   'contact_tracing_start_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-15, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
   ## stop after simulation end to simulate indefinite contact tracing
   'contact_tracing_stop1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-05-30, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2022-05-30, 'startdate_col': 'startdate'}
 fitted_parameters:
   Kis:
     'NMH_catchment':

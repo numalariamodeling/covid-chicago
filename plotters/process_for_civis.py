@@ -37,17 +37,17 @@ if __name__ == '__main__' :
     load_dotenv(dotenv_path="../.env")
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
-    args = parse_args()
+    stem = "20200522_EMS_1_scenario1_test"
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output'))
-                 if args.stem in x]
+                 if stem in x]
 
     for exp_name in exp_names :
         #exp_name = '20200417_EMS_11_scenario2_test'
 
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         df = load_sim_data(exp_name, wdir)
-        first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+        first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
         channels = ['infected','new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
         df['ventilators'] = get_vents(df['crit_det'].values)
