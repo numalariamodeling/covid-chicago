@@ -24,6 +24,16 @@ today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428_testDelay.yaml'
 
 
+def _get_full_factorial_df(df, column_name, values):
+    dfs = []
+    for value in values:
+        df_copy = df.copy()
+        df_copy[column_name] = value
+        dfs.append(df_copy)
+    result = pd.concat(dfs, ignore_index=True)
+    return result
+
+
 def _parse_config_parameter(df, parameter, parameter_function, column_name, start_date=None):
     if isinstance(parameter_function, (int, float)):
         df[column_name] = parameter_function
@@ -31,8 +41,11 @@ def _parse_config_parameter(df, parameter, parameter_function, column_name, star
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
         params = getattr(np.random, parameter_function['np.random'])(**function_kwargs)
-        df[column_name] = getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
-        return df
+        if not hasattr(params, "__iter__"):
+            # `params` is a single scalar number.
+            params = [params]
+        result = _get_full_factorial_df(df, column_name, params)
+        return result
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
@@ -88,7 +101,11 @@ def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins
 
     # Do the sampling
     for _bin, _dist, _kwargs in zip(age_bins, distribution, kwargs):
-        df[f"{parameter}_{_bin}"] = getattr(np.random, _dist)(size=len(df), **_kwargs)
+        params = getattr(np.random, _dist)(**_kwargs)
+        if not hasattr(params, "__iter__"):
+            # `params` is a single scalar number.
+            params = [params]
+        df = _get_full_factorial_df(df, f"{parameter}_{_bin}", params)
     return df
 
 
@@ -222,12 +239,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
 
     # For a given start date, cross all Ki values with df for full factorial.
-    dfs = []
-    for Kivalue in Kivalues:
-        df_copy = df.copy()
-        df_copy['Ki'] = Kivalue
-        dfs.append(df_copy)
-    df = pd.concat(dfs, ignore_index=True)
+    df = _get_full_factorial_df(df, "ki", Kivalues)
 
     # Time-varying parameters for each start date.
     dfs = []
