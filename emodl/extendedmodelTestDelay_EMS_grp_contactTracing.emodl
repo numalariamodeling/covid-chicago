@@ -1196,7 +1196,10 @@
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@))) 
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@)))
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@))) 
+ 
 
 (param time_D @time_to_detection@)
 (param Ksys_D (/ 1 time_D))
@@ -1375,6 +1378,7 @@
 (param Ki_red2_EMS_11 (* Ki_EMS_11 @social_multiplier_2_EMS_11@))
 (param Ki_red3_EMS_11 (* Ki_EMS_11 @social_multiplier_3_EMS_11@))
 (param Ki_red4_EMS_11 (* Ki_EMS_11 @social_multiplier_4_EMS_11@))
+
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_11 Ki_red1_EMS_11)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_11 Ki_red2_EMS_11)))
