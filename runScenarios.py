@@ -24,21 +24,27 @@ today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428_testDelay.yaml'
 
 
-def _parse_config_parameter(df, parameter, parameter_function, start_date=None):
+def _parse_config_parameter(df, parameter, parameter_function, column_name, start_date=None):
     if isinstance(parameter_function, (int, float)):
-        return parameter_function
+        df[column_name] = parameter_function
+        return df
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
-        return getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
+        df[column_name] = getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
+        return df
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
             startdate_col = function_kwargs['startdate_col']
-            return [DateToTimestep(function_kwargs['dates'], start_date or df[startdate_col][i])
-                    for i in range(len(df))]
+            df[column_name] = [
+                DateToTimestep(function_kwargs['dates'], start_date or df[startdate_col][i])
+                for i in range(len(df))
+            ]
+            return df
         elif function_name == 'subtract':
-            return df[function_kwargs['x1']] - df[function_kwargs['x2']]
+            df[column_name] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
+            return df
         else:
             raise ValueError(f"Unknown function for parameter {parameter}: {function_name}")
     else:
@@ -130,17 +136,18 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                 raise ValueError(f"{parameter} has a list with {n_list} elements, "
                                  f"but there are {len(age_bins)} age bins.")
             for bin, val in zip(age_bins, parameter_function['list']):
-                df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
+                df = _parse_config_parameter(df, parameter, val, f'{parameter}_{bin}')
         elif 'custom_function' in parameter_function:
             function_name = parameter_function['custom_function']
             if function_name == 'subtract':
                 for bin in age_bins:
-                    df[f'{parameter}_{bin}'] = _parse_config_parameter(
+                    df = _parse_config_parameter(
                         df, parameter,
                         {'custom_function': 'subtract',
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
                                              'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}},
-                        start_date,
+                        f'{parameter}_{bin}',
+                        start_date=start_date,
                     )
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
@@ -153,9 +160,9 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             m = parameter_function['matrix']
             for i, row in enumerate(m):
                 for j, item in enumerate(row):
-                    df[f'{parameter}{i+1}_{j+1}'] = _parse_config_parameter(df, parameter, item)
+                    df = _parse_config_parameter(df, parameter, item, f'{parameter}{i+1}_{j+1}')
         else:
-            df[parameter] = _parse_config_parameter(df, parameter, parameter_function)
+            df = _parse_config_parameter(df, parameter, parameter_function, parameter)
     return df
 
 
