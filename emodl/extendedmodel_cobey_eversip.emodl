@@ -169,15 +169,6 @@
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
             
-(param Ki_back1 (+ Ki_red3 (* @reopening_multiplier_1@ (- Ki Ki_red3))))
-(param Ki_back2 (+ Ki_red3 (* @reopening_multiplier_2@ (- Ki Ki_red3))))
-(param Ki_back3 (+ Ki_red3 (* @reopening_multiplier_3@ (- Ki Ki_red3))))
-(param Ki_back4 (+ Ki_red3 (* @reopening_multiplier_4@ (- Ki Ki_red3))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
-    
 
 
 (reaction exposure  (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))
