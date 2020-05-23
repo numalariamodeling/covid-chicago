@@ -50,11 +50,18 @@ def _parse_config_parameter(df, parameter, parameter_function, column_name, star
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
-            startdate_col = function_kwargs['startdate_col']
-            df[column_name] = [
-                DateToTimestep(function_kwargs['dates'], start_date or df[startdate_col][i])
-                for i in range(len(df))
-            ]
+            start_dates_from_yaml = function_kwargs['dates']
+            if not hasattr(start_dates_from_yaml, "__iter__"):
+                start_dates_from_yaml = [start_dates_from_yaml]
+            dfs = []
+            for start_date_from_yaml in start_dates_from_yaml:
+                df_copy = df.copy()
+                df_copy[column_name] = [
+                    DateToTimestep(start_date_from_yaml, start_date or df_copy["startdate"][i])
+                    for i in range(len(df_copy))
+                ]
+                dfs.append(df_copy)
+            df = pd.concat(dfs, ignore_index=True)
             return df
         elif function_name == 'subtract':
             df[column_name] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
