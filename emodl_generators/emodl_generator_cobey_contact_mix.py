@@ -732,34 +732,18 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
 
-## Without contact matrix
-generate_emodl(grpList=age_grp8, expandModel=None, add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8_homogeneous.emodl'), homogeneous=True)
-generate_emodl(grpList=age_grp4, expandModel=None, add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age4_homogeneous.emodl'), homogeneous=True)
-
-### With contact matrix - base model
-generate_emodl(grpList=age_grp4, expandModel=None, add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age4_neverSIP.emodl'))
-generate_emodl(grpList=age_grp4, expandModel=None, add_interventions='continuedSIP',   file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
-generate_emodl(grpList=age_grp4, expandModel=None, add_interventions='interventiopnStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_interventionStop.emodl'))
-generate_emodl(grpList=age_grp4, expandModel=None, add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_gradual_reopening.emodl'))
-generate_emodl(grpList=age_grp4, expandModel="contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_contactTracing.emodl'))
-
-generate_emodl(grpList=age_grp8, expandModel=None, add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_neverSIP.emodl'))
-generate_emodl(grpList=age_grp8, expandModel=None, add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
-generate_emodl(grpList=age_grp8, expandModel=None, add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_interventionStop.emodl'))
-generate_emodl(grpList=age_grp8, expandModel=None, add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_gradual_reopening.emodl'))
-generate_emodl(grpList=age_grp8, expandModel="contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_contactTracing.emodl'))
 
 ### With contact matrix - testDelay implemented
-generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age4_neverSIP.emodl'))
-generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age4.emodl'))
-generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age4_interventionStop.emodl'))
-generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age4_gradual_reopening.emodl'))
-generate_emodl(grpList=age_grp4, expandModel="testDelay_contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age4_contactTracing.emodl'))
+generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age4_neverSIP.emodl'))
+generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age4.emodl'))
+generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_interventionStop.emodl'))
+generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_gradual_reopening.emodl'))
+generate_emodl(grpList=age_grp4, expandModel="testDelay_contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodel_age4_contactTracing.emodl'))
 
-generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age8_neverSIP.emodl'))
-generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age8.emodl'))
-generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age8_interventionStop.emodl'))
-generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age8_gradual_reopening.emodl'))
-generate_emodl(grpList=age_grp8, expandModel="testDelay_contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodeltestDelay_age8_contactTracing.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_neverSIP.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_interventionStop.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_gradual_reopening.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay_contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_contactTracing.emodl'))
 
 
