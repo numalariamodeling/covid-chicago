@@ -46,8 +46,9 @@ For more information on Covid in Chicago visit the [Chicago Covid Coalition webs
 ## 3. Model 
 
 ### 3.1. Base model
-Assumes one well mixed homogeneous population. 
-![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure.png)
+Assumes one well mixed homogeneous population.
+![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure_Pdet_TestDelay_withParameter.png)
+
 
 #### List of parameters
 The starting date and intervention effect size are fixed and the transmission parameter "Ki"are fitted to the data.
