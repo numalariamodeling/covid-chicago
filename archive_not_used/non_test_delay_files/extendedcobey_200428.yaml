@@ -23,20 +23,20 @@ fixed_parameters_region_specific:
     'EMS_11': 2716921
   startdate:
     'NMH_catchment': 2020-02-28
-    'Chicago': 2020-02-20  
-    'IL': 2020-02-13  # used for spatial model 
+    'Chicago': 2020-02-20
+    'IL': 2020-02-13  # used for spatial model
     # To specify a range of dates instead of a single date:
     # 'EMS_1': [2020-02-26, 2020-02-28]
-    # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.                                                           
-    'EMS_1': 2020-02-26       
-    'EMS_2': 2020-02-26  
+    # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.
+    'EMS_1': 2020-02-26
+    'EMS_2': 2020-02-24  
     'EMS_3': 2020-02-20     
-    'EMS_4': 2020-02-23  
+    'EMS_4': 2020-02-21  
     'EMS_5': 2020-02-28     
-    'EMS_6': 2020-02-25  
-    'EMS_7': 2020-02-19           
+    'EMS_6': 2020-02-14  
+    'EMS_7': 2020-02-16           
     'EMS_8': 2020-02-23       
-    'EMS_9': 2020-02-22        
+    'EMS_9': 2020-02-23        
     'EMS_10': 2020-02-20      
     'EMS_11': 2020-02-23       
 fixed_parameters_global:
@@ -91,13 +91,13 @@ sampled_parameters:
     function_kwargs: {'low':0.01, 'high':0.05}
   'd_Sys':
     np.random: uniform
-    function_kwargs: {'low':0.00, 'high':0.0185} 
+    function_kwargs: {'low':0.00, 'high':0.025} 
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
   'd_P':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}    
+    function_kwargs: {'low':0, 'high':0}
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reduce Ki due to stay-at-home policy
@@ -110,59 +110,53 @@ intervention_parameters:
   'social_multiplier_3':
     np.random: uniform
     function_kwargs: {'low':0.08, 'high':0.08}
-  ### Reset Ki to defined proporions of it's initial value  
+  ### Reset Ki to defined proporions of it's initial value
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
     np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.30}
+    function_kwargs: {'low':0.90, 'high':0.90}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.1}
+    function_kwargs: {'low':0.3, 'high':0.3}
   'reopening_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.3, 'high':0.3}
+    function_kwargs: {'low':0.5, 'high':0.5}
   'reopening_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.6}
+    function_kwargs: {'low':0.7, 'high':0.7}
   'reopening_multiplier_4':
     np.random: uniform
-    function_kwargs: {'low':0.9, 'high':0.9}
+    function_kwargs: {'low':0.90, 'high':0.90}
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.0726, 'high':0.157}
+    function_kwargs: {'low':0.062, 'high':0.121}
   'd_Sys_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.335, 'high':0.422}
+    function_kwargs: {'low':0.286, 'high':0.457}
   'd_Sys_incr3':
     np.random: uniform
-    function_kwargs: {'low':0.516, 'high':0.778}
-  'd_Sys_incr4':
-    np.random: uniform
-    function_kwargs: {'low':0.565, 'high':0.835}
-  'd_Sys_incr5':
-    np.random: uniform
-    function_kwargs: {'low':0.682, 'high':0.835}
+    function_kwargs: {'low':0.447, 'high':0.683}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
-  ### (only used if corresponding emodl is defined)   
+  ### (only used if corresponding emodl is defined)
   ## d_SQ proportion of susceptibles that get temporarily quarantined (disabled)
   ## d_SQ if used, it should be proportional to cases rather than fixed fraction
   'd_As_ct1':
     np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.30}
+    function_kwargs: {'low':0.80, 'high':0.80}
   'd_Sym_ct1':
     np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.30}
+    function_kwargs: {'low':0.80, 'high':0.80}
   'd_SQ':
     np.random: uniform
-    function_kwargs: {'low':0.80, 'high':0.80} 
-   ### Use fixed dates or define detection time relative to  socialDistance_time3
+    function_kwargs: {'low':0.80, 'high':0.80}
+  ## Use fixed dates or define detection time relative to  socialDistance_time3
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
-  ### Reduce Ki due to stay-at-home policy 
+  ### Reduce Ki due to stay-at-home policy
   'socialDistance_time1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
@@ -172,11 +166,8 @@ time_parameters:
   'socialDistance_time3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
-  'socialDistance_time4':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-21, 'startdate_col': 'startdate'}
-  ### Reset Ki to defined proporions of it's initial value  
-  ### (only used if corresponding emodl is defined)    
+  ### Reset Ki to defined proporions of it's initial value
+  ### (only used if corresponding emodl is defined)
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
@@ -186,13 +177,13 @@ time_parameters:
     function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
   'gradual_reopening_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}        
+    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}
   'gradual_reopening_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}    
+    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}
   'gradual_reopening_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-15, 'startdate_col': 'startdate'}  
+    function_kwargs: {'dates': 2020-07-15, 'startdate_col': 'startdate'}
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3
@@ -204,13 +195,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
   'detection_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-28, 'startdate_col': 'startdate'} 
-  'detection_time_4':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-04, 'startdate_col': 'startdate'} 
-  'detection_time_5':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-18, 'startdate_col': 'startdate'} 
+    function_kwargs: {'dates': 2020-03-28, 'startdate_col': 'startdate'}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)
@@ -249,7 +234,7 @@ fitted_parameters:
       function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
     'EMS_6':
       np: linspace
-      function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
+      function_kwargs: {'start': 0.373, 'stop': 0.373, 'num': 1}
     'EMS_7':
       np: linspace
       function_kwargs: {'start': 0.714, 'stop': 0.714, 'num': 1}
