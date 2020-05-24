@@ -20,11 +20,6 @@ the model was further improved inspired from the compartmental model used at the
 | base           | added intervention              | none                     | immediate stop of SIP | extendedmodel_cobey_interventionStopy.emodl            |
 | base           | added intervention              | none                     | gradual reopen        | extendedmodel_cobey_gradual_reopening.emodl            |
 |                |                                 |                          |                       |                                                        |
-| base           | master                          | testDelay                | continued SIP         | extendedmodeltestDelay_cobey.emodl                              |
-| base           | added intervention              | testDelay                | never SIP             | extendedmodeltestDelay_cobey_noSIP.emodl                        |
-| base           | added intervention              | testDelay                | immediate stop of SIP | extendedmodeltestDelay_cobey_interventionStopy.emodl            |
-| base           | added intervention              | testDelay                | gradual reopen        | extendedmodeltestDelay_cobey_gradual_reopening.emodl            |
-|                |                                 |                          |                       |                                                        |
 | age-4          | homogeneous contacts            | none                     | continued SIP         | extendedmodel_age4_homogeneous.emodl                   |
 | age-4          | all location contacts           | added contact matrix     | continued SIP         | extendedmodel_age4.emodl                               |
 | age-4          | all location contacts           | added contact matrix     | never SIP             | extendedmodel_age4_neverSIP.emodl                      |
@@ -46,12 +41,6 @@ the model was further improved inspired from the compartmental model used at the
 | spatial-grp    | no migration                    | none                     | gradual reopen        | extendedmodel_EMSgrp_gradual_reopening.emodl          |
 | spatial-grp    | no migration                    | none                     | gradual reopen + CT   | extendedmodel_EMSgrp_gradual_contactTracing.emodl  
 |                |                                 |                          |                       |                                                        |
-| spatial-grp    | no migration  				   | testDelay                | continued SIP         | extendedmodeltestDelay_EMSgrp.emodl                            |
-| spatial-grp    | no migration  				   | testDelay                | never SIP             | extendedmodeltestDelay_EMSgrp_neverSIP.emodl                   |
-| spatial-grp    | no migration  				   | testDelay                | immediate stop of SIP | extendedmodeltestDelay_EMSgrp_interventionStop.emodl           |
-| spatial-grp    | no migration  				   | testDelay                | gradual reopen        | extendedmodeltestDelay_EMSgrp_gradual_reopening.emodl          |
-| spatial-grp    | no migration  				   | testDelay                | gradual reopen + CT   | extendedmodeltestDelay_EMSgrp_gradual_contactTracing.emodl  
-|                |                                 |                          |                       |                                                        |
 | spatial-locale | no migration                    | none                     | continued SIP         | extendedmodel_cobey_localeEMS.emodl                   |
 | spatial-locale | no migration                    | none                     | never SIP             | extendedmodel_cobey_localeEMS_neverSIP.emodl          |
 | spatial-locale | no migration                    | none                     | immediate stop of SIP | extendedmodel_cobey_localeEMS_interventionStop.emodl  |
@@ -59,5 +48,3 @@ the model was further improved inspired from the compartmental model used at the
 |                |                                 |                          |                       |                                                        |
 | locale_age     | no migration  no contact matrix | none                     | continued SIP         | extendedmodel_cobey_locale_age_test.emodl              |
 
-
-Note  for testDelay, the emodl name is extendedmodeltestDelay_xxxxx.emodl   
