@@ -54,7 +54,7 @@ Or for more details read the [published paper](https://link.springer.com/chapter
 
 ### Resources 
 For more information on Covid in Chicago visit the [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
-Or watch the IPHAM Webinar from the 7th May on [youtube](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be)
+or watch the IPHAM Webinar from the 7th May on [youtube](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be).
 
 ## 3. Model 
 
@@ -120,13 +120,12 @@ The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-even
 Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
 The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
 
-###### Intervention scenarios
 Current scenarios include:
 - No stay-at-home (counterfactual)
 - Continue stay-at-home
 - Stop stay-at-home order - immediately
 - Stop stay-at-home order - step-wise 
-
+For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
 ### 3.2. Age-structured model 
 The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. 
