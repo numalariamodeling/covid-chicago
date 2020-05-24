@@ -32,6 +32,19 @@ There are two main channels on slack:
 - [input](https://idmod.org/docs/cms/input-files.html)  model file (emodl)
 - [output](https://idmod.org/docs/cms/output.html?searchText=output): trajectories.csv (optionally define prefix or suffix)
 
+
+## 1.5. Updates 
+
+### Key updates in base model structure and parameters
+- 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
+- 20200521 added s_m_4, parameter fitting
+- 20200515 parameter fitting (also 20200512, 20200501)
+- 20200428 Model disease and transmission parameters (previously 20200421, 20200419)
+- 20200428 added d_Sys_incr1-3  
+- 20200421 adding scale-invariant Ki
+- 20200407 add more detected observables
+- 20200402 cobey model implementation (including presymptomatic)
+
 ### Compartmental model structure (emodl file)
 The "simplemodel" includes only the basic S-E-I-R compartments. 
 Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/simplemodel_testing.emodl)
@@ -41,7 +54,7 @@ Or for more details read the [published paper](https://link.springer.com/chapter
 
 ### Resources 
 For more information on Covid in Chicago visit the [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
-
+Or watch the IPHAM Webinar from the 7th May on [youtube](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be)
 
 ## 3. Model 
 
@@ -59,6 +72,7 @@ The starting date and intervention effect size are fixed and the transmission pa
 All other parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. model from [UChicago](https://github.com/cobeylab/covid_IL))
 To account for uncertainity and heterogeneity in transmission and disease parameters, all the parameters are sampled from a distribution informed by literature. 
 
+#### 'reaction paramaters'
 
 | parameter | name                                                                         | 
 |-----------|------------------------------------------------------------------------------|
@@ -81,7 +95,7 @@ To account for uncertainity and heterogeneity in transmission and disease parame
 | Km        | Deaths                                                                       |   
 
 
-Time parameters (in days)
+#### Time parameters (in days)
 
 | parameter | name                                                                         | 
 |---------------------------|--------------------------------------------------------------|
@@ -108,19 +122,21 @@ The time event can also be used to reflect increasing testing rates by increasin
 
 ###### Intervention scenarios
 Current scenarios include:
-- Scenario 1: Stop stay-at-home order  ‘next Friday’ 
-- Scenario 2: No stay-at-home (counterfactual)
-- Scenario 3: Continue stay-at-home
+- No stay-at-home (counterfactual)
+- Continue stay-at-home
+- Stop stay-at-home order - immediately
+- Stop stay-at-home order - step-wise 
+
 
 ### 3.2. Age-structured model 
 The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. 
 
 ### 3.2.1. Age groups
 - Four age groups: "0to19", "20to39", "40to59", "60to100" 
-[look at the 4grp emodl here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_age_4grp.emodl)
+[look at the 4grp emodl here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age4.emodl)
 -  Eight age groups: "0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100" 
-[look at the 8grp emodl here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_age_8grp.emodl)
-To generate or modify the emodl files use the [age specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_cobey_contact_mix.py) 
+[look at the 8grp emodl here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age8.emodl)
+To generate or modify the emodl files use the [age specific emodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_cobey_contact_mix.py) 
 
 ### 3.2.2. Contact matrix
 The contacts between age groups were previously extracted for running an [EMOD model](https://idmod.org/documentation) from [Prem et al 2017](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697). [Script that extracts the contact matrix values](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/age_contact/age_matrix_reducer.py). 
