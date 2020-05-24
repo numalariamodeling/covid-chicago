@@ -125,6 +125,7 @@ Current scenarios include:
 - Continue stay-at-home
 - Stop stay-at-home order - immediately
 - Stop stay-at-home order - step-wise 
+
 For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
 ### 3.2. Age-structured model 
