@@ -184,8 +184,10 @@ def write_params():
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
 (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@))) 
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@))) 
  """
     params_str = params_str.replace("  ", " ")
 

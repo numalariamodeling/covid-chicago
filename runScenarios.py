@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = datetime.datetime.today()
-DEFAULT_CONFIG = 'extendedcobey_200428_testDelay.yaml'
+DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
 
 def _get_full_factorial_df(df, column_name, values):

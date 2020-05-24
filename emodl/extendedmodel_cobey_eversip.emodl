@@ -169,9 +169,6 @@
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
             
-(param Ki_back (* Ki @backtonormal_multiplier@))
-(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
-        
 
 
 (reaction exposure  (S) (E) (* Ki S (/ (+ infectious_undet (* infectious_det reduced_inf_of_det_cases)) N )))
