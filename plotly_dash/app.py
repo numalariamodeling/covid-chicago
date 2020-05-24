@@ -10,7 +10,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, ALL
 
 # Analytic Libs
 import pandas as pd
@@ -20,78 +20,23 @@ import math
 LOG = logging.getLogger(__name__)
 logging.basicConfig(level="INFO")
 
-# Where the CSV data files are found.
+# In production, the CSV files are at this project on Civis Platform:
+# https://platform.civisanalytics.com/spa/#/projects/135876
 CIVIS_PROJECT_ID = 135876
 
 LOCAL_DATA_DIR = "data"
-DEV_CSV_FILENAME = "dash_trajectoriesDat_baseline.csv"  # file ID: 103222548
+DEV_CSV_FILENAMES = [
+    "dash_trajectoriesDat_baseline.csv",  # file ID: 103222548
+    "dash_trajectoriesDat_june1partial10.csv",  # file ID: 103222598
+    "dash_trajectoriesDat_june1partial30.csv",  # file ID: 103222650
+]
 
 EMS_MAPPING = {"North-Central": (1, 2), "Central": (3, 6), "Southern": (4, 5), "Northeast": (7, 8, 9, 10, 11)}
 
-
-def preprocess_df(df):
-    """Preprocess the dataframe.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-
-    Returns
-    -------
-    pd.DataFrame
-    """
-    # Filter out timeframes for graphs
-    # Generate datetime to get weeks for slider
-    df['date'] = pd.to_datetime(df['date'])
-    # Get week of date
-    df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
-    # Get month of date
-    df['month'] = df['date'].values.astype('datetime64[M]')
-    # Map EMS to Groupings
-    ems_to_region_mapping = {x: region for region, v in EMS_MAPPING.items() for x in v}
-    # Create a column for later filtering
-    df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
-    return df
-
-
-DATES = np.arange('2020-02', '2021-03', dtype='datetime64[M]')
-
-PARAMS = """
-param_fraction asymptomatic cases detected
-param_fraction mild symptomatic cases detected
-param_fraction of infections that are symptomatic
-param_fraction of severe cases that die
-param_fraction of symptomatic cases that are severe
-param_fraction severe cases detected
-param_reduced contact after stay at home
-param_reduced infectiousness of detected cases
-""".strip().split("\n")
-
-OUTPUTS = """
-output_daily new ICU cases
-output_daily new deaths
-output_daily new mild symptomatic cases
-output_daily new severe symptomatic cases
-output_number currently infectious
-output_number recovered
-""".strip().split("\n")
-
-# A dummy dataframe to not crash the dashboard when it first spins up.
-INITIAL_DF = preprocess_df(
-    pd.DataFrame(
-        {
-            "date": ["2020-02-01", "2020-02-02"],
-            "ems": [1, 2],
-            "run_num": [0, 0],
-            **{param: [0.01, 0.99] for param in PARAMS},
-            **{output: [1, 2] for output in OUTPUTS},
-        }
-    )
-)
-
 N_SLIDER_MARKS = 5
+N_CHART_COLUMNS = 2
 
-app = dash.Dash(__name__ )
+app = dash.Dash(__name__, prevent_initial_callbacks=True)
 
 # Mark the correct server for Heroku or Civis deployment
 server = app.server
@@ -108,14 +53,17 @@ if os.getenv("CIVIS_SERVICE_VERSION"):
     logging.info("%d CSV files found", len(CSV_FILES))
 else:
     CSVFile = collections.namedtuple("CSVFile", ("id", "file_name"))
-    CSV_FILES = [CSVFile(id=None, file_name=DEV_CSV_FILENAME)]
+    CSV_FILES = [
+        CSVFile(id=None, file_name=file_name)
+        for file_name in DEV_CSV_FILENAMES
+    ]
 
 
 # Setup 
 #############################################################################
 
 # Color Options 
-colors = {
+COLORS = {
     'sf': '#1798c1',
     'green': '#416165', # Color for plots & text
     'beige': '#F7F7FF', #Color for gridlinesgit 
@@ -137,7 +85,34 @@ def unixToDt (unixTime):
     return pd.to_datetime(unixTime, unit='s')
 
 
-def get_param_slider(param, marks):
+def preprocess_df(df):
+    """Preprocess the dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+
+    Returns
+    -------
+    pd.DataFrame or None
+    """
+    if df is None:
+        return None
+    # Filter out timeframes for graphs
+    # Generate datetime to get weeks for slider
+    df['date'] = pd.to_datetime(df['date'])
+    # Get week of date
+    df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
+    # Get month of date
+    df['month'] = df['date'].values.astype('datetime64[M]')
+    # Map EMS to Groupings
+    ems_to_region_mapping = {x: region for region, v in EMS_MAPPING.items() for x in v}
+    # Create a column for later filtering
+    df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
+    return df
+
+
+def get_param_slider(param, i, marks):
     return html.Div(
         style={"margin": "25px 5px 30px 0px"},
         children=[
@@ -149,7 +124,10 @@ def get_param_slider(param, marks):
                         className="control_label",
                     ),
                     dcc.RangeSlider(
-                        id=param + "Slider",
+                        id={
+                            "type": "parameter",
+                            "index": i,
+                        },
                         step=None,
                         marks={
                             m: "{:.1%}".format(m) if m < 1 else "{:.2f}".format(m)
@@ -175,9 +153,85 @@ def pd_read_json_cached(jsonified_df):
 
     Returns
     -------
-    pd.DataFrame
+    pd.DataFrame or None
     """
+    if jsonified_df is None:
+        return None
     return pd.read_json(jsonified_df)
+
+
+def get_formatted_charts(charts, columns=N_CHART_COLUMNS):
+    result = []
+    charts_in_row = []
+
+    for chart in charts:
+        if len(charts_in_row) == columns:
+            div = html.Div(
+                charts_in_row,
+                className="flex-display chartContainerDiv ",
+            )
+            result.append(div)
+            charts_in_row = []
+        graph = dcc.Graph(figure=chart)
+        charts_in_row.append(html.Div([graph], className="graphDiv"))
+
+    if charts_in_row:
+        div = html.Div(
+            charts_in_row,
+            className="flex-display chartContainerDiv ",
+        )
+        result.append(div)
+
+    return result
+
+
+def get_param_names(df):
+    """Get the parameter names from df.
+
+    Since the parameters are dynamically retrieved from the df,
+    this function ensures that we have a consistent and correct mapping
+    between their names and values across the callbacks.
+    """
+    return sorted(col for col in df.columns if col.startswith("param_"))
+
+
+def get_week_slider(df):
+    dates = sorted(df["month"].unique())
+    week_slider = [
+        dcc.RangeSlider(
+            id="timeSlider",
+            min=dtToUnix(dates[0]),
+            max=dtToUnix(dates[-1]),
+            value=[dtToUnix(dates[0]), dtToUnix(dates[-1])],
+            marks= {
+                dtToUnix(dt): {
+                    'label': np.datetime_as_string(dt, unit='M'),
+                    'style': {
+                        'transform':'rotate(45deg)',
+                        'font-size':'8px',
+                    }
+                } for i, dt in enumerate(dates)
+            },
+            allowCross=False,
+            className="",
+        ),
+    ]
+    return week_slider
+
+
+def get_param_sliders(df):
+    sliders = []
+
+    for i, param in enumerate(get_param_names(df)):
+        marks = np.linspace(
+            math.floor(df[param].min() * 1000) / 1000,
+            math.ceil(df[param].max() * 1000) / 1000,
+            N_SLIDER_MARKS,
+        )
+        slider = get_param_slider(param, i, marks)
+        sliders.append(slider)
+
+    return sliders
 
 
 # Main App Layout
@@ -268,52 +322,33 @@ app.layout = html.Div(
                                     "Filter Graphs by Week:",
                                     className="control_label",
                                 ),
-                                dcc.RangeSlider(
-                                    id="timeSlider",
-                                    min=dtToUnix(DATES[0]),
-                                    max=dtToUnix(DATES[-1]),
-                                    value=[dtToUnix(DATES[0]), dtToUnix(DATES[-1])],
-                                    marks= {
-                                        dtToUnix(dt): {
-                                            'label': np.datetime_as_string(dt, unit='M'),
-                                            'style': {
-                                                'transform':'rotate(45deg)',
-                                                'font-size':'8px',
-                                            }
-                                        } for i, dt in enumerate(DATES)
-                                    },
-                                    #dots=True,
-                                    allowCross=False,
-                                    className="",
+                                html.Div(
+                                    # `children` is dynamically updated.
+                                    [dcc.RangeSlider(
+                                        id="timeSlider",
+                                        min=dtToUnix(np.datetime64("2020-02")),
+                                        max=dtToUnix(np.datetime64("2021-02")),
+                                        value=[dtToUnix(np.datetime64("2020-02")),
+                                               dtToUnix(np.datetime64("2021-02"))],
+                                    )],
+                                    className="dcc_control",
+                                    id="week-slider",
                                 ),
-                            ], 
+                            ],
                             className="time-container",
                         ),
-                        # Sliders - Generate 3x3 Slider matrix
+                        # Parameter Sliders
                         html.Div(
                             [
-                                html.Div(
-                                    [
-                                        html.P(
-                                            "Filter Graphs by Model Parameters:",
-                                            className="control_label",
-                                        ),      
-                                    ],
+                                html.P(
+                                    "Filter Graphs by Model Parameters:",
+                                    className="control_label",
                                 ),
                                 html.Div(
-                                    [
-                                        html.Div(
-                                            # The `children` kwarg is dynamically reset
-                                            # by set_param_sliders.
-                                            children=[
-                                                get_param_slider(param, [0, 1])
-                                                for param in PARAMS
-                                            ],
-                                            className="dcc_control",
-                                            id="param-sliders",
-                                        ),
-                                    ],
-                                    className="",
+                                    # `children` is dynamically updated.
+                                    [get_param_slider("", 0, [0, 1])],
+                                    className="dcc_control",
+                                    id="param-sliders",
                                 ),
                             ],
                             className="time-container",
@@ -333,66 +368,8 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
-                        # 3 x 2 Arrangement
                         html.Div(
-                            [
-                                # Top 2 Charts
-                                html.Div(
-                                    [
-                                        # Chart 0
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart0")
-                                            ],
-                                            className="graphDiv",
-                                        ),
-                                        # Chart 1
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart1")
-                                            ],
-                                            className="graphDiv",
-                                        ),
-                                    ],
-                                    className="flex-display chartContainerDiv "
-                                ),
-                                # Middle two charts
-                                html.Div(
-                                    [
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart2")
-                                            ],
-                                            className="graphDiv",
-                                        ),
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart3")
-                                            ],
-                                            className="graphDiv",
-                                        ),                                    
-                                    ],
-                                    className="flex-display chartContainerDiv "
-                                ),
-                                # Bottom two charts
-                                html.Div(
-                                    [
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart4")
-                                            ],
-                                            className="graphDiv",
-                                        ),
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart5")
-                                            ],
-                                            className="graphDiv",
-                                        ),
-                                    ],
-                                    className="flex-display chartContainerDiv "
-                                ),
-                            ],
+                            id="output-charts",
                             className="chartContainer",
                         ),       
                     ], 
@@ -416,35 +393,29 @@ app.layout = html.Div(
     id="",
 )
 
-
 # Callback 
 #############################################################################
 
+
 @app.callback(
-    Output("param-sliders", "children"),
+    [
+        Output("week-slider", "children"),
+        Output("param-sliders", "children"),
+    ],
     [Input("div-df", "children")],
 )
-def set_param_sliders(jsonified_df):
+def set_sliders(jsonified_df):
     df = preprocess_df(pd_read_json_cached(jsonified_df))
-    sliders = []
-
-    for param in PARAMS:
-        marks = np.linspace(
-            math.floor(df[param].min() * 1000) / 1000,
-            math.ceil(df[param].max() * 1000) / 1000,
-            N_SLIDER_MARKS,
-        )
-        slider = get_param_slider(param, marks)
-        sliders.append(slider)
-
-    return sliders
+    week_slider = get_week_slider(df)
+    param_sliders = get_param_sliders(df)
+    return week_slider, param_sliders
 
 
 @app.callback(
     Output("div-df", "children"),
     [Input("csvDropdown", "value")],
 )
-@functools.lru_cache()
+@functools.lru_cache(maxsize=4)
 def set_df(csv_filename):
     """Set the pandas dataframe from CSV.
 
@@ -457,10 +428,6 @@ def set_df(csv_filename):
     str
         JSON-ified pandas dataframe
     """
-    if csv_filename is None:
-        # csv_filename is None when the dashboard app spins up.
-        return INITIAL_DF.to_json()
-
     if not os.path.exists(LOCAL_DATA_DIR):
         os.mkdir(LOCAL_DATA_DIR)
     csv_path = os.path.join(LOCAL_DATA_DIR, csv_filename)
@@ -476,39 +443,30 @@ def set_df(csv_filename):
         with open(csv_path, "wb") as f:
             civis.io.civis_to_file(file_id, f)
     df = preprocess_df(pd.read_csv(csv_path))
-
+    logging.info("df instantiated from %s", csv_path)
     return df.to_json()
 
 
-# Callback inputs will all be the same
 @app.callback(
-    [
-        Output('outputLineChart0', 'figure'),
-        Output('outputLineChart1', 'figure'),
-        Output('outputLineChart2', 'figure'),
-        Output('outputLineChart3', 'figure'),
-        Output('outputLineChart4', 'figure'),
-        Output('outputLineChart5', 'figure'),
-    ],
-
+    Output("output-charts", "children"),
     [
         Input('div-df', 'children'),
         Input('emsDropdown', 'value'),
         Input('timeSlider', 'value'),
-        # Unpack the elements of the list using *
-        *[Input(param + 'Slider', 'value') for param in PARAMS]
+        Input({"type": "parameter", "index": ALL}, "value"),
     ],
 )
-def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
+def generateOutput(jsonified_df, emsValue, timeValues, paramValues):
     df = preprocess_df(pd_read_json_cached(jsonified_df))
+    params = get_param_names(df)
 
     # Generate query string for EMS value and range of sliders
     emsString = "({0} == '{1}')".format('emsGroup', emsValue)
     # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
     # Filter RangeSlider for timeValues - inclusive of selected timeframe
-    timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
+    timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d"))
     # Filter RangeSlider for Parameter Values
-    paramString = " & ".join(["(`{0}` >= {1}) & (`{0}` <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(PARAMS, paramValues)])
+    paramString = " & ".join(["(`{0}` >= {1}) & (`{0}` <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params, paramValues)])
     strings = [emsString, timeString, paramString]
     queryString = " & ".join(strings)
 
@@ -528,9 +486,8 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
     # Function list passed to aggregation
     func_list = ['mean', 'sum', getQuantile(.025), getQuantile(.975), getQuantile(.25), getQuantile(.75)]
 
-    #dfg[[output_list[0]]].mean().reset_index()['date']
-    dfg = dff.groupby(groupbyList)[OUTPUTS].agg(func_list).reset_index()
-
+    outputs = sorted(col for col in df.columns if col.startswith("output_"))
+    dfg = dff.groupby(groupbyList)[outputs].agg(func_list).reset_index()
 
     def makeChart (outputVar):
 
@@ -543,7 +500,7 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
                     y=dfg.loc[:, (outputVar, 'quantile_2.50')],
                     mode='lines',
                     opacity=0.3,
-                    line=dict(color=colors['green'], width=0), 
+                    line=dict(color=COLORS['green'], width=0),
                     fill=None,
                 )
             )
@@ -553,7 +510,7 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
                     y=dfg.loc[:, (outputVar, 'quantile_97.50')],
                     mode='lines',
                     opacity=0.3,
-                    line=dict(color=colors['green'], width=0),
+                    line=dict(color=COLORS['green'], width=0),
                     fill='tonexty', # fill area between this and previous trace
                 )
             )
@@ -563,7 +520,7 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
                     y=dfg.loc[:, (outputVar, 'quantile_25.00')],
                     mode='lines',
                     opacity=0.3,
-                    line=dict(color=colors['green'], width=0), 
+                    line=dict(color=COLORS['green'], width=0),
                     fill=None,
                 )
             )
@@ -573,7 +530,7 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
                     y=dfg.loc[:, (outputVar, 'quantile_75.00')],
                     mode='lines',
                     opacity=0.3,
-                    line=dict(color=colors['green'], width=0),
+                    line=dict(color=COLORS['green'], width=0),
                     fill='tonexty',
                     
                 )
@@ -583,13 +540,13 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
             font=dict(
                 family="Open Sans, monospace",
                 size=14,
-                color=colors['green']
+                color=COLORS['green']
             ),
             title=outputVar.replace("output_", "").upper() + " by Date",
             showlegend=False,
             yaxis=dict(
                 tickformat="<,f",
-                gridcolor=colors['beige'],
+                gridcolor=COLORS['beige'],
                 gridwidth=2,
             ),
             xaxis=dict(
@@ -601,17 +558,9 @@ def generateOutput(jsonified_df, emsValue, timeValues, *paramValues):
 
         return figure
 
-    # Return a list of figures to feed callback
-    return [makeChart(output) for output in OUTPUTS]
+    charts = [makeChart(output) for output in outputs]
+    return get_formatted_charts(charts)
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-
-
-# TODOS
-# ----- DONE Update Title & Subtitle
-# ----- DONE Add note for refresh timing
-# ----- DONE Add ability to choose multiple EMS groups (checkbox or multi-select dropdown)
-# ----- DONE Add slider for Week-chooser
