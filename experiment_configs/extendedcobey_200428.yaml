@@ -114,6 +114,7 @@ intervention_parameters:
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
     np.random: uniform
+    # Add 'size' in function_kwargs to have multiple values instead of just one
     function_kwargs: {'low':0.30, 'high':0.30}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':

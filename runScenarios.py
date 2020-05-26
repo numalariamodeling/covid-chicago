@@ -246,7 +246,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
 
     # For a given start date, cross all Ki values with df for full factorial.
-    df = _get_full_factorial_df(df, "ki", Kivalues)
+    df = _get_full_factorial_df(df, "Ki", Kivalues)
 
     # Time-varying parameters for each start date.
     dfs = []
