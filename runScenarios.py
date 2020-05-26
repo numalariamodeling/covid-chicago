@@ -51,7 +51,8 @@ def _parse_config_parameter(df, parameter, parameter_function, column_name, star
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
             start_dates_from_yaml = function_kwargs['dates']
-            if not hasattr(start_dates_from_yaml, "__iter__"):
+            if not isinstance(start_dates_from_yaml, list):
+                # `start_dates_from_yaml` is a single datetime object.
                 start_dates_from_yaml = [start_dates_from_yaml]
             dfs = []
             for start_date_from_yaml in start_dates_from_yaml:
