@@ -49,13 +49,15 @@ trajectoriesDat <- subset(trajectoriesDat, time >= 100 & time <= 300)
 ## load predictions
 getdata <- function(ems) {
   # emsvars <- colnames(trajectoriesDat)[grep("[.]",colnames(trajectoriesDat))]
-  emsvars <- c("susceptible_EMS."        ,"exposed_EMS."             , "asymptomatic_EMS."         ,"symptomatic_mild_EMS." ,"symptomatic_severe_EMS."  , 
-    "hospitalized_EMS."       ,"critical_EMS."            , "deaths_EMS."               ,"recovered_EMS."        ,"asymp_cumul_EMS."      ,    
-    "asymp_det_cumul_EMS."    ,"symp_mild_cumul_EMS."     , "symp_severe_cumul_EMS."    ,"hosp_cumul_EMS."       ,"hosp_det_cumul_EMS."   ,    
-    "crit_cumul_EMS."         ,"crit_det_cumul_EMS."      , "crit_det_EMS."             ,"death_det_cumul_EMS."  ,"infected_EMS."        ,     
-    "infected_cumul_EMS."     ,"symp_mild_det_cumul_EMS." , "symp_severe_det_cumul_EMS.","detected_EMS."         ,"detected_cumul_EMS."   ,    
-    "presymptomatic_EMS." )      
-  
+  emsvars <- c(
+    "susceptible_EMS.", "exposed_EMS.", "asymptomatic_EMS.", "symptomatic_mild_EMS.", "symptomatic_severe_EMS.",
+    "hospitalized_EMS.", "critical_EMS.", "deaths_EMS.", "recovered_EMS.", "asymp_cumul_EMS.",
+    "asymp_det_cumul_EMS.", "symp_mild_cumul_EMS.", "symp_severe_cumul_EMS.", "hosp_cumul_EMS.", "hosp_det_cumul_EMS.",
+    "crit_cumul_EMS.", "crit_det_cumul_EMS.", "crit_det_EMS.", "death_det_cumul_EMS.", "infected_EMS.",
+    "infected_cumul_EMS.", "symp_mild_det_cumul_EMS.", "symp_severe_det_cumul_EMS.", "detected_EMS.", "detected_cumul_EMS.",
+    "presymptomatic_EMS."
+  )
+
   emsvars <- paste0(emsvars, ems)
 
   groupvars <- c("time", "startdate", "scen_num", "sample_num", "run_num", "time_to_detection", "d_As_ct1", "reduced_inf_of_det_cases")
@@ -73,8 +75,8 @@ getdata <- function(ems) {
     ) %>%
     separate(name, into = c("outcome", "region"), sep = "_EMS[.]")
   head(subdat)
-  
-  
+
+
   unique(subdat$time_to_detection)
   unique(subdat$reduced_inf_of_det_cases)
   unique(subdat$d_As_ct1)
@@ -136,7 +138,7 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
   ### Load capacityDat
   ems <- unique(df$region)
   capacity <- load_capacity(ems)
-  capacity$deaths = 0
+  capacity$deaths <- 0
 
   if (!selected_outcome %in% names(capacity)) threshold <- round(summary(matdat$z)["1st Qu."], 0)
   if (selected_outcome %in% names(capacity)) threshold <- round(as.numeric(capacity[selected_outcome]), 0)
@@ -159,34 +161,38 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
     geom_tile(aes(fill = z)) +
     # geom_text(aes(label = exposed), size = 5) +
     geom_line(aes(x = x, y = ythreshold)) +
-    #scale_fill_gradient(low = "white", high = "red") +
-    scale_fill_viridis(option="C" , discrete=FALSE, direction=-1)+
+    # scale_fill_gradient(low = "white", high = "red") +
+    scale_fill_viridis(option = "C", discrete = FALSE, direction = -1) +
     labs(
       title = selected_outcome,
-      x="detections (P, As, Sym) (%)",
+      x = "detections (P, As, Sym) (%)",
       y = "isolation success (%)",
       fill = flabel,
       col = "", shape = "",
       linetype = "",
-      caption = paste0("Threshold: ", threshold))+
+      caption = paste0("Threshold: ", threshold)
+    ) +
     customTheme_noAngle +
     scale_x_continuous(breaks = seq(0, 1, 0.2), labels = seq(0, 1, 0.2) * 100, expand = c(0, 0)) +
     scale_y_continuous(breaks = seq(0, 1, 0.2), labels = seq(0, 1, 0.2) * 100, expand = c(0, 0))
 
   return(matdatp)
-  
 }
 
 
 for (ems in c(1:11)) {
-  #ems <- 2
-  ems_dir <- file.path(gitdir, "Rfiles/_temp",paste0("EMS_",ems))
-  if(!dir.exists(ems_dir))dir.create(ems_dir)
+  # ems <- 2
+  ems_dir <- file.path(gitdir, "Rfiles/_temp", paste0("EMS_", ems))
+  if (!dir.exists(ems_dir)) dir.create(ems_dir)
 
   capacity <- load_capacity(ems)
+  capacity$deaths <- 0
+  capacityline <- as.numeric(capacity[colnames(capacity) == selected_outcome])
+
+
   tempdat <- getdata(ems)
-  write.csv(tempdat, file.path(ems_dir,paste0( "EMS_",ems,"_dat.csv")))
-  
+  write.csv(tempdat, file.path(ems_dir, paste0("EMS_", ems, "_dat.csv")))
+
   ### what time point to select?   - calculate mean over timeperiod ?
   ### Aggregate time for heatmap
   dfAggr <- tempdat %>%
@@ -194,52 +200,85 @@ for (ems in c(1:11)) {
     dplyr::group_by(region, d_As_ct1, isolation_success, time_to_detection, outcome) %>%
     dplyr::summarize_all(.funs = "mean", na.rm = T)
 
-  
-  for(selected_outcome in c("critical","hospitalized","deaths","ventilators")){
-    
+
+  for (selected_outcome in c("critical", "hospitalized", "deaths", "ventilators")) {
     if (selected_outcome == "ventilators") {
       plotdat <- tempdat %>%
         filter(outcome == "crit_det") %>%
         mutate(value.mean = value.mean * 0.660) %>%
         as.data.frame()
+
+      threshold_param <- dfAggr %>%
+        filter(outcome == "crit_det") %>%
+        mutate(value.mean = value.mean * 0.660) %>%
+        mutate(capacity = capacityline) %>%
+        filter(
+          value.mean <= capacity &
+            d_As_ct1 == min(d_As_ct1) &
+            isolation_success == min(isolation_success)
+        ) %>%
+        dplyr::select(region, d_As_ct1, isolation_success, time_to_detection, outcome, value.mean, capacity)
     } else {
       plotdat <- tempdat %>%
         filter(outcome == selected_outcome) %>%
         as.data.frame()
-    }
-    
-    capacity$deaths = 0
-    capacityline = as.numeric(capacity[colnames(capacity)==selected_outcome])
-    
-  l_plot <- ggplot(data=plotdat)+ theme_cowplot()+
-    #geom_vline(xintercept=as.Date("2020-08-02"), linetype="dashed")+
-    geom_line(aes(x=Date , y=value.mean, group=interaction(isolation_success, d_As_ct1)),size=1.3,col="deepskyblue4")+
-    facet_wrap(~time_to_detection)+
-      labs(title = paste0("EMS ", unique(plotdat$region)),
-           caption="each lines represents an unique combinations of isolation success and detection rate", 
-           subtitle="test delay (days)" ,y=selected_outcome)
-  
-  #selected_outcome = "critical"
-  p_plot <- ggplot(data = subset(plotdat, Date>=as.Date("2020-08-01") & Date<as.Date("2020-08-03"))) + theme_cowplot() +
-    geom_point(aes(x = d_As_ct1, y = value.mean,  col=isolation_success,shape=as.factor(time_to_detection)), size = 2.3) +
-    labs(title = paste0("EMS ", unique(tempdat$region)),
-         subtitle="2 months after reopening",
-         shape="test delay (days)",
-         x="detection rate (P, As, Sym)",
-         y=selected_outcome)+
-    scale_color_viridis(option="D" , discrete=FALSE, direction=-1)+
-    geom_hline(yintercept=capacityline, linetype="dashed")
-  
-  
-  h_plot <- f_heatmap(dfAggr, selected_outcome, valuetype = "absolute")
-  
-  ggsave(paste0( "EMS_",ems,"_",selected_outcome,"_line.png"), plot = l_plot, path = file.path(ems_dir), width = 8, height =6, dpi = 300, device = "png")
-  ggsave(paste0( "EMS_",ems,"_",selected_outcome,"_scatter.png"), plot = p_plot, path = file.path(ems_dir), width = 8, height =6, dpi = 300, device = "png")
-  ggsave(paste0("EMS_",ems,"_",selected_outcome,"_heatmap.png"), plot = h_plot, path = file.path(ems_dir), width = 8, height = 6, dpi = 300, device = "png")
-  
-  }
 
+      threshold_param <- dfAggr %>%
+        mutate(capacity = capacityline) %>%
+        filter(outcome == selected_outcome) %>%
+        filter(
+          value.mean <= capacity &
+            d_As_ct1 == min(d_As_ct1) &
+            isolation_success == min(isolation_success)
+        ) %>%
+        dplyr::select(region, d_As_ct1, isolation_success, time_to_detection, outcome, value.mean, capacity)
+    }
+
+    write.csv(threshold_param, file.path(ems_dir, paste0("EMS_", ems,"_",selected_outcome, "_thresholds.csv")))
+
+
+
+    l_plot <- ggplot(data = plotdat) + theme_cowplot() +
+      # geom_vline(xintercept=as.Date("2020-08-02"), linetype="dashed")+
+      geom_line(aes(x = Date, y = value.mean, group = interaction(isolation_success, d_As_ct1)), size = 1.3, col = "deepskyblue4") +
+      facet_wrap(~time_to_detection) +
+      labs(
+        title = paste0("EMS ", unique(plotdat$region)),
+        caption = "each lines represents an unique combinations of isolation success and detection rate",
+        subtitle = "test delay (days)", y = selected_outcome
+      )
+
+    ggsave(paste0("EMS_", ems, "_", selected_outcome, "_line.png"),
+      plot = l_plot, path = file.path(ems_dir), width = 8, height = 6, dpi = 300, device = "png"
+    )
+
+    # selected_outcome = "critical"
+    p_plot <- ggplot(data = subset(plotdat, Date >= as.Date("2020-08-01") & Date < as.Date("2020-08-03"))) + theme_cowplot() +
+      geom_point(aes(x = d_As_ct1, y = value.mean, col = isolation_success, shape = as.factor(time_to_detection)), size = 2.3) +
+      labs(
+        title = paste0("EMS ", unique(tempdat$region)),
+        subtitle = "2 months after reopening",
+        shape = "test delay (days)",
+        x = "detection rate (P, As, Sym)",
+        y = selected_outcome
+      ) +
+      scale_color_viridis(option = "D", discrete = FALSE, direction = -1) +
+      geom_hline(yintercept = capacityline, linetype = "dashed")
+
+    ggsave(paste0("EMS_", ems, "_", selected_outcome, "_scatter.png"),
+      plot = p_plot, path = file.path(ems_dir), width = 8, height = 6, dpi = 300, device = "png"
+    )
+
+
+    for (testDelay in unique(dfAggr$time_to_detection)) {
+      h_plot <- f_heatmap(subset(dfAggr, time_to_detection == testDelay), selected_outcome, valuetype = "absolute")
+      ggsave(paste0("EMS_", ems, "_", selected_outcome, "_tD", testDelay, "_heatmap.png"),
+        plot = h_plot, path = file.path(ems_dir), width = 8, height = 6, dpi = 300, device = "png"
+      )
+      rm(h_plot)
+    }
+  }
 }
 
 
-
+#### Extract minium value per ems and per outcome and plot + csv summary table
