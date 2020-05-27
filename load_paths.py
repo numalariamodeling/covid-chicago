@@ -26,6 +26,14 @@ def load_box_paths(user_path=None, Location ='Local'):
         wdir= os.path.join(user_path,'Box Sync','covid_chicago','cms_sim')
         exe_dir = os.path.join(user_path, 'Box Sync','compartments')
         git_dir = os.path.join(user_path, 'Documents','GitHub','covid-chicago')
+        
+    if 'tmh6260' in user_path:
+        data_path = os.path.join(user_path, 'Box Sync')
+        home_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'projects') # had an error so I added this
+        project_path = os.path.join(user_path, 'Box Sync', 'covid_chicago')  #
+        wdir = os.path.join(user_path, 'Box Sync', 'covid_chicago', 'cms_sim')
+        exe_dir = os.path.join(user_path, 'Box Sync', 'compartments')
+        git_dir = os.path.join(user_path, 'Documents', 'GitHub', 'covid-chicago')
 
     if Location == 'NUCLUSTER':
         user_path = '/projects/p30781/'
