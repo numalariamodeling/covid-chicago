@@ -1,0 +1,288 @@
+experiment_setup_parameters:
+  age_bins:
+    - EMS_1
+    - EMS_2
+    - EMS_3
+    - EMS_4
+    - EMS_5
+    - EMS_6
+    - EMS_7
+    - EMS_8
+    - EMS_9
+    - EMS_10
+    - EMS_11
+fixed_parameters_region_specific:
+  N:
+    expand_by_age: True
+    'IL': [736370,1124941,619366,698886,417674,788985,1814891,1673408,1970275,1052839,2716921]
+fixed_parameters_global:
+  initialAs:
+    expand_by_age: True
+    list: [10, 10, 10, 10,10, 9, 10, 10,10,10,10]
+  speciesS:
+    expand_by_age: True
+    custom_function: subtract
+    function_kwargs: {'x1': N, 'x2': initialAs}
+sampled_parameters:
+  social_multiplier_1:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+  social_multiplier_2:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5} 
+  social_multiplier_3:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.220, 'high': 0.220}
+        - {'low': 0.152, 'high': 0.152}
+        - {'low': 0.210, 'high': 0.210}
+        - {'low': 0.163, 'high': 0.163}
+        - {'low': 0.195, 'high': 0.195}
+        - {'low': 0.210, 'high': 0.210}
+        - {'low': 0.122, 'high': 0.122}
+        - {'low': 0.100, 'high': 0.100}
+        - {'low': 0.120, 'high': 0.120}
+        - {'low': 0.118, 'high': 0.118}
+        - {'low': 0.100, 'high': 0.100}  
+  Ki:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.589, 'high': 0.589}
+        - {'low': 0.654, 'high': 0.654}
+        - {'low': 0.373, 'high': 0.373}
+        - {'low': 0.571, 'high': 0.571}
+        - {'low': 0.501, 'high': 0.501}
+        - {'low': 0.373, 'high': 0.373}
+        - {'low': 0.714, 'high': 0.714}
+        - {'low': 0.897, 'high': 0.897}
+        - {'low': 0.857, 'high': 0.857}
+        - {'low': 0.754, 'high': 0.754}
+        - {'low': 1.01, 'high': 1.01} 
+  toEMS_1_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000000593, 'high': 0.000000593}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000000981, 'high': 0.000000981}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000} 
+
+  toEMS_2_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.00000367, 'high': 0.00000367}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000} 
+
+  toEMS_3_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.00000131, 'high': 0.00000131}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000} 
+
+  toEMS_4_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000123, 'high': 0.0000123}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000388, 'high': 0.000388}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000} 
+
+  toEMS_5_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000234, 'high': 0.000234}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000} 
+
+  toEMS_6_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000} 
+  toEMS_7_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000923, 'high': 0.0000923}
+        - {'low': 0.0000127, 'high': 0.0000127}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000588, 'high': 0.000588} 
+  toEMS_8_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000756, 'high': 0.0000756}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000425, 'high': 0.000425}
+        - {'low': 0.0000115, 'high': 0.0000115}
+        - {'low': 0.00139, 'high': 0.00139} 
+  toEMS_9_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.00000706, 'high': 0.00000706}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000102, 'high': 0.0000102}
+        - {'low': 0.000487, 'high': 0.000487}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000320, 'high': 0.000320}
+        - {'low': 0.0000961, 'high': 0.0000961} 
+  toEMS_10_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.00000637, 'high': 0.00000637}
+        - {'low': 0.000161, 'high': 0.000161}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000433, 'high': 0.000433} 
+  toEMS_11_from:  
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.0000, 'high': 0.0000}
+        - {'low': 0.000861, 'high': 0.000861}
+        - {'low': 0.00222, 'high': 0.00222}
+        - {'low': 0.000143, 'high': 0.000143}
+        - {'low': 0.00118, 'high': 0.00118}
+        - {'low': 0.0000, 'high': 0.0000} 
+  time_infection_import:  # Relative to generic startdate set for IL 
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 13.0, 'high': 13.0}
+        - {'low': 11.0, 'high': 11.0}
+        - {'low': 7.0, 'high':  7.0}
+        - {'low': 8.0, 'high':  8.0}
+        - {'low': 15.0, 'high': 15.0}
+        - {'low': 1.0, 'high':  1.0}
+        - {'low': 3.0, 'high':  3.0}
+        - {'low': 10.0, 'high':  10.0}
+        - {'low': 10.0, 'high': 10.0}
+        - {'low': 7.0, 'high':  7.0}
+        - {'low': 10.0, 'high':  10.0}    
+fitted_parameters:

@@ -99,7 +99,7 @@ if __name__ == '__main__' :
             df = load_sim_data(exp_name, input_sim_output_path = sim_output_path)
 
             df['ventilators'] = get_vents(df['crit_det'].values)
-            first_day = datetime.strptime(df['first_day'].unique()[0], '%Y-%m-%d')
+            first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
             df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
             df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]

@@ -53,7 +53,16 @@ else:
 
 
 # Setup 
-#******************************************************************************************
+#############################################################################
+
+# Preset EMS Groups
+# EMS Groupings
+emsMapping = {"North-Central": (1,2), "Central": (3,6), "Southern": (4,5), "Northeast": (7, 8, 9, 10, 11)}
+# Map EMS to Groupings 
+ems_to_region_mapping = {x: name for name, v in emsMapping.items() for x in v}
+# Create a column for later filtering
+df['emsGroup'] = df['ems'].map(ems_to_region_mapping)
+
 
 # Filter out timeframes for graphs
 # Generate datetime to get weeks for slider
@@ -64,6 +73,13 @@ df['week'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
 df['month'] = df['date'].values.astype('datetime64[M]')
 
 dateList = sorted(df['month'].unique())
+
+# Color Options 
+colors = {
+    'sf': '#1798c1',
+    'green': '#416165', # Color for plots & text
+    'beige': '#F7F7FF', #Color for gridlinesgit 
+}
 
 
 # RangeSlider values need to be ints - convert to unix timestamp
@@ -78,9 +94,6 @@ def dtToUnix (dt):
 def unixToDt (unixTime):
     ''' Convert Unix milliseconds to datetime '''  
     return pd.to_datetime(unixTime, unit='s')
-
-
-
 
 # Parameter Filtering -> RangeSlider Factory
 def generateRangeSlider (param, numMarks):
@@ -156,7 +169,7 @@ app.layout = html.Div(
                                             className="control_label",
                                         ),
                                         dcc.Dropdown(
-                                            options=[{"label": str(i), "value": i} for i in sorted(df['ems'].unique())],
+                                            options=[{'label': name, 'value': name} for name in emsMapping],
                                             multi=False,
                                             placeholder="Choose EMS Region",
                                             id="emsDropdown",
@@ -260,7 +273,7 @@ app.layout = html.Div(
                         # 3 x 2 Arrangement
                         html.Div(
                             [
-                                # Top 3 Chart Container
+                                # Top 2 Charts
                                 html.Div(
                                     [
                                         # Chart 0
@@ -268,7 +281,6 @@ app.layout = html.Div(
                                             [
                                                 dcc.Graph(id="outputLineChart0")
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                         # Chart 1
@@ -276,42 +288,42 @@ app.layout = html.Div(
                                             [
                                                 dcc.Graph(id="outputLineChart1")
                                             ],
-                                            #className="one-third columns",
-                                            className="graphDiv",
-                                        ),
-                                        # Chart 2...
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="outputLineChart2")
-                                            ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                     ],
                                     className="flex-display chartContainerDiv "
                                 ),
-                                # Remaining two charts
+                                # Middle two charts
                                 html.Div(
                                     [
                                         html.Div(
                                             [
-                                                dcc.Graph(id="outputLineChart3")
+                                                dcc.Graph(id="outputLineChart2")
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
+                                        html.Div(
+                                            [
+                                                dcc.Graph(id="outputLineChart3")
+                                            ],
+                                            className="graphDiv",
+                                        ),                                    
+                                    ],
+                                    className="flex-display chartContainerDiv "
+                                ),
+                                # Bottom two charts
+                                html.Div(
+                                    [
                                         html.Div(
                                             [
                                                 dcc.Graph(id="outputLineChart4")
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                         html.Div(
                                             [
-                                                # Placeholder for 6th 
+                                                # Placeholder for 6th chart
                                             ],
-                                            #className="one-third columns",
                                             className="graphDiv",
                                         ),
                                     ],
@@ -342,7 +354,9 @@ app.layout = html.Div(
 )
 
 
-# Selector for First Output Chart
+# Callback 
+#############################################################################
+
 # Callback inputs will all be the same
 @app.callback(
     [
@@ -362,43 +376,85 @@ app.layout = html.Div(
 )
 def generateOutput(emsValue, timeValues, *paramValues):
 
-    # Setup Color Options
-    colors = {
-        'sf': '#1798c1',
-        'green': '#416165', # Color for plots & text
-        'beige': '#F7F7FF', #Color for gridlinesgit 
-    }
+
+
+    # Generate query string for EMS value and range of sliders
+    emsString = "({0} == '{1}')".format('emsGroup', emsValue)
+    # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
+    # Filter RangeSlider for timeValues - inclusive of selected timeframe
+    timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
+    # Filter RangeSlider for Parameter Values
+    paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)]) 
+    strings = [emsString, timeString, paramString]
+    queryString = " & ".join(strings)
+    
+    # Filter data frame given the slider inputs
+    dff = df.query(queryString)
+
+    # List of columns to group by
+    groupbyList = ['date']
+    
+    def getQuantile(n):
+        ''' Function to generate quantiles for groupby, returns quantile '''
+        def _getQuantile(x):
+            return x.quantile(n)
+        _getQuantile.__name__ = 'quantile_{:2.2f}'.format(n*100)
+        return _getQuantile
+
+    # Function list passed to aggregation
+    func_list = ['mean', 'sum', getQuantile(.025), getQuantile(.975), getQuantile(.25), getQuantile(.75)]
+
+    #dfg[[output_list[0]]].mean().reset_index()['date']
+    dfg = dff.groupby(groupbyList)[output_list].agg(func_list).reset_index()
+
 
     def makeChart (outputVar):
-        # Generate query string for EMS value and range of sliders
-        emsString = "({0} == {1})".format('ems', emsValue)
-        # Rangeslider passes values for the bottom and top of the range as a list [bottom, top]
-        # Filter RangeSlider for timeValues - inclusive of selected timeframe
-        timeString = "({0} >= '{1}') & ({0} <= '{2}')".format('week', unixToDt(timeValues[0]).strftime("%Y-%m-%d"), unixToDt(timeValues[1]).strftime("%Y-%m-%d")) 
-        # Filter RangeSlider for Parameter Values
-        paramString = " & ".join(["({0} >= {1}) & ({0} <= {2})".format(param, pvalue[0], pvalue[1]) for param, pvalue in zip(params_list, paramValues)]) 
-        strings = [emsString, timeString, paramString]
-        queryString = " & ".join(strings)
-        
-        # Filter data frame given the slider inputs
-        dff = df.query(queryString)
-
-        # Generate list of columns to group by:
-        groupbyList =  ['ems', 'run_num'] + params_list
 
         # Generate Figure for plotting
         figure = go.Figure()
 
-        # This plot will create # of runs * parameter combo traces
-        for name, group in dff.groupby(groupbyList):
-            figure.add_trace(go.Scatter(
-                        x=group['date'],
-                        y=group[outputVar], # Variable for each output chart
-                        mode='lines',
-                        opacity=0.3,
-                        line=dict(color=colors['green'], width=1)
-                    )
+        # Add traces - shades between IQR and 2.5-97.5
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_2.50')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0), 
+                    fill=None,
                 )
+            )
+
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_97.50')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0),
+                    fill='tonexty', # fill area between this and previous trace
+                )
+            )
+
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_25.00')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0), 
+                    fill=None,
+                )
+            )
+
+        figure.add_trace(go.Scatter(
+                    x=dfg['date'],
+                    y=dfg.loc[:, (outputVar, 'quantile_75.00')],
+                    mode='lines',
+                    opacity=0.3,
+                    line=dict(color=colors['green'], width=0),
+                    fill='tonexty',
+                    
+                )
+            )
+
         figure.update_layout(
             font=dict(
                 family="Open Sans, monospace",
@@ -433,8 +489,6 @@ if __name__ == '__main__':
 
 # TODOS
 # ----- DONE Update Title & Subtitle
-# Add note for refresh timing
-# Add ability to choose multiple EMS groups (checkbox or multi-select dropdown)
-# Add toggle for all traces or only median / percentiles
-# Add slider for Week-chooser
-# Show Today's date on graph
+# ----- DONE Add note for refresh timing
+# ----- DONE Add ability to choose multiple EMS groups (checkbox or multi-select dropdown)
+# ----- DONE Add slider for Week-chooser
