@@ -85,19 +85,19 @@ def unixToDt (unixTime):
     return pd.to_datetime(unixTime, unit='s')
 
 
-def preprocess_df(df):
-    """Preprocess the dataframe.
+@functools.lru_cache(maxsize=4)
+def get_df(csv_file_path):
+    """Get pandas DataFrame from CSV and apply pre-processing.
 
     Parameters
     ----------
-    df : pd.DataFrame
+    csv_file_path : str
 
     Returns
     -------
     pd.DataFrame or None
     """
-    if df is None:
-        return None
+    df = pd.read_csv(csv_file_path)
     # Filter out timeframes for graphs
     # Generate datetime to get weeks for slider
     df['date'] = pd.to_datetime(df['date'])
@@ -141,23 +141,6 @@ def get_param_slider(param, i, marks):
             )
         ]
     )
-
-
-@functools.lru_cache()
-def pd_read_json_cached(jsonified_df):
-    """pd.read_json with caching.
-
-    Parameters
-    ----------
-    jsonified_df : str
-
-    Returns
-    -------
-    pd.DataFrame or None
-    """
-    if jsonified_df is None:
-        return None
-    return pd.read_json(jsonified_df)
 
 
 def get_formatted_charts(charts, columns=N_CHART_COLUMNS):
@@ -238,7 +221,7 @@ def get_param_sliders(df):
 #############################################################################
 app.layout = html.Div(
     children = [
-        html.Div(id="div-df", style={"display": "none"}),
+        html.Div(id="div-csv-file-name", style={"display": "none"}),
         # Header
         html.Div(
             children =[
@@ -402,22 +385,22 @@ app.layout = html.Div(
         Output("week-slider", "children"),
         Output("param-sliders", "children"),
     ],
-    [Input("div-df", "children")],
+    [Input("div-csv-file-name", "children")],
 )
-def set_sliders(jsonified_df):
-    df = preprocess_df(pd_read_json_cached(jsonified_df))
+def set_sliders(csv_file_path):
+    df = get_df(csv_file_path)
     week_slider = get_week_slider(df)
     param_sliders = get_param_sliders(df)
     return week_slider, param_sliders
 
 
 @app.callback(
-    Output("div-df", "children"),
+    Output("div-csv-file-name", "children"),
     [Input("csvDropdown", "value")],
 )
 @functools.lru_cache(maxsize=4)
-def set_df(csv_filename):
-    """Set the pandas dataframe from CSV.
+def set_csv_file_name_and_download(csv_filename):
+    """Set CSV file path in the app and download the CSV.
 
     Parameters
     ----------
@@ -426,14 +409,14 @@ def set_df(csv_filename):
     Returns
     -------
     str
-        JSON-ified pandas dataframe
+        CSV file path
     """
     if not os.path.exists(LOCAL_DATA_DIR):
         os.mkdir(LOCAL_DATA_DIR)
     csv_path = os.path.join(LOCAL_DATA_DIR, csv_filename)
 
     if os.path.exists(csv_path):
-        # If the CSV already exists on disk (during dev), just use it.
+        # If the CSV already exists on disk, just use it.
         pass
     else:
         # The CSV has to come from Civis Platform.
@@ -441,22 +424,21 @@ def set_df(csv_filename):
         if file_id is None:
             raise ValueError(f"CSV file not retrievable without a Civis file ID")
         civis.io.civis_to_file(file_id, csv_path)
-    df = preprocess_df(pd.read_csv(csv_path))
-    logging.info("df instantiated from %s", csv_path)
-    return df.to_json()
+        logging.info("CSV downloaded to %s", csv_path)
+    return csv_path
 
 
 @app.callback(
     Output("output-charts", "children"),
     [
-        Input('div-df', 'children'),
+        Input('div-csv-file-name', 'children'),
         Input('emsDropdown', 'value'),
         Input('timeSlider', 'value'),
         Input({"type": "parameter", "index": ALL}, "value"),
     ],
 )
-def generateOutput(jsonified_df, emsValue, timeValues, paramValues):
-    df = preprocess_df(pd_read_json_cached(jsonified_df))
+def generateOutput(csv_file_path, emsValue, timeValues, paramValues):
+    df = get_df(csv_file_path)
     params = get_param_names(df)
 
     # Generate query string for EMS value and range of sliders
