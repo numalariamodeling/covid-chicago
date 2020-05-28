@@ -95,7 +95,7 @@ def get_df(csv_file_path):
 
     Returns
     -------
-    pd.DataFrame or None
+    pd.DataFrame
     """
     df = pd.read_csv(csv_file_path)
     # Filter out timeframes for graphs
