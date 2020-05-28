@@ -43,6 +43,11 @@ def _parse_config_parameter(df, parameter, parameter_function, column_name):
         params = getattr(np.random, parameter_function['np.random'])(**{"size": 1, **function_kwargs})
         result = _get_full_factorial_df(df, column_name, params)
         return result
+    elif 'np' in parameter_function:
+        function_kwargs = parameter_function['function_kwargs']
+        params = getattr(np, parameter_function['np'])(**{"num": 1, **function_kwargs})
+        result = _get_full_factorial_df(df, column_name, params)
+        return result
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
