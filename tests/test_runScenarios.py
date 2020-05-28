@@ -98,7 +98,7 @@ def test_add_sampled_parameters_regions(region, expected):
     df_in = pd.DataFrame({'sample_num': [1, 2, 3]})
     df_exp = df_in.assign(myparam=len(df_in) * [expected])
 
-    df_out = rs.add_sampled_parameters(df_in, yaml_load(config), region, None)
+    df_out = rs.add_parameters(df_in, "sampled_parameters", yaml_load(config), region, None)
 
     pd.testing.assert_frame_equal(df_out, df_exp)
 
@@ -116,7 +116,7 @@ def test_add_sampled_parameters_expand_age():
     df_in = pd.DataFrame({'sample_num': [1, 2]})
     df_exp = df_in.assign(myparam_42=[1, 1], myparam_113=[2, 2])
 
-    df_out = rs.add_sampled_parameters(df_in, yaml_load(config), None, ['42', '113'])
+    df_out = rs.add_parameters(df_in, "sampled_parameters", yaml_load(config), None, ['42', '113'])
 
     pd.testing.assert_frame_equal(df_out, df_exp)
 
@@ -133,7 +133,7 @@ def test_add_sampled_parameters_expand_age_same_value():
     df_in = pd.DataFrame({'sample_num': [1, 2]})
     df_exp = df_in.assign(myparam_42=[1, 1], myparam_113=[1, 1])
 
-    df_out = rs.add_sampled_parameters(df_in, yaml_load(config), None, ['42', '113'])
+    df_out = rs.add_parameters(df_in, "sampled_parameters", yaml_load(config), None, ['42', '113'])
 
     pd.testing.assert_frame_equal(df_out, df_exp)
 
@@ -154,8 +154,8 @@ def test_add_sampled_parameters_expand_age_with_defaults():
     df_in = pd.DataFrame({'sample_num': [1, 2]})
     df_exp = df_in.assign(myparam_0=[2, 2], myparam_42=[1, 1], myparam_113=[1, 1])
 
-    df_out = rs.add_sampled_parameters(
-        df_in, yaml_load(config), None, ['0', '42', '113'])
+    df_out = rs.add_parameters(
+        df_in, "sampled_parameters", yaml_load(config), None, ['0', '42', '113'])
 
     pd.testing.assert_frame_equal(df_out, df_exp)
 
@@ -174,5 +174,4 @@ def test_add_sampled_parameters_expand_age_error():
     """
     df_in = pd.DataFrame({'sample_num': [1, 2]})
     with pytest.raises(ValueError, match="function_kwargs for myparam have 2 entries"):
-        rs.add_sampled_parameters(df_in, yaml_load(config), None, ['0', '42', '113'])
-
+        rs.add_parameters(df_in, "sampled_parameters", yaml_load(config), None, ['0', '42', '113'])
