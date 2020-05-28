@@ -1,6 +1,6 @@
 experiment_setup_parameters:
-  'number_of_samples': 50
-  'number_of_runs': 1
+  'number_of_samples': 3
+  'number_of_runs': 3
   'duration': 370
   'monitoring_samples': 370 # needs to be smaller than duration
   'random_seed': 18
@@ -47,9 +47,6 @@ sampled_parameters:
   'time_to_symptoms':
     np.random: uniform
     function_kwargs: {'low': 2.4, 'high': 3.5}
-  'time_to_detection':
-    np.random: uniform
-    function_kwargs: {'low':2.9, 'high':2.9}
   'time_to_hospitalization':
     np.random: uniform
     function_kwargs: {'low':3, 'high':6}
@@ -83,9 +80,6 @@ sampled_parameters:
   'cfr': 
     np.random: uniform
     function_kwargs: {'low':0.01, 'high':0.04}
-  'reduced_inf_of_det_cases':
-    np.random: uniform
-    function_kwargs: {'low':0, 'high':0.3}
   'd_Sym':
     np.random: uniform
     function_kwargs: {'low':0.01, 'high':0.05}
@@ -101,6 +95,12 @@ sampled_parameters:
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reduce Ki due to stay-at-home policy
+  'time_to_detection':
+    np: linspace
+    function_kwargs: {'start':0.01, 'stop':3, 'num':4}
+  'reduced_inf_of_det_cases':
+    np: linspace
+    function_kwargs: {'start':0, 'stop':1, 'num':6}
   'social_multiplier_1':
     np.random: uniform
     function_kwargs: {'low':0.7, 'high':0.9}
@@ -152,8 +152,8 @@ intervention_parameters:
   ## d_SQ proportion of susceptibles that get temporarily quarantined (disabled)
   ## d_SQ if used, it should be proportional to cases rather than fixed fraction
   'd_As_ct1':
-    np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.30}
+    np: linspace
+    function_kwargs: {'start':0, 'stop':1, 'num':6}
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.30}
