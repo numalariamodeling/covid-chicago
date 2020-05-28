@@ -440,8 +440,7 @@ def set_df(csv_filename):
         file_id = civis.find_one(CSV_FILES, file_name=csv_filename).id
         if file_id is None:
             raise ValueError(f"CSV file not retrievable without a Civis file ID")
-        with open(csv_path, "wb") as f:
-            civis.io.civis_to_file(file_id, f)
+        civis.io.civis_to_file(file_id, csv_path)
     df = preprocess_df(pd.read_csv(csv_path))
     logging.info("df instantiated from %s", csv_path)
     return df.to_json()
