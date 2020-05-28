@@ -23,11 +23,10 @@ datapath, projectpath, WDIR, EXE_DIR, GIT_DIR = load_box_paths()
 log = logging.getLogger(__name__)
 
 
-## To do - make work for multiple dates and timesteps
-def DateToTimestep(dates, startdate) :
-    datediff = dates - startdate
-    timesteps = datediff.days
-    return timesteps
+def DateToTimestep(date, startdate) :
+    datediff = date - startdate
+    timestep = datediff.days
+    return timestep
 
 
 def TimestepToDate(timesteps, startdate) :

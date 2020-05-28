@@ -114,6 +114,7 @@ intervention_parameters:
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
     np.random: uniform
+    # Add 'size' in function_kwargs to have multiple values instead of just one
     function_kwargs: {'low':0.30, 'high':0.30}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
@@ -165,62 +166,64 @@ time_parameters:
   ### Reduce Ki due to stay-at-home policy 
   'socialDistance_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-12, 'startdate_col': 'startdate'}
+    # To use multiple dates instead of just one date, use an array of dates,
+    # e.g., function_kwargs: {'dates': [2020-03-12, 2020-03-13]}
+    function_kwargs: {'dates': 2020-03-12}
   'socialDistance_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-17, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-03-17}
   'socialDistance_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-03-21}
   'socialDistance_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-21, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-04-21}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-06-01}
   ### Gradual reopening (time-wise)
   'gradual_reopening_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-06-01}
   'gradual_reopening_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-15, 'startdate_col': 'startdate'}        
+    function_kwargs: {'dates': 2020-06-15}        
   'gradual_reopening_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01, 'startdate_col': 'startdate'}    
+    function_kwargs: {'dates': 2020-07-01}    
   'gradual_reopening_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-15, 'startdate_col': 'startdate'}  
+    function_kwargs: {'dates': 2020-07-15}  
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3
   'detection_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-14, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-03-14}
   'detection_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-03-21}
   'detection_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-28, 'startdate_col': 'startdate'} 
+    function_kwargs: {'dates': 2020-03-28} 
   'detection_time_4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-04, 'startdate_col': 'startdate'} 
+    function_kwargs: {'dates': 2020-04-04} 
   'detection_time_5':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-18, 'startdate_col': 'startdate'} 
+    function_kwargs: {'dates': 2020-04-18} 
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)
   'contact_tracing_start_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2020-06-01}
   ## stop after simulation end to simulate indefinite contact tracing
   'contact_tracing_stop1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2022-05-30, 'startdate_col': 'startdate'}
+    function_kwargs: {'dates': 2022-05-30}
 fitted_parameters:
   Kis:
     'NMH_catchment':
