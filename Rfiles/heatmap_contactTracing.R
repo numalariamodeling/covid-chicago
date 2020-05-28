@@ -6,12 +6,12 @@ require(tidyverse)
 require(cowplot)
 require(scales)
 require(lattice)
-library(readxl)
-
+require(readxl)
+require(viridis)
 
 gitdir <- file.path("C:/Users/mrung/gitrepos/covid-chicago")
 datadir <- file.path("C:/Users/mrung/Box/NU-malaria-team/data")
-projectdir <- file.path("C:/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/d_As_ct1/")
+projectdir <- file.path("C:/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/contact_tracing/")
 
 source(file.path(gitdir, "Rfiles/f_AggrDat.R"))
 source(file.path(gitdir, "Rfiles/setup.R"))
@@ -36,8 +36,8 @@ load_capacity <- function(selected_ems) {
 }
 
 # exp_name ="20200414_NMH_catchment_testInterventionStop_rn50"
-simdate <- "20200526"
-exp_name <- "20200526_IL_EMSgrp_heatmapv1"
+simdate <- "20200528"
+exp_name <- "20200528_IL_EMSgrp_heatmap"
 
 reopeningdate <- as.Date("2020-06-01")
 evaluation_window <- c(reopeningdate, reopeningdate + 60)
@@ -180,14 +180,22 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
 }
 
 
+## Parameter combinations that did run
+sink(file.path(projectdir, simdate, exp_name, "parameter_combinations.txt"))
+  #\ntable(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
+  table(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
+  #\ntable(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
+  table(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
+sink()
+
+
 for (ems in c(1:11)) {
   # ems <- 2
-  ems_dir <- file.path(gitdir, "Rfiles/_temp", paste0("EMS_", ems))
+  ems_dir <- file.path(projectdir, simdate, exp_name, paste0("EMS_", ems))
   if (!dir.exists(ems_dir)) dir.create(ems_dir)
 
   capacity <- load_capacity(ems)
   capacity$deaths <- 0
-  capacityline <- as.numeric(capacity[colnames(capacity) == selected_outcome])
 
 
   tempdat <- getdata(ems)
@@ -202,6 +210,9 @@ for (ems in c(1:11)) {
 
 
   for (selected_outcome in c("critical", "hospitalized", "deaths", "ventilators")) {
+    
+    capacityline <- as.numeric(capacity[colnames(capacity) == selected_outcome])
+    
     if (selected_outcome == "ventilators") {
       plotdat <- tempdat %>%
         filter(outcome == "crit_det") %>%
