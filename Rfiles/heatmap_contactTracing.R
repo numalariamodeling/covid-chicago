@@ -257,7 +257,7 @@ for (ems in c(1:11)) {
       geom_point(aes(x = d_As_ct1, y = value.mean, col = isolation_success, shape = as.factor(time_to_detection)), size = 2.3) +
       labs(
         title = paste0("EMS ", unique(tempdat$region)),
-        subtitle = "2 months after reopening",
+        subtitle = "1 months after reopening",
         shape = "test delay (days)",
         x = "detection rate (P, As, Sym)",
         y = selected_outcome
