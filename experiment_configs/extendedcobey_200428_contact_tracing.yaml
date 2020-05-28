@@ -73,13 +73,13 @@ sampled_parameters:
     function_kwargs: {'low':0.5, 'high':0.7}
   'fraction_severe':
     np.random: uniform
-    function_kwargs: {'low':0.02, 'high':0.1}
+    function_kwargs: {'low':0.06, 'high':0.1}
   'fraction_critical':
     np.random: uniform
     function_kwargs: {'low':0.2, 'high':0.35}
   'cfr': 
     np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.04}
+    function_kwargs: {'low':0.01, 'high':0.03}
   'd_Sym':
     np.random: uniform
     function_kwargs: {'low':0.01, 'high':0.05}
