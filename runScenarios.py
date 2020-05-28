@@ -34,7 +34,7 @@ def _get_full_factorial_df(df, column_name, values):
     return result
 
 
-def _parse_config_parameter(df, parameter, parameter_function, column_name, start_date=None):
+def _parse_config_parameter(df, parameter, parameter_function, column_name):
     if isinstance(parameter_function, (int, float)):
         df[column_name] = parameter_function
         return df
@@ -55,7 +55,7 @@ def _parse_config_parameter(df, parameter, parameter_function, column_name, star
             for start_date_from_yaml in start_dates_from_yaml:
                 df_copy = df.copy()
                 df_copy[column_name] = [
-                    DateToTimestep(start_date_from_yaml, start_date or df_copy["startdate"][i])
+                    DateToTimestep(start_date_from_yaml, df_copy["startdate"][i])
                     for i in range(len(df_copy))
                 ]
                 dfs.append(df_copy)
@@ -111,7 +111,7 @@ def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins
     return df
 
 
-def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, start_date=None):
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
     """ Applies the described function and adds the column to the dataframe
 
     The input DataFrame will be modified in place.
@@ -138,9 +138,6 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
           e.g. SpeciesS (given N and initialAs)
     age_bins: list of str, optional
         If the parameter is to be expanded by age, the new dataframe with have individual parameters for each bin.
-    start_date: datetime.date, optional
-        Timesteps are relative to this first day. If not provided, use what's
-        given in the dataframe.
 
     Returns
     -------
@@ -167,7 +164,6 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
                                              'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}},
                         f'{parameter}_{bin}',
-                        start_date=start_date,
                     )
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
@@ -212,7 +208,7 @@ def add_computed_parameters(df):
     return df
 
 
-def add_parameters(df, parameter_type, config, region, age_bins, start_date=None):
+def add_parameters(df, parameter_type, config, region, age_bins):
     """Append parameters to the DataFrame"""
     if parameter_type not in ("time_parameters", "intervention_parameters", "sampled_parameters"):
         raise ValueError(f"Unrecognized parameter type: {parameter_type}")
@@ -220,7 +216,7 @@ def add_parameters(df, parameter_type, config, region, age_bins, start_date=None
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, start_date)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
     return df
 
 
@@ -248,7 +244,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
     for start_date in start_dates:
         df_copy = df.copy()
         df_copy['startdate'] = start_date
-        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins, start_date)
+        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins)
         df_copy = add_computed_parameters(df_copy)
         dfs.append(df_copy)
 
