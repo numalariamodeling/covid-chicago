@@ -536,7 +536,7 @@ def write_reactions(grp, expandModel=None):
 
     return (reaction_str)
 
-def write_interventions(grpList, total_string, scenarioName) :
+def write_interventions(grpList, total_string, scenarioName, change_testDelay) :
 
     continuedSIP_str = ""
     for grp in grpList:
@@ -597,6 +597,17 @@ def write_interventions(grpList, total_string, scenarioName) :
 
         contactTracing_str =  temp_str + contactTracing_str
 
+    change_testDelay_str = """
+(param testDelay_1 @time_to_detection_1@)
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
+    """.format("(time_D testDelay_1)", 
+               "(Ksys_D (/ 1 time_D))",
+               "(Ksym_D (/ 1 time_D))",
+               "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))",
+               "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))",
+               "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D)))",
+               "(Kr_m_D (/ 1 (- recovery_time_mild time_D )))")
+
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
     if scenarioName == "interventionSTOP_adj" :
@@ -610,14 +621,18 @@ def write_interventions(grpList, total_string, scenarioName) :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)
     if scenarioName == "testDelay_contactTracing" :
         #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)       
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)  
+        
+    if change_testDelay == True : 
+        total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_str)  
+ 
     return (total_string)
 
 
 
 ###stringing all of my functions together to make the file:
 
-def generate_emodl(grpList, file_output, expandModel, add_interventions):
+def generate_emodl(grpList, file_output, expandModel, add_interventions, change_testDelay=False):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -646,7 +661,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions):
 
     param_string = write_params(expandModel) + param_string + write_N_population(grpList)
     functions_string = functions_string + write_All(grpList)
-    intervention_string = ";[INTERVENTIONS]"
+    intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
 
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string +  '\n\n' + reaction_string + '\n\n' + footer_str
 
@@ -655,7 +670,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions):
 
     ### Add interventions (optional)
     if add_interventions != None :
-        total_string = write_interventions(grpList, total_string, add_interventions)
+        total_string = write_interventions(grpList, total_string, add_interventions, change_testDelay )
 
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
@@ -669,12 +684,13 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions):
 
 if __name__ == '__main__':
     ems_grp = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp.emodl'))
     generate_emodl(grpList=ems_grp,  expandModel="testDelay", add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_interventionSTOPadj.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_neverSIP.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionStop',  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_interventionStop.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_gradual_reopening.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_contactTracing.emodl'))
 
-
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', change_testDelay=True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_changeTD.emodl'))
+    generate_emodl(grpList=ems_grp,  expandModel="testDelay", add_interventions='interventionSTOP_adj', change_testDelay=True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_grp_changeTD_interventionSTOPadj.emodl'))
 

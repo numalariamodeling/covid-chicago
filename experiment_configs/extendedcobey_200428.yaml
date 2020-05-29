@@ -110,6 +110,10 @@ intervention_parameters:
   'social_multiplier_3':
     np.random: uniform
     function_kwargs: {'low':0.08, 'high':0.08}
+  ### IMPROVE TESTING - reduce time to detection
+  'time_to_detection_1':
+    np: linspace
+    function_kwargs: {'start':0, 'stop':2.9, 'num':3}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
@@ -178,6 +182,10 @@ time_parameters:
   'socialDistance_time4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-21}
+  ### IMPROVE TESTING - reduce time to detection
+  'change_testDelay_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':
