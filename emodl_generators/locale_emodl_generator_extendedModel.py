@@ -723,12 +723,16 @@ if __name__ == '__main__':
 
 
     ## By default include migration in spatial model, but also generate a test version without migration
-    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP',add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_localenomigration_EMS.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionSTOP_adj', file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS_interventionSTOPadj.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS_neverSIP.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionStop',  file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS_interventionStop.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS_gradual_reopening.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_contactTracing", add_interventions='contactTracing',  file_output=os.path.join(emodl_dir, 'extendedmodel_locale_EMS_contactTracing.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionSTOP_adj', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_neverSIP.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionStop', add_migration=False,  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionStop.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='gradual_reopening', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_contactTracing", add_interventions='contactTracing', add_migration=False,  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracing.emodl'))
 
-
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionSTOP_adj', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionSTOPadj.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_neverSIP.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionStop', add_migration=True,  file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionStop.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='gradual_reopening', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_gradual_reopening.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_contactTracing", add_interventions='contactTracing', add_migration=True,  file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_contactTracing.emodl'))
