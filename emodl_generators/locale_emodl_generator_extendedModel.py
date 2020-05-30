@@ -187,7 +187,7 @@ def write_functions(grp, expandModel=None):
     expand_testDelay_str = """
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3::{grp}))
-(func infectious_undet_{grp} (+ As::{grp} P_{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 """.format(grp=grp)
 
@@ -591,10 +591,13 @@ def write_interventions(grpList, total_string, scenarioName) :
 (param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
 (param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
 (param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
+(param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
+
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
+(time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
             """.format(grp=grp)
         continuedSIP_str = continuedSIP_str + temp_str
 
@@ -617,10 +620,10 @@ def write_interventions(grpList, total_string, scenarioName) :
     gradual_reopening_str = ""
     for grp in grpList:
         temp_str = """
-(param Ki_back1_{grp} (* Ki_{grp} @reopening_multiplier_1@))
-(param Ki_back2_{grp} (* Ki_{grp} @reopening_multiplier_2@))
-(param Ki_back3_{grp} (* Ki_{grp} @reopening_multiplier_3@))
-(param Ki_back4_{grp} (* Ki_{grp} @reopening_multiplier_4@))
+(param Ki_back1_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_1@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back2_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_2@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back3_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_3@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back4_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_4@ (- Ki_{grp} Ki_red3_{grp}))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
@@ -650,11 +653,11 @@ def write_interventions(grpList, total_string, scenarioName) :
     if scenarioName == "continuedSIP" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
     if scenarioName == "contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
+        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
     if scenarioName == "testDelay_contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
+        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
 
     return (total_string)
 
@@ -682,7 +685,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
     for grp in grpList:
         total_string = total_string + "\n(locale site-{})\n".format(grp)
         total_string = total_string + "(set-locale site-{})\n".format(grp)
-        total_string = total_string +  write_species(grp, expandModel)
+        total_string = total_string + write_species(grp, expandModel)
         functions = write_functions(grp, expandModel)
         observe_string = observe_string + write_observe(grp, expandModel)
         if (add_migration):
@@ -700,7 +703,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string +  '\n\n' + reaction_string + '\n\n' + footer_str
 
     ### Custom adjustments for EMS 6 (earliest start date)
-    total_string = total_string.replace('(species As_EMS_6 0)', '(species As_EMS_6 1)')
+    total_string = total_string.replace('(species As::EMS_6 0)', '(species As::EMS_6 1)')
     ### Add interventions (optional)
     if add_interventions != None :
         total_string = write_interventions(grpList, total_string, add_interventions)
