@@ -46,23 +46,13 @@ python runScenarios.py --running_location Local --region EMS_11 --experiment_con
 
 
 ### All EMS model (non spatial, grouped by EMS)
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_scenario3"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_gradual_reopening.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_reopen"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_interventionStop_testrun"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "_EMSgrp_neverSIP"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_contactTracing"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_interventionSTOPadj10"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl --cfg_template model_B.cfg --name_suffix "_EMS_scenario3"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_gradual_reopening.emodl --cfg_template model_B.cfg --name_suffix "_EMS_reopen"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "_EMS_interventionStop_testrun"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "_EMS_neverSIP"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "EMS_contactTracing"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMS_interventionSTOPadj10"
 
-
-
-#### Spatial model 
-# Region must be IL , the EMS parameter are defined in  spatial_EMS_experiment.yaml
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_locale_EMS.emodl --cfg_template model_B.cfg --name_suffix "mr_EMSlocale_scenario3"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_locale_gradual_EMS_reopening.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_reopen"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_locale_EMS_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_interventionStop"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_locale_EMS_interventionStop.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_interventionSTOPadj30"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_locale_EMS_neverSIP.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_neverSIP"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_locale_EMS_contactTracing.emodl --cfg_template model_B.cfg --name_suffix "_EMSlocale_contactTracing"
 
 
 #### Age  model 
