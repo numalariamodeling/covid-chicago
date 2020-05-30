@@ -1,13 +1,13 @@
 ### Note specify running_location either Local or NUCLUSTER, if NUCLUSTER 
 
 #### Current scenarios to submit for civis
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_scenario3"						  
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_interventionSTOPadj30"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_interventionSTOPadj10"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl --cfg_template model_B.cfg --name_suffix "EMS_scenario3"						  
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMS_interventionSTOPadj30"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMS_interventionSTOPadj10"
 
 
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_reopening_gradual"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_grp_contactTracing.emodl --cfg_template model_B.cfg --name_suffix "EMSgrp_contactTracing30"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMS_reopening_gradual"
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_contactTracing.emodl --cfg_template model_B.cfg --name_suffix "EMS_contactTracing30"
 
 
 
