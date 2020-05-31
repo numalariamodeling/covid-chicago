@@ -259,7 +259,7 @@ if (runPerEMS) {
       dplyr::group_by(region, d_As_ct1, isolation_success, time_to_detection, outcome) %>%
       dplyr::summarize_all(.funs = "mean", na.rm = T)
 
-
+    thresholdDat <- list()
     for (selected_outcome in c("critical", "hospitalized", "deaths", "ventilators")) {
       # selected_outcome = "critical"
 
@@ -293,8 +293,8 @@ if (runPerEMS) {
           dplyr::select(region, d_As_ct1, isolation_success, time_to_detection, outcome, value.mean, capacity)
       }
 
-      write.csv(threshold_param, file.path(ems_dir, paste0("EMS_", ems, "_", selected_outcome, "_thresholds.csv")))
-
+      thresholdDat[[selected_outcome]] <- threshold_param
+      #write.csv(threshold_param, file.path(ems_dir, paste0("EMS_", ems, "_", selected_outcome, "_thresholds.csv")))
 
 
       l_plot <- ggplot(data = plotdat) + theme_cowplot() +
@@ -340,6 +340,9 @@ if (runPerEMS) {
         rm(h_plot)
       }
     }
+    
+    thresholdDat <- do.call(rbind.data.frame, thresholdDat)
+    write.csv(thresholdDat, file.path(ems_dir, paste0("EMS_", ems, "_thresholds.csv")))
   }
 }
 #### Extract minium value per ems and per outcome and plot + csv summary table
@@ -360,7 +363,7 @@ if (runPerRegion) {
 
     tempdat <- getdata(ems)
     tempdat$region <- region
-    write.csv(tempdat, file.path(ems_dir, paste0("Region_", region, "_dat.csv")))
+    write.csv(tempdat, file.path(region_dir, paste0("Region_", region, "_dat.csv")))
 
     ### what time point to select?   - calculate mean over timeperiod ?
     ### Aggregate time for heatmap
@@ -369,7 +372,7 @@ if (runPerRegion) {
       dplyr::group_by(region, d_As_ct1, isolation_success, time_to_detection, outcome) %>%
       dplyr::summarize_all(.funs = "mean", na.rm = T)
 
-
+    thresholdDat <- list()
     for (selected_outcome in c("critical", "hospitalized", "deaths", "ventilators")) {
       # selected_outcome = "critical"
 
@@ -385,8 +388,8 @@ if (runPerRegion) {
           filter(outcome == "crit_det") %>%
           mutate(value.mean = value.mean * 0.660) %>%
           mutate(capacity = capacityline) %>%
-          filter(value.mean <= capacity)
-        group_by(d_As_ct1, time_to_detection) %>%
+          filter(value.mean <= capacity) %>%
+          group_by(d_As_ct1, time_to_detection) %>%
           filter(isolation_success == min(isolation_success)) %>%
           dplyr::select(region, d_As_ct1, isolation_success, time_to_detection, outcome, value.mean, capacity)
       } else {
@@ -397,16 +400,16 @@ if (runPerRegion) {
         threshold_param <- dfAggr %>%
           mutate(capacity = capacityline) %>%
           filter(outcome == selected_outcome) %>%
-          filter(value.mean <= capacity)
-        group_by(d_As_ct1, time_to_detection) %>%
+          filter(value.mean <= capacity) %>%
+          group_by(d_As_ct1, time_to_detection) %>%
           filter(isolation_success == min(isolation_success)) %>%
           dplyr::select(region, d_As_ct1, isolation_success, time_to_detection, outcome, value.mean, capacity)
       }
 
-      write.csv(threshold_param, file.path(region_dir, paste0("Region_", region, "_", selected_outcome, "_thresholds.csv")))
-
-
-
+      thresholdDat[[selected_outcome]] <- threshold_param
+      #write.csv(threshold_param, file.path(ems_dir, paste0("EMS_", ems, "_", selected_outcome, "_thresholds.csv")))
+      
+      
       l_plot <- ggplot(data = plotdat) + theme_cowplot() +
         # geom_vline(xintercept=as.Date("2020-08-02"), linetype="dashed")+
         geom_line(aes(x = Date, y = value.mean, group = interaction(isolation_success, d_As_ct1)), size = 1.3, col = "deepskyblue4") +
@@ -450,6 +453,8 @@ if (runPerRegion) {
         rm(h_plot)
       }
     }
+    thresholdDat <- do.call(rbind.data.frame, thresholdDat)
+    write.csv(thresholdDat, file.path(region_dir, paste0("Region_", region, "_thresholds.csv")))
   }
 }
 
