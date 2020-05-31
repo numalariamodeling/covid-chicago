@@ -334,6 +334,9 @@ if (runPerEMS) {
         ggsave(paste0("EMS_", ems, "_", selected_outcome, "_tD", testDelay, "_heatmap.png"),
           plot = h_plot, path = file.path(ems_dir), width = 8, height = 6, dpi = 300, device = "png"
         )
+        ggsave(paste0("EMS_", ems, "_", selected_outcome, "_tD", testDelay, "_heatmap.pdf"),
+               plot = h_plot, path = file.path(ems_dir), width = 8, height = 6, dpi = 300, device = "pdf"
+        )
         rm(h_plot)
       }
     }
@@ -440,6 +443,9 @@ if (runPerRegion) {
         h_plot <- f_heatmap(subset(dfAggr, time_to_detection == testDelay), selected_outcome, valuetype = "absolute")
         ggsave(paste0("region_", region, "_", selected_outcome, "_tD", testDelay, "_heatmap.png"),
           plot = h_plot, path = file.path(region_dir), width = 8, height = 6, dpi = 300, device = "png"
+        )
+        ggsave(paste0("region_", region, "_", selected_outcome, "_tD", testDelay, "_heatmap.pdf"),
+               plot = h_plot, path = file.path(region_dir), width = 8, height = 6, dpi = 300, device = "pdf"
         )
         rm(h_plot)
       }
