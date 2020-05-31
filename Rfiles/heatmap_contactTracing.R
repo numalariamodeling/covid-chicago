@@ -8,6 +8,7 @@ require(scales)
 require(lattice)
 require(readxl)
 require(viridis)
+library(stringr)
 
 gitdir <- file.path("C:/Users/mrung/gitrepos/covid-chicago")
 datadir <- file.path("C:/Users/mrung/Box/NU-malaria-team/data")
@@ -274,7 +275,8 @@ if (runPerEMS) {
         threshold_param <- dfAggr %>%
           filter(outcome == "crit_det") %>%
           mutate(value.mean = value.mean * 0.660) %>%
-          mutate(capacity = capacityline) %>%
+          mutate(capacity = capacityline,
+                 outcome=selected_outcome) %>%
           filter(value.mean <= capacity)
         group_by(d_As_ct1, time_to_detection) %>%
           filter(isolation_success == min(isolation_success)) %>%
@@ -387,7 +389,8 @@ if (runPerRegion) {
         threshold_param <- dfAggr %>%
           filter(outcome == "crit_det") %>%
           mutate(value.mean = value.mean * 0.660) %>%
-          mutate(capacity = capacityline) %>%
+          mutate(capacity = capacityline,
+                 outcome=selected_outcome) %>%
           filter(value.mean <= capacity) %>%
           group_by(d_As_ct1, time_to_detection) %>%
           filter(isolation_success == min(isolation_success)) %>%
@@ -457,5 +460,53 @@ if (runPerRegion) {
     write.csv(thresholdDat, file.path(region_dir, paste0("Region_", region, "_thresholds.csv")))
   }
 }
+
+
+
+thresholdsfiles <- list.files(file.path(exp_dir),pattern="thresholds",recursive=TRUE, full.names = TRUE)
+thresholdsfiles <- thresholdsfiles[grep("Region",thresholdsfiles)]
+
+thresholdsDat <- sapply(thresholdsfiles, read.csv, simplify = FALSE) %>%
+  bind_rows(.id = "id") %>% 
+  dplyr::select(-X) %>%
+  mutate(outcome=as.character(outcome),
+         outcome = factor(outcome, levels=c("hospitalized","critical","crit_det","deaths"),
+                          labels=c("hospitalized","critical","ventilators","deaths")),
+         capacityLabel = paste0("Capacity: ",capacity))
+
+
+regionnames <-  c(names(regions)[5],names(regions)[-5])
+
+thresholdsDat$region <- factor(thresholdsDat$region, 
+                               levels=regionnames, 
+                               labels= stringr::str_to_title(regionnames))
+
+table(thresholdsDat$region)
+table(thresholdsDat$region,thresholdsDat$d_As_ct1)
+
+capacityText <- thresholdsDat %>% select(region, outcome, capacityLabel) %>% unique()
+
+
+pplot <- ggplot(data=thresholdsDat) + theme_bw() +
+  geom_jitter(aes(x=d_As_ct1, y=isolation_success,col=as.factor(time_to_detection)),size=3)+
+  geom_text(data=capacityText,aes(x=0.18, y=1,label=capacityLabel),col="black")+
+  geom_smooth(aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="grey",size=1)+
+  facet_grid(outcome~region)+
+  labs(color="test delay",x="detection rate", y="isolation success")+
+  scale_color_manual(values=TwoCols)+
+  customThemeNoFacet+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank())+
+  scale_x_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))+
+  scale_y_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))
+
+ggsave(paste0("capacity_thresholds.png"),
+       plot = pplot, path = file.path(exp_dir), width = 16, height = 9, dpi = 300, device = "png"
+)
+
+
+write.csv(thresholdDat, file.path(exp_dir, paste0("Thresholds.csv")))
+
+
 
 
