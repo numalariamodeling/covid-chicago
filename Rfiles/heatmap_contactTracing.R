@@ -186,8 +186,6 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
     ems <- as.numeric(regions[[ems]])
   }
 
-  capacity <- load_capacity(ems)
-  capacity$deaths <- 0
 
   if (!selected_outcome %in% names(capacity)) threshold <- round(summary(matdat$z)["1st Qu."], 0)
   if (selected_outcome %in% names(capacity)) threshold <- round(as.numeric(capacity[selected_outcome]), 0)
@@ -254,22 +252,28 @@ table(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detectio
 sink()
 
 
-geography="EMS"
-#geography="Region"
+#geography="EMS"
+geography="Region"
 if (geography=="EMS") emsregions = c(1:11)
 if (geography=="Region") emsregions = names(regions)
 
 
 for (ems in emsregions) {
-  # ems <- 2
-  ems_dir <- file.path(exp_dir, paste0(geography, ems))
+  # ems <- emsregions[1]
+  ems_dir <- file.path(exp_dir, paste0(geography,"_", ems))
   if (!dir.exists(ems_dir)) dir.create(ems_dir)
   
-  capacity <- load_capacity(ems)
+  if(geography=="Region"){
+    selected_ems <- as.numeric(regions[[ems]])
+  } else{
+    selected_ems <- ems
+  }
+  
+  capacity <- load_capacity(selected_ems)
   capacity$deaths <- 0
   
   
-  tempdat <- getdata(ems)
+  tempdat <- getdata(selected_ems)
   tempdat$region <- ems
   write.csv(tempdat, file.path(ems_dir, paste0(geography,"_", ems, "_dat.csv")))
   
