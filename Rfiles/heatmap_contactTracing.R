@@ -197,6 +197,7 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
     filter(z <= threshold) %>%
     dplyr::group_by(x) %>%
     dplyr::summarize(ythreshold = min(y))
+  
   matdat <- left_join(matdat, tdat, by = "x")
 
   # if(valuetype=="absolute")flabel =  paste0(selected_outcome, "\n absolute predictions")
@@ -225,7 +226,22 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
     scale_x_continuous(breaks = seq(0, 1, 0.2), labels = seq(0, 1, 0.2) * 100, expand = c(0, 0)) +
     scale_y_continuous(breaks = seq(0, 1, 0.2), labels = seq(0, 1, 0.2) * 100, expand = c(0, 0))
 
-  return(matdatp)
+  
+  
+  xnew <- seq(0, 1, 0.2)
+  ynew <- seq(0, 1, 0.2)
+  # ...calculating prediction
+  heatmap_threshold <- expand.grid(x = xnew, y = ynew)
+  heatmap_threshold$z <- predict(xyzmodel, newdata = heatmap_threshold)
+  heatmap_threshold <- heatmap_threshold %>% filter(z <= threshold) %>%
+    dplyr::group_by(x) %>%
+    dplyr::summarize(ythreshold = min(y))
+  
+  
+  out_list <- list(matdatp,xyzmodel, heatmap_threshold,matdat)
+
+  
+  return(out_list)
 }
 
 
@@ -332,7 +348,8 @@ if (runPerEMS) {
 
 
       for (testDelay in unique(dfAggr$time_to_detection)) {
-        h_plot <- f_heatmap(subset(dfAggr, time_to_detection == testDelay), selected_outcome, valuetype = "absolute")
+        heatmap_out <- f_heatmap(subset(dfAggr, time_to_detection == testDelay), selected_outcome, valuetype = "absolute")
+        h_plot <- heatmap_out[[1]]
         ggsave(paste0("EMS_", ems, "_", selected_outcome, "_tD", testDelay, "_heatmap.png"),
           plot = h_plot, path = file.path(ems_dir), width = 8, height = 6, dpi = 300, device = "png"
         )
@@ -374,8 +391,12 @@ if (runPerRegion) {
       dplyr::group_by(region, d_As_ct1, isolation_success, time_to_detection, outcome) %>%
       dplyr::summarize_all(.funs = "mean", na.rm = T)
 
+    ### Thresholds from predictions
     thresholdDat <- list()
+    ### Thresholds from linear model
+    h_thresholdDat <- list()
     for (selected_outcome in c("critical", "hospitalized", "deaths", "ventilators")) {
+      print(selected_outcome)
       # selected_outcome = "critical"
 
       capacityline <- as.numeric(capacity[colnames(capacity) == selected_outcome])
@@ -446,7 +467,9 @@ if (runPerRegion) {
 
 
       for (testDelay in unique(dfAggr$time_to_detection)) {
-        h_plot <- f_heatmap(subset(dfAggr, time_to_detection == testDelay), selected_outcome, valuetype = "absolute")
+        heatmap_out <- f_heatmap(subset(dfAggr, time_to_detection == testDelay), selected_outcome, valuetype = "absolute")
+        h_plot <- heatmap_out[[1]]
+        h_threshold <- heatmap_out[[3]]
         ggsave(paste0("region_", region, "_", selected_outcome, "_tD", testDelay, "_heatmap.png"),
           plot = h_plot, path = file.path(region_dir), width = 8, height = 6, dpi = 300, device = "png"
         )
@@ -454,28 +477,64 @@ if (runPerRegion) {
                plot = h_plot, path = file.path(region_dir), width = 8, height = 6, dpi = 300, device = "pdf"
         )
         rm(h_plot)
+        
+        if(dim(h_threshold)[1]!=0){
+        h_threshold$time_to_detection <-testDelay
+        h_threshold$outcome <-selected_outcome
+        h_threshold$region <-region
+        h_thresholdDat[[length(h_thresholdDat)+1]] <- h_threshold
+        }
       }
+      
     }
+    
     thresholdDat <- do.call(rbind.data.frame, thresholdDat)
     write.csv(thresholdDat, file.path(region_dir, paste0("Region_", region, "_thresholds.csv")))
+    
+    h_thresholdDat <- do.call(rbind.data.frame, h_thresholdDat)
+    write.csv(h_thresholdDat, file.path(region_dir, paste0("Region_", region, "_lm_thresholds.csv")))
+    
   }
+  
 }
 
 
 
+#### Summary plot 
+regionnames <-  c(names(regions)[5],names(regions)[-5])
+
+
+
+### Load thresholds from lm model
+thresholdsfiles <- list.files(file.path(exp_dir),pattern="thresholds",recursive=TRUE, full.names = TRUE)
+thresholdsfiles <- thresholdsfiles[grep("lm",thresholdsfiles)]
+
+lmthresholdsDat <- sapply(thresholdsfiles, read.csv, simplify = FALSE) %>%
+  bind_rows(.id = "id") %>% 
+  dplyr::select(-X) %>%
+  dplyr::mutate(outcome=as.character(outcome))%>%
+  dplyr::rename(d_As_ct1=x, isolation_success=ythreshold )
+  
+lmthresholdsDat$region <- factor(lmthresholdsDat$region, 
+                               levels=regionnames, 
+                               labels= stringr::str_to_title(regionnames))
+
+
+### Load thresholds from predictions
 thresholdsfiles <- list.files(file.path(exp_dir),pattern="thresholds",recursive=TRUE, full.names = TRUE)
 thresholdsfiles <- thresholdsfiles[grep("Region",thresholdsfiles)]
+thresholdsfiles <- thresholdsfiles[!grepl("lm",thresholdsfiles)]
+
 
 thresholdsDat <- sapply(thresholdsfiles, read.csv, simplify = FALSE) %>%
   bind_rows(.id = "id") %>% 
   dplyr::select(-X) %>%
   mutate(outcome=as.character(outcome),
-         outcome = factor(outcome, levels=c("hospitalized","critical","crit_det","deaths"),
+         outcome = factor(outcome, levels=c("hospitalized","critical","ventilators","deaths"),
                           labels=c("hospitalized","critical","ventilators","deaths")),
          capacityLabel = paste0("Capacity: ",capacity))
 
 
-regionnames <-  c(names(regions)[5],names(regions)[-5])
 
 thresholdsDat$region <- factor(thresholdsDat$region, 
                                levels=regionnames, 
@@ -487,12 +546,16 @@ table(thresholdsDat$region,thresholdsDat$d_As_ct1)
 capacityText <- thresholdsDat %>% select(region, outcome, capacityLabel) %>% unique()
 
 
-pplot <- ggplot(data=thresholdsDat) + theme_bw() +
+pplot <- ggplot(data=subset(thresholdsDat, outcome!="deaths")) + theme_bw() +
   geom_jitter(aes(x=d_As_ct1, y=isolation_success,col=as.factor(time_to_detection)),size=3)+
   geom_text(data=capacityText,aes(x=0.18, y=1,label=capacityLabel),col="black")+
-  geom_smooth(aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="grey",size=1)+
+  geom_smooth(aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="darkgrey",size=1)+
+  geom_smooth(data=subset(lmthresholdsDat, outcome!="deaths"),aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="black",size=1)+
   facet_grid(outcome~region)+
-  labs(color="test delay",x="detection rate", y="isolation success")+
+  labs(color="test delay",
+       x="detection rate",
+       y="isolation success",
+       caption="\n dots from prediction dataset\ngrey line: thresholds from prediction dataset\nblack line: thresholds from linear model")+
   scale_color_manual(values=TwoCols)+
   customThemeNoFacet+
   theme(panel.grid.minor.x = element_blank(),
@@ -500,12 +563,21 @@ pplot <- ggplot(data=thresholdsDat) + theme_bw() +
   scale_x_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))+
   scale_y_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))
 
+
 ggsave(paste0("capacity_thresholds.png"),
        plot = pplot, path = file.path(exp_dir), width = 16, height = 9, dpi = 300, device = "png"
 )
 
 
-write.csv(thresholdDat, file.path(exp_dir, paste0("Thresholds.csv")))
+thresholdsDat$method ="simulations"
+lmthresholdsDat$method ="linear_model"
+
+thresholdsDat %>% 
+  dplyr::select(colnames(lmthresholdsDat)) %>%  
+  rbind(lmthresholdsDat) %>%  
+  dplyr::select(-id) %>%
+  pivot_wider(names_from = method, values_from=isolation_success) %>%
+  write.csv( file.path(exp_dir, paste0("Thresholds.csv")))
 
 
 
