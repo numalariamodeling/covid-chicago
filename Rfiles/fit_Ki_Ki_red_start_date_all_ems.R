@@ -53,7 +53,7 @@ simulationslist <- list(sim_ems1, sim_ems2, sim_ems3, sim_ems4, sim_ems5, sim_em
 # simulationslist <- list(sim_ems2)
 
 # read in hospital data
-hosp_data <- read.csv(file.path(data_path,"covid_IDPH/Corona virus reports/emresource_by_region.csv"))
+hosp_data <- read.csv(file.path(data_dir,"covid_IDPH/Corona virus reports/emresource_by_region.csv"))
 
 # Replace NA values with zeros (blank in raw data sheet)
 hosp_data[is.na(hosp_data)] <- 0
@@ -77,7 +77,7 @@ hosp_data_ems11 <- hosp_data[which(hosp_data$region == 11), ]
 hosp_list <- list(hosp_data_ems1,hosp_data_ems2,hosp_data_ems3, hosp_data_ems4, hosp_data_ems5, hosp_data_ems6, hosp_data_ems7, hosp_data_ems8, hosp_data_ems9, hosp_data_ems10, hosp_data_ems11)
 
 # Read in by line hospital admissions data
-pre_hosp_adm_data <- read.csv(file.path(data_path, "covid_IDPH", "Cleaned Data", "200522_jg_admission_date_ems.csv"))
+pre_hosp_adm_data <- read.csv(file.path(data_dir, "covid_IDPH", "Cleaned Data", "200602_jg_admission_date_ems.csv"))
 
 
 # Make date column as date
@@ -108,7 +108,7 @@ pre_hosp_adm_list <- list(
 # pre_hosp_adm_list <- list(pre_hosp_adm_data_ems2)
 
 # Read in by line hospital death data
-pre_hosp_det_data <- read.csv(file.path(data_path, "covid_IDPH", "Cleaned Data", "200522_jg_deceased_date_ems.csv"))
+pre_hosp_det_data <- read.csv(file.path(data_dir, "covid_IDPH", "Cleaned Data", "200602_jg_deceased_date_ems.csv"))
 # Make date column as dat
 pre_hosp_det_data <- pre_hosp_det_data %>%
   mutate(date = as.Date(date, "%Y-%m-%d"))
