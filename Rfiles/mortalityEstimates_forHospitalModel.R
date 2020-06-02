@@ -1,6 +1,3 @@
-library(tidyverse)
-library(cowplot)
-
 ### Note the time period needs to be set once the starting date is fixed
 
 #### Mortality estimates  per care location per age group
@@ -15,9 +12,10 @@ library(cowplot)
 #mu ICU =   deaths / critical (detected and undetected) 
 
 
-### Directories 
-username = Sys.getenv("USERNAME")
-simulation_output  = file.path("C:/Users/",username ,"/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/")
+library(tidyverse)
+library(cowplot)
+source("load_paths.R")
+
 
 ### Define experiment and load simulation outputs
 #exp_name = "31032020_test_extendedModel_age_pop1000"
