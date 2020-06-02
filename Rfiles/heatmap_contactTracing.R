@@ -8,73 +8,41 @@ require(scales)
 require(lattice)
 require(readxl)
 require(viridis)
-library(stringr)
+require(stringr)
 
-gitdir <- file.path("C:/Users/mrung/gitrepos/covid-chicago")
-datadir <- file.path("C:/Users/mrung/Box/NU-malaria-team/data")
-projectdir <- file.path("C:/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/contact_tracing/")
-
-source(file.path(gitdir, "Rfiles/f_AggrDat.R"))
-source(file.path(gitdir, "Rfiles/setup.R"))
+source("load_paths.R")
+source("processing_helpers.R")
 
 
-regions <- list(
-  "Northcentral" = c(1, 2),
-  "Northeast" = c(7, 8, 9, 10, 11),
-  "Central" = c(3, 6),
-  "Southern" = c(4, 5),
-  "Illinois" = c(1:11)
-)
+ct_dir <- file.path(simulation_output, "contact_tracing")
+
+# Define experiment iteration and simdate
+simdate <- "20200601"
+
+nexps <- list.files(file.path(ct_dir, simdate))
+exp_name <- simdate
+exp_dir <- file.path(ct_dir, simdate)
 
 
-load_capacity <- function(selected_ems) {
-  ems_df <- read_excel(file.path(datadir, "covid_IDPH/Corona virus reports/EMS_report_2020_03_21.xlsx"))
-  ems_df <- ems_df %>%
-    filter(Date == as.Date("2020-03-27")) %>%
-    separate(Region, into = c("ems", "Hospital"), sep = "-") %>%
-    mutate(
-      hospitalized = `Total_Med/_Surg_Beds`,
-      critical = `Total_Adult_ICU_Beds`,
-      ventilators = `Total_Vents`
-    )
+##--------------------------------------------
+## Define functions 
+##--------------------------------------------
 
-  if (length(selected_ems) == 1) {
-    capacity <- ems_df %>%
-      filter(ems == selected_ems) %>%
-      dplyr::select(hospitalized, critical, ventilators)
-  } else {
-    capacity <- ems_df %>%
-      filter(ems %in% selected_ems) %>%
-      dplyr::summarize(
-        hospitalized = sum(hospitalized),
-        critical = sum(critical),
-        ventilators = sum(ventilators)
-      )
-  }
-
-  return(capacity)
-}
-
-# exp_name ="20200414_NMH_catchment_testInterventionStop_rn50"
-simdate <- "20200530"
 reopeningdate <- as.Date("2020-06-01")
 evaluation_window <- c(reopeningdate, reopeningdate + 60)
 
 
-nexps <- list.files(file.path(projectdir, simdate))
-exp_name <- simdate
-exp_dir <- file.path(projectdir, simdate)
-
-
-nexpsfiles <- list.files(file.path(projectdir, simdate), pattern = "trajectoriesDat.csv", recursive = TRUE, full.names = TRUE)
-trajectoriesDat <- sapply(nexpsfiles, read.csv, simplify = FALSE) %>%
-  bind_rows(.id = "id")
-
-trajectoriesDat <- subset(trajectoriesDat, time >= 100 & time <= 300)
-
-
-## load predictions
+#getdata
 getdata <- function(selected_ems) {
+  #'  getdata is per default using the "trajectoriesDat" dataset to perfom specific data editing
+  #'  Outcome variables of interest are selected for one or more EMS regions as specified in selected_ems
+  #'  If multiple integers are included in the selected_ems, the data will be aggregated
+  #'  The data is filtered by date to include only dates within the defined evaluation window
+  #'  Factor variables per contact tracing parameter are generated to 
+  #'  optionally facilitate plotting or custom tables for data exploration
+  #' @param selected_ems  vector of integers representing one or multiple EMS areas
+
+  
   # emsvars <- colnames(trajectoriesDat)[grep("[.]",colnames(trajectoriesDat))]
   emsvars_temp <- c(
     "susceptible_EMS.", "exposed_EMS.", "asymptomatic_EMS.", "symptomatic_mild_EMS.", "symptomatic_severe_EMS.",
@@ -115,18 +83,9 @@ getdata <- function(selected_ems) {
       mutate(region = "central")
   }
 
-  unique(subdat$time_to_detection)
-  unique(subdat$reduced_inf_of_det_cases)
-  unique(subdat$d_As_ct1)
-  unique(subdat$startdate)
-
-  ### group column names
-  cumul_channels <- unique(grep("cumul", colnames(subdat), value = TRUE))
-
-
   ### what time point to select?
   tempdat <- subdat %>%
-    filter(Date >= evaluation_window[1] & Date <= evaluation_window[2] + 30) %>%
+    filter(Date >= evaluation_window[1] & Date <= evaluation_window[2]) %>%
     select(-c(time, sample_num, scen_num, run_num)) %>%
     group_by(Date, d_As_ct1, reduced_inf_of_det_cases, isolation_success, time_to_detection, outcome) %>%
     summarize(value.mean = mean(value)) %>%
@@ -149,7 +108,15 @@ getdata <- function(selected_ems) {
   return(tempdat)
 }
 
+#f_heatmap
 f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
+  #'  f_heatmap  performs a linea regression between contact tracing parameter and draws a heatmap using the model predicted values
+  #' The function returns a list of the heatmap plot, and the thresholds used to draw the lines, as well as the filtered lm prediction dataset
+  #' @param df  dataset
+  #' @param selected_outcome  name of the outcome variable 
+  #' @param valuetype  default "absolute", another option would be "growthRate"
+
+
   if (selected_outcome == "ventilators") {
     dat <- df %>%
       filter(outcome == "crit_det") %>%
@@ -215,11 +182,9 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
       linetype = "",
       caption = paste0("Threshold: ", threshold)
     ) +
-    customTheme_noAngle +
+    customThemeNoFacet +
     scale_x_continuous(breaks = seq(0, 1, 0.2), labels = seq(0, 1, 0.2) * 100, expand = c(0, 0)) +
     scale_y_continuous(breaks = seq(0, 1, 0.2), labels = seq(0, 1, 0.2) * 100, expand = c(0, 0))
-
-
 
   xnew <- seq(0, 1, 0.2)
   ynew <- seq(0, 1, 0.2)
@@ -238,21 +203,54 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
   return(out_list)
 }
 
+#region_to_fct
+region_to_fct <- function(dat, geography) {
+  #' Helper function to convert region character variable to factor variable
+  #' @param dat  dataset
+  #' @param geography  level of analysis EMS or Region (aggregated or not)
+
+  
+  if (geography == "EMS") {
+    levels <- c(1:11)
+    labels <- paste0("EMS ", levels)
+  }
+  
+  if (geography == "Region") {
+    levels <- c(names(regions)[5], names(regions)[-5])
+    labels <- stringr::str_to_title(levels)
+  }
+  
+  dat$region <- factor(dat$region,
+                       levels = levels,
+                       labels = labels
+  )
+  return(dat)
+}
+
+### Load and subset files to save memory
+nexpsfiles <- list.files(file.path(ct_dir, simdate), pattern = "trajectoriesDat.csv", recursive = TRUE, full.names = TRUE)
+trajectoriesDat <- sapply(nexpsfiles, read.csv, simplify = FALSE) %>%
+  bind_rows(.id = "id") 
+
+trajectoriesDat <- subset(trajectoriesDat, time >= 100 & time <= 300)
+
 
 ## Parameter combinations that did run
 sink(file.path(exp_dir, "parameter_combinations.txt"))
-cat("\ntable(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)")
-table(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
-cat("\ntable(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)")
-table(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
+  cat("\ntable(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)")
+  table(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
+  cat("\ntable(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)")
+  table(trajectoriesDat$reduced_inf_of_det_cases, trajectoriesDat$time_to_detection)
 sink()
 
 
+##--------------------------------------------
+## Generate heatmap and supplementary plots per EMS or aggregated region
+##--------------------------------------------
 # geography="EMS"
 geography <- "Region"
 if (geography == "EMS") emsregions <- c(1:11)
 if (geography == "Region") emsregions <- names(regions)
-
 
 for (ems in emsregions) {
   # ems <- emsregions[1]
@@ -278,7 +276,7 @@ for (ems in emsregions) {
   dfAggr <- tempdat %>%
     dplyr::select(-Date) %>%
     dplyr::group_by(region, d_As_ct1, isolation_success, time_to_detection, outcome) %>%
-    dplyr::summarize_all(.funs = "mean", na.rm = T)
+    dplyr::summarize_all(.funs = "mean", na.rm = T, .groups = 'drop')
 
   ### Thresholds from predictions
   thresholdDat <- list()
@@ -340,11 +338,13 @@ for (ems in emsregions) {
     )
 
     # selected_outcome = "critical"
-    p_plot <- ggplot(data = subset(plotdat, Date >= as.Date("2020-08-01") & Date < as.Date("2020-08-03"))) + theme_cowplot() +
+    p_plot <- ggplot(data = subset(plotdat, Date == max(plotdat$Date))) + 
+      theme_cowplot() +
       geom_point(aes(x = d_As_ct1, y = value.mean, col = isolation_success, shape = as.factor(time_to_detection)), size = 2.3) +
       labs(
         title = paste0(geography, " ", unique(tempdat$region)),
-        subtitle = "1 months after reopening",
+        subtitle = paste0("Time point: ",  evaluation_window[2],
+                          "\nContact tracing start: ", evaluation_window[1]),
         shape = "test delay (days)",
         x = "detection rate (P, As, Sym)",
         y = selected_outcome
@@ -384,9 +384,9 @@ for (ems in emsregions) {
 }
 
 
-
+##--------------------------------------------
 #### Summary plot of thresholds per region
-
+##--------------------------------------------
 
 ### Load thresholds from lm model
 thresholdsfiles <- list.files(file.path(exp_dir), pattern = "thresholds", recursive = TRUE, full.names = TRUE)
@@ -401,25 +401,6 @@ lmthresholdsDat <- sapply(thresholdsfiles, read.csv, simplify = FALSE) %>%
     outcome = as.character(outcome)
   ) %>%
   dplyr::rename(d_As_ct1 = x, isolation_success = ythreshold)
-
-
-region_to_fct <- function(dat, geography) {
-  if (geography == "EMS") {
-    levels <- c(1:11)
-    labels <- paste0("EMS ", levels)
-  }
-
-  if (geography == "Region") {
-    levels <- c(names(regions)[5], names(regions)[-5])
-    labels <- stringr::str_to_title(levels)
-  }
-
-  dat$region <- factor(dat$region,
-    levels = levels,
-    labels = labels
-  )
-  return(dat)
-}
 
 lmthresholdsDat <- region_to_fct(lmthresholdsDat, geography)
 
@@ -441,8 +422,6 @@ thresholdsDat <- sapply(thresholdsfiles, read.csv, simplify = FALSE) %>%
     capacityLabel = paste0("Capacity: ", capacity)
   )
 
-
-
 thresholdsDat <- region_to_fct(thresholdsDat, geography)
 
 table(thresholdsDat$region)
@@ -451,24 +430,6 @@ table(thresholdsDat$region, thresholdsDat$d_As_ct1)
 capacityText <- thresholdsDat %>%
   select(region, outcome, capacityLabel) %>%
   unique()
-
-
-
-customThemeNoFacet <- theme(
-  strip.text.x = element_text(size = 12, face = "bold"),
-  strip.text.y = element_text(size = 12, face = "bold"),
-  strip.background = element_blank(),
-  plot.title = element_text(size = 16, vjust = -1, hjust = 0),
-  plot.subtitle = element_text(size = 12),
-  plot.caption = element_text(size = 8),
-  legend.title = element_text(size = 12),
-  legend.text = element_text(size = 12),
-  axis.title.x = element_text(size = 12),
-  axis.text.x = element_text(size = 12),
-  axis.title.y = element_text(size = 12),
-  axis.text.y = element_text(size = 12)
-)
-
 
 if (geography == "Region") {
   pplot <- ggplot(data = subset(thresholdsDat, outcome != "deaths")) + theme_bw() +
@@ -538,4 +499,9 @@ thresholdsDat %>%
   write.csv(file.path(exp_dir, paste0(geography, "_Thresholds.csv")))
 
 
+##--------------------------------------------
 #### Line figure over time filtered for the threshold value
+##--------------------------------------------
+
+
+
