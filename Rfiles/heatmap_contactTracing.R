@@ -62,13 +62,8 @@ evaluation_window <- c(reopeningdate, reopeningdate + 60)
 
 
 nexps <- list.files(file.path(projectdir, simdate))
-if (length(nexps) == 1) {
-  exp_name <- nexps
-  exp_dir <- file.path(projectdir, simdate, exp_name)
-} else {
-  exp_name <- simdate
-  exp_dir <- file.path(projectdir, simdate)
-}
+exp_name <- simdate
+exp_dir <- file.path(projectdir, simdate)
 
 
 nexpsfiles <- list.files(file.path(projectdir, simdate), pattern = "trajectoriesDat.csv", recursive = TRUE, full.names = TRUE)
@@ -388,43 +383,58 @@ for (ems in emsregions) {
 
 
 #### Summary plot of thresholds per region 
-regionnames <-  c(names(regions)[5],names(regions)[-5])
 
 
 ### Load thresholds from lm model
 thresholdsfiles <- list.files(file.path(exp_dir),pattern="thresholds",recursive=TRUE, full.names = TRUE)
+thresholdsfiles <- thresholdsfiles[grep(geography,thresholdsfiles)]
 thresholdsfiles <- thresholdsfiles[grep("lm",thresholdsfiles)]
 
 lmthresholdsDat <- sapply(thresholdsfiles, read.csv, simplify = FALSE) %>%
   bind_rows(.id = "id") %>% 
   dplyr::select(-X) %>%
-  dplyr::mutate(outcome=as.character(outcome))%>%
+  dplyr::mutate(region = as.character(region) ,
+                outcome=as.character(outcome))%>%
   dplyr::rename(d_As_ct1=x, isolation_success=ythreshold )
-  
-lmthresholdsDat$region <- factor(lmthresholdsDat$region, 
-                               levels=regionnames, 
-                               labels= stringr::str_to_title(regionnames))
 
+
+region_to_fct <- function(dat, geography){
+
+if(geography=="EMS"){
+  levels <-  c(1:11)
+  labels <-  paste0("EMS ",levels)
+}
+
+if(geography=="Region"){
+  levels <-  c(names(regions)[5],names(regions)[-5])
+  labels <- stringr::str_to_title(levels) 
+}
+
+dat$region <- factor(dat$region , 
+                               levels=levels, 
+                               labels= labels )
+return(dat )
+}
+
+lmthresholdsDat <- region_to_fct(lmthresholdsDat,  geography )
 
 ### Load thresholds from predictions
 thresholdsfiles <- list.files(file.path(exp_dir),pattern="thresholds",recursive=TRUE, full.names = TRUE)
-thresholdsfiles <- thresholdsfiles[grep("Region",thresholdsfiles)]
+thresholdsfiles <- thresholdsfiles[grep(geography,thresholdsfiles)]
 thresholdsfiles <- thresholdsfiles[!grepl("lm",thresholdsfiles)]
-
 
 thresholdsDat <- sapply(thresholdsfiles, read.csv, simplify = FALSE) %>%
   bind_rows(.id = "id") %>% 
   dplyr::select(-X) %>%
-  mutate(outcome=as.character(outcome),
+  mutate(region = as.character(region) ,
+         outcome=as.character(outcome),
          outcome = factor(outcome, levels=c("hospitalized","critical","ventilators","deaths"),
                           labels=c("hospitalized","critical","ventilators","deaths")),
          capacityLabel = paste0("Capacity: ",capacity))
 
 
 
-thresholdsDat$region <- factor(thresholdsDat$region, 
-                               levels=regionnames, 
-                               labels= stringr::str_to_title(regionnames))
+thresholdsDat <- region_to_fct(thresholdsDat,  geography )
 
 table(thresholdsDat$region)
 table(thresholdsDat$region,thresholdsDat$d_As_ct1)
@@ -432,28 +442,73 @@ table(thresholdsDat$region,thresholdsDat$d_As_ct1)
 capacityText <- thresholdsDat %>% select(region, outcome, capacityLabel) %>% unique()
 
 
-pplot <- ggplot(data=subset(thresholdsDat, outcome!="deaths")) + theme_bw() +
-  geom_jitter(aes(x=d_As_ct1, y=isolation_success,col=as.factor(time_to_detection)),size=3)+
-  geom_text(data=capacityText,aes(x=0.18, y=1,label=capacityLabel),col="black")+
-  geom_smooth(aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="darkgrey",size=1)+
-  geom_smooth(data=subset(lmthresholdsDat, outcome!="deaths"),aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="black",size=1)+
-  facet_grid(outcome~region)+
-  labs(color="test delay",
-       x="detection rate",
-       y="isolation success",
-       caption="\n dots from prediction dataset\ngrey line: thresholds from prediction dataset\nblack line: thresholds from linear model")+
-  scale_color_manual(values=TwoCols)+
-  customThemeNoFacet+
-  theme(panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank())+
-  scale_x_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))+
-  scale_y_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))
 
-
-ggsave(paste0("capacity_thresholds.png"),
-       plot = pplot, path = file.path(exp_dir), width = 16, height = 9, dpi = 300, device = "png"
+customThemeNoFacet <- theme(
+  strip.text.x = element_text(size = 12, face = "bold"),
+  strip.text.y= element_text(size = 12, face = "bold"),
+  strip.background = element_blank(),
+  plot.title = element_text(size = 16, vjust = -1, hjust = 0),
+  plot.subtitle = element_text(size = 12),
+  plot.caption = element_text(size = 8),
+  legend.title = element_text(size = 12),
+  legend.text = element_text(size = 12),
+  axis.title.x = element_text(size = 12),
+  axis.text.x = element_text(size =12),
+  axis.title.y = element_text(size = 12),
+  axis.text.y = element_text(size = 12)
 )
 
+
+if(geography=="Region"){
+  pplot <- ggplot(data=subset(thresholdsDat, outcome!="deaths")) + theme_bw() +
+    geom_jitter(aes(x=d_As_ct1, y=isolation_success,col=as.factor(time_to_detection)),size=3)+
+    geom_text(data=capacityText,aes(x=0.18, y=1,label=capacityLabel),col="black")+
+    geom_smooth(aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="darkgrey",size=1)+
+    geom_smooth(data=subset(lmthresholdsDat, outcome!="deaths"),aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="black",size=1)+
+    facet_grid(outcome~region)+
+    labs(color="test delay",
+         x="detection rate",
+         y="isolation success",
+         caption="\n dots from prediction dataset\ngrey line: thresholds from prediction dataset\nblack line: thresholds from linear model")+
+    scale_color_brewer(palette="Dark2") +
+    customThemeNoFacet+
+    theme(panel.grid.minor.x = element_blank(),
+          panel.grid.minor.y = element_blank())+
+    scale_x_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))+
+    scale_y_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))
+  
+  
+  ggsave(paste0(geography, "_capacity_thresholds.png"),
+         plot = pplot, path = file.path(exp_dir), width = 16, height = 9, dpi = 300, device = "png"
+  )
+}
+if(geography=="EMS"){
+  for(ems in unique(thresholdsDat$region)){
+    
+  
+  pplot <- ggplot(data=subset(thresholdsDat, region %in% ems,  outcome!="deaths")) + theme_bw() +
+    geom_jitter(aes(x=d_As_ct1, y=isolation_success,col=as.factor(time_to_detection)),size=3)+
+    geom_text(data=subset(capacityText, region %in% ems ),aes(x=0.18, y=1,label=capacityLabel),col="black")+
+    geom_smooth(aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="darkgrey",size=1)+
+    geom_smooth(data=subset(lmthresholdsDat, region %in% ems,  outcome!="deaths"),aes(x=d_As_ct1, y=isolation_success),se=FALSE, method="lm", col="black",size=1)+
+    facet_grid(outcome~region)+
+    labs(color="test delay",
+         x="detection rate",
+         y="isolation success",
+         caption="\n dots from prediction dataset\ngrey line: thresholds from prediction dataset\nblack line: thresholds from linear model")+
+    scale_color_brewer(palette="Dark2") +
+    customThemeNoFacet+
+    theme(panel.grid.minor.x = element_blank(),
+          panel.grid.minor.y = element_blank())+
+    scale_x_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))+
+    scale_y_continuous(labels=seq(0,1,0.2),breaks=seq(0,1,0.2))
+  
+  
+  ggsave(paste0(ems, "_capacity_thresholds.png"),
+         plot = pplot, path = file.path(exp_dir), width = 6, height = 10, dpi = 300, device = "png"
+  )
+}
+}
 
 thresholdsDat$method ="simulations"
 lmthresholdsDat$method ="linear_model"
@@ -463,7 +518,7 @@ thresholdsDat %>%
   rbind(lmthresholdsDat) %>%  
   dplyr::select(-id) %>%
   pivot_wider(names_from = method, values_from=isolation_success) %>%
-  write.csv( file.path(exp_dir, paste0("Region_Thresholds.csv")))
+  write.csv( file.path(exp_dir, paste0(geography, "_Thresholds.csv")))
 
 
 #### Line figure over time filtered for the threshold value
