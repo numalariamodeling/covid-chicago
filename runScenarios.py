@@ -24,21 +24,51 @@ today = datetime.datetime.today()
 DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
 
 
-def _parse_config_parameter(df, parameter, parameter_function, start_date=None):
+def _get_full_factorial_df(df, column_name, values):
+    dfs = []
+    for value in values:
+        df_copy = df.copy()
+        df_copy[column_name] = value
+        dfs.append(df_copy)
+    result = pd.concat(dfs, ignore_index=True)
+    return result
+
+
+def _parse_config_parameter(df, parameter, parameter_function, column_name):
     if isinstance(parameter_function, (int, float)):
-        return parameter_function
+        df[column_name] = parameter_function
+        return df
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
-        return getattr(np.random, parameter_function['np.random'])(size=len(df), **function_kwargs)
+        params = getattr(np.random, parameter_function['np.random'])(**{"size": 1, **function_kwargs})
+        result = _get_full_factorial_df(df, column_name, params)
+        return result
+    elif 'np' in parameter_function:
+        function_kwargs = parameter_function['function_kwargs']
+        params = getattr(np, parameter_function['np'])(**{"num": 1, **function_kwargs})
+        result = _get_full_factorial_df(df, column_name, params)
+        return result
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
         function_kwargs = parameter_function['function_kwargs']
         if function_name == 'DateToTimestep':
-            startdate_col = function_kwargs['startdate_col']
-            return [DateToTimestep(function_kwargs['dates'], start_date or df[startdate_col][i])
-                    for i in range(len(df))]
+            start_dates_from_yaml = function_kwargs['dates']
+            if not isinstance(start_dates_from_yaml, list):
+                # `start_dates_from_yaml` is a single datetime object.
+                start_dates_from_yaml = [start_dates_from_yaml]
+            dfs = []
+            for start_date_from_yaml in start_dates_from_yaml:
+                df_copy = df.copy()
+                df_copy[column_name] = [
+                    DateToTimestep(start_date_from_yaml, df_copy["startdate"][i])
+                    for i in range(len(df_copy))
+                ]
+                dfs.append(df_copy)
+            df = pd.concat(dfs, ignore_index=True)
+            return df
         elif function_name == 'subtract':
-            return df[function_kwargs['x1']] - df[function_kwargs['x2']]
+            df[column_name] = df[function_kwargs['x1']] - df[function_kwargs['x2']]
+            return df
         else:
             raise ValueError(f"Unknown function for parameter {parameter}: {function_name}")
     else:
@@ -81,11 +111,12 @@ def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins
 
     # Do the sampling
     for _bin, _dist, _kwargs in zip(age_bins, distribution, kwargs):
-        df[f"{parameter}_{_bin}"] = getattr(np.random, _dist)(size=len(df), **_kwargs)
+        params = getattr(np.random, _dist)(**{"size": 1, **_kwargs})
+        df = _get_full_factorial_df(df, f"{parameter}_{_bin}", params)
     return df
 
 
-def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, start_date=None):
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
     """ Applies the described function and adds the column to the dataframe
 
     The input DataFrame will be modified in place.
@@ -112,9 +143,6 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
           e.g. SpeciesS (given N and initialAs)
     age_bins: list of str, optional
         If the parameter is to be expanded by age, the new dataframe with have individual parameters for each bin.
-    start_date: datetime.date, optional
-        Timesteps are relative to this first day. If not provided, use what's
-        given in the dataframe.
 
     Returns
     -------
@@ -130,22 +158,22 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                 raise ValueError(f"{parameter} has a list with {n_list} elements, "
                                  f"but there are {len(age_bins)} age bins.")
             for bin, val in zip(age_bins, parameter_function['list']):
-                df[f'{parameter}_{bin}'] = _parse_config_parameter(df, parameter, val)
+                df = _parse_config_parameter(df, parameter, val, f'{parameter}_{bin}')
         elif 'custom_function' in parameter_function:
             function_name = parameter_function['custom_function']
             if function_name == 'subtract':
                 for bin in age_bins:
-                    df[f'{parameter}_{bin}'] = _parse_config_parameter(
+                    df = _parse_config_parameter(
                         df, parameter,
                         {'custom_function': 'subtract',
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
                                              'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}},
-                        start_date,
+                        f'{parameter}_{bin}',
                     )
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
         elif 'np.random' in parameter_function:
-            _parse_age_specific_distribution(df, parameter, parameter_function, age_bins)
+            df = _parse_age_specific_distribution(df, parameter, parameter_function, age_bins)
         else:
             raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
@@ -153,9 +181,9 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             m = parameter_function['matrix']
             for i, row in enumerate(m):
                 for j, item in enumerate(row):
-                    df[f'{parameter}{i+1}_{j+1}'] = _parse_config_parameter(df, parameter, item)
+                    df = _parse_config_parameter(df, parameter, item, f'{parameter}{i+1}_{j+1}')
         else:
-            df[parameter] = _parse_config_parameter(df, parameter, parameter_function)
+            df = _parse_config_parameter(df, parameter, parameter_function, parameter)
     return df
 
 
@@ -185,7 +213,7 @@ def add_computed_parameters(df):
     return df
 
 
-def add_parameters(df, parameter_type, config, region, age_bins, start_date=None):
+def add_parameters(df, parameter_type, config, region, age_bins):
     """Append parameters to the DataFrame"""
     if parameter_type not in ("time_parameters", "intervention_parameters", "sampled_parameters"):
         raise ValueError(f"Unrecognized parameter type: {parameter_type}")
@@ -193,7 +221,7 @@ def add_parameters(df, parameter_type, config, region, age_bins, start_date=None
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, start_date)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
     return df
 
 
@@ -214,19 +242,14 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
 
     # For a given start date, cross all Ki values with df for full factorial.
-    dfs = []
-    for Kivalue in Kivalues:
-        df_copy = df.copy()
-        df_copy['Ki'] = Kivalue
-        dfs.append(df_copy)
-    df = pd.concat(dfs, ignore_index=True)
+    df = _get_full_factorial_df(df, "Ki", Kivalues)
 
     # Time-varying parameters for each start date.
     dfs = []
     for start_date in start_dates:
         df_copy = df.copy()
         df_copy['startdate'] = start_date
-        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins, start_date)
+        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins)
         df_copy = add_computed_parameters(df_copy)
         dfs.append(df_copy)
 
