@@ -133,6 +133,8 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
   if (valuetype == "absolute") z <- dat$value.mean
   if (valuetype == "growth") z <- dat$growthRate
 
+  lmok <- tryCatch( xyzmodel <- lm(z ~ y + x), error=function(e){cat("ERROR :",conditionMessage(e), "\n")} )
+  if(!is.null(lmok)){
   xyzmodel <- lm(z ~ y + x)
 
   xnew <- seq(0, 1, 0.01)
@@ -201,6 +203,9 @@ f_heatmap <- function(df, selected_outcome, valuetype = "absolute") {
 
 
   return(out_list)
+  }else{
+    return("lm.fit not ok")
+  }
 }
 
 #region_to_fct
@@ -284,21 +289,20 @@ for (ems in emsregions) {
     if (selected_outcome == "ventilators") {
       plotdat <- tempdat %>%
         filter(outcome == "crit_det") %>%
-        mutate(value.mean = value.mean * 0.660) %>%
+        mutate(value.mean = value.mean * 0.660,
+               outcome = selected_outcome) %>%
         as.data.frame()
 
       threshold_param <- plotdat %>%
         filter(Date == max(Date)) %>%
-        filter(outcome == "crit_det") %>%
-        mutate(value.mean = value.mean * 0.660) %>%
         mutate(
-          capacity = capacityline,
-          outcome = selected_outcome
+          capacity = capacityline
         ) %>%
         filter(value.mean <= capacity) %>%
         group_by(d_As_ct1, time_to_detection) %>%
         filter(isolation_success == min(isolation_success)) %>%
         dplyr::select(region, d_As_ct1, isolation_success, time_to_detection, outcome, value.mean, capacity)
+      
     } else {
       plotdat <- tempdat %>%
         filter(outcome == selected_outcome) %>%
@@ -362,13 +366,16 @@ for (ems in emsregions) {
     testdat <- plotdat %>%  
       left_join(threshold_param, by=c("region", "time_to_detection", "d_As_ct1","isolation_success")) %>%
       dplyr::filter(threshold == 1 )
+     # group_by(time_to_detection) %>%
+      #filter(d_As_ct1 <= 0.556)
     
     l_plot2 <- ggplot(data = subset(testdat, d_As_ct1=min(d_As_ct1) )) + theme_cowplot() +
-      geom_line(aes(x = Date, y = value.mean,col=isolation_success,
-                    group=interaction(isolation_success)), size = 1.3) +
-      facet_wrap(~time_to_detection) +
+      geom_line(aes(x = Date, y = value.mean,
+                    col=as.factor(round(isolation_success,2)),
+                    linetype=as.factor(round(time_to_detection,0)),
+                    group=interaction(isolation_success, d_As_ct1,time_to_detection)), size = 1.3) +
       geom_hline(yintercept = capacityline, linetype = "dashed")+
-      labs(
+      labs(color="isolation success",linetype="test delay",
         title = paste0(geography, " ", unique(plotdat$region)),
         subtitle = paste0("Outcome: ",selected_outcome, 
                           "\nMinimum detection rate ", round( unique(testdat$d_As_ct1),3)), 
@@ -376,15 +383,18 @@ for (ems in emsregions) {
       )+
       customThemeNoFacet+
       theme(axis.text.x  = element_text(size = 12, angle=60, hjust=1, vjust=1)) +
-      scale_color_viridis(option = "D", discrete = FALSE, direction = -1) 
+      scale_color_viridis(option = "D", discrete = TRUE, direction = -1) 
     
     ggsave(paste0(geography, "_", ems, "_", selected_outcome, "_line_belowCapacity.png"),
-           plot = l_plot2, path = file.path(ems_dir), width = 14, height = 5, dpi = 300, device = "png"
+           plot = l_plot2, path = file.path(ems_dir), width = 8, height = 5, dpi = 300, device = "png"
     )
 
 
     for (testDelay in unique(plotdat$time_to_detection)) {
-      heatmap_out <- f_heatmap(subset(plotdat, Date == max(plotdat$Date) &  time_to_detection == testDelay), selected_outcome, valuetype = "absolute")
+      heatmap_out <- f_heatmap(subset(plotdat, Date == max(plotdat$Date) &  time_to_detection == testDelay),
+                               selected_outcome, valuetype = "absolute")
+      
+      if(heatmap_out==  "lm.fit not ok") next
       h_plot <- heatmap_out[[1]]
       h_threshold <- heatmap_out[[3]]
       ggsave(paste0(geography, "_", ems, "_", selected_outcome, "_tD", testDelay, "_heatmap.png"),
