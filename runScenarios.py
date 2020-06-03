@@ -215,9 +215,19 @@ def add_computed_parameters(df):
 
 def add_parameters(df, parameter_type, config, region, age_bins):
     """Append parameters to the DataFrame"""
-    if parameter_type not in ("time_parameters", "intervention_parameters", "sampled_parameters"):
+    if parameter_type not in ("time_parameters", "intervention_parameters", "fixed_parameters_global"):
         raise ValueError(f"Unrecognized parameter type: {parameter_type}")
     for parameter, parameter_function in config[parameter_type].items():
+        if region in parameter_function:
+            # Check for a distribution specific to this region
+            parameter_function = parameter_function[region]
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+    return df
+
+
+def add_sampled_parameters(df, config, region, age_bins):
+    """Append sampled parameters to the DataFrame"""
+    for parameter, parameter_function in config["sampled_parameters"].items():
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
@@ -230,18 +240,17 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
     """
-    # Time-independent parameters.
+    # Time-independent parameters. No full factorial across parameters.
     df = pd.DataFrame()
     df['sample_num'] = range(samples)
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
     df = add_fixed_parameters_region_specific(df, config, region, age_bins)
-    df = add_parameters(df, "sampled_parameters", config, region, age_bins)
-    df = add_parameters(df, "intervention_parameters", config, region, age_bins)
-    for parameter, parameter_function in config['fixed_parameters_global'].items():
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+    df = add_sampled_parameters(df, config, region, age_bins)
 
-    # For a given start date, cross all Ki values with df for full factorial.
+    # Time-independent parameters. Create full factorial.
+    df = add_parameters(df, "intervention_parameters", config, region, age_bins)
+    df = add_parameters(df, "fixed_parameters_global", config, region, age_bins)
     df = _get_full_factorial_df(df, "Ki", Kivalues)
 
     # Time-varying parameters for each start date.
