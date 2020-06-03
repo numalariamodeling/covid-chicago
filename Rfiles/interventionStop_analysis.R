@@ -7,12 +7,10 @@ require(cowplot)
 require(scales)
 
 
-projectdir <- file.path("C:/Users/mrung/gitrepos/covid-chicago/")
-datadir <- file.path("C:/Users/mrung/Box/NU-malaria-team/data/covid_chicago/NMH/")
+source("load_paths.R")
+source("processing_helpers.R")
 
-source(file.path(projectdir, "Rfiles/f_AggrDat.R"))
-source(file.path(projectdir, "Rfiles/setup.R"))
-
+datadir <- file.path(data_path, "covid_chicago/NMH/")
 
 # exp_name ="20200414_NMH_catchment_testInterventionStop_rn50"
 exp_name <- "20200415_NMH_catchment_testInterventionStop_rn38"
@@ -39,13 +37,10 @@ table(trajectoriesDat$stop_date)
 trajectoriesDat$Date <- as.Date(trajectoriesDat$time + startDate)
 trajectoriesDat$effectVar <- (1 - trajectoriesDat$backtonormal_multiplier) * 100
 
-
-
 ### Calculate new infections
 ### Aggregate seeds and samples
 aggrDat_exposed <- trajectoriesDat %>% f_aggrDat(groupVars = c("time", "Date", "backtonormal_multiplier", "effectVar", "stop_date"), valueVar = "exposed", WideToLong = FALSE)
 aggrDat_hosp_cumul <- trajectoriesDat %>% f_aggrDat(groupVars = c("time", "Date", "backtonormal_multiplier", "effectVar", "stop_date"), valueVar = "hosp_cumul", WideToLong = FALSE)
-
 
 
 ## Show social multiploer arrows

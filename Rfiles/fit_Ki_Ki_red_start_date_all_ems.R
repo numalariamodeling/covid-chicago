@@ -23,14 +23,12 @@ library(tidyverse)
 
 username = Sys.getenv("USERNAME")
 if(username=="mrung"){
-  Box_dir = file.path("C:/Users/mrung/Box/NU-malaria-team")
-  simulation_output_dir = file.path(Box_dir,"projects/covid_chicago/cms_sim/simulation_output/")
-  data_dir = file.path(Box_dir,"data/")
-  out_dir =  file.path(Box_dir,"projects/covid_chicago/parameter_estimates_by_EMS/v2/")
+  source("load_paths.R")
+  out_dir =  file.path(project_path,"parameter_estimates_by_EMS/v2/")
 }else{
   Box_dir <- getwd()
-  simulation_output_dir <- file.path(Box_dir,'covid_chicago','cms_sim')
-  data_dir = file.path(Box_dir)
+  simulation_output <- file.path(Box_dir,'covid_chicago','cms_sim')
+  data_path = file.path(Box_dir)
   out_dir =  file.path(Box_dir,'covid_chicago',"parameter_estimates_by_EMS/v2/")
 }
 
@@ -38,17 +36,17 @@ if(username=="mrung"){
 simdate = "20200525"
 
 ## Read in simulations, put in list
-sim_ems1 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_1_fit_test1/trajectoriesDat.csv"))
-sim_ems2 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_2_fit_test1/trajectoriesDat.csv"))
-sim_ems3 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_3_fit_test1/trajectoriesDat.csv"))
-sim_ems4 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_4_fit_test1/trajectoriesDat.csv"))
-sim_ems5 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_5_fit_test1/trajectoriesDat.csv"))
-sim_ems6 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_6_fit_test1/trajectoriesDat.csv"))
-sim_ems7 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_7_fit_test1/trajectoriesDat.csv"))
-sim_ems8 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_8_fit_test1/trajectoriesDat.csv"))
-sim_ems9 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_9_fit_test1/trajectoriesDat.csv"))
-sim_ems10 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_10_fit_test1/trajectoriesDat.csv"))
-sim_ems11 <- read.csv(file.path(simulation_output_dir,"forFitting/",simdate,"_EMS_11_fit_test1/trajectoriesDat.csv"))
+sim_ems1 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_1_fit_test1/trajectoriesDat.csv")))
+sim_ems2 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_2_fit_test1/trajectoriesDat.csv")))
+sim_ems3 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_3_fit_test1/trajectoriesDat.csv")))
+sim_ems4 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_4_fit_test1/trajectoriesDat.csv")))
+sim_ems5 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_5_fit_test1/trajectoriesDat.csv")))
+sim_ems6 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_6_fit_test1/trajectoriesDat.csv")))
+sim_ems7 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_7_fit_test1/trajectoriesDat.csv")))
+sim_ems8 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_8_fit_test1/trajectoriesDat.csv")))
+sim_ems9 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_9_fit_test1/trajectoriesDat.csv")))
+sim_ems10 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_10_fit_test1/trajectoriesDat.csv")))
+sim_ems11 <- read.csv(file.path(simulation_output,"forFitting", paste0(simdate,"_EMS_11_fit_test1/trajectoriesDat.csv")))
 
 
 simulationslist <- list(sim_ems1, sim_ems2, sim_ems3, sim_ems4, sim_ems5, sim_ems6, sim_ems7, sim_ems8, sim_ems9, sim_ems10, sim_ems11)
