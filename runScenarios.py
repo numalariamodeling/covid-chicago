@@ -34,19 +34,33 @@ def _get_full_factorial_df(df, column_name, values):
     return result
 
 
-def _parse_config_parameter(df, parameter, parameter_function, column_name):
+def _parse_config_parameter(df, parameter, parameter_function, column_name, full_factorial):
     if isinstance(parameter_function, (int, float)):
         df[column_name] = parameter_function
         return df
     elif 'np.random' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
-        params = getattr(np.random, parameter_function['np.random'])(**{"size": 1, **function_kwargs})
-        result = _get_full_factorial_df(df, column_name, params)
+        func = getattr(np.random, parameter_function['np.random'])
+        if full_factorial:
+            params = func(**{"size": 1, **function_kwargs})
+            result = _get_full_factorial_df(df, column_name, params)
+        else:
+            params = [func(**function_kwargs, size=1)[0]
+                      for _ in range(len(df))]
+            result = df
+            result[column_name] = params
         return result
     elif 'np' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
-        params = getattr(np, parameter_function['np'])(**{"num": 1, **function_kwargs})
-        result = _get_full_factorial_df(df, column_name, params)
+        func = getattr(np, parameter_function['np'])
+        if full_factorial:
+            params = func(**{"num": 1, **function_kwargs})
+            result = _get_full_factorial_df(df, column_name, params)
+        else:
+            params = [func(**function_kwargs, num=1)[0]
+                      for _ in range(len(df))]
+            result = df
+            result[column_name] = params
         return result
     elif 'custom_function' in parameter_function:
         function_name = parameter_function['custom_function']
@@ -75,7 +89,7 @@ def _parse_config_parameter(df, parameter, parameter_function, column_name):
         raise ValueError(f"Unknown type of parameter {parameter}")
 
 
-def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins):
+def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins, full_factorial):
     """Age-specific parameter sampling from a numpy distribution
 
     Create a column in the DataFrame for each age bin, and sample from
@@ -111,12 +125,18 @@ def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins
 
     # Do the sampling
     for _bin, _dist, _kwargs in zip(age_bins, distribution, kwargs):
-        params = getattr(np.random, _dist)(**{"size": 1, **_kwargs})
-        df = _get_full_factorial_df(df, f"{parameter}_{_bin}", params)
+        func = getattr(np.random, _dist)
+        column_name = f"{parameter}_{_bin}"
+        if full_factorial:
+            params = func(**{"size": 1, **_kwargs})
+            df = _get_full_factorial_df(df, column_name, params)
+        else:
+            params = [func(**_kwargs, size=1)[0] for _ in range(len(df))]
+            df[column_name] = params
     return df
 
 
-def add_config_parameter_column(df, parameter, parameter_function, age_bins=None):
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, full_factorial=True):
     """ Applies the described function and adds the column to the dataframe
 
     The input DataFrame will be modified in place.
@@ -143,6 +163,8 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
           e.g. SpeciesS (given N and initialAs)
     age_bins: list of str, optional
         If the parameter is to be expanded by age, the new dataframe with have individual parameters for each bin.
+    full_factorial : bool, optional
+        If True, the returned df has a full factorial with the given parameter values.
 
     Returns
     -------
@@ -158,7 +180,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                 raise ValueError(f"{parameter} has a list with {n_list} elements, "
                                  f"but there are {len(age_bins)} age bins.")
             for bin, val in zip(age_bins, parameter_function['list']):
-                df = _parse_config_parameter(df, parameter, val, f'{parameter}_{bin}')
+                df = _parse_config_parameter(df, parameter, val, f'{parameter}_{bin}', full_factorial)
         elif 'custom_function' in parameter_function:
             function_name = parameter_function['custom_function']
             if function_name == 'subtract':
@@ -169,11 +191,12 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
                                              'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}},
                         f'{parameter}_{bin}',
+                        full_factorial,
                     )
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
         elif 'np.random' in parameter_function:
-            df = _parse_age_specific_distribution(df, parameter, parameter_function, age_bins)
+            df = _parse_age_specific_distribution(df, parameter, parameter_function, age_bins, full_factorial)
         else:
             raise ValueError(f"Unknown type of parameter {parameter} for expand_by_age")
     else:
@@ -181,9 +204,9 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             m = parameter_function['matrix']
             for i, row in enumerate(m):
                 for j, item in enumerate(row):
-                    df = _parse_config_parameter(df, parameter, item, f'{parameter}{i+1}_{j+1}')
+                    df = _parse_config_parameter(df, parameter, item, f'{parameter}{i+1}_{j+1}', full_factorial)
         else:
-            df = _parse_config_parameter(df, parameter, parameter_function, parameter)
+            df = _parse_config_parameter(df, parameter, parameter_function, parameter, full_factorial)
     return df
 
 
@@ -213,25 +236,16 @@ def add_computed_parameters(df):
     return df
 
 
-def add_parameters(df, parameter_type, config, region, age_bins):
+def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=True):
     """Append parameters to the DataFrame"""
-    if parameter_type not in ("time_parameters", "intervention_parameters", "fixed_parameters_global"):
+    if parameter_type not in ("time_parameters", "intervention_parameters",
+                              "sampled_parameters", "fixed_parameters_global"):
         raise ValueError(f"Unrecognized parameter type: {parameter_type}")
     for parameter, parameter_function in config[parameter_type].items():
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
-    return df
-
-
-def add_sampled_parameters(df, config, region, age_bins):
-    """Append sampled parameters to the DataFrame"""
-    for parameter, parameter_function in config["sampled_parameters"].items():
-        if region in parameter_function:
-            # Check for a distribution specific to this region
-            parameter_function = parameter_function[region]
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, full_factorial)
     return df
 
 
@@ -246,7 +260,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
     df['speciesS'] = pop
     df['initialAs'] = config['experiment_setup_parameters']['initialAs']
     df = add_fixed_parameters_region_specific(df, config, region, age_bins)
-    df = add_sampled_parameters(df, config, region, age_bins)
+    df = add_parameters(df, "sampled_parameters", config, region, age_bins, full_factorial=False)
 
     # Time-independent parameters. Create full factorial.
     df = add_parameters(df, "intervention_parameters", config, region, age_bins)
