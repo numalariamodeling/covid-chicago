@@ -4,7 +4,6 @@ The emodl file contains all information that defines the mathematical model itse
 For example, it defines the species, the transition rates, incubation time, daily recovery rate, and many other parameters specific to the disease being modeled. 
 The model file is in EMODL format; the syntax and available parameters are described in [Model file syntax](https://idmod.org/docs/cms/model-file.html).
 
-
 There are 4 types of models: 1) base, 2) age, 3) spatial, and 4) spatial-age. 
 The base emodl file is edited per hand, whereas for the other types so called "emodl-generator" scripts are availabble. 
 Note the term 'cobey' was removed from age and spatial file names to shorten the filename. 
@@ -15,7 +14,7 @@ the model was further improved inspired from the compartmental model used at the
 
 | structure      | type                            | cms modifications        | intervention          | emodl name                                             |
 |----------------|---------------------------------|--------------------------|-----------------------|--------------------------------------------------------|
-| base           | master                          | none                     | continued SIP         | extendedmodel_cobey.emodl                              |
+| base           | master                          | none                     | continued SIP         | extendedmodel_cobey.emodl                              |                       |
 | base           | added intervention              | none                     | never SIP             | extendedmodel_cobey_noSIP.emodl                        |
 | base           | added intervention              | none                     | immediate stop of SIP | extendedmodel_cobey_interventionStopy.emodl            |
 | base           | added intervention              | none                     | gradual reopen        | extendedmodel_cobey_gradual_reopening.emodl            |
@@ -35,16 +34,12 @@ the model was further improved inspired from the compartmental model used at the
 | age-8          | all location contacts           | added contact matrix     | gradual reopen        | extendedmodel_age8_contactTracing.emodl 
 | age-8          | all location contacts           | age specific parameter   | continued SIP         | extendedmodel_age8_param.emodl                         |
 |                |                                 |                          |                       |                                                        |
-| spatial-grp    | no migration                    | none                     | continued SIP         | extendedmodel_EMSgrp.emodl                            |
-| spatial-grp    | no migration                    | none                     | never SIP             | extendedmodel_EMSgrp_neverSIP.emodl                   |
-| spatial-grp    | no migration                    | none                     | immediate stop of SIP | extendedmodel_EMSgrp_interventionStop.emodl           |
-| spatial-grp    | no migration                    | none                     | gradual reopen        | extendedmodel_EMSgrp_gradual_reopening.emodl          |
-| spatial-grp    | no migration                    | none                     | gradual reopen + CT   | extendedmodel_EMSgrp_gradual_contactTracing.emodl  
 |                |                                 |                          |                       |                                                        |
-| spatial-locale | no migration                    | none                     | continued SIP         | extendedmodel_cobey_localeEMS.emodl                   |
-| spatial-locale | no migration                    | none                     | never SIP             | extendedmodel_cobey_localeEMS_neverSIP.emodl          |
-| spatial-locale | no migration                    | none                     | immediate stop of SIP | extendedmodel_cobey_localeEMS_interventionStop.emodl  |
-| spatial-locale | no migration                    | none                     | gradual reopen        | extendedmodel_cobey_localeEMS_gradual_reopening.emodl |
+| spatial        | no migration                    | none                     | continued SIP         | extendedmodel_EMS.emodl                   |
+| spatial        | no migration                    | none                     | never SIP             | extendedmodel_EMS_neverSIP.emodl          |
+| spatial        | no migration                    | none                     | immediate stop of SIP | extendedmodel_EMS_interventionStop.emodl  |
+| spatial        | no migration                    | none                     | immediate stop of SIP | extendedmodel_EMS_interventionStopadj.emodl  |
+| spatial        | no migration                    | none                     | gradual reopen        | extendedmodel_EMS_gradual_reopening.emodl |
 |                |                                 |                          |                       |                                                        |
 | locale_age     | no migration  no contact matrix | none                     | continued SIP         | extendedmodel_cobey_locale_age_test.emodl              |
 
