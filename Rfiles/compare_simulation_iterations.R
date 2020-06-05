@@ -11,22 +11,22 @@ source("load_paths.R")
 source("processing_helpers.R")
 
 
-simdates <- c("20200526", "20200521", "20200520")
+simdates <- c("20200521", "20200526" , "20200603")
 scenario <- "baseline" # june1partial10  , june1partial30
 
 dat1 <- read.csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[1], "/csv/nu_il_", scenario, "_", simdates[1], ".csv")))
 dat2 <- read.csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[2], "/csv/nu_il_", scenario, "_", simdates[2], ".csv")))
-dat0 <- read.csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[3], "_testDelay/csv/nu_il_", scenario, "_", simdates[3], ".csv")))
+dat3 <- read.csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[3], "/csv/nu_il_", scenario, "_", simdates[3], ".csv")))
 
 
 dat1$simdate <- simdates[1]
 dat2$simdate <- simdates[2]
-dat0$simdate <- simdates[3]
+dat3$simdate <- simdates[3]
 
-dat <- dat0 %>%
+dat <- dat3 %>%
   dplyr::select(colnames(dat1)) %>%
   rbind(dat1, dat2) %>%
-  dplyr::mutate(Date <- as.Date(Date)) %>%
+  dplyr::mutate(Date=  as.Date(Date)) %>%
   filter(
     Date <= "2021-03-01",
     geography_modeled == "illinois"
@@ -128,3 +128,6 @@ outdir <- file.path(project_path, paste0("NU_civis_outputs/", simdates[length(si
 
 fname <- paste0(scenario, "_comparison.png")
 ggsave(fname, plot = scen, path = outdir, width = 16, height = 10, device = "png")
+
+
+
