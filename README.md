@@ -31,7 +31,7 @@ The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.htm
 - CMS software publication [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
 - [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 - [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
-- [Northwestern news on COVID-19 Transmission Modeling](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
+- [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
 
 # 2. Model 
 The latest model description in emodl format is written in the [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl) file. Since early April,, the model includes modifications added in alignment with the COVID model from [a modelling team at the University of Chicago](https://github.com/cobeylab/covid_IL). 
