@@ -5,14 +5,12 @@
 # 1. General 
 
 ### 1.1 Compartmental model structure (emodl file)
-The "simplemodel" includes only the basic S-E-I-R compartments. 
-Go to the related [emodl file here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
-Latest version of the model, including modifications in alignment with the Covid model developed by [a modelling team at the University of Chicago](https://github.com/cobeylab/covid_IL). 
+A basic SEIR model was extended to include symptom status (asymptomatic, presymptomatic, mild and severe symptoms), hospitalization, critical illness, and deaths, while allowing to track detected and undetected cases separately.
+![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure_testDelay.png)
+
 
 ## 1.2. Software used
-- Modified SEIR model using Institute for Disease Modeling (IDM's)
-[Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html)
-The CMS language defines 5 main type: species, observations, reactions, parameters and functions, in addition time-events can be added as well as state-events. Multiple compartments, called ‘species’ can be defined. The movement of populations between compartments is called reaction. The model runs with different solvers, including spatial solvers. The model is written in ['emodl' files](https://idmod.org/docs/cms/input-files.html) and model configurations are written in ['cfg' files](https://idmod.org/docs/cms/input-files.html). The output is written into [trajectories.csv files](https://idmod.org/docs/cms/output.html?searchText=output).
+The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html) is used to simulate the COVID-19 transmission and disease progression. The CMS language defines 5 main type: species, observations, reactions, parameters and functions, in addition time-events can be added as well as state-events. Multiple compartments, called ‘species’ can be defined. The movement of populations between compartments is called reaction. The model runs with different solvers, including spatial solvers. The model is written in ['emodl' files](https://idmod.org/docs/cms/input-files.html) and model configurations are written in ['cfg' files](https://idmod.org/docs/cms/input-files.html). The output is written into [trajectories.csv files](https://idmod.org/docs/cms/output.html?searchText=output).
 
 ## 1.2. Updates 
 
@@ -36,19 +34,13 @@ The CMS language defines 5 main type: species, observations, reactions, paramete
 - [Northwestern news on COVID-19 Transmission Modeling](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
 
 # 2. Model 
+The latest model description in emodl format is written in the [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl) file. Since early April,, the model includes modifications added in alignment with the COVID model from [a modelling team at the University of Chicago](https://github.com/cobeylab/covid_IL). 
 
-## 2.1. Base model
-A basic SEIR model was extended to include symptom status (asymptomatic, presymptomatic, mild and severe symptoms), hospitalization, critical illness, and deaths, while allowing to track detected and undetected cases separately.
-![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure_testDelay.png)
-
-For the contact tracing scenario an additional compartment for detection of presymptomatic cases is added. The option for quarantine of susceptibles is currently disabled. 
-![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure_Pdet_TestDelay_withParameter.png)
-
-### 2.1.1. Model parameters
+## 2.1. Model parameters
 Most of the parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. model from [UChicago](https://github.com/cobeylab/covid_IL)).
 The starting date, intervention effect size, and the transmission parameter "Ki"are fitted to the data.
 
-#### 'reaction paramaters'
+### 2.1.1 'reaction paramaters'
 All the parameters are sampled from a uniform distribution as specified in the [experiment config (yaml) file ](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L43)
 
 | parameter | name                                                                         | 
@@ -72,7 +64,7 @@ All the parameters are sampled from a uniform distribution as specified in the [
 | Km        | Deaths                                                                       |   
 
 
-#### Time parameters (in days)
+### 2.1.2  Time parameters (in days)
 
 | parameter | name                                                                         | 
 |---------------------------|--------------------------------------------------------------|
@@ -89,7 +81,7 @@ All the parameters are sampled from a uniform distribution as specified in the [
 
 Note: Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
 
-#### time-varying parameters (intervention scenarios)
+### 2.1.3  time-varying parameters (intervention scenarios)
 The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-event) option in cms allows to change a paramter at a given time point (days) (which will stay constant afterwards if not resetted using a second time-event).
 Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
 The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
@@ -99,7 +91,7 @@ Current scenarios include:
 - Continue stay-at-home
 - Stop stay-at-home order - immediately
 - Stop stay-at-home order - step-wise 
-(- Contact tracing and increase in case detection)
+(- Contact tracing and increase in case detection (includes additional compartment for detection of presymptomatic cases))
 
 For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
