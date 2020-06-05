@@ -67,7 +67,8 @@ def calculate_incidence(adf, scenario_param, output_filename=None) :
 
 
 def plot_on_fig(df, channels, axes, color, label) :
-    first_day =  date(2020, 2, 28)
+    #first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    first_day = date(2020, 2, 20)
 
     for c, channel in enumerate(channels) :
         ax = axes[c]
