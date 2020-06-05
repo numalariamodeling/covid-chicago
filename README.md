@@ -131,7 +131,7 @@ and substitutes parameters with the values/functions in the
 user-provided configuration file using the `@param@` placeholder. Multiple trajectories.csv that are produced per single simulation are combined into a trajectoriesDat.csv, used for postprocessing and plotting.
 
 
-## 3.1 Configuration file:
+## 3.1 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
 The configuration file is in [YAML](https://yaml.org/) format and is divided into 5
 blocks: `experiment_setup_parameters`,
 `fixed_parameters_region_specific`, `fixed_parameters_global`,
@@ -170,13 +170,14 @@ Note that the user-supplied configuration file is used to provide
 
 
 ## 3.4 Define age or region specific inputs 
-View [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) for current custom scenarios that are being used. 
+The [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
 ### Region specific sample parameters (i.e. using estimates parameters per EMS regions)
--  `EMSspecific_sample_parameters.yaml`  (needs to be updated with fitted parameter estimates)
+- [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
 
 ###  Age extension and age specific parameters 
-- `sample_age4grp_experiment.yaml` and  `sample_age8grp_experiment.yaml`
+- `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
+Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
 
 ## 3.5. Local environment setup
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
