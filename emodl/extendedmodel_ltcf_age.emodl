@@ -1,8 +1,8 @@
-; simplemodel 
+; simplemodel
 
-(import (rnrs) (emodl cmslib)) 
+(import (rnrs) (emodl cmslib))
 
-(start-model "seir.emodl") 
+(start-model "seir.emodl")
 
 
 
@@ -257,17 +257,7 @@
 (func infectious_undet_All_out (+ infectious_undet_staff_out infectious_undet_visitors_out))
 
 
-(func N_all_in (+ S_residents_in As_residents_in As_det1_residents_in E_residents_in P_residents_in Sym_residents_in Sym_det2_residents_in Sys_residents_in Sys_det3_residents_in H1_residents_in H2_residents_in H3_residents_in H1_det3_residents_in H2_det3_residents_in H3_det3_residents_in C2_residents_in C3_residents_in C2_det3_residents_in C3_det3_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))
 
-
-(func N_all_out (+ S_staff_out As_staff_out E_staff_out As_det1_staff_out P_staff_out Sym_staff_out Sym_det2_staff_out Sys_staff_out Sys_det3_staff_in H1_staff_out H2_staff_out H3_staff_out H1_det3_staff_out H2_det3_staff_out H3_det3_staff_out C2_staff_out C3_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out S_visitors_out As_visitors_out E_visitors_out As_det1_visitors_out P_visitors_out Sym_visitors_out Sym_det2_visitors_out Sys_visitors_out Sys_det3_visitors_out H1_visitors_out H2_visitors_out H3_visitors_out H1_det3_visitors_out H2_det3_visitors_out H3_det3_visitors_out C2_visitors_out C3_visitors_out C2_det3_visitors_out C3_det3_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))
-(func Ncontact_all_in (+ S_residents_in As_residents_in E_residents_in P_residents_in Sym_residents_in Sys_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))
-(func Ncontact_all_out (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out S_visitors_out As_visitors_out E_visitors_out As_det1_visitors_out P_visitors_out Sym_visitors_out Sym_det2_visitors_out Sys_visitors_out Sys_det3_visitors_out H1_visitors_out H2_visitors_out H3_visitors_out H1_det3_visitors_out H2_det3_visitors_out H3_det3_visitors_out C2_visitors_out C3_visitors_out C2_det3_visitors_out C3_det3_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))
-(func Ncontact_all_staff_in (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))
-(func Ncontact_all_residents_in (+ S_residents_in As_residents_in E_residents_in P_residents_in Sym_residents_in Sys_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in))
-(func Ncontact_all_visitors_in (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in))
-(func Ncontact_all_staff_out (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))
-(func Ncontact_all_visitors_out (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))
 
 
 (observe Ncontact_all_in Ncontact_all_in)
@@ -494,6 +484,17 @@
 (param Ki_red3 (* Ki @social_multiplier_3@))
 (param Ki_red4 (* Ki @social_multiplier_4@))
 
+(param N_all_in (+ @speciesS_residents_in@ @speciesS_staff_in@ @speciesS_visitors_in@))
+(param N_all_out (+ @speciesS_staff_out@ @speciesS_visitors_out@))
+(param Ncontact_all_in (+ @speciesS_residents_in@ @speciesS_staff_in@ @speciesS_visitors_in@))
+(param Ncontact_all_out (+ @speciesS_staff_out@ @speciesS_visitors_out@))
+(param Ncontact_all_staff_in @speciesS_staff_in@)
+(param Ncontact_all_residents_in  @speciesS_residents_in@)
+(param Ncontact_all_visitors_in @speciesS_visitors_in@)
+(param Ncontact_all_staff_out @speciesS_staff_out@)
+(param Ncontact_all_visitors_out @speciesS_visitors_out@)
+
+
 ;Ki_residents changes diffrently from Ki_staff and Ki_visitors
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_staff Ki_red1)))
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_visitors Ki_red1)))
@@ -504,13 +505,13 @@
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_residents Ki_red4)))
 (time-event socialDistance_start @socialDistance_time3@ ((D_visitors 0)))
 
-(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@))) 
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@))) 
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
- 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
+
 (param fraction_severe_residents @fraction_severe_residents@)
 (param Ksysresidents (* fraction_severe_residents (/ 1 time_to_symptoms)))
-(param Ksymresidents (* (- 1 fraction_severe_residents) (/ 1 time_to_symptoms))) 
+(param Ksymresidents (* (- 1 fraction_severe_residents) (/ 1 time_to_symptoms)))
 
 ;(param fraction_dead_residents (/ cfr fraction_severe_residents))
 (param fraction_dead_residents @fraction_dead_residents@)
@@ -532,7 +533,7 @@
 
 (param fraction_severe_staff @fraction_severe_staff@)
 (param Ksysstaff (* fraction_severe_staff (/ 1 time_to_symptoms)))
-(param Ksymstaff (* (- 1 fraction_severe_staff) (/ 1 time_to_symptoms))) 
+(param Ksymstaff (* (- 1 fraction_severe_staff) (/ 1 time_to_symptoms)))
 
 ;(param fraction_dead_staff (/ cfr fraction_severe_staff))
 (param fraction_dead_staff @fraction_dead_staff@)
@@ -554,7 +555,7 @@
 
 (param fraction_severe_visitors @fraction_severe_visitors@)
 (param Ksysvisitors (* fraction_severe_visitors (/ 1 time_to_symptoms)))
-(param Ksymvisitors (* (- 1 fraction_severe_visitors) (/ 1 time_to_symptoms))) 
+(param Ksymvisitors (* (- 1 fraction_severe_visitors) (/ 1 time_to_symptoms)))
 
 ;(param fraction_dead_visitors (/ cfr fraction_severe_visitors))
 (param fraction_dead_visitors @fraction_dead_visitors@)
