@@ -47,7 +47,7 @@ Adding social distancing interventions
 - social_multiplier_2
 - social_multiplier_n
 
-Increeasing detection rates over time
+Increasing detection rates over time
 - detection_time_1
 - detection_time_2
 - detection_time_n
@@ -85,13 +85,14 @@ In contrast to the startdate, the dates here are taken ony by one and not as a r
 	
 ## [fitted_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L227)
 
-- Ki
+- Ki (transmission parameter)
 
 In base model (running for specified EMS alone)
 
     'EMS_1':
       np: linspace
       function_kwargs: {'start': 0.589, 'stop': 0.589, 'num': 1}
+     ...
 	  
 In spatial model (running for all EMS in one simulation using separate compartments)
 
@@ -157,8 +158,10 @@ Runs with these emodl files:
 
 
 ## 1.3. Customized yaml + emodls  (replacing master yaml file)
-- extendedcobey_forFitting.yaml 
-- extendedmodel_cobey_forFitting.emodl 
+- [extendedcobey_forFitting.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_forFitting.yaml)
+- [extendedmodel_cobey_forFitting.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_forFitting.emodl)(not used anymore)
+Note the emodl file is outdated and the 'forFitting' yaml file can be run with a [base EMS emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_EMS.emodl), since the startdate can be directly varied. 
+
 
 
 
