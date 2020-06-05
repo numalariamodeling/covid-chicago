@@ -197,7 +197,7 @@
 (func deaths_residents_in (+ D3_residents_in D3_det3_residents_in))
 (func recovered_residents_in (+ RAs_residents_in RSym_residents_in RH1_residents_in RC2_residents_in RAs_det1_residents_in RSym_det2_residents_in RH1_det3_residents_in RC2_det3_residents_in))
 (func infectious_undet_residents_in (+ As_residents_in P_residents_in Sym_residents_in Sys_residents_in H1_residents_in H2_residents_in H3_residents_in C2_residents_in C3_residents_in))
-(func infectious_det_residents_in (+ As_det1_residents_in Sym_det2_residents_in Sys_det3_residents_in ))
+(func infectious_det_residents_in (+ As_det1_residents_in Sym_det2_residents_in Sys_det3_residents_in H1_det3_residents_in H2_det3_residents_in H3_det3_residents_in))
 
 
 (func asymptomatic_staff_in(+ As_staff_in As_det1_staff_in))
@@ -208,7 +208,7 @@
 (func deaths_staff_in (+ D3_staff_in D3_det3_staff_in))
 (func recovered_staff_in (+ RAs_staff_in RSym_staff_in RH1_staff_in RC2_staff_in RAs_det1_staff_in RSym_det2_staff_in RH1_det3_staff_in RC2_det3_staff_in))
 (func infectious_undet_staff_in (+ As_staff_in P_staff_in Sym_staff_in Sys_staff_in H1_staff_in H2_staff_in H3_staff_in C2_staff_in C3_staff_in))
-(func infectious_det_staff_in (+ As_det1_staff_in Sym_det2_staff_in Sys_det3_staff_in ))
+(func infectious_det_staff_in (+ As_det1_staff_in Sym_det2_staff_in Sys_det3_staff_in H1_det3_staff_in H2_det3_staff_in H3_det3_staff_in))
 
 
 (func asymptomatic_visitors_in(+ As_visitors_in As_det1_visitors_in))
@@ -219,7 +219,7 @@
 (func deaths_visitors_in (+ D3_visitors_in D3_det3_visitors_in))
 (func recovered_visitors_in (+ RAs_visitors_in RSym_visitors_in RH1_visitors_in RC2_visitors_in RAs_det1_visitors_in RSym_det2_visitors_in RH1_det3_visitors_in RC2_det3_visitors_in))
 (func infectious_undet_visitors_in (+ As_visitors_in P_visitors_in Sym_visitors_in Sys_visitors_in H1_visitors_in H2_visitors_in H3_visitors_in C2_visitors_in C3_visitors_in))
-(func infectious_det_visitors_in (+ As_det1_visitors_in Sym_det2_visitors_in Sys_det3_visitors_in ))
+(func infectious_det_visitors_in (+ As_det1_visitors_in Sym_det2_visitors_in Sys_det3_visitors_in H1_det3_visitors_in H2_det3_visitors_in H3_det3_visitors_in))
 
 
 (func asymptomatic_residents_out(+ As_residents_out As_det1_residents_out))
@@ -241,7 +241,7 @@
 (func deaths_staff_out (+ D3_staff_out D3_det3_staff_out))
 (func recovered_staff_out (+ RAs_staff_out RSym_staff_out RH1_staff_out RC2_staff_out RAs_det1_staff_out RSym_det2_staff_out RH1_det3_staff_out RC2_det3_staff_out))
 (func infectious_undet_staff_out (+ As_staff_out P_staff_out Sym_staff_out Sys_staff_out H1_staff_out H2_staff_out H3_staff_out C2_staff_out C3_staff_out))
-(func infectious_det_staff_out (+ As_det1_staff_out Sym_det2_staff_out Sys_det3_staff_out ))
+(func infectious_det_staff_out (+ As_det1_staff_out Sym_det2_staff_out Sys_det3_staff_out H1_det3_staff_out H2_det3_staff_out H3_det3_staff_out))
 
 
 (func asymptomatic_visitors_out(+ As_visitors_out As_det1_visitors_out))
@@ -252,19 +252,19 @@
 (func deaths_visitors_out (+ D3_visitors_out D3_det3_visitors_out))
 (func recovered_visitors_out (+ RAs_visitors_out RSym_visitors_out RH1_visitors_out RC2_visitors_out RAs_det1_visitors_out RSym_det2_visitors_out RH1_det3_visitors_out RC2_det3_visitors_out))
 (func infectious_undet_visitors_out (+ As_visitors_out P_visitors_out Sym_visitors_out Sys_visitors_out H1_visitors_out H2_visitors_out H3_visitors_out C2_visitors_out C3_visitors_out))
-(func infectious_det_visitors_out (+ As_det1_visitors_out Sym_det2_visitors_out Sys_det3_visitors_out ))
+(func infectious_det_visitors_out (+ As_det1_visitors_out Sym_det2_visitors_out Sys_det3_visitors_out H1_det3_visitors_out H2_det3_visitors_out H3_det3_visitors_out))
 (func infectious_det_All_out (+ infectious_det_staff_out infectious_det_visitors_out))
 (func infectious_undet_All_out (+ infectious_undet_staff_out infectious_undet_visitors_out))
 
 
+(func N_all_in (+ S_residents_in As_residents_in As_det1_residents_in E_residents_in P_residents_in Sym_residents_in Sym_det2_residents_in Sys_residents_in Sys_det3_residents_in H1_residents_in H2_residents_in H3_residents_in H1_det3_residents_in H2_det3_residents_in H3_det3_residents_in C2_residents_in C3_residents_in C2_det3_residents_in C3_det3_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))
 
 
-
-
-(func Ncontact_all_in (+ S_residents_in As_residents_in E_residents_in P_residents_in Sym_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))
+(func N_all_out (+ S_staff_out As_staff_out E_staff_out As_det1_staff_out P_staff_out Sym_staff_out Sym_det2_staff_out Sys_staff_out Sys_det3_staff_in H1_staff_out H2_staff_out H3_staff_out H1_det3_staff_out H2_det3_staff_out H3_det3_staff_out C2_staff_out C3_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out S_visitors_out As_visitors_out E_visitors_out As_det1_visitors_out P_visitors_out Sym_visitors_out Sym_det2_visitors_out Sys_visitors_out Sys_det3_visitors_out H1_visitors_out H2_visitors_out H3_visitors_out H1_det3_visitors_out H2_det3_visitors_out H3_det3_visitors_out C2_visitors_out C3_visitors_out C2_det3_visitors_out C3_det3_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))
+(func Ncontact_all_in (+ S_residents_in As_residents_in E_residents_in P_residents_in Sym_residents_in Sys_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))
 (func Ncontact_all_out (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out S_visitors_out As_visitors_out E_visitors_out As_det1_visitors_out P_visitors_out Sym_visitors_out Sym_det2_visitors_out Sys_visitors_out Sys_det3_visitors_out H1_visitors_out H2_visitors_out H3_visitors_out H1_det3_visitors_out H2_det3_visitors_out H3_det3_visitors_out C2_visitors_out C3_visitors_out C2_det3_visitors_out C3_det3_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))
 (func Ncontact_all_staff_in (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))
-(func Ncontact_all_residents_in (+ S_residents_in As_residents_in E_residents_in P_residents_in Sym_residents_in Sys_residents_in H1_residents_in H2_residents_in H3_residents_in C2_residents_in C3_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in))
+(func Ncontact_all_residents_in (+ S_residents_in As_residents_in E_residents_in P_residents_in Sym_residents_in Sys_residents_in RAs_residents_in RAs_det1_residents_in RSym_residents_in RSym_det2_residents_in RH1_residents_in RH1_det3_residents_in RC2_residents_in RC2_det3_residents_in))
 (func Ncontact_all_visitors_in (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in))
 (func Ncontact_all_staff_out (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))
 (func Ncontact_all_visitors_out (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))
@@ -464,8 +464,8 @@
 (param recovery_time_hosp @recovery_time_hosp@)
 (param recovery_time_crit @recovery_time_crit@)
 (param recovery_time_asymp @recovery_time_asymp@)
-(param D_staff 0.25)
-(param D_visitors 0.08)
+(param D_staff 0.05)
+(param D_visitors 0.008)
 (param time_to_infectious @time_to_infectious@)
 (param time_to_symptoms @time_to_symptoms@)
 (param time_to_hospitalization @time_to_hospitalization@)
@@ -473,9 +473,9 @@
 (param time_to_death @time_to_death@)
 (param fraction_symptomatic @fraction_symptomatic@)
 (param fraction_severe @fraction_severe@)
-(param fraction_hospitalized @fraction_hospitalized@)
+
 (param fraction_critical @fraction_critical@ )
-(param fraction_dead @fraction_dead@)
+
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param d_As @d_As@)
 (param d_Sym @d_Sym@)
@@ -516,7 +516,7 @@
 (param fraction_dead_residents @fraction_dead_residents@)
 
 (param fraction_critical_residents @fraction_critical_residents@ )
-(param fraction_hospitalized_residents (/ fraction_critical_residents fraction_dead_residents ))
+(param fraction_hospitalized_residents @fraction_hospitalized_residents@)
 
 (param fraction_symptomatic_residents @fraction_symptomatic_residents@)
 (param Klresidents (/ (- 1 fraction_symptomatic_residents ) time_to_infectious))
@@ -538,7 +538,7 @@
 (param fraction_dead_staff @fraction_dead_staff@)
 
 (param fraction_critical_staff @fraction_critical_staff@ )
-(param fraction_hospitalized_staff (/ fraction_critical_staff fraction_dead_staff ))
+(param fraction_hospitalized_staff @fraction_hospitalized_staff@)
 
 (param fraction_symptomatic_staff @fraction_symptomatic_staff@)
 (param Klstaff (/ (- 1 fraction_symptomatic_staff ) time_to_infectious))
@@ -560,7 +560,7 @@
 (param fraction_dead_visitors @fraction_dead_visitors@)
 
 (param fraction_critical_visitors @fraction_critical_visitors@ )
-(param fraction_hospitalized_visitors (/ fraction_critical_visitors fraction_dead_visitors ))
+(param fraction_hospitalized_visitors @fraction_hospitalized_visitors@)
 
 (param fraction_symptomatic_visitors @fraction_symptomatic_visitors@)
 (param Klvisitors (/ (- 1 fraction_symptomatic_visitors ) time_to_infectious))
@@ -590,11 +590,13 @@
 (param sum2 (+ C21 C22 C23))
 (param sum3 (+ C31 C32 C33))
 
-(reaction exposure_staff_out  (S_staff_out) (E_staff_out) (* Ki_staff S_staff_out (/ (+ infectious_undet_All_out (* infectious_det_All_out reduced_inf_of_det_cases)) Ncontact_all_out )))
-(reaction exposure_visitors_out  (S_visitors_out) (E_visitors_out) (* Ki_visitors S_visitors_out (/ (+ infectious_undet_All_out (* infectious_det_All_out reduced_inf_of_det_cases)) Ncontact_all_out )))
-(reaction exposure_residents_in (S_residents_in) (E_residents_in) (* Ki_residents S_residents_in (+ (* (/ C11 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_residents_in Ncontact_all_residents_in)) (* (/ C12 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_staff_in Ncontact_all_staff_in)) (* (/ C13 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_visitors_in Ncontact_all_visitors_in)))))
-(reaction exposure_staff_in (S_staff_in) (E_staff_in) (* Ki_residents S_staff_in (+ (* (/ C21 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_residents_in Ncontact_all_residents_in)) (* (/ C22 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_staff_in Ncontact_all_staff_in)) (* (/ C23 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_visitors_in Ncontact_all_visitors_in)))))
-(reaction exposure_visitors_in (S_visitors_in) (E_visitors_in) (* Ki_residents S_visitors_in (+ (* (/ C31 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_residents_in Ncontact_all_residents_in)) (* (/ C32 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_staff_in Ncontact_all_staff_in)) (* (/ C33 (+ (* sum1 (/ Ncontact_all_residents_in Ncontact_all_in)) (* sum2 (/ Ncontact_all_staff_in Ncontact_all_in)) (* sum3 (/ Ncontact_all_visitors_in Ncontact_all_in)))) (/ infectious_undet_visitors_in Ncontact_all_visitors_in)))))
+
+
+(reaction exposure_staff_out  (S_staff_out) (E_staff_out) (* Ki_staff S_staff_out (/ (+ infectious_undet_All_out (* infectious_det_All_out reduced_inf_of_det_cases)) N_all_out )))
+(reaction exposure_visitors_out  (S_visitors_out) (E_visitors_out) (* Ki_visitors S_visitors_out (/ (+ infectious_undet_All_out (* infectious_det_All_out reduced_inf_of_det_cases)) N_all_out )))
+(reaction exposure_residents_in (S_residents_in) (E_residents_in) (* Ki_residents S_residents_in (+ (* (/ C11 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_residents_in Ncontact_all_residents_in)) (* (/ C12 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_staff_in Ncontact_all_staff_in)) (* (/ C13 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_visitors_in Ncontact_all_visitors_in)))))
+(reaction exposure_staff_in (S_staff_in) (E_staff_in) (* Ki_residents S_staff_in (+ (* (/ C21 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_residents_in Ncontact_all_residents_in)) (* (/ C22 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_staff_in Ncontact_all_staff_in)) (* (/ C23 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_visitors_in Ncontact_all_visitors_in)))))
+(reaction exposure_visitors_in (S_visitors_in) (E_visitors_in) (* Ki_residents S_visitors_in (+ (* (/ C31 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_residents_in Ncontact_all_residents_in)) (* (/ C32 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_staff_in Ncontact_all_staff_in)) (* (/ C33 (+ (* sum1 (/ Ncontact_all_residents_in N_all_in)) (* sum2 (/ Ncontact_all_staff_in N_all_in)) (* sum3 (/ Ncontact_all_visitors_in N_all_in)))) (/ infectious_undet_visitors_in Ncontact_all_visitors_in)))))
 
 
 (reaction infection_asymp_undet_residents_in (E_residents_in)  (As_residents_in)  (* Klresidents E_residents_in (- 1 d_As)))
@@ -632,71 +634,31 @@
 
 
 (reaction infection_asymp_undet_staff_in (E_staff_in)  (As_staff_in)  (* Klstaff E_staff_in (- 1 d_As)))
-(reaction infection_asymp_det_staff_in (E_staff_in)  (As_det1_staff_in)  (* Klstaff E_staff_in d_As))
+(reaction infection_asymp_det_staff_in (E_staff_in)  (As_det1_staff_out)  (* Klstaff E_staff_in d_As))
 (reaction presymptomatic_staff_in (E_staff_in)  (P_staff_in)  (* Ksstaff E_staff_in))
 (reaction mild_symptomatic_undet_staff_in (P_staff_in) (Sym_staff_in) (* Ksymstaff P_staff_in (- 1 d_Sym)))
-(reaction mild_symptomatic_det_staff_in (P_staff_in) (Sym_det2_staff_in) (* Ksymstaff P_staff_in d_Sym))
-(reaction severe_symptomatic_undet_staff_in (P_staff_in) (Sys_staff_in) (* Ksysstaff P_staff_in (- 1 d_Sys)))
-(reaction severe_symptomatic_det_staff_in (P_staff_in) (Sys_det3_staff_in) (* Ksysstaff P_staff_in d_Sys))
+(reaction mild_symptomatic_det_staff_in (P_staff_in) (Sym_det2_staff_out) (* Ksymstaff P_staff_in d_Sym))
+(reaction severe_symptomatic_undet_staff_in (P_staff_in) (Sys_staff_out) (* Ksysstaff P_staff_in (- 1 d_Sys)))
+(reaction severe_symptomatic_det_staff_in (P_staff_in) (Sys_det3_staff_out) (* Ksysstaff P_staff_in d_Sys))
 
-(reaction hospitalization_1_staff_in  (Sys_staff_in)  (H1_staff_in)  (* Kh1staff Sys_staff_in))
-(reaction hospitalization_2_staff_in  (Sys_staff_in)  (H2_staff_in)  (* Kh2staff Sys_staff_in))
-(reaction hospitalization_3_staff_in  (Sys_staff_in)  (H3_staff_in)  (* Kh3staff Sys_staff_in))
-(reaction critical_2_staff_in  (H2_staff_in)  (C2_staff_in)  (* Kc H2_staff_in))
-(reaction critical_3_staff_in  (H3_staff_in)  (C3_staff_in)  (* Kc H3_staff_in))
-(reaction death_staff_in  (C3_staff_in)  (D3_staff_in)  (* Km C3_staff_in))
 
 (reaction recovery_As_staff_in  (As_staff_in)  (RAs_staff_in)  (* Kr_a As_staff_in))
 (reaction recovery_Sym_staff_in  (Sym_staff_in)  (RSym_staff_in)  (* Kr_m Sym_staff_in))
-(reaction recovery_H1_staff_in  (H1_staff_in)  (RH1_staff_in)  (* Kr_hstaff H1_staff_in))
-(reaction recovery_C2_staff_in  (C2_staff_in)  (RC2_staff_in)  (* Kr_c C2_staff_in))
 
-(reaction recovery_As_det_staff_in (As_det1_staff_in)  (RAs_det1_staff_in)  (* Kr_a As_det1_staff_in))
-
-(reaction hospitalization_1_det_staff_in  (Sys_det3_staff_in)  (H1_det3_staff_in)  (* Kh1staff Sys_det3_staff_in))
-(reaction hospitalization_2_det_staff_in  (Sys_det3_staff_in)  (H2_det3_staff_in)  (* Kh2staff Sys_det3_staff_in))
-(reaction hospitalization_3_det_staff_in  (Sys_det3_staff_in)  (H3_det3_staff_in)  (* Kh3staff Sys_det3_staff_in))
-(reaction critical_2_det2_staff_in  (H2_det3_staff_in)  (C2_det3_staff_in)  (* Kc H2_det3_staff_in))
-(reaction critical_3_det2_staff_in  (H3_det3_staff_in)  (C3_det3_staff_in)  (* Kc H3_det3_staff_in))
-(reaction death_det3_staff_in  (C3_det3_staff_in)  (D3_det3_staff_in)  (* Km C3_det3_staff_in))
-
-(reaction recovery_Sym_det2_staff_in  (Sym_det2_staff_in)  (RSym_det2_staff_in)  (* Kr_m Sym_det2_staff_in))
-(reaction recovery_H1_det3_staff_in  (H1_det3_staff_in)  (RH1_det3_staff_in)  (* Kr_hstaff H1_det3_staff_in))
-(reaction recovery_C2_det3_staff_in  (C2_det3_staff_in)  (RC2_det3_staff_in)  (* Kr_c C2_det3_staff_in))
 
 
 (reaction infection_asymp_undet_visitors_in (E_visitors_in)  (As_visitors_in)  (* Klvisitors E_visitors_in (- 1 d_As)))
 (reaction infection_asymp_det_visitors_in (E_visitors_in)  (As_det1_visitors_in)  (* Klvisitors E_visitors_in d_As))
 (reaction presymptomatic_visitors_in (E_visitors_in)  (P_visitors_in)  (* Ksvisitors E_visitors_in))
 (reaction mild_symptomatic_undet_visitors_in (P_visitors_in) (Sym_visitors_in) (* Ksymvisitors P_visitors_in (- 1 d_Sym)))
-(reaction mild_symptomatic_det_visitors_in (P_visitors_in) (Sym_det2_visitors_in) (* Ksymvisitors P_visitors_in d_Sym))
-(reaction severe_symptomatic_undet_visitors_in (P_visitors_in) (Sys_visitors_in) (* Ksysvisitors P_visitors_in (- 1 d_Sys)))
-(reaction severe_symptomatic_det_visitors_in (P_visitors_in) (Sys_det3_visitors_in) (* Ksysvisitors P_visitors_in d_Sys))
+(reaction mild_symptomatic_det_visitors_in (P_visitors_in) (Sym_det2_visitors_out) (* Ksymvisitors P_visitors_in d_Sym))
+(reaction severe_symptomatic_undet_visitors_in (P_visitors_in) (Sys_visitors_out) (* Ksysvisitors P_visitors_in (- 1 d_Sys)))
+(reaction severe_symptomatic_det_visitors_in (P_visitors_in) (Sys_det3_visitors_out) (* Ksysvisitors P_visitors_in d_Sys))
 
-(reaction hospitalization_1_visitors_in  (Sys_visitors_in)  (H1_visitors_in)  (* Kh1visitors Sys_visitors_in))
-(reaction hospitalization_2_visitors_in  (Sys_visitors_in)  (H2_visitors_in)  (* Kh2visitors Sys_visitors_in))
-(reaction hospitalization_3_visitors_in  (Sys_visitors_in)  (H3_visitors_in)  (* Kh3visitors Sys_visitors_in))
-(reaction critical_2_visitors_in  (H2_visitors_in)  (C2_visitors_in)  (* Kc H2_visitors_in))
-(reaction critical_3_visitors_in  (H3_visitors_in)  (C3_visitors_in)  (* Kc H3_visitors_in))
-(reaction death_visitors_in  (C3_visitors_in)  (D3_visitors_in)  (* Km C3_visitors_in))
 
 (reaction recovery_As_visitors_in  (As_visitors_in)  (RAs_visitors_in)  (* Kr_a As_visitors_in))
 (reaction recovery_Sym_visitors_in  (Sym_visitors_in)  (RSym_visitors_in)  (* Kr_m Sym_visitors_in))
-(reaction recovery_H1_visitors_in  (H1_visitors_in)  (RH1_visitors_in)  (* Kr_hvisitors H1_visitors_in))
-(reaction recovery_C2_visitors_in  (C2_visitors_in)  (RC2_visitors_in)  (* Kr_c C2_visitors_in))
 
-(reaction recovery_As_det_visitors_in (As_det1_visitors_in)  (RAs_det1_visitors_in)  (* Kr_a As_det1_visitors_in))
-
-(reaction hospitalization_1_det_visitors_in  (Sys_det3_visitors_in)  (H1_det3_visitors_in)  (* Kh1visitors Sys_det3_visitors_in))
-(reaction hospitalization_2_det_visitors_in  (Sys_det3_visitors_in)  (H2_det3_visitors_in)  (* Kh2visitors Sys_det3_visitors_in))
-(reaction hospitalization_3_det_visitors_in  (Sys_det3_visitors_in)  (H3_det3_visitors_in)  (* Kh3visitors Sys_det3_visitors_in))
-(reaction critical_2_det2_visitors_in  (H2_det3_visitors_in)  (C2_det3_visitors_in)  (* Kc H2_det3_visitors_in))
-(reaction critical_3_det2_visitors_in  (H3_det3_visitors_in)  (C3_det3_visitors_in)  (* Kc H3_det3_visitors_in))
-(reaction death_det3_visitors_in  (C3_det3_visitors_in)  (D3_det3_visitors_in)  (* Km C3_det3_visitors_in))
-
-(reaction recovery_Sym_det2_visitors_in  (Sym_det2_visitors_in)  (RSym_det2_visitors_in)  (* Kr_m Sym_det2_visitors_in))
-(reaction recovery_H1_det3_visitors_in  (H1_det3_visitors_in)  (RH1_det3_visitors_in)  (* Kr_hvisitors H1_det3_visitors_in))
-(reaction recovery_C2_det3_visitors_in  (C2_det3_visitors_in)  (RC2_det3_visitors_in)  (* Kr_c C2_det3_visitors_in))
 
 
 (reaction infection_asymp_undet_residents_out (E_residents_out)  (As_residents_out)  (* Klresidents E_residents_out (- 1 d_As)))
@@ -800,11 +762,6 @@
 (reaction recovery_H1_det3_visitors_out  (H1_det3_visitors_out)  (RH1_det3_visitors_out)  (* Kr_hvisitors H1_det3_visitors_out))
 (reaction recovery_C2_det3_visitors_out  (C2_det3_visitors_out)  (RC2_det3_visitors_out)  (* Kr_c C2_det3_visitors_out))
 
-
-
-
-
-
 (reaction S_staff_inS_staff_out (S_staff_in) (S_staff_out) (* D_staff S_staff_in (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))))
 (reaction As_staff_inAs_staff_out (As_staff_in) (As_staff_out) (* D_staff As_staff_in (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))))
 (reaction E_staff_inE_staff_out (E_staff_in) (E_staff_out) (* D_staff E_staff_in (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))))
@@ -817,6 +774,8 @@
 (reaction RH1_det3_staff_inRH1_det3_staff_out (RH1_det3_staff_in) (RH1_det3_staff_out) (* D_staff RH1_det3_staff_in (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))))
 (reaction RC2_staff_inRC2_staff_out (RC2_staff_in) (RC2_staff_out) (* D_staff RC2_staff_in (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))))
 (reaction RC2_det3_staff_inRC2_det3_staff_out (RC2_det3_staff_in) (RC2_det3_staff_out) (* D_staff RC2_det3_staff_in (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))))
+
+(reaction Sym_staff_inSym_staff_out (Sym_staff_in) (Sym_staff_out) (* D_staff Sym_staff_in (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in))))
 
 (reaction S_visitors_inS_visitors_out (S_visitors_in)(S_visitors_out) (* D_visitors S_visitors_in (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in))))
 (reaction As_visitors_inAs_visitors_out (As_visitors_in) (As_visitors_out) (* D_visitors As_visitors_in (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in))))
@@ -831,6 +790,9 @@
 (reaction RC2_visitors_inRC2_visitors_out (RC2_visitors_in) (RC2_visitors_out) (* D_visitors RC2_visitors_in (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in))))
 (reaction RC2_det3_visitors_inRC2_det3_visitors_out (RC2_det3_visitors_in) (RC2_det3_visitors_out) (* D_visitors RC2_det3_visitors_in (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in))))
 
+(reaction Sym_visitors_inSym_visitors_out (Sym_visitors_in)(Sym_visitors_out) (* D_visitors Sym_visitors_in (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in))))
+
+
 (reaction S_staff_outS_staff_in (S_staff_out) (S_staff_in) (* D_staff S_staff_out (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))))
 (reaction As_staff_outAs_staff_in (As_staff_out) (As_staff_in) (* D_staff As_staff_out (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))))
 (reaction E_staff_outE_staff_in (E_staff_out) (E_staff_in) (* D_staff E_staff_out (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))))
@@ -844,6 +806,8 @@
 (reaction RC2_staff_outRC2_staff_in (RC2_staff_out) (RC2_staff_in) (* D_staff RC2_staff_out (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))))
 (reaction RC2_det3_staff_outRC2_det3_staff_in (RC2_det3_staff_out) (RC2_det3_staff_in) (* D_staff RC2_det3_staff_out (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))))
 
+(reaction Sym_staff_outSym_staff_in (Sym_staff_out) (Sym_staff_in) (* D_staff Sym_staff_out (/ (+ (+ S_staff_in As_staff_in E_staff_in P_staff_in Sym_staff_in RAs_staff_in RAs_det1_staff_in RSym_staff_in RSym_det2_staff_in RH1_staff_in RH1_det3_staff_in RC2_staff_in RC2_det3_staff_in) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out)) (+ S_staff_out As_staff_out E_staff_out P_staff_out Sym_staff_out RAs_staff_out RAs_det1_staff_out RSym_staff_out RSym_det2_staff_out RH1_staff_out RH1_det3_staff_out RC2_staff_out RC2_det3_staff_out))))
+
 (reaction S_visitors_outS_visitors_in (S_visitors_out) (S_visitors_in) (* D_visitors S_visitors_out (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))))
 (reaction As_visitors_outAs_visitors_in (As_visitors_out) (As_visitors_in) (* D_visitors As_visitors_out (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))))
 (reaction E_visitors_outE_visitors_in (E_visitors_out) (E_visitors_in) (* D_visitors E_visitors_out (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))))
@@ -856,6 +820,8 @@
 (reaction RH1_det3_visitors_outRH1_det3_visitors_in (RH1_det3_visitors_out) (RH1_det3_visitors_in) (* D_staff RH1_det3_visitors_out (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))))
 (reaction RC2_visitors_outRC2_visitors_in (RC2_visitors_out) (RC2_visitors_in) (* D_visitors RC2_visitors_out (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))))
 (reaction RC2_det3_visitors_outRC2_det3_visitors_in (RC2_det3_visitors_out) (RC2_det3_visitors_in) (* D_visitors RC2_det3_visitors_out (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))))
+
+(reaction Sym_visitors_outSym_visitors_in (Sym_visitors_out) (Sym_visitors_in) (* D_visitors Sym_visitors_out (/ (+ (+ S_visitors_in As_visitors_in E_visitors_in P_visitors_in Sym_visitors_in RAs_visitors_in RAs_det1_visitors_in RSym_visitors_in RSym_det2_visitors_in RH1_visitors_in RH1_det3_visitors_in RC2_visitors_in RC2_det3_visitors_in) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out)) (+ S_visitors_out As_visitors_out E_visitors_out P_visitors_out Sym_visitors_out RAs_visitors_out RAs_det1_visitors_out RSym_visitors_out RSym_det2_visitors_out RH1_visitors_out RH1_det3_visitors_out RC2_visitors_out RC2_det3_visitors_out))))
 
 
 (end-model)
