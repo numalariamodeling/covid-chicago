@@ -55,14 +55,9 @@ def load_box_paths(user_path=None, Location ='Local'):
             # user_path = 'E:/'
             home_path = os.path.join(user_path, 'Box', 'NU-malaria-team','projects')
             data_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'data')
-        if 'mrung' in user_path :
-            user_path = 'C:/Users/mrung'
+        if 'mrung' in user_path or 'mrm9534' in user_path  :
+            user_path = user_path
             home_path = os.path.join(user_path, 'Box', 'NU-malaria-team','projects')
-            data_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'data')
-            git_dir = os.path.join(user_path, 'gitrepos', 'covid-chicago/')
-        if 'mrm9534' in user_path:
-            user_path = '/home/mrm9534/'
-            home_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'projects')
             data_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'data')
             git_dir = os.path.join(user_path, 'gitrepos', 'covid-chicago/')
         if 'geickelb1' in user_path :
