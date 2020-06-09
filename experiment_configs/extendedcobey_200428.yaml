@@ -49,7 +49,7 @@ sampled_parameters:
     function_kwargs: {'low': 2.4, 'high': 3.5}
   'time_to_detection':
     np.random: uniform
-    function_kwargs: {'low':2.9, 'high':2.9}
+    function_kwargs: {'low':2.0, 'high':2.0}
   'time_to_hospitalization':
     np.random: uniform
     function_kwargs: {'low':3, 'high':6}
@@ -76,13 +76,13 @@ sampled_parameters:
     function_kwargs: {'low':0.5, 'high':0.7}
   'fraction_severe':
     np.random: uniform
-    function_kwargs: {'low':0.02, 'high':0.1}
+    function_kwargs: {'low':0.06, 'high':0.1}
   'fraction_critical':
     np.random: uniform
     function_kwargs: {'low':0.2, 'high':0.35}
   'cfr': 
     np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.04}
+    function_kwargs: {'low':0.01, 'high':0.03}
   'reduced_inf_of_det_cases':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0.3}
