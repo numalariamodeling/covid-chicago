@@ -97,9 +97,8 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}
   'd_P':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}    
-intervention_parameters:
-  ### TIME-VARYING PARAMETER - EFFECT SIZE
+    function_kwargs: {'low':0, 'high':0}  
+  ## Time event effect size parameter that are sampled 
   ### Reduce Ki due to stay-at-home policy
   'social_multiplier_1':
     np.random: uniform
@@ -109,26 +108,7 @@ intervention_parameters:
     function_kwargs: {'low':0.2, 'high':0.5}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.08, 'high':0.08}
-  ### Reset Ki to defined proporions of it's initial value  
-  ### (only used if corresponding emodl is defined)    
-  'backtonormal_multiplier':
-    np.random: uniform
-    # Add 'size' in function_kwargs to have multiple values instead of just one
-    function_kwargs: {'low':0.30, 'high':0.30}
-  ### Gradual reopening (time-wise)
-  'reopening_multiplier_1':
-    np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.1}
-  'reopening_multiplier_2':
-    np.random: uniform
-    function_kwargs: {'low':0.3, 'high':0.3}
-  'reopening_multiplier_3':
-    np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.6}
-  'reopening_multiplier_4':
-    np.random: uniform
-    function_kwargs: {'low':0.9, 'high':0.9}
+    function_kwargs: {'low':0.08, 'high':0.08}    
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
@@ -161,6 +141,27 @@ intervention_parameters:
   'd_Sym_incr5':
     np.random: uniform
     function_kwargs: {'low':0.410, 'high':0.450}
+intervention_parameters:
+  ### TIME-VARYING PARAMETER - EFFECT SIZE
+  ### Reset Ki to defined proporions of it's initial value  
+  ### (only used if corresponding emodl is defined)    
+  'backtonormal_multiplier':
+    np.random: uniform
+    # Add 'size' in function_kwargs to have multiple values instead of just one
+    function_kwargs: {'low':0.30, 'high':0.30}
+  ### Gradual reopening (time-wise)
+  'reopening_multiplier_1':
+    np.random: uniform
+    function_kwargs: {'low':0.1, 'high':0.1}
+  'reopening_multiplier_2':
+    np.random: uniform
+    function_kwargs: {'low':0.3, 'high':0.3}
+  'reopening_multiplier_3':
+    np.random: uniform
+    function_kwargs: {'low':0.6, 'high':0.6}
+  'reopening_multiplier_4':
+    np.random: uniform
+    function_kwargs: {'low':0.9, 'high':0.9}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)   
