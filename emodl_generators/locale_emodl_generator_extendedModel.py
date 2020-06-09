@@ -584,7 +584,7 @@ def write_reactions(grp, expandModel=None):
     return (reaction_str)
 
 
-def write_interventions(grpList, total_string, scenarioName) :
+def write_interventions(grpList, total_string, scenarioName, change_testDelay=False) :
 
     continuedSIP_str = ""
     for grp in grpList:
@@ -645,6 +645,17 @@ def write_interventions(grpList, total_string, scenarioName) :
 
         contactTracing_str =  temp_str + contactTracing_str
 
+    change_testDelay_str = """
+(param testDelay_1 @change_testDelay_time1@)
+(time-event change_testDelay1 @time_to_detection_1@ ( {} {} {} {} {} {} {} ))
+    """.format("(time_D testDelay_1)", 
+               "(Ksys_D (/ 1 time_D))",
+               "(Ksym_D (/ 1 time_D))",
+               "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))",
+               "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))",
+               "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D)))",
+               "(Kr_m_D (/ 1 (- recovery_time_mild time_D )))")
+               
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
     if scenarioName == "interventionSTOP_adj" :
@@ -660,6 +671,10 @@ def write_interventions(grpList, total_string, scenarioName) :
         #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
 
+    if change_testDelay == True : 
+        total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_str)  
+ 
+ 
     return (total_string)
 
 
@@ -699,7 +714,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
     if(add_migration) :
         param_string = param_string + write_migration_param(grpList)
     functions_string = functions_string + write_All(grpList)
-    intervention_string = ";[INTERVENTIONS]"
+    intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
 
     total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string +  '\n\n' + reaction_string + '\n\n' + footer_str
 

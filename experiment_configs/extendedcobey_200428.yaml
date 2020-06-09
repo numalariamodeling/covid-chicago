@@ -1,6 +1,6 @@
 experiment_setup_parameters:
-  'number_of_samples': 50
-  'number_of_runs': 1
+  'number_of_samples': 10
+  'number_of_runs': 3
   'duration': 370
   'monitoring_samples': 370 # needs to be smaller than duration
   'random_seed': 18
@@ -176,6 +176,9 @@ intervention_parameters:
   'd_SQ':
     np.random: uniform
     function_kwargs: {'low':0.80, 'high':0.80} 
+  'change_testDelay_time1':
+    np.random: uniform
+    function_kwargs: {'low':1, 'high':1}
    ### Use fixed dates or define detection time relative to  socialDistance_time3
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
@@ -240,6 +243,9 @@ time_parameters:
   'contact_tracing_stop1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2022-05-30}
+  'time_to_detection_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-15}
 fitted_parameters:
   Kis:
     'NMH_catchment':

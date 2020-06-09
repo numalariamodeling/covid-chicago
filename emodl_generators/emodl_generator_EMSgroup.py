@@ -598,8 +598,8 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay) :
         contactTracing_str =  temp_str + contactTracing_str
 
     change_testDelay_str = """
-(param testDelay_1 @time_to_detection_1@)
-(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
+(param testDelay_1 @change_testDelay_time1@)
+(time-event change_testDelay1 @time_to_detection_1@ ( {} {} {} {} {} {} {} ))
     """.format("(time_D testDelay_1)", 
                "(Ksys_D (/ 1 time_D))",
                "(Ksym_D (/ 1 time_D))",
