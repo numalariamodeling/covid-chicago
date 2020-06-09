@@ -97,9 +97,8 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}
   'd_P':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}    
-intervention_parameters:
-  ### TIME-VARYING PARAMETER - EFFECT SIZE
+    function_kwargs: {'low':0, 'high':0}  
+  ## Time event effect size parameter that are sampled 
   ### Reduce Ki due to stay-at-home policy
   'social_multiplier_1':
     np.random: uniform
@@ -109,7 +108,41 @@ intervention_parameters:
     function_kwargs: {'low':0.2, 'high':0.5}
   'social_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.08, 'high':0.08}
+    function_kwargs: {'low':0.08, 'high':0.08}    
+  ### Increased testing - increased detectioon of severe symptomatic infections
+  ### (only used if corresponding emodl is defined)    
+  'd_Sys_incr1':
+    np.random: uniform
+    function_kwargs: {'low':0.0726, 'high':0.157}
+  'd_Sys_incr2':
+    np.random: uniform
+    function_kwargs: {'low':0.335, 'high':0.422}
+  'd_Sys_incr3':
+    np.random: uniform
+    function_kwargs: {'low':0.516, 'high':0.778}
+  'd_Sys_incr4':
+    np.random: uniform
+    function_kwargs: {'low':0.565, 'high':0.835}
+  'd_Sys_incr5':
+    np.random: uniform
+    function_kwargs: {'low':0.682, 'high':0.835}
+  'd_Sym_incr1':
+    np.random: uniform
+    function_kwargs: {'low':0.062, 'high':0.102}
+  'd_Sym_incr2':
+    np.random: uniform
+    function_kwargs: {'low':0.205, 'high':0.245}
+  'd_Sym_incr3':
+    np.random: uniform
+    function_kwargs: {'low':0.350, 'high':0.390}
+  'd_Sym_incr4':
+    np.random: uniform
+    function_kwargs: {'low':0.378, 'high':0.418}
+  'd_Sym_incr5':
+    np.random: uniform
+    function_kwargs: {'low':0.410, 'high':0.450}
+intervention_parameters:
+  ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
@@ -129,23 +162,6 @@ intervention_parameters:
   'reopening_multiplier_4':
     np.random: uniform
     function_kwargs: {'low':0.9, 'high':0.9}
-  ### Increased testing - increased detectioon of severe symptomatic infections
-  ### (only used if corresponding emodl is defined)    
-  'd_Sys_incr1':
-    np.random: uniform
-    function_kwargs: {'low':0.0726, 'high':0.157}
-  'd_Sys_incr2':
-    np.random: uniform
-    function_kwargs: {'low':0.335, 'high':0.422}
-  'd_Sys_incr3':
-    np.random: uniform
-    function_kwargs: {'low':0.516, 'high':0.778}
-  'd_Sys_incr4':
-    np.random: uniform
-    function_kwargs: {'low':0.565, 'high':0.835}
-  'd_Sys_incr5':
-    np.random: uniform
-    function_kwargs: {'low':0.682, 'high':0.835}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)   
