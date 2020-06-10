@@ -10,11 +10,11 @@ library(tidyverse)
 library(EpiEstim)
 
 
-### Load  directories 
-
+source("load_paths.R")
+setwd("estimate_Rt/from_simulations")
 
 ### Load simulation outputs
-dat <- read.csv("C:/Users/mrm9534/Box/NU-malaria-team/projects/covid_chicago/NU_civis_outputs/20200603/csv/nu_il_baseline_20200603.csv")
+dat <- read.csv(file.path(project_path, "NU_civis_outputs/20200603/csv/nu_il_baseline_20200603.csv"))
 summary(as.Date(dat$Date))
 
 
