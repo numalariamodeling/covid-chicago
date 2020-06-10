@@ -46,6 +46,7 @@ def write_species(grp, expandModel=None):
     species_str = species_str.replace("  ", " ")
 
     expand_testDelay_str = """
+(species As_preD::{grp} 0)
 (species Sym_preD::{grp} 0)
 (species Sys_preD::{grp} 0)
 """.format(grp=grp)
@@ -57,6 +58,7 @@ def write_species(grp, expandModel=None):
 
     expand_testDelay_contactTracing_str = """
 ;(species Q::{grp} 0)
+(species As_preD::{grp} 0)
 (species P_det::{grp} 0)
 (species Sym_preD::{grp} 0)
 (species Sym_det2a::{grp} 0)
@@ -149,7 +151,6 @@ def write_observe(grp, expandModel=None):
 def write_functions(grp, expandModel=None):
     grp = str(grp)
     functions_str = """
-(func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
 (func hospitalized_{grp}  (+ H1::{grp} H2::{grp} H3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
 (func critical_{grp} (+ C2::{grp} C3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func deaths_{grp} (+ D3::{grp} D3_det3::{grp}))
@@ -177,6 +178,7 @@ def write_functions(grp, expandModel=None):
     
 
     expand_base_str = """
+(func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
@@ -185,14 +187,16 @@ def write_functions(grp, expandModel=None):
 
 
     expand_testDelay_str = """
+(func asymptomatic_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3::{grp}))
-(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+  As_preD::{grp}  As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 """.format(grp=grp)
 
 
     expand_contactTracing_str = """
+(func asymptomatic_{grp}  (+  As::{grp} As_det1::{grp}))
 (func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
@@ -201,10 +205,11 @@ def write_functions(grp, expandModel=None):
 """.format(grp=grp)
 
     expand_testDelay_contactTracing_str = """
+(func asymptomatic_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
 (func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
-(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+  As_preD::{grp}  As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 """.format(grp=grp)
 
@@ -268,16 +273,34 @@ def write_params(expandModel=None):
 
 
     expand_testDelay_str = """
-(param time_D @time_to_detection@)
-(param Ksys_D (/ 1 time_D))
-(param Ksym_D (/ 1 time_D))
+;(param time_D @time_to_detection@)
+(param time_D_AsP @time_to_detection_AsP@)
+(param time_D_Sym @time_to_detection_Sym@)
+(param time_D_Sys @time_to_detection_Sys@)
+
+; time after symptom onset (or lack of symptoms) to detection
+;(param Ksys_D (/ 1 time_D))
+;(param Ksym_D (/ 1 time_D))
+(param Kl_D (/ 1 time_D_AsP))
+(param Ksym_D (/ 1 time_D_Sym))
+(param Ksys_D (/ 1 time_D_Sys))
+
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D)))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
+
+;(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))
+;(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))
+;(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D)))
+;(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
+
+(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D_Sys)))
+(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_AsP )))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
+
+
 """
 
     expand_contactTracing_str = """
