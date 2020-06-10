@@ -6,45 +6,76 @@
 #library(devtools)
 #install_github("annecori/EpiEstim", force = TRUE)
 
-library(dplyr)
+library(tidyverse)
 library(EpiEstim)
-
-
 
 
 ### Load  directories 
 
 
 ### Load simulation outputs
-dat <- read.csv("C:/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/NU_civis_outputs/20200603/csv/nu_il_baseline_20200602.csv")
-#dat <- read.csv("C:/Users/mrung/Box/NU-malaria-team/projects/covid_chicago/NU_civis_outputs/20200603/trajectories/nu_il_baseline_20200602.csv")
-disease_incidence_data <- dat %>% select(Number.of.Covid.19.new.infections) %>% rename(V1=Number.of.Covid.19.new.infections)
-
-## Prepare 
+dat <- read.csv("C:/Users/mrm9534/Box/NU-malaria-team/projects/covid_chicago/NU_civis_outputs/20200603/csv/nu_il_baseline_20200603.csv")
+summary(as.Date(dat$Date))
 
 
-### Run EpiEstim
-#disease_incidence_data <- read.csv("DataS1.csv", header = FALSE)
-serial_interval_data <- read.csv("DataS2.csv", header = FALSE)
+Rt_non_parametric_si_list <- list()
+Rt_parametric_si_list <- list()
+Rt_uncertain_si_list <- list()
 
-serial_interval_data <- do.call("rbind", replicate(dim(disease_incidence_data)[1], serial_interval_data, simplify = FALSE))
-
-
-
-names <- c("EL", "ER", "SL", "SR")
-colnames(serial_interval_data) <- names
-serial_interval_data <- as.data.frame(serial_interval_data)
-disease_incidence_data <- as.data.frame(disease_incidence_data)
-
-#Default config will estimate R on weekly sliding windows.
-#To change this change the t_start and t_end arguments. 
-
-#t_start=2:9, t_end=7:14,
-R_estimate <- estimate_R(disease_incidence_data, si_data = serial_interval_data, method="si_from_data", 
-                         config=list( n1 = 500, n2 = 100, seed = 1, 
-                                mcmc_control=list(init.pars=NULL, burnin=3000, thin=10, seed=1), 
-                                si_parametric_distr = "off1G"))
+for(region in unique(dat$geography_modeled)){
+  # region = unique(dat$geography_modeled)[1]
+  disease_incidence_data <- dat %>% filter(geography_modeled == region) %>%
+  select(Number.of.Covid.19.new.infections) %>%
+  rename(I=Number.of.Covid.19.new.infections)
+  
+#write.csv(disease_incidence_data,paste0(region,"disease_incidence_data.csv") , row.names = FALSE)
 
 
-plot(R_estimate)
+  ## check what si_distr to assume, or calculate from predictions, here using an example from the package
+  si_distr <- c(0.000, 0.233, 0.359, 0.198, 0.103, 0.053, 0.027 ,0.014 ,0.007, 0.003, 0.002 ,0.001)
+  res_non_parametric_si <- estimate_R(incid = disease_incidence_data$I, 
+                    method = "non_parametric_si",
+                    config = make_config(list(si_distr = si_distr)))
+  
+  pplot <- plot(res_non_parametric_si)
+  ggsave(paste0(region, "_EpiEstim_default.pdf"),
+         plot = pplot, path = file.path(getwd()), width = 6, height = 10, dpi = 300, device = "pdf"
+  )
+  
+  
+  res_parametric_si <- estimate_R(incid = disease_incidence_data$I, 
+                                 method = "parametric_si",
+                                  config = make_config(list(mean_si = 2.6, std_si = 1.5)))
+  
+  pplot <- plot(res_parametric_si)
+  ggsave(paste0(region, "_EpiEstim_default_parametric_si.pdf"),
+         plot = pplot, path = file.path(getwd()), width = 6, height = 10, dpi = 300, device = "pdf"
+  )
+  
+  
+  ## estimate the reproduction number (method "uncertain_si")
+  res_uncertain_si <- estimate_R(disease_incidence_data$I, method = "uncertain_si",
+                    config = make_config(list(
+                      mean_si = 2.6, std_mean_si = 1,
+                      min_mean_si = 1, max_mean_si = 4.2,
+                      std_si = 1.5, std_std_si = 0.5,
+                      min_std_si = 0.5, max_std_si = 2.5,
+                      n1 = 100, n2 = 100)))
+  
+  pplot <- plot(res_uncertain_si)
+  
+  ggsave(paste0(region, "_EpiEstim_default_uncertain_si.pdf"),
+         plot = pplot, path = file.path(getwd()), width = 6, height = 10, dpi = 300, device = "pdf"
+  )
+  
+  
+  Rt_non_parametric_si_list[[region]]  <-  res_non_parametric_si$R
+  Rt_parametric_si_list[[region]]  <-  res_parametric_si$R
+  Rt_uncertain_si_list[[region]] <-  res_uncertain_si$R
+  
+}
+
+
+
+
 
