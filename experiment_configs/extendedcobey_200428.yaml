@@ -50,13 +50,13 @@ sampled_parameters:
   'time_to_detection':
     np.random: uniform
     function_kwargs: {'low':2.0, 'high':2.0}
-  ### Use separate time to detection (use matching emodl))
+  ### Optionally use separate time to detection (use matching emodl))
   'time_to_detection_AsP':
     np.random: uniform
     function_kwargs: {'low':1.0, 'high':5.0}
   'time_to_detection_Sym':
     np.random: uniform
-    function_kwargs: {'low':3.0, 'high':6.0}
+    function_kwargs: {'low':2.0, 'high':5.0}
   'time_to_detection_Sys':
     np.random: uniform
     function_kwargs: {'low':2.0, 'high':2.0}
