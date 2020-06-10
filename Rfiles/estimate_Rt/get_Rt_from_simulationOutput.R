@@ -5,14 +5,13 @@
 # install.packages("devtools")
 # library(devtools)
 # install_github("annecori/EpiEstim", force = TRUE)
-setwd("C:/Users/mrm9534/gitrepos/covid-chicago/Rfiles/")
 library(tidyverse)
 library(EpiEstim)
 
 
 source("load_paths.R")
 source("processing_helpers.R")
-setwd("estimate_Rt/from_simulations")
+outdir <- file..path("estimate_Rt/from_simulations")
 
 ### Load simulation outputs
 dat <- read.csv(file.path(project_path, "NU_civis_outputs/20200603/csv/nu_il_baseline_20200603.csv"))
@@ -81,7 +80,7 @@ for (region in unique(dat$geography_modeled)) {
   pplot <- plot(res)
 
   ggsave(paste0(region, "_EpiEstim_default_",method,".pdf"),
-    plot = pplot, path = file.path(getwd()), width = 6, height = 10, dpi = 300, device = "pdf"
+    plot = pplot, path = file.path(outdir), width = 6, height = 10, dpi = 300, device = "pdf"
   )
 
   Rt_list[[region]] <- res$R %>% mutate(region = region)
@@ -151,18 +150,18 @@ pplot <- ggplot(data = subset(Rt_dat, t_start <= 210)) +
 
 
 ggsave(paste0("Rt_simulation_uncertain_si_v3.pdf"),
-  plot = pplot, width = 14, height = 8, dpi = 300, device = "pdf"
+  plot = pplot, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "pdf"
 )
 ggsave(paste0("Rt_simulation_uncertain_si_v3.png"),
-  plot = pplot, width = 14, height = 8, dpi = 300, device = "png"
+  plot = pplot, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "png"
 )
 ggsave(paste0("Rt_simulation_uncertain_si_v2.pdf"),
-  plot = pcut, width = 14, height = 8, dpi = 300, device = "pdf"
+  plot = pcut, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "pdf"
 )
 ggsave(paste0("Rt_simulation_uncertain_si_v2.png"),
-  plot = pcut, width = 14, height = 8, dpi = 300, device = "png"
+  plot = pcut, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "png"
 )
 
 ggsave(paste0("Rt_simulation_uncertain_si_v1.png"),
-  plot = pall, width = 14, height = 8, dpi = 300, device = "png"
+  plot = pall, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "png"
 )

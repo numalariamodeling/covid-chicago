@@ -11,7 +11,7 @@ library(EpiEstim)
 
 source("load_paths.R")
 source("processing_helpers.R")
-setwd("estimate_Rt/from_data")
+outdir <- file.path("estimate_Rt/from_data")
 
 ### Load simulation outputs
 dat <- read.csv(file.path(data_path, "covid_IDPH/Cleaned Data/200608_jg_admission_date_ems.csv"))
@@ -79,15 +79,13 @@ if(method=="uncertain_si"){
   pplot <- plot(res)
 
 
-
   ggsave(paste0(region, "_EpiEstim_default_", method, ".pdf"),
-    plot = pplot3, path = file.path(getwd()), width = 6, height = 10, dpi = 300, device = "pdf"
+    plot = pplot3, path = file.path(outdir), width = 6, height = 10, dpi = 300, device = "pdf"
   )
 
 
   Rt_list[[region]] <- res$R %>% mutate(region = region)
   
-  #t_start_date = disease_incidence_data[t_start,"date"]
   
 }
 
@@ -111,6 +109,9 @@ Rt_dat %>%
 
 
 ### Generate plots 
+scl <- mean(dat$cases) / mean(Rt_dat$`Median(R)`)
+
+
 p_Rt <- ggplot(data = Rt_dat) +
   theme_bw() +
   geom_line(aes(x = t_start, y = `Median(R)`), col = "deepskyblue4", size = 1.3) +
@@ -120,26 +121,26 @@ p_Rt <- ggplot(data = Rt_dat) +
 
 
 ggsave(paste0("Rt_data_uncertain_si_v1.pdf"),
-       plot = p_Rt, width = 14, height = 8, dpi = 300, device = "pdf"
+       plot = p_Rt, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "pdf"
 )
 ggsave(paste0("Rt_data_uncertain_si_v1.png"),
-       plot = p_Rt, width = 14, height = 8, dpi = 300, device = "png"
+       plot = p_Rt, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "png"
 ) 
 
 pplot <- ggplot(data = Rt_dat) +
   theme_bw() +
-  geom_bar(data = dat, aes(x = time, y = cases / 20.12886), fill = "grey", stat = "identity", alpha = 0.9) +
+  geom_bar(data = dat, aes(x = time, y = cases / scl), fill = "grey", stat = "identity", alpha = 0.9) +
   geom_line(aes(x = t_start, y = `Median(R)`), col = "deepskyblue4", size = 1.3) +
   geom_ribbon(aes(x = t_start, ymin = `Quantile.0.025(R)`, ymax = `Quantile.0.975(R)`), fill = "deepskyblue4", alpha = 0.5) +
   facet_wrap(~EMS, scales = "free_y") +
   geom_hline(yintercept = 1, linetype = "dashed") +
-  scale_y_continuous("R0", sec.axis = sec_axis(~ . * 20.12886, name = "Cases")) +
+  scale_y_continuous("R0", sec.axis = sec_axis(~ . * scl, name = "Cases")) +
   labs(caption = "Using 'uncertain_si' distribution") +
   customThemeNoFacet
 
 ggsave(paste0("Rt_data_uncertain_si_v2.pdf"),
-  plot = pplot, width = 14, height = 8, dpi = 300, device = "pdf"
+  plot = pplot, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "pdf"
 )
 ggsave(paste0("Rt_data_uncertain_si_v2.png"),
-  plot = pplot, width = 14, height = 8, dpi = 300, device = "png"
+  plot = pplot, path = file.path(outdir), width = 14, height = 8, dpi = 300, device = "png"
 )
