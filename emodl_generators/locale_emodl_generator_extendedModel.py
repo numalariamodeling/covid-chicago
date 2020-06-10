@@ -252,11 +252,12 @@ def write_params(expandModel=None):
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
-(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))  
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@))) 
-(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@))) 
-(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@))) 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) (d_Sym @d_Sym_incr1@) ))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) (d_Sym @d_Sym_incr2@) ))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) (d_Sym @d_Sym_incr3@) )) 
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) (d_Sym @d_Sym_incr4@) )) 
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@) )) 
+
 """
 
     expand_base_str = """
@@ -267,16 +268,19 @@ def write_params(expandModel=None):
 
 
     expand_testDelay_str = """
-(param time_D @time_to_detection@)
-(param Ksys_D (/ 1 time_D))
-(param Ksym_D (/ 1 time_D))
+(param time_D_Sym @time_to_detection_Sym@)
+(param time_D_Sys @time_to_detection_Sys@)
+
+(param Ksym_D (/ 1 time_D_Sym))
+(param Ksys_D (/ 1 time_D_Sys))
+
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D)))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
+(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D_Sys)))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
 """
 
     expand_contactTracing_str = """
@@ -430,7 +434,6 @@ def write_reactions(grp, expandModel=None):
 
     reaction_str_III = """
 (reaction recovery_As_{grp}   (As::{grp})   (RAs::{grp})   (* Kr_a As::{grp}))
-(reaction recovery_Sym_{grp}   (Sym::{grp})   (RSym::{grp})   (* Kr_m  Sym::{grp}))
 (reaction recovery_H1_{grp}   (H1::{grp})   (RH1::{grp})   (* Kr_h H1::{grp}))
 (reaction recovery_C2_{grp}   (C2::{grp})   (RC2::{grp})   (* Kr_c C2::{grp}))
 (reaction recovery_As_det_{grp} (As_det1::{grp})   (RAs_det1::{grp})   (* Kr_a As_det1::{grp}))
@@ -459,6 +462,7 @@ def write_reactions(grp, expandModel=None):
 (reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
 (reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
 
+(reaction recovery_Sym_{grp}   (Sym::{grp})   (RSym::{grp})   (* Kr_m  Sym::{grp}))
 (reaction recovery_Sym_det2_{grp}   (Sym_det2::{grp})   (RSym_det2::{grp})   (* Kr_m  Sym_det2::{grp}))
 """.format(grp=grp)
 
@@ -492,6 +496,7 @@ def write_reactions(grp, expandModel=None):
 (reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
 (reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
 
+(reaction recovery_Sym_{grp}   (Sym::{grp})   (RSym::{grp})   (* Kr_m_D  Sym::{grp}))
 (reaction recovery_Sym_det2_{grp}   (Sym_det2::{grp})   (RSym_det2::{grp})   (* Kr_m_D  Sym_det2::{grp}))
 
 """.format(grp=grp)
@@ -565,6 +570,7 @@ def write_reactions(grp, expandModel=None):
 (reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
 (reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
 
+(reaction recovery_Sym_{grp}   (Sym::{grp})   (RSym::{grp})   (* Kr_m_D  Sym::{grp}))
 (reaction recovery_Sym_det2a_{grp}   (Sym_det2a::{grp})   (RSym_det2::{grp})   (* Kr_m_D  Sym_det2a::{grp}))
 (reaction recovery_Sym_det2b_{grp}   (Sym_det2b::{grp})   (RSym_det2::{grp})   (* Kr_m  Sym_det2b::{grp}))
  """.format(grp=grp)
