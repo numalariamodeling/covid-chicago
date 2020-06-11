@@ -15,6 +15,8 @@ The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.htm
 ## 1.2. Updates 
 
 ### Main updates in model structure and fitted parameters
+- 20200610 updated parameter fit 
+- 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
 - 20200602 updated parameter fit 
 - 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
 - 20200521 added s_m_4, parameter fitting
