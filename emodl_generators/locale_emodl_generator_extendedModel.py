@@ -300,7 +300,7 @@ def write_params(expandModel=None):
 (param d_As_ct1 @d_As_ct1@)
 (param d_Sym_ct1 @d_Sym_ct1@)
 
-(param time_D_As @time_to_detection_As@)
+(param time_D_As @time_to_detection_AsP@)
 (param time_D_Sym @time_to_detection_Sym@)
 (param time_D_Sys @time_to_detection_Sys@)
 
