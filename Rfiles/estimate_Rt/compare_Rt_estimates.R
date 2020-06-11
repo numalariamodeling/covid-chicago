@@ -8,15 +8,17 @@ library(cowplot)
 
 source("load_paths.R")
 source("processing_helpers.R")
-setwd(file.path(git_dir, "Rfiles/estimate_Rt"))
+outdir <- file.path("estimate_Rt")
+
+simdate = "20200610"
 
 
-Rtdat <- read.csv(file.path("nu_il_fromdata_estimated_Rt.csv")) %>% mutate(source = "data")
-Rtsim <- read.csv(file.path("nu_il_baseline_estimated_Rt.csv")) %>%
+Rtdat <- read.csv(file.path(outdir, "/nu_il_fromdata_estimated_Rt.csv")) %>% mutate(source = "data")
+Rtsim <- read.csv(file.path(paste0(outdir,"/nu_il_baseline_estimated_Rt_",simdate,".csv"))) %>%
   mutate(source = "simulations") %>%
   mutate(geography_modeled = gsub("ems", "EMS_", geography_modeled)) %>%
   filter(
-    Date <= "2020-10-01",
+    Date <= "2020-08-01",
     geography_modeled %in% paste0("EMS_", c(1:11))
   )
 
@@ -42,7 +44,7 @@ pplot <- ggplot(data = subset(Rt_comb, Date >= as.Date("2020-03-01"))) +
     title = "Estimated Rt \n",
     y = "Estimated Rt",
     subtitle = "mean after shelter in place ~ 0.9740  \n Using EpiEstim and an uncertain serial interval distribution (mean 4.6, min 1, max 6.47 )",
-    caption = "using 1 week sliding window for simulations and 2 weeks for the data when estimating Rt"
+    caption = "using 2 week sliding window for Rt estimation"
   ) +
   geom_hline(yintercept = 1, linetype = "dashed", col = "darkred", size = 1) +
   geom_vline(xintercept = c(as.Date("2020-03-12"), as.Date("2020-06-01")), linetype = "solid") +
@@ -68,7 +70,7 @@ pplot <- ggplot(data = subset(Rt_comb, source == "simulations" & Date >= as.Date
     title = "Estimated Rt \n",
     y = "Estimated Rt",
     subtitle = "mean after shelter in place ~ 0.9740  \n Using EpiEstim and an uncertain serial interval distribution (mean 4.6, min 1, max 6.47 )",
-    caption = "using 1 week sliding window for simulations and 2 weeks for the data when estimating Rt"
+    caption = "using 2 week sliding window for Rt estimation"
   ) +
   geom_hline(yintercept = 1, linetype = "dashed", col = "darkred", size = 1) +
   geom_vline(xintercept = c(as.Date("2020-03-12"), as.Date("2020-06-01")), linetype = "solid") +
@@ -94,7 +96,7 @@ pplot <- ggplot(data = subset(Rt_comb, source != "simulations" & Date >= as.Date
     title = "Estimated Rt \n",
     y = "Estimated Rt",
     subtitle = "mean after shelter in place ~ 0.9740  \n Using EpiEstim and an uncertain serial interval distribution (mean 4.6, min 1, max 6.47 )",
-    caption = "using 1 week sliding window for simulations and 2 weeks for the data when estimating Rt"
+    caption = "using 2 week sliding window for Rt estimation"
   ) +
   geom_hline(yintercept = 1, linetype = "dashed", col = "darkred", size = 1) +
   geom_vline(xintercept = c(as.Date("2020-03-12"), as.Date("2020-06-01")), linetype = "solid") +

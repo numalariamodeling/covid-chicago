@@ -11,7 +11,7 @@ source("load_paths.R")
 source("processing_helpers.R")
 
 
-simdates <- c("20200521", "20200526" , "20200603")
+simdates <- c( "20200526" , "20200603", "20200610")
 scenario <- "baseline" # june1partial10  , june1partial30
 
 dat1 <- read.csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[1], "/csv/nu_il_", scenario, "_", simdates[1], ".csv")))

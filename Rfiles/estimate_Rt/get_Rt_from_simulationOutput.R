@@ -11,23 +11,13 @@ library(EpiEstim)
 
 source("load_paths.R")
 source("processing_helpers.R")
-outdir <- file..path("estimate_Rt/from_simulations")
+outdir <- file.path("estimate_Rt/from_simulations")
 
+simdate = "20200610"
 ### Load simulation outputs
-dat <- read.csv(file.path(project_path, "NU_civis_outputs/20200603/csv/nu_il_baseline_20200603.csv"))
+dat <- read.csv(file.path(project_path, "NU_civis_outputs",simdate,paste0("csv/nu_il_baseline_",simdate,".csv")))
 summary(as.Date(dat$Date))
 
-dat <- dat %>%
-  filter(geography_modeled %in% paste0("ems", c(1:11))) %>%
-  rename(region = geography_modeled)
-
-dat$EMS <- factor(dat$region,  levels = paste0("ems", c(1:11)), labels = paste0("EMS_", c(1:11)))
-
-
-dat <- dat %>%
-  arrange(EMS, Date) %>%
-  group_by(EMS) %>%
-  mutate(date = as.Date(Date), time = c(1:n_distinct(date)))
 
 
 method <- "uncertain_si"
@@ -38,7 +28,6 @@ for (region in unique(dat$geography_modeled)) {
   # region = unique(dat$geography_modeled)[1]
   disease_incidence_data <- dat %>%
     filter(geography_modeled == region) %>%
-    select(Number.of.Covid.19.new.infections) %>%
     rename(I = Number.of.Covid.19.new.infections)
 
   ## check what si_distr to assume, or calculate from predictions, here using an example from the package
@@ -93,18 +82,32 @@ Rt_dat <- Rt_list %>% bind_rows()
 table(Rt_dat$region)
 
 
+dat <- dat %>%
+  filter(geography_modeled %in% paste0("ems", c(1:11))) %>%
+  rename(region = geography_modeled)
+
+dat$EMS <- factor(dat$region,  levels = paste0("ems", c(1:11)), labels = paste0("EMS_", c(1:11)))
+
+
+dat <- dat %>%
+  arrange(EMS, Date) %>%
+  group_by(EMS) %>%
+  mutate(date = as.Date(Date), time = c(1:n_distinct(date)))
+
+
 ### Write csv file with Rt 
 Rt_dat %>%
   merge(unique(dat[, c("time", "Date")]), by.x = "t_start", by.y = "time") %>%
-  rename(
-    geography_modeled = region,
+  rename(geography_modeled = region,
     Median.of.covid.19.Rt = `Median(R)`,
     Lower.error.bound.of.covid.19.Rt = `Quantile.0.025(R)`,
     Upper.error.bound.of.covid.19.Rt = `Quantile.0.975(R)`
   ) %>%
   arrange(Date, geography_modeled) %>%
+  filter(
+    Date <= "2020-08-01") %>%
   select(Date, geography_modeled, Median.of.covid.19.Rt, Lower.error.bound.of.covid.19.Rt, Upper.error.bound.of.covid.19.Rt) %>%
-  write.csv("nu_il_baseline_estimated_Rt.csv", row.names = FALSE)
+  write.csv(paste0("estimate_Rt","/nu_il_baseline_estimated_Rt_",simdate,".csv"), row.names = FALSE)
 
 
 
@@ -113,13 +116,20 @@ Rt_dat <- Rt_dat %>% filter(region %in% paste0("ems", c(1:11))) %>%
   mutate(EMS = factor(region, levels = paste0("ems", c(1:11)), labels = paste0("EMS_", c(1:11))))
 
 
+
+ggplot(data = dat) +
+  geom_bar(aes(x = Date, y = Number.of.Covid.19.new.infections), stat = "identity") +
+  facet_wrap(~EMS, scales = "free")
+
+
+
 ## Used for secondary axis in plot showing both cases and Rt
 scl <- mean(dat$Number.of.Covid.19.new.infections) / mean(Rt_dat$`Median(R)`)
 
 
 
 ### Generate plots 
-pall <- ggplot(data = subset(Rt_dat, t_start <= 210)) +
+pall <- ggplot(data = subset(Rt_dat, t_start <= 160)) +
   theme_bw() +
   geom_line(aes(x = t_start, y = `Median(R)`), col = "deepskyblue3", size = 1.3) +
   geom_ribbon(aes(x = t_start, ymin = `Quantile.0.025(R)`, ymax = `Quantile.0.975(R)`), fill = "deepskyblue3", alpha = 0.5) +
@@ -128,7 +138,7 @@ pall <- ggplot(data = subset(Rt_dat, t_start <= 210)) +
   customThemeNoFacet
 
 
-pcut <- ggplot(data = subset(Rt_dat, t_start <= 210)) +
+pcut <- ggplot(data = subset(Rt_dat, t_start <= 160)) +
   theme_bw() +
   geom_line(aes(x = t_start, y = `Median(R)`), col = "deepskyblue3", size = 1.3) +
   geom_ribbon(aes(x = t_start, ymin = `Quantile.0.025(R)`, ymax = `Quantile.0.975(R)`), fill = "deepskyblue3", alpha = 0.5) +
@@ -137,7 +147,7 @@ pcut <- ggplot(data = subset(Rt_dat, t_start <= 210)) +
   customThemeNoFacet
 
 
-pplot <- ggplot(data = subset(Rt_dat, t_start <= 210)) +
+pplot <- ggplot(data = subset(Rt_dat, t_start <= 160)) +
   theme_bw() +
   geom_bar(data = subset(dat, time <= 210), aes(x = time, y = Number.of.Covid.19.new.infections / scl), fill = "grey", stat = "identity", alpha = 0.9) +
   geom_line(aes(x = t_start, y = `Median(R)`), col = "deepskyblue4", size = 1.3) +
