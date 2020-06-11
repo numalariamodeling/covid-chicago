@@ -293,4 +293,4 @@ fitted_parameters:
       function_kwargs: {'start': 0.754, 'stop': 0.754, 'num': 1}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 1.025, 'stop': 1.025, 'num': 1}
+      function_kwargs: {'start': 1.020, 'stop': 1.020, 'num': 1}

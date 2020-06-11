@@ -103,7 +103,7 @@ sampled_parameters:
         - {'low': 0.897, 'high': 0.897}
         - {'low': 0.807, 'high': 0.807}
         - {'low': 0.754, 'high': 0.754}
-        - {'low': 1.025, 'high': 1.025} 
+        - {'low': 1.020, 'high': 1.020} 
   toEMS_1_from:  
     IL:
       expand_by_age: True
