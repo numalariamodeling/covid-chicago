@@ -53,7 +53,7 @@ sampled_parameters:
   ### Optionally use separate time to detection (use matching emodl))
   'time_to_detection_AsP':
     np.random: uniform
-    function_kwargs: {'low':1.0, 'high':5.0}
+    function_kwargs: {'low':3.0, 'high':3.0}
   'time_to_detection_Sym':
     np.random: uniform
     function_kwargs: {'low':2.0, 'high':5.0}
@@ -113,7 +113,7 @@ intervention_parameters:
   #  function_kwargs: {'start':0.01, 'stop':3, 'num':4}
   'reduced_inf_of_det_cases':
     np: linspace
-    function_kwargs: {'start':0, 'stop':1, 'num':6}
+    function_kwargs: {'start':0, 'stop':1, 'num':2}
   'social_multiplier_1':
     np.random: uniform
     function_kwargs: {'low':0.7, 'high':0.9}
@@ -181,7 +181,7 @@ intervention_parameters:
   ## d_SQ if used, it should be proportional to cases rather than fixed fraction
   'd_As_ct1':
     np: linspace
-    function_kwargs: {'start':0, 'stop':1, 'num':6}
+    function_kwargs: {'start':0, 'stop':1, 'num':2}
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.30}
