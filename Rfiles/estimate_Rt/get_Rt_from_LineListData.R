@@ -105,7 +105,7 @@ Rt_dat %>%
   ) %>%
   arrange(Date, geography_modeled) %>%
   select(Date, geography_modeled, Median.of.covid.19.Rt, Lower.error.bound.of.covid.19.Rt, Upper.error.bound.of.covid.19.Rt) %>%
-  write.csv("nu_il_fromdata_estimated_Rt.csv", row.names = FALSE)
+  write.csv("estimate_Rt","/nu_il_fromdata_estimated_Rt.csv", row.names = FALSE)
 
 
 ### Generate plots 
