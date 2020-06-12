@@ -14,7 +14,7 @@ sampled_parameters:
       function_kwargs: {'low':0.280, 'high': 0.280}
     EMS_4:
       np.random: uniform
-      function_kwargs: {'low':0.110, 'high': 0.110}
+      function_kwargs: {'low':0.135, 'high': 0.135}
     EMS_5:
       np.random: uniform
       function_kwargs: {'low':0.195, 'high': 0.195}
@@ -48,13 +48,13 @@ sampled_parameters:
       function_kwargs: {'low':0.240, 'high': 0.240}
     EMS_4:
       np.random: uniform
-      function_kwargs: {'low':0.170, 'high': 0.170}
+      function_kwargs: {'low':0.175, 'high': 0.175}
     EMS_5:
       np.random: uniform
-      function_kwargs: {'low':0.125, 'high': 0.125}
+      function_kwargs: {'low':0.195, 'high': 0.195}
     EMS_6:
       np.random: uniform
-      function_kwargs: {'low':0.150, 'high':0.150}
+      function_kwargs: {'low':0.225, 'high':0.225}
     EMS_7:
       np.random: uniform
       function_kwargs: {'low':0.118, 'high': 0.118}
@@ -66,7 +66,7 @@ sampled_parameters:
       function_kwargs: {'low':0.110, 'high': 0.110}
     EMS_10:
       np.random: uniform
-      function_kwargs: {'low':0.110, 'high': 0.110}
+      function_kwargs: {'low':0.105, 'high': 0.105}
     EMS_11:
       np.random: uniform
       function_kwargs: {'low':0.090, 'high': 0.090}
