@@ -50,6 +50,16 @@ sampled_parameters:
   'time_to_detection':
     np.random: uniform
     function_kwargs: {'low':2.0, 'high':2.0}
+  ### Optionally use separate time to detection (use matching emodl))
+  'time_to_detection_AsP':
+    np.random: uniform
+    function_kwargs: {'low':1.0, 'high':5.0}
+  'time_to_detection_Sym':
+    np.random: uniform
+    function_kwargs: {'low':2.0, 'high':5.0}
+  'time_to_detection_Sys':
+    np.random: uniform
+    function_kwargs: {'low':2.0, 'high':2.0}
   'time_to_hospitalization':
     np.random: uniform
     function_kwargs: {'low':3, 'high':6}
@@ -259,13 +269,13 @@ fitted_parameters:
       function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 0.589, 'stop': 0.589, 'num': 1}
+      function_kwargs: {'start': 0.592, 'stop': 0.592, 'num': 1}
     'EMS_2':
       np: linspace
       function_kwargs: {'start': 0.654, 'stop': 0.654, 'num': 1}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 0.373, 'stop': 0.373, 'num': 1}
+      function_kwargs: {'start': 0.381, 'stop': 0.381, 'num': 1}
     'EMS_4':
       np: linspace
       function_kwargs: {'start': 0.571, 'stop': 0.571, 'num': 1}
@@ -277,16 +287,16 @@ fitted_parameters:
       function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
     'EMS_7':
       np: linspace
-      function_kwargs: {'start': 0.714, 'stop': 0.714, 'num': 1}
+      function_kwargs: {'start': 0.716, 'stop': 0.716, 'num': 1}
     'EMS_8':
       np: linspace
       function_kwargs: {'start': 0.897, 'stop': 0.897, 'num': 1}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 0.857, 'stop': 0.857, 'num': 1}
+      function_kwargs: {'start': 0.807, 'stop': 0.807, 'num': 1}
     'EMS_10':
       np: linspace
       function_kwargs: {'start': 0.754, 'stop': 0.754, 'num': 1}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 1.01, 'stop': 1.01, 'num': 1}
+      function_kwargs: {'start': 1.020, 'stop': 1.020, 'num': 1}
