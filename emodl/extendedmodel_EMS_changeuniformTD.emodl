@@ -1168,19 +1168,18 @@
 (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@) )) 
 
 
-(param time_D_Sym @time_to_detection_Sym@)
-(param time_D_Sys @time_to_detection_Sys@)
+(param time_D @time_to_detection@)
 
-(param Ksym_D (/ 1 time_D_Sym))
-(param Ksys_D (/ 1 time_D_Sys))
+(param Ksym_D (/ 1 time_D))
+(param Ksys_D (/ 1 time_D))
 
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead time_to_hospitalization))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))
-(param Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
+(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))
+(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))
+(param Kh3_D (/ fraction_dead (- time_to_hospitalization time_D)))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
 
 (param Ki_EMS_1 @Ki_EMS_1@)
 (time-event time_infection_import @time_infection_import_EMS_1@ ((As::EMS_1 @initialAs_EMS_1@) (S::EMS_1 (- S::EMS_1 @initialAs_EMS_1@))))
@@ -1351,9 +1350,8 @@
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_11 Ki_red4_EMS_11)))
             
 
-(param testDelay_Sym_1 @change_testDelay_Sym_1@)
-(param testDelay_Sys_1 @change_testDelay_Sys_1@)
-(time-event change_testDelay1 @time_to_detection_1@ ( (time_D_Sym testDelay_Sym_1) (time_D_Sys testDelay_Sys_1) (Ksys_D (/ 1 time_D_Sym)) (Ksym_D (/ 1 time_D_Sys)) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) (Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys))) ))
+(param testDelay_1 @change_testDelay_1@)
+(time-event change_testDelay1 @time_to_detection_1@ ( (time_D testDelay_1) (Ksys_D (/ 1 time_D)) (Ksym_D (/ 1 time_D)) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) )) (Kh3_D (/ fraction_dead (- time_to_hospitalization time_D))) (Kr_m_D (/ 1 (- recovery_time_mild time_D ))) ))
     
 
 

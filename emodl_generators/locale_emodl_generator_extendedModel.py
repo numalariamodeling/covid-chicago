@@ -66,7 +66,7 @@ def write_species(grp, expandModel=None):
 (species Sys_det3b::{grp} 0)
 """.format(grp=grp)
 
-    if expandModel == "testDelay":
+    if expandModel == "testDelay" or  expandModel == "uniformtestDelay" :
         species_str = species_str + expand_testDelay_str
     if expandModel == "contactTracing" :
         species_str = species_str + expand_contactTracing_str
@@ -135,7 +135,7 @@ def write_observe(grp, expandModel=None):
 
     if expandModel == None :
         observe_str = observe_str + expand_base_str
-    if expandModel == "testDelay" :
+    if expandModel == "testDelay" or  expandModel == "uniformtestDelay" :
         observe_str = observe_str + expand_base_str
     if expandModel == "contactTracing" :
         observe_str = observe_str + expand_contactTracing_str
@@ -210,7 +210,7 @@ def write_functions(grp, expandModel=None):
 
     if expandModel == None:
         functions_str = expand_base_str + functions_str
-    if expandModel =="testDelay" :
+    if expandModel == "testDelay" or  expandModel == "uniformtestDelay" :
         functions_str =  expand_testDelay_str + functions_str
     if expandModel == "contactTracing":
         functions_str = expand_contactTracing_str + functions_str
@@ -266,6 +266,21 @@ def write_params(expandModel=None):
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
 """
 
+    expand_uniformtestDelay_str = """
+(param time_D @time_to_detection@)
+
+(param Ksym_D (/ 1 time_D))
+(param Ksys_D (/ 1 time_D))
+
+(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
+(param Kh2 (/ fraction_critical time_to_hospitalization ))
+(param Kh3 (/ fraction_dead  time_to_hospitalization))
+(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))
+(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))
+(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D)))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
+"""
+
 
     expand_testDelay_str = """
 (param time_D_Sym @time_to_detection_Sym@)
@@ -295,6 +310,8 @@ def write_params(expandModel=None):
         params_str = params_str + expand_base_str
     if expandModel == "testDelay":
         params_str = params_str + expand_testDelay_str
+    if expandModel == "uniformtestDelay":
+        params_str = params_str + expand_uniformtestDelay_str
     if expandModel == "contactTracing" :
         params_str = params_str + expand_base_str + expand_contactTracing_str
     if expandModel == "testDelay_contactTracing" :
@@ -577,7 +594,7 @@ def write_reactions(grp, expandModel=None):
 
     if expandModel ==None :
         reaction_str = reaction_str_I + expand_base_str + reaction_str_III
-    if expandModel == "testDelay":
+    if expandModel == "testDelay" or  expandModel == "uniformtestDelay" :
         reaction_str = reaction_str_I + expand_testDelay_str + reaction_str_III
     if expandModel == 'contactTracing':
         reaction_str = reaction_str_I + expand_contactTracing_str + reaction_str_III
@@ -589,7 +606,7 @@ def write_reactions(grp, expandModel=None):
     return (reaction_str)
 
 
-def write_interventions(grpList, total_string, scenarioName, change_testDelay=False) :
+def write_interventions(grpList, total_string, scenarioName, expandModel, change_testDelay=False) :
 
     continuedSIP_str = ""
     for grp in grpList:
@@ -650,8 +667,8 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=Fa
 
         contactTracing_str =  temp_str + contactTracing_str
 
-    change_testDelay_str = """
-(param testDelay_1 @change_testDelay_time1@)
+    change_uniformtestDelay_str = """
+(param testDelay_1 @change_testDelay_1@)
 (time-event change_testDelay1 @time_to_detection_1@ ( {} {} {} {} {} {} {} ))
     """.format("(time_D testDelay_1)", 
                "(Ksys_D (/ 1 time_D))",
@@ -660,6 +677,19 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=Fa
                "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))",
                "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D)))",
                "(Kr_m_D (/ 1 (- recovery_time_mild time_D )))")
+   
+    change_testDelay_str = """
+(param testDelay_Sym_1 @change_testDelay_Sym_1@)
+(param testDelay_Sys_1 @change_testDelay_Sys_1@)
+(time-event change_testDelay1 @time_to_detection_1@ ( {} {} {} {} {} {} {} ))
+    """.format("(time_D_Sym testDelay_Sym_1)", 
+               "(time_D_Sys testDelay_Sys_1)", 
+               "(Ksys_D (/ 1 time_D_Sym))",
+               "(Ksym_D (/ 1 time_D_Sys))",
+               "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
+               "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))",
+               "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))",
+               "(Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))")
                
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
@@ -676,8 +706,10 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=Fa
         #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
 
-    if change_testDelay == True : 
+    if change_testDelay == True and expandModel == "testDelay" : 
         total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_str)  
+    if change_testDelay == True and expandModel == "uniformtestDelay" : 
+        total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_uniformtestDelay_str)  
  
  
     return (total_string)
@@ -685,7 +717,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=Fa
 
 ###stringing all of my functions together to make the file:
 
-def generate_emodl(grpList, file_output, expandModel, add_interventions, add_migration=True):
+def generate_emodl(grpList, file_output, expandModel, add_interventions, add_migration=True, change_testDelay =False):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -727,7 +759,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
     total_string = total_string.replace('(species As::EMS_6 0)', '(species As::EMS_6 1)')
     ### Add interventions (optional)
     if add_interventions != None :
-        total_string = write_interventions(grpList, total_string, add_interventions)
+        total_string = write_interventions(grpList, total_string, add_interventions, expandModel, change_testDelay)
 
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
@@ -745,6 +777,8 @@ if __name__ == '__main__':
 
     ## By default include migration in spatial model, but also generate a test version without migration
     generate_emodl(grpList=ems_grp, expandModel=None,  add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_noTD.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay",  add_interventions='continuedSIP', add_migration=False, change_testDelay = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_changeTD.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="uniformtestDelay",  add_interventions='continuedSIP', add_migration=False, change_testDelay = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_changeuniformTD.emodl'))
 
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionSTOP_adj', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj.emodl'))

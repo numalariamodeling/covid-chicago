@@ -5,10 +5,13 @@ python runScenarios.py --running_location Local --region IL --experiment_config 
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMS_interventionSTOPadj30"
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMS_interventionSTOPadj10"
 
-
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_interventionSTOPadj.emodl --cfg_template model_B.cfg --name_suffix "EMS_reopening_gradual"
-python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_contactTracing.emodl --cfg_template model_B.cfg --name_suffix "EMS_contactTracing30"
-
+### change in test delay
+#### use unified time to detection (not separated by Sys and Sym)
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_changeTD.emodl --cfg_template model_B.cfg --name_suffix "EMS_test_changeTD"
+#### use separate time to detection (separated by Sys and Sym)
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_changeuniformTD.emodl --cfg_template model_B.cfg --name_suffix "EMS_test_changeuniformTD"
+#### no test delay for comparison, since time_to_detection 0 not possible 
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_noTD.emodl --cfg_template model_B.cfg --name_suffix "EMS_test_noTD"
 
 
 ##### Scenario 3 - constant mitigation

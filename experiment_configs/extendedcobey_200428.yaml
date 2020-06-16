@@ -1,6 +1,6 @@
 experiment_setup_parameters:
   'number_of_samples': 10
-  'number_of_runs': 3
+  'number_of_runs': 1
   'duration': 370
   'monitoring_samples': 370 # needs to be smaller than duration
   'random_seed': 18
@@ -49,7 +49,7 @@ sampled_parameters:
     function_kwargs: {'low': 2.4, 'high': 3.5}
   'time_to_detection':
     np.random: uniform
-    function_kwargs: {'low':2.0, 'high':2.0}
+    function_kwargs: {'low':2, 'high':2}
   ### Optionally use separate time to detection (use matching emodl))
   'time_to_detection_AsP':
     np.random: uniform
@@ -62,7 +62,7 @@ sampled_parameters:
     function_kwargs: {'low':2.0, 'high':2.0}
   'time_to_hospitalization':
     np.random: uniform
-    function_kwargs: {'low':3, 'high':6}
+    function_kwargs: {'low':4, 'high':6}
   'time_to_critical':
     np.random: uniform
     function_kwargs: {'low':4, 'high':6}
@@ -186,9 +186,19 @@ intervention_parameters:
   'd_SQ':
     np.random: uniform
     function_kwargs: {'low':0.80, 'high':0.80} 
-  'change_testDelay_time1':
-    np.random: uniform
-    function_kwargs: {'low':1, 'high':1}
+  # change_testDelay_1  (using unified time to detection)
+  'change_testDelay_1':
+    np: linspace
+    function_kwargs: {'start':1, 'stop':3, 'num' : 3}
+  # change_testDelay_Sym_1 and change_testDelay_Sys_1  (for separate test delays)
+  # To avoid full factorial, edits in the emodl and workarounds might be needed,
+  # i.e. use the change parameter to substract from the time delay parameter in the emodl
+  'change_testDelay_Sym_1':
+    np: linspace
+    function_kwargs: {'start':1, 'stop':3, 'num' : 1}
+  'change_testDelay_Sys_1':
+    np: linspace
+    function_kwargs: {'start':1, 'stop':3, 'num' : 1}
    ### Use fixed dates or define detection time relative to  socialDistance_time3
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
