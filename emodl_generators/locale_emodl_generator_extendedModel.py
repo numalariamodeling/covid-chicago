@@ -744,6 +744,8 @@ if __name__ == '__main__':
 
 
     ## By default include migration in spatial model, but also generate a test version without migration
+    generate_emodl(grpList=ems_grp, expandModel=None,  add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_noTD.emodl'))
+
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions='interventionSTOP_adj', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay", add_interventions=None, add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_neverSIP.emodl'))
