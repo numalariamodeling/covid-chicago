@@ -67,9 +67,9 @@ sampled_parameters:
         - {'low': 0.135, 'high': 0.135}
         - {'low': 0.195, 'high': 0.195}
         - {'low': 0.100, 'high': 0.100}
-        - {'low': 0.112, 'high': 0.112}
-        - {'low': 0.110, 'high': 0.110}
-        - {'low': 0.110, 'high': 0.110}
+        - {'low': 0.140, 'high': 0.140}
+        - {'low': 0.115, 'high': 0.115}
+        - {'low': 0.130, 'high': 0.130}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.100, 'high': 0.100}
   social_multiplier_4:
@@ -78,15 +78,15 @@ sampled_parameters:
       np.random: uniform
       function_kwargs:
         - {'low': 0.160, 'high': 0.160}
-        - {'low': 0.080, 'high': 0.080}
+        - {'low': 0.150, 'high': 0.150}
         - {'low': 0.240, 'high': 0.240}
         - {'low': 0.175, 'high': 0.175}
         - {'low': 0.195, 'high': 0.195}
         - {'low': 0.225, 'high': 0.225}
-        - {'low': 0.118, 'high': 0.118}
+        - {'low': 0.120, 'high': 0.120}
         - {'low': 0.109, 'high': 0.109}
-        - {'low': 0.110, 'high': 0.110}
-        - {'low': 0.105, 'high': 0.105}
+        - {'low': 0.130, 'high': 0.130}
+        - {'low': 0.125, 'high': 0.125}
         - {'low': 0.090, 'high': 0.090}    
   Ki:  
     IL:
