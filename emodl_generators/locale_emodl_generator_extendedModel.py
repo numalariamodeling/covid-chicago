@@ -679,8 +679,8 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (time-event change_testDelay1 @time_to_detection_1@ ( {} {} {} {} {} {} {} ))
     """.format("(time_D_Sym testDelay_Sym_1)",
                "(time_D_Sys testDelay_Sys_1)",
-               "(Ksys_D (/ 1 time_D_Sym))",
-               "(Ksym_D (/ 1 time_D_Sys))",
+               "(Ksys_D (/ 1 time_D_Sys))",
+               "(Ksym_D (/ 1 time_D_Sym))",
                "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
                "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))",
                "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))",
