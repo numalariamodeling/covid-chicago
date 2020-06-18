@@ -180,15 +180,12 @@ intervention_parameters:
     np.random: uniform
     function_kwargs: {'low':0.9, 'high':0.9}
   ### INCREASE DETECTION RATES of asymptomatic, presymptomatic and mild infections
-  'd_P_ct1':
-    np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
-  'd_As_ct1':
+  'd_AsP_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
   'd_Sym_ct1':
     np.random: uniform
-    function_kwargs: {'low':0.30, 'high':0.30}
+    function_kwargs: {'low':0, 'high':0}
   ## d_SQ proportion of susceptibles that get temporarily quarantined (disabled)
   ## d_SQ if used, it should be proportional to cases rather than fixed fraction ?
   'd_SQ':

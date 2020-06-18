@@ -643,7 +643,7 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 
 
     contactTracing_str = """
-(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_AsP_ct1) (d_P d_AsP_ct1) (d_Sym d_Sym_ct1)))
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
     """
 
