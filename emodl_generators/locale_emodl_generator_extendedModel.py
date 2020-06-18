@@ -212,10 +212,12 @@ def write_params(expandModel=None):
 (param fraction_critical @fraction_critical@ )
 (param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
+
 (param d_As @d_As@)
 (param d_P @d_P@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
+
 ;(param Ki @Ki@)
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
@@ -270,18 +272,9 @@ def write_params(expandModel=None):
 (param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
 """
 
-    expand_contactTracing_str = """
-(param d_P_ct1 @d_P_ct1@)
-(param d_As_ct1 @d_As_ct1@)
-(param d_Sym_ct1 @d_Sym_ct1@)
-"""
 
     expand_testDelay_AsPSymSys_str = """
 (param d_P @d_P@)
-
-(param d_P_ct1 @d_P_ct1@)
-(param d_As_ct1 @d_As_ct1@)
-(param d_Sym_ct1 @d_Sym_ct1@)
 
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
@@ -643,11 +636,9 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 
 
     contactTracing_str = """
-(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_AsP_ct1) (d_P d_AsP_ct1) (d_Sym d_Sym_ct1)))
+(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
     """
-
-        contactTracing_str =  temp_str + contactTracing_str
 
     change_uniformtestDelay_str = """
 (param testDelay_1 @change_testDelay_1@)
