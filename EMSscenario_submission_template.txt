@@ -11,6 +11,11 @@ python runScenarios.py --running_location Local --region IL --experiment_config 
 
 
 
+### Change in test delay at varying times
+### Note, the default config file in runScenarios will need to be changed to  extendedcobey_200428_changeTD.yaml
+### Or temporarily pasted into the extendedcobey_200428.yaml file 
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS_changeTD.emodl --cfg_template model_B.cfg --name_suffix "EMS_test"						  
+
 ##### Scenario 3 - constant mitigation
 python runScenarios.py --running_location Local --region EMS_1 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
 python runScenarios.py --running_location Local --region EMS_2 --experiment_config EMSspecific_sample_parameters.yaml --emodl_template extendedmodel_cobey.emodl  --name_suffix "scenario3"
