@@ -151,7 +151,7 @@ def write_functions(grp, expandModel=None):
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
-(func infectious_det_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
+(func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 """.format(grp=grp)
 
 
@@ -161,18 +161,9 @@ def write_functions(grp, expandModel=None):
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3::{grp}))
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
-(func infectious_det_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
-""".format(grp=grp)
-
-
-    expand_contactTracing_str = """
-(func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
-(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
-(func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
-(func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
-(func infectious_undet_{grp} (+ As::{grp} P_{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 """.format(grp=grp)
+
 
     expand_testDelay_AsPSymSys_str = """
 (func asymptomatic_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
@@ -187,8 +178,6 @@ def write_functions(grp, expandModel=None):
         functions_str = expand_base_str + functions_str
     if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
         functions_str =  expand_testDelay_SymSys_str + functions_str
-    if expandModel == "contactTracing":
-        functions_str = expand_contactTracing_str + functions_str
     if expandModel == "testDelay_AsPSymSys":
         functions_str = expand_testDelay_AsPSymSys_str + functions_str
 
@@ -274,8 +263,6 @@ def write_params(expandModel=None):
 
 
     expand_testDelay_AsPSymSys_str = """
-(param d_P @d_P@)
-
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
