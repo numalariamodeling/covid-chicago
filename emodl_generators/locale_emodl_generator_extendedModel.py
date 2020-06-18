@@ -58,6 +58,7 @@ def write_species(grp, expandModel=None):
     expand_testDelay_contactTracing_str = """
 ;(species Q::{grp} 0)
 (species As_preD::{grp} 0)
+(species P_preD::{grp} 0)
 (species P_det::{grp} 0)
 (species Sym_preD::{grp} 0)
 (species Sym_det2a::{grp} 0)
@@ -203,10 +204,10 @@ def write_functions(grp, expandModel=None):
 
     expand_testDelay_contactTracing_str = """
 (func asymptomatic_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
-(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
+(func presymptomatic_{grp}  (+ P_preD::{grp} P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
-(func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P_preD::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 """.format(grp=grp)
 
@@ -307,25 +308,33 @@ def write_params(expandModel=None):
     expand_testDelay_contactTracing_str = """
 ;(param d_SQ @d_SQ@)
 (param d_P @d_P@)
+
+(param d_P_ct1 @d_P_ct1@)
 (param d_As_ct1 @d_As_ct1@)
 (param d_Sym_ct1 @d_Sym_ct1@)
-
-(param time_D_As @time_to_detection_AsP@)
-(param time_D_Sym @time_to_detection_Sym@)
-(param time_D_Sys @time_to_detection_Sys@)
-
-(param Kl_D (/ 1 time_D_As))
-(param Ksym_D (/ 1 time_D_Sym))
-(param Ksys_D (/ 1 time_D_Sys))
 
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
+
+(param time_D_Sys @time_to_detection_Sys@)
+(param Ksys_D (/ 1 time_D_Sys))
 (param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
 (param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))
 (param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D_Sys)))
-(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
+
+(param time_D_Sym @time_to_detection_Sym@)
+(param Ksym_D (/ 1 time_D_Sym))
 (param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
+
+(param time_D_As @time_to_detection_As@)
+(param Kl_D (/ 1 time_D_As))
+(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
+
+(param time_D_P @time_to_detection_P@)
+(param Ks_D (/ 1 time_D_P))
+(param Ksym_DP (/ 1 (- time_to_symptoms time_D_P )))
+(param Ksys_DP (/ 1 (- time_to_symptoms time_D_P )))
 """
 
     if expandModel == None:
@@ -582,11 +591,12 @@ def write_reactions(grp, expandModel=None):
 
     expand_testDelay_contactTracing_str = """
 (reaction infection_asymp_det_{grp}  (E::{grp})   (As_preD::{grp})   (* Kl E::{grp}))
-(reaction infection_asymp_undet_{grp}  (As_preD::{grp})   (As::{grp})   (* Kl_D E::{grp} (- 1 d_As)))
-(reaction infection_asymp_det_{grp}  (As_preD::{grp})   (As_det1::{grp})   (* Kl_D E::{grp} d_As))
+(reaction infection_asymp_undet_{grp}  (As_preD::{grp})   (As::{grp})   (* Kl_D As_preD::{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (As_preD::{grp})   (As_det1::{grp})   (* Kl_D As_preD::{grp} d_As))
 
-(reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks E::{grp} (- 1 d_P)))
-(reaction presymptomatic_{grp} (E::{grp})   (P_det::{grp})   (* Ks E::{grp} d_P))
+(reaction presymptomatic_{grp} (E::{grp})   (P_preD::{grp})   (* Ks E::{grp} ))
+(reaction presymptomatic_{grp} (P_preD::{grp})   (P::{grp})   (* Ks_D P_preD::{grp} (- 1 d_P)))
+(reaction presymptomatic_{grp} (P_preD::{grp})   (P_det::{grp})   (* Ks_D P_preD::{grp} d_P))
 
 ; developing symptoms - same time to symptoms as in master emodl
 (reaction mild_symptomatic_{grp} (P::{grp})  (Sym_preD::{grp}) (* Ksym P::{grp}))
@@ -601,8 +611,8 @@ def write_reactions(grp, expandModel=None):
 (reaction severe_symptomatic_det_{grp} (Sys_preD::{grp})  (Sys_det3a::{grp})  (* Ksys_D Sys_preD::{grp} d_Sys))
 
 ; developing symptoms - already detected, same time to symptoms as in master emodl
-(reaction mild_symptomatic_det_{grp} (P_det::{grp})  (Sym_det2b::{grp}) (* Ksym P_det::{grp}))
-(reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3b::{grp})  (* Ksys P_det::{grp} ))
+(reaction mild_symptomatic_det_{grp} (P_det::{grp})  (Sym_det2b::{grp}) (* Ksym_DP P_det::{grp}))
+(reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3b::{grp})  (* Ksym_DP P_det::{grp} ))
 
 (reaction hospitalization_1_{grp}  (Sys::{grp})   (H1::{grp})   (* Kh1_D Sys::{grp}))
 (reaction hospitalization_2_{grp}   (Sys::{grp})   (H2::{grp})   (* Kh2_D Sys::{grp}))
