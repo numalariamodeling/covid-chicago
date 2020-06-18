@@ -73,7 +73,7 @@ sampled_parameters:
     function_kwargs: {'low':2.0, 'high':5.0}
   'time_to_detection_Sys':
     np.random: uniform
-    function_kwargs: {'low':1.0, 'high':2.0}
+    function_kwargs: {'low':2.0, 'high':2.0}
   ### RECOVERY TIMES 
   'recovery_time_asymp':
     np.random: uniform
@@ -186,11 +186,6 @@ intervention_parameters:
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
-  ## d_SQ proportion of susceptibles that get temporarily quarantined (disabled)
-  ## d_SQ if used, it should be proportional to cases rather than fixed fraction ?
-  'd_SQ':
-    np.random: uniform
-    function_kwargs: {'low':0.80, 'high':0.80} 
    ### Use fixed dates or define detection time relative to  socialDistance_time3
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
