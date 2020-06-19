@@ -259,6 +259,10 @@ time_parameters:
   'contact_tracing_stop1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2022-05-30}
+  'change_testDelay_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-15}
+    #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
 fitted_parameters:
   Kis:
     'NMH_catchment':
