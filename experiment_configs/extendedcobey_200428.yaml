@@ -186,7 +186,16 @@ intervention_parameters:
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
-   ### Use fixed dates or define detection time relative to  socialDistance_time3
+  'change_testDelay_As_1':
+    np: linspace
+    function_kwargs: {'start':2, 'stop':7, 'num' : 1}
+  'change_testDelay_P_1':
+    np: linspace
+    function_kwargs: {'start':2, 'stop':2, 'num' : 1}
+  'change_testDelay_Sym_1':
+    np: linspace
+    function_kwargs: {'start':2, 'stop':7, 'num' : 1}
+    #function_kwargs: {'start':2, 'stop':7, 'num' : 11}
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
