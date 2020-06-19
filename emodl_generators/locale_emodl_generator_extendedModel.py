@@ -111,6 +111,8 @@ def write_observe(grp, expandModel=None):
 (observe symp_severe_det_cumul_{grpout} symp_severe_det_cumul_{grp})
 (observe detected_{grpout} detected_{grp})
 (observe detected_cumul_{grpout} detected_cumul_{grp} )
+
+(observe Ki_{grpout} Ki_{grp})
 """.format(grpout=grpout, grp=grp)
     
     observe_str = observe_str.replace("  ", " ")
