@@ -196,6 +196,10 @@ intervention_parameters:
     np: linspace
     function_kwargs: {'start':2, 'stop':7, 'num' : 1}
     #function_kwargs: {'start':2, 'stop':7, 'num' : 11}
+  #### Change 'isolation success' in contact tracing simulations
+  'reduced_inf_of_det_cases_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':1}
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
