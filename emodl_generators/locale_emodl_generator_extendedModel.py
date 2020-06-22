@@ -51,9 +51,9 @@ def write_species(grp, expandModel=None):
 (species Sys_preD::{grp} 0)
 """.format(grp=grp)
 
-    expand_testDelay_AsPSymSys_str = """
+
+    expand_testDelay_AsSymSys_str = """
 (species As_preD::{grp} 0)
-(species P_preD::{grp} 0)
 (species Sym_preD::{grp} 0)
 (species Sym_det2a::{grp} 0)
 (species Sym_det2b::{grp} 0)
@@ -62,10 +62,12 @@ def write_species(grp, expandModel=None):
 (species Sys_det3b::{grp} 0)
 """.format(grp=grp)
 
+
+
     if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
         species_str = species_str + expand_testDelay_SymSys_str
-    if expandModel == "testDelay_AsPSymSys":
-        species_str = species_str + expand_testDelay_AsPSymSys_str
+    if expandModel == "testDelay_AsSymSys":
+        species_str = species_str + expand_testDelay_AsSymSys_str
 
     return (species_str)
 
@@ -167,21 +169,22 @@ def write_functions(grp, expandModel=None):
 """.format(grp=grp)
 
 
-    expand_testDelay_AsPSymSys_str = """
+    expand_testDelay_AsSymSys_str = """
 (func asymptomatic_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
-(func presymptomatic_{grp}  (+ P_preD::{grp} P::{grp} P_det::{grp}))
+(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
-(func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P_preD::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 """.format(grp=grp)
+
 
     if expandModel == None:
         functions_str = expand_base_str + functions_str
     if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
         functions_str =  expand_testDelay_SymSys_str + functions_str
-    if expandModel == "testDelay_AsPSymSys":
-        functions_str = expand_testDelay_AsPSymSys_str + functions_str
+    if expandModel == "testDelay_AsSymSys":
+        functions_str = expand_testDelay_AsSymSys_str + functions_str
 
     return (functions_str)
 
@@ -263,8 +266,7 @@ def write_params(expandModel=None):
 (param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
 """
 
-
-    expand_testDelay_AsPSymSys_str = """
+    expand_testDelay_AsSymSys_str = """
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead  time_to_hospitalization))
@@ -282,12 +284,8 @@ def write_params(expandModel=None):
 (param time_D_As @time_to_detection_As@)
 (param Kl_D (/ 1 time_D_As))
 (param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
-
-(param time_D_P @time_to_detection_P@)
-(param Ks_D (/ 1 time_D_P))
-(param Ksym_DP (/ 1 (- time_to_symptoms time_D_P )))
-(param Ksys_DP (/ 1 (- time_to_symptoms time_D_P )))
 """
+
 
     if expandModel == None:
         params_str = params_str + expand_base_str
@@ -297,8 +295,8 @@ def write_params(expandModel=None):
         params_str = params_str + expand_uniformtestDelay_str
     if expandModel == "contactTracing" :
         params_str = params_str + expand_base_str + expand_contactTracing_str
-    if expandModel == "testDelay_AsPSymSys" :
-        params_str = params_str + expand_testDelay_AsPSymSys_str
+    if expandModel == "testDelay_AsSymSys" :
+        params_str = params_str + expand_testDelay_AsSymSys_str
 
     params_str = params_str.replace("  ", " ")
 
@@ -512,14 +510,13 @@ def write_reactions(grp, expandModel=None):
 """.format(grp=grp)
 
 
-    expand_testDelay_AsPSymSys_str = """
+    expand_testDelay_AsSymSys_str = """
 (reaction infection_asymp_det_{grp}  (E::{grp})   (As_preD::{grp})   (* Kl E::{grp}))
 (reaction infection_asymp_undet_{grp}  (As_preD::{grp})   (As::{grp})   (* Kl_D As_preD::{grp} (- 1 d_As)))
 (reaction infection_asymp_det_{grp}  (As_preD::{grp})   (As_det1::{grp})   (* Kl_D As_preD::{grp} d_As))
 
-(reaction presymptomatic_{grp} (E::{grp})   (P_preD::{grp})   (* Ks E::{grp} ))
-(reaction presymptomatic_{grp} (P_preD::{grp})   (P::{grp})   (* Ks_D P_preD::{grp} (- 1 d_P)))
-(reaction presymptomatic_{grp} (P_preD::{grp})   (P_det::{grp})   (* Ks_D P_preD::{grp} d_P))
+(reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks  E::{grp} (- 1 d_P)))
+(reaction presymptomatic_{grp} (E::{grp})   (P_det::{grp})   (* Ks  E::{grp} d_P))
 
 ; developing symptoms - same time to symptoms as in master emodl
 (reaction mild_symptomatic_{grp} (P::{grp})  (Sym_preD::{grp}) (* Ksym P::{grp}))
@@ -529,13 +526,13 @@ def write_reactions(grp, expandModel=None):
 (reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp})  (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym)))
 (reaction severe_symptomatic_undet_{grp} (Sys_preD::{grp})  (Sys::{grp})  (* Ksys_D Sys_preD::{grp} (- 1 d_Sys)))
 
-; new detections  - time to detection is substracted from hospital time
+; new detections  - time to detection is subtracted from hospital time
 (reaction mild_symptomatic_det_{grp} (Sym_preD::{grp})  (Sym_det2a::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))
 (reaction severe_symptomatic_det_{grp} (Sys_preD::{grp})  (Sys_det3a::{grp})  (* Ksys_D Sys_preD::{grp} d_Sys))
 
 ; developing symptoms - already detected, same time to symptoms as in master emodl
-(reaction mild_symptomatic_det_{grp} (P_det::{grp})  (Sym_det2b::{grp}) (* Ksym_DP P_det::{grp}))
-(reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3b::{grp})  (* Ksym_DP P_det::{grp} ))
+(reaction mild_symptomatic_det_{grp} (P_det::{grp})  (Sym_det2b::{grp}) (* Ksym  P_det::{grp}))
+(reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3b::{grp})  (* Ksys  P_det::{grp} ))
 
 (reaction hospitalization_1_{grp}  (Sys::{grp})   (H1::{grp})   (* Kh1_D Sys::{grp}))
 (reaction hospitalization_2_{grp}   (Sys::{grp})   (H2::{grp})   (* Kh2_D Sys::{grp}))
@@ -568,9 +565,9 @@ def write_reactions(grp, expandModel=None):
         reaction_str = reaction_str_I + expand_base_str + reaction_str_III
     if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
         reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III
-    if expandModel == 'testDelay_AsPSymSys':
-        reaction_str = reaction_str_I + expand_testDelay_AsPSymSys_str + reaction_str_III
-
+    if expandModel == 'testDelay_AsSymSys':
+        reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III
+        
     reaction_str = reaction_str.replace("  ", " ")
 
     return (reaction_str)
@@ -766,23 +763,23 @@ if __name__ == '__main__':
     
     ### Vary test delay  (i.e. change_testDelay = "SymSys"   )
     generate_emodl(grpList=ems_grp, expandModel=None,  add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_noTD.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys",  add_interventions='continuedSIP', add_migration=False, change_testDelay = "SymSys", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_changeTD.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys",  add_interventions='continuedSIP', add_migration=False, change_testDelay = "SymSys", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_changeTD.emodl'))
     #generate_emodl(grpList=ems_grp, expandModel="uniformtestDelay",  add_interventions='continuedSIP', add_migration=False, change_testDelay = "uniform", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_changeuniformTD.emodl'))
 
     ### Emodls without migration between EMS areas
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='interventionSTOP_adj', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions=None, add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_neverSIP.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='interventionStop', add_migration=False,  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionStop.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='gradual_reopening', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='contactTracing', add_migration=False,  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracing.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='contactTracing', add_migration=False, change_testDelay = "AsPSymSys", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracingChangeTD.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions=None, add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_neverSIP.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionStop', add_migration=False,  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionStop.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False,  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracing.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False, change_testDelay = "AsPSymSys", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracingChangeTD.emodl'))
   
     ### Emodls with migration between EMS areas  
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='continuedSIP', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='interventionSTOP_adj', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionSTOPadj.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions=None, add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_neverSIP.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='interventionStop', add_migration=True,  file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionStop.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='gradual_reopening', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_gradual_reopening.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='contactTracing', add_migration=True,  file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_contactTracing.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsPSymSys", add_interventions='contactTracing', add_migration=True, change_testDelay = "AsPSymSys", file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_contactTracingChangeTD.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionSTOPadj.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions=None, add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_neverSIP.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionStop', add_migration=True,  file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionStop.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_gradual_reopening.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=True,  file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_contactTracing.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=True, change_testDelay = "AsPSymSys", file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_contactTracingChangeTD.emodl'))
