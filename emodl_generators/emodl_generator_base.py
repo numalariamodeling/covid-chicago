@@ -512,28 +512,34 @@ def write_interventions( total_string, scenarioName, expandModel, change_testDel
                "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D)))",
                "(Kr_m_D (/ 1 (- recovery_time_mild time_D )))")
 
-    change_testDelay_SymSys_str = """
-(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} {}))
+    change_testDelay_Sym_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
     """.format("(time_D_Sym @change_testDelay_Sym_1@)",
-               "(time_D_Sys @change_testDelay_Sys_1@)",
-               "(Ksys_D (/ 1 time_D_Sys))",
                "(Ksym_D (/ 1 time_D_Sym))",
-               "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
-               "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))",
-               "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))",
                "(Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))")
 
-    change_testDelay_AsP_str = """
-(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
+    change_testDelay_Sys_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} ))
+    """.format("(time_D_Sys @change_testDelay_Sys_1@)",
+               "(Ksys_D (/ 1 time_D_Sys))",
+               "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
+               "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))",
+               "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))")
+               
+    change_testDelay_As_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
     """.format("(time_D_As @change_testDelay_As_1@)",
-               "(time_D_P @change_testDelay_P_1@)",
                "(Kl_D (/ 1 time_D_As))",
-               "(Ks_D (/ 1 time_D_P))",
-               "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))",
+               "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
+
+     ### (change_testDelay_P_str not used)
+    change_testDelay_P_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
+    """.format("(time_D_P @change_testDelay_P_1@)",
+               "(Kl_D (/ 1 time_D_As))",
                "(Ksym_DP (/ 1 (- time_to_symptoms time_D_P )))",
                "(Ksys_DP (/ 1 (- time_to_symptoms time_D_P )))")
-               
- 
+   
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
     if scenarioName == "interventionSTOP_adj" :
@@ -549,12 +555,23 @@ def write_interventions( total_string, scenarioName, expandModel, change_testDel
     if change_testDelay != None :
         if change_testDelay == "uniform" :
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_uniformtestDelay_str)
+        if change_testDelay == "As"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str )
+        if change_testDelay == "P"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_P_str )
+        if change_testDelay == "Sym"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str )
+        if change_testDelay == "Sys"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sys_str )
+        if change_testDelay == "AsSym"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sys_str )
         if change_testDelay == "SymSys" :
-            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_SymSys_str)
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
         if change_testDelay == "AsP" :
-            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_AsP_str)
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_P_str)
         if change_testDelay == "AsPSymSys"  :
-            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_AsP_str + '\n' + change_testDelay_SymSys_str)
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_P_str + '\n' + change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
+
 
 
     return (total_string)
