@@ -660,7 +660,7 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 
      ### (change_testDelay_P_str not used)
     change_testDelay_P_str = """
-(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} ))
     """.format("(time_D_P @change_testDelay_P_1@)",
                "(Kl_D (/ 1 time_D_As))",
                "(Ksym_DP (/ 1 (- time_to_symptoms time_D_P )))",
