@@ -617,7 +617,6 @@
 (observe detected_cumul_age0to9 detected_cumul_age0to9 )
 
 
- (observe Ki Ki)
 (observe susceptible_age10to19 S_age10to19)
 (observe exposed_age10to19 E_age10to19)
 (observe asymptomatic_age10to19 asymptomatic_age10to19)
@@ -651,7 +650,6 @@
 (observe detected_cumul_age10to19 detected_cumul_age10to19 )
 
 
- (observe Ki Ki)
 (observe susceptible_age20to29 S_age20to29)
 (observe exposed_age20to29 E_age20to29)
 (observe asymptomatic_age20to29 asymptomatic_age20to29)
@@ -685,7 +683,6 @@
 (observe detected_cumul_age20to29 detected_cumul_age20to29 )
 
 
- (observe Ki Ki)
 (observe susceptible_age30to39 S_age30to39)
 (observe exposed_age30to39 E_age30to39)
 (observe asymptomatic_age30to39 asymptomatic_age30to39)
@@ -719,7 +716,6 @@
 (observe detected_cumul_age30to39 detected_cumul_age30to39 )
 
 
- (observe Ki Ki)
 (observe susceptible_age40to49 S_age40to49)
 (observe exposed_age40to49 E_age40to49)
 (observe asymptomatic_age40to49 asymptomatic_age40to49)
@@ -753,7 +749,6 @@
 (observe detected_cumul_age40to49 detected_cumul_age40to49 )
 
 
- (observe Ki Ki)
 (observe susceptible_age50to59 S_age50to59)
 (observe exposed_age50to59 E_age50to59)
 (observe asymptomatic_age50to59 asymptomatic_age50to59)
@@ -787,7 +782,6 @@
 (observe detected_cumul_age50to59 detected_cumul_age50to59 )
 
 
- (observe Ki Ki)
 (observe susceptible_age60to69 S_age60to69)
 (observe exposed_age60to69 E_age60to69)
 (observe asymptomatic_age60to69 asymptomatic_age60to69)
@@ -821,7 +815,6 @@
 (observe detected_cumul_age60to69 detected_cumul_age60to69 )
 
 
- (observe Ki Ki)
 (observe susceptible_age70to100 S_age70to100)
 (observe exposed_age70to100 E_age70to100)
 (observe asymptomatic_age70to100 asymptomatic_age70to100)
@@ -855,7 +848,7 @@
 (observe detected_cumul_age70to100 detected_cumul_age70to100 )
 
 
- (observe Ki Ki)
+(observe Ki Ki)
 
 
 (param time_to_infectious @time_to_infectious@)

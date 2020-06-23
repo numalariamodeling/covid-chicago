@@ -114,8 +114,7 @@ def write_observe(grp, expandModel=None):
 (observe detected_cumul_{grpout} detected_cumul_{grp} )
 
 """.format(grpout=grpout, grp=grp)
-    
-    observe_str = observe_str + "\n (observe Ki Ki)"
+   
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
@@ -742,7 +741,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
     functions_string = functions_string + write_All(grpList)
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
 
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params  + '\n\n' + intervention_string + '\n\n' + reaction_string_combined + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string   + "\n(observe Ki Ki)" + '\n\n' + params  + '\n\n' + intervention_string + '\n\n' + reaction_string_combined + '\n\n' + footer_str
 
 
     ### Add interventions (optional)
