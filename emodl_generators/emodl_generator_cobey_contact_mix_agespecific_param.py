@@ -16,10 +16,11 @@ def write_species(grp, expandModel=None):
     grp = str(grp)
     species_str = """
 (species S_{grp} @speciesS_{grp}@)
-(species As_{grp} @initialAs_{grp}@)
+(species As_{grp}  @initialAs_{grp}@)
 (species E_{grp} 0)
 (species As_det1_{grp} 0)
 (species P_{grp} 0)
+(species P_det_{grp} 0)
 (species Sym_{grp} 0)
 (species Sym_det2_{grp} 0)
 (species Sys_{grp} 0)
@@ -46,17 +47,31 @@ def write_species(grp, expandModel=None):
 (species RC2_det3_{grp} 0)
 """.format(grp=grp)
     species_str = species_str.replace("  ", " ")
-   
-    if expandModel =="testDelay" :
-            expand_str = """
+
+    expand_testDelay_SymSys_str = """
 (species Sym_preD_{grp} 0)
 (species Sys_preD_{grp} 0)
 """.format(grp=grp)
-            species_str = species_str + expand_str
-        
+
+
+    expand_testDelay_AsSymSys_str = """
+(species As_preD_{grp} 0)
+(species Sym_preD_{grp} 0)
+(species Sym_det2a_{grp} 0)
+(species Sym_det2b_{grp} 0)
+(species Sys_preD_{grp} 0)
+(species Sys_det3a_{grp} 0)
+(species Sys_det3b_{grp} 0)
+""".format(grp=grp)
+
+
+
+    if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
+        species_str = species_str + expand_testDelay_SymSys_str
+    if expandModel == "testDelay_AsSymSys":
+        species_str = species_str + expand_testDelay_AsSymSys_str
+
     return (species_str)
-
-
 
 # eval(" 'age,' * 108") + "age"   ### need to add the number of ages pasted into format automatically depending on n groups
 def write_observe(grp, expandModel=None):
@@ -66,7 +81,7 @@ def write_observe(grp, expandModel=None):
 (observe susceptible_{grp} S_{grp})
 (observe exposed_{grp} E_{grp})
 (observe asymptomatic_{grp} asymptomatic_{grp})
-                                      
+(observe presymptomatic_{grp} presymptomatic_{grp})
 (observe symptomatic_mild_{grp} symptomatic_mild_{grp})
 (observe symptomatic_severe_{grp} symptomatic_severe_{grp})
 (observe hospitalized_{grp} hospitalized_{grp})
@@ -77,7 +92,9 @@ def write_observe(grp, expandModel=None):
 (observe asymp_cumul_{grp} asymp_cumul_{grp} )
 (observe asymp_det_cumul_{grp} asymp_det_cumul_{grp})
 (observe symp_mild_cumul_{grp} symp_mild_cumul_{grp})
+
 (observe symp_severe_cumul_{grp} symp_severe_cumul_{grp})
+
 (observe hosp_cumul_{grp} hosp_cumul_{grp})
 (observe hosp_det_cumul_{grp} hosp_det_cumul_{grp} )
 (observe crit_cumul_{grp} crit_cumul_{grp})
@@ -92,29 +109,19 @@ def write_observe(grp, expandModel=None):
 (observe symp_severe_det_cumul_{grp} symp_severe_det_cumul_{grp})
 (observe detected_{grp} detected_{grp})
 (observe detected_cumul_{grp} detected_cumul_{grp} )
+
 """.format(grp=grp)
+   
     observe_str = observe_str.replace("  ", " ")
-    
-    if expandModel != "contactTracing" :
-        expand_str = """(observe presymptomatic_{grp} P_{grp})""".format(grp=grp)
- 
-    if expandModel =="contactTracing" :
-        expand_str = """(observe presymptomatic_{grp} presymptomatic_{grp})""".format(grp=grp)
-    
-    observe_str = observe_str + expand_str
-        
     return (observe_str)
 
-# eval(" 'age,' * 34") + "age"
 def write_functions(grp, expandModel=None):
     grp = str(grp)
     functions_str = """
-(func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
 (func hospitalized_{grp}  (+ H1_{grp} H2_{grp} H3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp}))
 (func critical_{grp} (+ C2_{grp} C3_{grp} C2_det3_{grp} C3_det3_{grp}))
 (func deaths_{grp} (+ D3_{grp} D3_det3_{grp}))
 (func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-
 (func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
 (func asymp_det_cumul_{grp} (+ As_det1_{grp} RAs_det1_{grp}))
 (func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
@@ -137,22 +144,7 @@ def write_functions(grp, expandModel=None):
     
 
     expand_base_str = """
-(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_det2_{grp}))
-(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_det3_{grp}))
-(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
-(func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
-""".format(grp=grp)
-
-
-    expand_testDelay_str = """
-(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2_{grp}))
-(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3_{grp}))
-(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_preD_{grp} Sym_{grp} Sys_preD_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
-(func infectious_det_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
-""".format(grp=grp)
-
-
-    expand_contactTracing_str = """
+(func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
 (func presymptomatic_{grp}  (+ P_{grp} P_det_{grp}))
 (func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_det2_{grp}))
 (func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_det3_{grp}))
@@ -160,25 +152,35 @@ def write_functions(grp, expandModel=None):
 (func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
 """.format(grp=grp)
 
-    expand_testDelay_contactTracing_str = """
+
+    expand_testDelay_SymSys_str = """
+(func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
+(func presymptomatic_{grp}  (+ P_{grp} P_det_{grp}))
+(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2_{grp}))
+(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3_{grp}))
+(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_preD_{grp} Sym_{grp} Sys_preD_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
+""".format(grp=grp)
+
+
+    expand_testDelay_AsSymSys_str = """
+(func asymptomatic_{grp}  (+ As_preD_{grp} As_{grp} As_det1_{grp}))
 (func presymptomatic_{grp}  (+ P_{grp} P_det_{grp}))
 (func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2a_{grp} Sym_det2b_{grp}))
 (func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
-(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sym_preD_{grp} Sys_{grp} Sys_preD_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_undet_{grp} (+ As_preD_{grp} As_{grp} P_{grp} Sym_{grp} Sym_preD_{grp} Sys_{grp} Sys_preD_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
 (func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
 """.format(grp=grp)
 
+
     if expandModel == None:
         functions_str = expand_base_str + functions_str
-    if expandModel =="testDelay" :
-        functions_str =  expand_testDelay_str + functions_str
-    if expandModel == "contactTracing":
-        functions_str = expand_contactTracing_str + functions_str
-    if expandModel == "testDelay_contactTracing":
-        functions_str = expand_testDelay_contactTracing_str + functions_str
+    if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
+        functions_str =  expand_testDelay_SymSys_str + functions_str
+    if expandModel == "testDelay_AsSymSys":
+        functions_str = expand_testDelay_AsSymSys_str + functions_str
 
     return (functions_str)
-
 def sub(x):
     xout = re.sub('_','', str(x), count=1)
     return(xout)
@@ -237,6 +239,7 @@ def write_params(expandModel=None):
 (param recovery_time_crit @recovery_time_crit@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param d_As @d_As@)
+(param d_P @d_P@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
 (param Ki @Ki@)
@@ -254,29 +257,48 @@ def write_params(expandModel=None):
 """
 
 
-    expand_testDelay_str = """
+    expand_uniformtestDelay_str = """
 (param time_D @time_to_detection@)
-(param Ksys_D (/ 1 time_D))
 (param Ksym_D (/ 1 time_D))
+(param Ksys_D (/ 1 time_D))
+
 (param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
 """
 
-    expand_contactTracing_str = """
-;(param d_SQ @d_SQ@)
-(param d_P @d_P@)
-(param d_As_ct1 @d_As_ct1@)
-(param d_Sym_ct1 @d_Sym_ct1@)
+
+    expand_testDelay_SymSys_str = """
+(param time_D_Sym @time_to_detection_Sym@)
+(param time_D_Sys @time_to_detection_Sys@)
+(param Ksym_D (/ 1 time_D_Sym))
+(param Ksys_D (/ 1 time_D_Sys))
+
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
+"""
+
+    expand_testDelay_AsSymSys_str = """
+(param time_D_Sys @time_to_detection_Sys@)
+(param Ksys_D (/ 1 time_D_Sys))
+
+(param time_D_Sym @time_to_detection_Sym@)
+(param Ksym_D (/ 1 time_D_Sym))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
+
+(param time_D_As @time_to_detection_As@)
+(param Kl_D (/ 1 time_D_As))
+(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
 """
 
 
     if expandModel == None:
-        params_str = params_str
-    if expandModel == "testDelay":
-        params_str = params_str + expand_testDelay_str
+        params_str = params_str 
+    if expandModel == "testDelay_SymSys":
+        params_str = params_str + expand_testDelay_SymSys_str
+    if expandModel == "uniformtestDelay":
+        params_str = params_str + expand_uniformtestDelay_str
     if expandModel == "contactTracing" :
         params_str = params_str  + expand_contactTracing_str
-    if expandModel == "testDelay_contactTracing" :
-        params_str = params_str + expand_testDelay_str + expand_contactTracing_str
+    if expandModel == "testDelay_AsSymSys" :
+        params_str = params_str + expand_testDelay_AsSymSys_str
 
     params_str = params_str.replace("  ", " ")
 
@@ -309,27 +331,48 @@ def write_age_specific_param(grp, expandModel):
 (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
 (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
 (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-""".format(grp=grp)   
+""".format(grp=grp)    
 
-
-    expand_testDelay_str = """
+    expand_uniformtestDelay_str = """
 (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
 (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
 (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
 (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
 (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
 (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
-""".format(grp=grp)   
+""".format(grp=grp)    
+
+
+    expand_testDelay_SymSys_str = """
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+""".format(grp=grp)    
+
+    expand_testDelay_AsSymSys_str = """
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+""".format(grp=grp)    
 
     if expandModel == None:
         params_str = params_str + expand_base_str
-    if expandModel == "testDelay":
-        params_str = params_str + expand_testDelay_str
-    if expandModel == "contactTracing" :
-        params_str = params_str + expand_base_str 
-    if expandModel == "testDelay_contactTracing" :
-        params_str = params_str + expand_testDelay_str 
-        
+    if expandModel == "testDelay_SymSys":
+        params_str = params_str + expand_testDelay_SymSys_str
+    if expandModel == "uniformtestDelay":
+        params_str = params_str + expand_uniformtestDelay_str
+    if expandModel == "testDelay_AsSymSys" :
+        params_str = params_str + expand_testDelay_AsSymSys_str
+
+    params_str = params_str.replace("  ", " ")
+
+
     return params_str
 
 
@@ -361,39 +404,37 @@ def repeat_string_by_grp(fixedstring, grpList):
 def write_All(grpList):
     obs_All_str = ""
     obs_All_str = obs_All_str + "\n(observe susceptible_All (+ " + repeat_string_by_grp('S_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe asymptomatic_All (+ " + repeat_string_by_grp('asymptomatic_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P_',    grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symptomatic_mild_All (+ " + repeat_string_by_grp( 'symptomatic_mild_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symptomatic_severe_All (+ " + repeat_string_by_grp('symptomatic_severe_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp( 'hospitalized_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe critical_All (+ " + repeat_string_by_grp('critical_',  grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E_',  grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe asymptomatic_All (+ " + repeat_string_by_grp( 'asymptomatic_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe symptomatic_mild_All (+ " + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe symptomatic_severe_All (+ " + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe critical_All (+ " + repeat_string_by_grp('critical_',    grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe deaths_All (+ " + repeat_string_by_grp('deaths_',   grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe infected_All (+ " + repeat_string_by_grp('infected_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',   grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',    grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe asymp_cumul_All (+ " + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe asymp_det_cumul_All (+ " + repeat_string_by_grp('asymp_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symp_mild_cumul_All (+ " + repeat_string_by_grp(  'symp_mild_cumul_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe asymp_det_cumul_All (+ " + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe symp_mild_cumul_All (+ " + repeat_string_by_grp( 'symp_mild_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe symp_mild_det_cumul_All (+ " + repeat_string_by_grp( 'symp_mild_det_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe symp_severe_cumul_All (+ " + repeat_string_by_grp( 'symp_severe_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symp_severe_det_cumul_All  (+ " + repeat_string_by_grp( 'symp_severe_det_cumul_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe symp_severe_det_cumul_All  (+ " + repeat_string_by_grp(  'symp_severe_det_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe hosp_cumul_All (+ " + repeat_string_by_grp('hosp_cumul_',  grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe hosp_det_cumul_All (+ " + repeat_string_by_grp( 'hosp_det_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe crit_cumul_All (+ " + repeat_string_by_grp('crit_cumul_',   grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe crit_det_cumul_All (+ " + repeat_string_by_grp(  'crit_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe crit_det_All (+ " + repeat_string_by_grp('crit_det_',    grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe crit_det_All (+ " + repeat_string_by_grp('crit_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe detected_cumul_All (+ " + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe death_det_cumul_All (+ " + repeat_string_by_grp('death_det_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe infected_cumul_All (+ " + repeat_string_by_grp('infected_cumul_', grpList) + "))"
 
-    obs_All_str = obs_All_str + "\n(func infectious_det_All (+ " + repeat_string_by_grp( 'infectious_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(func infectious_undet_All (+ " + repeat_string_by_grp('infectious_undet_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(func infectious_det_All (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(func infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe infectious_det_All infectious_det_All)"
     obs_All_str = obs_All_str + "\n(observe infectious_undet_All infectious_undet_All)"
 
-    out_str =  obs_All_str
-
-    return (out_str)
+    return (obs_All_str)
 
 
 
@@ -431,33 +472,29 @@ def write_exposure_reaction8():
     return exposure_reaction_str
 
 
-# eval(" 'age,' * 105") + "age"   ### need to add the number of ages pasted into format automatically depending on n groups
-# (reaction exposure_from_undetected_{grp} (S_{grp}) (E_{grp}) (* Ki S_{grp} infectious_undet_{grp}))
-# (reaction exposure_from_detected_{grp} (S_{grp}) (E_{grp}) (* Ki S_{grp} infectious_det_{grp} reduced_inf_of_det_cases))
 def write_reactions(grp, expandModel=None):
     grp = str(grp)
 
-    reaction_str_I = """
-(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
-(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
-""".format(grp=grp)
-
     reaction_str_III = """
-(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
-(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m  Sym_{grp}))
 (reaction recovery_H1_{grp}   (H1_{grp})   (RH1_{grp})   (* Kr_h{grp} H1_{grp}))
 (reaction recovery_C2_{grp}   (C2_{grp})   (RC2_{grp})   (* Kr_c C2_{grp}))
-(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
 (reaction recovery_H1_det3_{grp}   (H1_det3_{grp})   (RH1_det3_{grp})   (* Kr_h{grp} H1_det3_{grp}))
 (reaction recovery_C2_det3_{grp}   (C2_det3_{grp})   (RC2_det3_{grp})   (* Kr_c C2_det3_{grp}))
     """.format(grp=grp)
 
     expand_base_str = """
-(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp}))
+(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
+(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp} (- 1 d_P)))
+(reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp} E_{grp} d_P))
+
 (reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym{grp} P_{grp} (- 1 d_Sym)))
 (reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_{grp} d_Sym))
 (reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys{grp} P_{grp} (- 1 d_Sys)))
 (reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_{grp} d_Sys))
+
+(reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_det_{grp}))
+(reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_det_{grp} ))
 
 (reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1{grp} Sys_{grp}))
 (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2{grp} Sys_{grp}))
@@ -473,11 +510,17 @@ def write_reactions(grp, expandModel=None):
 (reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
 (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
+(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
+(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
+
+(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m  Sym_{grp}))
 (reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2_{grp}))
 """.format(grp=grp)
 
 
-    expand_testDelay_str = """
+    expand_testDelay_SymSys_str = """
+(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
 (reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp}))
 
 ; developing symptoms - same time to symptoms as in master emodl
@@ -506,61 +549,39 @@ def write_reactions(grp, expandModel=None):
 (reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
 (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
+(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
+(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
+(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m_D  Sym_{grp}))
 (reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m_D  Sym_det2_{grp}))
 
 """.format(grp=grp)
 
 
-    expand_contactTracing_str = """
-(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp} (- 1 d_P)))
-(reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp} E_{grp} d_P))
+    expand_testDelay_AsSymSys_str = """
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_preD_{grp})   (* Kl{grp} E_{grp}))
+(reaction infection_asymp_undet_{grp}  (As_preD_{grp})   (As_{grp})   (* Kl_D As_preD_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (As_preD_{grp})   (As_det1_{grp})   (* Kl_D As_preD_{grp} d_As))
 
-(reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym{grp} P_{grp} (- 1 d_Sym)))
-(reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_{grp} d_Sym))
-(reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys{grp} P_{grp} (- 1 d_Sys)))
-(reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_{grp} d_Sys))
-
-(reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_det_{grp}))
-(reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_det_{grp} ))
-
-(reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1{grp} Sys_{grp}))
-(reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2{grp} Sys_{grp}))
-(reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3{grp} Sys_{grp}))
-(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc H2_{grp}))
-(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc H3_{grp}))
-(reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
-
-(reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1{grp} Sys_det3_{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3_{grp}))
-(reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3_{grp}))
-(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc H2_det3_{grp}))
-(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
-(reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
-
-(reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2_{grp}))
-""".format(grp=grp)
-
-    expand_testDelay_contactTracing_str = """
-(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp} (- 1 d_P)))
-(reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp} E_{grp} d_P))
+(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp}  E_{grp} (- 1 d_P)))
+(reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp}  E_{grp} d_P))
 
 ; developing symptoms - same time to symptoms as in master emodl
 (reaction mild_symptomatic_{grp} (P_{grp})  (Sym_preD_{grp}) (* Ksym{grp} P_{grp}))
 (reaction severe_symptomatic_{grp} (P_{grp})  (Sys_preD_{grp})  (* Ksys{grp} P_{grp}))
-																   
+
 ; never detected 
 (reaction mild_symptomatic_undet_{grp} (Sym_preD_{grp})  (Sym_{grp}) (* Ksym_D Sym_preD_{grp} (- 1 d_Sym)))
 (reaction severe_symptomatic_undet_{grp} (Sys_preD_{grp})  (Sys_{grp})  (* Ksys_D Sys_preD_{grp} (- 1 d_Sys)))
 
-; new detections  - time to detection is substracted from hospital time
+; new detections  - time to detection is subtracted from hospital time
 (reaction mild_symptomatic_det_{grp} (Sym_preD_{grp})  (Sym_det2a_{grp}) (* Ksym_D Sym_preD_{grp} d_Sym))
 (reaction severe_symptomatic_det_{grp} (Sys_preD_{grp})  (Sys_det3a_{grp})  (* Ksys_D Sys_preD_{grp} d_Sys))
 
 ; developing symptoms - already detected, same time to symptoms as in master emodl
-(reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2b_{grp}) (* Ksym{grp} P_det_{grp}))
-(reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3b_{grp})  (* Ksys{grp} P_det_{grp} ))
+(reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2b_{grp}) (* Ksym{grp}  P_det_{grp}))
+(reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3b_{grp})  (* Ksys{grp}  P_det_{grp} ))
 
-(reaction hospitalization_1_{grp}  (Sys_{grp})   (H1_{grp})    (* Kh1_D{grp} Sys_{grp}))
+(reaction hospitalization_1_{grp}  (Sys_{grp})   (H1_{grp})   (* Kh1_D{grp} Sys_{grp}))
 (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2_D{grp} Sys_{grp}))
 (reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3_D{grp} Sys_{grp}))
 (reaction critical_2_{grp}  (H2_{grp})   (C2_{grp})   (* Kc H2_{grp}))
@@ -579,87 +600,141 @@ def write_reactions(grp, expandModel=None):
 (reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
 (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
+(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a_D As_{grp}))
+(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a_D As_det1_{grp}))
+
+(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m_D  Sym_{grp}))
 (reaction recovery_Sym_det2a_{grp}   (Sym_det2a_{grp})   (RSym_det2_{grp})   (* Kr_m_D  Sym_det2a_{grp}))
 (reaction recovery_Sym_det2b_{grp}   (Sym_det2b_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2b_{grp}))
  """.format(grp=grp)
 
     if expandModel ==None :
-        reaction_str = reaction_str_I + expand_base_str + reaction_str_III
-    if expandModel == "testDelay":
-        reaction_str = reaction_str_I + expand_testDelay_str + reaction_str_III
-    if expandModel == 'contactTracing':
-        reaction_str = reaction_str_I + expand_contactTracing_str + reaction_str_III
-    if expandModel == 'testDelay_contactTracing':
-        reaction_str = reaction_str_I + expand_testDelay_contactTracing_str + reaction_str_III
-
+        reaction_str =  expand_base_str + reaction_str_III
+    if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
+        reaction_str =  expand_testDelay_SymSys_str + reaction_str_III
+    if expandModel == 'testDelay_AsSymSys':
+        reaction_str =  expand_testDelay_AsSymSys_str + reaction_str_III
+        
     reaction_str = reaction_str.replace("  ", " ")
 
     return (reaction_str)
-
-
+   
 def write_interventions(grpList, total_string, scenarioName) :
 
     continuedSIP_str =  """
 (param Ki_red1 (* Ki @social_multiplier_1@))
 (param Ki_red2 (* Ki @social_multiplier_2@))
 (param Ki_red3 (* Ki @social_multiplier_3@))
+(param Ki_red4 (* Ki @social_multiplier_4@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
-            """
+(time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
+"""
 
-    interventiopnSTOP_str =  """
+    interventiopnSTOP_str = """
 (param Ki_back (* Ki @backtonormal_multiplier@))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
-        """
+"""
 
+    interventionSTOP_adj_str =  """
+(param Ki_back (+ Ki_red4 (* @backtonormal_multiplier@ (- Ki Ki_red4))))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+"""
 
-    gradual_reopening_str =  """
-(param Ki_back1 (* Ki @reopening_multiplier_1@))
-(param Ki_back2 (* Ki @reopening_multiplier_2@))
-(param Ki_back3 (* Ki @reopening_multiplier_3@))
-(param Ki_back4 (* Ki @reopening_multiplier_4@))
+    gradual_reopening_str = """
+(param Ki_back1 (+ Ki_red4 (* @reopening_multiplier_1@ (- Ki Ki_red4))))
+(param Ki_back2 (+ Ki_red4 (* @reopening_multiplier_2@ (- Ki Ki_red4))))
+(param Ki_back3 (+ Ki_red4 (* @reopening_multiplier_3@ (- Ki Ki_red4))))
+(param Ki_back4 (+ Ki_red4 (* @reopening_multiplier_4@ (- Ki Ki_red4))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
 (time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
-    """
+"""
 
     contactTracing_str = """
-(time-event contact_tracing_start @contact_tracing_start_1@ ((d_As d_As_ct1) (d_P d_As_ct1) (d_Sym d_Sym_ct1)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
     """
-    for grp in grpList:
-        temp_str = """
-;(time-event contact_tracing_start @contact_tracing_start_1@ ((S_{grp} (* S_{grp} (- 1 d_SQ))) (Q (* S_{grp} d_SQ))))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((S_{grp} (+ S_{grp} Q_{grp})) (Q_{grp} 0)))
-        """.format(grp=grp)
 
-        contactTracing_str =  temp_str + contactTracing_str
-
+   
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
+    if scenarioName == "interventionSTOP_adj" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str)
     if scenarioName == "gradual_reopening" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str)
     if scenarioName == "continuedSIP" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
     if scenarioName == "contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
-    if scenarioName == "testDelay_contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)
+
+    return (total_string)
+  
+
+#### To do , make age specific   and add to emodl generator functions
+def write_agespecific_interventions(grp, total_string, expandModel, change_testDelay=None) :
+
+    change_uniformtestDelay_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
+    """.format("(time_D @change_testDelay_1@)",
+               "(Ksys_D (/ 1 time_D))",
+               "(Ksym_D (/ 1 time_D))",
+               "(Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))",
+               "(Kh2_D{grp} (/ fraction_critical (- time_to_hospitalization time_D) ))",
+               "(Kh3_D{grp} (/ fraction_dead (- time_to_hospitalization time_D)))",
+               "(Kr_m_D (/ 1 (- recovery_time_mild time_D )))")
+
+    change_testDelay_Sym_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
+    """.format("(time_D_Sym @change_testDelay_Sym_1@)",
+               "(Ksym_D (/ 1 time_D_Sym))",
+               "(Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))")
+
+    change_testDelay_Sys_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} ))
+    """.format("(time_D_Sys @change_testDelay_Sys_1@)",
+               "(Ksys_D (/ 1 time_D_Sys))",
+               "(Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))",
+               "(Kh2_D{grp} (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))",
+               "(Kh3_D{grp} (/ fraction_dead (- time_to_hospitalization time_D_Sys)))")
+               
+    change_testDelay_As_str = """
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
+    """.format("(time_D_As @change_testDelay_As_1@)",
+               "(Kl_D (/ 1 time_D_As))",
+               "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
+
+  
+    if change_testDelay != None :
+        if change_testDelay == "uniform" :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_uniformtestDelay_str)
+        if change_testDelay == "As"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str )
+        if change_testDelay == "Sym"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str )
+        if change_testDelay == "Sys"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sys_str )
+        if change_testDelay == "AsSym"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sys_str )
+        if change_testDelay == "SymSys" :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
+        if change_testDelay == "AsSymSys"  :
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
+
 
     return (total_string)
 
 
+
 ###stringing all of the functions together to make the file:
-def generate_emodl(grpList, file_output, expandModel, add_interventions , homogeneous=False):
+def generate_emodl(grpList, file_output, expandModel, add_interventions , homogeneous=False, change_testDelay =None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
-    model_name = "seir.emodl"  ### can make this more flexible
+    model_name = "seir.emodl" 
     header_str = "; simplemodel \n\n" + "(import (rnrs) (emodl cmslib)) \n\n" + '(start-model "{}") \n\n'.format(
         model_name)
     footer_str = "(end-model)"
@@ -674,10 +749,14 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
     total_string = total_string + header_str
 
     for grp in grpList:    
-        species_string = species_string + write_species(grp, expandModel)
-        observe_string = observe_string + write_observe(grp, expandModel)
-        reaction_string = reaction_string + write_reactions(grp, expandModel)
-        functions_string = functions_string + write_functions(grp, expandModel)
+        species = write_species(grp, expandModel)
+        observe = write_observe(grp, expandModel)
+        reaction = write_reactions(grp, expandModel)
+        functions = write_functions(grp, expandModel)
+        species_string = species_string + species
+        observe_string = observe_string + observe
+        reaction_string = reaction_string + reaction
+        functions_string = functions_string + functions
         age_specific_param_string = age_specific_param_string + write_age_specific_param(grp, expandModel)
 
     if (homogeneous == False):
@@ -688,21 +767,21 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
 
     elif (homogeneous == True):
         reaction_string_combined = ""
-        for key in grpList:
-            temp = write_exposure_reaction_homogeneous(key)
+        for grp in grpList:
+            temp = write_exposure_reaction_homogeneous(grp)
             reaction_string_combined = reaction_string_combined + temp
 
         reaction_string_combined = reaction_string_combined + '\n' + reaction_string
 
     params = write_params(expandModel) + age_specific_param_string + write_N_population(grpList) + write_ki_mix(len(grpList)) 
     functions_string = functions_string + write_All(grpList)
-    intervention_string = ";[INTERVENTIONS]"
+    intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
     
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params  + '\n\n' + intervention_string + '\n\n' + reaction_string_combined + '\n\n' + footer_str
-   
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string   + "\n(observe Ki Ki)" + '\n\n' + params  + '\n\n' + intervention_string + '\n\n' + reaction_string_combined + '\n\n' + footer_str
+  
     ### Add interventions (optional)
     if add_interventions != None :
-        total_string = write_interventions(grpList, total_string, add_interventions)
+        total_string = write_interventions(grpList, total_string, add_interventions, expandModel, change_testDelay)
 
 
     print(total_string)
@@ -716,22 +795,11 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
 
 
 # if __name__ == '__main__':
-
 age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
 
-#### Wit test delay
-generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='continuedSIP',   file_output=os.path.join(emodl_dir, 'extendedmodel_age4_param.emodl'))
-#generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age4param_neverSIP.emodl'))
-#generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='interventiopnStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age4param_interventionStop.emodl'))
-#generate_emodl(grpList=age_grp4, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age4param_gradual_reopening.emodl'))
-#generate_emodl(grpList=age_grp4, expandModel="testDelay_contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodel_age4param_contactTracing.emodl'))
 
-
-generate_emodl(grpList=age_grp8,  expandModel="testDelay", add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8_param.emodl'))
-#generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age8param_neverSIP.emodl'))
-#generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='interventiopnStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age8param_interventionStop.emodl'))
-#generate_emodl(grpList=age_grp8, expandModel="testDelay", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age8param_gradual_reopening.emodl'))
-#generate_emodl(grpList=age_grp8, expandModel="testDelay_contactTracing", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodel_age8param_contactTracing.emodl'))
+### With contact matrix - testDelay implemented
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_param.emodl'))
 
 
