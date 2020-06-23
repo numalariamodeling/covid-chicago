@@ -40,7 +40,6 @@
 (species RC2_det3 0)
 
 (species As_preD 0)
-(species P_preD 0)
 (species Sym_preD 0)
 (species Sym_det2a 0)
 (species Sym_det2b 0)
@@ -53,10 +52,10 @@
 
 
 (func asymptomatic  (+ As_preD As As_det1))
-(func presymptomatic  (+ P_preD P P_det))
+(func presymptomatic  (+ P P_det))
 (func symptomatic_mild  (+ Sym Sym_preD Sym_det2a Sym_det2b))
 (func symptomatic_severe  (+ Sys Sys_preD Sys_det3a Sys_det3b))
-(func infectious_undet (+ As_preD As P_preD P Sym Sym_preD Sys Sys_preD H1 H2 H3 C2 C3))
+(func infectious_undet (+ As_preD As P Sym Sym_preD Sys Sys_preD H1 H2 H3 C2 C3))
 (func infectious_det (+ As_det1 P_det Sym_det2a Sym_det2b Sys_det3a Sys_det3b))
 
 (func hospitalized(+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
@@ -175,10 +174,6 @@
 (param Kl_D (/ 1 time_D_As))
 (param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
 
-(param time_D_P @time_to_detection_P@)
-(param Ks_D (/ 1 time_D_P))
-(param Ksym_DP (/ 1 (- time_to_symptoms time_D_P )))
-(param Ksys_DP (/ 1 (- time_to_symptoms time_D_P )))
 
 (param N (+ @speciesS@ @initialAs@) )
 
@@ -200,10 +195,10 @@
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
    
 
-(time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_As @change_testDelay_As_1@) (time_D_P @change_testDelay_P_1@) (Kl_D (/ 1 time_D_As)) (Ks_D (/ 1 time_D_P)) (Kr_a_D (/ 1 (- recovery_time_asymp time_D_As ))) (Ksym_DP (/ 1 (- time_to_symptoms time_D_P ))) (Ksys_DP (/ 1 (- time_to_symptoms time_D_P ))) ))
+(time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_As @change_testDelay_As_1@) (Kl_D (/ 1 time_D_As)) (Kr_a_D (/ 1 (- recovery_time_asymp time_D_As ))) ))
     
 
-(time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_Sym @change_testDelay_Sym_1@) (time_D_Sys @change_testDelay_Sys_1@) (Ksys_D (/ 1 time_D_Sys)) (Ksym_D (/ 1 time_D_Sym)) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) (Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys))) (Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))))
+(time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_Sys @change_testDelay_Sys_1@) (Ksys_D (/ 1 time_D_Sys)) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) (Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys))) ))
     
 
 
@@ -213,9 +208,8 @@
 (reaction infection_asymp_undet (As_preD)  (As)  (* Kl_D As_preD (- 1 d_As)))
 (reaction infection_asymp_det (As_preD)  (As_det1)  (* Kl_D As_preD d_As))
 
-(reaction presymptomatic (E)  (P_preD)  (* Ks E ))
-(reaction presymptomatic (P_preD)  (P)  (* Ks_D P_preD (- 1 d_P)))
-(reaction presymptomatic (P_preD)  (P_det)  (* Ks_D P_preD d_P))
+(reaction presymptomatic (E)  (P)  (* Ks E (- 1 d_P)))
+(reaction presymptomatic (E)  (P_det)  (* Ks E d_P))
 
 ; developing symptoms - same time to symptoms as in master emodl
 (reaction mild_symptomatic (P) (Sym_preD) (* Ksym P))
@@ -230,8 +224,8 @@
 (reaction severe_symptomatic_det (Sys_preD) (Sys_det3a) (* Ksys_D Sys_preD d_Sys))
 
 ; developing symptoms - already detected, same time to symptoms as in master emodl
-(reaction mild_symptomatic_det (P_det) (Sym_det2b) (* Ksym_DP P_det))
-(reaction severe_symptomatic_det (P_det) (Sys_det3b) (* Ksym_DP P_det ))
+(reaction mild_symptomatic_det (P_det) (Sym_det2b) (* Ksym P_det))
+(reaction severe_symptomatic_det (P_det) (Sys_det3b) (* Ksys P_det ))
 
 (reaction hospitalization_1 (Sys)  (H1)  (* Kh1_D Sys))
 (reaction hospitalization_2  (Sys)  (H2)  (* Kh2_D Sys))
