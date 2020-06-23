@@ -140,21 +140,28 @@ sampled_parameters:
   'd_Sys_incr5':
     np.random: uniform
     function_kwargs: {'low':0.682, 'high':0.835}
+  'd_Sys_incr6':
+    np.random: uniform
+    function_kwargs: {'low':0.95, 'high':1}
+  ### d_Sym
   'd_Sym_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.062, 'high':0.102}
+    function_kwargs: {'low':0.020, 'high':0.067}
   'd_Sym_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.205, 'high':0.245}
+    function_kwargs: {'low':0.056, 'high':0.099}
   'd_Sym_incr3':
     np.random: uniform
-    function_kwargs: {'low':0.350, 'high':0.390}
+    function_kwargs: {'low':0.081, 'high':0.143}
   'd_Sym_incr4':
     np.random: uniform
-    function_kwargs: {'low':0.378, 'high':0.418}
+    function_kwargs: {'low':0.087, 'high':0.150}
   'd_Sym_incr5':
     np.random: uniform
-    function_kwargs: {'low':0.410, 'high':0.450}
+    function_kwargs: {'low':0.103, 'high':0.150}
+  'd_Sym_incr6':
+    np.random: uniform
+    function_kwargs: {'low':0.140, 'high':0.170}
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reset Ki to defined proporions of it's initial value  
@@ -247,6 +254,9 @@ time_parameters:
   'detection_time_5':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-18} 
+  'detection_time_6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-01} 
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)
