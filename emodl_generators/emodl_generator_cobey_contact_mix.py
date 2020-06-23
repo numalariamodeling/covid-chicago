@@ -596,50 +596,38 @@ def write_reactions(grp, expandModel=None):
 
 def write_interventions(grpList, total_string, scenarioName, expandModel, change_testDelay=None) :
 
-    continuedSIP_str = ""
-    for grp in grpList:
-        temp_str = """
-(param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
-(param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
-(param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
-(param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
+    continuedSIP_str =  """
+(param Ki_red1 (* Ki @social_multiplier_1@))
+(param Ki_red2 (* Ki @social_multiplier_2@))
+(param Ki_red3 (* Ki @social_multiplier_3@))
+(param Ki_red4 (* Ki @social_multiplier_4@))
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
-            """.format(grp=grp)
-        continuedSIP_str = continuedSIP_str + temp_str
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
+(time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
+"""
 
-    interventiopnSTOP_str = ""
-    for grp in grpList :
-        temp_str = """
-(param Ki_back_{grp} (* Ki_{grp} @backtonormal_multiplier@))
-(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
-        """.format(grp=grp)
-        interventiopnSTOP_str = interventiopnSTOP_str + temp_str
+    interventiopnSTOP_str = """
+(param Ki_back (* Ki @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+"""
 
-    interventionSTOP_adj_str = ""
-    for grp in grpList :
-        temp_str = """
-(param Ki_back_{grp} (+ Ki_red4_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red4_{grp}))))
-(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
-        """.format(grp=grp)
-        interventionSTOP_adj_str = interventionSTOP_adj_str + temp_str
+    interventionSTOP_adj_str =  """
+(param Ki_back (+ Ki_red4 (* @backtonormal_multiplier@ (- Ki Ki_red4))))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+"""
 
-    gradual_reopening_str = ""
-    for grp in grpList:
-        temp_str = """
-(param Ki_back1_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_1@ (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back2_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_2@ (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back3_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_3@ (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back4_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ (- Ki_{grp} Ki_red4_{grp}))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_{grp} Ki_back4_{grp})))
-    """.format(grp=grp)
-        gradual_reopening_str = gradual_reopening_str + temp_str
+    gradual_reopening_str = """
+(param Ki_back1 (+ Ki_red4 (* @reopening_multiplier_1@ (- Ki Ki_red4))))
+(param Ki_back2 (+ Ki_red4 (* @reopening_multiplier_2@ (- Ki Ki_red4))))
+(param Ki_back3 (+ Ki_red4 (* @reopening_multiplier_3@ (- Ki Ki_red4))))
+(param Ki_back4 (+ Ki_red4 (* @reopening_multiplier_4@ (- Ki Ki_red4))))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
+"""
 
     contactTracing_str = """
 (time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))

@@ -1076,86 +1076,16 @@
 (param C8_1 (/ C81 norm_factor))
 
 
-(param Ki_red1_age0to9 (* Ki_age0to9 @social_multiplier_1_age0to9@))
-(param Ki_red2_age0to9 (* Ki_age0to9 @social_multiplier_2_age0to9@))
-(param Ki_red3_age0to9 (* Ki_age0to9 @social_multiplier_3_age0to9@))
-(param Ki_red4_age0to9 (* Ki_age0to9 @social_multiplier_4_age0to9@))
+(param Ki_red1 (* Ki @social_multiplier_1@))
+(param Ki_red2 (* Ki @social_multiplier_2@))
+(param Ki_red3 (* Ki @social_multiplier_3@))
+(param Ki_red4 (* Ki @social_multiplier_4@))
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age0to9 Ki_red1_age0to9)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age0to9 Ki_red2_age0to9)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age0to9 Ki_red3_age0to9)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age0to9 Ki_red4_age0to9)))
-            
-(param Ki_red1_age10to19 (* Ki_age10to19 @social_multiplier_1_age10to19@))
-(param Ki_red2_age10to19 (* Ki_age10to19 @social_multiplier_2_age10to19@))
-(param Ki_red3_age10to19 (* Ki_age10to19 @social_multiplier_3_age10to19@))
-(param Ki_red4_age10to19 (* Ki_age10to19 @social_multiplier_4_age10to19@))
+(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
+(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
+(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
+(time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age10to19 Ki_red1_age10to19)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age10to19 Ki_red2_age10to19)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age10to19 Ki_red3_age10to19)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age10to19 Ki_red4_age10to19)))
-            
-(param Ki_red1_age20to29 (* Ki_age20to29 @social_multiplier_1_age20to29@))
-(param Ki_red2_age20to29 (* Ki_age20to29 @social_multiplier_2_age20to29@))
-(param Ki_red3_age20to29 (* Ki_age20to29 @social_multiplier_3_age20to29@))
-(param Ki_red4_age20to29 (* Ki_age20to29 @social_multiplier_4_age20to29@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age20to29 Ki_red1_age20to29)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age20to29 Ki_red2_age20to29)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age20to29 Ki_red3_age20to29)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age20to29 Ki_red4_age20to29)))
-            
-(param Ki_red1_age30to39 (* Ki_age30to39 @social_multiplier_1_age30to39@))
-(param Ki_red2_age30to39 (* Ki_age30to39 @social_multiplier_2_age30to39@))
-(param Ki_red3_age30to39 (* Ki_age30to39 @social_multiplier_3_age30to39@))
-(param Ki_red4_age30to39 (* Ki_age30to39 @social_multiplier_4_age30to39@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age30to39 Ki_red1_age30to39)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age30to39 Ki_red2_age30to39)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age30to39 Ki_red3_age30to39)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age30to39 Ki_red4_age30to39)))
-            
-(param Ki_red1_age40to49 (* Ki_age40to49 @social_multiplier_1_age40to49@))
-(param Ki_red2_age40to49 (* Ki_age40to49 @social_multiplier_2_age40to49@))
-(param Ki_red3_age40to49 (* Ki_age40to49 @social_multiplier_3_age40to49@))
-(param Ki_red4_age40to49 (* Ki_age40to49 @social_multiplier_4_age40to49@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age40to49 Ki_red1_age40to49)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age40to49 Ki_red2_age40to49)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age40to49 Ki_red3_age40to49)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age40to49 Ki_red4_age40to49)))
-            
-(param Ki_red1_age50to59 (* Ki_age50to59 @social_multiplier_1_age50to59@))
-(param Ki_red2_age50to59 (* Ki_age50to59 @social_multiplier_2_age50to59@))
-(param Ki_red3_age50to59 (* Ki_age50to59 @social_multiplier_3_age50to59@))
-(param Ki_red4_age50to59 (* Ki_age50to59 @social_multiplier_4_age50to59@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age50to59 Ki_red1_age50to59)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age50to59 Ki_red2_age50to59)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age50to59 Ki_red3_age50to59)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age50to59 Ki_red4_age50to59)))
-            
-(param Ki_red1_age60to69 (* Ki_age60to69 @social_multiplier_1_age60to69@))
-(param Ki_red2_age60to69 (* Ki_age60to69 @social_multiplier_2_age60to69@))
-(param Ki_red3_age60to69 (* Ki_age60to69 @social_multiplier_3_age60to69@))
-(param Ki_red4_age60to69 (* Ki_age60to69 @social_multiplier_4_age60to69@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age60to69 Ki_red1_age60to69)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age60to69 Ki_red2_age60to69)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age60to69 Ki_red3_age60to69)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age60to69 Ki_red4_age60to69)))
-            
-(param Ki_red1_age70to100 (* Ki_age70to100 @social_multiplier_1_age70to100@))
-(param Ki_red2_age70to100 (* Ki_age70to100 @social_multiplier_2_age70to100@))
-(param Ki_red3_age70to100 (* Ki_age70to100 @social_multiplier_3_age70to100@))
-(param Ki_red4_age70to100 (* Ki_age70to100 @social_multiplier_4_age70to100@))
-
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_age70to100 Ki_red1_age70to100)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_age70to100 Ki_red2_age70to100)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_age70to100 Ki_red3_age70to100)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_age70to100 Ki_red4_age70to100)))
-            
 ;[ADDITIONAL_TIMEEVENTS]
 
   
