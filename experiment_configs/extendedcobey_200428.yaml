@@ -146,22 +146,22 @@ sampled_parameters:
   ### d_Sym
   'd_Sym_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.017, 'high':0.061}
+    function_kwargs: {'low':0.020, 'high':0.067}
   'd_Sym_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.042, 'high':0.082}
+    function_kwargs: {'low':0.056, 'high':0.099}
   'd_Sym_incr3':
     np.random: uniform
-    function_kwargs: {'low':0.059, 'high':0.110}
+    function_kwargs: {'low':0.081, 'high':0.143}
   'd_Sym_incr4':
     np.random: uniform
-    function_kwargs: {'low':0.064, 'high':0.114}
+    function_kwargs: {'low':0.087, 'high':0.150}
   'd_Sym_incr5':
     np.random: uniform
-    function_kwargs: {'low':0.075, 'high':0.114}
+    function_kwargs: {'low':0.103, 'high':0.150}
   'd_Sym_incr6':
     np.random: uniform
-    function_kwargs: {'low':0.10, 'high':0.127}
+    function_kwargs: {'low':0.140, 'high':0.170}
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reset Ki to defined proporions of it's initial value  
