@@ -95,9 +95,9 @@ def write_observe(grp, expandModel=None):
 (observe asymp_cumul_{grpout} asymp_cumul_{grp} )
 (observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
 (observe symp_mild_cumul_{grpout} symp_mild_cumul_{grp})
-                                                                           
+
 (observe symp_severe_cumul_{grpout} symp_severe_cumul_{grp})
-                                                                                                                                                                                      
+
 (observe hosp_cumul_{grpout} hosp_cumul_{grp})
 (observe hosp_det_cumul_{grpout} hosp_det_cumul_{grp} )
 (observe crit_cumul_{grpout} crit_cumul_{grp})
@@ -113,9 +113,9 @@ def write_observe(grp, expandModel=None):
 (observe detected_{grpout} detected_{grp})
 (observe detected_cumul_{grpout} detected_cumul_{grp} )
 
-(observe Ki_{grpout} Ki_{grp})
 """.format(grpout=grpout, grp=grp)
     
+    observe_str = observe_str + "\n (observe Ki Ki)"
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
