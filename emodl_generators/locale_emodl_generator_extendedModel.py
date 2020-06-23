@@ -229,7 +229,7 @@ def write_params(expandModel=None):
 (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) (d_Sym @d_Sym_incr3@) )) 
 (time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) (d_Sym @d_Sym_incr4@) )) 
 (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@) )) 
-(time-event detection5 @detection_time_6@ ((d_Sys @d_Sys_incr6@) (d_Sym @d_Sym_incr6@) )) 
+(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@) (d_Sym @d_Sym_incr6@) )) 
 
 """
 
@@ -602,7 +602,7 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
     interventionSTOP_adj_str = ""
     for grp in grpList :
         temp_str = """
-(param Ki_back_{grp} (+ Ki_red3_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back_{grp} (+ Ki_red4_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red4_{grp}))))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
         """.format(grp=grp)
         interventionSTOP_adj_str = interventionSTOP_adj_str + temp_str
@@ -610,10 +610,10 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
     gradual_reopening_str = ""
     for grp in grpList:
         temp_str = """
-(param Ki_back1_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_1@ (- Ki_{grp} Ki_red3_{grp}))))
-(param Ki_back2_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_2@ (- Ki_{grp} Ki_red3_{grp}))))
-(param Ki_back3_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_3@ (- Ki_{grp} Ki_red3_{grp}))))
-(param Ki_back4_{grp} (+ Ki_red3_{grp} (* @reopening_multiplier_4@ (- Ki_{grp} Ki_red3_{grp}))))
+(param Ki_back1_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_1@ (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back2_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_2@ (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back3_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_3@ (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back4_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ (- Ki_{grp} Ki_red4_{grp}))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
@@ -666,8 +666,7 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
     if scenarioName == "continuedSIP" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
     if scenarioName == "contactTracing" :
-        #total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)
 
     if change_testDelay != None :
         if change_testDelay == "uniform" :
