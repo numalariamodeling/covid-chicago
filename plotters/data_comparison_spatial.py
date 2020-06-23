@@ -98,8 +98,8 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     # plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
     # plot_path=plot_path, first_day=first_day)
     # plt.show()
-    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200616_jg_deceased_date_ems.csv'))
-    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200616_jg_admission_date_ems.csv'))
+    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200622_jg_deceased_date_ems.csv'))
+    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200622_jg_admission_date_ems.csv'))
     if ems > 0:
         ref_df1 = ref_df1[ref_df1['EMS'] == ems]
         ref_df2 = ref_df2[ref_df2['EMS'] == ems]
@@ -135,8 +135,8 @@ def compare_ems(exp_name, ems=0, source='EMR'):
 
 
 if __name__ == '__main__':
-    stem = sys.argv[1]
-    #stem = "20200616_IL_RR_fitting_0"
+    #stem = sys.argv[1]
+    stem = "20200622_IL_EMS_testModel_scenario3_SymSysincr"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     #exp_name = "20200512_IL__EMSall_scenario3_v3"
 
