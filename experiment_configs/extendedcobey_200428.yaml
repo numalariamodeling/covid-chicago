@@ -67,7 +67,8 @@ sampled_parameters:
     function_kwargs: {'low':1.0, 'high':6.0}
   'time_to_detection_Sym':
     np.random: uniform
-    function_kwargs: {'low':2.0, 'high':5.0}
+    function_kwargs: {'low':7.0, 'high':7.0}
+    #function_kwargs: {'low':2.0, 'high':5.0}
   'time_to_detection_Sys':
     np.random: uniform
     function_kwargs: {'low':2.0, 'high':2.0}
@@ -77,7 +78,8 @@ sampled_parameters:
     function_kwargs: {'low':7, 'high':10}
   'recovery_time_mild':
     np.random: uniform
-    function_kwargs: {'low':7, 'high':10}
+    function_kwargs: {'low':9, 'high':9}
+    #function_kwargs: {'low':7, 'high':10}
   'recovery_time_hosp':
     np.random: uniform
     function_kwargs: {'low':4, 'high':6}
