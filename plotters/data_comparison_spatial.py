@@ -135,8 +135,8 @@ def compare_ems(exp_name, ems=0, source='EMR'):
 
 
 if __name__ == '__main__':
-    #stem = sys.argv[1]
-    stem = "20200622_IL_EMS_testModel_scenario3_SymSysincr"
+    stem = sys.argv[1]
+    #stem = "20200616_IL_RR_fitting_0"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     #exp_name = "20200512_IL__EMSall_scenario3_v3"
 
