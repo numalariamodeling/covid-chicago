@@ -1,6 +1,6 @@
 experiment_setup_parameters:
-  'number_of_samples': 3
-  'number_of_runs': 3
+  'number_of_samples': 5
+  'number_of_runs': 1
   'duration': 370
   'monitoring_samples': 370 # needs to be smaller than duration
   'random_seed': 18
@@ -47,6 +47,19 @@ sampled_parameters:
   'time_to_symptoms':
     np.random: uniform
     function_kwargs: {'low': 2.4, 'high': 3.5}
+  'time_to_detection':
+    np.random: uniform
+    function_kwargs: {'low':2.0, 'high':2.0}
+  ### Optionally use separate time to detection (use matching emodl))
+  'time_to_detection_AsP':
+    np.random: uniform
+    function_kwargs: {'low':3.0, 'high':3.0}
+  'time_to_detection_Sym':
+    np.random: uniform
+    function_kwargs: {'low':2.0, 'high':5.0}
+  'time_to_detection_Sys':
+    np.random: uniform
+    function_kwargs: {'low':2.0, 'high':2.0}
   'time_to_hospitalization':
     np.random: uniform
     function_kwargs: {'low':3, 'high':6}
@@ -95,12 +108,12 @@ sampled_parameters:
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reduce Ki due to stay-at-home policy
-  'time_to_detection':
-    np: linspace
-    function_kwargs: {'start':0.01, 'stop':3, 'num':4}
+  #'time_to_detection':
+  #  np: linspace
+  #  function_kwargs: {'start':0.01, 'stop':3, 'num':4}
   'reduced_inf_of_det_cases':
     np: linspace
-    function_kwargs: {'start':0, 'stop':1, 'num':6}
+    function_kwargs: {'start':0, 'stop':1, 'num':2}
   'social_multiplier_1':
     np.random: uniform
     function_kwargs: {'low':0.7, 'high':0.9}
@@ -146,6 +159,21 @@ intervention_parameters:
   'd_Sys_incr5':
     np.random: uniform
     function_kwargs: {'low':0.682, 'high':0.835}
+  'd_Sym_incr1':
+    np.random: uniform
+    function_kwargs: {'low':0.062, 'high':0.102}
+  'd_Sym_incr2':
+    np.random: uniform
+    function_kwargs: {'low':0.205, 'high':0.245}
+  'd_Sym_incr3':
+    np.random: uniform
+    function_kwargs: {'low':0.350, 'high':0.390}
+  'd_Sym_incr4':
+    np.random: uniform
+    function_kwargs: {'low':0.378, 'high':0.418}
+  'd_Sym_incr5':
+    np.random: uniform
+    function_kwargs: {'low':0.410, 'high':0.450}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)   
@@ -153,7 +181,7 @@ intervention_parameters:
   ## d_SQ if used, it should be proportional to cases rather than fixed fraction
   'd_As_ct1':
     np: linspace
-    function_kwargs: {'start':0, 'stop':1, 'num':6}
+    function_kwargs: {'start':0, 'stop':1, 'num':2}
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0.30, 'high':0.30}
@@ -237,13 +265,13 @@ fitted_parameters:
       function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 0.589, 'stop': 0.589, 'num': 1}
+      function_kwargs: {'start': 0.592, 'stop': 0.592, 'num': 1}
     'EMS_2':
       np: linspace
       function_kwargs: {'start': 0.654, 'stop': 0.654, 'num': 1}
     'EMS_3':
       np: linspace
-      function_kwargs: {'start': 0.373, 'stop': 0.373, 'num': 1}
+      function_kwargs: {'start': 0.381, 'stop': 0.381, 'num': 1}
     'EMS_4':
       np: linspace
       function_kwargs: {'start': 0.571, 'stop': 0.571, 'num': 1}
@@ -255,16 +283,16 @@ fitted_parameters:
       function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
     'EMS_7':
       np: linspace
-      function_kwargs: {'start': 0.714, 'stop': 0.714, 'num': 1}
+      function_kwargs: {'start': 0.716, 'stop': 0.716, 'num': 1}
     'EMS_8':
       np: linspace
       function_kwargs: {'start': 0.897, 'stop': 0.897, 'num': 1}
     'EMS_9':
       np: linspace
-      function_kwargs: {'start': 0.857, 'stop': 0.857, 'num': 1}
+      function_kwargs: {'start': 0.807, 'stop': 0.807, 'num': 1}
     'EMS_10':
       np: linspace
       function_kwargs: {'start': 0.754, 'stop': 0.754, 'num': 1}
     'EMS_11':
       np: linspace
-      function_kwargs: {'start': 1.01, 'stop': 1.01, 'num': 1}
+      function_kwargs: {'start': 1.020, 'stop': 1.020, 'num': 1}
