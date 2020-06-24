@@ -312,11 +312,10 @@ def write_age_specific_param(grp, expandModel):
 (param Ksys{grp} (* fraction_severe_{grp} (/ 1 time_to_symptoms)))
 (param Ksym{grp} (* (- 1 fraction_severe_{grp}) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_{grp} (/ cfr fraction_severe_{grp}))
 (param fraction_dead_{grp} @fraction_dead_{grp}@)
 
 (param fraction_critical_{grp} @fraction_critical_{grp}@ )
-(param fraction_hospitalized_{grp} (/ fraction_critical_{grp} fraction_dead_{grp} ))
+(param fraction_hospitalized_{grp} @fraction_hospitalized_{grp}@)
 
 (param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
 (param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) time_to_infectious))
@@ -374,6 +373,27 @@ def write_age_specific_param(grp, expandModel):
 
 
     return params_str
+
+def write_observed_param(grpList):
+    observed_param_str = """  
+(observe Ki_t Ki)
+(observe d_Sym_t d_Sym)
+(observe d_Sys_t d_Sys)
+"""
+
+    observed_ageparam_str=""
+    for grp in grpList:
+        grp = str(grp)
+        temp_str = """
+(observe fraction_dead_{grp}_t fraction_dead_{grp})
+(observe fraction_hospitalized_{grp}_t fraction_hospitalized_{grp})
+""".format(grp=grp)
+        observed_ageparam_str = observed_ageparam_str + temp_str
+
+    observed_param_str = observed_param_str + "\n" + observed_ageparam_str
+    
+    return observed_param_str
+
 
 
 def write_N_population(grpList):
@@ -773,11 +793,11 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
 
         reaction_string_combined = reaction_string_combined + '\n' + reaction_string
 
-    params = write_params(expandModel) + age_specific_param_string + write_N_population(grpList) + write_ki_mix(len(grpList)) 
+    params = write_params(expandModel) + age_specific_param_string + write_N_population(grpList) + write_observed_param(grpList) + write_ki_mix(len(grpList)) 
     functions_string = functions_string + write_All(grpList)
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
     
-    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string   + "\n(observe Ki Ki)" + '\n\n' + params  + '\n\n' + intervention_string + '\n\n' + reaction_string_combined + '\n\n' + footer_str
+    total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + params  + '\n\n' + intervention_string + '\n\n' + reaction_string_combined + '\n\n' + footer_str
   
     ### Add interventions (optional)
     if add_interventions != None :
