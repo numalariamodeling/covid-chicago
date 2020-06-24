@@ -91,9 +91,9 @@ def write_observe(expandModel=None):
 (observe asymp_cumul asymp_cumul )
 (observe asymp_det_cumul asymp_det_cumul)
 (observe symp_mild_cumul symp_mild_cumul)
-                                                                           
+
 (observe symp_severe_cumul symp_severe_cumul)
-                                                                                                                                                                                      
+
 (observe hosp_cumul hosp_cumul)
 (observe hosp_det_cumul hosp_det_cumul )
 (observe crit_cumul crit_cumul)
@@ -295,12 +295,20 @@ def write_params(expandModel=None):
 
     return (params_str)
 
-
+### Monitor time varying parameters
+def write_observed_param(grpList):
+    observed_param_str = """  
+(observe Ki_t Ki)
+(observe d_As_t d_As)
+(observe d_P_t d_P)
+(observe d_Sym_t d_Sym)
+(observe d_Sys_t d_Sys)
+"""
+   
+    return observed_param_str
 
 def write_N_population():
     string1 = """\n(param N (+ @speciesS@ @initialAs@) )"""
-								   
-																														
     return (string1)
 
 
@@ -589,7 +597,7 @@ def generate_emodl( file_output, expandModel, add_interventions, add_migration=T
     reaction_string = reaction_string + write_reactions(expandModel)
     functions_string = functions_string + functions
 
-    param_string =  write_params(expandModel) + param_string + write_N_population()
+    param_string =  write_params(expandModel) + param_string + write_observed_param() +  write_N_population()
     functions_string = functions_string 
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
 
