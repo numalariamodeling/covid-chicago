@@ -171,7 +171,7 @@ intervention_parameters:
   'backtonormal_multiplier':
     np.random: uniform
     # Add 'size' in function_kwargs to have multiple values instead of just one
-    function_kwargs: {'low':0.30, 'high':0.30}
+    function_kwargs: {'low':0.10, 'high':0.10}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
     np.random: uniform
