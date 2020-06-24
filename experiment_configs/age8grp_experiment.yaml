@@ -11,9 +11,6 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
-    #'NMH_catchment': 
-    #'Chicago': ,
-    #'IL': , 
     'EMS_1': [78641, 91701, 94681, 89371, 92396, 110878, 92988, 89076]
     'EMS_2': [114210, 132626, 150792, 141161, 140827, 170321, 143642, 135817]
     'EMS_3': [57069, 71489, 76506, 71437, 79844, 101522, 82573, 81032]
@@ -142,6 +139,7 @@ sampled_parameters:
     EMS_11:
       np.random: uniform
       function_kwargs: {'low':0.090, 'high': 0.090}
+  #####  fraction_severe
   fraction_severe_age0to9:
     np.random: uniform
     function_kwargs: {'low':0.001, 'high': 0.0029}
@@ -166,6 +164,34 @@ sampled_parameters:
   fraction_severe_age70to100:
     np.random: uniform
     function_kwargs: {'low':0.102, 'high': 0.229}
+  #####  fraction_hospitalized 
+  ##### Usually backcalculated from cfr and fraction severe
+  #### however estimates are available per age 
+  fraction_hospitalized_age0to9:
+    np.random: uniform
+    function_kwargs: {'low':0.001, 'high': 0.0029}
+  fraction_hospitalized_age10to19:
+    np.random: uniform
+    function_kwargs: {'low':0.001, 'high': 0.0029}
+  fraction_hospitalized_age20to29:
+    np.random: uniform
+    function_kwargs: {'low':0.006, 'high': 0.0129}
+  fraction_hospitalized_age30to39:
+    np.random: uniform
+    function_kwargs: {'low':0.012, 'high': 0.0243}
+  fraction_hospitalized_age40to49:
+    np.random: uniform
+    function_kwargs: {'low':0.016, 'high': 0.0343}
+  fraction_hospitalized_age50to59:
+    np.random: uniform
+    function_kwargs: {'low':0.03, 'high': 0.067}
+  fraction_hospitalized_age60to69:
+    np.random: uniform
+    function_kwargs: {'low':0.064, 'high': 0.146}
+  fraction_hospitalized_age70to100:
+    np.random: uniform
+    function_kwargs: {'low':0.102, 'high': 0.229}
+ #####  fraction_critical
   fraction_critical_age0to9:
     np.random: uniform
     function_kwargs: {'low':0.11, 'high': 0.164}
@@ -174,22 +200,23 @@ sampled_parameters:
     function_kwargs: {'low':0.11, 'high': 0.164}
   fraction_critical_age20to29:
     np.random: uniform
-    function_kwargs: {'low':0.083, 'high': 0.114}
+    function_kwargs: {'low':0.114, 'high': 0.132}
   fraction_critical_age30to39:
     np.random: uniform
-    function_kwargs: {'low':0.128, 'high': 0.155}
+    function_kwargs: {'low':0.155, 'high': 0.191}
   fraction_critical_age40to49:
     np.random: uniform
-    function_kwargs: {'low':0.185, 'high': 0.21}
+    function_kwargs: {'low':0.168, 'high': 0.185}
   fraction_critical_age50to59:
     np.random: uniform
-    function_kwargs: {'low':0.248, 'high': 0.27}
+    function_kwargs: {'low':0.197, 'high': 0.248}
   fraction_critical_age60to69:
     np.random: uniform
-    function_kwargs: {'low':0.286, 'high': 0.308}
+    function_kwargs: {'low':0.209, 'high': 0.286}
   fraction_critical_age70to100:
     np.random: uniform
-    function_kwargs: {'low':0.226, 'high': 0.244}
+    function_kwargs: {'low':0.169, 'high': 0.226}
+  #####  fraction_dead
   fraction_dead_age0to9:
     np.random: uniform
     function_kwargs: {'low':0.001, 'high': 0.015}
@@ -213,7 +240,8 @@ sampled_parameters:
     function_kwargs: {'low':0.125, 'high': 0.139}
   fraction_dead_age70to100:
     np.random: uniform
-    function_kwargs: {'low':0.223, 'high': 0.241}
+    function_kwargs: {'low':0.241, 'high': 0.318}
+  #####  fraction_symptomatic
   fraction_symptomatic_age0to9:
     np.random: uniform
     function_kwargs: {'low':0.07, 'high': 0.07}
@@ -238,6 +266,9 @@ sampled_parameters:
   fraction_symptomatic_age70to100:
     np.random: uniform
     function_kwargs: {'low':0.997, 'high': 0.997}
+  #####  recovery_time_hosp
+  ### UPDATE when age specific recovery times are available
+  ### emodl file does include age specific recovery_time_hosp
   recovery_time_hosp_age0to9:
     np.random: uniform
     function_kwargs: {'low':4, 'high':6}
@@ -262,4 +293,3 @@ sampled_parameters:
   recovery_time_hosp_age70to100:
     np.random: uniform
     function_kwargs: {'low':4, 'high':6}
-fitted_parameters:
