@@ -639,7 +639,7 @@ def write_reactions(grp, expandModel=None):
 
     return (reaction_str)
    
-def write_interventions(grpList, total_string, scenarioName) :
+def write_interventions(total_string, scenarioName) :
 
     continuedSIP_str =  """
 (param Ki_red1 (* Ki @social_multiplier_1@))
@@ -653,7 +653,7 @@ def write_interventions(grpList, total_string, scenarioName) :
 (time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
 """
 
-    interventiopnSTOP_str = """
+    interventionSTOP_str = """
 (param Ki_back (* Ki @backtonormal_multiplier@))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
 """
@@ -681,7 +681,7 @@ def write_interventions(grpList, total_string, scenarioName) :
 
    
     if scenarioName == "interventionStop" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_str)
     if scenarioName == "interventionSTOP_adj" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str)
     if scenarioName == "gradual_reopening" :
@@ -801,7 +801,8 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
   
     ### Add interventions (optional)
     if add_interventions != None :
-        total_string = write_interventions(grpList, total_string, add_interventions, expandModel, change_testDelay)
+        total_string = write_interventions(total_string, add_interventions)
+        total_string = total_string + write_agespecific_interventions(grpList, total_string, expandModel, change_testDelay)
 
 
     print(total_string)
