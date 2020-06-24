@@ -71,7 +71,7 @@ if __name__ == '__main__' :
     suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
     base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    first_day = date(2020, 2, 25)  #datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     plot_first_day = date(2020, 3, 1)
     plot_last_day = date(2020, 10, 1)
