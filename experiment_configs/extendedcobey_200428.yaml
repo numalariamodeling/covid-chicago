@@ -191,7 +191,7 @@ intervention_parameters:
     function_kwargs: {'low':0, 'high':0}
   'd_Sym_ct1':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
+    function_kwargs: {'low':0.170, 'high':0.170}
   'change_testDelay_As_1':
     np: linspace
     function_kwargs: {'start':2, 'stop':7, 'num' : 1}
