@@ -185,7 +185,7 @@ def sub(x):
     xout = re.sub('_','', str(x), count=1)
     return(xout)
 
-def write_ki_mix(nageGroups, scale=True):
+def write_contact_matrix(nageGroups, scale=True):
     grp_x = range(1, nageGroups + 1)
     grp_y = reversed(grp_x)
 
@@ -793,7 +793,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
 
         reaction_string_combined = reaction_string_combined + '\n' + reaction_string
 
-    params = write_params(expandModel) + age_specific_param_string + write_N_population(grpList) + write_observed_param(grpList) + write_ki_mix(len(grpList)) 
+    params = write_params(expandModel) + age_specific_param_string + write_N_population(grpList) + write_observed_param(grpList) + write_contact_matrix(len(grpList)) 
     functions_string = functions_string + write_All(grpList)
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
     
