@@ -1559,56 +1559,227 @@
 (param time_to_death @time_to_death@)
 (param recovery_time_asymp @recovery_time_asymp@)
 (param recovery_time_mild @recovery_time_mild@)
-(param recovery_time_hosp @recovery_time_hosp@)
 (param recovery_time_crit @recovery_time_crit@)
-(param fraction_symptomatic @fraction_symptomatic@)
-(param fraction_severe @fraction_severe@)
-(param fraction_hospitalized @fraction_hospitalized@)
-(param fraction_critical @fraction_critical@ )
-(param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
-
 (param d_As @d_As@)
 (param d_P @d_P@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
-
+(param Ki @Ki@)
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
-(param Kr_h (/ 1 recovery_time_hosp))
 (param Kr_c (/ 1 recovery_time_crit))
-(param Kl (/ (- 1 fraction_symptomatic ) time_to_infectious))
-(param Ks (/ fraction_symptomatic time_to_infectious))
-(param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
-(param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
-(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) (d_Sym @d_Sym_incr1@))) 
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) (d_Sym @d_Sym_incr2@)))
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) (d_Sym @d_Sym_incr3@))) 
-(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) (d_Sym @d_Sym_incr4@))) 
-(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@))) 
-(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@) (d_Sym @d_Sym_incr6@))) 
-
-
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization))
-(param Kh3 (/ fraction_dead time_to_hospitalization))
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) (d_Sym @d_Sym_incr1@) )) 
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) (d_Sym @d_Sym_incr2@) ))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) (d_Sym @d_Sym_incr3@) )) 
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) (d_Sym @d_Sym_incr4@) )) 
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@) )) 
 
 (param time_D_Sys @time_to_detection_Sys@)
 (param Ksys_D (/ 1 time_D_Sys))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys)))
-(param Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))
 
 (param time_D_Sym @time_to_detection_Sym@)
 (param Ksym_D (/ 1 time_D_Sym))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym)))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
 
 (param time_D_As @time_to_detection_As@)
 (param Kl_D (/ 1 time_D_As))
-(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As)))
+(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
+
+(param fraction_severe_age0to9 @fraction_severe_age0to9@)
+(param Ksysage0to9 (* fraction_severe_age0to9 (/ 1 time_to_symptoms)))
+(param Ksymage0to9 (* (- 1 fraction_severe_age0to9) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age0to9 @fraction_dead_age0to9@)
+
+(param fraction_critical_age0to9 @fraction_critical_age0to9@ )
+(param fraction_hospitalized_age0to9 @fraction_hospitalized_age0to9@)
+
+(param fraction_symptomatic_age0to9 @fraction_symptomatic_age0to9@)
+(param Klage0to9 (/ (- 1 fraction_symptomatic_age0to9 ) time_to_infectious))
+(param Ksage0to9 (/ fraction_symptomatic_age0to9 time_to_infectious))
+
+(param recovery_time_hosp_age0to9 @recovery_time_hosp_age0to9@)
+(param Kr_hage0to9 (/ 1 recovery_time_hosp_age0to9))
+
+
+(param Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization))
+(param Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization ))
+(param Kh3age0to9 (/ fraction_dead_age0to9 time_to_hospitalization))
+(param Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage0to9 (/ fraction_dead_age0to9 (- time_to_hospitalization time_D_Sys)))
+
+(param fraction_severe_age10to19 @fraction_severe_age10to19@)
+(param Ksysage10to19 (* fraction_severe_age10to19 (/ 1 time_to_symptoms)))
+(param Ksymage10to19 (* (- 1 fraction_severe_age10to19) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age10to19 @fraction_dead_age10to19@)
+
+(param fraction_critical_age10to19 @fraction_critical_age10to19@ )
+(param fraction_hospitalized_age10to19 @fraction_hospitalized_age10to19@)
+
+(param fraction_symptomatic_age10to19 @fraction_symptomatic_age10to19@)
+(param Klage10to19 (/ (- 1 fraction_symptomatic_age10to19 ) time_to_infectious))
+(param Ksage10to19 (/ fraction_symptomatic_age10to19 time_to_infectious))
+
+(param recovery_time_hosp_age10to19 @recovery_time_hosp_age10to19@)
+(param Kr_hage10to19 (/ 1 recovery_time_hosp_age10to19))
+
+
+(param Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization))
+(param Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization ))
+(param Kh3age10to19 (/ fraction_dead_age10to19 time_to_hospitalization))
+(param Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage10to19 (/ fraction_dead_age10to19 (- time_to_hospitalization time_D_Sys)))
+
+(param fraction_severe_age20to29 @fraction_severe_age20to29@)
+(param Ksysage20to29 (* fraction_severe_age20to29 (/ 1 time_to_symptoms)))
+(param Ksymage20to29 (* (- 1 fraction_severe_age20to29) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age20to29 @fraction_dead_age20to29@)
+
+(param fraction_critical_age20to29 @fraction_critical_age20to29@ )
+(param fraction_hospitalized_age20to29 @fraction_hospitalized_age20to29@)
+
+(param fraction_symptomatic_age20to29 @fraction_symptomatic_age20to29@)
+(param Klage20to29 (/ (- 1 fraction_symptomatic_age20to29 ) time_to_infectious))
+(param Ksage20to29 (/ fraction_symptomatic_age20to29 time_to_infectious))
+
+(param recovery_time_hosp_age20to29 @recovery_time_hosp_age20to29@)
+(param Kr_hage20to29 (/ 1 recovery_time_hosp_age20to29))
+
+
+(param Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization))
+(param Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization ))
+(param Kh3age20to29 (/ fraction_dead_age20to29 time_to_hospitalization))
+(param Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage20to29 (/ fraction_dead_age20to29 (- time_to_hospitalization time_D_Sys)))
+
+(param fraction_severe_age30to39 @fraction_severe_age30to39@)
+(param Ksysage30to39 (* fraction_severe_age30to39 (/ 1 time_to_symptoms)))
+(param Ksymage30to39 (* (- 1 fraction_severe_age30to39) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age30to39 @fraction_dead_age30to39@)
+
+(param fraction_critical_age30to39 @fraction_critical_age30to39@ )
+(param fraction_hospitalized_age30to39 @fraction_hospitalized_age30to39@)
+
+(param fraction_symptomatic_age30to39 @fraction_symptomatic_age30to39@)
+(param Klage30to39 (/ (- 1 fraction_symptomatic_age30to39 ) time_to_infectious))
+(param Ksage30to39 (/ fraction_symptomatic_age30to39 time_to_infectious))
+
+(param recovery_time_hosp_age30to39 @recovery_time_hosp_age30to39@)
+(param Kr_hage30to39 (/ 1 recovery_time_hosp_age30to39))
+
+
+(param Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization))
+(param Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization ))
+(param Kh3age30to39 (/ fraction_dead_age30to39 time_to_hospitalization))
+(param Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage30to39 (/ fraction_dead_age30to39 (- time_to_hospitalization time_D_Sys)))
+
+(param fraction_severe_age40to49 @fraction_severe_age40to49@)
+(param Ksysage40to49 (* fraction_severe_age40to49 (/ 1 time_to_symptoms)))
+(param Ksymage40to49 (* (- 1 fraction_severe_age40to49) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age40to49 @fraction_dead_age40to49@)
+
+(param fraction_critical_age40to49 @fraction_critical_age40to49@ )
+(param fraction_hospitalized_age40to49 @fraction_hospitalized_age40to49@)
+
+(param fraction_symptomatic_age40to49 @fraction_symptomatic_age40to49@)
+(param Klage40to49 (/ (- 1 fraction_symptomatic_age40to49 ) time_to_infectious))
+(param Ksage40to49 (/ fraction_symptomatic_age40to49 time_to_infectious))
+
+(param recovery_time_hosp_age40to49 @recovery_time_hosp_age40to49@)
+(param Kr_hage40to49 (/ 1 recovery_time_hosp_age40to49))
+
+
+(param Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization))
+(param Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization ))
+(param Kh3age40to49 (/ fraction_dead_age40to49 time_to_hospitalization))
+(param Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage40to49 (/ fraction_dead_age40to49 (- time_to_hospitalization time_D_Sys)))
+
+(param fraction_severe_age50to59 @fraction_severe_age50to59@)
+(param Ksysage50to59 (* fraction_severe_age50to59 (/ 1 time_to_symptoms)))
+(param Ksymage50to59 (* (- 1 fraction_severe_age50to59) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age50to59 @fraction_dead_age50to59@)
+
+(param fraction_critical_age50to59 @fraction_critical_age50to59@ )
+(param fraction_hospitalized_age50to59 @fraction_hospitalized_age50to59@)
+
+(param fraction_symptomatic_age50to59 @fraction_symptomatic_age50to59@)
+(param Klage50to59 (/ (- 1 fraction_symptomatic_age50to59 ) time_to_infectious))
+(param Ksage50to59 (/ fraction_symptomatic_age50to59 time_to_infectious))
+
+(param recovery_time_hosp_age50to59 @recovery_time_hosp_age50to59@)
+(param Kr_hage50to59 (/ 1 recovery_time_hosp_age50to59))
+
+
+(param Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization))
+(param Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization ))
+(param Kh3age50to59 (/ fraction_dead_age50to59 time_to_hospitalization))
+(param Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage50to59 (/ fraction_dead_age50to59 (- time_to_hospitalization time_D_Sys)))
+
+(param fraction_severe_age60to69 @fraction_severe_age60to69@)
+(param Ksysage60to69 (* fraction_severe_age60to69 (/ 1 time_to_symptoms)))
+(param Ksymage60to69 (* (- 1 fraction_severe_age60to69) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age60to69 @fraction_dead_age60to69@)
+
+(param fraction_critical_age60to69 @fraction_critical_age60to69@ )
+(param fraction_hospitalized_age60to69 @fraction_hospitalized_age60to69@)
+
+(param fraction_symptomatic_age60to69 @fraction_symptomatic_age60to69@)
+(param Klage60to69 (/ (- 1 fraction_symptomatic_age60to69 ) time_to_infectious))
+(param Ksage60to69 (/ fraction_symptomatic_age60to69 time_to_infectious))
+
+(param recovery_time_hosp_age60to69 @recovery_time_hosp_age60to69@)
+(param Kr_hage60to69 (/ 1 recovery_time_hosp_age60to69))
+
+
+(param Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization))
+(param Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization ))
+(param Kh3age60to69 (/ fraction_dead_age60to69 time_to_hospitalization))
+(param Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage60to69 (/ fraction_dead_age60to69 (- time_to_hospitalization time_D_Sys)))
+
+(param fraction_severe_age70to100 @fraction_severe_age70to100@)
+(param Ksysage70to100 (* fraction_severe_age70to100 (/ 1 time_to_symptoms)))
+(param Ksymage70to100 (* (- 1 fraction_severe_age70to100) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_age70to100 @fraction_dead_age70to100@)
+
+(param fraction_critical_age70to100 @fraction_critical_age70to100@ )
+(param fraction_hospitalized_age70to100 @fraction_hospitalized_age70to100@)
+
+(param fraction_symptomatic_age70to100 @fraction_symptomatic_age70to100@)
+(param Klage70to100 (/ (- 1 fraction_symptomatic_age70to100 ) time_to_infectious))
+(param Ksage70to100 (/ fraction_symptomatic_age70to100 time_to_infectious))
+
+(param recovery_time_hosp_age70to100 @recovery_time_hosp_age70to100@)
+(param Kr_hage70to100 (/ 1 recovery_time_hosp_age70to100))
+
+
+(param Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization))
+(param Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization ))
+(param Kh3age70to100 (/ fraction_dead_age70to100 time_to_hospitalization))
+(param Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys)))
+(param Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_Dage70to100 (/ fraction_dead_age70to100 (- time_to_hospitalization time_D_Sys)))
 
 (time-event time_infection_import @time_infection_import_EMS_1@ ((As_age0to9::EMS_1 0) (S_age0to9::EMS_1 (- S_age0to9::EMS_1 0))))
 
