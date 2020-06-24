@@ -34,8 +34,6 @@ def write_N_population(ageList, regionList, pop_dic):
 
     return (stringAll)
 
-
-
 def write_Ki_timevents(age, region, import_dic2):
 
     params_str = """
@@ -184,7 +182,6 @@ def write_observed_param(ageList, regionList):
         
     return observed_param_str
     
-
 def write_functions(age, region, expandModel=None):
 
     functions_str = """
@@ -253,6 +250,7 @@ def write_functions(age, region, expandModel=None):
     return (functions_str)
 
 ###
+# If Ki mix is defined, Ki here can be set to 0 in script that generates the simulation
 def write_params(expandModel=None):
     params_str = """
 (param time_to_infectious @time_to_infectious@)
@@ -262,101 +260,67 @@ def write_params(expandModel=None):
 (param time_to_death @time_to_death@)
 (param recovery_time_asymp @recovery_time_asymp@)
 (param recovery_time_mild @recovery_time_mild@)
-(param recovery_time_hosp @recovery_time_hosp@)
 (param recovery_time_crit @recovery_time_crit@)
-(param fraction_symptomatic @fraction_symptomatic@)
-(param fraction_severe @fraction_severe@)
-(param fraction_hospitalized @fraction_hospitalized@)
-(param fraction_critical @fraction_critical@ )
-(param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
-
 (param d_As @d_As@)
 (param d_P @d_P@)
 (param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
-
+(param Ki @Ki@)
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
-(param Kr_h (/ 1 recovery_time_hosp))
 (param Kr_c (/ 1 recovery_time_crit))
-(param Kl (/ (- 1 fraction_symptomatic ) time_to_infectious))
-(param Ks (/ fraction_symptomatic  time_to_infectious))
-(param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
-(param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
-(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) (d_Sym @d_Sym_incr1@)))  
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) (d_Sym @d_Sym_incr2@)))
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) (d_Sym @d_Sym_incr3@))) 
-(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) (d_Sym @d_Sym_incr4@))) 
-(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@))) 
-(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@) (d_Sym @d_Sym_incr6@))) 
-
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) (d_Sym @d_Sym_incr1@) ))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) (d_Sym @d_Sym_incr2@) ))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) (d_Sym @d_Sym_incr3@) )) 
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) (d_Sym @d_Sym_incr4@) )) 
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@) )) 
 """
 
-    expand_base_str = """
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-"""
 
     expand_uniformtestDelay_str = """
 (param time_D @time_to_detection@)
 (param Ksym_D (/ 1 time_D))
 (param Ksys_D (/ 1 time_D))
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D)))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D)))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D)))
+
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
 """
+
 
     expand_testDelay_SymSys_str = """
 (param time_D_Sym @time_to_detection_Sym@)
 (param time_D_Sys @time_to_detection_Sys@)
 (param Ksym_D (/ 1 time_D_Sym))
 (param Ksys_D (/ 1 time_D_Sys))
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys)))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D_Sys)))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym)))
+
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
 """
 
     expand_testDelay_AsSymSys_str = """
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-
 (param time_D_Sys @time_to_detection_Sys@)
 (param Ksys_D (/ 1 time_D_Sys))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys)))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D_Sys)))
 
 (param time_D_Sym @time_to_detection_Sym@)
 (param Ksym_D (/ 1 time_D_Sym))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym)))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
 
 (param time_D_As @time_to_detection_As@)
 (param Kl_D (/ 1 time_D_As))
-(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As)))
+(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
 """
 
+
     if expandModel == None:
-        params_str = params_str + expand_base_str
+        params_str = params_str 
     if expandModel == "testDelay_SymSys":
         params_str = params_str + expand_testDelay_SymSys_str
     if expandModel == "uniformtestDelay":
         params_str = params_str + expand_uniformtestDelay_str
     if expandModel == "contactTracing" :
-        params_str = params_str + expand_base_str + expand_contactTracing_str
+        params_str = params_str  + expand_contactTracing_str
     if expandModel == "testDelay_AsSymSys" :
         params_str = params_str + expand_testDelay_AsSymSys_str
 
@@ -365,7 +329,75 @@ def write_params(expandModel=None):
     return (params_str)
 
 
-   
+def write_age_specific_param(grp, expandModel):
+    grp = str(grp)
+    params_str =  """
+(param fraction_severe_{grp} @fraction_severe_{grp}@)
+(param Ksys{grp} (* fraction_severe_{grp} (/ 1 time_to_symptoms)))
+(param Ksym{grp} (* (- 1 fraction_severe_{grp}) (/ 1 time_to_symptoms))) 
+
+(param fraction_dead_{grp} @fraction_dead_{grp}@)
+
+(param fraction_critical_{grp} @fraction_critical_{grp}@ )
+(param fraction_hospitalized_{grp} @fraction_hospitalized_{grp}@)
+
+(param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
+(param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) time_to_infectious))
+(param Ks{grp} (/ fraction_symptomatic_{grp}  time_to_infectious))
+
+(param recovery_time_hosp_{grp} @recovery_time_hosp_{grp}@)
+(param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))
+
+""".format(grp=grp)    
+
+    expand_base_str = """
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+""".format(grp=grp)    
+
+    expand_uniformtestDelay_str = """
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
+""".format(grp=grp)    
+
+
+    expand_testDelay_SymSys_str = """
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+""".format(grp=grp)    
+
+    expand_testDelay_AsSymSys_str = """
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+""".format(grp=grp)    
+
+    if expandModel == None:
+        params_str = params_str + expand_base_str
+    if expandModel == "testDelay_SymSys":
+        params_str = params_str + expand_testDelay_SymSys_str
+    if expandModel == "uniformtestDelay":
+        params_str = params_str + expand_uniformtestDelay_str
+    if expandModel == "testDelay_AsSymSys" :
+        params_str = params_str + expand_testDelay_AsSymSys_str
+
+    params_str = params_str.replace("  ", " ")
+
+
+    return params_str
+
 
 def repeat_string_by_grp(fixedstring, grpList1, grpList2):
     stringAll = ""
@@ -450,7 +482,6 @@ def write_travel_reaction(age, region, travelspeciesList=None):
 
 
     return (reaction_str)
-
 
 
 #### Age specific contact matric
@@ -783,7 +814,6 @@ def write_interventions(regionList, total_string, scenarioName, expandModel, cha
 
 
 ###stringing all of my functions together to make the file:
-
 def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_output, expandModel, add_interventions, add_migration=True, change_testDelay =None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
@@ -800,6 +830,7 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
     param_string = ""
     reaction_string = ""
     functions_string = ""
+    age_specific_param_string = ""
     total_string = total_string + header_str
 
     for region in region_list:
@@ -820,9 +851,12 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
                 reaction_string = reaction_string + write_travel_reaction(age, region)
          reaction_string = reaction_string + write_reactions(age, region)
          functions_string = functions_string + write_functions(age, region)
-         param_string = param_string + write_Ki_timevents(age, region, import_dic2) # + write_age_param(age)
+         param_string = param_string + write_Ki_timevents(age, region, import_dic2)
+           
+    for age in age_list:
+        age_specific_param_string = age_specific_param_string + write_age_specific_param(age, expandModel)
             
-    param_string = write_params(expandModel) + param_string + write_observed_param(age_list, region_list) + write_N_population(age_list, region_list, pop_dic) + write_contact_matrix(age_list)
+    param_string = write_params(expandModel) + age_specific_param_string + param_string + write_observed_param(age_list, region_list) + write_N_population(age_list, region_list, pop_dic) + write_contact_matrix(age_list)
     if(add_migration) :
         param_string = param_string + write_migration_param(region_list)
         
