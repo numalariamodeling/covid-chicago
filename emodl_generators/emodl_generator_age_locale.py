@@ -421,8 +421,40 @@ def write_All(ageList, regionList):
 
     return (obs_All_str)
  
+#### Locale specific migration
+def write_migration_param(grpList) :
+    x1 = range(1, len(grpList) + 1)
+    x2 = range(1, len(grpList) + 1)
+    param_str = ""
+    for x1_i in x1 :
+        param_str = param_str + "\n"
+        for x2_i in x2 :
+            #x1_i=1
+            param_str = param_str + """\n(param toEMS_{x1_i}_from_EMS_{x2_i} @toEMS_{x1_i}_from_EMS_{x2_i}@)""".format(x1_i=x1_i, x2_i=x2_i)
+    return (param_str)
 
-def write_ki_mix(age_list, scale=True):
+
+def write_travel_reaction(age, region, travelspeciesList=None):
+    x1_i = int(region.split("_")[1])
+    x2 = list(range(1,12))
+    x2 = [i for i in x2 if i != x1_i ]
+    reaction_str = ""
+    if travelspeciesList == None:
+        travelspeciesList = ["S", "E", "As", "P"]
+
+    for travelspecies in travelspeciesList:
+        reaction_str = reaction_str + "\n"
+        for x2_i in x2:
+            # x1_i=1
+            reaction_str = reaction_str + """\n(reaction {travelspecies}_travel_{age}_EMS_{x2_i}to{x1_i}  ({travelspecies}_{age}::EMS_{x2_i}) ({travelspecies}_{age}::EMS_{x1_i}) (* {travelspecies}_{age}::EMS_{x2_i} toEMS_{x1_i}_from_EMS_{x2_i} (/ N_{age}_EMS_{x2_i} (+ S_{age}::EMS_{x2_i} E_{age}::EMS_{x2_i} As_{age}::EMS_{x2_i} P_{age}::EMS_{x2_i} recovered_{age}_EMS_{x2_i}))))""".format(age=age,travelspecies=travelspecies, x1_i=x1_i, x2_i=x2_i)
+
+
+    return (reaction_str)
+
+
+
+#### Age specific contact matric
+def write_contact_matrix(age_list, scale=True):
     nageGroups = len(age_list)
     grp_x = range(1, nageGroups + 1)
     grp_y = reversed(grp_x)
@@ -774,7 +806,6 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
         total_string = total_string + "\n(locale site-{})\n".format(region)
         total_string = total_string + "(set-locale site-{})\n".format(region)
         reaction_string = write_exposure_reaction8(region) + '\n' + reaction_string
-
         
         for age in age_list:
             #species_init = write_species_init_2grp(age=age, region_dic=region_dic, region=key)
@@ -784,12 +815,17 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
 
     for age, region in [(x, y) for x in age_list for y in region_list]:
          observe_string = observe_string + write_observe(age, region)
+         if (add_migration):
+            if age == "age20to29" or age == "age30to39" or age == "age40to49"  or age == "age50to59"  or age == "age60to69" :
+                reaction_string = reaction_string + write_travel_reaction(age, region)
          reaction_string = reaction_string + write_reactions(age, region)
          functions_string = functions_string + write_functions(age, region)
          param_string = param_string + write_Ki_timevents(age, region, import_dic2) # + write_age_param(age)
             
-    param_string = write_params(expandModel) + param_string + write_observed_param(age_list, region_list) + write_N_population(age_list, region_list, pop_dic) + write_ki_mix(age_list)
-
+    param_string = write_params(expandModel) + param_string + write_observed_param(age_list, region_list) + write_N_population(age_list, region_list, pop_dic) + write_contact_matrix(age_list)
+    if(add_migration) :
+        param_string = param_string + write_migration_param(region_list)
+        
     functions_string = functions_string + write_All(age_list, region_list)
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
 
@@ -861,13 +897,24 @@ if __name__ == '__main__':
 
 
 
-    ### Vary test delay  (i.e. change_testDelay = "SymSys"   )
+    ### Generate emodl file 
+    ### Interventions to add; 'continuedSIP', 'interventionSTOP', 'interventionSTOP_adj', 'gradual_reopening', 'contactTracing', None
     generate_emodl(age_list=age_grp8,
                    region_list=region_list,
                    pop_dic=age_region_pop,
                    import_dic=age_region_initialInfect,
                    import_dic2=age_region_importedInfect,
-                   expandModel=None,
+                   expandModel="testDelay_AsSymSys",
                    add_interventions='continuedSIP',
                    add_migration=False,
-                   file_output=os.path.join(emodl_dir, 'extendedmodel_agelocale_test.emodl'))
+                   file_output=os.path.join(emodl_dir, 'extendedmodel_agelocale_scen3.emodl'))
+                   
+    generate_emodl(age_list=age_grp8,
+                   region_list=region_list,
+                   pop_dic=age_region_pop,
+                   import_dic=age_region_initialInfect,
+                   import_dic2=age_region_importedInfect,
+                   expandModel="testDelay_AsSymSys",
+                   add_interventions='continuedSIP',
+                   add_migration=True,
+                   file_output=os.path.join(emodl_dir, 'extendedmodel_agelocale_migration_scen3.emodl'))
