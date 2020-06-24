@@ -381,14 +381,14 @@ def write_observed_param(grpList):
 (observe d_Sys_t d_Sys)
 """
 
+## If age specific parameters would change over time and should be tracked
     observed_ageparam_str=""
-    for grp in grpList:
-        grp = str(grp)
-        temp_str = """
-(observe fraction_dead_{grp}_t fraction_dead_{grp})
-(observe fraction_hospitalized_{grp}_t fraction_hospitalized_{grp})
-""".format(grp=grp)
-        observed_ageparam_str = observed_ageparam_str + temp_str
+#    for grp in grpList:
+#        grp = str(grp)
+#        temp_str = """
+#(observe fraction_dead_{grp}_t fraction_dead_{grp})
+#""".format(grp=grp)
+#        observed_ageparam_str = observed_ageparam_str + temp_str
 
     observed_param_str = observed_param_str + "\n" + observed_ageparam_str
     
@@ -815,11 +815,16 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , homoge
 
 
 # if __name__ == '__main__':
-age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
+#age_grp4 = ['age0to19', 'age20to39', 'age40to59', 'age60to100']
 age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
 
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_neverSIP.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='interventionStop', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_interventionStop.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_gradual_reopening.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', file_output=os.path.join(emodl_dir, 'extendedmodel_age8_contactTracing.emodl'))
 
-### With contact matrix - testDelay implemented
-generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions=None, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_param.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', change_testDelay="AsSym", file_output=os.path.join(emodl_dir, 'extendedmodel_age8_ChangeTD.emodl'))
+generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions=None, change_testDelay="AsSym",  file_output=os.path.join(emodl_dir, 'extendedmodel_age8_contactTracingChangeTD.emodl'))
 
 
