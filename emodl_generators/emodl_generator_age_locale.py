@@ -1,4 +1,5 @@
 import os
+import itertools
 import sys
 import re
 
@@ -32,6 +33,7 @@ def write_N_population(ageList, regionList, pop_dic):
     stringAll = stringAll + "\n" + string2 + "\n"  +  string4 # + string3 + "\n"
 
     return (stringAll)
+
 
 
 def write_Ki_timevents(age, region, import_dic2):
@@ -114,6 +116,10 @@ def write_species(age, region, expandModel=None):
 ## This might change depending on the postprocessing
 def sub(x):
     xout = re.sub('_','-', str(x), count=1)
+    return(xout)
+    
+def sub2(x):
+    xout = re.sub('_','', str(x), count=1)
     return(xout)
     
 def write_observe(age, region, expandModel=None):
@@ -358,45 +364,7 @@ def write_params(expandModel=None):
 
     return (params_str)
 
-def write_ki_mix(nageGroups, scale=True):
-    grp_x = range(1, nageGroups + 1)
-    grp_y = reversed(grp_x)
 
-    ki_dic = {}
-    for i, xy in enumerate(itertools.product(grp_x, grp_y)):
-        ki_dic[i] = ["C" + str(xy[0]) + '_' + str(xy[1])]
-
-    ki_mix_param1 = ""
-    ki_mix_param3 = ""
-    for i in range(len(ki_dic.keys())):
-        string_i = "\n(param " + sub(ki_dic[i][0]) + " @" + ki_dic[i][0] + "@ )"
-        ki_mix_param1 = ki_mix_param1 + string_i
-        
-        string_i = "\n(param " + ki_dic[i][0]  + " (/ " + sub(ki_dic[i][0]) + " norm_factor))"
-        ki_mix_param3 = ki_mix_param3 + string_i
-
-    ## To do - remove hardcoding and if statement
-    if nageGroups ==4 :
-        ki_mix_param2 = "\n(param sum1 (+ C11 C12 C13 C14))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum2  (+ C21 C22 C23 C24))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum3 (+ C31 C32 C33 C34))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum4 (+ C41 C42 C43 C44))"
-        norm_factor = "\n(param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4)))"
-
-    if nageGroups ==8:
-        ki_mix_param2 = "\n(param sum1 (+ C11 C12 C13 C14 C15 C16 C17 C18))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum2 (+ C21 C22 C23 C24 C25 C26 C27 C28))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum3 (+ C31 C32 C33 C34 C35 C36 C37 C38))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum4 (+ C41 C42 C43 C44 C45 C46 C47 C48))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum5 (+ C51 C52 C53 C54 C55 C56 C57 C58))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum6 (+ C61 C62 C63 C64 C65 C66 C67 C68))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum7 (+ C71 C72 C73 C74 C75 C76 C77 C78))"
-        ki_mix_param2 = ki_mix_param2 + "\n(param sum8 (+ C81 C82 C83 C84 C85 C86 C87 C88))"
-        norm_factor = "\n(param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4) (* sum5  p5) (* sum6  p6) (* sum7  p7) (* sum8  p8)))"
-
-    ki_mix_param = ki_mix_param1 + "\n" + ki_mix_param2 + "\n" + norm_factor + "\n" + ki_mix_param3
-    
-    return ki_mix_param
    
 
 def repeat_string_by_grp(fixedstring, grpList1, grpList2):
@@ -453,17 +421,66 @@ def write_All(ageList, regionList):
 
     return (obs_All_str)
  
+
+def write_ki_mix(age_list, scale=True):
+    nageGroups = len(age_list)
+    grp_x = range(1, nageGroups + 1)
+    grp_y = reversed(grp_x)
+
+    ki_dic = {}
+    for i, xy in enumerate(itertools.product(grp_x, grp_y)):
+        ki_dic[i] = ["C" + str(xy[0]) + '_' + str(xy[1])]
+
+    ki_mix_param1 = ""
+    ki_mix_param3 = ""
+    for i in range(len(ki_dic.keys())):
+        string_i = "\n(param " + sub2(ki_dic[i][0]) + " @" + ki_dic[i][0] + "@ )"       
+        ki_mix_param1 = ki_mix_param1 + string_i
+        
+        string_i = "\n(param " + ki_dic[i][0]  + " (/ " + sub2(ki_dic[i][0]) + " norm_factor))"
+        ki_mix_param3 = ki_mix_param3 + string_i
+
+    ## To do - remove hardcoding and if statement
+    if nageGroups ==4 :
+        ki_mix_param2 = "\n(param sum1 (+ C11 C12 C13 C14))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum2  (+ C21 C22 C23 C24))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum3 (+ C31 C32 C33 C34))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum4 (+ C41 C42 C43 C44))"
+        norm_factor = "\n(param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4)))"
+
+    if nageGroups ==8:
+        ki_mix_param2 = "\n(param sum1 (+ C11 C12 C13 C14 C15 C16 C17 C18))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum2 (+ C21 C22 C23 C24 C25 C26 C27 C28))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum3 (+ C31 C32 C33 C34 C35 C36 C37 C38))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum4 (+ C41 C42 C43 C44 C45 C46 C47 C48))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum5 (+ C51 C52 C53 C54 C55 C56 C57 C58))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum6 (+ C61 C62 C63 C64 C65 C66 C67 C68))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum7 (+ C71 C72 C73 C74 C75 C76 C77 C78))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param sum8 (+ C81 C82 C83 C84 C85 C86 C87 C88))"
+        norm_factor = "\n(param norm_factor (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4) (* sum5  p5) (* sum6  p6) (* sum7  p7) (* sum8  p8)))"
+
+    stringAll = ""
+    for i, age in enumerate(age_list):
+        string2 = """\n(param p{i} (/ N_{age} N_All))""".format(i=i+1, age=age)
+        stringAll = stringAll + string2
+        
+    ki_mix_param = ki_mix_param1 + "\n" + ki_mix_param2 + "\n" + norm_factor + "\n" + ki_mix_param3
     
+    ki_mix_param = stringAll + ki_mix_param
+    
+    return ki_mix_param
+
+   
 def write_exposure_reaction8(region):
     exposure_reaction_str = """  
-(reaction exposure_age0to9_{region}    (S_age0to9::{region})    (E_age0to9::{region})    (* Ki S_age0to9::{region}    (+ (* C1_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C1_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C1_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C1_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C1_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C1_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C1_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C1_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
-(reaction exposure_age10to19_{region}  (S_age10to19::{region})  (E_age10to19::{region})  (* Ki S_age10to19::{region}  (+ (* C2_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C2_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C2_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C2_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C2_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C2_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C2_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C2_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
-(reaction exposure_age20to29_{region}  (S_age20to29::{region})  (E_age20to29::{region})  (* Ki S_age20to29::{region}  (+ (* C3_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C3_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C3_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C3_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C3_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C3_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C3_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C3_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
-(reaction exposure_age30to39_{region}  (S_age30to39::{region})  (E_age30to39::{region})  (* Ki S_age30to39::{region}  (+ (* C4_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C4_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C4_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C4_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C4_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C4_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C4_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C4_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
-(reaction exposure_age40to49_{region}  (S_age40to49::{region})  (E_age40to49::{region})  (* Ki S_age40to49::{region}  (+ (* C5_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C5_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C5_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C5_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C5_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C5_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C5_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C5_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
-(reaction exposure_age50to59_{region}  (S_age50to59::{region})  (E_age50to59::{region})  (* Ki S_age50to59::{region}  (+ (* C6_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C6_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C6_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C6_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C6_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C6_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C6_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C6_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
-(reaction exposure_age60to69_{region}  (S_age60to69::{region})  (E_age60to69::{region})  (* Ki S_age60to69::{region}  (+ (* C7_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C7_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C7_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C7_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C7_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C7_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C7_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C7_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
-(reaction exposure_age70to100_{region} (S_age70to100::{region}) (E_age70to100::{region}) (* Ki S_age70to100::{region} (+ (* C8_1 (/ (+ infectious_undet_age0to9::{region} (* infectious_det_age0to9::{region} reduced_inf_of_det_cases)) N_age0to9::{region})) (* C8_2 (/ (+ infectious_undet_age10to19::{region} (* infectious_det_age10to19::{region} reduced_inf_of_det_cases)) N_age10to19::{region})) (* C8_3 (/ (+ infectious_undet_age20to29::{region} (* infectious_det_age20to29::{region} reduced_inf_of_det_cases)) N_age20to29::{region})) (* C8_4 (/ (+ infectious_undet_age30to39::{region} (* infectious_det_age30to39::{region} reduced_inf_of_det_cases)) N_age30to39::{region})) (* C8_5 (/ (+ infectious_undet_age40to49::{region} (* infectious_det_age40to49::{region} reduced_inf_of_det_cases)) N_age40to49::{region})) (* C8_6 (/ (+ infectious_undet_age50to59::{region} (* infectious_det_age50to59::{region} reduced_inf_of_det_cases)) N_age50to59::{region})) (* C8_7 (/ (+ infectious_undet_age60to69::{region} (* infectious_det_age60to69::{region} reduced_inf_of_det_cases)) N_age60to69::{region})) (* C8_8 (/ (+ infectious_undet_age70to100::{region} (* infectious_det_age70to100::{region} reduced_inf_of_det_cases)) N_age70to100::{region})))))
+(reaction exposure_age0to9_{region}    (S_age0to9::{region})    (E_age0to9::{region})    (* Ki_{region} S_age0to9::{region}    (+ (* C1_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C1_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C1_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C1_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C1_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C1_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C1_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C1_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
+(reaction exposure_age10to19_{region}  (S_age10to19::{region})  (E_age10to19::{region})  (* Ki_{region} S_age10to19::{region}  (+ (* C2_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C2_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C2_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C2_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C2_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C2_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C2_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C2_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
+(reaction exposure_age20to29_{region}  (S_age20to29::{region})  (E_age20to29::{region})  (* Ki_{region} S_age20to29::{region}  (+ (* C3_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C3_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C3_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C3_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C3_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C3_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C3_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C3_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
+(reaction exposure_age30to39_{region}  (S_age30to39::{region})  (E_age30to39::{region})  (* Ki_{region} S_age30to39::{region}  (+ (* C4_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C4_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C4_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C4_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C4_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C4_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C4_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C4_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
+(reaction exposure_age40to49_{region}  (S_age40to49::{region})  (E_age40to49::{region})  (* Ki_{region} S_age40to49::{region}  (+ (* C5_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C5_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C5_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C5_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C5_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C5_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C5_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C5_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
+(reaction exposure_age50to59_{region}  (S_age50to59::{region})  (E_age50to59::{region})  (* Ki_{region} S_age50to59::{region}  (+ (* C6_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C6_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C6_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C6_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C6_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C6_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C6_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C6_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
+(reaction exposure_age60to69_{region}  (S_age60to69::{region})  (E_age60to69::{region})  (* Ki_{region} S_age60to69::{region}  (+ (* C7_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C7_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C7_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C7_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C7_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C7_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C7_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C7_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
+(reaction exposure_age70to100_{region} (S_age70to100::{region}) (E_age70to100::{region}) (* Ki_{region} S_age70to100::{region} (+ (* C8_1 (/ (+ infectious_undet_age0to9_{region} (* infectious_det_age0to9_{region} reduced_inf_of_det_cases)) N_age0to9_{region})) (* C8_2 (/ (+ infectious_undet_age10to19_{region} (* infectious_det_age10to19_{region} reduced_inf_of_det_cases)) N_age10to19_{region})) (* C8_3 (/ (+ infectious_undet_age20to29_{region} (* infectious_det_age20to29_{region} reduced_inf_of_det_cases)) N_age20to29_{region})) (* C8_4 (/ (+ infectious_undet_age30to39_{region} (* infectious_det_age30to39_{region} reduced_inf_of_det_cases)) N_age30to39_{region})) (* C8_5 (/ (+ infectious_undet_age40to49_{region} (* infectious_det_age40to49_{region} reduced_inf_of_det_cases)) N_age40to49_{region})) (* C8_6 (/ (+ infectious_undet_age50to59_{region} (* infectious_det_age50to59_{region} reduced_inf_of_det_cases)) N_age50to59_{region})) (* C8_7 (/ (+ infectious_undet_age60to69_{region} (* infectious_det_age60to69_{region} reduced_inf_of_det_cases)) N_age60to69_{region})) (* C8_8 (/ (+ infectious_undet_age70to100_{region} (* infectious_det_age70to100_{region} reduced_inf_of_det_cases)) N_age70to100_{region})))))
 """.format(region=region)
     return exposure_reaction_str    
     
@@ -771,7 +788,7 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
          functions_string = functions_string + write_functions(age, region)
          param_string = param_string + write_Ki_timevents(age, region, import_dic2) # + write_age_param(age)
             
-    param_string = write_params(expandModel) + param_string + write_observed_param(age_list, region_list) + write_N_population(age_list, region_list, pop_dic)
+    param_string = write_params(expandModel) + param_string + write_observed_param(age_list, region_list) + write_N_population(age_list, region_list, pop_dic) + write_ki_mix(age_list)
 
     functions_string = functions_string + write_All(age_list, region_list)
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
