@@ -338,24 +338,6 @@ def write_migration_param(grpList) :
     return (param_str)
 
 
-def write_travel_reaction_chunk(grpList,travelspeciesList=None) :
-    x1 = range(1, len(grpList) + 1)
-    x2 = range(1, len(grpList) + 1)
-    reaction_str = ""
-    if travelspeciesList ==None:
-        travelspeciesList = ["S","E","As","P"]
-
-    for x1_i in x1 :
-        reaction_str = reaction_str + "\n"
-        for travelspecies in travelspeciesList:
-            reaction_str = reaction_str + "\n"
-            for x2_i in x2 :
-                #x1_i=1
-                reaction_str = reaction_str + """\n(reaction {travelspecies}_travel_EMS_{x2_i}to{x1_i}  ({travelspecies}::EMS_{x2_i}) ({travelspecies}::EMS_{x1_i}) (* {travelspecies}::EMS_{x2_i} toEMS_{x1_i}_from_EMS_{x2_i} (/ N_EMS_{x2_i} (+ S::EMS_{x2_i} E::EMS_{x2_i} As::EMS_{x2_i} P::EMS_{x2_i} recovered_EMS_{x2_i}))))""".format(travelspecies=travelspecies, x1_i=x1_i, x2_i=x2_i)
-
-    return (reaction_str)
-
-
 def write_travel_reaction(grp, travelspeciesList=None):
     x1_i = int(grp.split("_")[1])
     x2 = list(range(1,12))
