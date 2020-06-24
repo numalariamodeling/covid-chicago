@@ -42,7 +42,7 @@ def plot(adf, channels, age_group, filename=None) :
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
     axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(channels))]
 
-    palette = sns.color_palette('husl', 9)
+    palette = sns.color_palette('coolwarm', 9)
     for c, channel in enumerate(plotchannels) :
 
         mdf = adf.groupby('date')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
@@ -74,7 +74,7 @@ if __name__ == '__main__' :
     first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     plot_first_day = date(2020, 3, 1)
-    plot_last_day = date(2020, 8, 1)
+    plot_last_day = date(2020, 10, 1)
     df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
 
     #channels = ['infected', 'new_detected', 'new_deaths',
@@ -86,7 +86,7 @@ if __name__ == '__main__' :
     fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
     axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(channels))]
-    palette = sns.color_palette('Reds', len([x for x in suffix_names if 'All' not in x]))
+    palette = sns.color_palette('coolwarm', len([x for x in suffix_names if 'All' not in x]))
 
     days_to_plot = len(df['date'].unique())
     last = {x: [0] * days_to_plot for x in channels}
