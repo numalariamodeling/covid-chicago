@@ -848,7 +848,6 @@
 (observe detected_cumul_age70to100 detected_cumul_age70to100 )
 
 
-(observe Ki Ki)
 
 
 (param time_to_infectious @time_to_infectious@)
@@ -892,11 +891,10 @@
 (param Ksysage0to9 (* fraction_severe_age0to9 (/ 1 time_to_symptoms)))
 (param Ksymage0to9 (* (- 1 fraction_severe_age0to9) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age0to9 (/ cfr fraction_severe_age0to9))
 (param fraction_dead_age0to9 @fraction_dead_age0to9@)
 
 (param fraction_critical_age0to9 @fraction_critical_age0to9@ )
-(param fraction_hospitalized_age0to9 (/ fraction_critical_age0to9 fraction_dead_age0to9 ))
+(param fraction_hospitalized_age0to9 @fraction_hospitalized_age0to9@)
 
 (param fraction_symptomatic_age0to9 @fraction_symptomatic_age0to9@)
 (param Klage0to9 (/ (- 1 fraction_symptomatic_age0to9 ) time_to_infectious))
@@ -917,11 +915,10 @@
 (param Ksysage10to19 (* fraction_severe_age10to19 (/ 1 time_to_symptoms)))
 (param Ksymage10to19 (* (- 1 fraction_severe_age10to19) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age10to19 (/ cfr fraction_severe_age10to19))
 (param fraction_dead_age10to19 @fraction_dead_age10to19@)
 
 (param fraction_critical_age10to19 @fraction_critical_age10to19@ )
-(param fraction_hospitalized_age10to19 (/ fraction_critical_age10to19 fraction_dead_age10to19 ))
+(param fraction_hospitalized_age10to19 @fraction_hospitalized_age10to19@)
 
 (param fraction_symptomatic_age10to19 @fraction_symptomatic_age10to19@)
 (param Klage10to19 (/ (- 1 fraction_symptomatic_age10to19 ) time_to_infectious))
@@ -942,11 +939,10 @@
 (param Ksysage20to29 (* fraction_severe_age20to29 (/ 1 time_to_symptoms)))
 (param Ksymage20to29 (* (- 1 fraction_severe_age20to29) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age20to29 (/ cfr fraction_severe_age20to29))
 (param fraction_dead_age20to29 @fraction_dead_age20to29@)
 
 (param fraction_critical_age20to29 @fraction_critical_age20to29@ )
-(param fraction_hospitalized_age20to29 (/ fraction_critical_age20to29 fraction_dead_age20to29 ))
+(param fraction_hospitalized_age20to29 @fraction_hospitalized_age20to29@)
 
 (param fraction_symptomatic_age20to29 @fraction_symptomatic_age20to29@)
 (param Klage20to29 (/ (- 1 fraction_symptomatic_age20to29 ) time_to_infectious))
@@ -967,11 +963,10 @@
 (param Ksysage30to39 (* fraction_severe_age30to39 (/ 1 time_to_symptoms)))
 (param Ksymage30to39 (* (- 1 fraction_severe_age30to39) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age30to39 (/ cfr fraction_severe_age30to39))
 (param fraction_dead_age30to39 @fraction_dead_age30to39@)
 
 (param fraction_critical_age30to39 @fraction_critical_age30to39@ )
-(param fraction_hospitalized_age30to39 (/ fraction_critical_age30to39 fraction_dead_age30to39 ))
+(param fraction_hospitalized_age30to39 @fraction_hospitalized_age30to39@)
 
 (param fraction_symptomatic_age30to39 @fraction_symptomatic_age30to39@)
 (param Klage30to39 (/ (- 1 fraction_symptomatic_age30to39 ) time_to_infectious))
@@ -992,11 +987,10 @@
 (param Ksysage40to49 (* fraction_severe_age40to49 (/ 1 time_to_symptoms)))
 (param Ksymage40to49 (* (- 1 fraction_severe_age40to49) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age40to49 (/ cfr fraction_severe_age40to49))
 (param fraction_dead_age40to49 @fraction_dead_age40to49@)
 
 (param fraction_critical_age40to49 @fraction_critical_age40to49@ )
-(param fraction_hospitalized_age40to49 (/ fraction_critical_age40to49 fraction_dead_age40to49 ))
+(param fraction_hospitalized_age40to49 @fraction_hospitalized_age40to49@)
 
 (param fraction_symptomatic_age40to49 @fraction_symptomatic_age40to49@)
 (param Klage40to49 (/ (- 1 fraction_symptomatic_age40to49 ) time_to_infectious))
@@ -1017,11 +1011,10 @@
 (param Ksysage50to59 (* fraction_severe_age50to59 (/ 1 time_to_symptoms)))
 (param Ksymage50to59 (* (- 1 fraction_severe_age50to59) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age50to59 (/ cfr fraction_severe_age50to59))
 (param fraction_dead_age50to59 @fraction_dead_age50to59@)
 
 (param fraction_critical_age50to59 @fraction_critical_age50to59@ )
-(param fraction_hospitalized_age50to59 (/ fraction_critical_age50to59 fraction_dead_age50to59 ))
+(param fraction_hospitalized_age50to59 @fraction_hospitalized_age50to59@)
 
 (param fraction_symptomatic_age50to59 @fraction_symptomatic_age50to59@)
 (param Klage50to59 (/ (- 1 fraction_symptomatic_age50to59 ) time_to_infectious))
@@ -1042,11 +1035,10 @@
 (param Ksysage60to69 (* fraction_severe_age60to69 (/ 1 time_to_symptoms)))
 (param Ksymage60to69 (* (- 1 fraction_severe_age60to69) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age60to69 (/ cfr fraction_severe_age60to69))
 (param fraction_dead_age60to69 @fraction_dead_age60to69@)
 
 (param fraction_critical_age60to69 @fraction_critical_age60to69@ )
-(param fraction_hospitalized_age60to69 (/ fraction_critical_age60to69 fraction_dead_age60to69 ))
+(param fraction_hospitalized_age60to69 @fraction_hospitalized_age60to69@)
 
 (param fraction_symptomatic_age60to69 @fraction_symptomatic_age60to69@)
 (param Klage60to69 (/ (- 1 fraction_symptomatic_age60to69 ) time_to_infectious))
@@ -1067,11 +1059,10 @@
 (param Ksysage70to100 (* fraction_severe_age70to100 (/ 1 time_to_symptoms)))
 (param Ksymage70to100 (* (- 1 fraction_severe_age70to100) (/ 1 time_to_symptoms))) 
 
-;(param fraction_dead_age70to100 (/ cfr fraction_severe_age70to100))
 (param fraction_dead_age70to100 @fraction_dead_age70to100@)
 
 (param fraction_critical_age70to100 @fraction_critical_age70to100@ )
-(param fraction_hospitalized_age70to100 (/ fraction_critical_age70to100 fraction_dead_age70to100 ))
+(param fraction_hospitalized_age70to100 @fraction_hospitalized_age70to100@)
 
 (param fraction_symptomatic_age70to100 @fraction_symptomatic_age70to100@)
 (param Klage70to100 (/ (- 1 fraction_symptomatic_age70to100 ) time_to_infectious))
@@ -1104,7 +1095,36 @@
 (param p5 (/ N_age40to49 N_All))
 (param p6 (/ N_age50to59 N_All))
 (param p7 (/ N_age60to69 N_All))
-(param p8 (/ N_age70to100 N_All))
+(param p8 (/ N_age70to100 N_All))  
+(observe Ki_t Ki)
+(observe d_Sym_t d_Sym)
+(observe d_Sys_t d_Sys)
+
+
+(observe fraction_dead_age0to9_t fraction_dead_age0to9)
+(observe fraction_hospitalized_age0to9_t fraction_hospitalized_age0to9)
+
+(observe fraction_dead_age10to19_t fraction_dead_age10to19)
+(observe fraction_hospitalized_age10to19_t fraction_hospitalized_age10to19)
+
+(observe fraction_dead_age20to29_t fraction_dead_age20to29)
+(observe fraction_hospitalized_age20to29_t fraction_hospitalized_age20to29)
+
+(observe fraction_dead_age30to39_t fraction_dead_age30to39)
+(observe fraction_hospitalized_age30to39_t fraction_hospitalized_age30to39)
+
+(observe fraction_dead_age40to49_t fraction_dead_age40to49)
+(observe fraction_hospitalized_age40to49_t fraction_hospitalized_age40to49)
+
+(observe fraction_dead_age50to59_t fraction_dead_age50to59)
+(observe fraction_hospitalized_age50to59_t fraction_hospitalized_age50to59)
+
+(observe fraction_dead_age60to69_t fraction_dead_age60to69)
+(observe fraction_hospitalized_age60to69_t fraction_hospitalized_age60to69)
+
+(observe fraction_dead_age70to100_t fraction_dead_age70to100)
+(observe fraction_hospitalized_age70to100_t fraction_hospitalized_age70to100)
+
 (param C18 @C1_8@ )
 (param C17 @C1_7@ )
 (param C16 @C1_6@ )
