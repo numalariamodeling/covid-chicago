@@ -72,3 +72,6 @@ python runScenarios.py --running_location Local --region EMS_11 --experiment_con
 ## With age specific parameter 
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config age4grp_experiment.yaml --emodl_template extendedmodel_age4_param.emodl --cfg_template model_B.cfg --name_suffix "age4_ageparam_test"
 python runScenarios.py --running_location Local --region EMS_11 --experiment_config age8grp_experiment.yaml --emodl_template extendedmodel_age8_param.emodl --cfg_template model_B.cfg --name_suffix "age8_ageparam_test"
+
+python runScenarios.py --running_location Local --region IL --experiment_config age_locale_experiment.yaml --emodl_template extendedmodel_agelocale_scen3.emodl --cfg_template model_B.cfg --name_suffix "agelocale_test2"
+python runScenarios.py --running_location Local --region IL --experiment_config age_locale_experiment.yaml --emodl_template extendedmodel_agelocale_migration_scen3.emodl --cfg_template model_B.cfg --name_suffix "agelocale_test2"

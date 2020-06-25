@@ -883,8 +883,7 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
 
 if __name__ == '__main__':
     age_grp8 = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
-    #region_list = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
-    region_list = ['EMS_1', 'EMS_2']
+    region_list = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
     age_region_pop = {
     'EMS_1' : [{"age0to9": 78641	, "age10to19": 91701	, "age20to29": 94681	, "age30to39" : 89371	, "age40to49": 92396	,"age50to59": 110878	, "age60to69" :92988	, "age70to100" :89076	}],
     'EMS_2' : [{"age0to9": 114210	, "age10to19": 132626	, "age20to29": 150792 	, "age30to39" : 141161	, "age40to49": 140827	,"age50to59": 170321	, "age60to69" :143642	, "age70to100" :135817	}],
