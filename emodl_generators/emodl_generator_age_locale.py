@@ -567,13 +567,13 @@ def write_reactions(age, region, expandModel=None):
 (reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks{age} E_{age}::{region} (- 1 d_P)))
 (reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_det_{age}::{region})   (* Ks{age} E_{age}::{region} d_P))
 
-(reaction mild_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sym_{age}::{region}) (* Ksym P_{age}::{region} (- 1 d_Sym)))
-(reaction mild_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym P_{age}::{region} d_Sym))
-(reaction severe_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sys_{age}::{region})  (* Ksys P_{age}::{region} (- 1 d_Sys)))
-(reaction severe_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys P_{age}::{region} d_Sys))
+(reaction mild_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sym_{age}::{region}) (* Ksym{age} P_{age}::{region} (- 1 d_Sym)))
+(reaction mild_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym{age} P_{age}::{region} d_Sym))
+(reaction severe_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sys_{age}::{region})  (* Ksys{age} P_{age}::{region} (- 1 d_Sys)))
+(reaction severe_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys{age} P_{age}::{region} d_Sys))
 
-(reaction mild_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym P_det_{age}::{region}))
-(reaction severe_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys P_det_{age}::{region} ))
+(reaction mild_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym{age} P_det_{age}::{region}))
+(reaction severe_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys{age} P_det_{age}::{region} ))
 
 (reaction hospitalization_1_{age}_{region}   (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1{age} Sys_{age}::{region}))
 (reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2{age} Sys_{age}::{region}))
@@ -603,8 +603,8 @@ def write_reactions(age, region, expandModel=None):
 (reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks{age} E_{age}::{region}))
 
 ; developing symptoms - same time to symptoms as in master emodl
-(reaction mild_symptomatic_{age}_{region} (P_{age}::{region})  (Sym_preD_{age}::{region}) (* Ksym P_{age}::{region}))
-(reaction severe_symptomatic_{age}_{region} (P_{age}::{region})  (Sys_preD_{age}::{region})  (* Ksys P_{age}::{region}))
+(reaction mild_symptomatic_{age}_{region} (P_{age}::{region})  (Sym_preD_{age}::{region}) (* Ksym{age} P_{age}::{region}))
+(reaction severe_symptomatic_{age}_{region} (P_{age}::{region})  (Sys_preD_{age}::{region})  (* Ksys{age} P_{age}::{region}))
 
 ; never detected 
 (reaction mild_symptomatic_undet_{age}_{region} (Sym_preD_{age}::{region})  (Sym_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} (- 1 d_Sym)))
@@ -645,8 +645,8 @@ def write_reactions(age, region, expandModel=None):
 (reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_det_{age}::{region})   (* Ks{age}  E_{age}::{region} d_P))
 
 ; developing symptoms - same time to symptoms as in master emodl
-(reaction mild_symptomatic_{age}_{region} (P_{age}::{region})  (Sym_preD_{age}::{region}) (* Ksym P_{age}::{region}))
-(reaction severe_symptomatic_{age}_{region} (P_{age}::{region})  (Sys_preD_{age}::{region})  (* Ksys P_{age}::{region}))
+(reaction mild_symptomatic_{age}_{region} (P_{age}::{region})  (Sym_preD_{age}::{region}) (* Ksym{age} P_{age}::{region}))
+(reaction severe_symptomatic_{age}_{region} (P_{age}::{region})  (Sys_preD_{age}::{region})  (* Ksys{age} P_{age}::{region}))
 																   
 ; never detected 
 (reaction mild_symptomatic_undet_{age}_{region} (Sym_preD_{age}::{region})  (Sym_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} (- 1 d_Sym)))
@@ -657,8 +657,8 @@ def write_reactions(age, region, expandModel=None):
 (reaction severe_symptomatic_det_{age}_{region} (Sys_preD_{age}::{region})  (Sys_det3a_{age}::{region})  (* Ksys_D Sys_preD_{age}::{region} d_Sys))
 
 ; developing symptoms - already detected, same time to symptoms as in master emodl
-(reaction mild_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sym_det2b_{age}::{region}) (* Ksym  P_det_{age}::{region}))
-(reaction severe_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sys_det3b_{age}::{region})  (* Ksys  P_det_{age}::{region} ))
+(reaction mild_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sym_det2b_{age}::{region}) (* Ksym{age}  P_det_{age}::{region}))
+(reaction severe_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sys_det3b_{age}::{region})  (* Ksys{age}  P_det_{age}::{region} ))
 
 (reaction hospitalization_1_{age}_{region}  (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1_D{age} Sys_{age}::{region}))
 (reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2_D{age} Sys_{age}::{region}))
