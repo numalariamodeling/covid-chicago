@@ -98,7 +98,7 @@ sampled_parameters:
       function_kwargs: {'low':0.7, 'high': 0.9}
     EMS_9:
       np.random: uniform
-       function_kwargs: {'low':0.7, 'high': 0.9}
+      function_kwargs: {'low':0.7, 'high': 0.9}
     EMS_10:
       np.random: uniform
       function_kwargs: {'low':0.7, 'high': 0.9}
