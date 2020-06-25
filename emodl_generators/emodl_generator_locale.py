@@ -96,9 +96,9 @@ def write_observe(grp, expandModel=None):
 (observe asymp_cumul_{grpout} asymp_cumul_{grp} )
 (observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
 (observe symp_mild_cumul_{grpout} symp_mild_cumul_{grp})
-                                                                           
+
 (observe symp_severe_cumul_{grpout} symp_severe_cumul_{grp})
-                                                                                                                                                                                      
+ 
 (observe hosp_cumul_{grpout} hosp_cumul_{grp})
 (observe hosp_det_cumul_{grpout} hosp_det_cumul_{grp} )
 (observe crit_cumul_{grpout} crit_cumul_{grp})
@@ -114,12 +114,34 @@ def write_observe(grp, expandModel=None):
 (observe detected_{grpout} detected_{grp})
 (observe detected_cumul_{grpout} detected_cumul_{grp} )
 
-(observe Ki_{grpout} Ki_{grp})
 """.format(grpout=grpout, grp=grp)
     
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
+### Monitor time varying parameters
+def write_observed_param(grpList):
+    observed_param_str = """  
+(observe d_As_t d_As)
+(observe d_P_t d_P)
+(observe d_Sym_t d_Sym)
+(observe d_Sys_t d_Sys)
+"""
+
+## If grp specific parameters  change over time and should be tracked
+    observed_ageparam_str=""
+    for grp in grpList:
+        grp = str(grp)
+        grpout = sub(grp)
+        temp_str = """
+(observe Ki_{grpout} Ki_{grp})
+""".format(grpout=grpout, grp=grp)
+        observed_ageparam_str = observed_ageparam_str + temp_str
+
+    observed_param_str = observed_param_str + "\n" + observed_ageparam_str
+    
+    return observed_param_str
+    
 
 def write_functions(grp, expandModel=None):
     grp = str(grp)
@@ -314,24 +336,6 @@ def write_migration_param(grpList) :
             #x1_i=1
             param_str = param_str + """\n(param toEMS_{x1_i}_from_EMS_{x2_i} @toEMS_{x1_i}_from_EMS_{x2_i}@)""".format(x1_i=x1_i, x2_i=x2_i)
     return (param_str)
-
-
-def write_travel_reaction_chunk(grpList,travelspeciesList=None) :
-    x1 = range(1, len(grpList) + 1)
-    x2 = range(1, len(grpList) + 1)
-    reaction_str = ""
-    if travelspeciesList ==None:
-        travelspeciesList = ["S","E","As","P"]
-
-    for x1_i in x1 :
-        reaction_str = reaction_str + "\n"
-        for travelspecies in travelspeciesList:
-            reaction_str = reaction_str + "\n"
-            for x2_i in x2 :
-                #x1_i=1
-                reaction_str = reaction_str + """\n(reaction {travelspecies}_travel_EMS_{x2_i}to{x1_i}  ({travelspecies}::EMS_{x2_i}) ({travelspecies}::EMS_{x1_i}) (* {travelspecies}::EMS_{x2_i} toEMS_{x1_i}_from_EMS_{x2_i} (/ N_EMS_{x2_i} (+ S::EMS_{x2_i} E::EMS_{x2_i} As::EMS_{x2_i} P::EMS_{x2_i} recovered_EMS_{x2_i}))))""".format(travelspecies=travelspecies, x1_i=x1_i, x2_i=x2_i)
-
-    return (reaction_str)
 
 
 def write_travel_reaction(grp, travelspeciesList=None):
@@ -720,7 +724,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
         functions_string = functions_string + functions
         param_string = param_string + write_Ki_timevents(grp)
 
-    param_string =  write_params(expandModel) + param_string + write_N_population(grpList)
+    param_string =  write_params(expandModel) + param_string + write_observed_param(grpList) +  write_N_population(grpList)
     if(add_migration) :
         param_string = param_string + write_migration_param(grpList)
     functions_string = functions_string + write_All(grpList)
