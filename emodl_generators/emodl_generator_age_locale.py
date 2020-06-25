@@ -555,17 +555,17 @@ def write_reactions(age, region, expandModel=None):
 #""".format(age=age, region=region)
 
     reaction_str_III = """
-(reaction recovery_H1_{age}_{region}   (H1_{age}::{region})   (RH1_{age}::{region})   (* Kr_h H1_{age}::{region}))
+(reaction recovery_H1_{age}_{region}   (H1_{age}::{region})   (RH1_{age}::{region})   (* Kr_h{age} H1_{age}::{region}))
 (reaction recovery_C2_{age}_{region}   (C2_{age}::{region})   (RC2_{age}::{region})   (* Kr_c C2_{age}::{region}))
-(reaction recovery_H1_det3_{age}_{region}   (H1_det3_{age}::{region})   (RH1_det3_{age}::{region})   (* Kr_h H1_det3_{age}::{region}))
+(reaction recovery_H1_det3_{age}_{region}   (H1_det3_{age}::{region})   (RH1_det3_{age}::{region})   (* Kr_h{age} H1_det3_{age}::{region}))
 (reaction recovery_C2_det3_{age}_{region}   (C2_det3_{age}::{region})   (RC2_det3_{age}::{region})   (* Kr_c C2_det3_{age}::{region}))
     """.format(age=age, region=region)
 
     expand_base_str = """
-(reaction infection_asymp_undet_{age}_{region}  (E_{age}::{region})   (As_{age}::{region})   (* Kl E_{age}::{region} (- 1 d_As)))
-(reaction infection_asymp_det_{age}_{region}  (E_{age}::{region})   (As_det1_{age}::{region})   (* Kl E_{age}::{region} d_As))
-(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks E_{age}::{region} (- 1 d_P)))
-(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_det_{age}::{region})   (* Ks E_{age}::{region} d_P))
+(reaction infection_asymp_undet_{age}_{region}  (E_{age}::{region})   (As_{age}::{region})   (* Kl{age} E_{age}::{region} (- 1 d_As)))
+(reaction infection_asymp_det_{age}_{region}  (E_{age}::{region})   (As_det1_{age}::{region})   (* Kl{age} E_{age}::{region} d_As))
+(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks{age} E_{age}::{region} (- 1 d_P)))
+(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_det_{age}::{region})   (* Ks{age} E_{age}::{region} d_P))
 
 (reaction mild_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sym_{age}::{region}) (* Ksym P_{age}::{region} (- 1 d_Sym)))
 (reaction mild_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym P_{age}::{region} d_Sym))
@@ -575,16 +575,16 @@ def write_reactions(age, region, expandModel=None):
 (reaction mild_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym P_det_{age}::{region}))
 (reaction severe_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys P_det_{age}::{region} ))
 
-(reaction hospitalization_1_{age}_{region}   (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1 Sys_{age}::{region}))
-(reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2 Sys_{age}::{region}))
-(reaction hospitalization_3_{age}_{region}   (Sys_{age}::{region})   (H3_{age}::{region})   (* Kh3 Sys_{age}::{region}))
+(reaction hospitalization_1_{age}_{region}   (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1{age} Sys_{age}::{region}))
+(reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2{age} Sys_{age}::{region}))
+(reaction hospitalization_3_{age}_{region}   (Sys_{age}::{region})   (H3_{age}::{region})   (* Kh3{age} Sys_{age}::{region}))
 (reaction critical_2_{age}_{region}   (H2_{age}::{region})   (C2_{age}::{region})   (* Kc H2_{age}::{region}))
 (reaction critical_3_{age}_{region}   (H3_{age}::{region})   (C3_{age}::{region})   (* Kc H3_{age}::{region}))
 (reaction death_{age}_{region}   (C3_{age}::{region})   (D3_{age}::{region})   (* Km C3_{age}::{region}))
 
-(reaction hospitalization_1_det_{age}_{region}   (Sys_det3_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1 Sys_det3_{age}::{region}))
-(reaction hospitalization_2_det_{age}_{region}   (Sys_det3_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2 Sys_det3_{age}::{region}))
-(reaction hospitalization_3_det_{age}_{region}   (Sys_det3_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3 Sys_det3_{age}::{region}))
+(reaction hospitalization_1_det_{age}_{region}   (Sys_det3_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1{age} Sys_det3_{age}::{region}))
+(reaction hospitalization_2_det_{age}_{region}   (Sys_det3_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2{age} Sys_det3_{age}::{region}))
+(reaction hospitalization_3_det_{age}_{region}   (Sys_det3_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3{age} Sys_det3_{age}::{region}))
 (reaction critical_2_det2_{age}_{region}   (H2_det3_{age}::{region})   (C2_det3_{age}::{region})   (* Kc H2_det3_{age}::{region}))
 (reaction critical_3_det2_{age}_{region}   (H3_det3_{age}::{region})   (C3_det3_{age}::{region})   (* Kc H3_det3_{age}::{region}))
 (reaction death_det3_{age}_{region}   (C3_det3_{age}::{region})   (D3_det3_{age}::{region})   (* Km C3_det3_{age}::{region}))
@@ -598,9 +598,9 @@ def write_reactions(age, region, expandModel=None):
 
 
     expand_testDelay_SymSys_str = """
-(reaction infection_asymp_undet_{age}_{region}  (E_{age}::{region})   (As_{age}::{region})   (* Kl E_{age}::{region} (- 1 d_As)))
-(reaction infection_asymp_det_{age}_{region}  (E_{age}::{region})   (As_det1_{age}::{region})   (* Kl E_{age}::{region} d_As))
-(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks E_{age}::{region}))
+(reaction infection_asymp_undet_{age}_{region}  (E_{age}::{region})   (As_{age}::{region})   (* Kl{age} E_{age}::{region} (- 1 d_As)))
+(reaction infection_asymp_det_{age}_{region}  (E_{age}::{region})   (As_det1_{age}::{region})   (* Kl{age} E_{age}::{region} d_As))
+(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks{age} E_{age}::{region}))
 
 ; developing symptoms - same time to symptoms as in master emodl
 (reaction mild_symptomatic_{age}_{region} (P_{age}::{region})  (Sym_preD_{age}::{region}) (* Ksym P_{age}::{region}))
@@ -614,16 +614,16 @@ def write_reactions(age, region, expandModel=None):
 (reaction mild_symptomatic_det_{age}_{region} (Sym_preD_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} d_Sym))
 (reaction severe_symptomatic_det_{age}_{region} (Sys_preD_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys_D Sys_preD_{age}::{region} d_Sys))
 
-(reaction hospitalization_1_{age}_{region}   (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1_D Sys_{age}::{region}))
-(reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2_D Sys_{age}::{region}))
-(reaction hospitalization_3_{age}_{region}   (Sys_{age}::{region})   (H3_{age}::{region})   (* Kh3_D Sys_{age}::{region}))
+(reaction hospitalization_1_{age}_{region}   (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1_D{age} Sys_{age}::{region}))
+(reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2_D{age} Sys_{age}::{region}))
+(reaction hospitalization_3_{age}_{region}   (Sys_{age}::{region})   (H3_{age}::{region})   (* Kh3_D{age} Sys_{age}::{region}))
 (reaction critical_2_{age}_{region}   (H2_{age}::{region})   (C2_{age}::{region})   (* Kc H2_{age}::{region}))
 (reaction critical_3_{age}_{region}   (H3_{age}::{region})   (C3_{age}::{region})   (* Kc H3_{age}::{region}))
 (reaction death_{age}_{region}   (C3_{age}::{region})   (D3_{age}::{region})   (* Km C3_{age}::{region}))
 
-(reaction hospitalization_1_det_{age}_{region}   (Sys_det3_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1_D Sys_det3_{age}::{region}))
-(reaction hospitalization_2_det_{age}_{region}   (Sys_det3_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2_D Sys_det3_{age}::{region}))
-(reaction hospitalization_3_det_{age}_{region}   (Sys_det3_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3_D Sys_det3_{age}::{region}))
+(reaction hospitalization_1_det_{age}_{region}   (Sys_det3_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1_D{age} Sys_det3_{age}::{region}))
+(reaction hospitalization_2_det_{age}_{region}   (Sys_det3_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2_D{age} Sys_det3_{age}::{region}))
+(reaction hospitalization_3_det_{age}_{region}   (Sys_det3_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3_D{age} Sys_det3_{age}::{region}))
 (reaction critical_2_det2_{age}_{region}   (H2_det3_{age}::{region})   (C2_det3_{age}::{region})   (* Kc H2_det3_{age}::{region}))
 (reaction critical_3_det2_{age}_{region}   (H3_det3_{age}::{region})   (C3_det3_{age}::{region})   (* Kc H3_det3_{age}::{region}))
 (reaction death_det3_{age}_{region}   (C3_det3_{age}::{region})   (D3_det3_{age}::{region})   (* Km C3_det3_{age}::{region}))
@@ -637,12 +637,12 @@ def write_reactions(age, region, expandModel=None):
 
 
     expand_testDelay_AsSymSys_str = """
-(reaction infection_asymp_det_{age}_{region}  (E_{age}::{region})   (As_preD_{age}::{region})   (* Kl E_{age}::{region}))
+(reaction infection_asymp_det_{age}_{region}  (E_{age}::{region})   (As_preD_{age}::{region})   (* Kl{age} E_{age}::{region}))
 (reaction infection_asymp_undet_{age}_{region}  (As_preD_{age}::{region})   (As_{age}::{region})   (* Kl_D As_preD_{age}::{region} (- 1 d_As)))
 (reaction infection_asymp_det_{age}_{region}  (As_preD_{age}::{region})   (As_det1_{age}::{region})   (* Kl_D As_preD_{age}::{region} d_As))
 
-(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks  E_{age}::{region} (- 1 d_P)))
-(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_det_{age}::{region})   (* Ks  E_{age}::{region} d_P))
+(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks{age}  E_{age}::{region} (- 1 d_P)))
+(reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_det_{age}::{region})   (* Ks{age}  E_{age}::{region} d_P))
 
 ; developing symptoms - same time to symptoms as in master emodl
 (reaction mild_symptomatic_{age}_{region} (P_{age}::{region})  (Sym_preD_{age}::{region}) (* Ksym P_{age}::{region}))
@@ -660,20 +660,20 @@ def write_reactions(age, region, expandModel=None):
 (reaction mild_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sym_det2b_{age}::{region}) (* Ksym  P_det_{age}::{region}))
 (reaction severe_symptomatic_det_{age}_{region} (P_det_{age}::{region})  (Sys_det3b_{age}::{region})  (* Ksys  P_det_{age}::{region} ))
 
-(reaction hospitalization_1_{age}_{region}  (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1_D Sys_{age}::{region}))
-(reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2_D Sys_{age}::{region}))
-(reaction hospitalization_3_{age}_{region}   (Sys_{age}::{region})   (H3_{age}::{region})   (* Kh3_D Sys_{age}::{region}))
+(reaction hospitalization_1_{age}_{region}  (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1_D{age} Sys_{age}::{region}))
+(reaction hospitalization_2_{age}_{region}   (Sys_{age}::{region})   (H2_{age}::{region})   (* Kh2_D{age} Sys_{age}::{region}))
+(reaction hospitalization_3_{age}_{region}   (Sys_{age}::{region})   (H3_{age}::{region})   (* Kh3_D{age} Sys_{age}::{region}))
 (reaction critical_2_{age}_{region}  (H2_{age}::{region})   (C2_{age}::{region})   (* Kc H2_{age}::{region}))
 (reaction critical_3_{age}_{region}   (H3_{age}::{region})   (C3_{age}::{region})   (* Kc H3_{age}::{region}))
 (reaction death_{age}_{region}   (C3_{age}::{region})   (D3_{age}::{region})   (* Km C3_{age}::{region}))
 
-(reaction hospitalization_1_det_{age}_{region}   (Sys_det3a_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1_D Sys_det3a_{age}::{region}))
-(reaction hospitalization_2_det_{age}_{region}   (Sys_det3a_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2_D Sys_det3a_{age}::{region}))
-(reaction hospitalization_3_det_{age}_{region}   (Sys_det3a_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3_D Sys_det3a_{age}::{region}))
+(reaction hospitalization_1_det_{age}_{region}   (Sys_det3a_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1_D{age} Sys_det3a_{age}::{region}))
+(reaction hospitalization_2_det_{age}_{region}   (Sys_det3a_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2_D{age} Sys_det3a_{age}::{region}))
+(reaction hospitalization_3_det_{age}_{region}   (Sys_det3a_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3_D{age} Sys_det3a_{age}::{region}))
 
-(reaction hospitalization_1_det_{age}_{region}   (Sys_det3b_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1 Sys_det3b_{age}::{region}))
-(reaction hospitalization_2_det_{age}_{region}   (Sys_det3b_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2 Sys_det3b_{age}::{region}))
-(reaction hospitalization_3_det_{age}_{region}   (Sys_det3b_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3 Sys_det3b_{age}::{region}))
+(reaction hospitalization_1_det_{age}_{region}   (Sys_det3b_{age}::{region})   (H1_det3_{age}::{region})   (* Kh1{age} Sys_det3b_{age}::{region}))
+(reaction hospitalization_2_det_{age}_{region}   (Sys_det3b_{age}::{region})   (H2_det3_{age}::{region})   (* Kh2{age} Sys_det3b_{age}::{region}))
+(reaction hospitalization_3_det_{age}_{region}   (Sys_det3b_{age}::{region})   (H3_det3_{age}::{region})   (* Kh3{age} Sys_det3b_{age}::{region}))
 
 (reaction critical_2_det2_{age}_{region}   (H2_det3_{age}::{region})   (C2_det3_{age}::{region})   (* Kc H2_det3_{age}::{region}))
 (reaction critical_3_det2_{age}_{region}   (H3_det3_{age}::{region})   (C3_det3_{age}::{region})   (* Kc H3_det3_{age}::{region}))
