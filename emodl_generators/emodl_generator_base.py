@@ -296,7 +296,7 @@ def write_params(expandModel=None):
     return (params_str)
 
 ### Monitor time varying parameters
-def write_observed_param(grpList):
+def write_observed_param():
     observed_param_str = """  
 (observe Ki_t Ki)
 (observe d_As_t d_As)
@@ -556,7 +556,7 @@ def write_interventions( total_string, scenarioName, expandModel, change_testDel
         if change_testDelay == "Sys"  :
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sys_str )
         if change_testDelay == "AsSym"  :
-            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sys_str )
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sym_str )
         if change_testDelay == "SymSys" :
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
         if change_testDelay == "AsP" :
