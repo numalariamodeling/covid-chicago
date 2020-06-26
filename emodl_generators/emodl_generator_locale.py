@@ -179,8 +179,8 @@ def write_functions(grp, expandModel=None):
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 
-(func infectious_det_symp{grp} (+ Sym_det2::{grp} Sys_det3::{grp} ))
-(func infectious_det_AsP{grp} (+ As_det1::{grp} P_det::{grp}))
+(func infectious_det_symp_{grp} (+ Sym_det2::{grp} Sys_det3::{grp} ))
+(func infectious_det_AsP_{grp} (+ As_det1::{grp} P_det::{grp}))
 """.format(grp=grp)
 
 
@@ -192,8 +192,8 @@ def write_functions(grp, expandModel=None):
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 
-(func infectious_det_symp{grp} (+ Sym_det2::{grp} Sys_det3::{grp} ))
-(func infectious_det_AsP{grp} (+ As_det1::{grp} P_det::{grp}))
+(func infectious_det_symp_{grp} (+ Sym_det2::{grp} Sys_det3::{grp} ))
+(func infectious_det_AsP_{grp} (+ As_det1::{grp} P_det::{grp}))
 """.format(grp=grp)
 
 
@@ -205,8 +205,8 @@ def write_functions(grp, expandModel=None):
 (func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 
-(func infectious_det_symp{grp} (+ Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp} ))
-(func infectious_det_AsP{grp} (+ As_det1::{grp} P_det::{grp}))
+(func infectious_det_symp_{grp} (+ Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp} ))
+(func infectious_det_AsP_{grp} (+ As_det1::{grp} P_det::{grp}))
 """.format(grp=grp)
 
 
@@ -440,7 +440,7 @@ def write_reactions(grp, expandModel=None):
     grp = str(grp)
 
     reaction_str_I = """
-(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_{grp} (* infectious_det_symp{grp} reduced_inf_of_det_cases) (* infectious_det_AsP{grp} reduced_inf_of_det_cases_ct)) N_{grp} )))
+(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_{grp} (* infectious_det_symp_{grp} reduced_inf_of_det_cases) (* infectious_det_AsP_{grp} reduced_inf_of_det_cases_ct)) N_{grp} )))
 """.format(grp=grp)
 
     reaction_str_III = """
