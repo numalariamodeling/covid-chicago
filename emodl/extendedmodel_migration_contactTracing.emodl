@@ -96,9 +96,9 @@
 (observe asymp_cumul asymp_cumul )
 (observe asymp_det_cumul asymp_det_cumul)
 (observe symp_mild_cumul symp_mild_cumul)
-                                      
+
 (observe symp_severe_cumul symp_severe_cumul)
-                                                                                           
+
 (observe hosp_cumul hosp_cumul)
 (observe hosp_det_cumul hosp_det_cumul )
 (observe crit_cumul crit_cumul)
@@ -174,6 +174,12 @@
 (param Kl_D (/ 1 time_D_As))
 (param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
 
+  
+(observe Ki_t Ki)
+(observe d_As_t d_As)
+(observe d_P_t d_P)
+(observe d_Sym_t d_Sym)
+(observe d_Sys_t d_Sys)
 
 (param N (+ @speciesS@ @initialAs@) )
 
