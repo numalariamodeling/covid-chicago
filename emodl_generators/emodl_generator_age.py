@@ -738,7 +738,7 @@ def write_agespecific_interventions(grp, total_string, expandModel, change_testD
         if change_testDelay == "Sys"  :
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sys_str )
         if change_testDelay == "AsSym"  :
-            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sys_str )
+            total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sym_str )
         if change_testDelay == "SymSys" :
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
         if change_testDelay == "AsSymSys"  :
