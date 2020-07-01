@@ -187,8 +187,8 @@ def compare_ems(exp_name, ems=0, source='EMR') :
     #plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
                      #plot_path=plot_path, first_day=first_day)
     #plt.show()
-    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200608_jg_deceased_date_ems.csv'))
-    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200608_jg_admission_date_ems.csv'))
+    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200629_jg_deceased_date_ems.csv'))
+    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200629_jg_admission_date_ems.csv'))
     if ems > 0 :
         ref_df1 = ref_df1[ref_df1['EMS'] == ems]
         ref_df2 = ref_df2[ref_df2['EMS'] == ems]
