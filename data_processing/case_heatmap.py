@@ -12,7 +12,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'LL_200622_JGcleaned_no_race.csv')
+                                       'LL_200629_JGcleaned_no_race.csv')
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs')
@@ -65,5 +65,5 @@ if __name__ == '__main__' :
         ax = fig.add_subplot(1,len(cols),c+1)
         make_heatmap(ax, adf, col)
 
-    plt.savefig(os.path.join(plot_path, 'EMS_cases_deaths_heatmap_200622LL.png'))
+    plt.savefig(os.path.join(plot_path, 'EMS_cases_deaths_heatmap_200629LL.png'))
     plt.show()
