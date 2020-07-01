@@ -6,7 +6,7 @@
 
 ### 1.1 Compartmental model structure (emodl file)
 A basic SEIR model was extended to include symptom status (asymptomatic, presymptomatic, mild and severe symptoms), hospitalization, critical illness, and deaths, while allowing to track detected and undetected cases separately.
-![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure_testDelay.png)
+![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure.png)
 
 
 ## 1.2. Software used
@@ -15,13 +15,17 @@ The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.htm
 ## 1.2. Updates 
 
 ### Main updates in model structure and fitted parameters
+- 20200624 updated parameter fit
+- 20200622 adjusted increase in detection for severe and mild symptomatic cases 
+- 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
+- 20200616 updated parameter fit 
 - 20200610 updated parameter fit 
 - 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
 - 20200602 updated parameter fit 
 - 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
 - 20200521 added s_m_4, parameter fitting
 - 20200515 parameter fitting (also 20200512, 20200501)
-- 20200428 Model disease and transmission parameters (previously 20200421, 20200419)
+- 20200428 updated model disease and transmission parameters (previously 20200421, 20200419)
 - 20200428 added d_Sys_incr1-3  
 - 20200421 adding scale-invariant Ki
 - 20200407 add more detected observables
