@@ -18,7 +18,8 @@ today = datetime.today()
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 plotdir = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
 
-if __name__ == '__main__' :
+
+def plot_emresource(scale='') :
 
     ems_regions = {
         'northcentral' : [1, 2],
@@ -43,10 +44,11 @@ if __name__ == '__main__' :
         'confirmed_covid_deaths_prev_24h' : 'deaths',
         'confirmed_covid_icu' : 'ICU conf',
         'confirmed_covid_on_vents' : 'vents conf',
-        'suspected_and_confirmed_covid_icu' : 'ICU conf+susp'
+        'suspected_and_confirmed_covid_icu' : 'ICU conf+susp',
+        'covid_non_icu' : 'non ICU'
     })
 
-    channels = ['ICU conf+susp', 'ICU conf', 'vents conf', 'deaths']
+    channels = ['ICU conf+susp', 'ICU conf', 'vents conf', 'deaths', 'non ICU']
     ref_df = ref_df[['date', 'region'] + channels]
 
     palette = load_color_palette('wes')
@@ -60,15 +62,19 @@ if __name__ == '__main__' :
         ax.set_xlim(xmin, )
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_yscale('log')
-
+        if scale == 'log' :
+            ax.set_yscale('log')
 
     for ri, (restore_region, ems_list) in enumerate(ems_regions.items()) :
         ax_all = fig_all.add_subplot(2,2,ri+1)
         ax = fig.add_subplot(4,6,6*ri+1)
 
-        df = ref_df[ref_df['region'].isin(ems_list)].groupby('date').agg(np.sum).reset_index()
+        pdf = ref_df[ref_df['region'].isin(ems_list)].groupby('date').agg(np.sum).reset_index()
         for (c,name) in enumerate(channels):
+            if name == 'non ICU' :
+                df = pdf[pdf['date'] >= date(2020,5,6)]
+            else :
+                df = pdf
             df['moving_ave'] = df[name].rolling(window = 7, center=True).mean()
             ax_all.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
             ax_all.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
@@ -95,8 +101,14 @@ if __name__ == '__main__' :
             if ems == 2 :
                 ax.legend(bbox_to_anchor=(1.5, 1))
 
-    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region.png'))
-    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region.pdf'), format='PDF')
-    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region.png'))
-    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region.pdf'), format='PDF')
+    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.png' % scale))
+    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.pdf' % scale), format='PDF')
+    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region_%s.png' % scale))
+    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region_%s.pdf' % scale), format='PDF')
+
+
+if __name__ == '__main__' :
+
+    plot_emresource('nolog')
+    plot_emresource('log')
     plt.show()
