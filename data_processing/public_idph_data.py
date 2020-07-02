@@ -24,16 +24,43 @@ shp_path = os.path.join(datapath, 'shapefiles')
 
 def plot_IL_cases() :
 
-    IL_fname = os.path.join(datapath, 'Corona virus reports', 'covid_tracking_project_200505.csv')
-    df = pd.read_csv(IL_fname)
-    df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
+    IL_fname = os.path.join(datapath, 'Corona virus reports', 'illinois_public.csv')
+    df = pd.read_csv(IL_fname, parse_dates=['update_date'])
+    df = df.rename(columns={'update_date' : 'date'})
+    df = df.sort_values(by='date')
+    df = df.fillna(0)
 
-    fig = plt.figure()
-    ax = fig.gca()
-    ax.plot(df['date'], df['positive'], label='positives')
-    ax.plot(df['date'], df['death'], label='death')
-    ax.legend()
     formatter = mdates.DateFormatter("%m-%d")
+    sns.set_style('whitegrid', {'axes.linewidth' : 0.5})
+    fig = plt.figure(figsize=(10,6))
+    fig.subplots_adjust(left=0.07, right=0.97)
+
+    ax = fig.add_subplot(3,1,1)
+    df['daily_pos'] = np.insert(np.diff(df['tests_pos']), 0, 0)
+    ax.bar(df['date'].values[1:], np.diff(df['tests_pos']),
+           align='center', color='#a187be', linewidth=0)
+    df['moving_ave'] = df['daily_pos'].rolling(window=7, center=True).mean()
+    ax.plot(df['date'], df['moving_ave'], '-', color='#414042')
+    ax.set_ylabel('positives')
+    ax.xaxis.set_major_formatter(formatter)
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+
+    ax = fig.add_subplot(3,1,2)
+    ax.bar(df['date'].values[1:], df['new_tests'][1:],
+           align='center', color='#7AC4AD', linewidth=0)
+    df['moving_ave'] = df['new_tests'].rolling(window=7, center=True).mean()
+    ax.plot(df['date'], df['moving_ave'], '-', color='#414042')
+    ax.set_ylabel('tests')
+    ax.xaxis.set_major_formatter(formatter)
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+
+    ax = fig.add_subplot(3,1,3)
+    ax.bar(df['date'].values[1:], np.diff(df['deaths']),
+           align='center', color='#fbb46c', linewidth=0)
+    df['daily_death'] = np.insert(np.diff(df['deaths']), 0, 0)
+    df['moving_ave'] = df['daily_death'].rolling(window=7, center=True).mean()
+    ax.plot(df['date'], df['moving_ave'], '-', color='#414042')
+    ax.set_ylabel('deaths')
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
     plt.savefig(os.path.join(plot_dir, 'idph_public_cases_and_deaths.pdf'), format='PDF')
@@ -47,7 +74,7 @@ def plot_cases_by_county() :
 
     df = pd.read_csv(county_fname)
     df['update_date'] = pd.to_datetime(df['update_date'])
-    df = df[df['update_date'] == date(2020, 5, 5)]
+    df = df[df['update_date'] == date(2020, 6, 8)]
     df = df[~df['NOFO_Region'].isin(['Illinois', 'Out Of State', 'Unassigned'])]
 
     sdf = df[df['County'] == 'Chicago']
@@ -90,8 +117,9 @@ def plot_cases_by_county() :
 
     plt.savefig(os.path.join(plot_dir, 'maps', 'idph_public_by_county.pdf'), format='PDF')
 
+
 if __name__ == '__main__' :
 
-    # plot_IL_cases()
-    plot_cases_by_county()
+    plot_IL_cases()
+    # plot_cases_by_county()
     plt.show()

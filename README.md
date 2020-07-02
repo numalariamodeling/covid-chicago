@@ -15,6 +15,7 @@ The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.htm
 ## 1.2. Updates 
 
 ### Main updates in model structure and fitted parameters
+- 20200624 updated parameter fit
 - 20200622 adjusted increase in detection for severe and mild symptomatic cases 
 - 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
 - 20200616 updated parameter fit 
