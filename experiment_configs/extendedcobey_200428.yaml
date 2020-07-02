@@ -29,16 +29,16 @@ fixed_parameters_region_specific:
     # 'EMS_1': [2020-02-26, 2020-02-28]
     # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.                                                           
     'EMS_1': 2020-02-26       
-    'EMS_2': 2020-02-26  
-    'EMS_3': 2020-02-20     
-    'EMS_4': 2020-02-22  
-    'EMS_5': 2020-02-28     
-    'EMS_6': 2020-02-27  
-    'EMS_7': 2020-02-19           
+    'EMS_2': 2020-02-25  
+    'EMS_3': 2020-02-16     
+    'EMS_4': 2020-02-18  
+    'EMS_5': 2020-02-22     
+    'EMS_6': 2020-02-21  
+    'EMS_7': 2020-02-16           
     'EMS_8': 2020-02-24       
-    'EMS_9': 2020-02-22        
-    'EMS_10': 2020-02-21      
-    'EMS_11': 2020-02-25       
+    'EMS_9': 2020-02-25        
+    'EMS_10': 2020-02-20      
+    'EMS_11': 2020-02-22       
 fixed_parameters_global:
 sampled_parameters:
   'time_to_infectious':
@@ -171,7 +171,7 @@ intervention_parameters:
   'backtonormal_multiplier':
     np.random: uniform
     # Add 'size' in function_kwargs to have multiple values instead of just one
-    function_kwargs: {'low':0.30, 'high':0.30}
+    function_kwargs: {'low':0.10, 'high':0.10}
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
     np.random: uniform
@@ -191,7 +191,7 @@ intervention_parameters:
     function_kwargs: {'low':0, 'high':0}
   'd_Sym_ct1':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
+    function_kwargs: {'low':0.170, 'high':0.170}
   'change_testDelay_As_1':
     np: linspace
     function_kwargs: {'start':2, 'stop':7, 'num' : 1}
@@ -224,7 +224,7 @@ time_parameters:
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-07-01}
   ### Gradual reopening (time-wise)
   'gradual_reopening_time1':
     custom_function: DateToTimestep

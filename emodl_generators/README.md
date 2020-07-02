@@ -23,18 +23,12 @@ Optional compartment + parameter additions
 #### emodl_generator_base.py
 - Generates emodl files without any age groups 
 
-#### emodl_generator_cobey_contact_mix.py
-- Generates emodl files for different age groups, currently "4grp" and "8grp"
-
-#### emodl_generator_cobey_contact_mix_agespecific_param.py
+#### emodl_generator_cobey_age.py
 - Generates emodl files for different age groups, currently "4grp" and "8grp" with age specific transmission and disease parameter
 - Eventually could be combined with  emodl_generator_cobey_contact_mix.py and having an option "age_specific=T"
 
-#### emodl_generator_EMSgroup.py
-- Generates emodl files without groups per EMS, referred to as 'lumped model' or 'EMS group'
-
-#### locale_emodl_generator_extendedModel.py
+#### emodl_generator_locale.py
 - Generates emodl files without 'locales' per EMS , referred to as spatial model or 'EMS locale'
 
-#### extended_cobey_age_locale_emodl_generator.py (testing)
+#### emodl_generator_age_locale.py (testing)
 - Generates emodl files with age groups per EMS (testing, not up to date) 
