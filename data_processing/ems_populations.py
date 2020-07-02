@@ -10,6 +10,7 @@ from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 datapath = os.path.join(datapath, 'covid_IDPH')
+census_path = os.path.join(datapath, 'census')
 shp_path = os.path.join(datapath, 'shapefiles')
 pop_path = os.path.join(datapath, 'rasters', 'IL_2018_synpop')
 
@@ -105,7 +106,50 @@ def ems_proportional_pop_by_county() :
     ems_county_df.to_csv(os.path.join(datapath, 'EMS Population', 'EMS_population_by_county.csv'), index=False)
 
 
+def ems_race_and_ethnicity_structure() :
+
+    ems_shp = gpd.read_file(os.path.join(shp_path, 'EMS_Regions', 'EMS_Regions.shp'))
+    cbg_shp = gpd.read_file(os.path.join(shp_path, 'tl_2016_17_bg', 'tl_2016_17_bg.shp'))
+
+    race_df = pd.read_csv(os.path.join(census_path, 'data', 'cbg_b02.csv'))
+    keep_race_cols = [x for x in race_df.columns.values if '1e' in x]
+    eth_df = pd.read_csv(os.path.join(census_path, 'data', 'cbg_b03.csv'))
+    keep_eth_cols = [x for x in eth_df.columns.values if '2e' in x]
+
+    ems_race_df = pd.DataFrame()
+    ems_eth_df = pd.DataFrame()
+    for ems, ems_poly in zip(ems_shp['REGION'], ems_shp['geometry']) :
+        cbg_shp['in_ems'] = cbg_shp['geometry'].apply(lambda x: x.intersects(ems_poly))
+        tract_ids = cbg_shp[cbg_shp['in_ems']]['GEOID'].values
+
+        rdf = race_df[race_df['census_block_group'].isin(tract_ids)]
+        rdf['ems'] = ems
+        sdf = rdf.groupby('ems').agg(np.sum).reset_index()
+        sdf = sdf[['ems'] + keep_race_cols]
+        ems_race_df = pd.concat([ems_race_df, sdf])
+
+        rdf = eth_df[eth_df['census_block_group'].isin(tract_ids)]
+        rdf['ems'] = ems
+        sdf = rdf.groupby('ems').agg(np.sum).reset_index()
+        sdf = sdf[['ems'] + keep_eth_cols]
+        ems_eth_df = pd.concat([ems_eth_df, sdf])
+
+    colname_df = pd.read_csv(os.path.join(census_path, 'metadata', 'cbg_field_descriptions.csv'))
+    colname_df = colname_df.set_index('table_id')
+    ems_race_df = ems_race_df.rename(columns={
+        col : colname_df.at[col, 'field_full_name'] for col in keep_race_cols
+    })
+    ems_eth_df = ems_eth_df.rename(columns={
+        col : colname_df.at[col, 'field_full_name'] for col in keep_eth_cols
+    })
+
+    race_output_fname = os.path.join(datapath, 'EMS Population', 'EMS_population_by_race_cbg.csv')
+    eth_output_fname = os.path.join(datapath, 'EMS Population', 'EMS_population_by_eth_cbg.csv')
+
+    ems_race_df.to_csv(race_output_fname, index=False)
+    ems_eth_df.to_csv(eth_output_fname, index=False)
+
+
 if __name__ == '__main__' :
 
-    ems_proportional_pop_by_county()
-
+    ems_race_and_ethnicity_structure()

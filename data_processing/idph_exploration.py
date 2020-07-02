@@ -14,11 +14,11 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 line_list_fname = os.path.join(idph_data_path,
-                               'LL_200629.csv')
+                               'LL_200701.csv')
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'LL_200629_JGcleaned.csv')
+                                       'LL_200701_JGcleaned.csv')
 cleaned_deduped_fname = os.path.join(idph_data_path,
-                                     'LL_200629_JGcleaned_no_race.csv')
+                                     'LL_200701_JGcleaned_no_race.csv')
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs')
@@ -265,14 +265,14 @@ if __name__ == '__main__' :
     del df['race']
     del df['ethnicity']
     df = df.drop_duplicates()
-    # df.to_csv(cleaned_deduped_fname, index=False)
+    df.to_csv(cleaned_deduped_fname, index=False)
 
-    date_col = 'admission_date'
+    date_col = 'deceased_date'
     df = df.groupby([date_col, 'EMS'])['id'].agg(len).reset_index()
     df = df.rename(columns={'id' : 'cases',
                             date_col : 'date'})
     df = df.sort_values(by=['date', 'EMS'])
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200629_jg_%s_ems.csv' % date_col), index=False)
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200701_jg_%s_ems.csv' % date_col), index=False)
 
     # df.loc[df['county_at_onset'] == 'St Clair', 'county_at_onset'] = 'St. Clair'
     # df.loc[df['county_at_onset'] == 'Jodaviess', 'county_at_onset'] = 'Jo daviess'
