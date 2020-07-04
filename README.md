@@ -2,51 +2,17 @@
 
 
 
-# 1. General 
+# 1. Model overview
 
 ### 1.1 Compartmental model structure (emodl file)
-A basic SEIR model was extended to include symptom status (asymptomatic, presymptomatic, mild and severe symptoms), hospitalization, critical illness, and deaths, while allowing to track detected and undetected cases separately.
+A basic SEIR model was extended to include symptom status (asymptomatic, presymptomatic, mild and severe symptoms), hospitalization, critical illness, and deaths, while allowing to track detected and undetected cases separately. In the model, the susceptible population is exposed (infected) at a constant rate described by the transmission probability and contact rate with the infectious population. After latent period of few days, the exposed population becomes infectious and moves either to the asymptomatic or pre-symptomatic compartments. At the end of the incubation period pre-symptomatic population develops either mild or severe symptoms. Mild symptomatic cases recover at a similar rate as asymptomatic cases, while all severe symptomatic cases that ‘should’ need professional care move to the hospitalization compartment. Hospitalized cases either recover or develop critical illness and then recover, or die. Once recovered, we assume that the population stays immune throughout the simulation period. The asymptomatic presymptomatic, mild symptomatic, severe symptomatic infections, undetected hospitalized are the infectious compartments with reduced infectiousness for the detected sub-compartments due to self-isolation. We assume that hospitalized cases that are detected are not infectious. 
 ![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure.png)
 
+## 1.2. Model parameters
+Most of the parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. [UChicago](https://github.com/cobeylab/covid_IL/tree/master/Parameters)).
+The starting date, intervention effect size, and the transmission parameter "Ki"are fitted to death data.
 
-## 1.2. Software used
-The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html) is used to simulate the COVID-19 transmission and disease progression. The CMS language defines 5 main type: species, observations, reactions, parameters and functions, in addition time-events can be added as well as state-events. Multiple compartments, called ‘species’ can be defined. The movement of populations between compartments is called reaction. The model runs with different solvers, including spatial solvers. The model is written in ['emodl' files](https://idmod.org/docs/cms/input-files.html) and model configurations are written in ['cfg' files](https://idmod.org/docs/cms/input-files.html). The output is written into [trajectories.csv files](https://idmod.org/docs/cms/output.html?searchText=output).
-
-## 1.2. Updates 
-
-### Main updates in model structure and fitted parameters
-- 20200624 updated parameter fit
-- 20200622 adjusted increase in detection for severe and mild symptomatic cases 
-- 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
-- 20200616 updated parameter fit 
-- 20200610 updated parameter fit 
-- 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
-- 20200602 updated parameter fit 
-- 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
-- 20200521 added s_m_4, parameter fitting
-- 20200515 parameter fitting (also 20200512, 20200501)
-- 20200428 updated model disease and transmission parameters (previously 20200421, 20200419)
-- 20200428 added d_Sys_incr1-3  
-- 20200421 adding scale-invariant Ki
-- 20200407 add more detected observables
-- 20200402 [cobey](https://github.com/cobeylab/covid_IL) model implementation (including presymptomatic)
-- 20200402 [cobey](https://github.com/cobeylab/covid_IL) model implementation (including presymptomatic)
-
-
-### Resources 
-- CMS software publication [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
-- [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
-- [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
-- [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
-
-# 2. Model 
-The latest model description in emodl format is written in the [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl) file. Since early April,, the model includes modifications added in alignment with the COVID model from [a modelling team at the University of Chicago](https://github.com/cobeylab/covid_IL). 
-
-## 2.1. Model parameters
-Most of the parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. model from [UChicago](https://github.com/cobeylab/covid_IL)).
-The starting date, intervention effect size, and the transmission parameter "Ki"are fitted to the data.
-
-### 2.1.1 'reaction paramaters'
+### 1.2.1 'reaction paramaters'
 All the parameters are sampled from a uniform distribution as specified in the [experiment config (yaml) file ](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L43)
 
 | parameter | name                                                                         | 
@@ -70,7 +36,7 @@ All the parameters are sampled from a uniform distribution as specified in the [
 | Km        | Deaths                                                                       |   
 
 
-### 2.1.2  Time parameters (in days)
+### 1.2.2  Time parameters (in days)
 
 | parameter | name                                                                         | 
 |---------------------------|--------------------------------------------------------------|
@@ -87,49 +53,72 @@ All the parameters are sampled from a uniform distribution as specified in the [
 
 Note: Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
 
-### 2.1.3  time-varying parameters (intervention scenarios)
-The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-event) option in cms allows to change a paramter at a given time point (days) (which will stay constant afterwards if not resetted using a second time-event).
+### 1.2.3  time-varying parameters (intervention scenarios)
+The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-event) option in cms allows to change a paramter at a given time point (days) (which will stay constant afterwards if not resetted using a stop time-event).
 Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
 The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
 
 Current scenarios include:
-- No stay-at-home (counterfactual)
-- Continue stay-at-home
+- No stay-at-home 
+- Continued stay-at-home
 - Stop stay-at-home order - immediately
 - Stop stay-at-home order - step-wise 
-(- Contact tracing and increase in case detection (includes additional compartment for detection of presymptomatic cases))
+- Contact tracing - immediately
+- Contact tracing - step-wise
 
 For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
-## 2.2. Age-structured model 
+## 1.3. Age and spatial model structures
+
+### 1.3.1. Age-structured model 
 The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. 
 
-![model](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model_8grp.png)
-
-
-### 2.2.1. Age groups
-- Four age groups: "0to19", "20to39", "40to59", "60to100" 
-[(4grp emodl)](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age4.emodl)
--  Eight age groups: "0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100" 
-[(8grp emodl)](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age8.emodl)
+-  Age groups: "0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100" 
+[(emodl)](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age8.emodl)
 To generate or modify the emodl files use the [age specific emodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_cobey_contact_mix.py) 
 
-### 2.2.2. Contact matrix
+#### Contact matrix
 The contacts between age groups were previously extracted for running an [EMOD model](https://idmod.org/documentation) from [Prem et al 2017](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697). [Script that extracts the contact matrix values](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/age_contact/age_matrix_reducer.py). 
 
-## 2.3. Spatial model
+### 1.3.2. Spatial model
 The "spatial_model" uses a special syntax as described [here](https://idmod.org/docs/cms/create-spatial-model.html?searchText=spatial). 
 To generate or modify the emodl files use the [locale specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/locale_emodl_generator_extendedModel.py )
 - View the [EMS specific emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_locale_EMS.emodl)
 
-### 3.3.1. Movement between areas
+#### Movement between areas
 [...]
 
-## 2.4. Spatial age-structured model
+### 1.3.3. Spatial age-structured model
 A test verion is available under [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_locale_age_test.emodl).
 To generate or modify the emodl files use the [locale-age specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/extended_cobey_age_locale_emodl_generator.py )
 
-# 3 Run simulations 
+## 1.4. Model updates
+
+### Main updates in model structure and fitted parameters
+- 20200624 updated parameter fit
+- 20200622 adjusted increase in detection for severe and mild symptomatic cases 
+- 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
+- 20200616 updated parameter fit 
+- 20200610 updated parameter fit 
+- 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
+- 20200602 updated parameter fit 
+- 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
+- 20200521 added s_m_4, parameter fitting
+- 20200515 parameter fitting (also 20200512, 20200501)
+- 20200428 updated model disease and transmission parameters (previously 20200421, 20200419)
+- 20200428 added d_Sys_incr1-3  
+- 20200421 adding scale-invariant Ki
+- 20200407 add more detected observables
+- 20200402 [cobey](https://github.com/cobeylab/covid_IL) model alignment (including presymptomatic)
+- 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
+
+
+# 2. Software used
+The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html) is used to simulate the COVID-19 transmission and disease progression. The CMS language defines 5 main type: species, observations, reactions, parameters and functions, in addition time-events can be added as well as state-events. Multiple compartments, called ‘species’ can be defined. The movement of populations between compartments is called reaction. The model runs with different solvers, including spatial solvers. The model is written in ['emodl' files](https://idmod.org/docs/cms/input-files.html) and model configurations are written in ['cfg' files](https://idmod.org/docs/cms/input-files.html). The output is written into [trajectories.csv files](https://idmod.org/docs/cms/output.html?searchText=output).
+
+The latest model description in emodl format is written in the [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl) file. 
+
+## 2.1 Run simulations 
 The [runScenarios.py](runScenarios.py) is used to run multiple simulations
 given a configuration file with the parameters. The script builds off
 a default configuration file [extendedcobey.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml)
@@ -137,7 +126,7 @@ and substitutes parameters with the values/functions in the
 user-provided configuration file using the `@param@` placeholder. Multiple trajectories.csv that are produced per single simulation are combined into a trajectoriesDat.csv, used for postprocessing and plotting.
 
 
-## 3.1 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
+## 2.2 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
 The configuration file is in [YAML](https://yaml.org/) format and is divided into 5
 blocks: `experiment_setup_parameters`,
 `fixed_parameters_region_specific`, `fixed_parameters_global`,
@@ -150,7 +139,7 @@ allowing for more libraries in `generateParameterSamples` of [runScenarios.py](r
 Note that the user-supplied configuration file is used to provide
 *additional* or *updated* parameters from the base configutation file.
 
-## 3.2 Inputs:
+## 2.3 Inputs:
 - Running location: Where the simulation is being run (either `Local`
   or `NUCLUSTER`)
 - Region: The region of interest. (e.g. `EMS_1`, or `IL` for all EMS 1-11 inclued in the same model)
@@ -164,7 +153,7 @@ Note that the user-supplied configuration file is used to provide
 - Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
   parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
   
-## 3.3 Usage examples:
+## 2.4 Usage examples:
 - Using the default emodl template: `python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
@@ -175,7 +164,7 @@ Note that the user-supplied configuration file is used to provide
   --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
 
 
-## 3.4 Define age or region specific inputs 
+## 3.5 Define age or region specific inputs 
 The [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
 ### Region specific sample parameters (i.e. using estimates parameters per EMS regions)
@@ -185,16 +174,16 @@ The [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/c
 - `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
 Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
 
-## 3.5. Local environment setup
+## 3.6. Local environment setup
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
 Copy the `sample.env` file to `.env` and edit so that paths point as needed for your system.
 
-## 3.6. Running on OS X or Linux
+## 3.7. Running on OS X or Linux
 The CMS software is provided as a compiled Windows executable, but can be run on Unix-like systems via [`wine`](https://www.winehq.org/).
 If you do not have `wine` installed on your system, you can use the provided [Dockerfile](Dockerfile), which has `wine` baked in.
 To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in your environment or your `.env` file to use it.
 
-## 3.7 Running on Quest (NUCLUSTER) 
+## 3.8 Running on Quest (NUCLUSTER) 
 A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
 
 ### Requirements on quest 
@@ -218,6 +207,12 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - `dos2unix runSimulations.sh`  # converts windows format to linux format
 - `sbatch runSimulations.sh`  # submits the simulations as an array job , note maximum array <5000 scenarios. 
 
-# 4 Visualizing and analyzing results
+# 4 Visualizing and analyzing simulation outputs
 - see [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/)
 
+
+# Resources 
+- CMS software publication [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
+- [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
+- [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
+- [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
