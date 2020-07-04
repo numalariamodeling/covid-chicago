@@ -136,9 +136,9 @@ f_weighted.aggrDat <- function(dataframe, groupVars, valueVar, weightVar, WideTo
     dplyr::summarise(
       min.val 	= min(tempvar, na.rm = TRUE),
       max.val	= max(tempvar, na.rm = TRUE),
-      mean.val 	= wt.mean(tempvar, w),
+      mean.val 	= weighted.mean(tempvar, w),
       median.val	= weighted.median(tempvar, w),
-      sd.val		= wt.sd(tempvar,w),
+	  sd.val		= sqrt(sum(w * (tempvar - mean.val)^2)),
       n.val 		= n(),										 
       q25		= weighted.quantile(tempvar,w, probs=0.25),
       q75		= weighted.quantile(tempvar,w, probs=0.75),
