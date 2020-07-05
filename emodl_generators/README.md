@@ -1,25 +1,8 @@
 
-### Emodl generators
+## Emodl generators
 The python files in this sub-directory allow to create .emodl files using python!
 To avoid having to edit the experiment_config (yaml) files, different emodl files are generated per simulation scenario. 
 Currently the emodl files are generated independently of the runScenarios and emodls exist for all scenarios in the emodl-sub-directory.
-
-Currently added interventions: 
-- neverSIP
-- continuedSIP 
-- interventionStop 
-- gradual_reopen
-- increased testing
-- reduced test delays
-- contact_tracing 
-- gradual contact_tracing 
-And any combination of these
-
-Optional compartment + parameter additions 
-- none (base model)
-- P_det, d_P (required for contact tracing)
-- Sym_preD, Sys_preD, time_D, Ksys_D,Ksym_D  Kh1_D, Kh2_D, Kh3_D Kr_m_D (required for test delay)
-
 
 #### emodl_generator_base.py
 - Generates emodl files without any age groups 
@@ -35,7 +18,7 @@ Optional compartment + parameter additions
 - Generates emodl files with age groups per EMS (testing, not up to date) 
 
 
-### Structure
+## Structure
 The emodl generators specify separate functions for each text structure of the emodl file (species, parameter, observe, functions, and reactions)
 
 #### write_species
@@ -205,7 +188,6 @@ Where `@socialDistance_time1@` defines the time in days after start of simulatio
 And `(Ki Ki_red1)` specifes the replacement of the Ki parameter with Ki_red1
 Note; the parameter is overwritten and stays constant unless a stop time event is specified, resetting the overwritten parameter to the initial value.
 
-
 ### generate_emodl 
 Function that combines the functions described above to write the text chunks and saving it into an emodl file.
 The function is called at the end of the emodl generator, specifying different options for model type, extension and intervention.
@@ -219,9 +201,9 @@ Arguments
 - grpList: list of the group names 
 - expandModel: whether to add test delay to pre-defined compartments (As, Sym, Sys)
 	- None 
-	- "testDelay_SymSys"
-	- "testDelay_AsSym"	
-	- "testDelay_AsSymSys"	
+	- 'testDelay_SymSys'
+	- 'testDelay_AsSym'	
+	- 'testDelay_AsSymSys'	
 - add_interventions
 	- None 
 	- 'continuedSIP'
@@ -229,7 +211,35 @@ Arguments
 	- 'interventionSTOP_adj'	
 	- 'gradual_reopening'
 	- 'contactTracing' ( needs to be manually defined whether to run in combination with immediate or gradual intervention stop)
+- change_testDelay
+	- 'AsSym'
+	- 'SymSys'
+	- 'AsSymSys'
 - [add_migration](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_locale.py#L339) whether to allow for movement between groups or not, currently boolean only
 
 Note [migration](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_locale.py#L339) is optional in the spatial model, whereas contact matrix in the age model is integrated per default.
+
+
+## Interventions 
+Currently added interventions: 
+- neverSIP  
+	- `add_interventions = 'None'`
+- continuedSIP 
+	- `add_interventions = 'continuedSIP'`
+- interventionStop 
+	- `add_interventions = 'interventionSTOP_adj'`
+- gradual_reopen
+	- `add_interventions = 'gradual_reopening'`
+- increased testing
+	- `add_interventions = 'contactTracing'` and keep detection of As and P at 0  
+- reduced test delays
+	- `change_testDelay = 'AsSym'`check in yaml config file proper test delay reduction parameters
+- contact_tracing 
+	- `add_interventions = 'contactTracing'` and change detection of As and P in yaml config file
+- contact_tracing and reduced test delays
+	- `add_interventions = 'contactTracing'` and change detection of As and P in yaml config file
+	- `change_testDelay = 'AsSym'`
+- gradual contact_tracing 
+	- `add_interventions = 'gradual_contactTracing'` and change detection of As and P in yaml config file
+And any combination of these (i.e. contact tracing on top of continued SIP, SIP stop or gradual reopening. 
 
