@@ -146,16 +146,18 @@ Adds EMS specific sample parameters, such as effect of social distancing multipl
 - [extendedmodel_EMS.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_EMS.emodl)
 
 
-### 1.2.3. [age4grp_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age4grp_experiment.yaml) and [age8grp_experiment.yaml ](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age8grp_experiment.yaml)
+### 1.2.3. [age8grp_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age8grp_experiment.yaml) 
 Adds age specific parameter and contact matrix.
 Runs with these emodl files:
-- [extendedmodel_age4.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age4.emodl)
-- [extendedmodel_age4_param.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/extendedmodel_age4_param.emodl)
-- [extendedmodel_age4_homogeneous.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/extendedmodel_age4_homogeneous.emodl)
 - [extendedmodel_age8.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age8.emodl)
 - [extendedmodel_age8_param.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/extendedmodel_age8_param.emodl)
 - ...
 
+### 1.2.4. [age_locale_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age_locale_experiment.yaml) 
+Adds age and spatial specific parameter, contact matrix and migration.
+Runs with these emodl files:
+- [extendedmodel_agelocale_migration_scen3.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_agelocale_migration_scen3.emodl)
+- ...
 
 ## 1.3. Customized yaml + emodls  (replacing master yaml file)
 - [extendedcobey_forFitting.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_forFitting.yaml)
