@@ -640,6 +640,16 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
     """
 
+    contactTracing_gradual_str = """
+(time-event contact_tracing_1 @contact_tracing_start_1@ ((d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
+(time-event contact_tracing_2 @contact_tracing_start_2@ ((d_As @d_AsP_ct2@) (d_P @d_AsP_ct2@) (d_Sym @d_Sym_ct2@)))
+(time-event contact_tracing_3 @contact_tracing_start_3@ ((d_As @d_AsP_ct3@) (d_P @d_AsP_ct3@) (d_Sym @d_Sym_ct3@)))
+(time-event contact_tracing_4 @contact_tracing_start_4@ ((d_As @d_AsP_ct4@) (d_P @d_AsP_ct4@) (d_Sym @d_Sym_ct4@)))
+(time-event contact_tracing_5 @contact_tracing_start_5@ ((d_As @d_AsP_ct5@) (d_P @d_AsP_ct5@) (d_Sym @d_Sym_ct5@)))
+(time-event contact_tracing_6 @contact_tracing_start_6@ ((d_As @d_AsP_ct6@) (d_P @d_AsP_ct6@) (d_Sym @d_Sym_ct6@)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+        """
+
     change_uniformtestDelay_str = """
 (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
     """.format("(time_D @change_testDelay_1@)",
@@ -680,7 +690,9 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
     if scenarioName == "continuedSIP" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
     if scenarioName == "contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
+    if scenarioName == "gradual_contactTracing" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_gradual_str)
 
     if change_testDelay != None :
         if change_testDelay == "uniform" :
@@ -695,7 +707,7 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sym_str )
         if change_testDelay == "SymSys" :
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
-        if change_testDelay == "AsSymSys"  :
+        if change_testDelay == "AsSymSys" :
             total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str + '\n' + change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
 
 
@@ -778,6 +790,8 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False,  file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracing.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False, change_testDelay = "AsSym", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracingChangeTD.emodl'))
   
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_contactTracing', add_migration=False, change_testDelay = "Sym", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradualCTChangeTD.emodl'))
+
     ### Emodls with migration between EMS areas  
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionSTOPadj.emodl'))
