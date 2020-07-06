@@ -67,10 +67,10 @@ def ems_pop_structure() :
 
     # pop_by_ems(ems_shp, census_tract_shp)
 
-    agebins = [0, 20, 40, 60, 200]
-    # agebins = [0, 10, 20, 30, 40, 50, 60, 70, 200]
+    # agebins = [0, 20, 40, 60, 200]
+    agebins = [0, 20, 30, 40, 50, 60, 70, 80, 200]
 
-    output_fname = os.path.join(datapath, 'EMS Population', 'EMS_population_from_RTI_by_age_4grp.csv')
+    output_fname = os.path.join(datapath, 'EMS Population', 'EMS_population_from_RTI_by_age_8grpLL.csv')
     pop_age_structure_by_ems(ems_shp, census_tract_shp, agebins, output_fname)
 
 
@@ -152,4 +152,5 @@ def ems_race_and_ethnicity_structure() :
 
 if __name__ == '__main__' :
 
-    ems_race_and_ethnicity_structure()
+    # ems_race_and_ethnicity_structure()
+    ems_pop_structure()
