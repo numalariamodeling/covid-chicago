@@ -14,11 +14,11 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 fsm_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling'
 idph_data_path = os.path.join(fsm_path, 'IDPH line list',)
-ltcf_data_path = os.path.join('/Users/jlg1657/Box/Data Uploads/IDPH', 'untitled folder')
+ltcf_data_path = os.path.join(fsm_path, 'IDPH LTCF')
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'LL_200616_JGcleaned.csv')
-ltcf_fname = os.path.join(ltcf_data_path, 'Modelors LTC Report_200617.xlsx')
-cleaned_ltcf_fname = os.path.join(ltcf_data_path, 'Modelors LTC Report_200617_first_specimen.csv')
+                                       'LL_200701_JGcleaned_no_race.csv')
+ltcf_fname = os.path.join(ltcf_data_path, 'Modelors LTC Report_200703.xlsx')
+cleaned_ltcf_fname = os.path.join(ltcf_data_path, 'Modelors LTC Report_200703_first_specimen.csv')
 
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
@@ -79,9 +79,9 @@ def plot_daily_LL_LTCF_deaths() :
     fig = plt.figure(figsize=(10,6))
     ax = fig.add_subplot(2,1,1)
     ax.fill_between(df['Deceased Date'].values, [0]*len(df),
-                    df['daily_deaths_line_list'], label='LL 200616', color=palette[0], alpha=0.5)
+                    df['daily_deaths_line_list'], label='LL 200701', color=palette[0], alpha=0.5)
     ax.fill_between(df['Deceased Date'].values, [0]*len(df),
-                    df['daily_deaths_LTCF'], label='LTCF 200617', color=palette[1], alpha=0.5)
+                    df['daily_deaths_LTCF'], label='LTCF 200703', color=palette[1], alpha=0.5)
     formatter = mdates.DateFormatter("%m-%d")
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.WeekdayLocator())
@@ -99,8 +99,8 @@ def plot_daily_LL_LTCF_deaths() :
     ax.xaxis.set_major_locator(mdates.WeekdayLocator())
     ax.set_ylabel('fraction of deaths in LTCF')
 
-    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF share of deaths 200619.png'))
-    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF share of deaths 200619.pdf'), format='PDF')
+    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF share of deaths 200703.png'))
+    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF share of deaths 200703.pdf'), format='PDF')
     plt.show()
 
 
@@ -113,8 +113,8 @@ def format_x_axis(ax) :
 
 if __name__ == '__main__' :
 
-    # clean_ltcf()
-    # plot_daily_LL_LTCF_deaths()
+    clean_ltcf()
+    plot_daily_LL_LTCF_deaths()
 
     df = merge_LL_LTCF_deaths()
     df['non_LTCF_deaths'] = df['daily_deaths_line_list'] - df['daily_deaths_LTCF']
@@ -138,6 +138,6 @@ if __name__ == '__main__' :
         ax.legend()
     axes[1].set_yscale('log')
 
-    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF and non LTCF deaths 200619.png'))
-    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF and non LTCF deaths 200619.pdf'), format='PDF')
+    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF and non LTCF deaths 200703.png'))
+    fig.savefig(os.path.join(plot_path, 'LTCF', 'LTCF and non LTCF deaths 200703.pdf'), format='PDF')
     plt.show()
