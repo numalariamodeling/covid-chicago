@@ -393,6 +393,7 @@
 (func infectious_det_AsP_EMS_1 (+ As_det1::EMS_1 P_det::EMS_1))
 
 (func presymptomatic_EMS_1(+ P::EMS_1 P_det::EMS_1))
+(func presymptomatic_det_EMS_1(- presymptomatic_EMS_1 P::EMS_1))
 (func asymptomatic_det_EMS_1(- asymptomatic_EMS_1 As::EMS_1))
 (func symptomatic_mild_det_EMS_1(- symptomatic_mild_EMS_1 Sym::EMS_1))
 (func symptomatic_severe_det_EMS_1(- symptomatic_severe_EMS_1 Sys::EMS_1))
@@ -420,7 +421,15 @@
 
 (func detected_EMS_1 (+ As_det1::EMS_1 Sym_det2::EMS_1 Sys_det3::EMS_1 H1_det3::EMS_1 H2_det3::EMS_1 H3_det3::EMS_1 C2_det3::EMS_1 C3_det3::EMS_1))
 (func infected_EMS_1 (+ infectious_det_EMS_1 infectious_undet_EMS_1 H1_det3::EMS_1 H2_det3::EMS_1 H3_det3::EMS_1 C2_det3::EMS_1 C3_det3::EMS_1))
+(func infected_det_EMS_1 (+ infectious_det_EMS_1 H1_det3::EMS_1 H2_det3::EMS_1 H3_det3::EMS_1 C2_det3::EMS_1 C3_det3::EMS_1))
 (func infected_cumul_EMS_1 (+ infected_EMS_1 recovered_EMS_1 deaths_EMS_1))
+
+(func prevalence_EMS_1 (/ infected_EMS_1 N_EMS_1))
+(func seroprevalence_EMS_1 (/ (+ infected_EMS_1 recovered_EMS_1) N_EMS_1))
+
+(func prevalence_det_EMS_1 (/ infected_det_EMS_1 N_EMS_1))
+(func seroprevalence_det_EMS_1 (/ (+ infected_det_EMS_1 recovered_det_EMS_1) N_EMS_1))
+
 
 (func asymptomatic_EMS_2  (+ As::EMS_2 As_det1::EMS_2))
 (func symptomatic_mild_EMS_2  (+ Sym::EMS_2 Sym_det2::EMS_2))
@@ -432,6 +441,7 @@
 (func infectious_det_AsP_EMS_2 (+ As_det1::EMS_2 P_det::EMS_2))
 
 (func presymptomatic_EMS_2(+ P::EMS_2 P_det::EMS_2))
+(func presymptomatic_det_EMS_2(- presymptomatic_EMS_2 P::EMS_2))
 (func asymptomatic_det_EMS_2(- asymptomatic_EMS_2 As::EMS_2))
 (func symptomatic_mild_det_EMS_2(- symptomatic_mild_EMS_2 Sym::EMS_2))
 (func symptomatic_severe_det_EMS_2(- symptomatic_severe_EMS_2 Sys::EMS_2))
@@ -459,7 +469,15 @@
 
 (func detected_EMS_2 (+ As_det1::EMS_2 Sym_det2::EMS_2 Sys_det3::EMS_2 H1_det3::EMS_2 H2_det3::EMS_2 H3_det3::EMS_2 C2_det3::EMS_2 C3_det3::EMS_2))
 (func infected_EMS_2 (+ infectious_det_EMS_2 infectious_undet_EMS_2 H1_det3::EMS_2 H2_det3::EMS_2 H3_det3::EMS_2 C2_det3::EMS_2 C3_det3::EMS_2))
+(func infected_det_EMS_2 (+ infectious_det_EMS_2 H1_det3::EMS_2 H2_det3::EMS_2 H3_det3::EMS_2 C2_det3::EMS_2 C3_det3::EMS_2))
 (func infected_cumul_EMS_2 (+ infected_EMS_2 recovered_EMS_2 deaths_EMS_2))
+
+(func prevalence_EMS_2 (/ infected_EMS_2 N_EMS_2))
+(func seroprevalence_EMS_2 (/ (+ infected_EMS_2 recovered_EMS_2) N_EMS_2))
+
+(func prevalence_det_EMS_2 (/ infected_det_EMS_2 N_EMS_2))
+(func seroprevalence_det_EMS_2 (/ (+ infected_det_EMS_2 recovered_det_EMS_2) N_EMS_2))
+
 
 (func asymptomatic_EMS_3  (+ As::EMS_3 As_det1::EMS_3))
 (func symptomatic_mild_EMS_3  (+ Sym::EMS_3 Sym_det2::EMS_3))
@@ -471,6 +489,7 @@
 (func infectious_det_AsP_EMS_3 (+ As_det1::EMS_3 P_det::EMS_3))
 
 (func presymptomatic_EMS_3(+ P::EMS_3 P_det::EMS_3))
+(func presymptomatic_det_EMS_3(- presymptomatic_EMS_3 P::EMS_3))
 (func asymptomatic_det_EMS_3(- asymptomatic_EMS_3 As::EMS_3))
 (func symptomatic_mild_det_EMS_3(- symptomatic_mild_EMS_3 Sym::EMS_3))
 (func symptomatic_severe_det_EMS_3(- symptomatic_severe_EMS_3 Sys::EMS_3))
@@ -498,7 +517,15 @@
 
 (func detected_EMS_3 (+ As_det1::EMS_3 Sym_det2::EMS_3 Sys_det3::EMS_3 H1_det3::EMS_3 H2_det3::EMS_3 H3_det3::EMS_3 C2_det3::EMS_3 C3_det3::EMS_3))
 (func infected_EMS_3 (+ infectious_det_EMS_3 infectious_undet_EMS_3 H1_det3::EMS_3 H2_det3::EMS_3 H3_det3::EMS_3 C2_det3::EMS_3 C3_det3::EMS_3))
+(func infected_det_EMS_3 (+ infectious_det_EMS_3 H1_det3::EMS_3 H2_det3::EMS_3 H3_det3::EMS_3 C2_det3::EMS_3 C3_det3::EMS_3))
 (func infected_cumul_EMS_3 (+ infected_EMS_3 recovered_EMS_3 deaths_EMS_3))
+
+(func prevalence_EMS_3 (/ infected_EMS_3 N_EMS_3))
+(func seroprevalence_EMS_3 (/ (+ infected_EMS_3 recovered_EMS_3) N_EMS_3))
+
+(func prevalence_det_EMS_3 (/ infected_det_EMS_3 N_EMS_3))
+(func seroprevalence_det_EMS_3 (/ (+ infected_det_EMS_3 recovered_det_EMS_3) N_EMS_3))
+
 
 (func asymptomatic_EMS_4  (+ As::EMS_4 As_det1::EMS_4))
 (func symptomatic_mild_EMS_4  (+ Sym::EMS_4 Sym_det2::EMS_4))
@@ -510,6 +537,7 @@
 (func infectious_det_AsP_EMS_4 (+ As_det1::EMS_4 P_det::EMS_4))
 
 (func presymptomatic_EMS_4(+ P::EMS_4 P_det::EMS_4))
+(func presymptomatic_det_EMS_4(- presymptomatic_EMS_4 P::EMS_4))
 (func asymptomatic_det_EMS_4(- asymptomatic_EMS_4 As::EMS_4))
 (func symptomatic_mild_det_EMS_4(- symptomatic_mild_EMS_4 Sym::EMS_4))
 (func symptomatic_severe_det_EMS_4(- symptomatic_severe_EMS_4 Sys::EMS_4))
@@ -537,7 +565,15 @@
 
 (func detected_EMS_4 (+ As_det1::EMS_4 Sym_det2::EMS_4 Sys_det3::EMS_4 H1_det3::EMS_4 H2_det3::EMS_4 H3_det3::EMS_4 C2_det3::EMS_4 C3_det3::EMS_4))
 (func infected_EMS_4 (+ infectious_det_EMS_4 infectious_undet_EMS_4 H1_det3::EMS_4 H2_det3::EMS_4 H3_det3::EMS_4 C2_det3::EMS_4 C3_det3::EMS_4))
+(func infected_det_EMS_4 (+ infectious_det_EMS_4 H1_det3::EMS_4 H2_det3::EMS_4 H3_det3::EMS_4 C2_det3::EMS_4 C3_det3::EMS_4))
 (func infected_cumul_EMS_4 (+ infected_EMS_4 recovered_EMS_4 deaths_EMS_4))
+
+(func prevalence_EMS_4 (/ infected_EMS_4 N_EMS_4))
+(func seroprevalence_EMS_4 (/ (+ infected_EMS_4 recovered_EMS_4) N_EMS_4))
+
+(func prevalence_det_EMS_4 (/ infected_det_EMS_4 N_EMS_4))
+(func seroprevalence_det_EMS_4 (/ (+ infected_det_EMS_4 recovered_det_EMS_4) N_EMS_4))
+
 
 (func asymptomatic_EMS_5  (+ As::EMS_5 As_det1::EMS_5))
 (func symptomatic_mild_EMS_5  (+ Sym::EMS_5 Sym_det2::EMS_5))
@@ -549,6 +585,7 @@
 (func infectious_det_AsP_EMS_5 (+ As_det1::EMS_5 P_det::EMS_5))
 
 (func presymptomatic_EMS_5(+ P::EMS_5 P_det::EMS_5))
+(func presymptomatic_det_EMS_5(- presymptomatic_EMS_5 P::EMS_5))
 (func asymptomatic_det_EMS_5(- asymptomatic_EMS_5 As::EMS_5))
 (func symptomatic_mild_det_EMS_5(- symptomatic_mild_EMS_5 Sym::EMS_5))
 (func symptomatic_severe_det_EMS_5(- symptomatic_severe_EMS_5 Sys::EMS_5))
@@ -576,7 +613,15 @@
 
 (func detected_EMS_5 (+ As_det1::EMS_5 Sym_det2::EMS_5 Sys_det3::EMS_5 H1_det3::EMS_5 H2_det3::EMS_5 H3_det3::EMS_5 C2_det3::EMS_5 C3_det3::EMS_5))
 (func infected_EMS_5 (+ infectious_det_EMS_5 infectious_undet_EMS_5 H1_det3::EMS_5 H2_det3::EMS_5 H3_det3::EMS_5 C2_det3::EMS_5 C3_det3::EMS_5))
+(func infected_det_EMS_5 (+ infectious_det_EMS_5 H1_det3::EMS_5 H2_det3::EMS_5 H3_det3::EMS_5 C2_det3::EMS_5 C3_det3::EMS_5))
 (func infected_cumul_EMS_5 (+ infected_EMS_5 recovered_EMS_5 deaths_EMS_5))
+
+(func prevalence_EMS_5 (/ infected_EMS_5 N_EMS_5))
+(func seroprevalence_EMS_5 (/ (+ infected_EMS_5 recovered_EMS_5) N_EMS_5))
+
+(func prevalence_det_EMS_5 (/ infected_det_EMS_5 N_EMS_5))
+(func seroprevalence_det_EMS_5 (/ (+ infected_det_EMS_5 recovered_det_EMS_5) N_EMS_5))
+
 
 (func asymptomatic_EMS_6  (+ As::EMS_6 As_det1::EMS_6))
 (func symptomatic_mild_EMS_6  (+ Sym::EMS_6 Sym_det2::EMS_6))
@@ -588,6 +633,7 @@
 (func infectious_det_AsP_EMS_6 (+ As_det1::EMS_6 P_det::EMS_6))
 
 (func presymptomatic_EMS_6(+ P::EMS_6 P_det::EMS_6))
+(func presymptomatic_det_EMS_6(- presymptomatic_EMS_6 P::EMS_6))
 (func asymptomatic_det_EMS_6(- asymptomatic_EMS_6 As::EMS_6))
 (func symptomatic_mild_det_EMS_6(- symptomatic_mild_EMS_6 Sym::EMS_6))
 (func symptomatic_severe_det_EMS_6(- symptomatic_severe_EMS_6 Sys::EMS_6))
@@ -615,7 +661,15 @@
 
 (func detected_EMS_6 (+ As_det1::EMS_6 Sym_det2::EMS_6 Sys_det3::EMS_6 H1_det3::EMS_6 H2_det3::EMS_6 H3_det3::EMS_6 C2_det3::EMS_6 C3_det3::EMS_6))
 (func infected_EMS_6 (+ infectious_det_EMS_6 infectious_undet_EMS_6 H1_det3::EMS_6 H2_det3::EMS_6 H3_det3::EMS_6 C2_det3::EMS_6 C3_det3::EMS_6))
+(func infected_det_EMS_6 (+ infectious_det_EMS_6 H1_det3::EMS_6 H2_det3::EMS_6 H3_det3::EMS_6 C2_det3::EMS_6 C3_det3::EMS_6))
 (func infected_cumul_EMS_6 (+ infected_EMS_6 recovered_EMS_6 deaths_EMS_6))
+
+(func prevalence_EMS_6 (/ infected_EMS_6 N_EMS_6))
+(func seroprevalence_EMS_6 (/ (+ infected_EMS_6 recovered_EMS_6) N_EMS_6))
+
+(func prevalence_det_EMS_6 (/ infected_det_EMS_6 N_EMS_6))
+(func seroprevalence_det_EMS_6 (/ (+ infected_det_EMS_6 recovered_det_EMS_6) N_EMS_6))
+
 
 (func asymptomatic_EMS_7  (+ As::EMS_7 As_det1::EMS_7))
 (func symptomatic_mild_EMS_7  (+ Sym::EMS_7 Sym_det2::EMS_7))
@@ -627,6 +681,7 @@
 (func infectious_det_AsP_EMS_7 (+ As_det1::EMS_7 P_det::EMS_7))
 
 (func presymptomatic_EMS_7(+ P::EMS_7 P_det::EMS_7))
+(func presymptomatic_det_EMS_7(- presymptomatic_EMS_7 P::EMS_7))
 (func asymptomatic_det_EMS_7(- asymptomatic_EMS_7 As::EMS_7))
 (func symptomatic_mild_det_EMS_7(- symptomatic_mild_EMS_7 Sym::EMS_7))
 (func symptomatic_severe_det_EMS_7(- symptomatic_severe_EMS_7 Sys::EMS_7))
@@ -654,7 +709,15 @@
 
 (func detected_EMS_7 (+ As_det1::EMS_7 Sym_det2::EMS_7 Sys_det3::EMS_7 H1_det3::EMS_7 H2_det3::EMS_7 H3_det3::EMS_7 C2_det3::EMS_7 C3_det3::EMS_7))
 (func infected_EMS_7 (+ infectious_det_EMS_7 infectious_undet_EMS_7 H1_det3::EMS_7 H2_det3::EMS_7 H3_det3::EMS_7 C2_det3::EMS_7 C3_det3::EMS_7))
+(func infected_det_EMS_7 (+ infectious_det_EMS_7 H1_det3::EMS_7 H2_det3::EMS_7 H3_det3::EMS_7 C2_det3::EMS_7 C3_det3::EMS_7))
 (func infected_cumul_EMS_7 (+ infected_EMS_7 recovered_EMS_7 deaths_EMS_7))
+
+(func prevalence_EMS_7 (/ infected_EMS_7 N_EMS_7))
+(func seroprevalence_EMS_7 (/ (+ infected_EMS_7 recovered_EMS_7) N_EMS_7))
+
+(func prevalence_det_EMS_7 (/ infected_det_EMS_7 N_EMS_7))
+(func seroprevalence_det_EMS_7 (/ (+ infected_det_EMS_7 recovered_det_EMS_7) N_EMS_7))
+
 
 (func asymptomatic_EMS_8  (+ As::EMS_8 As_det1::EMS_8))
 (func symptomatic_mild_EMS_8  (+ Sym::EMS_8 Sym_det2::EMS_8))
@@ -666,6 +729,7 @@
 (func infectious_det_AsP_EMS_8 (+ As_det1::EMS_8 P_det::EMS_8))
 
 (func presymptomatic_EMS_8(+ P::EMS_8 P_det::EMS_8))
+(func presymptomatic_det_EMS_8(- presymptomatic_EMS_8 P::EMS_8))
 (func asymptomatic_det_EMS_8(- asymptomatic_EMS_8 As::EMS_8))
 (func symptomatic_mild_det_EMS_8(- symptomatic_mild_EMS_8 Sym::EMS_8))
 (func symptomatic_severe_det_EMS_8(- symptomatic_severe_EMS_8 Sys::EMS_8))
@@ -693,7 +757,15 @@
 
 (func detected_EMS_8 (+ As_det1::EMS_8 Sym_det2::EMS_8 Sys_det3::EMS_8 H1_det3::EMS_8 H2_det3::EMS_8 H3_det3::EMS_8 C2_det3::EMS_8 C3_det3::EMS_8))
 (func infected_EMS_8 (+ infectious_det_EMS_8 infectious_undet_EMS_8 H1_det3::EMS_8 H2_det3::EMS_8 H3_det3::EMS_8 C2_det3::EMS_8 C3_det3::EMS_8))
+(func infected_det_EMS_8 (+ infectious_det_EMS_8 H1_det3::EMS_8 H2_det3::EMS_8 H3_det3::EMS_8 C2_det3::EMS_8 C3_det3::EMS_8))
 (func infected_cumul_EMS_8 (+ infected_EMS_8 recovered_EMS_8 deaths_EMS_8))
+
+(func prevalence_EMS_8 (/ infected_EMS_8 N_EMS_8))
+(func seroprevalence_EMS_8 (/ (+ infected_EMS_8 recovered_EMS_8) N_EMS_8))
+
+(func prevalence_det_EMS_8 (/ infected_det_EMS_8 N_EMS_8))
+(func seroprevalence_det_EMS_8 (/ (+ infected_det_EMS_8 recovered_det_EMS_8) N_EMS_8))
+
 
 (func asymptomatic_EMS_9  (+ As::EMS_9 As_det1::EMS_9))
 (func symptomatic_mild_EMS_9  (+ Sym::EMS_9 Sym_det2::EMS_9))
@@ -705,6 +777,7 @@
 (func infectious_det_AsP_EMS_9 (+ As_det1::EMS_9 P_det::EMS_9))
 
 (func presymptomatic_EMS_9(+ P::EMS_9 P_det::EMS_9))
+(func presymptomatic_det_EMS_9(- presymptomatic_EMS_9 P::EMS_9))
 (func asymptomatic_det_EMS_9(- asymptomatic_EMS_9 As::EMS_9))
 (func symptomatic_mild_det_EMS_9(- symptomatic_mild_EMS_9 Sym::EMS_9))
 (func symptomatic_severe_det_EMS_9(- symptomatic_severe_EMS_9 Sys::EMS_9))
@@ -732,7 +805,15 @@
 
 (func detected_EMS_9 (+ As_det1::EMS_9 Sym_det2::EMS_9 Sys_det3::EMS_9 H1_det3::EMS_9 H2_det3::EMS_9 H3_det3::EMS_9 C2_det3::EMS_9 C3_det3::EMS_9))
 (func infected_EMS_9 (+ infectious_det_EMS_9 infectious_undet_EMS_9 H1_det3::EMS_9 H2_det3::EMS_9 H3_det3::EMS_9 C2_det3::EMS_9 C3_det3::EMS_9))
+(func infected_det_EMS_9 (+ infectious_det_EMS_9 H1_det3::EMS_9 H2_det3::EMS_9 H3_det3::EMS_9 C2_det3::EMS_9 C3_det3::EMS_9))
 (func infected_cumul_EMS_9 (+ infected_EMS_9 recovered_EMS_9 deaths_EMS_9))
+
+(func prevalence_EMS_9 (/ infected_EMS_9 N_EMS_9))
+(func seroprevalence_EMS_9 (/ (+ infected_EMS_9 recovered_EMS_9) N_EMS_9))
+
+(func prevalence_det_EMS_9 (/ infected_det_EMS_9 N_EMS_9))
+(func seroprevalence_det_EMS_9 (/ (+ infected_det_EMS_9 recovered_det_EMS_9) N_EMS_9))
+
 
 (func asymptomatic_EMS_10  (+ As::EMS_10 As_det1::EMS_10))
 (func symptomatic_mild_EMS_10  (+ Sym::EMS_10 Sym_det2::EMS_10))
@@ -744,6 +825,7 @@
 (func infectious_det_AsP_EMS_10 (+ As_det1::EMS_10 P_det::EMS_10))
 
 (func presymptomatic_EMS_10(+ P::EMS_10 P_det::EMS_10))
+(func presymptomatic_det_EMS_10(- presymptomatic_EMS_10 P::EMS_10))
 (func asymptomatic_det_EMS_10(- asymptomatic_EMS_10 As::EMS_10))
 (func symptomatic_mild_det_EMS_10(- symptomatic_mild_EMS_10 Sym::EMS_10))
 (func symptomatic_severe_det_EMS_10(- symptomatic_severe_EMS_10 Sys::EMS_10))
@@ -771,7 +853,15 @@
 
 (func detected_EMS_10 (+ As_det1::EMS_10 Sym_det2::EMS_10 Sys_det3::EMS_10 H1_det3::EMS_10 H2_det3::EMS_10 H3_det3::EMS_10 C2_det3::EMS_10 C3_det3::EMS_10))
 (func infected_EMS_10 (+ infectious_det_EMS_10 infectious_undet_EMS_10 H1_det3::EMS_10 H2_det3::EMS_10 H3_det3::EMS_10 C2_det3::EMS_10 C3_det3::EMS_10))
+(func infected_det_EMS_10 (+ infectious_det_EMS_10 H1_det3::EMS_10 H2_det3::EMS_10 H3_det3::EMS_10 C2_det3::EMS_10 C3_det3::EMS_10))
 (func infected_cumul_EMS_10 (+ infected_EMS_10 recovered_EMS_10 deaths_EMS_10))
+
+(func prevalence_EMS_10 (/ infected_EMS_10 N_EMS_10))
+(func seroprevalence_EMS_10 (/ (+ infected_EMS_10 recovered_EMS_10) N_EMS_10))
+
+(func prevalence_det_EMS_10 (/ infected_det_EMS_10 N_EMS_10))
+(func seroprevalence_det_EMS_10 (/ (+ infected_det_EMS_10 recovered_det_EMS_10) N_EMS_10))
+
 
 (func asymptomatic_EMS_11  (+ As::EMS_11 As_det1::EMS_11))
 (func symptomatic_mild_EMS_11  (+ Sym::EMS_11 Sym_det2::EMS_11))
@@ -783,6 +873,7 @@
 (func infectious_det_AsP_EMS_11 (+ As_det1::EMS_11 P_det::EMS_11))
 
 (func presymptomatic_EMS_11(+ P::EMS_11 P_det::EMS_11))
+(func presymptomatic_det_EMS_11(- presymptomatic_EMS_11 P::EMS_11))
 (func asymptomatic_det_EMS_11(- asymptomatic_EMS_11 As::EMS_11))
 (func symptomatic_mild_det_EMS_11(- symptomatic_mild_EMS_11 Sym::EMS_11))
 (func symptomatic_severe_det_EMS_11(- symptomatic_severe_EMS_11 Sys::EMS_11))
@@ -810,19 +901,36 @@
 
 (func detected_EMS_11 (+ As_det1::EMS_11 Sym_det2::EMS_11 Sys_det3::EMS_11 H1_det3::EMS_11 H2_det3::EMS_11 H3_det3::EMS_11 C2_det3::EMS_11 C3_det3::EMS_11))
 (func infected_EMS_11 (+ infectious_det_EMS_11 infectious_undet_EMS_11 H1_det3::EMS_11 H2_det3::EMS_11 H3_det3::EMS_11 C2_det3::EMS_11 C3_det3::EMS_11))
+(func infected_det_EMS_11 (+ infectious_det_EMS_11 H1_det3::EMS_11 H2_det3::EMS_11 H3_det3::EMS_11 C2_det3::EMS_11 C3_det3::EMS_11))
 (func infected_cumul_EMS_11 (+ infected_EMS_11 recovered_EMS_11 deaths_EMS_11))
+
+(func prevalence_EMS_11 (/ infected_EMS_11 N_EMS_11))
+(func seroprevalence_EMS_11 (/ (+ infected_EMS_11 recovered_EMS_11) N_EMS_11))
+
+(func prevalence_det_EMS_11 (/ infected_det_EMS_11 N_EMS_11))
+(func seroprevalence_det_EMS_11 (/ (+ infected_det_EMS_11 recovered_det_EMS_11) N_EMS_11))
+
 
 (observe susceptible_All (+  S::EMS_1 S::EMS_2 S::EMS_3 S::EMS_4 S::EMS_5 S::EMS_6 S::EMS_7 S::EMS_8 S::EMS_9 S::EMS_10 S::EMS_11))
 (observe exposed_All (+  E::EMS_1 E::EMS_2 E::EMS_3 E::EMS_4 E::EMS_5 E::EMS_6 E::EMS_7 E::EMS_8 E::EMS_9 E::EMS_10 E::EMS_11))
 (observe asymptomatic_All (+  asymptomatic_EMS_1 asymptomatic_EMS_2 asymptomatic_EMS_3 asymptomatic_EMS_4 asymptomatic_EMS_5 asymptomatic_EMS_6 asymptomatic_EMS_7 asymptomatic_EMS_8 asymptomatic_EMS_9 asymptomatic_EMS_10 asymptomatic_EMS_11))
+(observe asymptomatic_det_All (+  asymptomatic_det_EMS_1 asymptomatic_det_EMS_2 asymptomatic_det_EMS_3 asymptomatic_det_EMS_4 asymptomatic_det_EMS_5 asymptomatic_det_EMS_6 asymptomatic_det_EMS_7 asymptomatic_det_EMS_8 asymptomatic_det_EMS_9 asymptomatic_det_EMS_10 asymptomatic_det_EMS_11))
 (observe presymptomatic_All (+  P::EMS_1 P::EMS_2 P::EMS_3 P::EMS_4 P::EMS_5 P::EMS_6 P::EMS_7 P::EMS_8 P::EMS_9 P::EMS_10 P::EMS_11))
+(observe presymptomatic_det_All (+  presymptomatic_det_EMS_1 presymptomatic_det_EMS_2 presymptomatic_det_EMS_3 presymptomatic_det_EMS_4 presymptomatic_det_EMS_5 presymptomatic_det_EMS_6 presymptomatic_det_EMS_7 presymptomatic_det_EMS_8 presymptomatic_det_EMS_9 presymptomatic_det_EMS_10 presymptomatic_det_EMS_11))
 (observe symptomatic_mild_All (+  symptomatic_mild_EMS_1 symptomatic_mild_EMS_2 symptomatic_mild_EMS_3 symptomatic_mild_EMS_4 symptomatic_mild_EMS_5 symptomatic_mild_EMS_6 symptomatic_mild_EMS_7 symptomatic_mild_EMS_8 symptomatic_mild_EMS_9 symptomatic_mild_EMS_10 symptomatic_mild_EMS_11))
+(observe symptomatic_mild_det_All (+  symptomatic_mild_det_EMS_1 symptomatic_mild_det_EMS_2 symptomatic_mild_det_EMS_3 symptomatic_mild_det_EMS_4 symptomatic_mild_det_EMS_5 symptomatic_mild_det_EMS_6 symptomatic_mild_det_EMS_7 symptomatic_mild_det_EMS_8 symptomatic_mild_det_EMS_9 symptomatic_mild_det_EMS_10 symptomatic_mild_det_EMS_11))
 (observe symptomatic_severe_All (+  symptomatic_severe_EMS_1 symptomatic_severe_EMS_2 symptomatic_severe_EMS_3 symptomatic_severe_EMS_4 symptomatic_severe_EMS_5 symptomatic_severe_EMS_6 symptomatic_severe_EMS_7 symptomatic_severe_EMS_8 symptomatic_severe_EMS_9 symptomatic_severe_EMS_10 symptomatic_severe_EMS_11))
+(observe symptomatic_severe_det_All (+  symptomatic_severe_det_EMS_1 symptomatic_severe_det_EMS_2 symptomatic_severe_det_EMS_3 symptomatic_severe_det_EMS_4 symptomatic_severe_det_EMS_5 symptomatic_severe_det_EMS_6 symptomatic_severe_det_EMS_7 symptomatic_severe_det_EMS_8 symptomatic_severe_det_EMS_9 symptomatic_severe_det_EMS_10 symptomatic_severe_det_EMS_11))
 (observe hospitalized_All (+  hospitalized_EMS_1 hospitalized_EMS_2 hospitalized_EMS_3 hospitalized_EMS_4 hospitalized_EMS_5 hospitalized_EMS_6 hospitalized_EMS_7 hospitalized_EMS_8 hospitalized_EMS_9 hospitalized_EMS_10 hospitalized_EMS_11))
+(observe hospitalized_det_All (+  hospitalized_det_EMS_1 hospitalized_det_EMS_2 hospitalized_det_EMS_3 hospitalized_det_EMS_4 hospitalized_det_EMS_5 hospitalized_det_EMS_6 hospitalized_det_EMS_7 hospitalized_det_EMS_8 hospitalized_det_EMS_9 hospitalized_det_EMS_10 hospitalized_det_EMS_11))
 (observe critical_All (+  critical_EMS_1 critical_EMS_2 critical_EMS_3 critical_EMS_4 critical_EMS_5 critical_EMS_6 critical_EMS_7 critical_EMS_8 critical_EMS_9 critical_EMS_10 critical_EMS_11))
+(observe critical_det_All (+  critical_det_EMS_1 critical_det_EMS_2 critical_det_EMS_3 critical_det_EMS_4 critical_det_EMS_5 critical_det_EMS_6 critical_det_EMS_7 critical_det_EMS_8 critical_det_EMS_9 critical_det_EMS_10 critical_det_EMS_11))
 (observe deaths_All (+  deaths_EMS_1 deaths_EMS_2 deaths_EMS_3 deaths_EMS_4 deaths_EMS_5 deaths_EMS_6 deaths_EMS_7 deaths_EMS_8 deaths_EMS_9 deaths_EMS_10 deaths_EMS_11))
+(observe deaths_det_All (+  D3_det3::EMS_1 D3_det3::EMS_2 D3_det3::EMS_3 D3_det3::EMS_4 D3_det3::EMS_5 D3_det3::EMS_6 D3_det3::EMS_7 D3_det3::EMS_8 D3_det3::EMS_9 D3_det3::EMS_10 D3_det3::EMS_11))
 (observe infected_All (+  infected_EMS_1 infected_EMS_2 infected_EMS_3 infected_EMS_4 infected_EMS_5 infected_EMS_6 infected_EMS_7 infected_EMS_8 infected_EMS_9 infected_EMS_10 infected_EMS_11))
+(observe infected_det_All (+  infected_det_EMS_1 infected_det_EMS_2 infected_det_EMS_3 infected_det_EMS_4 infected_det_EMS_5 infected_det_EMS_6 infected_det_EMS_7 infected_det_EMS_8 infected_det_EMS_9 infected_det_EMS_10 infected_det_EMS_11))
 (observe recovered_All (+  recovered_EMS_1 recovered_EMS_2 recovered_EMS_3 recovered_EMS_4 recovered_EMS_5 recovered_EMS_6 recovered_EMS_7 recovered_EMS_8 recovered_EMS_9 recovered_EMS_10 recovered_EMS_11))
+(observe recovered_det_All (+  recovered_det_EMS_1 recovered_det_EMS_2 recovered_det_EMS_3 recovered_det_EMS_4 recovered_det_EMS_5 recovered_det_EMS_6 recovered_det_EMS_7 recovered_det_EMS_8 recovered_det_EMS_9 recovered_det_EMS_10 recovered_det_EMS_11))
 (observe asymp_cumul_All (+  asymp_cumul_EMS_1 asymp_cumul_EMS_2 asymp_cumul_EMS_3 asymp_cumul_EMS_4 asymp_cumul_EMS_5 asymp_cumul_EMS_6 asymp_cumul_EMS_7 asymp_cumul_EMS_8 asymp_cumul_EMS_9 asymp_cumul_EMS_10 asymp_cumul_EMS_11))
 (observe asymp_det_cumul_All (+  asymp_det_cumul_EMS_1 asymp_det_cumul_EMS_2 asymp_det_cumul_EMS_3 asymp_det_cumul_EMS_4 asymp_det_cumul_EMS_5 asymp_det_cumul_EMS_6 asymp_det_cumul_EMS_7 asymp_det_cumul_EMS_8 asymp_det_cumul_EMS_9 asymp_det_cumul_EMS_10 asymp_det_cumul_EMS_11))
 (observe symp_mild_cumul_All (+  symp_mild_cumul_EMS_1 symp_mild_cumul_EMS_2 symp_mild_cumul_EMS_3 symp_mild_cumul_EMS_4 symp_mild_cumul_EMS_5 symp_mild_cumul_EMS_6 symp_mild_cumul_EMS_7 symp_mild_cumul_EMS_8 symp_mild_cumul_EMS_9 symp_mild_cumul_EMS_10 symp_mild_cumul_EMS_11))
@@ -837,10 +945,10 @@
 (observe detected_cumul_All (+  detected_cumul_EMS_1 detected_cumul_EMS_2 detected_cumul_EMS_3 detected_cumul_EMS_4 detected_cumul_EMS_5 detected_cumul_EMS_6 detected_cumul_EMS_7 detected_cumul_EMS_8 detected_cumul_EMS_9 detected_cumul_EMS_10 detected_cumul_EMS_11))
 (observe death_det_cumul_All (+  death_det_cumul_EMS_1 death_det_cumul_EMS_2 death_det_cumul_EMS_3 death_det_cumul_EMS_4 death_det_cumul_EMS_5 death_det_cumul_EMS_6 death_det_cumul_EMS_7 death_det_cumul_EMS_8 death_det_cumul_EMS_9 death_det_cumul_EMS_10 death_det_cumul_EMS_11))
 (observe infected_cumul_All (+  infected_cumul_EMS_1 infected_cumul_EMS_2 infected_cumul_EMS_3 infected_cumul_EMS_4 infected_cumul_EMS_5 infected_cumul_EMS_6 infected_cumul_EMS_7 infected_cumul_EMS_8 infected_cumul_EMS_9 infected_cumul_EMS_10 infected_cumul_EMS_11))
-(func infectious_det_All (+  infectious_det_EMS_1 infectious_det_EMS_2 infectious_det_EMS_3 infectious_det_EMS_4 infectious_det_EMS_5 infectious_det_EMS_6 infectious_det_EMS_7 infectious_det_EMS_8 infectious_det_EMS_9 infectious_det_EMS_10 infectious_det_EMS_11))
-(func infectious_undet_All (+  infectious_undet_EMS_1 infectious_undet_EMS_2 infectious_undet_EMS_3 infectious_undet_EMS_4 infectious_undet_EMS_5 infectious_undet_EMS_6 infectious_undet_EMS_7 infectious_undet_EMS_8 infectious_undet_EMS_9 infectious_undet_EMS_10 infectious_undet_EMS_11))
-(observe infectious_det_All infectious_det_All)
-(observe infectious_undet_All infectious_undet_All)
+(observe infectious_det_All (+  infectious_det_EMS_1 infectious_det_EMS_2 infectious_det_EMS_3 infectious_det_EMS_4 infectious_det_EMS_5 infectious_det_EMS_6 infectious_det_EMS_7 infectious_det_EMS_8 infectious_det_EMS_9 infectious_det_EMS_10 infectious_det_EMS_11))
+(observe infectious_undet_All (+  infectious_undet_EMS_1 infectious_undet_EMS_2 infectious_undet_EMS_3 infectious_undet_EMS_4 infectious_undet_EMS_5 infectious_undet_EMS_6 infectious_undet_EMS_7 infectious_undet_EMS_8 infectious_undet_EMS_9 infectious_undet_EMS_10 infectious_undet_EMS_11))
+(observe infectious_det_symp_All (+  infectious_det_symp_EMS_1 infectious_det_symp_EMS_2 infectious_det_symp_EMS_3 infectious_det_symp_EMS_4 infectious_det_symp_EMS_5 infectious_det_symp_EMS_6 infectious_det_symp_EMS_7 infectious_det_symp_EMS_8 infectious_det_symp_EMS_9 infectious_det_symp_EMS_10 infectious_det_symp_EMS_11))
+(observe infectious_det_AsP_All (+  infectious_det_AsP_EMS_1 infectious_det_AsP_EMS_2 infectious_det_AsP_EMS_3 infectious_det_AsP_EMS_4 infectious_det_AsP_EMS_5 infectious_det_AsP_EMS_6 infectious_det_AsP_EMS_7 infectious_det_AsP_EMS_8 infectious_det_AsP_EMS_9 infectious_det_AsP_EMS_10 infectious_det_AsP_EMS_11))
 
 
 (observe susceptible_EMS-1 S::EMS_1)
@@ -855,7 +963,7 @@
 (observe recovered_EMS-1 recovered_EMS_1)
 
 (observe asymptomatic_det_EMS-1 asymptomatic_det_EMS_1)
-(observe presymptomatic__detEMS-1 P_det::EMS_1 )
+(observe presymptomatic_detEMS-1 P_det::EMS_1 )
 (observe symptomatic_mild_det_EMS-1 symptomatic_mild_det_EMS_1)
 (observe symptomatic_severe_det_EMS-1 symptomatic_severe_det_EMS_1)
 (observe hospitalized_det_EMS-1 hospitalized_det_EMS_1)
@@ -889,6 +997,11 @@
 (observe detected_EMS-1 detected_EMS_1)
 (observe detected_cumul_EMS-1 detected_cumul_EMS_1 )
 
+(observe prevalence_EMS-1 prevalence_EMS_1)  
+(observe seroprevalence_EMS-1 seroprevalence_EMS_1 )
+(observe prevalence_det_EMS-1 prevalence_det_EMS_1)  
+(observe seroprevalence_det_EMS-1 seroprevalence_det_EMS_1 )
+
 
 (observe susceptible_EMS-2 S::EMS_2)
 (observe exposed_EMS-2 E::EMS_2)
@@ -902,7 +1015,7 @@
 (observe recovered_EMS-2 recovered_EMS_2)
 
 (observe asymptomatic_det_EMS-2 asymptomatic_det_EMS_2)
-(observe presymptomatic__detEMS-2 P_det::EMS_2 )
+(observe presymptomatic_detEMS-2 P_det::EMS_2 )
 (observe symptomatic_mild_det_EMS-2 symptomatic_mild_det_EMS_2)
 (observe symptomatic_severe_det_EMS-2 symptomatic_severe_det_EMS_2)
 (observe hospitalized_det_EMS-2 hospitalized_det_EMS_2)
@@ -936,6 +1049,11 @@
 (observe detected_EMS-2 detected_EMS_2)
 (observe detected_cumul_EMS-2 detected_cumul_EMS_2 )
 
+(observe prevalence_EMS-2 prevalence_EMS_2)  
+(observe seroprevalence_EMS-2 seroprevalence_EMS_2 )
+(observe prevalence_det_EMS-2 prevalence_det_EMS_2)  
+(observe seroprevalence_det_EMS-2 seroprevalence_det_EMS_2 )
+
 
 (observe susceptible_EMS-3 S::EMS_3)
 (observe exposed_EMS-3 E::EMS_3)
@@ -949,7 +1067,7 @@
 (observe recovered_EMS-3 recovered_EMS_3)
 
 (observe asymptomatic_det_EMS-3 asymptomatic_det_EMS_3)
-(observe presymptomatic__detEMS-3 P_det::EMS_3 )
+(observe presymptomatic_detEMS-3 P_det::EMS_3 )
 (observe symptomatic_mild_det_EMS-3 symptomatic_mild_det_EMS_3)
 (observe symptomatic_severe_det_EMS-3 symptomatic_severe_det_EMS_3)
 (observe hospitalized_det_EMS-3 hospitalized_det_EMS_3)
@@ -983,6 +1101,11 @@
 (observe detected_EMS-3 detected_EMS_3)
 (observe detected_cumul_EMS-3 detected_cumul_EMS_3 )
 
+(observe prevalence_EMS-3 prevalence_EMS_3)  
+(observe seroprevalence_EMS-3 seroprevalence_EMS_3 )
+(observe prevalence_det_EMS-3 prevalence_det_EMS_3)  
+(observe seroprevalence_det_EMS-3 seroprevalence_det_EMS_3 )
+
 
 (observe susceptible_EMS-4 S::EMS_4)
 (observe exposed_EMS-4 E::EMS_4)
@@ -996,7 +1119,7 @@
 (observe recovered_EMS-4 recovered_EMS_4)
 
 (observe asymptomatic_det_EMS-4 asymptomatic_det_EMS_4)
-(observe presymptomatic__detEMS-4 P_det::EMS_4 )
+(observe presymptomatic_detEMS-4 P_det::EMS_4 )
 (observe symptomatic_mild_det_EMS-4 symptomatic_mild_det_EMS_4)
 (observe symptomatic_severe_det_EMS-4 symptomatic_severe_det_EMS_4)
 (observe hospitalized_det_EMS-4 hospitalized_det_EMS_4)
@@ -1030,6 +1153,11 @@
 (observe detected_EMS-4 detected_EMS_4)
 (observe detected_cumul_EMS-4 detected_cumul_EMS_4 )
 
+(observe prevalence_EMS-4 prevalence_EMS_4)  
+(observe seroprevalence_EMS-4 seroprevalence_EMS_4 )
+(observe prevalence_det_EMS-4 prevalence_det_EMS_4)  
+(observe seroprevalence_det_EMS-4 seroprevalence_det_EMS_4 )
+
 
 (observe susceptible_EMS-5 S::EMS_5)
 (observe exposed_EMS-5 E::EMS_5)
@@ -1043,7 +1171,7 @@
 (observe recovered_EMS-5 recovered_EMS_5)
 
 (observe asymptomatic_det_EMS-5 asymptomatic_det_EMS_5)
-(observe presymptomatic__detEMS-5 P_det::EMS_5 )
+(observe presymptomatic_detEMS-5 P_det::EMS_5 )
 (observe symptomatic_mild_det_EMS-5 symptomatic_mild_det_EMS_5)
 (observe symptomatic_severe_det_EMS-5 symptomatic_severe_det_EMS_5)
 (observe hospitalized_det_EMS-5 hospitalized_det_EMS_5)
@@ -1077,6 +1205,11 @@
 (observe detected_EMS-5 detected_EMS_5)
 (observe detected_cumul_EMS-5 detected_cumul_EMS_5 )
 
+(observe prevalence_EMS-5 prevalence_EMS_5)  
+(observe seroprevalence_EMS-5 seroprevalence_EMS_5 )
+(observe prevalence_det_EMS-5 prevalence_det_EMS_5)  
+(observe seroprevalence_det_EMS-5 seroprevalence_det_EMS_5 )
+
 
 (observe susceptible_EMS-6 S::EMS_6)
 (observe exposed_EMS-6 E::EMS_6)
@@ -1090,7 +1223,7 @@
 (observe recovered_EMS-6 recovered_EMS_6)
 
 (observe asymptomatic_det_EMS-6 asymptomatic_det_EMS_6)
-(observe presymptomatic__detEMS-6 P_det::EMS_6 )
+(observe presymptomatic_detEMS-6 P_det::EMS_6 )
 (observe symptomatic_mild_det_EMS-6 symptomatic_mild_det_EMS_6)
 (observe symptomatic_severe_det_EMS-6 symptomatic_severe_det_EMS_6)
 (observe hospitalized_det_EMS-6 hospitalized_det_EMS_6)
@@ -1124,6 +1257,11 @@
 (observe detected_EMS-6 detected_EMS_6)
 (observe detected_cumul_EMS-6 detected_cumul_EMS_6 )
 
+(observe prevalence_EMS-6 prevalence_EMS_6)  
+(observe seroprevalence_EMS-6 seroprevalence_EMS_6 )
+(observe prevalence_det_EMS-6 prevalence_det_EMS_6)  
+(observe seroprevalence_det_EMS-6 seroprevalence_det_EMS_6 )
+
 
 (observe susceptible_EMS-7 S::EMS_7)
 (observe exposed_EMS-7 E::EMS_7)
@@ -1137,7 +1275,7 @@
 (observe recovered_EMS-7 recovered_EMS_7)
 
 (observe asymptomatic_det_EMS-7 asymptomatic_det_EMS_7)
-(observe presymptomatic__detEMS-7 P_det::EMS_7 )
+(observe presymptomatic_detEMS-7 P_det::EMS_7 )
 (observe symptomatic_mild_det_EMS-7 symptomatic_mild_det_EMS_7)
 (observe symptomatic_severe_det_EMS-7 symptomatic_severe_det_EMS_7)
 (observe hospitalized_det_EMS-7 hospitalized_det_EMS_7)
@@ -1171,6 +1309,11 @@
 (observe detected_EMS-7 detected_EMS_7)
 (observe detected_cumul_EMS-7 detected_cumul_EMS_7 )
 
+(observe prevalence_EMS-7 prevalence_EMS_7)  
+(observe seroprevalence_EMS-7 seroprevalence_EMS_7 )
+(observe prevalence_det_EMS-7 prevalence_det_EMS_7)  
+(observe seroprevalence_det_EMS-7 seroprevalence_det_EMS_7 )
+
 
 (observe susceptible_EMS-8 S::EMS_8)
 (observe exposed_EMS-8 E::EMS_8)
@@ -1184,7 +1327,7 @@
 (observe recovered_EMS-8 recovered_EMS_8)
 
 (observe asymptomatic_det_EMS-8 asymptomatic_det_EMS_8)
-(observe presymptomatic__detEMS-8 P_det::EMS_8 )
+(observe presymptomatic_detEMS-8 P_det::EMS_8 )
 (observe symptomatic_mild_det_EMS-8 symptomatic_mild_det_EMS_8)
 (observe symptomatic_severe_det_EMS-8 symptomatic_severe_det_EMS_8)
 (observe hospitalized_det_EMS-8 hospitalized_det_EMS_8)
@@ -1218,6 +1361,11 @@
 (observe detected_EMS-8 detected_EMS_8)
 (observe detected_cumul_EMS-8 detected_cumul_EMS_8 )
 
+(observe prevalence_EMS-8 prevalence_EMS_8)  
+(observe seroprevalence_EMS-8 seroprevalence_EMS_8 )
+(observe prevalence_det_EMS-8 prevalence_det_EMS_8)  
+(observe seroprevalence_det_EMS-8 seroprevalence_det_EMS_8 )
+
 
 (observe susceptible_EMS-9 S::EMS_9)
 (observe exposed_EMS-9 E::EMS_9)
@@ -1231,7 +1379,7 @@
 (observe recovered_EMS-9 recovered_EMS_9)
 
 (observe asymptomatic_det_EMS-9 asymptomatic_det_EMS_9)
-(observe presymptomatic__detEMS-9 P_det::EMS_9 )
+(observe presymptomatic_detEMS-9 P_det::EMS_9 )
 (observe symptomatic_mild_det_EMS-9 symptomatic_mild_det_EMS_9)
 (observe symptomatic_severe_det_EMS-9 symptomatic_severe_det_EMS_9)
 (observe hospitalized_det_EMS-9 hospitalized_det_EMS_9)
@@ -1265,6 +1413,11 @@
 (observe detected_EMS-9 detected_EMS_9)
 (observe detected_cumul_EMS-9 detected_cumul_EMS_9 )
 
+(observe prevalence_EMS-9 prevalence_EMS_9)  
+(observe seroprevalence_EMS-9 seroprevalence_EMS_9 )
+(observe prevalence_det_EMS-9 prevalence_det_EMS_9)  
+(observe seroprevalence_det_EMS-9 seroprevalence_det_EMS_9 )
+
 
 (observe susceptible_EMS-10 S::EMS_10)
 (observe exposed_EMS-10 E::EMS_10)
@@ -1278,7 +1431,7 @@
 (observe recovered_EMS-10 recovered_EMS_10)
 
 (observe asymptomatic_det_EMS-10 asymptomatic_det_EMS_10)
-(observe presymptomatic__detEMS-10 P_det::EMS_10 )
+(observe presymptomatic_detEMS-10 P_det::EMS_10 )
 (observe symptomatic_mild_det_EMS-10 symptomatic_mild_det_EMS_10)
 (observe symptomatic_severe_det_EMS-10 symptomatic_severe_det_EMS_10)
 (observe hospitalized_det_EMS-10 hospitalized_det_EMS_10)
@@ -1312,6 +1465,11 @@
 (observe detected_EMS-10 detected_EMS_10)
 (observe detected_cumul_EMS-10 detected_cumul_EMS_10 )
 
+(observe prevalence_EMS-10 prevalence_EMS_10)  
+(observe seroprevalence_EMS-10 seroprevalence_EMS_10 )
+(observe prevalence_det_EMS-10 prevalence_det_EMS_10)  
+(observe seroprevalence_det_EMS-10 seroprevalence_det_EMS_10 )
+
 
 (observe susceptible_EMS-11 S::EMS_11)
 (observe exposed_EMS-11 E::EMS_11)
@@ -1325,7 +1483,7 @@
 (observe recovered_EMS-11 recovered_EMS_11)
 
 (observe asymptomatic_det_EMS-11 asymptomatic_det_EMS_11)
-(observe presymptomatic__detEMS-11 P_det::EMS_11 )
+(observe presymptomatic_detEMS-11 P_det::EMS_11 )
 (observe symptomatic_mild_det_EMS-11 symptomatic_mild_det_EMS_11)
 (observe symptomatic_severe_det_EMS-11 symptomatic_severe_det_EMS_11)
 (observe hospitalized_det_EMS-11 hospitalized_det_EMS_11)
@@ -1358,6 +1516,11 @@
 (observe symp_severe_det_cumul_EMS-11 symp_severe_det_cumul_EMS_11)
 (observe detected_EMS-11 detected_EMS_11)
 (observe detected_cumul_EMS-11 detected_cumul_EMS_11 )
+
+(observe prevalence_EMS-11 prevalence_EMS_11)  
+(observe seroprevalence_EMS-11 seroprevalence_EMS_11 )
+(observe prevalence_det_EMS-11 prevalence_det_EMS_11)  
+(observe seroprevalence_det_EMS-11 seroprevalence_det_EMS_11 )
 
 
 

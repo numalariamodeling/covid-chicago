@@ -94,7 +94,7 @@ def write_observe(grp, expandModel=None):
 (observe recovered_{grpout} recovered_{grp})
 
 (observe asymptomatic_det_{grpout} asymptomatic_det_{grp})
-(observe presymptomatic__det{grpout} P_det::{grp} )
+(observe presymptomatic_det{grpout} P_det::{grp} )
 (observe symptomatic_mild_det_{grpout} symptomatic_mild_det_{grp})
 (observe symptomatic_severe_det_{grpout} symptomatic_severe_det_{grp})
 (observe hospitalized_det_{grpout} hospitalized_det_{grp})
@@ -127,6 +127,11 @@ def write_observe(grp, expandModel=None):
 (observe symp_severe_det_cumul_{grpout} symp_severe_det_cumul_{grp})
 (observe detected_{grpout} detected_{grp})
 (observe detected_cumul_{grpout} detected_cumul_{grp} )
+
+(observe prevalence_{grpout} prevalence_{grp})    
+(observe seroprevalence_{grpout} seroprevalence_{grp} )
+(observe prevalence_det_{grpout} prevalence_det_{grp})    
+(observe seroprevalence_det_{grpout} seroprevalence_det_{grp} )
 
 """.format(grpout=grpout, grp=grp)
     
@@ -161,6 +166,7 @@ def write_functions(grp, expandModel=None):
     grp = str(grp)
     functions_str = """
 (func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
+(func presymptomatic_det_{grp}  (- presymptomatic_{grp} P::{grp}))
 (func asymptomatic_det_{grp}  (- asymptomatic_{grp} As::{grp}))
 (func symptomatic_mild_det_{grp}  (- symptomatic_mild_{grp} Sym::{grp}))
 (func symptomatic_severe_det_{grp}  (- symptomatic_severe_{grp} Sys::{grp}))
@@ -188,7 +194,15 @@ def write_functions(grp, expandModel=None):
 
 (func detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(func infected_det_{grp} (+ infectious_det_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
+
+(func prevalence_{grp} (/ infected_{grp} N_{grp}))    
+(func seroprevalence_{grp} (/ (+ infected_{grp} recovered_{grp}) N_{grp}))    
+
+(func prevalence_det_{grp} (/ infected_det_{grp} N_{grp}))    
+(func seroprevalence_det_{grp} (/ (+ infected_det_{grp} recovered_det_{grp}) N_{grp}))    
+
 """.format(grp=grp)
     functions_str = functions_str.replace("  ", "")
     
@@ -427,14 +441,23 @@ def write_All(grpList):
     obs_All_str = obs_All_str + "\n(observe susceptible_All (+ " + repeat_string_by_grp('S::', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E::',  grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe asymptomatic_All (+ " + repeat_string_by_grp( 'asymptomatic_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe asymptomatic_det_All (+ " + repeat_string_by_grp( 'asymptomatic_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P::', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe presymptomatic_det_All (+ " + repeat_string_by_grp( 'presymptomatic_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe symptomatic_mild_All (+ " + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe symptomatic_mild_det_All (+ " + repeat_string_by_grp(  'symptomatic_mild_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe symptomatic_severe_All (+ " + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe symptomatic_severe_det_All (+ " + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe hospitalized_det_All (+ " + repeat_string_by_grp('hospitalized_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe critical_All (+ " + repeat_string_by_grp('critical_',    grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe critical_det_All (+ " + repeat_string_by_grp('critical_det_',    grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe deaths_All (+ " + repeat_string_by_grp('deaths_',   grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe deaths_det_All (+ " + repeat_string_by_grp('D3_det3::',  grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe infected_All (+ " + repeat_string_by_grp('infected_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe infected_det_All (+ " + repeat_string_by_grp('infected_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',    grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe recovered_det_All (+ " + repeat_string_by_grp('recovered_det_',    grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe asymp_cumul_All (+ " + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe asymp_det_cumul_All (+ " + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe symp_mild_cumul_All (+ " + repeat_string_by_grp( 'symp_mild_cumul_', grpList) + "))"
@@ -449,10 +472,10 @@ def write_All(grpList):
     obs_All_str = obs_All_str + "\n(observe detected_cumul_All (+ " + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe death_det_cumul_All (+ " + repeat_string_by_grp('death_det_cumul_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe infected_cumul_All (+ " + repeat_string_by_grp('infected_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(func infectious_det_All (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(func infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infectious_det_All infectious_det_All)"
-    obs_All_str = obs_All_str + "\n(observe infectious_undet_All infectious_undet_All)"
+    obs_All_str = obs_All_str + "\n(observe infectious_det_All (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe infectious_det_symp_All (+ " + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe infectious_det_AsP_All (+ " + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
 
 
     return (obs_All_str)
