@@ -39,18 +39,18 @@ def plot_IL_cases() :
     ax = fig.add_subplot(4,1,1)
     df['daily_pos'] = np.insert(np.diff(df['tests_pos']), 0, 0)
     ax.bar(df['date'].values[1:], np.diff(df['tests_pos']),
-           align='center', color=palette[0], linewidth=0)
-    df['moving_ave'] = df['daily_pos'].rolling(window=7, center=True).mean()
-    ax.plot(df['date'], df['moving_ave'], '-', color='#414042')
+           align='center', color=palette[0], linewidth=0, alpha=0.5)
+    df['moving_ave'] = df['daily_pos'].rolling(window=7, center=False).mean()
+    ax.plot(df['date'], df['moving_ave'], '-', color=palette[0])
     ax.set_ylabel('positives')
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
 
     ax = fig.add_subplot(4,1,2)
     ax.bar(df['date'].values[1:], df['new_tests'][1:],
-           align='center', color=palette[1], linewidth=0)
-    df['moving_ave'] = df['new_tests'].rolling(window=7, center=True).mean()
-    ax.plot(df['date'], df['moving_ave'], '-', color='#414042')
+           align='center', color=palette[1], linewidth=0, alpha=0.5)
+    df['moving_ave'] = df['new_tests'].rolling(window=7, center=False).mean()
+    ax.plot(df['date'], df['moving_ave'], '-', color=palette[1])
     ax.set_ylabel('tests')
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
@@ -58,20 +58,21 @@ def plot_IL_cases() :
     ax = fig.add_subplot(4,1,3)
     df['daily_tpr'] = df['daily_pos']/df['new_tests']
     ax.bar(df['date'].values[1:], df['daily_tpr'][1:],
-           align='center', color=palette[2], linewidth=0)
-    df['moving_ave'] = df['daily_tpr'].rolling(window=7, center=True).mean()
-    ax.plot(df['date'], df['moving_ave'], '-', color='#414042')
+           align='center', color=palette[2], linewidth=0, alpha=0.5)
+    df['moving_ave'] = df['daily_tpr'].rolling(window=7, center=False).mean()
+    ax.plot(df['date'], df['moving_ave'], '-', color=palette[2])
     ax.set_ylabel('TPR')
+    ax.set_ylim(0, 0.3)
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
     print(df[['date', 'daily_tpr']].tail(20))
 
     ax = fig.add_subplot(4,1,4)
     ax.bar(df['date'].values[1:], np.diff(df['deaths']),
-           align='center', color=palette[3], linewidth=0)
+           align='center', color=palette[3], linewidth=0, alpha=0.5)
     df['daily_death'] = np.insert(np.diff(df['deaths']), 0, 0)
-    df['moving_ave'] = df['daily_death'].rolling(window=7, center=True).mean()
-    ax.plot(df['date'], df['moving_ave'], '-', color='#414042')
+    df['moving_ave'] = df['daily_death'].rolling(window=7, center=False).mean()
+    ax.plot(df['date'], df['moving_ave'], '-', color=palette[3])
     ax.set_ylabel('deaths')
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
@@ -238,7 +239,8 @@ def plot_agg_by_region() :
     tpr_limits = [0.01, 0.02, 0.05, 0.1, 1]
     palette_scale = [palette[x] for x in [1, 0, 4, 5, 7]]
 
-    fig = plt.figure(figsize=(12,6))
+    fig = plt.figure(figsize=(14,6))
+    fig.subplots_adjust(left=0.05, right=0.97, wspace=0.2)
     for ri, (region, cdf) in enumerate(df.groupby('restore_region')) :
         ax = fig.add_subplot(2,4,ri+1)
         cdf['daily_pos'] = np.insert(np.diff(cdf['Positive_Cases']), 0, 0)
@@ -298,8 +300,8 @@ def plot_agg_by_region() :
 
 if __name__ == '__main__' :
 
-    # plot_IL_cases()
+    plot_IL_cases()
     # plot_cases_by_county_map()
-    plot_cases_by_county_line()
-    plot_agg_by_region()
+    # plot_cases_by_county_line()
+    # plot_agg_by_region()
     plt.show()
