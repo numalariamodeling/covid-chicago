@@ -85,13 +85,22 @@ def write_observe(grp, expandModel=None):
 (observe susceptible_{grpout} S::{grp})
 (observe exposed_{grpout} E::{grp})
 (observe asymptomatic_{grpout} asymptomatic_{grp})
-(observe presymptomatic_{grpout} presymptomatic_{grp})
+(observe presymptomatic_{grpout} P_det::{grp})
 (observe symptomatic_mild_{grpout} symptomatic_mild_{grp})
 (observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
 (observe hospitalized_{grpout} hospitalized_{grp})
 (observe critical_{grpout} critical_{grp})
-(observe deaths_{grpout} deaths_{grp})
+(observe deaths_{grpout} D3_det3::{grp})
 (observe recovered_{grpout} recovered_{grp})
+
+(observe asymptomatic_det_{grpout} asymptomatic_det_{grp})
+(observe presymptomatic__det{grpout} P_det::{grp} )
+(observe symptomatic_mild_det_{grpout} symptomatic_mild_det_{grp})
+(observe symptomatic_severe_det_{grpout} symptomatic_severe_det_{grp})
+(observe hospitalized_det_{grpout} hospitalized_det_{grp})
+(observe critical_det_{grpout} critical_det_{grp})
+(observe deaths_det_{grpout} D3_det3::{grp})
+(observe recovered_det_{grpout} recovered_det_{grp})
 
 (observe asymp_cumul_{grpout} asymp_cumul_{grp} )
 (observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
@@ -108,6 +117,11 @@ def write_observe(grp, expandModel=None):
 
 (observe infected_{grpout} infected_{grp})
 (observe infected_cumul_{grpout} infected_cumul_{grp})
+
+(observe infectious_undet_{grpout} infectious_undet_{grp})
+(observe infectious_det_{grpout} infectious_det_{grp})
+(observe infectious_det_symp_{grpout} infectious_det_symp_{grp})
+(observe infectious_det_AsP_{grpout} infectious_det_AsP_{grp})
 
 (observe symp_mild_det_cumul_{grpout} symp_mild_det_cumul_{grp})
 (observe symp_severe_det_cumul_{grpout} symp_severe_det_cumul_{grp})
@@ -146,10 +160,18 @@ def write_observed_param(grpList):
 def write_functions(grp, expandModel=None):
     grp = str(grp)
     functions_str = """
+(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
+(func asymptomatic_det_{grp}  (- asymptomatic_{grp} As::{grp}))
+(func symptomatic_mild_det_{grp}  (- symptomatic_mild_{grp} Sym::{grp}))
+(func symptomatic_severe_det_{grp}  (- symptomatic_severe_{grp} Sys::{grp}))
+
 (func hospitalized_{grp}  (+ H1::{grp} H2::{grp} H3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
+(func hospitalized_det_{grp}  (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
 (func critical_{grp} (+ C2::{grp} C3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(func critical_det_{grp} (+ C2_det3::{grp} C3_det3::{grp}))
 (func deaths_{grp} (+ D3::{grp} D3_det3::{grp}))
 (func recovered_{grp} (+ RAs::{grp} RSym::{grp} RH1::{grp} RC2::{grp} RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(func recovered_det_{grp} (+ RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
 (func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
 (func asymp_det_cumul_{grp} (+ As_det1::{grp} RAs_det1::{grp}))
 (func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym::{grp} RSym_det2::{grp}))
@@ -173,7 +195,6 @@ def write_functions(grp, expandModel=None):
 
     expand_base_str = """
 (func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
-(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
@@ -186,7 +207,6 @@ def write_functions(grp, expandModel=None):
 
     expand_testDelay_SymSys_str = """
 (func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
-(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3::{grp}))
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
@@ -199,7 +219,6 @@ def write_functions(grp, expandModel=None):
 
     expand_testDelay_AsSymSys_str = """
 (func asymptomatic_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
-(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 (func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 (func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
