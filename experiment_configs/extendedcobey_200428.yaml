@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
+  'number_of_samples': 30
   'number_of_runs': 1
   'duration': 370
   'monitoring_samples': 370 # needs to be smaller than duration
@@ -94,7 +94,7 @@ sampled_parameters:
     function_kwargs: {'low':0.06, 'high':0.1}
   'fraction_critical':
     np.random: uniform
-    function_kwargs: {'low':0.2, 'high':0.35}
+    function_kwargs: {'low':0.20, 'high':0.35}
   'cfr': 
     np.random: uniform
     function_kwargs: {'low':0.01, 'high':0.03}
@@ -164,6 +164,16 @@ sampled_parameters:
   'd_Sym_incr6':
     np.random: uniform
     function_kwargs: {'low':0.140, 'high':0.170}
+  ### fraction_critical
+  'fraction_critical_incr1':
+    np.random: uniform
+    function_kwargs: {'low':0.13, 'high':0.23}
+  'fraction_critical_incr2':
+    np.random: uniform
+    function_kwargs: {'low':0.07, 'high':0.12}
+  'fraction_critical_incr3':
+    np.random: uniform
+    function_kwargs: {'low':0.05, 'high':0.09}
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reset Ki to defined proporions of it's initial value  
@@ -258,7 +268,16 @@ time_parameters:
     function_kwargs: {'dates': 2020-04-18} 
   'detection_time_6':
     custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-01}
+  'crit_time_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-01} 
+  'crit_time_2':
+    custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-05-01} 
+  'crit_time_3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01} 
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)
