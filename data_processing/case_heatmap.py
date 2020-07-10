@@ -12,7 +12,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'LL_200706_JGcleaned_no_race.csv')
+                                       'LL_200708_JGcleaned_no_race.csv')
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs')
@@ -65,11 +65,22 @@ def heatmap() :
         ax = fig.add_subplot(1,len(cols),c+1)
         make_heatmap(ax, adf, col)
 
-    plt.savefig(os.path.join(plot_path, 'EMS_cases_deaths_heatmap_200706LL.png'))
+    plt.savefig(os.path.join(plot_path, 'EMS_cases_deaths_heatmap_200708LL.png'))
     plt.show()
 
 
 if __name__ == '__main__' :
+
+    adf = load_cleaned_line_list()
+    col = 'specimen_collection'
+    df = adf.dropna(subset=[col])
+    df = df.groupby([col, 'EMS'])['id'].agg(len).reset_index()
+    df = df.rename(columns={'id' : col,
+                            col : 'date'})
+    df = df.sort_values(by=['EMS', 'date'])
+    df.to_csv(os.path.join(box_data_path, 'Corona virus reports', '200708_LL_cases_by_EMS_spec_collection.csv'), index=False)
+    exit()
+
 
     heatmap()
     exit()
