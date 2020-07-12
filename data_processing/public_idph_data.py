@@ -17,7 +17,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-plot_dir = os.path.join(projectpath, 'Plots + Graphs')
+plot_dir = os.path.join(projectpath, 'Plots + Graphs', '_trend_tracking')
 datapath = os.path.join(datapath, 'covid_IDPH')
 shp_path = os.path.join(datapath, 'shapefiles')
 
@@ -361,9 +361,9 @@ def plot_county_line_by_region() :
 
 if __name__ == '__main__' :
 
-    # plot_IL_cases()
     # plot_cases_by_county_map()
     # plot_cases_by_county_line()
     plot_county_line_by_region()
     plot_agg_by_region()
+    plot_IL_cases()
     # plt.show()
