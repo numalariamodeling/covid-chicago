@@ -17,7 +17,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-plot_dir = os.path.join(projectpath, 'Plots + Graphs')
+plot_dir = os.path.join(projectpath, 'Plots + Graphs', '_trend_tracking')
 datapath = os.path.join(datapath, 'covid_IDPH')
 shp_path = os.path.join(datapath, 'shapefiles')
 
@@ -156,7 +156,7 @@ def format_axis(ax, ci, df, county, max_pos, plottype='TPR') :
     ax.set_title(county, y=0.75)
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
-    if ci < 91:
+    if ci < 92:
         ax.set_xticklabels([])
     if plottype == 'TPR' :
         if max_pos > 0.02 :
@@ -226,12 +226,18 @@ def plot_cases_by_county_line() :
     fig_tpr.savefig(os.path.join(plot_dir, 'idph_public_county_tpr.pdf'), format='PDF')
 
 
-def plot_agg_by_region() :
+def assign_counties_restore_region() :
 
     df = load_county_cases()
     ref_df = pd.read_csv(os.path.join(datapath, 'Corona virus reports', 'county_restore_region_map.csv'))
     df['County'] = df['County'].apply(lambda x : x.upper())
     df = pd.merge(left=df, right=ref_df, left_on='County', right_on='county', how='left')
+    return df
+
+
+def plot_agg_by_region() :
+
+    df = assign_counties_restore_region()
     df = df.groupby(['restore_region', 'update_date'])[['Positive_Cases', 'Tested']].agg(np.sum).reset_index()
     df = df.sort_values(by=['restore_region', 'update_date'])
 
@@ -239,10 +245,13 @@ def plot_agg_by_region() :
     tpr_limits = [0.01, 0.02, 0.05, 0.1, 1]
     palette_scale = [palette[x] for x in [1, 0, 4, 5, 7]]
 
-    fig = plt.figure(figsize=(14,6))
+    fig = plt.figure(figsize=(14,9))
     fig.subplots_adjust(left=0.05, right=0.97, wspace=0.2)
+    formatter = mdates.DateFormatter("%m-%d")
+
     for ri, (region, cdf) in enumerate(df.groupby('restore_region')) :
-        ax = fig.add_subplot(2,4,ri+1)
+        ax = fig.add_subplot(3,4,ri+1)
+        colorbin = 5
         cdf['daily_pos'] = np.insert(np.diff(cdf['Positive_Cases']), 0, 0)
         cdf['daily_test'] = np.insert(np.diff(cdf['Tested']), 0, 0)
         cdf.loc[cdf['daily_test'] == 0, 'daily_test'] = 1
@@ -250,19 +259,10 @@ def plot_agg_by_region() :
 
         cdf['moving_ave'] = cdf['daily_pos'].rolling(window=7, center=False).mean()
         max_pos = np.max(cdf['moving_ave'])
-        if cdf['moving_ave'].values[-1] < 1 :
-            colorbin = 7
-        elif cdf['moving_ave'].values[-1] > cdf['moving_ave'].values[-8]*1.1 :
-            colorbin = 5
-        elif cdf['moving_ave'].values[-1] > cdf['moving_ave'].values[-8] :
-            colorbin = 4
-        else :
-            colorbin = 1
         ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=palette[colorbin])
         ax.fill_between(cdf['update_date'].values, [0]*len(cdf['moving_ave']), cdf['moving_ave'],
                         linewidth=0, color=palette[colorbin], alpha=0.3)
 
-        formatter = mdates.DateFormatter("%m-%d")
         ax.set_ylim(0, max_pos)
         ax.set_xlim(np.min(df['update_date']) - timedelta(days=1),
                     np.max(df['update_date']) + timedelta(days=1))
@@ -272,7 +272,7 @@ def plot_agg_by_region() :
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-        ax = fig.add_subplot(2,4,4+ri+1)
+        ax = fig.add_subplot(3,4,8+ri+1)
         cdf = cdf[cdf['Positive_Cases'] <= cdf['Tested']]
         cdf['moving_ave'] = cdf['daily_tpr'].rolling(window=7, center=False).mean()
         colorbin = min(b for b,i in enumerate(tpr_limits) if i > cdf['moving_ave'].values[-1])
@@ -285,7 +285,6 @@ def plot_agg_by_region() :
         ax.plot([np.min(df['update_date']), np.max(df['update_date'])], [0.05, 0.05], '-',
                 linewidth=0.5, color='#969696')
 
-        formatter = mdates.DateFormatter("%m-%d")
         ax.set_ylim(0, max_pos)
         ax.set_xlim(np.min(df['update_date']) - timedelta(days=1),
                     np.max(df['update_date']) + timedelta(days=1))
@@ -295,13 +294,88 @@ def plot_agg_by_region() :
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_ylim(0, 0.2)
 
+        ax = fig.add_subplot(3,4,4+ri+1)
+        colorbin = 1
+        cdf = cdf[cdf['update_date'] >= date(2020,5,15)]
+        cdf['moving_ave'] = cdf['daily_test'].rolling(window=7, center=False).mean()
+        ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=palette[colorbin])
+        ax.fill_between(cdf['update_date'].values, [0]*len(cdf['moving_ave']), cdf['moving_ave'],
+                        linewidth=0, color=palette[colorbin], alpha=0.3)
+        max_pos = np.max(cdf['moving_ave'])
+
+        ax.set_ylim(0, max_pos)
+        ax.set_xlim(np.min(df['update_date']) - timedelta(days=1),
+                    np.max(df['update_date']) + timedelta(days=1))
+        if ri == 0 :
+            ax.set_ylabel('tests')
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+
+
+
     fig.savefig(os.path.join(plot_dir, 'idph_public_region.pdf'), format='PDF')
+
+
+def plot_county_line_by_region() :
+
+    df = assign_counties_restore_region()
+    df = df.sort_values(by=['update_date', 'restore_region', 'County'])
+
+    regions = pd.DataFrame( { 'region' : df['restore_region'].unique(),
+                              'cindex' : range(len(df['restore_region'].unique()))})
+    regions = regions.set_index('region')
+
+    fig_cases = setup_fig('cases')
+    fig_tpr = setup_fig('TPR')
+    palette = load_color_palette('wes')
+
+    ci = 0
+    for ri, (reg, rdf) in enumerate(df.groupby('restore_region')) :
+        for county, cdf in rdf.groupby('County') :
+            cdf['daily_pos'] = np.insert(np.diff(cdf['Positive_Cases']), 0, 0)
+            cdf['daily_test'] = np.insert(np.diff(cdf['Tested']), 0, 0)
+            cdf.loc[cdf['daily_test'] == 0, 'daily_test'] = 1
+            cdf['daily_tpr'] = cdf['daily_pos']/cdf['daily_test']
+
+            ax = fig_cases.add_subplot(9,12,ci+1)
+            colorbin = regions.at[reg, 'cindex']
+            if len(cdf) < 10 :
+                ax.bar(cdf['update_date'].values[1:], np.diff(cdf['Positive_Cases']),
+                       align='center', color=palette[colorbin], linewidth=0, alpha=0.3)
+                max_pos = np.max(cdf['Positive_Cases'])
+            else :
+                cdf['moving_ave'] = cdf['daily_pos'].rolling(window=7, center=False).mean()
+                max_pos = np.max(cdf['moving_ave'])
+                ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=palette[colorbin])
+                ax.fill_between(cdf['update_date'].values, [0]*len(cdf['moving_ave']), cdf['moving_ave'],
+                                linewidth=0, color=palette[colorbin], alpha=0.3)
+            format_axis(ax, ci, df, county, max_pos, 'cases')
+
+            ax = fig_tpr.add_subplot(9,12,ci+1)
+            cdf = cdf[cdf['Positive_Cases'] <= cdf['Tested']]
+            if len(cdf) < 10 :
+                ax.plot(cdf['update_date'], cdf['daily_tpr'], '-', color=palette[colorbin])
+                ax.fill_between(cdf['update_date'].values, [0] * len(cdf['daily_tpr']), cdf['daily_tpr'],
+                                linewidth=0, color=palette[colorbin], alpha=0.3)
+                max_pos = np.max(cdf['daily_tpr'])
+            else :
+                cdf['moving_ave'] = cdf['daily_tpr'].rolling(window=7, center=False).mean()
+                ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=palette[colorbin])
+                ax.fill_between(cdf['update_date'].values, [0]*len(cdf['moving_ave']), cdf['moving_ave'],
+                                linewidth=0, color=palette[colorbin], alpha=0.3)
+                max_pos = np.max(cdf['moving_ave'])
+            format_axis(ax, ci, df, county, max_pos, 'TPR')
+            ci += 1
+
+    fig_cases.savefig(os.path.join(plot_dir, 'idph_public_county_region_cases.pdf'), format='PDF')
+    fig_tpr.savefig(os.path.join(plot_dir, 'idph_public_county__region_tpr.pdf'), format='PDF')
 
 
 if __name__ == '__main__' :
 
-    plot_IL_cases()
     # plot_cases_by_county_map()
     # plot_cases_by_county_line()
-    # plot_agg_by_region()
-    plt.show()
+    # plot_county_line_by_region()
+    plot_agg_by_region()
+    # plot_IL_cases()
+    # plt.show()
