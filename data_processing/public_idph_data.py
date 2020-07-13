@@ -76,7 +76,8 @@ def plot_IL_cases() :
     ax.set_ylabel('deaths')
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
-    plt.savefig(os.path.join(plot_dir, 'idph_public_cases_and_deaths.pdf'), format='PDF')
+    fig.savefig(os.path.join(plot_dir, 'idph_public_cases_and_deaths.pdf'), format='PDF')
+    plt.close(fig)
 
 
 def load_county_cases() :
@@ -224,6 +225,8 @@ def plot_cases_by_county_line() :
 
     fig_cases.savefig(os.path.join(plot_dir, 'idph_public_county_cases.pdf'), format='PDF')
     fig_tpr.savefig(os.path.join(plot_dir, 'idph_public_county_tpr.pdf'), format='PDF')
+    plt.close(fig_cases)
+    plt.close(fig_tpr)
 
 
 def assign_counties_restore_region() :
@@ -311,9 +314,8 @@ def plot_agg_by_region() :
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-
-
     fig.savefig(os.path.join(plot_dir, 'idph_public_region.pdf'), format='PDF')
+    plt.close(fig)
 
 
 def plot_county_line_by_region() :
@@ -368,14 +370,16 @@ def plot_county_line_by_region() :
             ci += 1
 
     fig_cases.savefig(os.path.join(plot_dir, 'idph_public_county_region_cases.pdf'), format='PDF')
-    fig_tpr.savefig(os.path.join(plot_dir, 'idph_public_county__region_tpr.pdf'), format='PDF')
+    fig_tpr.savefig(os.path.join(plot_dir, 'idph_public_county_region_tpr.pdf'), format='PDF')
+    plt.close(fig_cases)
+    plt.close(fig_tpr)
 
 
 if __name__ == '__main__' :
 
     # plot_cases_by_county_map()
     # plot_cases_by_county_line()
-    # plot_county_line_by_region()
-    plot_agg_by_region()
+    plot_county_line_by_region()
+    # plot_agg_by_region()
     # plot_IL_cases()
     # plt.show()

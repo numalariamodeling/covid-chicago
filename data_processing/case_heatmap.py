@@ -239,9 +239,9 @@ def plot_ratio_county() :
         ds_shp.plot(ax=ax, color='#969696', edgecolor='0.8',
                     linewidth=0.8, legend=False)
         pdf = ds_shp[ds_shp['ratio'] == -1]
-        pdf.plot(ax=ax, color='#BADA55', edgecolor='0.8',
+        pdf.plot(ax=ax, color='#313695', edgecolor='0.8',
                  linewidth=0.8, legend=False)
-        pdf = ds_shp[ds_shp['ratio'] > 0]
+        pdf = ds_shp[ds_shp['ratio'] >= 0]
         pdf.plot(column='ratio', ax=ax, cmap='RdYlBu_r', edgecolor='0.8',
                      linewidth=0.8, legend=False, norm=norm)
         sm = plt.cm.ScalarMappable(cmap='RdYlBu_r', norm=norm)
@@ -302,7 +302,7 @@ if __name__ == '__main__' :
     # plot_EMS_by_line('admissions')
     # plot_EMS_by_line('deaths')
     # plot_ratio_ems()
-    # plot_ratio_county()
-    plot_LL_all_IL()
+    plot_ratio_county()
+    # plot_LL_all_IL()
     plt.show()
 
