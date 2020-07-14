@@ -97,8 +97,8 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     # plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
     # plot_path=plot_path, first_day=first_day)
     # plt.show()
-    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200708_jg_deceased_date_ems.csv'))
-    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200708_jg_admission_date_ems.csv'))
+    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200713_jg_deceased_date_ems.csv'))
+    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200713_jg_admission_date_ems.csv'))
     if ems > 0:
         ref_df1 = ref_df1[ref_df1['EMS'] == ems]
         ref_df2 = ref_df2[ref_df2['EMS'] == ems]
@@ -124,7 +124,7 @@ def compare_ems(exp_name, ems=0, source='EMR'):
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
-    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'New Detected\nHospitalizations  (EMR)', 'New Detected\nDeaths (LL)',
+    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'New Deaths (LL)', 'New Detected\nHospitalizations (LL)']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
     plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=5000,
