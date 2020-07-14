@@ -674,10 +674,10 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
     gradual_reopening_str = ""
     for grp in grpList:
         temp_str = """
-(param Ki_back1_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_1@ (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back2_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_2@ (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back3_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_3@ (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back4_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back1_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 0.25 (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back2_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 0.50 (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back3_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 0.75 (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back4_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 1.00 (- Ki_{grp} Ki_red4_{grp}))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
