@@ -251,6 +251,62 @@ def plot_ratio_county() :
     plt.savefig(os.path.join(plot_path, 'county_weekly_case_ratio.png'))
 
 
+
+def plot_ratio_region() :
+
+    region_shp = gpd.read_file(os.path.join(shp_path, 'Restore_Regions', 'Restore_Regions.shp'))
+    region_fname = os.path.join(box_data_path, 'Corona virus reports', 'county_restore_region_map.csv')
+    regiondf = pd.read_csv(region_fname)
+    regiondf.loc[regiondf['restore_region'] == 'North-Central', 'restore_region'] = 'North Central'
+
+    ds_shp, df = load_county_map_with_public_data()
+
+    df = pd.merge(left=df, right=regiondf, left_on='County', right_on='county')
+    df = df.groupby(['update_date', 'restore_region'])[['Positive_Cases']].agg(np.sum).reset_index()
+    df['REGION'] =  df['restore_region']
+    max_date = np.max(df['update_date'])
+    fig = plt.figure(figsize=(12, 10))
+    fig.subplots_adjust(top=0.95)
+    vmin, vmax = 0.5, 2
+    norm = MidpointNormalize(vmin=vmin, vcenter=1, vmax=vmax)
+
+    def get_ratio(adf, region, w):
+        cdf = adf[adf['REGION'] == region]
+        # if len(cdf) == 0 :
+        #     return 100
+        cdf['daily_pos'] = np.insert(np.diff(cdf['Positive_Cases']), 0, 0)
+        d = cdf['daily_pos'].values
+        if w == 0:
+            recent = np.mean(d[-7:])
+        else:
+            recent = np.mean(d[-7 * (w + 1):-7 * w])
+        back = np.mean(d[-7 * (w + 2):-7 * (w + 1)])
+        if back == 0 and recent == 0 :
+            return -1
+        if back == 0 :
+            return vmax
+        return min([recent / back, vmax])
+
+    for week in range(6) :
+        ax = fig.add_subplot(2,3,6-week)
+        format_ax(ax, '%d weeks ago vs %d weeks ago' % (week, week+1))
+        region_shp['ratio'] = region_shp['REGION'].apply(lambda x : get_ratio(df, x, week))
+        region_shp.plot(ax=ax, color='#969696', edgecolor='0.8',
+                    linewidth=0.8, legend=False)
+        pdf = region_shp[region_shp['ratio'] <0]
+        pdf.plot(ax=ax, color='#313695', edgecolor='0.8',
+                 linewidth=0.8, legend=False)
+        pdf = region_shp[region_shp['ratio'] >= 0]
+        pdf.plot(column='ratio', ax=ax, cmap='RdYlBu_r', edgecolor='0.8',
+                     linewidth=0.8, legend=False, norm=norm)
+        sm = plt.cm.ScalarMappable(cmap='RdYlBu_r', norm=norm)
+        sm._A = []
+        cbar = fig.colorbar(sm, ax=ax)
+    fig.suptitle('week over week ratio of cases\npublic data ending ' + str(max_date))
+    plt.savefig(os.path.join(plot_path, 'restoreRegion_weekly_case_ratio.png'))
+    plt.savefig(os.path.join(plot_path, 'restoreRegion_weekly_case_ratio.pdf'))
+
+
 def plot_LL_all_IL() :
 
     case_df = pd.read_csv(spec_coll_fname)
@@ -303,6 +359,7 @@ if __name__ == '__main__' :
     # plot_EMS_by_line('deaths')
     # plot_ratio_ems()
     plot_ratio_county()
+    #plot_ratio_region
     # plot_LL_all_IL()
     plt.show()
 
