@@ -1051,7 +1051,7 @@
 (observe symptomatic_severe_EMS-1 symptomatic_severe_EMS_1)
 (observe hospitalized_EMS-1 hospitalized_EMS_1)
 (observe critical_EMS-1 critical_EMS_1)
-(observe deaths_EMS-1 D3_det3::EMS_1)
+(observe deaths_EMS-1 deaths_EMS_1)
 (observe recovered_EMS-1 recovered_EMS_1)
 
 (observe asymptomatic_det_EMS-1 asymptomatic_det_EMS_1)
@@ -1103,7 +1103,7 @@
 (observe symptomatic_severe_EMS-2 symptomatic_severe_EMS_2)
 (observe hospitalized_EMS-2 hospitalized_EMS_2)
 (observe critical_EMS-2 critical_EMS_2)
-(observe deaths_EMS-2 D3_det3::EMS_2)
+(observe deaths_EMS-2 deaths_EMS_2)
 (observe recovered_EMS-2 recovered_EMS_2)
 
 (observe asymptomatic_det_EMS-2 asymptomatic_det_EMS_2)
@@ -1155,7 +1155,7 @@
 (observe symptomatic_severe_EMS-3 symptomatic_severe_EMS_3)
 (observe hospitalized_EMS-3 hospitalized_EMS_3)
 (observe critical_EMS-3 critical_EMS_3)
-(observe deaths_EMS-3 D3_det3::EMS_3)
+(observe deaths_EMS-3 deaths_EMS_3)
 (observe recovered_EMS-3 recovered_EMS_3)
 
 (observe asymptomatic_det_EMS-3 asymptomatic_det_EMS_3)
@@ -1207,7 +1207,7 @@
 (observe symptomatic_severe_EMS-4 symptomatic_severe_EMS_4)
 (observe hospitalized_EMS-4 hospitalized_EMS_4)
 (observe critical_EMS-4 critical_EMS_4)
-(observe deaths_EMS-4 D3_det3::EMS_4)
+(observe deaths_EMS-4 deaths_EMS_4)
 (observe recovered_EMS-4 recovered_EMS_4)
 
 (observe asymptomatic_det_EMS-4 asymptomatic_det_EMS_4)
@@ -1259,7 +1259,7 @@
 (observe symptomatic_severe_EMS-5 symptomatic_severe_EMS_5)
 (observe hospitalized_EMS-5 hospitalized_EMS_5)
 (observe critical_EMS-5 critical_EMS_5)
-(observe deaths_EMS-5 D3_det3::EMS_5)
+(observe deaths_EMS-5 deaths_EMS_5)
 (observe recovered_EMS-5 recovered_EMS_5)
 
 (observe asymptomatic_det_EMS-5 asymptomatic_det_EMS_5)
@@ -1311,7 +1311,7 @@
 (observe symptomatic_severe_EMS-6 symptomatic_severe_EMS_6)
 (observe hospitalized_EMS-6 hospitalized_EMS_6)
 (observe critical_EMS-6 critical_EMS_6)
-(observe deaths_EMS-6 D3_det3::EMS_6)
+(observe deaths_EMS-6 deaths_EMS_6)
 (observe recovered_EMS-6 recovered_EMS_6)
 
 (observe asymptomatic_det_EMS-6 asymptomatic_det_EMS_6)
@@ -1363,7 +1363,7 @@
 (observe symptomatic_severe_EMS-7 symptomatic_severe_EMS_7)
 (observe hospitalized_EMS-7 hospitalized_EMS_7)
 (observe critical_EMS-7 critical_EMS_7)
-(observe deaths_EMS-7 D3_det3::EMS_7)
+(observe deaths_EMS-7 deaths_EMS_7)
 (observe recovered_EMS-7 recovered_EMS_7)
 
 (observe asymptomatic_det_EMS-7 asymptomatic_det_EMS_7)
@@ -1415,7 +1415,7 @@
 (observe symptomatic_severe_EMS-8 symptomatic_severe_EMS_8)
 (observe hospitalized_EMS-8 hospitalized_EMS_8)
 (observe critical_EMS-8 critical_EMS_8)
-(observe deaths_EMS-8 D3_det3::EMS_8)
+(observe deaths_EMS-8 deaths_EMS_8)
 (observe recovered_EMS-8 recovered_EMS_8)
 
 (observe asymptomatic_det_EMS-8 asymptomatic_det_EMS_8)
@@ -1467,7 +1467,7 @@
 (observe symptomatic_severe_EMS-9 symptomatic_severe_EMS_9)
 (observe hospitalized_EMS-9 hospitalized_EMS_9)
 (observe critical_EMS-9 critical_EMS_9)
-(observe deaths_EMS-9 D3_det3::EMS_9)
+(observe deaths_EMS-9 deaths_EMS_9)
 (observe recovered_EMS-9 recovered_EMS_9)
 
 (observe asymptomatic_det_EMS-9 asymptomatic_det_EMS_9)
@@ -1519,7 +1519,7 @@
 (observe symptomatic_severe_EMS-10 symptomatic_severe_EMS_10)
 (observe hospitalized_EMS-10 hospitalized_EMS_10)
 (observe critical_EMS-10 critical_EMS_10)
-(observe deaths_EMS-10 D3_det3::EMS_10)
+(observe deaths_EMS-10 deaths_EMS_10)
 (observe recovered_EMS-10 recovered_EMS_10)
 
 (observe asymptomatic_det_EMS-10 asymptomatic_det_EMS_10)
@@ -1571,7 +1571,7 @@
 (observe symptomatic_severe_EMS-11 symptomatic_severe_EMS_11)
 (observe hospitalized_EMS-11 hospitalized_EMS_11)
 (observe critical_EMS-11 critical_EMS_11)
-(observe deaths_EMS-11 D3_det3::EMS_11)
+(observe deaths_EMS-11 deaths_EMS_11)
 (observe recovered_EMS-11 recovered_EMS_11)
 
 (observe asymptomatic_det_EMS-11 asymptomatic_det_EMS_11)
@@ -1760,111 +1760,133 @@
 (param Ki_red2_EMS_1 (* Ki_EMS_1 @social_multiplier_2_EMS_1@))
 (param Ki_red3_EMS_1 (* Ki_EMS_1 @social_multiplier_3_EMS_1@))
 (param Ki_red4_EMS_1 (* Ki_EMS_1 @social_multiplier_4_EMS_1@))
+(param Ki_red5_EMS_1 (* Ki_EMS_1 @social_multiplier_5_EMS_1@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_1 Ki_red1_EMS_1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_1 Ki_red2_EMS_1)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_1 Ki_red3_EMS_1)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_1 Ki_red4_EMS_1)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_1 Ki_red5_EMS_1)))
             
 (param Ki_red1_EMS_2 (* Ki_EMS_2 @social_multiplier_1_EMS_2@))
 (param Ki_red2_EMS_2 (* Ki_EMS_2 @social_multiplier_2_EMS_2@))
 (param Ki_red3_EMS_2 (* Ki_EMS_2 @social_multiplier_3_EMS_2@))
 (param Ki_red4_EMS_2 (* Ki_EMS_2 @social_multiplier_4_EMS_2@))
+(param Ki_red5_EMS_2 (* Ki_EMS_2 @social_multiplier_5_EMS_2@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_2 Ki_red1_EMS_2)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_2 Ki_red2_EMS_2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_2 Ki_red3_EMS_2)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_2 Ki_red4_EMS_2)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_2 Ki_red5_EMS_2)))
             
 (param Ki_red1_EMS_3 (* Ki_EMS_3 @social_multiplier_1_EMS_3@))
 (param Ki_red2_EMS_3 (* Ki_EMS_3 @social_multiplier_2_EMS_3@))
 (param Ki_red3_EMS_3 (* Ki_EMS_3 @social_multiplier_3_EMS_3@))
 (param Ki_red4_EMS_3 (* Ki_EMS_3 @social_multiplier_4_EMS_3@))
+(param Ki_red5_EMS_3 (* Ki_EMS_3 @social_multiplier_5_EMS_3@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_3 Ki_red1_EMS_3)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_3 Ki_red2_EMS_3)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_3 Ki_red3_EMS_3)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_3 Ki_red4_EMS_3)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_3 Ki_red5_EMS_3)))
             
 (param Ki_red1_EMS_4 (* Ki_EMS_4 @social_multiplier_1_EMS_4@))
 (param Ki_red2_EMS_4 (* Ki_EMS_4 @social_multiplier_2_EMS_4@))
 (param Ki_red3_EMS_4 (* Ki_EMS_4 @social_multiplier_3_EMS_4@))
 (param Ki_red4_EMS_4 (* Ki_EMS_4 @social_multiplier_4_EMS_4@))
+(param Ki_red5_EMS_4 (* Ki_EMS_4 @social_multiplier_5_EMS_4@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_4 Ki_red1_EMS_4)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_4 Ki_red2_EMS_4)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_4 Ki_red3_EMS_4)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_4 Ki_red4_EMS_4)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_4 Ki_red5_EMS_4)))
             
 (param Ki_red1_EMS_5 (* Ki_EMS_5 @social_multiplier_1_EMS_5@))
 (param Ki_red2_EMS_5 (* Ki_EMS_5 @social_multiplier_2_EMS_5@))
 (param Ki_red3_EMS_5 (* Ki_EMS_5 @social_multiplier_3_EMS_5@))
 (param Ki_red4_EMS_5 (* Ki_EMS_5 @social_multiplier_4_EMS_5@))
+(param Ki_red5_EMS_5 (* Ki_EMS_5 @social_multiplier_5_EMS_5@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_5 Ki_red1_EMS_5)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_5 Ki_red2_EMS_5)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_5 Ki_red3_EMS_5)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_5 Ki_red4_EMS_5)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_5 Ki_red5_EMS_5)))
             
 (param Ki_red1_EMS_6 (* Ki_EMS_6 @social_multiplier_1_EMS_6@))
 (param Ki_red2_EMS_6 (* Ki_EMS_6 @social_multiplier_2_EMS_6@))
 (param Ki_red3_EMS_6 (* Ki_EMS_6 @social_multiplier_3_EMS_6@))
 (param Ki_red4_EMS_6 (* Ki_EMS_6 @social_multiplier_4_EMS_6@))
+(param Ki_red5_EMS_6 (* Ki_EMS_6 @social_multiplier_5_EMS_6@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_6 Ki_red1_EMS_6)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_6 Ki_red2_EMS_6)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_6 Ki_red3_EMS_6)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_6 Ki_red4_EMS_6)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_6 Ki_red5_EMS_6)))
             
 (param Ki_red1_EMS_7 (* Ki_EMS_7 @social_multiplier_1_EMS_7@))
 (param Ki_red2_EMS_7 (* Ki_EMS_7 @social_multiplier_2_EMS_7@))
 (param Ki_red3_EMS_7 (* Ki_EMS_7 @social_multiplier_3_EMS_7@))
 (param Ki_red4_EMS_7 (* Ki_EMS_7 @social_multiplier_4_EMS_7@))
+(param Ki_red5_EMS_7 (* Ki_EMS_7 @social_multiplier_5_EMS_7@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_7 Ki_red1_EMS_7)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_7 Ki_red2_EMS_7)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_7 Ki_red3_EMS_7)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_7 Ki_red4_EMS_7)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_7 Ki_red5_EMS_7)))
             
 (param Ki_red1_EMS_8 (* Ki_EMS_8 @social_multiplier_1_EMS_8@))
 (param Ki_red2_EMS_8 (* Ki_EMS_8 @social_multiplier_2_EMS_8@))
 (param Ki_red3_EMS_8 (* Ki_EMS_8 @social_multiplier_3_EMS_8@))
 (param Ki_red4_EMS_8 (* Ki_EMS_8 @social_multiplier_4_EMS_8@))
+(param Ki_red5_EMS_8 (* Ki_EMS_8 @social_multiplier_5_EMS_8@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_8 Ki_red1_EMS_8)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_8 Ki_red2_EMS_8)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_8 Ki_red3_EMS_8)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_8 Ki_red4_EMS_8)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_8 Ki_red5_EMS_8)))
             
 (param Ki_red1_EMS_9 (* Ki_EMS_9 @social_multiplier_1_EMS_9@))
 (param Ki_red2_EMS_9 (* Ki_EMS_9 @social_multiplier_2_EMS_9@))
 (param Ki_red3_EMS_9 (* Ki_EMS_9 @social_multiplier_3_EMS_9@))
 (param Ki_red4_EMS_9 (* Ki_EMS_9 @social_multiplier_4_EMS_9@))
+(param Ki_red5_EMS_9 (* Ki_EMS_9 @social_multiplier_5_EMS_9@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_9 Ki_red1_EMS_9)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_9 Ki_red2_EMS_9)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_9 Ki_red3_EMS_9)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_9 Ki_red4_EMS_9)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_9 Ki_red5_EMS_9)))
             
 (param Ki_red1_EMS_10 (* Ki_EMS_10 @social_multiplier_1_EMS_10@))
 (param Ki_red2_EMS_10 (* Ki_EMS_10 @social_multiplier_2_EMS_10@))
 (param Ki_red3_EMS_10 (* Ki_EMS_10 @social_multiplier_3_EMS_10@))
 (param Ki_red4_EMS_10 (* Ki_EMS_10 @social_multiplier_4_EMS_10@))
+(param Ki_red5_EMS_10 (* Ki_EMS_10 @social_multiplier_5_EMS_10@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_10 Ki_red1_EMS_10)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_10 Ki_red2_EMS_10)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_10 Ki_red3_EMS_10)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_10 Ki_red4_EMS_10)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_10 Ki_red5_EMS_10)))
             
 (param Ki_red1_EMS_11 (* Ki_EMS_11 @social_multiplier_1_EMS_11@))
 (param Ki_red2_EMS_11 (* Ki_EMS_11 @social_multiplier_2_EMS_11@))
 (param Ki_red3_EMS_11 (* Ki_EMS_11 @social_multiplier_3_EMS_11@))
 (param Ki_red4_EMS_11 (* Ki_EMS_11 @social_multiplier_4_EMS_11@))
+(param Ki_red5_EMS_11 (* Ki_EMS_11 @social_multiplier_5_EMS_11@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_11 Ki_red1_EMS_11)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_11 Ki_red2_EMS_11)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_11 Ki_red3_EMS_11)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_11 Ki_red4_EMS_11)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_11 Ki_red5_EMS_11)))
             
 
 (time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_As @change_testDelay_As_1@) (Kl_D (/ 1 time_D_As)) (Kr_a_D (/ 1 (- recovery_time_asymp time_D_As ))) ))

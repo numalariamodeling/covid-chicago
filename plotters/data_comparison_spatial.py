@@ -60,10 +60,11 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, datetoday)
-        ax.set_ylim(1, ymax)
+        ax.set_ylim(0.1, ymax)
         ax.set_yscale('log')
 
-        ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
+        ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0, ms=1)
+        ax.plot(ref_df['date'], ref_df[data_channel_names[c]].rolling(window = 7, center=True).mean(), c='k', alpha=1.0)
     fig.tight_layout()
     if plot_path:
         plot_name = 'compare_to_data_EMS_' + str(ems_nr) + '_KiCI'
@@ -94,21 +95,22 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     channels = ['new_detected_deaths', 'crit_det', 'ventilators']
     ref_df_emr = ref_df
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
-    # plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
+    # plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=8000,
     # plot_path=plot_path, first_day=first_day)
     # plt.show()
-    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200713_jg_deceased_date_ems.csv'))
-    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200713_jg_admission_date_ems.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200715_jg_aggregated_ems.csv'))
     if ems > 0:
-        ref_df1 = ref_df1[ref_df1['EMS'] == ems]
-        ref_df2 = ref_df2[ref_df2['EMS'] == ems]
+        #ref_df1 = ref_df1[ref_df1['EMS'] == ems]
+        #ref_df2 = ref_df2[ref_df2['EMS'] == ems]
+        ref_df = ref_df[ref_df['EMS'] == ems]
     else:
-        ref_df1 = ref_df1.groupby('date').agg(np.sum).reset_index()
-        ref_df2 = ref_df2.groupby('date').agg(np.sum).reset_index()
-    ref_df1 = ref_df1.rename(columns={'cases': 'deaths'})
-    ref_df2 = ref_df2.rename(columns={'cases': 'admissions'})
-    del ref_df2['EMS']
-    ref_df = pd.merge(left=ref_df1, left_on='date', right=ref_df2, right_on='date')
+        #ref_df1 = ref_df1.groupby('date').agg(np.sum).reset_index()
+        #ref_df2 = ref_df2.groupby('date').agg(np.sum).reset_index()
+        ref_df = ref_df.groupby('date').agg(np.sum).reset_index()
+    #ref_df1 = ref_df1.rename(columns={'cases': 'deaths'})
+    #ref_df2 = ref_df2.rename(columns={'cases': 'admissions'})
+    #del ref_df2['EMS']
+    #ref_df = pd.merge(left=ref_df1, left_on='date', right=ref_df2, right_on='date')
     ref_df['date'] = pd.to_datetime(ref_df['date'])
     data_channel_names = ['deaths', 'deaths', 'admissions']
 
@@ -127,7 +129,7 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'New Deaths (LL)', 'New Detected\nHospitalizations (LL)']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
-    plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=5000,
+    plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
                      plot_path=plot_path, first_day=first_day)
 
     # return ref_df_emr, ref_df_ll
