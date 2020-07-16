@@ -3,7 +3,7 @@ experiment_setup_parameters:
   'number_of_runs': 1
   'duration': 370
   'monitoring_samples': 370 # needs to be smaller than duration
-  'random_seed': 18
+  'random_seed': 19
   'initialAs': 10
 fixed_parameters_region_specific:
   populations:
@@ -185,16 +185,16 @@ intervention_parameters:
   ### Gradual reopening (time-wise)
   'reopening_multiplier_1':
     np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.1}
+    function_kwargs: {'low':0.02, 'high':0.02}
   'reopening_multiplier_2':
     np.random: uniform
-    function_kwargs: {'low':0.3, 'high':0.3}
+    function_kwargs: {'low':0.04, 'high':0.04}
   'reopening_multiplier_3':
     np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.6}
+    function_kwargs: {'low':0.06, 'high':0.06}
   'reopening_multiplier_4':
-    np.random: uniform
-    function_kwargs: {'low':0.9, 'high':0.9}
+    np: linspace
+    function_kwargs: {'start':0.08, 'stop':0.20, 'num' : 1}
   ### INCREASE DETECTION RATES of asymptomatic, presymptomatic and mild infections
   'd_AsP_ct1':
     np.random: uniform
@@ -230,6 +230,9 @@ time_parameters:
   'socialDistance_time4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-21}
+  'socialDistance_time5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-21}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':

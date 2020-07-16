@@ -90,7 +90,7 @@ def write_observe(grp, expandModel=None):
 (observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
 (observe hospitalized_{grpout} hospitalized_{grp})
 (observe critical_{grpout} critical_{grp})
-(observe deaths_{grpout} D3_det3::{grp})
+(observe deaths_{grpout} deaths_{grp})
 (observe recovered_{grpout} recovered_{grp})
 
 (observe asymptomatic_det_{grpout} asymptomatic_det_{grp})
@@ -647,11 +647,13 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (param Ki_red2_{grp} (* Ki_{grp} @social_multiplier_2_{grp}@))
 (param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
 (param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
+(param Ki_red5_{grp} (* Ki_{grp} @social_multiplier_5_{grp}@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_{grp} Ki_red5_{grp})))
             """.format(grp=grp)
         continuedSIP_str = continuedSIP_str + temp_str
 
