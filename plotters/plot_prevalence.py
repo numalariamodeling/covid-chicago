@@ -32,13 +32,13 @@ def trim_trajectories(simpath, scenario, colnames, ems) :
 
 if __name__ == '__main__' :
 
-    outdir = '20200624'
+    outdir = '20200715'
     scenario = 'baseline'
     ems = ['EMS-%d' % x for x in range(1, 12)] + ['All']
     colnames = ['infected', 'recovered', 'N']
 
     simpath = os.path.join(projectpath, 'NU_civis_outputs', outdir, 'trajectories')
-    # trim_trajectories(simpath, scenario, colnames, ems)
+    trim_trajectories(simpath, scenario, colnames, ems)
     df = pd.read_csv(os.path.join(simpath, 'trimmed_trajectoriesDat_%s.csv' % scenario))
     df['date'] = pd.to_datetime(df['date'])
     fig = plt.figure(figsize=(16,8))

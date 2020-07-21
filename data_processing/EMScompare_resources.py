@@ -111,4 +111,4 @@ if __name__ == '__main__' :
 
     plot_emresource('nolog')
     plot_emresource('log')
-    plt.show()
+    # plt.show()
