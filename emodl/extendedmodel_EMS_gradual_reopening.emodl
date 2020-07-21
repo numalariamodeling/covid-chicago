@@ -1762,6 +1762,9 @@
 (param Ki_red4_EMS_1 (* Ki_EMS_1 @social_multiplier_4_EMS_1@))
 (param Ki_red5_EMS_1 (* Ki_EMS_1 @social_multiplier_5_EMS_1@))
 
+(param backtonormal_multiplier_1_EMS_1  (/ (- Ki_red5_EMS_1  Ki_red4_EMS_1 ) (- Ki_EMS_1 Ki_red4_EMS_1 ) ) )  
+(observe backtonormal_multiplier_1_EMS_1 backtonormal_multiplier_1_EMS_1)
+
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_1 Ki_red1_EMS_1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_1 Ki_red2_EMS_1)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_1 Ki_red3_EMS_1)))
@@ -1773,6 +1776,9 @@
 (param Ki_red3_EMS_2 (* Ki_EMS_2 @social_multiplier_3_EMS_2@))
 (param Ki_red4_EMS_2 (* Ki_EMS_2 @social_multiplier_4_EMS_2@))
 (param Ki_red5_EMS_2 (* Ki_EMS_2 @social_multiplier_5_EMS_2@))
+
+(param backtonormal_multiplier_1_EMS_2  (/ (- Ki_red5_EMS_2  Ki_red4_EMS_2 ) (- Ki_EMS_2 Ki_red4_EMS_2 ) ) )  
+(observe backtonormal_multiplier_1_EMS_2 backtonormal_multiplier_1_EMS_2)
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_2 Ki_red1_EMS_2)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_2 Ki_red2_EMS_2)))
@@ -1786,6 +1792,9 @@
 (param Ki_red4_EMS_3 (* Ki_EMS_3 @social_multiplier_4_EMS_3@))
 (param Ki_red5_EMS_3 (* Ki_EMS_3 @social_multiplier_5_EMS_3@))
 
+(param backtonormal_multiplier_1_EMS_3  (/ (- Ki_red5_EMS_3  Ki_red4_EMS_3 ) (- Ki_EMS_3 Ki_red4_EMS_3 ) ) )  
+(observe backtonormal_multiplier_1_EMS_3 backtonormal_multiplier_1_EMS_3)
+
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_3 Ki_red1_EMS_3)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_3 Ki_red2_EMS_3)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_3 Ki_red3_EMS_3)))
@@ -1797,6 +1806,9 @@
 (param Ki_red3_EMS_4 (* Ki_EMS_4 @social_multiplier_3_EMS_4@))
 (param Ki_red4_EMS_4 (* Ki_EMS_4 @social_multiplier_4_EMS_4@))
 (param Ki_red5_EMS_4 (* Ki_EMS_4 @social_multiplier_5_EMS_4@))
+
+(param backtonormal_multiplier_1_EMS_4  (/ (- Ki_red5_EMS_4  Ki_red4_EMS_4 ) (- Ki_EMS_4 Ki_red4_EMS_4 ) ) )  
+(observe backtonormal_multiplier_1_EMS_4 backtonormal_multiplier_1_EMS_4)
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_4 Ki_red1_EMS_4)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_4 Ki_red2_EMS_4)))
@@ -1810,6 +1822,9 @@
 (param Ki_red4_EMS_5 (* Ki_EMS_5 @social_multiplier_4_EMS_5@))
 (param Ki_red5_EMS_5 (* Ki_EMS_5 @social_multiplier_5_EMS_5@))
 
+(param backtonormal_multiplier_1_EMS_5  (/ (- Ki_red5_EMS_5  Ki_red4_EMS_5 ) (- Ki_EMS_5 Ki_red4_EMS_5 ) ) )  
+(observe backtonormal_multiplier_1_EMS_5 backtonormal_multiplier_1_EMS_5)
+
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_5 Ki_red1_EMS_5)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_5 Ki_red2_EMS_5)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_5 Ki_red3_EMS_5)))
@@ -1821,6 +1836,9 @@
 (param Ki_red3_EMS_6 (* Ki_EMS_6 @social_multiplier_3_EMS_6@))
 (param Ki_red4_EMS_6 (* Ki_EMS_6 @social_multiplier_4_EMS_6@))
 (param Ki_red5_EMS_6 (* Ki_EMS_6 @social_multiplier_5_EMS_6@))
+
+(param backtonormal_multiplier_1_EMS_6  (/ (- Ki_red5_EMS_6  Ki_red4_EMS_6 ) (- Ki_EMS_6 Ki_red4_EMS_6 ) ) )  
+(observe backtonormal_multiplier_1_EMS_6 backtonormal_multiplier_1_EMS_6)
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_6 Ki_red1_EMS_6)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_6 Ki_red2_EMS_6)))
@@ -1834,6 +1852,9 @@
 (param Ki_red4_EMS_7 (* Ki_EMS_7 @social_multiplier_4_EMS_7@))
 (param Ki_red5_EMS_7 (* Ki_EMS_7 @social_multiplier_5_EMS_7@))
 
+(param backtonormal_multiplier_1_EMS_7  (/ (- Ki_red5_EMS_7  Ki_red4_EMS_7 ) (- Ki_EMS_7 Ki_red4_EMS_7 ) ) )  
+(observe backtonormal_multiplier_1_EMS_7 backtonormal_multiplier_1_EMS_7)
+
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_7 Ki_red1_EMS_7)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_7 Ki_red2_EMS_7)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_7 Ki_red3_EMS_7)))
@@ -1845,6 +1866,9 @@
 (param Ki_red3_EMS_8 (* Ki_EMS_8 @social_multiplier_3_EMS_8@))
 (param Ki_red4_EMS_8 (* Ki_EMS_8 @social_multiplier_4_EMS_8@))
 (param Ki_red5_EMS_8 (* Ki_EMS_8 @social_multiplier_5_EMS_8@))
+
+(param backtonormal_multiplier_1_EMS_8  (/ (- Ki_red5_EMS_8  Ki_red4_EMS_8 ) (- Ki_EMS_8 Ki_red4_EMS_8 ) ) )  
+(observe backtonormal_multiplier_1_EMS_8 backtonormal_multiplier_1_EMS_8)
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_8 Ki_red1_EMS_8)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_8 Ki_red2_EMS_8)))
@@ -1858,6 +1882,9 @@
 (param Ki_red4_EMS_9 (* Ki_EMS_9 @social_multiplier_4_EMS_9@))
 (param Ki_red5_EMS_9 (* Ki_EMS_9 @social_multiplier_5_EMS_9@))
 
+(param backtonormal_multiplier_1_EMS_9  (/ (- Ki_red5_EMS_9  Ki_red4_EMS_9 ) (- Ki_EMS_9 Ki_red4_EMS_9 ) ) )  
+(observe backtonormal_multiplier_1_EMS_9 backtonormal_multiplier_1_EMS_9)
+
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_9 Ki_red1_EMS_9)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_9 Ki_red2_EMS_9)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_9 Ki_red3_EMS_9)))
@@ -1869,6 +1896,9 @@
 (param Ki_red3_EMS_10 (* Ki_EMS_10 @social_multiplier_3_EMS_10@))
 (param Ki_red4_EMS_10 (* Ki_EMS_10 @social_multiplier_4_EMS_10@))
 (param Ki_red5_EMS_10 (* Ki_EMS_10 @social_multiplier_5_EMS_10@))
+
+(param backtonormal_multiplier_1_EMS_10  (/ (- Ki_red5_EMS_10  Ki_red4_EMS_10 ) (- Ki_EMS_10 Ki_red4_EMS_10 ) ) )  
+(observe backtonormal_multiplier_1_EMS_10 backtonormal_multiplier_1_EMS_10)
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_10 Ki_red1_EMS_10)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_10 Ki_red2_EMS_10)))
@@ -1882,111 +1912,125 @@
 (param Ki_red4_EMS_11 (* Ki_EMS_11 @social_multiplier_4_EMS_11@))
 (param Ki_red5_EMS_11 (* Ki_EMS_11 @social_multiplier_5_EMS_11@))
 
+(param backtonormal_multiplier_1_EMS_11  (/ (- Ki_red5_EMS_11  Ki_red4_EMS_11 ) (- Ki_EMS_11 Ki_red4_EMS_11 ) ) )  
+(observe backtonormal_multiplier_1_EMS_11 backtonormal_multiplier_1_EMS_11)
+
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_EMS_11 Ki_red1_EMS_11)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_EMS_11 Ki_red2_EMS_11)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_EMS_11 Ki_red3_EMS_11)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_EMS_11 Ki_red4_EMS_11)))
 (time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_EMS_11 Ki_red5_EMS_11)))
             
-(param Ki_back1_EMS_1 (+ Ki_red4_EMS_1 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_1 Ki_red4_EMS_1))))
-(param Ki_back2_EMS_1 (+ Ki_red4_EMS_1 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_1 Ki_red4_EMS_1))))
-(param Ki_back3_EMS_1 (+ Ki_red4_EMS_1 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_1 Ki_red4_EMS_1))))
-(param Ki_back4_EMS_1 (+ Ki_red4_EMS_1 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_1 Ki_red4_EMS_1))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_1 Ki_back1_EMS_1)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_1 Ki_back2_EMS_1)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_1 Ki_back3_EMS_1)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_1 Ki_back4_EMS_1)))
-    
-(param Ki_back1_EMS_2 (+ Ki_red4_EMS_2 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_2 Ki_red4_EMS_2))))
-(param Ki_back2_EMS_2 (+ Ki_red4_EMS_2 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_2 Ki_red4_EMS_2))))
-(param Ki_back3_EMS_2 (+ Ki_red4_EMS_2 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_2 Ki_red4_EMS_2))))
-(param Ki_back4_EMS_2 (+ Ki_red4_EMS_2 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_2 Ki_red4_EMS_2))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_2 Ki_back1_EMS_2)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_2 Ki_back2_EMS_2)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_2 Ki_back3_EMS_2)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_2 Ki_back4_EMS_2)))
-    
-(param Ki_back1_EMS_3 (+ Ki_red4_EMS_3 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_3 Ki_red4_EMS_3))))
-(param Ki_back2_EMS_3 (+ Ki_red4_EMS_3 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_3 Ki_red4_EMS_3))))
-(param Ki_back3_EMS_3 (+ Ki_red4_EMS_3 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_3 Ki_red4_EMS_3))))
-(param Ki_back4_EMS_3 (+ Ki_red4_EMS_3 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_3 Ki_red4_EMS_3))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_3 Ki_back1_EMS_3)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_3 Ki_back2_EMS_3)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_3 Ki_back3_EMS_3)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_3 Ki_back4_EMS_3)))
-    
-(param Ki_back1_EMS_4 (+ Ki_red4_EMS_4 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_4 Ki_red4_EMS_4))))
-(param Ki_back2_EMS_4 (+ Ki_red4_EMS_4 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_4 Ki_red4_EMS_4))))
-(param Ki_back3_EMS_4 (+ Ki_red4_EMS_4 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_4 Ki_red4_EMS_4))))
-(param Ki_back4_EMS_4 (+ Ki_red4_EMS_4 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_4 Ki_red4_EMS_4))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_4 Ki_back1_EMS_4)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_4 Ki_back2_EMS_4)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_4 Ki_back3_EMS_4)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_4 Ki_back4_EMS_4)))
-    
-(param Ki_back1_EMS_5 (+ Ki_red4_EMS_5 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_5 Ki_red4_EMS_5))))
-(param Ki_back2_EMS_5 (+ Ki_red4_EMS_5 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_5 Ki_red4_EMS_5))))
-(param Ki_back3_EMS_5 (+ Ki_red4_EMS_5 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_5 Ki_red4_EMS_5))))
-(param Ki_back4_EMS_5 (+ Ki_red4_EMS_5 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_5 Ki_red4_EMS_5))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_5 Ki_back1_EMS_5)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_5 Ki_back2_EMS_5)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_5 Ki_back3_EMS_5)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_5 Ki_back4_EMS_5)))
-    
-(param Ki_back1_EMS_6 (+ Ki_red4_EMS_6 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_6 Ki_red4_EMS_6))))
-(param Ki_back2_EMS_6 (+ Ki_red4_EMS_6 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_6 Ki_red4_EMS_6))))
-(param Ki_back3_EMS_6 (+ Ki_red4_EMS_6 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_6 Ki_red4_EMS_6))))
-(param Ki_back4_EMS_6 (+ Ki_red4_EMS_6 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_6 Ki_red4_EMS_6))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_6 Ki_back1_EMS_6)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_6 Ki_back2_EMS_6)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_6 Ki_back3_EMS_6)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_6 Ki_back4_EMS_6)))
-    
-(param Ki_back1_EMS_7 (+ Ki_red4_EMS_7 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_7 Ki_red4_EMS_7))))
-(param Ki_back2_EMS_7 (+ Ki_red4_EMS_7 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_7 Ki_red4_EMS_7))))
-(param Ki_back3_EMS_7 (+ Ki_red4_EMS_7 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_7 Ki_red4_EMS_7))))
-(param Ki_back4_EMS_7 (+ Ki_red4_EMS_7 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_7 Ki_red4_EMS_7))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_7 Ki_back1_EMS_7)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_7 Ki_back2_EMS_7)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_7 Ki_back3_EMS_7)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_7 Ki_back4_EMS_7)))
-    
-(param Ki_back1_EMS_8 (+ Ki_red4_EMS_8 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_8 Ki_red4_EMS_8))))
-(param Ki_back2_EMS_8 (+ Ki_red4_EMS_8 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_8 Ki_red4_EMS_8))))
-(param Ki_back3_EMS_8 (+ Ki_red4_EMS_8 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_8 Ki_red4_EMS_8))))
-(param Ki_back4_EMS_8 (+ Ki_red4_EMS_8 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_8 Ki_red4_EMS_8))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_8 Ki_back1_EMS_8)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_8 Ki_back2_EMS_8)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_8 Ki_back3_EMS_8)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_8 Ki_back4_EMS_8)))
-    
-(param Ki_back1_EMS_9 (+ Ki_red4_EMS_9 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_9 Ki_red4_EMS_9))))
-(param Ki_back2_EMS_9 (+ Ki_red4_EMS_9 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_9 Ki_red4_EMS_9))))
-(param Ki_back3_EMS_9 (+ Ki_red4_EMS_9 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_9 Ki_red4_EMS_9))))
-(param Ki_back4_EMS_9 (+ Ki_red4_EMS_9 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_9 Ki_red4_EMS_9))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_9 Ki_back1_EMS_9)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_9 Ki_back2_EMS_9)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_9 Ki_back3_EMS_9)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_9 Ki_back4_EMS_9)))
-    
-(param Ki_back1_EMS_10 (+ Ki_red4_EMS_10 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_10 Ki_red4_EMS_10))))
-(param Ki_back2_EMS_10 (+ Ki_red4_EMS_10 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_10 Ki_red4_EMS_10))))
-(param Ki_back3_EMS_10 (+ Ki_red4_EMS_10 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_10 Ki_red4_EMS_10))))
-(param Ki_back4_EMS_10 (+ Ki_red4_EMS_10 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_10 Ki_red4_EMS_10))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_10 Ki_back1_EMS_10)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_10 Ki_back2_EMS_10)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_10 Ki_back3_EMS_10)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_10 Ki_back4_EMS_10)))
-    
-(param Ki_back1_EMS_11 (+ Ki_red4_EMS_11 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_11 Ki_red4_EMS_11))))
-(param Ki_back2_EMS_11 (+ Ki_red4_EMS_11 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_11 Ki_red4_EMS_11))))
-(param Ki_back3_EMS_11 (+ Ki_red4_EMS_11 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_11 Ki_red4_EMS_11))))
-(param Ki_back4_EMS_11 (+ Ki_red4_EMS_11 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_11 Ki_red4_EMS_11))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_11 Ki_back1_EMS_11)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_11 Ki_back2_EMS_11)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_11 Ki_back3_EMS_11)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_11 Ki_back4_EMS_11)))
-    
+(param backtonormal_multiplier_1_adj_EMS_1  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_1 ))
+(observe backtonormal_multiplier_1_adj_EMS_1  backtonormal_multiplier_1_adj_EMS_1)
+
+(param Ki_back2_EMS_1 (+ Ki_red5_EMS_1 (* backtonormal_multiplier_1_adj_EMS_1 0.3333 (- Ki_EMS_1 Ki_red4_EMS_1))))
+(param Ki_back3_EMS_1 (+ Ki_red5_EMS_1 (* backtonormal_multiplier_1_adj_EMS_1 0.6666 (- Ki_EMS_1 Ki_red4_EMS_1))))
+(param Ki_back4_EMS_1 (+ Ki_red5_EMS_1 (* backtonormal_multiplier_1_adj_EMS_1 1.00 (- Ki_EMS_1 Ki_red4_EMS_1))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_1 Ki_back2_EMS_1)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_1 Ki_back3_EMS_1)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_1 Ki_back4_EMS_1)))
+        
+(param backtonormal_multiplier_1_adj_EMS_2  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_2 ))
+(observe backtonormal_multiplier_1_adj_EMS_2  backtonormal_multiplier_1_adj_EMS_2)
+
+(param Ki_back2_EMS_2 (+ Ki_red5_EMS_2 (* backtonormal_multiplier_1_adj_EMS_2 0.3333 (- Ki_EMS_2 Ki_red4_EMS_2))))
+(param Ki_back3_EMS_2 (+ Ki_red5_EMS_2 (* backtonormal_multiplier_1_adj_EMS_2 0.6666 (- Ki_EMS_2 Ki_red4_EMS_2))))
+(param Ki_back4_EMS_2 (+ Ki_red5_EMS_2 (* backtonormal_multiplier_1_adj_EMS_2 1.00 (- Ki_EMS_2 Ki_red4_EMS_2))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_2 Ki_back2_EMS_2)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_2 Ki_back3_EMS_2)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_2 Ki_back4_EMS_2)))
+        
+(param backtonormal_multiplier_1_adj_EMS_3  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_3 ))
+(observe backtonormal_multiplier_1_adj_EMS_3  backtonormal_multiplier_1_adj_EMS_3)
+
+(param Ki_back2_EMS_3 (+ Ki_red5_EMS_3 (* backtonormal_multiplier_1_adj_EMS_3 0.3333 (- Ki_EMS_3 Ki_red4_EMS_3))))
+(param Ki_back3_EMS_3 (+ Ki_red5_EMS_3 (* backtonormal_multiplier_1_adj_EMS_3 0.6666 (- Ki_EMS_3 Ki_red4_EMS_3))))
+(param Ki_back4_EMS_3 (+ Ki_red5_EMS_3 (* backtonormal_multiplier_1_adj_EMS_3 1.00 (- Ki_EMS_3 Ki_red4_EMS_3))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_3 Ki_back2_EMS_3)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_3 Ki_back3_EMS_3)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_3 Ki_back4_EMS_3)))
+        
+(param backtonormal_multiplier_1_adj_EMS_4  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_4 ))
+(observe backtonormal_multiplier_1_adj_EMS_4  backtonormal_multiplier_1_adj_EMS_4)
+
+(param Ki_back2_EMS_4 (+ Ki_red5_EMS_4 (* backtonormal_multiplier_1_adj_EMS_4 0.3333 (- Ki_EMS_4 Ki_red4_EMS_4))))
+(param Ki_back3_EMS_4 (+ Ki_red5_EMS_4 (* backtonormal_multiplier_1_adj_EMS_4 0.6666 (- Ki_EMS_4 Ki_red4_EMS_4))))
+(param Ki_back4_EMS_4 (+ Ki_red5_EMS_4 (* backtonormal_multiplier_1_adj_EMS_4 1.00 (- Ki_EMS_4 Ki_red4_EMS_4))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_4 Ki_back2_EMS_4)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_4 Ki_back3_EMS_4)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_4 Ki_back4_EMS_4)))
+        
+(param backtonormal_multiplier_1_adj_EMS_5  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_5 ))
+(observe backtonormal_multiplier_1_adj_EMS_5  backtonormal_multiplier_1_adj_EMS_5)
+
+(param Ki_back2_EMS_5 (+ Ki_red5_EMS_5 (* backtonormal_multiplier_1_adj_EMS_5 0.3333 (- Ki_EMS_5 Ki_red4_EMS_5))))
+(param Ki_back3_EMS_5 (+ Ki_red5_EMS_5 (* backtonormal_multiplier_1_adj_EMS_5 0.6666 (- Ki_EMS_5 Ki_red4_EMS_5))))
+(param Ki_back4_EMS_5 (+ Ki_red5_EMS_5 (* backtonormal_multiplier_1_adj_EMS_5 1.00 (- Ki_EMS_5 Ki_red4_EMS_5))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_5 Ki_back2_EMS_5)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_5 Ki_back3_EMS_5)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_5 Ki_back4_EMS_5)))
+        
+(param backtonormal_multiplier_1_adj_EMS_6  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_6 ))
+(observe backtonormal_multiplier_1_adj_EMS_6  backtonormal_multiplier_1_adj_EMS_6)
+
+(param Ki_back2_EMS_6 (+ Ki_red5_EMS_6 (* backtonormal_multiplier_1_adj_EMS_6 0.3333 (- Ki_EMS_6 Ki_red4_EMS_6))))
+(param Ki_back3_EMS_6 (+ Ki_red5_EMS_6 (* backtonormal_multiplier_1_adj_EMS_6 0.6666 (- Ki_EMS_6 Ki_red4_EMS_6))))
+(param Ki_back4_EMS_6 (+ Ki_red5_EMS_6 (* backtonormal_multiplier_1_adj_EMS_6 1.00 (- Ki_EMS_6 Ki_red4_EMS_6))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_6 Ki_back2_EMS_6)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_6 Ki_back3_EMS_6)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_6 Ki_back4_EMS_6)))
+        
+(param backtonormal_multiplier_1_adj_EMS_7  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_7 ))
+(observe backtonormal_multiplier_1_adj_EMS_7  backtonormal_multiplier_1_adj_EMS_7)
+
+(param Ki_back2_EMS_7 (+ Ki_red5_EMS_7 (* backtonormal_multiplier_1_adj_EMS_7 0.3333 (- Ki_EMS_7 Ki_red4_EMS_7))))
+(param Ki_back3_EMS_7 (+ Ki_red5_EMS_7 (* backtonormal_multiplier_1_adj_EMS_7 0.6666 (- Ki_EMS_7 Ki_red4_EMS_7))))
+(param Ki_back4_EMS_7 (+ Ki_red5_EMS_7 (* backtonormal_multiplier_1_adj_EMS_7 1.00 (- Ki_EMS_7 Ki_red4_EMS_7))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_7 Ki_back2_EMS_7)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_7 Ki_back3_EMS_7)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_7 Ki_back4_EMS_7)))
+        
+(param backtonormal_multiplier_1_adj_EMS_8  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_8 ))
+(observe backtonormal_multiplier_1_adj_EMS_8  backtonormal_multiplier_1_adj_EMS_8)
+
+(param Ki_back2_EMS_8 (+ Ki_red5_EMS_8 (* backtonormal_multiplier_1_adj_EMS_8 0.3333 (- Ki_EMS_8 Ki_red4_EMS_8))))
+(param Ki_back3_EMS_8 (+ Ki_red5_EMS_8 (* backtonormal_multiplier_1_adj_EMS_8 0.6666 (- Ki_EMS_8 Ki_red4_EMS_8))))
+(param Ki_back4_EMS_8 (+ Ki_red5_EMS_8 (* backtonormal_multiplier_1_adj_EMS_8 1.00 (- Ki_EMS_8 Ki_red4_EMS_8))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_8 Ki_back2_EMS_8)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_8 Ki_back3_EMS_8)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_8 Ki_back4_EMS_8)))
+        
+(param backtonormal_multiplier_1_adj_EMS_9  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_9 ))
+(observe backtonormal_multiplier_1_adj_EMS_9  backtonormal_multiplier_1_adj_EMS_9)
+
+(param Ki_back2_EMS_9 (+ Ki_red5_EMS_9 (* backtonormal_multiplier_1_adj_EMS_9 0.3333 (- Ki_EMS_9 Ki_red4_EMS_9))))
+(param Ki_back3_EMS_9 (+ Ki_red5_EMS_9 (* backtonormal_multiplier_1_adj_EMS_9 0.6666 (- Ki_EMS_9 Ki_red4_EMS_9))))
+(param Ki_back4_EMS_9 (+ Ki_red5_EMS_9 (* backtonormal_multiplier_1_adj_EMS_9 1.00 (- Ki_EMS_9 Ki_red4_EMS_9))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_9 Ki_back2_EMS_9)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_9 Ki_back3_EMS_9)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_9 Ki_back4_EMS_9)))
+        
+(param backtonormal_multiplier_1_adj_EMS_10  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_10 ))
+(observe backtonormal_multiplier_1_adj_EMS_10  backtonormal_multiplier_1_adj_EMS_10)
+
+(param Ki_back2_EMS_10 (+ Ki_red5_EMS_10 (* backtonormal_multiplier_1_adj_EMS_10 0.3333 (- Ki_EMS_10 Ki_red4_EMS_10))))
+(param Ki_back3_EMS_10 (+ Ki_red5_EMS_10 (* backtonormal_multiplier_1_adj_EMS_10 0.6666 (- Ki_EMS_10 Ki_red4_EMS_10))))
+(param Ki_back4_EMS_10 (+ Ki_red5_EMS_10 (* backtonormal_multiplier_1_adj_EMS_10 1.00 (- Ki_EMS_10 Ki_red4_EMS_10))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_10 Ki_back2_EMS_10)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_10 Ki_back3_EMS_10)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_10 Ki_back4_EMS_10)))
+        
+(param backtonormal_multiplier_1_adj_EMS_11  (- @backtonormal_multiplier@ backtonormal_multiplier_1_EMS_11 ))
+(observe backtonormal_multiplier_1_adj_EMS_11  backtonormal_multiplier_1_adj_EMS_11)
+
+(param Ki_back2_EMS_11 (+ Ki_red5_EMS_11 (* backtonormal_multiplier_1_adj_EMS_11 0.3333 (- Ki_EMS_11 Ki_red4_EMS_11))))
+(param Ki_back3_EMS_11 (+ Ki_red5_EMS_11 (* backtonormal_multiplier_1_adj_EMS_11 0.6666 (- Ki_EMS_11 Ki_red4_EMS_11))))
+(param Ki_back4_EMS_11 (+ Ki_red5_EMS_11 (* backtonormal_multiplier_1_adj_EMS_11 1.00 (- Ki_EMS_11 Ki_red4_EMS_11))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_EMS_11 Ki_back2_EMS_11)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_EMS_11 Ki_back3_EMS_11)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_EMS_11 Ki_back4_EMS_11)))
+        
 ;[ADDITIONAL_TIMEEVENTS]
 
 
