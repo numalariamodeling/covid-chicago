@@ -183,15 +183,16 @@ intervention_parameters:
     # Add 'size' in function_kwargs to have multiple values instead of just one
     function_kwargs: {'low':0.10, 'high':0.10}
   ### Gradual reopening (time-wise)
-  'reopening_multiplier_1':
-    np.random: uniform
-    function_kwargs: {'low':0.02, 'high':0.02}
-  'reopening_multiplier_2':
-    np.random: uniform
-    function_kwargs: {'low':0.04, 'high':0.04}
-  'reopening_multiplier_3':
-    np.random: uniform
-    function_kwargs: {'low':0.06, 'high':0.06}
+  ### Default in the yaml is a linear increase, scaling  reopening_multiplier_4 by 0.25, 0.5, 0.75 and 1
+  #'reopening_multiplier_1':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.02, 'high':0.02}
+  #'reopening_multiplier_2':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.04, 'high':0.04}
+  #'reopening_multiplier_3':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.06, 'high':0.06}
   'reopening_multiplier_4':
     np: linspace
     function_kwargs: {'start':0.08, 'stop':0.20, 'num' : 1}
@@ -241,16 +242,16 @@ time_parameters:
   ### Gradual reopening (time-wise)
   'gradual_reopening_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-07-05}
   'gradual_reopening_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-15}        
+    function_kwargs: {'dates': 2020-07-12}        
   'gradual_reopening_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}    
+    function_kwargs: {'dates': 2020-07-19}    
   'gradual_reopening_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-15}  
+    function_kwargs: {'dates': 2020-07-26}  
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3

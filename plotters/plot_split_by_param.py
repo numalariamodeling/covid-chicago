@@ -16,10 +16,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-# first_day = date(2020, 2, 13) # IL
-# first_day = date(2020, 2, 18) # Chicago
-first_day = date(2020, 2, 28) # NMH
-
+first_day = date(2020, 2, 13) # IL
 
 def plot_on_fig(df, channels, axes, color, label) :
 
