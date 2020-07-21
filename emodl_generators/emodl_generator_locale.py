@@ -649,6 +649,9 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
 (param Ki_red5_{grp} (* Ki_{grp} @social_multiplier_5_{grp}@))
 
+(param backtonormal_multiplier_1_{grp}  (/ (- Ki_red5_{grp}  Ki_red4_{grp} ) (- Ki_{grp} Ki_red4_{grp} ) ) )  
+(observe backtonormal_multiplier_1_{grp} backtonormal_multiplier_1_{grp})
+
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
@@ -665,6 +668,8 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
         """.format(grp=grp)
         interventiopnSTOP_str = interventiopnSTOP_str + temp_str
 
+# % change from lowest transmission level - immediate
+# starting point is lowest level of transmission  Ki_red4
     interventionSTOP_adj_str = ""
     for grp in grpList :
         temp_str = """
@@ -673,19 +678,48 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
         """.format(grp=grp)
         interventionSTOP_adj_str = interventionSTOP_adj_str + temp_str
 
-    gradual_reopening_str = ""
-    for grp in grpList:
+# % change from current transmission level - immediate
+# starting point is current level of transmission  Ki_red5
+    interventionSTOP_adj2_str = ""
+    for grp in grpList :
         temp_str = """
-(param Ki_back1_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 0.25 (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back2_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 0.50 (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back3_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 0.75 (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back4_{grp} (+ Ki_red4_{grp} (* @reopening_multiplier_4@ 1.00 (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back_{grp} (+ Ki_red5_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red5_{grp}))))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
+        """.format(grp=grp)
+        interventionSTOP_adj2_str = interventionSTOP_adj2_str + temp_str
+
+
+# gradual reopening from 'lowest' transmission level,  Ki_red5 == Ki_back1
+        gradual_reopening_str = ""
+        for grp in grpList:
+            temp_str = """
+(param backtonormal_multiplier_1_adj_{grp}  (- @backtonormal_multiplier@ backtonormal_multiplier_1_{grp} ))
+(observe backtonormal_multiplier_1_adj_{grp}  backtonormal_multiplier_1_adj_{grp})
+
+(param Ki_back2_{grp} (+ Ki_red5_{grp} (* backtonormal_multiplier_1_adj_{grp} 0.3333 (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back3_{grp} (+ Ki_red5_{grp} (* backtonormal_multiplier_1_adj_{grp} 0.6666 (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back4_{grp} (+ Ki_red5_{grp} (* backtonormal_multiplier_1_adj_{grp} 1.00 (- Ki_{grp} Ki_red4_{grp}))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_{grp} Ki_back2_{grp})))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_{grp} Ki_back3_{grp})))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_{grp} Ki_back4_{grp})))
+        """.format(grp=grp)
+            gradual_reopening_str = gradual_reopening_str + temp_str
+            
+# gradual reopening from 'current' transmission level 
+        gradual_reopening2_str = ""
+        for grp in grpList:
+            temp_str = """
+(param Ki_back1_{grp} (+ Ki_red5_{grp} (* @reopening_multiplier_4@ 0.25 (- Ki_{grp} Ki_red5_{grp}))))
+(param Ki_back2_{grp} (+ Ki_red5_{grp} (* @reopening_multiplier_4@ 0.50 (- Ki_{grp} Ki_red5_{grp}))))
+(param Ki_back3_{grp} (+ Ki_red5_{grp} (* @reopening_multiplier_4@ 0.75 (- Ki_{grp} Ki_red5_{grp}))))
+(param Ki_back4_{grp} (+ Ki_red5_{grp} (* @reopening_multiplier_4@ 1.00 (- Ki_{grp} Ki_red5_{grp}))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
 (time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_{grp} Ki_back4_{grp})))
-    """.format(grp=grp)
-        gradual_reopening_str = gradual_reopening_str + temp_str
+        """.format(grp=grp)
+            gradual_reopening2_str = gradual_reopening2_str + temp_str
+
 
     contactTracing_str = """
 (time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
@@ -737,8 +771,12 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
     if scenarioName == "interventionSTOP_adj" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str)
+    if scenarioName == "interventionSTOP_adj2":
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj2_str)
     if scenarioName == "gradual_reopening" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str)
+    if scenarioName == "gradual_reopening2" :
+        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening2_str)
     if scenarioName == "continuedSIP" :
         total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
     if scenarioName == "contactTracing" :
@@ -843,6 +881,10 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False, change_testDelay = "AsSym", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracingChangeTD.emodl'))
   
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_contactTracing', add_migration=False, change_testDelay = "Sym", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradualCTChangeTD.emodl'))
+
+    ### % additional increase to latest transmission level
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj2', add_migration=False,file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj2.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening2', add_migration=False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening2.emodl'))
 
     ### Emodls with migration between EMS areas  
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=True, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS.emodl'))
