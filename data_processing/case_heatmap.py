@@ -13,7 +13,7 @@ from plotting.colors import load_color_palette
 mpl.rcParams['pdf.fonttype'] = 42
 
 
-LL_date = '200710'
+LL_date = '200720'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
@@ -212,7 +212,7 @@ def plot_ratio_county() :
     max_date = np.max(df['update_date'])
     fig = plt.figure(figsize=(12, 10))
     fig.subplots_adjust(top=0.95)
-    vmin, vmax = 0.4, 3
+    vmin, vmax = 0, 3
     norm = MidpointNormalize(vmin=vmin, vcenter=1, vmax=vmax)
 
     def get_ratio(adf, county, w):
@@ -251,7 +251,7 @@ def plot_ratio_county() :
     plt.savefig(os.path.join(plot_path, 'county_weekly_case_ratio.png'))
 
 
-def plot_LL_all_IL() :
+def generate_combo_LL_agg_csv() :
 
     case_df = pd.read_csv(spec_coll_fname)
     case_df = case_df.rename(columns={'specimen_collection' : 'cases'})
@@ -263,6 +263,14 @@ def plot_LL_all_IL() :
     df = pd.merge(left=case_df, right=death_df, on=['date', 'EMS'], how='outer')
     df = pd.merge(left=df, right=adm_df, on=['date', 'EMS'], how='outer')
     df = df.fillna(0)
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values(by='date')
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_ems.csv' % LL_date), index=False)
+
+
+def plot_LL_all_IL() :
+
+    df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_ems.csv' % LL_date))
     df = df.groupby('date')[['cases', 'deaths', 'admissions']].agg(np.sum).reset_index()
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
@@ -294,15 +302,30 @@ def plot_LL_all_IL() :
     fig.savefig(os.path.join(plot_path, 'IL_cases_deaths_LL%s.png' % LL_date))
 
 
+def combo_LL_emr() :
+
+    ldf = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_ems.csv' % LL_date))
+    edf = pd.read_csv(os.path.join(box_data_path, 'Corona virus reports', 'emresource_by_region.csv'))
+    edf['date'] = pd.to_datetime(edf['date_of_extract'])
+    edf = edf.rename(columns={'region' : 'EMS'})
+    edf = edf[['date', 'covid_non_icu', 'confirmed_covid_icu', 'EMS']]
+    ldf['date'] = pd.to_datetime(ldf['date'])
+    df = pd.merge(left=ldf, right=edf, on=['date', 'EMS'], how='outer')
+    df = df.sort_values(by=['EMS', 'date'])
+    df[df['EMS'] == 11].to_csv(os.path.join(box_data_path, 'Cleaned Data', 'LL_EMR_%s_EMS11.csv' % LL_date), index=False)
+
+
 if __name__ == '__main__' :
 
-    # aggregate_to_date_spec_collection()
+    aggregate_to_date_spec_collection()
+    generate_combo_LL_agg_csv()
+    # combo_LL_emr()
     # heatmap()
     # plot_EMS_by_line('cases')
     # plot_EMS_by_line('admissions')
     # plot_EMS_by_line('deaths')
     # plot_ratio_ems()
-    plot_ratio_county()
+    # plot_ratio_county()
     # plot_LL_all_IL()
-    plt.show()
+    # plt.show()
 
