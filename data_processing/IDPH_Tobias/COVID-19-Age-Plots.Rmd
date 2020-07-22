@@ -1,0 +1,1759 @@
+---
+title: "Covid-19 Age Plots"
+author: "Tobias Holden"
+date: "7/20/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+
+library(sf)
+library(stringr)
+library(ggplot2)
+library(gridExtra)
+library(knitr)
+library(reshape2)
+library(dplyr)
+library(ggsci)
+library(ggthemes)
+library(leaflet)
+library(widgetframe)
+library(htmltools)
+library(here)
+library(purrr)
+library(wesanderson)
+library(scales)
+library(tidyr)
+library(cowplot)
+
+wespal <- c('#913058', "#F6851F", "#00A08A", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
+age_extreme_pal <- RColorBrewer::brewer.pal(8, "Paired")
+theme_set(theme_bw(base_size = 18))
+```
+
+```{r}
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+#theme_set(theme_bw(base_size = 20))
+
+# Date cut-off
+pull_date <- as.Date("2020-07-20",format="%Y-%m-%d")
+
+# Tag for saved outputs
+tag <- "AgePlots/LL_200720_th"
+# Filetype for images (.png or .pdf)
+extension <- ".pdf"
+
+# Local copy of latest pull
+file_path <- file.choose(new = FALSE)
+ll <- read.csv(file_path,stringsAsFactors = FALSE)
+
+setwd("~/Box/NU-malaria-team/projects/covid_chicago/Plots + Graphs/IDPH Line-List Plots")
+
+# List of actual US zip codes, used to subset only patients in IL
+ref <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/census/ACS 2018 Estimates By Zip/uszips.csv", stringsAsFactors = FALSE)
+ref <- subset(ref, state_id == "IL")
+
+# Demographic information by Zip (national)
+IL_demo <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/census/ACS 2018 Estimates By Zip/IL Demographics by Zip - TH.csv",stringsAsFactors = FALSE)
+for (i in 2:8)
+{
+   IL_demo[,i] <- as.numeric(IL_demo[,i])
+}
+
+
+ems_age <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/EMS Population/EMS_population_from_RTI_by_age_8grpLL.csv",stringsAsFactors = F)
+ems_age <- ems_age[,c(9,1:8)]
+colnames(ems_age) <- c("EMS","Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")
+
+ems_age_fractions <- ems_age
+
+for (i in 1:nrow(ems_age))
+{
+   ems_total <- sum(ems_age_fractions[i,c(2:9)])
+  for (j in 2:9)
+  {
+    ems_age_fractions[i,j] <- ems_age_fractions[i,j] / ems_total
+  }
+}
+
+ems_age_fractions_melted <- melt(ems_age_fractions, id.vars = 'EMS')
+#ems_age_fractions_melted
+  
+toplot_age <- ems_age_fractions_melted
+toplot_age$variable <- factor(toplot_age$variable)
+
+ggplot(data=toplot_age,aes(x=EMS,y=value*100, fill= variable)) +
+  geom_bar(stat="identity",position="stack") +
+  ggtitle("Age Distribution of EMS Population") + 
+  xlab("EMS") + 
+  ylab("%") +
+  scale_fill_brewer(palette = 'Paired') + 
+  labs(fill = "Age Group") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1)
+
+  ggsave(paste(tag,"_BarPlot_Population-byAge-byEMS",extension, sep=""), width = 15, height = 11)
+
+```
+
+## Data Cleaning {.tabset}
+
+### Unique IDs
+
+Multiracial patients are entered as multiple rows... Add column of multiple_races to label these
+```{r}
+ids <- data.frame(table(ll$id))
+#table(ids$Var1[which(ids$Freq>1)])
+
+ll$multiple_races <- ll$id %in% ids$Var1[which(ids$Freq>1)]
+ll$race[which(ll$multiple_races==T)] <- "Multiple"
+
+#Reduce dataset to exclude multiples
+
+cases <- ll[!duplicated(ll$id),]
+cases$critical <- (cases$icu == "Yes" | cases$vent == "Yes")
+print(paste(format(nrow(cases),big.mark = ','), "unique patient IDs"))
+```
+
+### Race
+
+```{r}
+kable(table(cases$race,useNA = 'ifany'), col.names = c("Race (alone)","n"))
+```
+
+23,569 blanks. Different categories here...
+
+- White
+- Black
+- Asian
+- Native (combining Hawaiian/PI & Alaskan/American)
+- Other (including 470 'multiple')
+- Unknown
+- Missing
+
+```{r}
+cases$race_label <- cases$race
+cases$race_label[cases$race_label==""] <- "Missing"
+cases$race_label[cases$race_label=="Native Hawaiian or Other Pacific Islander"] <- "Native" 
+cases$race_label[cases$race_label=="American Indian or Alaskan Native"] <- "Native"
+cases$race_label[cases$race_label=="Multiple"] <- "Other"
+cases$race_label[cases$race_label=="Black or African American"] <- "Black"
+
+
+kable(table(cases$race_label,useNA = 'ifany'),col.names = c("Race (collapsed)","n"))
+```
+
+### Ethnicity
+
+```{r}
+kable(table(cases$ethnicity, useNA = "ifany"),col.names = c("Ethnicity (alone)","n"))
+```
+
+```{r}
+cases$ethnicity[which(cases$ethnicity=="")] <- "Missing"
+cases$ethnicity[which(cases$ethnicity=="Unknown Not Classified")] <- "Unknown"
+cases$ethnicity[which(cases$ethnicity=="Not Hispanic or not Latino")] <- "Not Hispanic or Latino"
+
+#table(cases$ethnicity, useNA = "ifany")
+
+cases$race_eth <- cases$race_label
+cases$race_eth[which(cases$ethnicity=="Hispanic or Latino")] <- "Hispanic-Latino"
+
+kable(table(cases$race_eth,useNA = 'ifany'),col.names = c("Race/Ethnicity","n"))
+cases$race_eth <- factor(cases$race_eth, levels=c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+```
+
+### Age
+
+```{r}
+kable(table(cases$age_group,useNA = 'ifany'),col.names = c("Age Group","n"))
+
+print(paste(nrow(cases[cases$age_group=="",]),"cases without age"))
+```
+
+### Positive Tests
+
+```{r}
+cases$specimen_collection <- as.Date(cases$specimen_collection, format = "%Y-%m-%d")
+kable(table(!(is.na(cases$specimen_collection))),col.names = c("Has Test Date?","n"))
+
+print(paste(format(sum(is.na(cases$specimen_collection)),big.mark = ','), "cases without test date"))
+```
+
+
+```{r}
+# Remove dates in the future or before Jan 1, 2020 
+
+futures <- which(cases$specimen_collection > pull_date)
+if(length(futures)>0) {cases$specimen_collection[futures] <- NA}
+pasts <- which(cases$specimen_collection < "2020-01-01")
+if(length(pasts)>0) {cases$specimen_collection[pasts] <- NA}
+
+tested <- subset(cases, !is.na(specimen_collection))
+
+print("Range of Specimen Collection Dates")
+print(range(tested$specimen_collection))
+print(paste(format(nrow(tested),big.mark = ','), "records with specimen collection date."))
+```
+
+```{r}
+## Assign to weekly window based on test date
+
+tested$window <- NA
+
+ marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- tested$specimen_collection- marker_test
+tested$window <- round(difference/7) + 1
+
+tested_with_age <- subset(tested,tested$age_group!="")
+```
+
+### Admissions
+
+```{r}
+# Based on date
+admitted <- subset(cases, cases$admitted_to_hospital=="Yes" & cases$admission_date !="")
+
+# Based on date / logical
+admitted_all <- subset(cases, cases$admitted_to_hospital == "Yes" | cases$admission_date != "")
+not_admitted <- subset(cases, !(cases$id %in% admitted_all$id))
+
+kable(table(admitted_all$admission_date!="",useNA = 'ifany'),col.names = c("Has Admission Date?","N_admitted"))
+print(paste(format(nrow(admitted_all[admitted_all$admission_date=="",]),big.mark = ','),"admits without admission date"))
+
+admitted$window <- NA
+admitted$admission_date <- as.Date(admitted$admission_date,format="%Y-%m-%d")
+
+marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- admitted$admission_date- marker_test
+admitted$window <- round(difference/7) + 1
+
+admitted_with_age <- subset(admitted, admitted$age_group != "")
+admitted_with_age_all <- subset(admitted_all,admitted_all$age_group!="")
+not_admitted_with_age <- subset(not_admitted, not_admitted$age_group!="")
+
+
+admitted_with_age$age_group <- factor(admitted_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+admitted_with_age_all$age_group <- factor(admitted_with_age_all$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+not_admitted_with_age$age_group <- factor(not_admitted_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+```
+
+### Deaths
+
+```{r}
+
+cases$deceased_date <- as.Date(cases$deceased_date, format = "%Y-%m-%d")
+futures <- which(cases$deceased_date > pull_date)
+if(length(futures)>0) {cases$deceased_date[futures] <- NA}
+pasts <- which(cases$deceased_date < "2020-01-01")
+if(length(pasts)>0) {cases$deceased_date[pasts] <- NA}
+
+print("Range of Death Dates:")
+print(range(as.Date(cases$deceased_date, format = "%Y-%m-%d"),na.rm = T))
+print(paste(format(nrow(cases[!(is.na(cases$deceased_date)),]),big.mark = ','),"cases with date deceased"))
+
+```
+
+```{r}
+#table(cases$deceased_date,useNA='ifany')
+deceased <- subset(cases, !is.na(cases$deceased_date))
+
+#table(deceased$deceased_date,useNA = 'ifany')
+deceased$window <- NA
+deceased$deceased_date <- as.Date(deceased$deceased_date,format="%Y-%m-%d")
+
+marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- deceased$deceased_date- marker_test
+deceased$window <- round(difference/7) + 1
+
+hospital_deaths <- subset(deceased, deceased$id %in% admitted_all$id)
+
+deceased_with_age <- subset(deceased, deceased$age_group != "")
+hospital_deaths_with_age <- subset(hospital_deaths, hospital_deaths$age_group != "")
+
+deceased_with_age$age_group <- factor(deceased_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+hospital_deaths_with_age$age_group <- factor(hospital_deaths_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+```
+
+
+
+```{r}
+#State demographics
+census_2010<- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/census/sc-est2019-alldata6.csv",stringsAsFactors = FALSE)
+
+IL_census_2010 <- subset(census_2010,NAME == "Illinois")
+#IL_census_2010$zip <- paste(rownames(IL_census_2010))
+#census_2010$POPESTIMATE2019
+
+IL_age_race <- IL_census_2010[,c("SEX","ORIGIN","RACE","AGE","POPESTIMATE2019")]
+IL_age_race <- subset(IL_age_race, IL_age_race$SEX == 0)
+colnames(IL_age_race) <- c("SEX","ORIGIN","RACE","AGE","POPESTIMATE2019")
+
+
+latino <- subset(IL_age_race, IL_age_race$ORIGIN==2)
+
+non_latino <- subset(IL_age_race, IL_age_race$ORIGIN==1)
+
+
+
+race_key <- c("White","Black","Native","Asian","Native","Other", "Hispanic-Latino")
+age_key <- c("Under 21", "21-30","31-40","41-50","51-60","61-70","71-80","Over 80")
+
+non_latino$race_eth <- race_key[non_latino$RACE]
+latino$race_eth<- "Hispanic-Latino"
+#table(race_eth,useNA = 'ifany')
+
+age_key <- c("Under 21", "21-30","31-40","41-50","51-60","61-70","71-80","Over 80")
+
+IL_age_race <- rbind.data.frame(non_latino,latino)
+
+IL_age_race$age_group <- age_key[ifelse(IL_age_race$AGE<21,1,trunc((IL_age_race$AGE-11)/10)+1)]
+#table(IL_age_race$AGE,IL_age_race$age_group)
+
+IL_age_race$group_label <- paste(IL_age_race$race_eth, IL_age_race$age_group,sep="_")
+
+
+```
+
+
+
+## Age Plots {.tabset}
+
+### Positive Tests vs. Time (by Age)
+
+```{r}
+
+tested_with_age$age_group <- factor(tested_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+### Age Only
+
+ages <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+pops <- c()
+
+for(a in 1:length(levels(tested_with_age$age_group)))
+{
+      for (j in 1:length(unique(tested_with_age$window)))
+      {
+        age <- levels(tested_with_age$age_group)[a]
+        slot <- unique(tested_with_age$window)[j]
+        
+        s <- subset(tested_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+      
+        g <- nrow(s)
+        n <- nrow(c)
+        f <- n/g
+        pop <- sum(IL_age_race$POPESTIMATE2019[IL_age_race$age_group==age],na.rm = T)
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        pops <- c(pops,pop)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+positives <- data.frame(ages,windows,gt,nt,ft,pops)
+positives$ages <- factor(positives$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+theme_set(theme_bw(base_size = 18))
+
+ v <- ggplot(positives[positives$windows<max(positives$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   geom_area(color = "white",linetype=2,size=0.2,show.legend = F, position='stack') +
+   ggtitle("Breakdown of Positive Tests by Age", paste("n = ", format(nrow(tested_with_age[tested_with_age$window < max(positives$windows),]),big.mark=','), "cases with age, as of", max(tested_with_age$specimen_collection[tested_with_age$window < max(positives$windows)]))) + 
+   xlab("Date Tested (7-Day bins)") + 
+   ylab("# of Positive Tests") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   theme(legend.position="none") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + facet_wrap(~ages, ncol = 2,scales="free_y") 
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_Positives-vs-Time_byAge_all_window7_free-y","",extension, sep=""), height = 8, width = 10)
+  
+  
+v <- ggplot(positives[positives$windows<max(positives$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   geom_area(color = "white",linetype=2,size=0.2,show.legend = F, position='stack') +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Positive Tests by Age", paste("n = ", format(nrow(tested_with_age[tested_with_age$window < max(positives$windows),]),big.mark=','), "cases with age, as of", max(tested_with_age$specimen_collection[tested_with_age$window < max(positives$windows)]))) + 
+   xlab("Date Tested (7-Day bins)") + 
+   ylab("Portion of Positive Tests") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_ShareOfPositives-vs-Time_byAge_all_window7","",extension, sep=""), height = 8, width = 10)
+  
+  
+# Heatmap
+  
+  ggplot(data=positives[positives$windows < max(positives$windows) & positives$windows >9,], x = as.Date((windows-1)*7+marker_test), y = factor(ages), fill = nt/pops*1000) +
+     geom_tile(aes(x=as.Date((windows-1)*7+marker_test), y = factor(ages), fill = nt/pops*1000)) +
+     scale_fill_viridis_c(option="magma") + 
+     scale_y_discrete(limits = factor(age_key)) + 
+   scale_x_date(date_labels="%b %d",date_breaks  ="1 week") +
+     ggtitle("Heatmap of Positive Tests (per 1,000) in Illinois") + 
+     xlab("Date Tested (week)") + ylab("Age Group") +
+     theme(axis.text.x = element_text(angle=90,vjust=-0.05)) +
+     labs(fill="") #+ xlim(as.Date("2020-03-01",format="%Y-%m-%d"),NA)
+  
+  ggsave(paste(tag,"_HeatMap_PositiveTestsPerThousand-Vs-Time_byAge",extension,sep=""),width=10,height=8)
+  
+   ggplot(data=positives[positives$windows < max(positives$windows) & positives$windows >9,], x = as.Date((windows-1)*7+marker_test), y = factor(ages), fill = nt) +
+     geom_tile(aes(x=as.Date((windows-1)*7+marker_test), y = factor(ages), fill = nt)) +
+     scale_fill_distiller(palette ="YlOrRd", direction = 1) +
+     scale_y_discrete(limits = factor(age_key)) + 
+     scale_x_date(breaks = seq(as.Date((9-1)*7+marker_test+3), as.Date((max(windows)-1)*7+marker_test), by="1 week"), labels=date_format("%m-%d")) +
+     #scale_x_date(date_labels="%b %d",date_breaks  ="1 week") +
+     #ggtitle("Heatmap of Positive Tests in Illinois") + 
+     xlab("Date Tested (week)") + ylab("Age Group") +
+     theme(axis.text.x = element_text(angle=90,vjust=-0.05), axis.title.y =  element_text(angle=90)) +
+     labs(fill="") #+ xlim(as.Date("2020-03-01",format="%Y-%m-%d"),NA)
+  
+  ggsave(paste(tag,"_HeatMap_PositiveTests-Vs-Time_byAge",extension,sep=""),width=10,height=8)
+     
+  
+ # Age Area Plots by EMS
+
+regions <- c()
+ages <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+
+for(a in 1:length(levels(tested_with_age$age_group)))
+{
+      for (j in 1:length(unique(tested_with_age$window)))
+      {
+         for (r in c(1:11))
+         {
+           age <- levels(tested_with_age$age_group)[a]
+           slot <- unique(tested_with_age$window)[j]
+           
+           s <- subset(tested_with_age, window == slot)
+           reg <- subset(s, s$EMS == r)
+           
+           c <- subset(reg, reg$age_group == age)
+         
+           g <- nrow(reg)
+           n <- nrow(c)
+           f <- n/g
+           
+           ages <- c(ages,age)
+           regions <- c(regions,r)
+           windows <- c(windows,slot)
+           nt <- c(nt,n)
+           gt <- c(gt,g)
+           ft <- c(ft,f)
+         }
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+positives <- data.frame(ages,regions,windows,gt,nt,ft)
+positives$ages <- factor(positives$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+positives$regions <- factor(positives$regions, levels=seq(1:11))
+
+ems_areaplots_7to11 <- ggplot(positives[positives$windows<max(positives$windows) & positives$regions %in% c(7:11),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   geom_area(color = "white",linetype=2,size=0.2,show.legend = F, position='stack') +
+   labs(fill = "Age Group") + 
+   ggtitle("Share of Positive Tests by Age per EMS Region", "All Restore Regions (except NE)") + 
+   xlab("Date Tested (7-Day bins)") + 
+   ylab("Portion of Positive Tests") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + facet_wrap(~regions,ncol=3)
+   
+
+  print(ems_areaplots_7to11)
+  ggsave(paste(tag,"PANEL_AreaPlot_ShareOfPositives-vs-Time_byAge_byEMS_7to11_window7","",extension, sep=""), height = 10, width = 12) 
+
+
+positives$regions <- factor(positives$regions, levels=c(1,3,4,2,6,5))
+  
+ems_areaplots_1to6 <- ggplot(positives[positives$windows<max(positives$windows) & positives$regions %in% c(1:6),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   geom_area(color = "white",linetype=2,size=0.2,show.legend = F, position='stack') +
+   labs(fill = "Age Group") + 
+   ggtitle("Share of Positive Tests by Age per EMS Region", "All Restore Regions (except NE)") + 
+   xlab("Date Tested (7-Day bins)") + 
+   ylab("Portion of Positive Tests") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + facet_wrap(~regions,ncol=3)
+   
+
+  print(ems_areaplots_1to6)
+  ggsave(paste(tag,"PANEL_AreaPlot_ShareOfPositives-vs-Time_byAge_byEMS_1to6_window7","",extension, sep=""), height = 10, width = 12) 
+```
+
+
+### Admissions vs. Time (by Age)
+
+```{r}
+
+theme_set(theme_bw(base_size = 18))
+
+ages <- c()
+windows <- c()
+na <- c()
+ga <- c()
+fa <- c()
+
+for(a in 1:length(levels(admitted_with_age$age_group)))
+{
+      for (j in 1:length(unique(admitted_with_age$window)))
+      {
+        age <- levels(admitted_with_age$age_group)[a]
+        slot <- unique(admitted_with_age$window)[j]
+        
+        # All admits with date and age within "window"
+        s <- subset(admitted_with_age, window == slot)
+        
+        # Admits of specific age within "window"
+        c <- subset(s, age_group == age)
+      
+        # Admissions in this window
+        g <- nrow(s)
+        
+        # Admissions for specific age in this window
+        n <- nrow(c)
+        
+        # Fraction of admits in age group
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        na <- c(na,n)
+        ga <- c(ga,g)
+        fa <- c(fa,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+admissions <- data.frame(ages,windows,ga,na,fa)
+admissions$ages <- factor(admissions$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+theme_set(theme_bw(base_size=18))
+ v <- ggplot(admissions[admissions$windows < max(admissions$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = fa, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Hospital Admissions by Age", paste("n = ", format(nrow(admitted_with_age[admitted_with_age$window<max(admissions$windows),]),big.mark = ','), "admissions as of", max(admitted_with_age$admission_date[admitted_with_age$window < max(admissions$windows)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("Portion of All Admissions") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((admissions$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_ShareOfAdmissions-vs-Time_byAge_all_window7","",extension, sep=""), height=8, width=10)
+  
+  v <- ggplot(admissions[admissions$windows < max(admissions$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = na, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Hospital Admissions by Age", paste("n = ", format(nrow(admitted_with_age[admitted_with_age$window<max(admissions$windows),]),big.mark = ','), "admissions as of", max(admitted_with_age$admission_date[admitted_with_age$window < max(admissions$windows)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("# Hospital Admissions") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   facet_wrap(~ages, ncol=2, scales = "free_y") +
+   geom_vline(xintercept = as.Date((admissions$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   theme(legend.position = "none")
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_Admissions-vs-Time_byAge_all_window7_free-y","",extension, sep=""), height=8, width=10)
+  
+ v <- ggplot(admissions[which(admissions$ages %in% c("Under 21","21-30","71-80","Over 80") & admissions$windows < max(admissions$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = na, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Hospital Admissions by Age", paste("admissions as of", max(admitted_with_age$admission_date[admitted_with_age$window < max(admissions$windows)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("# Hospital Admissions") +
+   scale_fill_manual(values = age_extreme_pal[c(8,7,2,1)]) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((admissions$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  + facet_grid(factor(ages)~., scales="free_y")
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_Admissions-vs-Time_byAge_extremes_all_window7","",extension, sep=""), height=8, width=10)
+  
+   v <- ggplot(admissions[admissions$windows < max(admissions$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = na, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Hospital Admissions over Time", paste("admissions as of", max(admitted_with_age$admission_date[admitted_with_age$window < max(admissions$windows)]))) +
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("# Hospital Admissions") +
+   scale_fill_manual(values = rep("black",8)) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((admissions$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + 
+     theme(legend.position='none')
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_Admissions-vs-Time_all_window7","",extension, sep=""), height=8, width=10)
+```
+
+
+
+### Total Deaths vs. Time (by Age)
+
+```{r}
+### Age Only
+
+ages <- c()
+windows <- c()
+na <- c()
+ga <- c()
+fa <- c()
+
+for(a in 1:length(levels(deceased_with_age$age_group)))
+{
+      for (j in 1:length(unique(deceased_with_age$window)))
+      {
+        age <- levels(deceased_with_age$age_group)[a]
+        slot <- unique(deceased_with_age$window)[j]
+        
+        s <- subset(deceased_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+      
+        g <- nrow(s)
+        n <- nrow(c)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        na <- c(na,n)
+        ga <- c(ga,g)
+        fa <- c(fa,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+deaths <- data.frame(ages,windows,ga,na,fa)
+deaths$ages <- factor(deaths$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+theme_set(theme_bw(base_size=18))
+
+ v <- ggplot(deaths, aes(x = as.Date((windows-1)*7+marker_test), y = fa, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Observed Deaths by Age", paste("All Races: n = ", format(nrow(deceased_with_age[deceased_with_age$window<max(deaths$windows),]),big.mark = ','), "deaths as of", max(deceased_with_age$deceased_date[deceased_with_age$window<max(deaths$windows)]))) + 
+   xlab("Date Deceased (7-Day bins)") + 
+   ylab("Portion of All Observed Deaths") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((deaths$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_ShareOfDeaths-vs-Time_byAge_all_window7","",extension, sep=""),height=8,width=10)
+  
+  v <- ggplot(deaths, aes(x = as.Date((windows-1)*7+marker_test), y = na, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Observed Deaths by Age", paste("All Races: n = ", nrow(deceased_with_age), "deaths as of", max(deceased_with_age$deceased_date))) + 
+   xlab("Date Deceased (7-Day bins)") + 
+   ylab("# of Deaths") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((deaths$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_Deaths-vs-Time_byAge_all_window7","",extension, sep=""),height=8,width=10)
+```
+
+
+### Deaths (given admitted) vs. Time (by Age)
+
+```{r}
+### Age Only
+
+ages <- c()
+windows <- c()
+na <- c()
+ga <- c()
+fa <- c()
+
+for(a in 1:length(levels(hospital_deaths_with_age$age_group)))
+{
+      for (j in 1:length(unique(hospital_deaths_with_age$window)))
+      {
+        age <- levels(hospital_deaths_with_age$age_group)[a]
+        slot <- unique(hospital_deaths_with_age$window)[j]
+        
+        s <- subset(hospital_deaths_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+      
+        g <- nrow(s)
+        n <- nrow(c)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        na <- c(na,n)
+        ga <- c(ga,g)
+        fa <- c(fa,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+deaths <- data.frame(ages,windows,ga,na,fa)
+deaths$ages <- factor(deaths$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+
+ v <- ggplot(deaths[deaths$windows<max(deaths$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = fa, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Observed Deaths by Age", paste("All Races: n = ", nrow(hospital_deaths_with_age), "deaths as of", max(hospital_deaths_with_age$deceased_date[hospital_deaths_with_age$window < max(deaths$windows)]))) + 
+   xlab("Date Deceased (7-Day bins)") + 
+   ylab("Portion of Hospital Deaths") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((deaths$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_ShareOfHospitalDeaths-vs-Time_byAge_all_window7","",extension, sep=""))
+  
+  v <- ggplot(deaths[deaths$windows < max(deaths$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = na, fill = factor(ages))) + geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Breakdown of Hospital Deaths by Age", paste("All Races: n = ", nrow(hospital_deaths_with_age), "deaths as of", max(hospital_deaths_with_age$deceased_date[hospital_deaths_with_age$window < max(deaths$windows)]))) + 
+   xlab("Date Deceased (7-Day bins)") + 
+   ylab("# of Deaths") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((deaths$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_HospitalDeaths-vs-Time_byAge_all_window7","",extension, sep=""))
+```
+
+
+
+### Fraction Admitted | Positive (by Age)
+
+```{r}
+
+### Overall
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+
+    for (j in 1:length(unique(tested$window)))
+    {
+      slot <- unique(tested$window)[j]
+      
+      b <- subset(tested, window == slot)
+      
+      s <- subset(b, ((b$admitted_to_hospital=="Yes") |(b$admission_date !="")))
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+
+f_admitted <- data.frame(windows,gt,nt,ft)
+
+ v <- ggplot(f_admitted[which(f_admitted$windows>9 & f_admitted$windows<max(f_admitted$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft)) + 
+   geom_area() +
+   #geom_line() +
+   ggtitle("Fraction Admitted | Positive", paste("All Ages: n = ", nrow(tested[tested$window<max(f_admitted$windows),]), "admissions as of", max(tested$specimen_collection[tested$window<max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Fraction of Cases Admitted") +
+   scale_fill_manual(values = wespal) +
+   geom_vline(xintercept = as.Date((f_admitted$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v + ylim(0,1)
+
+  ggsave(paste(tag,"_AreaPlot_FractionAdmitted-vs-Time_Overall_window7",extension, sep=""), width = 9, height = 7)
+
+
+  v2 <- v2 + geom_line()
+  v2 + scale_y_continuous(seq(0,1,0.1)) +ylim(0,1)
+
+  ggsave(paste(tag,"_LinePlot_FractionAdmitted-vs-Time_Overall_window7",extension, sep=""), width = 9, height = 7)
+  
+f_admitted_overall <- f_admitted
+
+### Age Only
+
+ages <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+tested_with_age$age_group <- factor(tested_with_age$age_group)
+
+for(a in 1:length(levels(factor(tested_with_age$age_group))))
+{
+      for (j in 1:length(unique(tested_with_age$window)))
+      {
+        age <- levels(tested_with_age$age_group)[a]
+        slot <- unique(tested_with_age$window)[j]
+        
+        s <- subset(tested_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+        
+        d <- subset(c, c$admitted_to_hospital=="Yes" | !is.na(c$admission_date) !="")
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+f_admit <- data.frame(ages,windows,gt,nt,ft)
+f_admit$ages <- factor(f_admit$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+  
+v <- ggplot(f_admit[which(f_admit$windows < max(f_admit$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Fraction Admitted by Age", paste("All Races: n = ", format(nrow(tested_with_age[tested_with_age$window<max(f_admit$windows),]),big.mark = ','), "tests as of", max(tested_with_age$specimen_collection[tested_with_age$window<max(f_admit$window)]))) + 
+   xlab("Date Tested (7-Day bins)") + 
+   ylab("Portion of Patients Later Admitted") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((f_admit$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1))
+
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(ages), ncol=2)
+   
+   
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_FractionAdmitted-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+ 
+  
+  
+  v2 + geom_line(aes(color=factor(ages))) + 
+    labs(color = "Age Group") +
+    scale_color_brewer(palette = "Paired", direction=-1)
+  
+  ggsave(paste(tag,"_LinePlot_FractionAdmitted-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+  
+  f_admit_by_age <- f_admit
+  
+  
+      v <- ggplot(f_admit[which(f_admit$windows>9 & f_admit$windows<max(f_admit$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill=factor(ages),color = factor(ages))) +
+   geom_point(shape = 20) +
+   geom_smooth(se=T) +
+   #geom_line() +
+   labs(color = "Age Group") + 
+   ggtitle("Fraction Admitted | Positive by Age Group", paste("n = ", format(nrow(admitted_with_age[admitted_with_age$window < max(admitted_with_age$window),]),big.mark = ','), "admissions as of", max(tested_with_age$admission_date[tested_with_age$window < max(tested_with_age$window)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Fraction of Cases Later Admitted") +
+   scale_color_brewer(palette = "Paired", direction = -1) +
+   scale_fill_brewer(palette = "Paired", direction = -1) +
+   labs(fill="Age Group") +
+   geom_vline(xintercept = as.Date((f_admit$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1))
+    v
+    
+    ggsave(paste(tag,"_SmoothCurves_FractionAdmitted-vs-Time_byAgeGroup_window7",extension, sep=""), width = 10, height = 8)
+    
+
+# Overall
+  
+ages <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(a in 1:length(levels(factor(tested_with_age$age_group))))
+{
+
+        age <- levels(tested_with_age$age_group)[a]
+
+        
+        c <- subset(tested_with_age, age_group == age)
+        
+        d <- subset(c, c$admitted_to_hospital=="Yes" | c$admission_date !="")
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+
+  }
+
+
+f_admit <- data.frame(ages,gt,nt,ft)
+f_admit$ages <- factor(f_admit$ages,levels=c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+ggplot(f_admit, aes(x=ages, y= ft, fill=ages)) + 
+  geom_bar(position='dodge',stat='identity') +
+  scale_fill_brewer(palette="Paired") + 
+  theme(legend.position="none") +
+  xlab("Age Group") + ylab("Fraction of Cases Admitted") +
+  ggtitle("Fraction Admitted | Positive by Age Group", paste(format(sum(f_admit$nt),big.mark=','),"admissions as of",max(admitted_with_age_all$admission_date)))
+
+ggsave(paste(tag,"_barplot_FractionAdmitted-Overall_byAgeGroup",extension,sep="",width=10,height=8)
+  
+```
+
+
+
+
+### Fraction Dead | Admitted (by Age)
+
+```{r}
+### Age Only
+
+ages <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(a in 1:length(levels(admitted_with_age$age_group)))
+{
+      for (j in 1:length(unique(admitted_with_age$window)))
+      {
+        age <- levels(admitted_with_age$age_group)[a]
+        slot <- unique(admitted_with_age$window)[j]
+        
+        s <- subset(admitted_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+        
+        d <- subset(c, c$id %in% deceased_with_age$id)
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+f_dead <- data.frame(ages,windows,gt,nt,ft)
+f_dead$ages <- factor(f_dead$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+  
+v <- ggplot(f_dead[f_dead$windows<max(f_dead$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Fraction Dead | Admitted by Age", paste("n = ", format(nrow(admitted_with_age),big.mark = ','), "admissions as of", max(admitted_with_age$admission_date[admitted_with_age$window<max(f_dead$windows)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("Portion of Admitted Patients who Later Died") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((f_dead$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1))
+
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(ages),ncol=2)
+   
+   
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_FractionDead-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+ 
+  
+  
+  v2 + geom_line(aes(color=factor(ages))) + 
+    labs(color = "Age Group") +
+    scale_color_brewer(palette = "Paired", direction=-1)
+  
+  ggsave(paste(tag,"_LinePlot_FractionDead-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+
+  f_dead_by_age <- f_dead
+  
+  
+    
+      v <- ggplot(f_dead[which(f_dead$windows>9 & f_dead$windows<max(f_dead$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill=factor(ages),color = factor(ages))) +
+   geom_point(shape = 20) +
+   geom_smooth(se=T) +
+   #geom_line() +
+   labs(color = "Age Group") + 
+   ggtitle("Fraction Dead | Admitted by Age Group", paste("n = ", format(sum(f_dead$nt),big.mark = ','), "deaths as of", max(tested_with_age$admission_date[tested_with_age$window < max(tested_with_age$window)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Cases Later Deceased") +
+   scale_color_brewer(palette = "Paired", direction = -1) +
+   scale_fill_brewer(palette = "Paired", direction = -1) +
+   labs(fill="Age Group") +
+   geom_vline(xintercept = as.Date((f_dead$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=seq(0,0.6,0.1))
+    v
+    
+    ggsave(paste(tag,"_SmoothCurves_FractionDead-GivenAdmitted-vs-Time_byAgeGroup_window7",extension, sep=""), width = 10, height = 8)
+    
+# Overall
+    
+ages <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(a in 1:length(levels(admitted_with_age_all$age_group)))
+{
+        age <- levels(admitted_with_age_all$age_group)[a]
+        
+        
+        c <- subset(admitted_with_age_all, age_group == age)
+        
+        d <- subset(c, c$id %in% deceased_with_age$id)
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+  }
+
+
+f_dead <- data.frame(ages,gt,nt,ft)
+f_dead$ages <- factor(f_dead$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+ggplot(f_dead, aes(x=ages,y=ft,fill=ages)) + 
+  geom_bar(stat='identity', position='dodge') +
+  scale_fill_brewer(palette="Paired") +
+  theme(legend.position = "none") +
+  xlab("Age Group") + ylab("Fraction Dead | Admitted") +
+  ggtitle("Fraction Dead | Admitted, by age group",paste(format(sum(f_dead$nt),big.mark=','),"hospital deaths as of",max(deceased_with_age$deceased_date)))
+  
+
+ggsave(paste(tag,"_barplot_FractionDead-GivenAdmitted-Overall_byAge",extension,sep="",width=10,height=8)
+
+
+  
+```
+
+
+
+### Fraction Critical vs. Time (by Age)
+
+```{r}
+### Age Only
+
+races <- c()
+ages <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+#admitted_with_age$critical <-  (admitted_with_age$icu=="Yes" | admitted_with_age$vent == "Yes")
+
+for(a in 1:length(levels(admitted_with_age$age_group)))
+{
+      for (j in 1:length(unique(admitted_with_age$window)))
+      {
+        age <- levels(admitted_with_age$age_group)[a]
+        slot <- unique(admitted_with_age$window)[j]
+        
+        s <- subset(admitted_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+        
+        d <- subset(c, c$critical == T)
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+f_critical <- data.frame(ages,windows,gt,nt,ft)
+f_critical$ages <- factor(f_critical$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+  
+v <- ggplot(f_critical[f_critical$windows<max(f_critical$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Fraction Critical by Age", paste("n = ", format(nrow(admitted_with_age[admitted_with_age$window<max(f_critical$windows),]),big.mark = ','), "admissions as of", max(admitted_with_age$admission_date[admitted_with_age$window<max(f_critical$windows)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("Portion of Admitted Patients in ICU or on Ventilator") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((f_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1))
+
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(ages),ncol=2)
+   
+   
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_FractionCritical-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+ 
+  
+  
+  v2 + geom_line(aes(color=factor(ages))) + 
+    labs(color = "Age Group") +
+    scale_color_brewer(palette = "Paired", direction=-1)
+  
+  ggsave(paste(tag,"_LinePlot_FractionCritical-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+  
+  f_critical_by_age <- f_critical
+```
+
+
+
+### Fraction Dead | Critical (by Age)
+```{r}
+### Overall
+
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+critical <- subset(admitted, admitted$critical == T)
+critical_with_age <- subset(admitted_with_age, admitted_with_age$critical == T)
+
+
+      for (j in 1:length(unique(critical$window)))
+      {
+        
+        slot <- unique(critical$window)[j]
+        
+        c <- subset(critical, window == slot)
+        
+        
+        d <- subset(c, c$id %in% deceased_with_age$id)
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+       
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+
+
+f_dead_critical <- data.frame(windows,gt,nt,ft)
+
+  
+v <- ggplot(f_dead_critical[f_dead_critical$windows,max(f_dead_critical$windows)], aes(x = as.Date((windows-1)*7+marker_test), y = ft)) + 
+   geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Fraction Dead | Critical", paste("n = ", format(nrow(critical[critical$window<max(critical$window),]),big.mark = ','), "critical cases as of", max(critical$admission_date[critical$window<max(critical$window)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("Portion of Critical Patients who Later Died") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((f_dead_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1)) +
+  ylim(0,1)
+
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v 
+   
+   
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_FractionCriticalDead-vs-Time_Overall_window7","",extension, sep=""), width = 10, height= 8)
+ 
+  
+  
+  v2 + geom_line() + 
+    scale_y_continuous(breaks=c(0,0.5,1)) +
+    ylim(0,1)
+  
+  ggsave(paste(tag,"_LinePlot_FractionCriticalDead-vs-Time_Overall_window7","",extension, sep=""), width = 10, height= 8)
+
+### Age Only
+
+races <- c()
+ages <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+critical <- subset(admitted, admitted$critical == T)
+critical_with_age <- subset(admitted_with_age, admitted_with_age$critical == T)
+
+for(a in 1:length(levels(critical_with_age$age_group)))
+{
+      for (j in 1:length(unique(critical_with_age$window)))
+      {
+        age <- levels(critical_with_age$age_group)[a]
+        slot <- unique(critical_with_age$window)[j]
+        
+        s <- subset(critical_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+        
+        d <- subset(c, c$id %in% deceased_with_age$id)
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+f_dead_critical <- data.frame(ages,windows,gt,nt,ft)
+f_dead_critical$ages <- factor(f_dead_critical$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+  
+v <- ggplot(f_dead_critical[f_dead_critical$windows<max(f_dead_critical$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Fraction Dead | Critical by Age", paste("n = ", format(nrow(critical_with_age[critical_with_age$window<max(critical_with_age$window),]),big.mark = ','), "critical cases with age as of", max(critical_with_age$admission_date[critical_with_age$window<max(critical_with_age$window)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("Portion of Critical Patients who Later Died") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((f_dead_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1))
+
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(ages),ncol=2)
+   
+   
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_FractionCriticalDead-vs-Time_byAge_all_window7","",extension, sep=""), width = 9, height= 7)
+ 
+  
+  
+  v2 + geom_line(aes(color=factor(ages))) + 
+    labs(color = "Age Group") +
+    scale_color_brewer(palette = "Paired", direction=-1)
+  
+  ggsave(paste(tag,"_LinePlot_FractionCriticalDead-vs-Time_byAge_all_window7","",extension, sep=""), width = 9, height= 7)
+  
+```
+
+
+
+### Dead | Not Critical (including 'unknowns')
+```{r}
+### Age Only
+
+races <- c()
+ages <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+critical <- subset(admitted, admitted$critical == F)
+
+critical_with_age <- subset(admitted_with_age, admitted_with_age$critical == F)
+
+for(a in 1:length(levels(critical_with_age$age_group)))
+{
+      for (j in 1:length(unique(critical_with_age$window)))
+      {
+        age <- levels(critical_with_age$age_group)[a]
+        slot <- unique(critical_with_age$window)[j]
+        
+        s <- subset(critical_with_age, window == slot)
+        
+        c <- subset(s, age_group == age)
+        
+        d <- subset(c, c$id %in% deceased_with_age$id)
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+        ages <- c(ages,age)
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+f_dead_critical <- data.frame(ages,windows,gt,nt,ft)
+f_dead_critical$ages <- factor(f_dead_critical$ages, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+  
+v <- ggplot(f_dead_critical[f_dead_critical$windows<max(f_dead_critical$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(ages))) + 
+   geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Fraction Dead | Non-Critical by Age", paste("n = ", format(nrow(critical_with_age[critical_with_age$window<max(critical_with_age$window),]),big.mark = ','), "non-critical cases as of", max(critical_with_age$admission_date[critical_with_age$window<max(critical_with_age$window)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("Portion of Non-Critical Patients who Later Died") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((f_dead_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1))
+
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(ages),ncol=2)
+   
+   
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_FractionNonCriticalDead-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+ 
+  
+  
+  v2 + geom_line(aes(color=factor(ages))) + 
+    labs(color = "Age Group") +
+    scale_color_brewer(palette = "Paired", direction=-1)
+  
+  ggsave(paste(tag,"_LinePlot_FractionNonCriticalDead-vs-Time_byAge_all_window7","",extension, sep=""), width = 10, height= 8)
+  
+```
+
+
+
+
+
+### Age Breakdown By EMS Region
+
+```{r}
+ems_age <- data.frame(table(tested_with_age$EMS,tested_with_age$age_group))
+colnames(ems_age) <- c("EMS","age_group","n")
+
+ems_tot <- aggregate(x=ems_age$n, by=list(ems_age$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_age <- merge(x=ems_age,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_age$frac <- ems_age$n/ems_age$tot
+
+ems_age$age_group<- factor(ems_age$age_group, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+ggplot(ems_age, aes(x=EMS,y=frac*100, fill=age_group)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_brewer(palette = "Paired",direction=-1) + 
+  ggtitle("COVID (+) Population by Age x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1) + scale_y_continuous(breaks=seq(0,100,10))
+
+  ggsave(paste(tag,"_BarPlot_PositiveTests-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+  ems_age$var <- "positives"
+  toplot_age$var <- "population"
+  
+pos <- ems_age[,c(1,2,5,6)]
+pop <- toplot_age[,c(1,2,3,4)]
+colnames(pop) <- colnames(pos)
+
+bound <- rbind.data.frame(pos,pop)
+melted <- melt(bound, c("EMS","age_group","var"))
+
+melted$cat <- ''
+melted[melted$var == 'positives',]$cat <- "COVID (+)"
+melted[melted$var != 'positives',]$cat <- "Population"
+
+melted$age_group <- factor(melted$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+ggplot(melted, aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired",direction=-1) +
+  ggtitle("Age Distribution of Population vs. Positive Tests","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +labs(fill="Age Group")
+  
+ggsave(paste(tag,"_BarPlot_Population_Vs_PositiveTests-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+### Age Breakdown (admitted) by EMS Region
+
+ems_age <- data.frame(table(admitted_with_age_all$EMS,admitted_with_age_all$age_group))
+colnames(ems_age) <- c("EMS","age_group","n")
+
+ems_tot <- aggregate(x=ems_age$n, by=list(ems_age$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_age <- merge(x=ems_age,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_age$frac <- ems_age$n/ems_age$tot
+
+ems_age$age_group<- factor(ems_age$age_group, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+admit_age <- ems_age
+
+ggplot(ems_age, aes(x=EMS,y=frac*100, fill=age_group)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_brewer(palette = "Paired",direction=-1) + 
+  ggtitle("Hospitalized Population by Age x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1) + scale_y_continuous(breaks=seq(0,100,10))
+
+  ggsave(paste(tag,"_BarPlot_Admissions-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+  
+### Age Breakdown deaths by EMS Region
+
+ems_age <- data.frame(table(deceased_with_age$EMS, deceased_with_age$age_group))
+colnames(ems_age) <- c("EMS","age_group","n")
+
+ems_tot <- aggregate(x=ems_age$n, by=list(ems_age$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_age <- merge(x=ems_age,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_age$frac <- ems_age$n/ems_age$tot
+
+ems_age$age_group<- factor(ems_age$age_group, levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+ggplot(ems_age, aes(x=EMS,y=frac*100, fill=age_group)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_brewer(palette = "Paired",direction=-1) + 
+  ggtitle("COVID Deaths by Age x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1) + scale_y_continuous(breaks=seq(0,100,10))
+
+  ggsave(paste(tag,"_BarPlot_Deaths-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+  ems_age$var <- "deaths"
+  toplot_age$var <- "population"
+  
+pos <- ems_age[,c(1,2,5,6)]
+pop <- toplot_age[,c(1,2,3,4)]
+colnames(pop) <- colnames(pos)
+
+bound <- rbind.data.frame(pos,pop)
+melted2 <- melt(bound, c("EMS","age_group","var"))
+
+melted2$cat <- ''
+melted2[melted2$var == 'deaths',]$cat <- "Deaths"
+melted2[melted2$var != 'deaths',]$cat <- "Population"
+
+melted2$age_group <- factor(melted2$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+ggplot(melted2, aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired",direction=-1) +
+  ggtitle("Age Distribution of Population vs. COVID-19 Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +labs(fill="Age Group")
+  
+ggsave(paste(tag,"_BarPlot_Population_Vs_Deaths-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+age_TestsDeaths <- rbind.data.frame(melted,melted2[which(melted2$var != "population"),])
+age_TestsDeaths$cat <- factor(age_TestsDeaths$cat, levels = c("Population","COVID (+)","Deaths"))
+
+ggplot(age_TestsDeaths, aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired",direction=-1) +
+  ggtitle("Age Breakdown of Population, Cases, and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Age Group") +
+  geom_hline(yintercept=seq(5,100,5),color="white", size=0.25)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAndDeaths-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+## Hospital Deaths
+
+deceased_admitted <- subset(deceased_with_age, deceased_with_age$id %in% admitted_with_age_all$id)
+
+ems_age <- data.frame(table(deceased_admitted$EMS,deceased_admitted$age_group))
+colnames(ems_age) <- c("EMS","age_group","n")
+
+ems_tot <- aggregate(x=ems_age$n, by=list(ems_age$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_age <- merge(x=ems_age,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_age$frac <- ems_age$n/ems_age$tot
+
+ems_age$age_group <- factor(ems_age$age_group, levels = c("Under 21", "21-30", "31-40", "41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+ggplot(ems_age, aes(x=EMS,y=frac*100, fill=age_group)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_brewer(palette = "Paired", direction = -1) +
+  ggtitle("Hospital Deaths by Race x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1)
+
+  ggsave(paste(tag,"_BarPlot_HospitalDeaths-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+  ems_age$var <- "hospdeaths"
+  toplot_age$var <- "population"
+  
+pos <- ems_age[,c(1,2,5,6)]
+pop <- toplot_age[,c(1,2,3,4)]
+colnames(pop) <- colnames(pos)
+
+bound3 <- rbind.data.frame(pos,pop)
+melted3 <- melt(bound3, c("EMS","age_group","var"))
+
+melted3$cat <- ''
+melted3[melted3$var == 'hospdeaths',]$cat <- "Hospital Deaths"
+melted3[melted3$var != 'hospdeaths',]$cat <- "Population"
+
+melted3$age_group <- factor(melted3$age_group,levels = c("Under 21", "21-30", "31-40", "41-50","51-60","61-70","71-80","Over 80")[8:1])
+
+
+ggplot(melted3, aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired", direction = -1) +
+  ggtitle("Age Breakdown of Population vs. Hospital Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Age Group")
+  
+ggsave(paste(tag,"_BarPlot_Population_Vs_HospitalDeaths-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+  
+
+age_TestsDeaths <- rbind.data.frame(melted,melted2[which(melted2$var != "population"),])
+age_TestsDeaths$cat <- factor(age_TestsDeaths$cat, levels = c("Population","COVID (+)","Deaths"))
+
+ggplot(age_TestsDeaths, aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired", direction = -1) +
+  ggtitle("Age Breakdown of Population, Cases, and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Age Group") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAndDeaths-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+age_TestsDeaths <- rbind.data.frame(melted,melted2[which(melted2$var != "population"),],melted3[which(melted3$var != "population"),])
+age_TestsDeaths$cat <- factor(age_TestsDeaths$cat, levels = c("Population","COVID (+)","Deaths", "Hospital Deaths"))
+
+ggplot(age_TestsDeaths, aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired", direction = -1) +
+  ggtitle("Age Breakdown of Population, Cases and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Age Group") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsDeaths-withHospital-byAge-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+### Adding Admissions to Grid
+
+admit_age$var <- "admissions"
+admit_age$variable <- "frac"
+admit_age <- admit_age[,c(1,2,6,7,5)]
+admit_age$cat <- "Hospitalizations"
+colnames(admit_age) <- colnames(age_TestsDeaths)
+
+age_TestsAdmissionsDeaths <- rbind.data.frame(age_TestsDeaths,admit_age)
+
+age_TestsAdmissionsDeaths$cat <- factor(age_TestsAdmissionsDeaths$cat, levels = c("Population","COVID (+)","Hospitalizations", "Hospital Deaths","Deaths"), labels = c("Population","COVID (+)","Hospitalizations", "Hospital Deaths","Total Deaths"))
+
+theme_set(theme_bw(base_size=12))
+age_TestsAdmissionsDeaths$EMS <- factor(age_TestsAdmissionsDeaths$EMS, levels = c("4","5","3","6","1","2","7","8","9","10","11"))
+ggplot(age_TestsAdmissionsDeaths, aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired", direction = -1) +
+  ggtitle("Age Breakdown of Population, Cases, Hospital Admissions, and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Age Group") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAdmissionsDeaths-withHospital-byAge-byEMS",extension, sep=""), width = 15, height = 8)
+
+theme_set(theme_bw(base_size=18))
+ggplot(age_TestsAdmissionsDeaths[age_TestsAdmissionsDeaths$EMS == "5",], aes(x = cat, y = value*100, fill = age_group)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_brewer(palette = "Paired", direction = -1) +
+  ggtitle("Age Breakdown of Population, Cases, Admissions, and Deaths","EMS Region:") +
+  #theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Age Group") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2) +
+  theme(axis.text.x = element_text(size=18))
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAdmissionsDeaths-withHospital-byAge-byEMS-EMS-5-only",extension, sep=""), width = 12, height = 9)
+```
+
+### Age of Positives vs. Population
+```{r}
+IL_ages <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/census/IL_age_distribution8.csv",stringsAsFactors = F)
+IL_ages <- IL_ages[,c(2,3)]
+colnames(IL_ages) <- c("age_group","n")
+IL_ages
+IL_ages$pct <- IL_ages$n / sum(IL_ages$n)
+
+IL_ages$age_group <- factor(IL_ages$age_group, levels=c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+ggplot(IL_ages, aes(x=age_group,y=n, fill=age_group)) + 
+  geom_bar(stat="identity") + 
+  scale_fill_brewer(palette="Paired") +
+  ylab("#") + xlab("") + labs(fill="Age Group") +
+  ggtitle("Age Distribution of Illinois")
+
+ggsave(paste(tag,"_barplot_IL-Age-Distribution_raw",extension, sep=""),width=10,height=8)
+
+
+ggplot(IL_ages, aes(x=age_group,y=pct*100, fill=age_group)) + 
+  geom_bar(stat="identity") + 
+  scale_fill_brewer(palette="Paired") +
+  ylab("%") + xlab("") + labs(fill="Age Group") +
+  ggtitle("Age Distribution of Illinois") + ylim(0,30)
+ggsave(paste(tag,"_barplot_IL-Age-Distribution_pct",extension, sep=""),width=10,height=8)
+
+tested_with_age2 <- tested_with_age %>% 
+  group_by(age_group) %>% 
+  summarise(count=n()) %>% 
+  mutate(perc=count/sum(count))
+ggplot(tested_with_age2, aes(x=age_group,y=perc*100,fill=age_group)) + 
+  geom_bar(stat="identity") + 
+  scale_fill_brewer(palette = "Paired") + 
+  ylab("%") + xlab("") + labs(fill="Age Group") +
+  ggtitle("Age Distribution of Illinois COVID (+) Cases")+
+  ylim(0,25)
+ggsave(paste(tag,"_barplot_Age-Distribution-of-Positives_pct",extension, sep=""), height = 11, width =15) 
+
+tested_with_age2$var <- "positives"
+IL_ages$var <- "population"
+
+colnames(IL_ages) <- colnames(tested_with_age2)
+
+bound_pos <- rbind.data.frame(tested_with_age2,IL_ages)
+
+
+bound_pos$est <- NA
+bound_pos$p_value <- NA
+  
+for(i in 1:nrow(bound_pos))
+{
+  group <- bound_pos$age_group[i]
+  a <- t.test(x = (tested_with_age$age_group == group )*100, mu = IL_ages$perc[which(IL_ages$age_group==group)]*100, alternative = "two.sided")
+  bound_pos$est[which(bound_pos$age_group == group)] <- a$estimate
+  bound_pos$p_value[which(bound_pos$age_group == group)] <- a$p.value
+}
+
+bound_pos$age_group <- factor(bound_pos$age_group, levels=c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80")) 
+
+bound_pos_melt <- melt(bound_pos, id.vars=c('age_group', "p_value","var"))
+
+bound_pos_melt
+bound_pos_melt <- subset(bound_pos_melt, bound_pos_melt$variable == "perc")
+bound_pos_melt$p_value[which(bound_pos_melt$var=="population")] <- NA
+
+theme_set(theme_bw(base_size=18))
+p <- ggplot(bound_pos_melt, aes(fill=var, y=value*100, x=age_group, label = ifelse(p_value < 0.05, "*", " "))) + 
+    geom_bar(position="dodge", stat="identity") +
+  scale_fill_manual(values = c("gray","#FE6D64"), labels = c("Population", "Positive Tests")) + 
+  ggtitle("Percent of Cases vs. Percent of Population in Illinois", paste("n = ",format(nrow(tested_with_age),big.mark = ','), "cases with age as of", max(tested_with_age$specimen_collection,na.rm=T))) +
+  xlab("Age Group") +
+  ylab("%") +
+  #ylim(0,100) +
+  geom_text(vjust = 0, hjust = -0.5, size=20) +
+  labs(fill="") +
+  theme(axis.title=element_text(size=20), title=element_text(size=20), axis.text = element_text(size=20))
+p
+ggsave(plot=p,paste(tag,"_barplot_Age-Distribution-of-Positives_vs_Population_pct",extension, sep=""),height=10,width=12) 
+
+```
+

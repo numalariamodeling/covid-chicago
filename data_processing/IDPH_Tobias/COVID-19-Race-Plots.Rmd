@@ -1,0 +1,3306 @@
+---
+title: "COVID 19 Race Plots"
+author: "Tobias Holden"
+date: "7/20/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+
+library(sf)
+library(stringr)
+library(ggplot2)
+library(gridExtra)
+library(knitr)
+library(reshape2)
+library(dplyr)
+library(ggsci)
+library(ggthemes)
+library(leaflet)
+library(widgetframe)
+library(htmltools)
+library(here)
+library(purrr)
+library(wesanderson)
+library(scales)
+library(tidyr)
+library(cowplot)
+
+wespal <- c('#913058', "#F6851F", "#00A08A", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
+age_extreme_pal <- RColorBrewer::brewer.pal(8, "Paired")
+theme_set(theme_bw(base_size = 18))
+```
+
+```{r}
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+#theme_set(theme_bw(base_size = 20))
+
+# Date cut-off
+pull_date <- as.Date("2020-07-20",format="%Y-%m-%d")
+
+# Tag for saved outputs
+tag <- "RacePlots/LL_200720_th"
+# Filetype for images (.png or .pdf)
+extension <- ".pdf"
+
+# Local copy of latest pull
+file_path <- file.choose(new = FALSE)
+ll <- read.csv(file_path,stringsAsFactors = FALSE)
+
+setwd("~/Box/NU-malaria-team/projects/covid_chicago/Plots + Graphs/IDPH Line-List Plots")
+
+# List of actual US zip codes, used to subset only patients in IL
+ref <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/census/ACS 2018 Estimates By Zip/uszips.csv", stringsAsFactors = FALSE)
+ref <- subset(ref, state_id == "IL")
+
+# Demographic information by Zip (national)
+IL_demo <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/census/ACS 2018 Estimates By Zip/IL Demographics by Zip - TH.csv",stringsAsFactors = FALSE)
+for (i in 2:8)
+{
+   IL_demo[,i] <- as.numeric(IL_demo[,i])
+}
+
+
+#IL_demo <- subset(demo, demo$zip %in% ref$zip)
+
+
+# Zip-Code shapefile for IL
+shpfl <- st_read("~/Box/NU-malaria-team/data/covid_IDPH/shapefiles/IL_zipcodes/IL_zipcodes.shp")
+
+
+idph_long <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/Corona virus reports/illinois_zip_public.csv", stringsAsFactors = FALSE)
+idph <- subset(idph_long,as.Date(idph_long$update_date,format="%m-%d-%Y") %in% seq.Date(as.Date(pull_date,format="%Y-%m-%d")-7, as.Date(pull_date,format="%Y-%m-%d"), by=1))
+
+idph$update_date <- as.Date(idph$update_date,format="%m-%d-%Y")
+
+# Check for lag in updates
+idph_max <- aggregate(idph$update_date, by=list(idph$Zip),FUN=max)
+table(idph_max$x)
+
+idph <- subset(idph,idph$update_date ==  as.Date(pull_date,format="%Y-%m-%d"))
+
+
+idph$TPR <- idph$Positive_Cases/idph$Tested
+ems_eth <- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/EMS Population/EMS_population_by_eth_cbg.csv",stringsAsFactors = FALSE)
+ems_eth <- ems_eth[,c(1,2,13,3:10)]
+colnames(ems_eth) <- c("EMS","Total","Hispanic-Latino","Not_Hispanic-Latino","White","Black","Native","Asian","PI","Other","Multiple")
+
+# Combining Groups for "Other" and "Native"
+ems_eth$Native <- ems_eth$Native+ems_eth$PI
+ems_eth$Other <- ems_eth$Other+ems_eth$Multiple
+
+ems_eth$EMS <- factor(ems_eth$EMS, levels = paste(1:11))
+
+
+
+ems_eth_fractions <- ems_eth
+
+for (i in 1:nrow(ems_eth))
+{
+   ems_total <- ems_eth_fractions[i,2]
+  for (j in 3:10)
+  {
+    ems_eth_fractions[i,j] <- ems_eth_fractions[i,j] / ems_eth_fractions[i,2]
+  }
+}
+
+ems_eth_fractions_melted <- melt(ems_eth_fractions, id.vars = 'EMS')
+#ems_eth_fractions_melted
+
+toplot_eth <- ems_eth_fractions_melted[which(!(ems_eth_fractions_melted$variable %in% c("Not_Hispanic-Latino","Total","Multiple","PI"))),]
+toplot_eth$variable <- factor(toplot_eth$variable, levels=c("White","Hispanic-Latino","Black","Asian","Native","Other")[c(1,6:4,2,3)])
+
+ggplot(data=toplot_eth,aes(x=EMS,y=value*100, fill= variable)) +
+  geom_bar(stat="identity",position="stack") +
+  ggtitle("Racial/Ethnic Distribution of EMS Population") + 
+  xlab("EMS") + 
+  ylab("%") +
+  scale_fill_manual(values = wespal[c(1,6:4,2,3)]) + 
+  labs(fill = "Race/Ethnicity") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1)
+
+  ggsave(paste(tag,"_BarPlot_Population-byRace-byEMS",extension, sep=""), width = 11, height = 15)
+
+```
+
+## Data Cleaning {.tabset}
+
+### Unique IDs
+
+Multiracial patients are entered as multiple rows... Add column of multiple_races to label these
+```{r}
+ids <- data.frame(table(ll$id))
+#table(ids$Var1[which(ids$Freq>1)])
+
+ll$multiple_races <- ll$id %in% ids$Var1[which(ids$Freq>1)]
+ll$race[which(ll$multiple_races==T)] <- "Multiple"
+
+#Reduce dataset to exclude multiples
+
+cases <- ll[!duplicated(ll$id),]
+cases$critical <- (cases$icu == "Yes" | cases$vent == "Yes")
+print(paste(format(nrow(cases),big.mark = ','), "unique patient IDs"))
+```
+
+### Race
+
+```{r}
+kable(table(cases$race,useNA = 'ifany'), col.names = c("Race (alone)","n"))
+```
+
+23,569 blanks. Different categories here...
+
+- White
+- Black
+- Asian
+- Native (combining Hawaiian/PI & Alaskan/American)
+- Other (including 470 'multiple')
+- Unknown
+- Missing
+
+```{r}
+cases$race_label <- cases$race
+cases$race_label[cases$race_label==""] <- "Missing"
+cases$race_label[cases$race_label=="Native Hawaiian or Other Pacific Islander"] <- "Native" 
+cases$race_label[cases$race_label=="American Indian or Alaskan Native"] <- "Native"
+cases$race_label[cases$race_label=="Multiple"] <- "Other"
+cases$race_label[cases$race_label=="Black or African American"] <- "Black"
+
+
+kable(table(cases$race_label,useNA = 'ifany'),col.names = c("Race (collapsed)","n"))
+```
+
+### Ethnicity
+
+```{r}
+kable(table(cases$ethnicity, useNA = "ifany"),col.names = c("Ethnicity (alone)","n"))
+```
+
+```{r}
+cases$ethnicity[which(cases$ethnicity=="")] <- "Missing"
+cases$ethnicity[which(cases$ethnicity=="Unknown Not Classified")] <- "Unknown"
+cases$ethnicity[which(cases$ethnicity=="Not Hispanic or not Latino")] <- "Not Hispanic or Latino"
+
+#table(cases$ethnicity, useNA = "ifany")
+
+cases$race_eth <- cases$race_label
+cases$race_eth[which(cases$ethnicity=="Hispanic or Latino")] <- "Hispanic-Latino"
+
+kable(table(cases$race_eth,useNA = 'ifany'),col.names = c("Race/Ethnicity","n"))
+cases$race_eth <- factor(cases$race_eth, levels=c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+```
+
+### Age
+
+```{r}
+kable(table(cases$age_group,useNA = 'ifany'),col.names = c("Age Group","n"))
+
+print(paste(nrow(cases[cases$age_group=="",]),"cases without age"))
+```
+
+### Positive Tests
+
+```{r}
+cases$specimen_collection <- as.Date(cases$specimen_collection, format = "%Y-%m-%d")
+kable(table(!(is.na(cases$specimen_collection))),col.names = c("Has Test Date?","n"))
+
+print(paste(format(sum(is.na(cases$specimen_collection)),big.mark = ','), "cases without test date"))
+```
+
+
+```{r}
+# Remove dates in the future or before Jan 1, 2020 
+
+futures <- which(cases$specimen_collection > pull_date)
+if(length(futures)>0) {cases$specimen_collection[futures] <- NA}
+pasts <- which(cases$specimen_collection < "2020-01-01")
+if(length(pasts)>0) {cases$specimen_collection[pasts] <- NA}
+
+tested <- subset(cases, !is.na(specimen_collection))
+
+print("Range of Specimen Collection Dates")
+print(range(tested$specimen_collection))
+print(paste(format(nrow(tested),big.mark = ','), "records with specimen collection date."))
+```
+
+```{r}
+## Assign to weekly window based on test date
+
+tested$window <- NA
+
+ marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- tested$specimen_collection- marker_test
+tested$window <- round(difference/7) + 1
+
+tested_with_age <- subset(tested,tested$age_group!="")
+```
+
+### Admissions
+
+```{r}
+# Based on date
+admitted <- subset(cases, cases$admitted_to_hospital=="Yes" & cases$admission_date !="")
+
+# Based on date / logical
+admitted_all <- subset(cases, cases$admitted_to_hospital == "Yes" | cases$admission_date != "")
+not_admitted <- subset(cases, !(cases$id %in% admitted_all$id))
+
+kable(table(admitted_all$admission_date!="",useNA = 'ifany'),col.names = c("Has Admission Date?","N_admitted"))
+print(paste(format(nrow(admitted_all[admitted_all$admission_date=="",]),big.mark = ','),"admits without admission date"))
+
+admitted$window <- NA
+admitted$admission_date <- as.Date(admitted$admission_date,format="%Y-%m-%d")
+
+marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- admitted$admission_date- marker_test
+admitted$window <- round(difference/7) + 1
+
+admitted_with_age <- subset(admitted, admitted$age_group != "")
+admitted_with_age_all <- subset(admitted_all,admitted_all$age_group!="")
+not_admitted_with_age <- subset(not_admitted, not_admitted$age_group!="")
+
+
+admitted_with_age$age_group <- factor(admitted_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+admitted_with_age_all$age_group <- factor(admitted_with_age_all$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+not_admitted_with_age$age_group <- factor(not_admitted_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+```
+
+### Deaths
+
+```{r}
+
+cases$deceased_date <- as.Date(cases$deceased_date, format = "%Y-%m-%d")
+futures <- which(cases$deceased_date > pull_date)
+if(length(futures)>0) {cases$deceased_date[futures] <- NA}
+pasts <- which(cases$deceased_date < "2020-01-01")
+if(length(pasts)>0) {cases$deceased_date[pasts] <- NA}
+
+print("Range of Death Dates:")
+print(range(as.Date(cases$deceased_date, format = "%Y-%m-%d"),na.rm = T))
+print(paste(format(nrow(cases[!(is.na(cases$deceased_date)),]),big.mark = ','),"cases with date deceased"))
+
+```
+
+```{r}
+#table(cases$deceased_date,useNA='ifany')
+deceased <- subset(cases, !is.na(cases$deceased_date))
+
+#table(deceased$deceased_date,useNA = 'ifany')
+deceased$window <- NA
+deceased$deceased_date <- as.Date(deceased$deceased_date,format="%Y-%m-%d")
+
+marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- deceased$deceased_date- marker_test
+deceased$window <- round(difference/7) + 1
+
+hospital_deaths <- subset(deceased, deceased$id %in% admitted_all$id)
+
+deceased_with_age <- subset(deceased, deceased$age_group != "")
+hospital_deaths_with_age <- subset(hospital_deaths, hospital_deaths$age_group != "")
+
+deceased_with_age$age_group <- factor(deceased_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+hospital_deaths_with_age$age_group <- factor(hospital_deaths_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+```
+
+## Demographics
+
+```{r}
+theme_set(theme_bw(base_size=18))
+cases$ethnicity <- factor(cases$ethnicity,levels=c("Missing","Unknown","Hispanic or Latino", "Not Hispanic or Latino"))
+cases$race_eth <- factor(cases$race_eth,levels=c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing")[8:1])
+ggplot(cases) + geom_bar(aes(y=race_eth,fill=ethnicity),stat="count") +
+  ggtitle("# of Positive Tests by Race/Ethnicity") +
+  ylab("Race/Ethnicity") +
+  xlab("# Positive Tests") +
+  labs(fill="Ethnicity") +
+  #theme(axis.text.y = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  scale_fill_manual(values = c("#fa96d5","#faef98",wespal[c(2,9)]))
+
+ggsave(paste(tag,"_barplot_PositiveCases_RaceEth_withLatino",extension, sep=""),width=10,height=8)
+
+cases$race_label <- factor(cases$race_label,levels=c("White","Black","Asian","Native","Other","Unknown","Missing")[8:1])
+ggplot(cases) + geom_bar(aes(y=race_label,fill=ethnicity),stat="count") +
+  ggtitle("# of Positive Tests by Race") +
+  ylab("Race") +
+  xlab("# Positive Tests") +
+  labs(fill="Ethnicity") +
+  #theme(axis.text.y = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+   scale_fill_manual(values = c("#fa96d5","#faef98",wespal[c(2,9)]))
+
+ggsave(paste(tag,"_barplot_PositiveCases_RaceEth_withoutLatino",extension, sep=""),width=10,height=8)
+
+cases$eth_label <- paste(cases$ethnicity)
+cases$eth_label[cases$eth_label=="Missing" | cases$eth_label=="Unknown"] <- "Missing/Unknown"
+cases$eth_label <- factor(cases$eth_label)
+
+ggplot(cases) + geom_bar(aes(y=eth_label,fill=ethnicity),stat="count") +
+  ggtitle("# of Positive Tests by Ethnicity") +
+  ylab("Ethnicity") +
+  xlab("# Positive Tests") +
+  labs(fill="Ethnicity") +
+  #theme(axis.text.y = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+   scale_fill_manual(values = c("#fa96d5","#faef98",wespal[c(2,9)]))
+
+ggsave(paste(tag,"_barplot_PositiveCases_Ethnicity",extension, sep=""),width=10,height=8)
+
+IL_white <- sum(IL_demo$population*IL_demo$pct_white,na.rm=T) / sum(IL_demo$population) / 100
+IL_hispanic <- sum(IL_demo$population*IL_demo$pct_hispanic,na.rm=T)/ sum(IL_demo$population) / 100
+IL_black <- sum(IL_demo$population*IL_demo$pct_black,na.rm=T) / sum(IL_demo$population) / 100
+IL_asian <- sum(IL_demo$population*IL_demo$pct_asian,na.rm=T) / sum(IL_demo$population) / 100
+IL_native <- sum(IL_demo$population*IL_demo$pct_native,na.rm=T) / sum(IL_demo$population) / 100
+IL_other <- sum(IL_demo$population*IL_demo$pct_other,na.rm=T) / sum(IL_demo$population) / 100
+
+IL_pop <- data.frame(race=c("White","Hispanic-Latino","Black","Asian","Native","Other"),
+                     pop_share = c(IL_white,IL_hispanic,IL_black,IL_asian,IL_native,IL_other))
+
+#sum(IL_white, IL_hispanic, IL_black, IL_asian, IL_native, IL_other)
+
+cases_with_race <- subset(cases, cases$race_eth != "Missing")
+cases_with_race <- subset(cases_with_race, cases_with_race$race_eth != "Unknown")
+
+race_portions <- data.frame(table(cases_with_race$race_eth))[-c(1,2),]
+race_portions$Freq <- race_portions$Freq/sum(race_portions$Freq)
+colnames(race_portions) <- c("race_eth",'p_positives')
+race_portions <- merge(x=race_portions,y=IL_pop, by.x='race_eth', by.y='race')
+
+
+race_portions$est <- NA
+race_portions$p_value <- NA
+
+# Statistical Tests
+
+a <- t.test(x = (cases_with_race$race_eth == "White")*1, mu = race_portions$pop_share[which(race_portions$race_eth=="White")], alternative = "two.sided")
+race_portions$est[which(race_portions$race_eth == "White")] <- a$estimate
+race_portions$p_value[which(race_portions$race_eth == "White")] <- a$p.value
+
+
+a <- t.test(x = (cases_with_race$race_eth == "Hispanic-Latino")*1, mu = race_portions$pop_share[which(race_portions$race_eth=="Hispanic-Latino")], alternative = "greater")
+race_portions$est[which(race_portions$race_eth == "Hispanic-Latino")] <- a$estimate
+race_portions$p_value[which(race_portions$race_eth == "Hispanic-Latino")] <- a$p.value
+
+a <- t.test(x = (cases_with_race$race_eth == "Black")*1, mu = race_portions$pop_share[which(race_portions$race_eth=="Black")], alternative = "two.sided")
+race_portions$est[which(race_portions$race_eth == "Black")] <- a$estimate
+race_portions$p_value[which(race_portions$race_eth == "Black")] <- a$p.value
+
+a <- t.test(x = (cases_with_race$race_eth == "Asian")*1, mu = race_portions$pop_share[which(race_portions$race_eth=="Asian")], alternative = "two.sided")
+race_portions$est[which(race_portions$race_eth == "Asian")] <- a$estimate
+race_portions$p_value[which(race_portions$race_eth == "Asian")] <- a$p.value
+
+a <- t.test(x = (cases_with_race$race_eth == "Native")*1, mu = race_portions$pop_share[which(race_portions$race_eth=="Native")], alternative = "two.sided")
+race_portions$est[which(race_portions$race_eth == "Native")] <- a$estimate
+race_portions$p_value[which(race_portions$race_eth == "Native")] <- a$p.value
+
+a <- t.test(x = (cases_with_race$race_eth == "Other")*1, mu = race_portions$pop_share[which(race_portions$race_eth=="Other")], alternative = "two.sided")
+race_portions$est[which(race_portions$race_eth == "Other")] <- a$estimate
+race_portions$p_value[which(race_portions$race_eth == "Other")] <- a$p.value
+
+
+race_portions$race_eth <- factor(race_portions$race_eth, levels=c("White","Hispanic-Latino","Black","Asian","Native","Other")) 
+
+race_portions <- melt(race_portions, id.vars=c('race_eth','p_value'))
+race_portions$p_value[which(race_portions$variable == "pop_share")] <- NA
+race_portions <- subset(race_portions, race_portions$variable != "est")
+theme_set(theme_bw(base_size=18))
+ggplot(race_portions, aes(fill=variable, y=value*100, x=race_eth, label = ifelse(p_value < 0.05, "*", " "))) + 
+    geom_bar(position="dodge", stat="identity") +
+  scale_fill_manual(values = c("#FE6D64","gray"), labels = c("Positive Tests", "Population")) + 
+  ggtitle("Percent of Cases vs. Population", paste("n = ",format(nrow(cases_with_race),big.mark = ','),"cases as of",max(cases$specimen_collection,na.rm = T))) +
+  xlab("Race/Ethnicity") +
+  ylab("%") +
+  ylim(0,75) +
+  geom_text(vjust = 0, hjust = 1.5,size=20) +
+  labs(fill="")
+
+ggsave(paste(tag,"_barplot_PositiveCases_vs_Population_byRaceEth",extension, sep=""), width = 12, height = 10)
+
+
+race_numbers<- data.frame(table(cases_with_race$race_eth))[-c(1,2),]
+colnames(race_numbers) <- c("race_eth",'positives')
+race_numbers <- merge(x=race_numbers,y=IL_pop, by.x='race_eth', by.y='race')
+
+race_numbers$pop_share <- race_numbers$pop_share*sum(IL_demo$population)
+colnames(race_numbers)[3] <- "population"
+
+race_numbers$non_positives <- race_numbers$population-race_numbers$positives
+
+race_numbers$est <- NA
+race_numbers$p_value <- NA
+
+rownames(race_numbers) <- race_numbers$race_eth
+
+race_chisq_cases <- chisq.test(race_numbers[,c("positives","non_positives")])
+race_chisq_cases$observed
+race_chisq_cases$expected
+race_chisq_cases$statistic
+race_chisq_cases$parameter
+race_chisq_cases$p.value
+
+race_chisq_cases
+
+OP <- par(mfrow=c(1,2), "mar"=c(1,1,3,1))
+mosaicplot(race_chisq_cases$observed[,1], cex.axis =1 ,  main = "Observed counts", dir = c("h"), las = 1)
+mosaicplot(race_chisq_cases$expected[,1], cex.axis =1 , main = "Expected counts\n(if race had no influence)",dir = c("h"), las=1)
+par(OP)
+
+o <- data.frame(race_chisq_cases$observed)
+o$race_eth <- rownames(o)
+e <- data.frame(race_chisq_cases$expected)
+e$race_eth <- rownames(e)
+
+
+chi.race <- merge(o,e,by="race_eth")
+colnames(chi.race) <- c("race_eth","observed.cases","observed.non-cases","expected.cases","expected.non-cases")
+chi.race[,c(1,4)]
+
+```
+
+```{r}
+
+tested$window <- NA
+
+ marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- tested$specimen_collection- marker_test
+tested$window <- round(difference/7) + 1
+```
+
+```{r}
+admitted <- subset(cases, cases$admitted_to_hospital=="Yes" & cases$admission_date !="")
+admitted_all <- subset(cases, cases$admitted_to_hospital == "Yes" | cases$admission_date != "")
+not_admitted <- subset(cases, !(cases$id %in% admitted_all$id))
+
+
+table(admitted$admission_date,useNA = 'ifany')
+admitted$window <- NA
+admitted$admission_date <- as.Date(admitted$admission_date,format="%Y-%m-%d")
+
+marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- admitted$admission_date- marker_test
+admitted$window <- round(difference/7) + 1
+
+admitted_with_age <- subset(admitted, admitted$age_group != "")
+admitted_with_age_all <- subset(admitted_all,admitted_all$age_group!="")
+not_admitted_with_age <- subset(not_admitted, not_admitted$age_group!="")
+
+
+admitted_with_age$age_group <- factor(admitted_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+admitted_with_age_all$age_group <- factor(admitted_with_age_all$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+not_admitted_with_age$age_group <- factor(not_admitted_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+
+icu_plot <- data.frame(table(admitted_all$race_eth,admitted_all$icu,useNA='ifany'))
+icu_plot$Var2 <- paste(icu_plot$Var2)
+icu_plot$Var2[icu_plot$Var2==""] <- "Blank"
+icu_plot$Var2 <- factor(icu_plot$Var2)
+colnames(icu_plot) <- c("race_eth","icu_status","n")
+
+
+icu_plot
+
+ggplot(icu_plot, aes(x=race_eth,y=n, fill=icu_status)) + 
+   geom_bar(position="fill", stat="identity") + 
+   ggtitle("% of Admits in ICU") +
+   ylab("%") +
+   xlab("Race/Ethnicity") +
+   labs(fill="ICU?") +
+   theme(axis.text.x = element_text(size=12))
+
+ggsave(paste(tag,"_ICU-Admission-Status_by_Race",extension),width=10,height=8)
+
+   
+icu_plot_yes <- subset(icu_plot, icu_plot$icu_status=="Yes")
+
+icu_plot_yes
+
+ggplot(icu_plot_yes, aes(x=race_eth,y=n,fill=race_eth)) + 
+   geom_bar(position="dodge",stat="identity") +
+   ggtitle("Racial Distribution of ICU Patients") + 
+   ylab("# ICU | Admitted") + 
+   xlab("Race/Ethnicity") +
+   theme(legend.position = "none", axis.text.x = element_text(size=12)) + 
+   scale_fill_manual(values=wespal[8:1])
+
+ggsave(paste(tag,"_Racial-Distribution-of-ICU-Patients",extension),width=10,height=8)
+
+```
+
+```{r}
+#table(cases$deceased_date,useNA='ifany')
+deceased <- subset(cases, !is.na(cases$deceased_date))
+
+#table(deceased$deceased_date,useNA = 'ifany')
+deceased$window <- NA
+deceased$deceased_date <- as.Date(deceased$deceased_date,format="%Y-%m-%d")
+
+marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- deceased$deceased_date- marker_test
+deceased$window <- round(difference/7) + 1
+
+deceased_with_age <- subset(deceased, deceased$age_group != "")
+
+deceased_with_age$age_group <- factor(deceased_with_age$age_group,levels = c("Under 21","21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+
+```
+
+```{r}
+#State demographics
+census_2010<- read.csv("~/Box/NU-malaria-team/data/covid_IDPH/census/sc-est2019-alldata6.csv",stringsAsFactors = FALSE)
+IL_census_2010 <- subset(census_2010,NAME == "Illinois")
+#IL_census_2010$zip <- paste(rownames(IL_census_2010))
+#census_2010$POPESTIMATE2019
+
+IL_age_race <- IL_census_2010[,c("SEX","ORIGIN","RACE","AGE","POPESTIMATE2019")]
+IL_age_race <- subset(IL_age_race, IL_age_race$SEX == 0)
+colnames(IL_age_race) <- c("SEX","ORIGIN","RACE","AGE","POPESTIMATE2019")
+
+
+latino <- subset(IL_age_race, IL_age_race$ORIGIN==2)
+
+non_latino <- subset(IL_age_race, IL_age_race$ORIGIN==1)
+
+
+
+race_key <- c("White","Black","Native","Asian","Native","Other", "Hispanic-Latino")
+age_key <- c("Under 21", "21-30","31-40","41-50","51-60","61-70","71-80","Over 80")
+
+non_latino$race_eth <- race_key[non_latino$RACE]
+latino$race_eth<- "Hispanic-Latino"
+#table(race_eth,useNA = 'ifany')
+
+age_key <- c("Under 21", "21-30","31-40","41-50","51-60","61-70","71-80","Over 80")
+
+IL_age_race <- rbind.data.frame(non_latino,latino)
+
+IL_age_race$age_group <- age_key[ifelse(IL_age_race$AGE<21,1,trunc((IL_age_race$AGE-11)/10)+1)]
+#table(IL_age_race$AGE,IL_age_race$age_group)
+
+IL_age_race$group_label <- paste(IL_age_race$race_eth, IL_age_race$age_group,sep="_")
+
+
+```
+
+### Positive Tests vs. Time (by Race)
+
+```{r}
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length((unique(tested$window))))
+{
+    for (j in 1:length(levels(tested$race_eth)))
+    {
+      re <- levels(tested$race_eth)[j]
+      slot <- unique(tested$window)[i]
+    
+      a <- subset(tested, window == slot)
+      
+      b <- subset(a, race_eth == re)
+    
+      g <- nrow(a)
+      n <- nrow(b)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+positives <- data.frame(races,windows,gt,nt,ft)
+positives$races <- factor(positives$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+theme_set(theme_bw(base_size = 18))
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)  & positives$races %in% c("Unknown","Missing")),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(color="white",position="stack",show.legend = F, linetype =2, size =0.2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Incomplete Race/Ethnicity Data, over time","cases") + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Portion of All Positive Tests") +
+   scale_fill_manual(values = wespal[c(7,8)]) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfPositives-vs-Time_byRaceEth-Incomplete_window7",extension, sep=""), height = 8, width = 10)
+
+theme_set(theme_bw(base_size = 18))
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(color="white",position="stack",show.legend = F, linetype =2, size =0.2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group", paste("n=",format(nrow(tested[tested$window<max(positives$window),]),big.mark = ','),"cases up to", max(tested$specimen_collection[tested$window < max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Portion of All Positive Tests") +
+   scale_fill_manual(values = wespal[]) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfPositives-vs-Time_byRaceEth_window7",extension, sep=""), height = 8, width = 10)
+
+theme_set(theme_bw(base_size = 18))
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+    geom_area(color="white",position="stack",show.legend = F, linetype =2, size =0.2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group", paste("testing up to", max(tested$specimen_collection[tested$window < max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("# of Positive Tests") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_Positives-vs-Time_byRaceEth_window7",extension, sep=""), height = 8, width =10)
+
+# tots <- data.frame(table(tested$window[which(!(tested$race_eth %in% c("Missing","Unknown")))]))
+# tots <- aggregate(tots$Freq, by=list(tots$Var1), FUN = sum)
+# colnames(tots) <- c("window","total_positive")
+# tots$races <- "Known"
+# tots$races <- factor(tots$races)
+# 
+# tots
+# 
+# p <- positives[,c("windows","nt","races")]
+# colnames(tots) <- colnames(p)
+# 
+# p <- rbind.data.frame(tots,p)
+# p$windows <- paste(p$windows)
+# p$windows <- as.integer(p$windows)
+# theme_set(theme_bw(base_size = 18))
+# 
+#  v <- ggplot(p[which(p$windows>9 & p$races %in% c("Known","Missing","Unknown") & p$windows < max(p$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+#    geom_area() +
+#    #geom_line(data = tots, aes(x = as.Date((windows-1)*7+marker_test), y = total_positive)) +
+#    #geom_line() +
+#    labs(fill = "Race/Ethnicity") + 
+#    ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group",
+#            paste("testing up to", max(tested$specimen_collection[tested$window < max(p$windows)]))) + 
+#    xlab("Date Tested (7-day bins)") + 
+#    ylab("# of Positive Tests") +
+#    scale_fill_manual(values = c("black",wespal[c(7,8)])) +
+#    #labs(fill="Race/Ethnicity") +
+#    geom_vline(xintercept = as.Date((p$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+#  v
+#  v + facet_grid(factor(races)~., scales = "free_y") 
+# 
+# ggsave(paste(tag,"_AreaPlot_Positives-vs-Time_byRaceEth-MissingUnknown-_window7",extension, sep=""), width=10,height=8)
+
+
+# missing in admissions vs. time
+
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)  & positives$races %in% c("Unknown","Missing")),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(color="white",position="stack",show.legend = F, linetype =2, size =0.2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Incomplete Race/Ethnicity Data, over time","cases") + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Portion of All Positive Tests") +
+   scale_fill_manual(values = wespal[c(7,8)]) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfPositives-vs-Time_byRaceEth-Incomplete_window7",extension, sep=""), height = 8, width = 10)
+
+# missing in deaths vs. time 
+
+
+```
+
+
+```{r}
+tested_with_race <- tested[which(!(tested$race_eth %in% c("Missing","Unknown"))),]
+
+tested_with_race$window <- NA
+
+ marker_test <- as.Date("2020-01-01")
+
+# Weekly Windows
+
+difference <- tested_with_race$specimen_collection- marker_test
+tested_with_race$window <- round(difference/7) + 1
+
+tested_with_race$race_eth <- factor(tested_with_race$race_eth, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other"))
+```
+
+
+```{r}
+### Race Only (excluding Missing and Unknown)
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length((unique(tested_with_race$window))))
+{
+    for (j in 1:length(levels(tested_with_race$race_eth)))
+    {
+      re <- levels(tested_with_race$race_eth)[j]
+      slot <- unique(tested_with_race$window)[i]
+    
+      a <- subset(tested_with_race, window == slot)
+      
+      b <- subset(a, race_eth == re)
+    
+      g <- nrow(a)
+      n <- nrow(b)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+positives <- data.frame(races,windows,gt,nt,ft)
+positives$races <- factor(positives$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other"))
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft*100, fill = factor(races))) + 
+   geom_area() +
+   geom_area(color = "white",position = 'stack', linetype = 2, size = 0.2, show_guide=FALSE) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group", paste("n = ", format(nrow(tested_with_race[tested_with_race$window<max(positives$windows),]),big.mark = ','), "cases with race, as of", max(tested_with_race$specimen_collection[tested_with_race$window<max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("% of Positive Tests") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfPositives-vs-Time_byRaceEth-withRace-_window7",extension, sep=""), height = 9, width = 11)
+
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$races %in% c("White","Black","Hispanic-Latino") & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group",  paste("n = ", format(nrow(tested_with_race[tested_with_race$window<max(positives$windows) & tested$race_eth %in% c("White","Black","Hispanic-Latino"),]),big.mark = ','), "cases with race, as of", max(tested_with_race$specimen_collection[tested_with_race$window<max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("# of Positive Tests") +
+   scale_fill_manual(values = wespal) +
+   scale_color_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v + facet_grid(factor(races)~.,scales="free_y")
+
+ggsave(paste(tag,"_AreaPlot_Positives-vs-Time_byRaceEth-BWL_free-y_window7",extension, sep=""), width=10, height=8)
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group",paste("n = ", format(nrow(tested_with_race[tested_with_race$window<max(positives$windows),]),big.mark = ','), "cases with race, as of", max(tested_with_race$specimen_collection[tested_with_race$window<max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("# of Positive Tests") +
+   scale_fill_manual(values = wespal) +
+   scale_color_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v 
+
+ggsave(paste(tag,"_AreaPlot_Positives-vs-Time_byRaceEth-withRace-_window7",extension, sep=""))
+
+#YOUNG ONLY
+
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+ testedU30 <- subset(tested,tested$age_group %in% c("Under 21","21-30"))
+
+for(i in 1:length((unique(testedU30$window))))
+{
+    for (j in 1:length(levels(testedU30$race_eth)))
+    {
+      re <- levels(testedU30$race_eth)[j]
+      slot <- unique(testedU30$window)[i]
+    
+      a <- subset(testedU30, window == slot)
+      
+      b <- subset(a, race_eth == re)
+    
+      g <- nrow(a)
+      n <- nrow(b)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+positives <- data.frame(races,windows,gt,nt,ft)
+positives$races <- factor(positives$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(color="white",position="stack",show.legend = F, linetype =2, size =0.2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group", paste("testing up to", max(testedU30$specimen_collection[testedU30$window < max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Portion of Cases Under 30 y.o.") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfPositivesU30-vs-Time_byRaceEth_window7",extension, sep=""), height = 9, width = 11)
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows<max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+    geom_area(color="white",position="stack",show.legend = F, linetype =2, size =0.2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Positive Tests by Racial/Ethnic Group", paste("testing up to", max(tested$specimen_collection[tested$window < max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("# of Positive Tests Under 30") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + xlim(as.Date("2020-06-01"),NA) + facet_grid(factor(races)~.,scales="free_y")
+ v
+
+ggsave(paste(tag,"_AreaPlot_PositivesU30-vs-Time_byRaceEth_window7",extension, sep=""), height = 9, width =11)
+
+
+
+### By EMS 
+
+tested$EMS <- factor(tested$EMS,levels = seq(1:11))
+
+# Race Area Plots by EMS
+  
+races <- c()
+regions <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+
+for(a in 1:length(levels(tested$race_eth)))
+{
+      for (j in 1:length(unique(tested$window)))
+      {
+         for (r in c(1:11))
+         {
+           re <- levels(tested$race_eth)[a]
+           slot <- unique(tested$window)[j]
+           
+           s <- subset(tested, window == slot)
+           reg <- subset(s, s$EMS == r)
+           
+           c <- subset(reg, reg$race_eth == re)
+         
+           g <- nrow(reg)
+           n <- nrow(c)
+           f <- n/g
+           
+           races <- c(races,re)
+           regions <- c(regions,r)
+           windows <- c(windows,slot)
+           nt <- c(nt,n)
+           gt <- c(gt,g)
+           ft <- c(ft,f)
+         }
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+  }
+
+
+positives <- data.frame(races,regions,windows,gt,nt,ft)
+positives$races <- factor(positives$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+positives$regions <- factor(positives$regions, levels=seq(1:11))
+
+ems_areaplots_7to11 <- ggplot(positives[positives$windows<max(positives$windows) & positives$regions %in% c(7:11),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(color = "white",linetype=2,size=0.2,show.legend = F, position='stack') +
+   labs(fill = "Race/Ethnicity") + 
+   ggtitle("Share of Positive Tests by Race per EMS Region", "All Restore Regions (except NE)") + 
+   xlab("Date Tested (7-Day bins)") + 
+   ylab("Portion of Positive Tests") +
+   scale_fill_manual(values = wespal) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + facet_wrap(~regions,ncol=3)
+   
+
+  print(ems_areaplots_7to11)
+  ggsave(paste(tag,"PANEL_AreaPlot_ShareOfPositives-vs-Time_byRace_byEMS_7to11_window7","",extension, sep=""), height = 10, width = 12) 
+
+
+positives$regions <- factor(positives$regions, levels=c(1,3,4,2,6,5))
+  
+ems_areaplots_1to6 <- ggplot(positives[positives$windows<max(positives$windows) & positives$regions %in% c(1:6),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(color = "white",linetype=2,size=0.2,show.legend = F, position='stack') +
+   labs(fill = "Race/Ethnicity") + 
+   ggtitle("Share of Positive Tests by Race per EMS Region", "All Restore Regions (except NE)") + 
+   xlab("Date Tested (7-Day bins)") + 
+   ylab("Portion of Positive Tests") +
+   scale_fill_manual(values = wespal) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + facet_wrap(~regions,ncol=3)
+   
+
+  print(ems_areaplots_1to6)
+  ggsave(paste(tag,"PANEL_AreaPlot_ShareOfPositives-vs-Time_byRace_byEMS_1to6_window7","",extension, sep=""), height = 10, width = 12)
+  
+```
+
+### Ethnicity Completeness
+
+```{r} 
+
+# Cases vs. Time
+
+a <- data.frame(table(tested$window, tested$ethnicity)) 
+t <- aggregate(a$Freq, by = list(a$Var1), FUN = sum)
+
+a <- merge(a,t,by.x='Var1',by.y='Group.1')
+colnames(a) <- c("window","eth","n","tot")
+a$p_window <- a$n/a$tot*100
+a$window <- as.integer(paste(a$window))
+
+a$eth <- factor(a$eth, levels = c("Hispanic or Latino","Not Hispanic or Latino","Unknown","Missing"))
+ggplot(data = a[which(a$window<max(tested$window) & a$window>9 & a$eth %in% c("Unknown","Missing")),], aes(x=as.Date((as.integer(paste(window))-1)*7+marker_test), y = p_window, fill = eth)) + geom_area() +
+  geom_area(color="white",linetype=2,size=0.2,show.legend = F) +
+  ggtitle("Incomplete Ethnicity Data over Time",paste("Cases as of", max(tested$specimen_collection[tested$window < max(tested$window)])))+  
+  xlim(as.Date("2020-03-01"),NA) +
+  ylab("% of Responses") + 
+  xlab("Date Tested (weekly window)") + 
+  scale_fill_manual(values = c("#fa96d5","#faef98")) +
+  labs(fill="Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+
+ggsave(paste(tag,"AreaPlot_Share-of-Positives_vs_Time_byEthnicity-Incomplete",extension,sep="_"))
+
+# Admissions vs. Time
+
+a <- data.frame(table(admitted$window, admitted$ethnicity)) 
+t <- aggregate(a$Freq, by = list(a$Var1), FUN = sum)
+
+a <- merge(a,t,by.x='Var1',by.y='Group.1')
+colnames(a) <- c("window","eth","n","tot")
+a$p_window <- a$n/a$tot*100
+a$window <- as.integer(paste(a$window))
+
+a$eth <- factor(a$eth, levels = c("Hispanic or Latino","Not Hispanic or Latino","Unknown","Missing"))
+ggplot(data = a[which(a$window<max(tested$window) & a$window>9 & a$eth %in% c("Unknown","Missing")),], aes(x=as.Date((as.integer(paste(window))-1)*7+marker_test), y = p_window, fill = eth)) + geom_area() +
+  geom_area(color="white",linetype=2,size=0.2,show.legend = F) +
+  ggtitle("Incomplete Ethnicity Data over Time",paste("Admissions as of", max(admitted$admission_date[admitted$window < max(admitted$window)])))+  
+  xlim(as.Date("2020-03-01"),NA) +
+  ylab("% of Responses") + 
+  xlab("Date Admitted (weekly window)") + 
+  scale_fill_manual(values = c("#fa96d5","#faef98")) +
+  labs(fill="Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+
+ggsave(paste(tag,"AreaPlot_Share-of-Admissions_vs_Time_byEthnicity-Incomplete",extension,sep="_"))
+
+# Deaths vs. Time
+
+a <- data.frame(table(deceased$window, deceased$ethnicity)) 
+t <- aggregate(a$Freq, by = list(a$Var1), FUN = sum)
+
+a <- merge(a,t,by.x='Var1',by.y='Group.1')
+colnames(a) <- c("window","eth","n","tot")
+a$p_window <- a$n/a$tot*100
+a$window <- as.integer(paste(a$window))
+
+a$eth <- factor(a$eth, levels = c("Hispanic or Latino","Not Hispanic or Latino","Unknown","Missing"))
+ggplot(data = a[which(a$window<max(tested$window) & a$window>9 & a$eth %in% c("Unknown","Missing")),], aes(x=as.Date((as.integer(paste(window))-1)*7+marker_test), y = p_window, fill = eth)) + geom_area() +
+  geom_area(color="white",linetype=2,size=0.2,show.legend = F) +
+  ggtitle("Incomplete Ethnicity Data over Time",paste("Deaths as of", max(deceased$deceased_date[deceased$window < max(deceased$window)])))+  
+  xlim(as.Date("2020-03-01"),NA) +
+  ylab("% of Responses") + 
+  xlab("Date Deceased (weekly window)") + 
+  scale_fill_manual(values = c("#fa96d5","#faef98")) +
+  labs(fill="Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+
+ggsave(paste(tag,"AreaPlot_Share-of-Admissions_vs_Time_byEthnicity-Incomplete",extension,sep="_"))
+
+####
+
+ems_ethnicity <- data.frame(table(tested$EMS, tested$ethnicity))
+ems_total_eth <- data.frame(table(tested$EMS))
+ems_total_eth <- merge(ems_ethnicity,ems_total_eth,by='Var1')
+colnames(ems_total_eth) <- c("EMS","eth","n","t")
+ems_total_eth$p <- ems_total_eth$n / ems_total_eth$t*100
+
+ems_total_eth$eth <- factor(ems_total_eth$eth, levels = c("Hispanic or Latino","Not Hispanic or Latino","Unknown","Missing"))
+ggplot(data=ems_total_eth[ems_total_eth$eth %in% c("Unknown","Missing"),], aes(x=EMS,y=p, fill=eth)) + geom_bar(stat = 'identity',position='stack') +
+  ggtitle("Incomplete Ethnicity Data by EMS",paste("as of", max(tested$specimen_collection[tested$window < max(tested$window)])))+  
+  ylab("% of Responses") + 
+  xlab("EMS") + 
+  scale_fill_manual(values = c("#fa96d5","#faef98")) +
+  labs(fill="Ethnicity")
+
+ggsave(paste(tag,"BarplotPlot_Share-of-Positives_byEthnicity_byEMS-Incomplete",extension,sep="_"))
+
+ag_ethnicity <- data.frame(table(tested_with_age$age_group, tested_with_age$ethnicity))
+ag_total_eth <- data.frame(table(tested_with_age$age_group))
+ag_total_eth <- merge(ag_ethnicity,ag_total_eth,by='Var1')
+colnames(ag_total_eth) <- c("age_group","eth","n","t")
+ag_total_eth$p <- ag_total_eth$n / ag_total_eth$t*100
+
+ag_total_eth$age_group <- factor(ag_total_eth$age_group, levels = c("Under 21", "21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+ag_total_eth$eth <- factor(ag_total_eth$eth, levels = c("Hispanic or Latino","Not Hispanic or Latino","Unknown","Missing"))
+ggplot(data=ag_total_eth[ag_total_eth$eth %in% c("Unknown","Missing"),], aes(x=age_group,y=p, fill=factor(eth))) + geom_bar(stat = 'identity',position='stack') +
+  ggtitle("Incomplete Ethnicity Data by Age Group",paste("as of", max(tested$specimen_collection[tested$window < max(tested$window)])))+  
+  ylab("% of Responses") + 
+  xlab("Age") + 
+  scale_fill_manual(values = c("#fa96d5","#faef98")) +
+  labs(fill="Ethnicity")
+
+ggsave(paste(tag,"BarplotPlot_Share-of-Positives_byEthnicity_byAge-Incomplete",extension,sep="_"))
+
+```
+
+
+
+### Admissions
+
+```{r}
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(admitted$race_eth)))
+{
+    for (j in 1:length(unique(admitted$window)))
+    {
+      re <- levels(admitted$race_eth)[i]
+      slot <- unique(admitted$window)[j]
+    
+      a <- subset(admitted, window == slot)
+      
+      b <- subset(a, race_eth == re)
+    
+      g <- nrow(a)
+      n <- nrow(b)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+positives <- data.frame(races,windows,gt,nt,ft)
+positives$races <- factor(positives$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows<max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(show.legend = F, position = "stack", color = "white", linetype = 2, size = 0.2)+
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Hospital Admissions by Racial/Ethnic Group", paste("n = ", format(nrow(admitted[admitted$window<max(positives$window),]),big.mark = ','), "admissions as of", max(admitted$admission_date[admitted$window < max(positives$windows)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Portion of Hospital Admissions") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfAdmissions-vs-Time_byRaceEth_window7",extension, sep=""), height=8,width=10)
+
+v <- ggplot(positives[which(positives$windows>9 & positives$windows<max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   geom_area(show.legend = F, position = "stack", color = "white", linetype = 2, size = 0.2)+
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Hospital Admissions by Racial/Ethnic Group", paste("n = ", format(nrow(admitted[admitted$window<max(positives$window),]),big.mark = ','), "admissions as of", max(admitted$admission_date[admitted$window<max(positives$window)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("# of Hospital Admissions") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_Admissions-vs-Time_byRaceEth_window7",extension, sep=""), height=8,width=10)
+
+### BLW
+
+v <- ggplot(positives[which(positives$windows>9 & positives$windows<max(positives$windows) & positives$races %in% c("White","Black","Hispanic-Latino")),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Hospital Admissions by Racial/Ethnic Group", paste("n = ", format(nrow(admitted[admitted$window<max(positives$window) & admitted$race_eth %in% c("White","Hispanic-Latino","Black"),]),big.mark=','), "admissions as of", max(admitted$admission_date[admitted$window<max(positives$window)],na.rm = T))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("# of Hospital Admissions") +
+   scale_fill_manual(values = wespal[1:3]) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) + facet_grid(factor(races)~.,scales = "free_y")
+ v
+ 
+ ggsave(paste(tag,"_AreaPlot_Admissions-vs-Time_byRaceEth-BLW-free_y-_window7",extension, sep=""), height=8,width=10)
+
+```
+
+
+
+### Deaths (all)
+
+```{r}
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(deceased$race_eth)))
+{
+    for (j in 1:length(unique(deceased$window)))
+    {
+      re <- levels(deceased$race_eth)[i]
+      slot <- unique(deceased$window)[j]
+      
+      a <- subset(deceased, window == slot)
+      
+      b <- subset(a, race_eth == re)
+    
+      g <- nrow(a)
+      n <- nrow(b)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+theme_set(theme_bw(base_size=18))
+
+positives <- data.frame(races,windows,gt,nt,ft)
+positives$races <- factor(positives$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(position="stack",show.legend = F,color="white",size=0.2,linetype=2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Deaths by Racial/Ethnic Group", paste("n = ", format(nrow(deceased[deceased$window<max(positives$windows),]),big.mark = ','), "deaths as of", max(deceased$deceased_date[deceased$window<max(positives$windows)]))) + 
+   xlab("Date Deceased (7-day bins)") + 
+   ylab("Portion of Deaths") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfDeaths-vs-Time_byRaceEth_window7",extension, sep=""),height=8,width=10)
+
+v <- ggplot(positives[which(positives$windows>9)& positives$windows < max(positives$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Deaths by Racial/Ethnic Group", paste("n = ", format(nrow(deceased[deceased$window<max(positives$windows),]),big.mark = ','), "deaths as of", max(deceased$deceased_date[deceased$window<max(positives$windows)]))) + 
+   xlab("Date Deceased (7-day bins)") + 
+   ylab("# of Deaths") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_Deaths-vs-Time_byRaceEth_window7",extension, sep=""),height=8,width=10)
+
+
+v <- ggplot(positives[which(positives$windows>9)& positives$windows < max(positives$windows) & positives$races %in% c("White","Black","Hispanic-Latino"),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Deaths by Racial/Ethnic Group", paste("n = ",format(nrow(deceased[deceased$window<max(positives$windows) & deceased$race_eth %in% c("White","Hispanic-Latino","Black"),]),big.mark = ','), "deaths as of", max(deceased$deceased_date[deceased$window<max(positives$windows)]))) + 
+   xlab("Date Deceased (7-day bins)") + 
+   ylab("# of Deaths") +
+   scale_fill_manual(values = wespal[1:3]) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v + facet_grid(factor(races)~.,scales = "free_y")
+
+ggsave(paste(tag,"_AreaPlot_Deaths-vs-Time_byRaceEth-BLW_free-y_window7",extension, sep=""),height=8,width=10)
+
+
+
+```
+
+
+### Deaths (hospitalized)
+
+
+```{r}
+### Race Only
+
+hospital_deaths <- subset(deceased, deceased$id %in% admitted_all$id)
+hospital_deaths_with_age <- subset(deceased_with_age, deceased_with_age$id %in% admitted$id)
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(hospital_deaths$race_eth)))
+{
+    for (j in 1:length(unique(hospital_deaths$window)))
+    {
+      re <- levels(hospital_deaths$race_eth)[i]
+      slot <- unique(hospital_deaths$window)[j]
+      
+      a <- subset(hospital_deaths, window == slot)
+      
+      b <- subset(a, race_eth == re)
+    
+      g <- nrow(a)
+      n <- nrow(b)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+positives <- data.frame(races,windows,gt,nt,ft)
+positives$races <- factor(positives$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(positives[which(positives$windows>9 & positives$windows < max(positives$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   geom_area(position="stack",show.legend = F,color="white",size=0.2,linetype=2) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Hospital Deaths by Racial/Ethnic Group", paste("n = ", nrow(hospital_deaths[hospital_deaths$window<max(positives$windows),]), "deaths as of", max(hospital_deaths$deceased_date[hospital_deaths$window< max(positives$windows)]))) + 
+   xlab("Date Deceased (7-day bins)") + 
+   ylab("Portion of Hospital Deaths") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_ShareOfHospitalDeaths-vs-Time_byRaceEth_window7",extension, sep=""))
+
+v <- ggplot(positives[which(positives$windows>9)& positives$windows < max(positives$windows),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Hospital Deaths by Racial/Ethnic Group", paste("n = ", nrow(hospital_deaths[hospital_deaths$window < max(positives$windows),]), "deaths as of", max(hospital_deaths$deceased_date[hospital_deaths$window< max(positives$windows)]))) + 
+   xlab("Date Deceased (7-day bins)") + 
+   ylab("# of Deaths (hospital)") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v
+
+ggsave(paste(tag,"_AreaPlot_HospitalDeaths-vs-Time_byRaceEth_window7",extension, sep=""))
+
+v <- ggplot(positives[which(positives$windows>9)& positives$windows < max(positives$windows) & positives$races %in% c("White","Black","Hispanic-Latino"),], aes(x = as.Date((windows-1)*7+marker_test), y = nt, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Breakdown of Hospital Deaths by Racial/Ethnic Group", paste("n = ", nrow(hospital_deaths[hospital_deaths$window < max(positives$windows),]), "deaths as of", max(hospital_deaths$deceased_date[hospital_deaths$window< max(positives$windows)]))) + 
+   xlab("Date Deceased (7-day bins)") + 
+   ylab("# of Deaths (hospital)") +
+   scale_fill_manual(values = wespal[1:3]) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((positives$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+ v + facet_grid(factor(races)~.)
+
+ggsave(paste(tag,"_AreaPlot_HospitalDeaths-vs-Time_byRaceEth-BLW-_window7",extension, sep=""))
+
+
+```
+
+
+
+### Fraction Admitted | Positive (by Race)
+
+```{r}
+
+### Overall
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+
+    for (j in 1:length(unique(tested$window)))
+    {
+      slot <- unique(tested$window)[j]
+      
+      b <- subset(tested, window == slot)
+      
+      s <- subset(b, ((b$admitted_to_hospital=="Yes") |(b$admission_date !="")))
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+
+f_admitted <- data.frame(windows,gt,nt,ft)
+
+ v <- ggplot(f_admitted[which(f_admitted$windows>9 & f_admitted$windows<max(f_admitted$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft)) + 
+   geom_area() +
+   #geom_line() +
+   ggtitle("Fraction Admitted | Positive", paste("All Ages: n = ", nrow(tested[tested$window<max(f_admitted$windows),]), "admissions as of", max(tested$specimen_collection[tested$window<max(positives$windows)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Fraction of Cases Admitted") +
+   scale_fill_manual(values = wespal) +
+   geom_vline(xintercept = as.Date((f_admitted$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v + ylim(0,1)
+
+  ggsave(paste(tag,"_AreaPlot_FractionAdmitted-vs-Time_Overall_window7",extension, sep=""), width = 9, height = 7)
+
+
+  v2 <- v2 + geom_line()
+  v2 + scale_y_continuous(seq(0,1,0.1)) +ylim(0,1)
+
+  ggsave(paste(tag,"_LinePlot_FractionADmitted-vs-Time_Overall_window7",extension, sep=""), width = 9, height = 7)
+  
+f_admitted_overall <- f_admitted
+
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(tested$race_eth)))
+{
+    for (j in 1:length(unique(tested$window)))
+    {
+      re <- levels(tested$race_eth)[i]
+      slot <- unique(tested$window)[j]
+      
+      a <- subset(tested, window == slot)
+      
+      b <- subset(a, race_eth == re)
+      
+      s <- subset(b, b$admitted_to_hospital=="Yes" | b$admission_date!="")
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+f_admit <- data.frame(races,windows,gt,nt,ft)
+f_admit$races <- factor(f_admit$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(f_admit[which(f_admit$windows>9),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) +
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Fraction Admitted | Positive by Racial/Ethnic Group", paste("n = ", format(nrow(admitted[admitted$window < max(admitted$window),]),big.mark = ','), "admissions as of", max(tested$admission_date[tested$window<max(tested$window)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Fraction of Cases who were Later Admitted") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((f_admit$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(races), ncol=2)
+   
+   print(v)
+   ggsave(paste(tag,"_AreaPlot_FractionAdmitted-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+
+
+   v2 <- v2 + geom_line(aes(color = factor(races))) + scale_color_manual(values = wespal)
+   print(v2)
+   ggsave(paste(tag,"_LinePlot_FractionAdmitted-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+   
+   f_admit_by_race <- f_admit
+   
+   
+    v <- ggplot(f_admit[which(f_admit$windows>9 & f_admit$windows<max(f_admit$windows) & f_admit$races %in% c("White","Hispanic-Latino","Black")),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill=factor(races),color = factor(races))) +
+   geom_point(shape = 20) +
+   geom_smooth(se=T) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Fraction Admitted | Positive by Racial/Ethnic Group", paste("n = ", format(nrow(admitted[admitted$race_eth %in% c("White","Black","Hispanic-Latino") & admitted$window < max(admitted$window),]),big.mark = ','), "admissions as of", max(tested$admission_date[tested$window < max(tested$window)]))) + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Fraction of Cases who were Later Admitted") +
+   scale_color_manual(values = wespal) +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((f_admit$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1)) + ylim(0,1)
+    v
+    
+    ggsave(paste(tag,"_SmoothCurves_FractionAdmitted-vs-Time_byRaceEth-BLW_window7",extension, sep=""), width = 10, height = 8)
+    
+
+```
+
+
+
+### Fraction Dead | Admitted (by Race)
+
+```{r}
+### Overall vs. time
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+
+    for (j in 1:length(unique(admitted$window)))
+    {
+      slot <- unique(admitted$window)[j]
+      
+      b <- subset(admitted, window == slot)
+      
+      s <- subset(b, !is.na(b$deceased_date))
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+
+f_dead <- data.frame(windows,gt,nt,ft)
+
+ v <- ggplot(f_dead[which(f_dead$windows>9 & f_dead$windows<max(f_dead$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft)) + 
+   geom_area() +
+   #geom_line() +
+   ggtitle("Fraction Dead | Admitted", paste("n = ", format(nrow(admitted[admitted$window <max(f_dead$windows),]),big.mark = ','), "admissions as of", max(admitted$admission_date[admitted$window<max(f_dead$windows)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Admitted Patients who Died") +
+   scale_fill_manual(values = wespal) +
+   geom_vline(xintercept = as.Date((f_dead$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v + ylim(0,1)
+
+  ggsave(paste(tag,"_AreaPlot_FractionDead-vs-Time_Overall_window7",extension, sep=""), width = 10, height = 8)
+
+
+  v2 <- v2 + geom_line()
+  v2 + scale_y_continuous(seq(0,1,0.1)) +ylim(0,1)
+
+  ggsave(paste(tag,"_LinePlot_FractionDead-vs-Time_Overall_window7",extension, sep=""), width = 10, height = 8)
+  
+f_dead_overall <- f_dead
+
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(admitted$race_eth)))
+{
+    for (j in 1:length(unique(admitted$window)))
+    {
+      re <- levels(admitted$race_eth)[i]
+      slot <- unique(admitted$window)[j]
+      
+      a <- subset(admitted, window == slot)
+      
+      b <- subset(a, race_eth == re)
+      
+      s <- subset(b, b$id %in% deceased$id)
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+f_dead <- data.frame(races,windows,gt,nt,ft)
+f_dead$races <- factor(f_dead$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(f_dead[which(f_dead$windows>9 & f_dead$windows<max(f_dead$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Fraction Dead | Admitted by Racial/Ethnic Group", paste("n = ", format(nrow(admitted[admitted$window<max(admitted$window),]),big.mark = ','), "admissions as of", max(admitted$admission_date[admitted$window<max(f_dead$windows)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Admitted Patients who Later Died") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((f_dead$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(races), ncol=2)
+   
+   v
+
+  ggsave(paste(tag,"_AreaPlot_FractionDead-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+
+
+  v2 <- v2 + geom_line(aes(color = factor(races))) + scale_color_manual(values = wespal)
+  v2
+
+  ggsave(paste(tag,"_LinePlot_FractionDead-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+  
+  f_dead_by_race <- f_dead
+  
+   v <- ggplot(f_dead[f_dead$windows>9 & f_dead$windows<max(f_dead$windows) & f_dead$races %in% c("White","Hispanic-Latino","Black"),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races), color=factor(races))) + 
+   geom_point() +
+   geom_smooth(se=T) +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Fraction Dead | Admitted by Racial/Ethnic Group", paste("n = ", format(nrow(deceased[deceased$window<max(deceased$window) & deceased$race_eth %in% c("White","Hispanic-Latino","Black"),]),big.mark = ','), "deaths as of", max(as.Date(admitted$deceased_date,format="%Y-%m-%d"),na.rm = T))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Admitted Patients who Later Died") +
+   scale_fill_manual(values = wespal) +
+   scale_color_manual(values=wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((f_dead$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+   v
+   
+     ggsave(paste(tag,"_smoothCurve_FractionDeadGivenAdmitted-vs-Time_byRaceEth-BLW-window7",extension, sep=""), width = 10, height = 8)
+
+```
+
+### "Critical"
+
+```{r}
+
+#admitted$critical <- (admitted$icu == "Yes" | admitted$vent == "Yes")
+
+### Overall
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+
+    for (j in 1:length(unique(admitted$window)))
+    {
+      slot <- unique(admitted$window)[j]
+      
+      b <- subset(admitted, window == slot)
+      
+      s <- subset(b, b$critical==T)
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+
+f_critical <- data.frame(windows,gt,nt,ft)
+
+ v <- ggplot(f_critical[which(f_critical$windows>9 & f_critical$windows<max(f_critical$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft)) + 
+   geom_area() +
+   #geom_line() +
+   ggtitle("Fraction Critical | Admitted", paste("All Ages: n = ", format(nrow(admitted[admitted$window<max(admitted$window),]),big.mark = ','), "admissions as of", max(admitted$admission_date[admitted$window<max(admitted$window)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Admitted Patients in ICU or on Ventilator") +
+   scale_fill_manual(values = wespal) +
+   geom_vline(xintercept = as.Date((f_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v + ylim(0,1)
+
+  ggsave(paste(tag,"_AreaPlot_FractionCritical-vs-Time_Overall_window7",extension, sep=""), width = 9, height = 7)
+
+
+  v2 <- v2 + geom_line()
+  v2 + scale_y_continuous(seq(0,1,0.1)) +ylim(0,1)
+
+  ggsave(paste(tag,"_LinePlot_FractionCritical-vs-Time_window7",extension, sep=""), width = 9, height = 7)
+  
+f_critical_overall <- f_critical
+
+
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(admitted$race_eth)))
+{
+    for (j in 1:length(unique(admitted$window)))
+    {
+      re <- levels(admitted$race_eth)[i]
+      slot <- unique(admitted$window)[j]
+      
+      a <- subset(admitted, window == slot)
+      
+      b <- subset(a, race_eth == re)
+      
+      s <- subset(b, b$critical==T)
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+f_critical <- data.frame(races,windows,gt,nt,ft)
+f_critical$races <- factor(f_critical$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(f_critical[which(f_critical$windows>9 & f_critical$windows<max(f_critical$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Fraction Critical | Admitted by Racial/Ethnic Group", paste("n = ", format(nrow(admitted[admitted$window<max(admitted$window),]),big.mark = ','), "admissions as of", max(admitted$admission_date[admitted$window<max(admitted$window)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Admitted Patients in ICU or on Ventilator") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((f_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(races),ncol=2)
+   
+   v
+
+  ggsave(paste(tag,"_AreaPlot_FractionCritical-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+
+
+  v2 <- v2 + geom_line(aes(color = factor(races))) + scale_color_manual(values = wespal)
+  v2
+
+  ggsave(paste(tag,"_LinePlot_FractionCritical-vs-Time_byRaceEth_window7",extension, sep=""), width = 9, height = 7)
+
+  f_critical_by_race <- f_critical
+```
+
+
+
+### Dead | Critical
+```{r}
+### Overall
+
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+critical <- subset(admitted, admitted$critical == T)
+critical_with_age <- subset(admitted_with_age, admitted_with_age$critical == T)
+
+
+      for (j in 1:length(unique(critical$window)))
+      {
+        
+        slot <- unique(critical$window)[j]
+        
+        c <- subset(critical, window == slot)
+        
+        
+        d <- subset(c, c$id %in% deceased_with_age$id)
+      
+        g <- nrow(c)
+        n <- nrow(d)
+        f <- n/g
+        
+       
+        windows <- c(windows,slot)
+        nt <- c(nt,n)
+        gt <- c(gt,g)
+        ft <- c(ft,f)
+        
+        #print(paste(i,j,age,slot,sep=" - - "))
+    }
+
+
+f_dead_critical <- data.frame(windows,gt,nt,ft)
+
+  
+v <- ggplot(f_dead_critical[f_dead_critical$windows,max(f_dead_critical$windows)], aes(x = as.Date((windows-1)*7+marker_test), y = ft)) + 
+   geom_area() +
+   labs(fill = "Age Group") + 
+   ggtitle("Fraction Dead | Critical", paste("n = ", format(nrow(critical[critical$window<max(critical$window),]),big.mark = ','), "critical cases as of", max(critical$admission_date[critical$window<max(critical$window)]))) + 
+   xlab("Date Admitted (7-Day bins)") + 
+   ylab("Portion of Critical Patients who Later Died") +
+   scale_fill_brewer(palette="Paired", direction = -1) +
+   #scale_color_manual(values = c("red","orange","gray","gray","gray","gray","gray","gray")) +
+   #ylim(0,1.0) +
+   xlim(as.Date("2020-03-01"),NA) +
+   geom_vline(xintercept = as.Date((f_dead_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1) +
+   scale_y_continuous(breaks=c(0,0.5,1)) +
+  ylim(0,1)
+
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v 
+   
+   
+  print(v)
+  ggsave(paste(tag,"_AreaPlot_FractionCriticalDead-vs-Time_Overall_window7","",extension, sep=""), width = 10, height= 8)
+ 
+  
+  
+  v2 + geom_line() + 
+    scale_y_continuous(breaks=c(0,0.5,1)) +
+    ylim(0,1)
+  
+  ggsave(paste(tag,"_LinePlot_FractionCriticalDead-vs-Time_Overall_window7","",extension, sep=""), width = 10, height= 8)
+
+
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(critical$race_eth)))
+{
+    for (j in 1:length(unique(critical$window)))
+    {
+      re <- levels(critical$race_eth)[i]
+      slot <- unique(critical$window)[j]
+      
+      a <- subset(critical, window == slot)
+      
+      b <- subset(a, race_eth == re)
+      
+      s <- subset(b, b$id %in% deceased$id)
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+f_dead_critical <- data.frame(races,windows,gt,nt,ft)
+f_dead_critical$races <- factor(f_dead_critical$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(f_dead_critical[which(f_dead_critical$windows>9 & f_dead_critical$windows<max(f_dead_critical$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Fraction Dead | Critical by Racial/Ethnic Group", paste("n = ", format(nrow(critical[critical$window<max(critical$window),]),big.mark = ','), "critical cases as of", max(critical$admission_date[critical$window<max(critical$window)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Critical Patients who Later Died") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((f_dead_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(races),ncol=2)
+   
+   v
+
+  ggsave(paste(tag,"_AreaPlot_FractionCriticalDead-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+
+
+  v2 <- v2 + geom_line(aes(color = factor(races))) + scale_color_manual(values = wespal)
+  v2
+
+  ggsave(paste(tag,"_LinePlot_FractionCriticalDead-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+```
+
+
+### Dead | ! Critical (including 'unknowns')
+
+```{r}
+### Race Only
+
+races <- c()
+windows <- c()
+nt <- c()
+gt <- c()
+ft <- c()
+
+for(i in 1:length(levels(critical$race_eth)))
+{
+    for (j in 1:length(unique(critical$window)))
+    {
+      re <- levels(critical$race_eth)[i]
+      slot <- unique(critical$window)[j]
+      
+      a <- subset(critical, window == slot)
+      
+      b <- subset(a, race_eth == re)
+      
+      s <- subset(b, b$id %in% deceased$id)
+    
+      g <- nrow(b)
+      n <- nrow(s)
+      f <- n/g
+    
+      races <- c(races,re)
+      windows <- c(windows,slot)
+      nt <- c(nt,n)
+      gt <- c(gt,g)
+      ft <- c(ft,f)
+      
+      #print(paste(i,j,re,slot,sep=" - - "))
+  }
+}
+
+f_dead_critical <- data.frame(races,windows,gt,nt,ft)
+f_dead_critical$races <- factor(f_dead_critical$races, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+
+ v <- ggplot(f_dead_critical[which(f_dead_critical$windows>9 & f_dead_critical$windows<max(f_dead_critical$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = ft, fill = factor(races))) + 
+   geom_area() +
+   #geom_line() +
+   labs(color = "Race/Ethnicity") + 
+   ggtitle("Fraction Dead | Not Critical by Racial/Ethnic Group", paste("All Ages: n = ", format(nrow(critical[critical$window<max(critical$window),]),big.mark=','), "non-critical cases as of", max(critical$admission_date[critical$window<max(critical$window)]))) + 
+   xlab("Date Admitted (7-day bins)") + 
+   ylab("Fraction of Non-Critical Patients who Later Died") +
+   scale_fill_manual(values = wespal) +
+   labs(fill="Race/Ethnicity") +
+   geom_vline(xintercept = as.Date((f_dead_critical$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)  +
+   scale_y_continuous(breaks=c(0,0.5,1))
+ 
+   v2 <- v
+   v2$layers[[1]] <- NULL
+   
+   v <- v + facet_wrap(~factor(races),ncol=2)
+   
+   v
+
+  ggsave(paste(tag,"_AreaPlot_FractionNonCriticalDead-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+
+
+  v2 <- v2 + geom_line(aes(color = factor(races))) + scale_color_manual(values = wespal)
+  v2
+
+  ggsave(paste(tag,"_LinePlot_FractionNonCriticalDead-vs-Time_byRaceEth_window7",extension, sep=""), width = 10, height = 8)
+```
+
+
+
+### Zip-Level Inequality
+```{r}
+IL_patients <- subset(cases, (patient_home_zip %in% ref$zip))
+
+merged_IL <- merge(y=ref, x=shpfl, by.y='zip',
+    by.x='GEOID10')
+
+cases_per_zip <- data.frame(table(IL_patients$patient_home_zip))
+colnames(cases_per_zip) <- c("zip","n_cases")
+
+merged_IL_cases <- merge(y=cases_per_zip,x=merged_IL, by.y='zip', by.x='GEOID10', all=TRUE)
+
+deaths_per_zip <- data.frame(table(IL_patients$patient_home_zip,!is.na(IL_patients$deceased_date))[,2])
+deaths_per_zip$zip <- rownames(deaths_per_zip)
+rownames(deaths_per_zip) <- NULL
+colnames(deaths_per_zip) <- c("n_deaths","zip")
+
+merged_IL_deaths <- merge(y=deaths_per_zip,x=merged_IL, by.y='zip', by.x='GEOID10', all=TRUE)
+merged_IL_cases$n_deaths <- merged_IL_deaths$n_deaths
+
+white_per_zip <- IL_demo[,c("zip","pct_white")]
+merged_IL_white <- merge(y=white_per_zip,x=merged_IL, by.y='zip',by.x='GEOID10', all = F)
+merged_IL_cases$pct_white <- as.numeric(merged_IL_white$pct_white)
+
+
+black_per_zip <- IL_demo[,c("zip","pct_black")]
+merged_IL_black <- merge(y=black_per_zip,x=merged_IL, by.y='zip',by.x='GEOID10', all = F)
+merged_IL_cases$pct_black <- as.numeric(merged_IL_black$pct_black)
+
+hispanic_per_zip <- IL_demo[,c("zip","pct_hispanic")]
+merged_IL_hispanic <- merge(y=hispanic_per_zip,x=merged_IL, by.y='zip',by.x='GEOID10', all = F)
+merged_IL_cases$pct_hispanic <- as.numeric(merged_IL_hispanic$pct_hispanic)
+
+asian_per_zip <- IL_demo[,c("zip","pct_asian")]
+merged_IL_asian <- merge(y=asian_per_zip,x=merged_IL, by.y='zip',by.x='GEOID10', all = F)
+merged_IL_cases$pct_asian <- as.numeric(merged_IL_asian$pct_asian)
+
+native_per_zip <- IL_demo[,c("zip","pct_native")]
+merged_IL_native <- merge(y=native_per_zip,x=merged_IL, by.y='zip',by.x='GEOID10', all = F)
+merged_IL_cases$pct_native <- as.numeric(merged_IL_native$pct_native)
+
+black_per_zip <- IL_demo[,c("zip","pct_black")]
+merged_IL_black <- merge(y=black_per_zip,x=merged_IL, by.y='zip',by.x='GEOID10', all = F)
+merged_IL_cases$pct_black <- as.numeric(merged_IL_black$pct_black)
+
+other_per_zip <- IL_demo[,c("zip","pct_other")]
+merged_IL_other <- merge(y=other_per_zip,x=merged_IL, by.y='zip',by.x='GEOID10', all = F)
+merged_IL_cases$pct_other <- as.numeric(merged_IL_other$pct_other)
+
+
+admitted_per_zip <- data.frame(table(IL_patients$patient_home_zip, (IL_patients$admitted_to_hospital=="Yes"  | IL_patients$admission_date !=""))[,2])
+admitted_per_zip$zip <- rownames(admitted_per_zip)
+rownames(admitted_per_zip) <- NULL
+colnames(admitted_per_zip) <- c("n_admitted","zip")
+
+merged_IL_admissions <- merge(y=admitted_per_zip,x=merged_IL,by.y='zip',by.x='GEOID10',all=T)
+merged_IL_cases$n_admitted <- merged_IL_admissions$n_admitted
+
+merged_IL_cases$AttackRate <- merged_IL_cases$n_cases/merged_IL_cases$population*1000
+merged_IL_cases$AttackRate[which(is.na(merged_IL_cases$AttackRate))] <- 0
+
+merged_IL_cases$TPP <- 1000-merged_IL_cases$AttackRate
+merged_IL_cases$TPP[which(is.na(merged_IL_cases$TPP))] <- 0
+
+merged_IL_cases$AdmitRate <- merged_IL_cases$n_admitted / merged_IL_cases$population*1000
+merged_IL_cases$AdmitRate[which(is.na(merged_IL_cases$AdmitRate))] <- 0
+
+merged_IL_cases$DeathRate <- merged_IL_cases$n_deaths/merged_IL_cases$population*1000
+merged_IL_cases$DeathRate[which(is.na(merged_IL_cases$DeathRate))] <- 0
+
+merged_IL_cases$pct_nonwhite <- 100 - merged_IL_cases$pct_white
+
+
+merged_IL_cases$majority <- "None"
+merged_IL_cases$majority[which(merged_IL_cases$pct_white > 50)] <- "White"
+merged_IL_cases$majority[which(merged_IL_cases$pct_hispanic > 50)] <- "Hispanic"
+merged_IL_cases$majority[which(merged_IL_cases$pct_black > 50)] <- "Black"
+merged_IL_cases$majority[which(merged_IL_cases$pct_asian > 50)] <- "Asian"
+merged_IL_cases$majority[which(merged_IL_cases$pct_other > 50)] <- "Other"
+merged_IL_cases$majority[which(merged_IL_cases$pct_native > 50)] <- "Native"
+
+table(merged_IL_cases$majority)
+
+
+```
+
+### Zip by Non-White
+
+```{r}
+
+# Zip Disparity in Observed Cases 
+tests_per_zip <- data.frame(table(tested$patient_home_zip))
+colnames(tests_per_zip) <- c("zip","n_tests")
+z <- data.frame(table(tested$patient_home_zip,tested$race_eth=="White"))
+colnames(z) <- c("zip","maj_white","n_tests")
+white_tests <- subset(z,maj_white==TRUE)
+nonwhite_tests <- subset(z,maj_white==FALSE)
+
+white_tests_per_zip <- white_tests[,c(1,3)]
+colnames(white_tests_per_zip)[2] <- "n_white_tests"
+nonwhite_tests_per_zip <- nonwhite_tests[,c(1,3)]
+colnames(nonwhite_tests_per_zip)[2] <- "n_nonwhite_tests"
+
+t <- merge(x=tests_per_zip,y=white_tests_per_zip)
+t <- merge(x=t,y=nonwhite_tests_per_zip)
+#table(t$n_tests-t$n_white_tests-t$n_nonwhite_tests)
+
+t <- merge(y=merged_IL_cases,x=t,by.x = 'zip', by.y='GEOID10')
+#head(t)
+t$pct_tests_white <- t$n_white_tests/t$n_tests*100
+t$pct_tests_nonwhite <- 100-t$pct_tests_white
+
+p7 <- ggplot(data=t, aes(x=pct_nonwhite,y=pct_tests_nonwhite)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(t$n_tests)))),alpha=0.5,shape=21) +
+  ggtitle("% Positive Tests vs. % of Zip (Non-White)") +
+  xlab("% of Zip Non-White") +
+  ylab("% of Positive Tests Non-White") +
+  labs(fill="Majority Race",size="log(# of Positive Tests)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p7
+ggsave(paste(tag,"scatterplot_Tests-Vs-Population-NonWhite_byZip",extension),height=8,width=10)
+
+
+
+# Zip Disparity in Hospital Admissions
+
+admissions_per_zip <- data.frame(table(admitted_all$patient_home_zip))
+colnames(admissions_per_zip) <- c("zip","n_admissions")
+z <- data.frame(table(admitted_all$patient_home_zip,admitted_all$race_eth=="White"))
+colnames(z) <- c("zip","maj_white","n_admissions")
+white_admissions <- subset(z,maj_white==TRUE)
+nonwhite_admissions <- subset(z,maj_white==FALSE)
+
+white_admissions_per_zip <- white_admissions[,c(1,3)]
+colnames(white_admissions_per_zip)[2] <- "n_white_admissions"
+nonwhite_admissions_per_zip <- nonwhite_admissions[,c(1,3)]
+colnames(nonwhite_admissions_per_zip)[2] <- "n_nonwhite_admissions"
+
+d <- merge(x=admissions_per_zip,y=white_admissions_per_zip, by="zip")
+d <- merge(x=d,y=nonwhite_admissions_per_zip, by="zip")
+#table(d$n_admissions-d$n_white_admissions-d$n_nonwhite_admissions)
+
+d <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_admissions"))],x=d,by.x = 'zip', by.y='GEOID10')
+#head(t)
+d$pct_admissions_white <- d$n_white_admissions/d$n_admissions*100
+d$pct_admissions_nonwhite <- 100-d$pct_admissions_white
+
+p8 <- ggplot(data=d, aes(x=pct_nonwhite,y=pct_admissions_nonwhite)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(d$n_admissions)))),alpha=0.5,shape=21) +
+  ggtitle("% Admissions vs. % of Zip (Non-White)") +
+  xlab("% of Zip Non-White") +
+  ylab("% of Admissions Non-White") +
+  labs(fill="Majority Race",size="log(# of Admissions)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p8
+ggsave(paste(tag,"scatterplot_Admissions-Vs-Population-NonWhite_byZip",extension),height=8,width=10)
+disp <- merge(d,t)
+
+# Zip Disparity in Observed Deaths 
+
+deaths_per_zip <- data.frame(table(deceased$patient_home_zip))
+colnames(deaths_per_zip) <- c("zip","n_deaths")
+z <- data.frame(table(deceased$patient_home_zip,deceased$race_eth=="White"))
+colnames(z) <- c("zip","maj_white","n_deaths")
+white_deaths <- subset(z,maj_white==TRUE)
+nonwhite_deaths <- subset(z,maj_white==FALSE)
+
+white_deaths_per_zip <- white_deaths[,c(1,3)]
+colnames(white_deaths_per_zip)[2] <- "n_white_deaths"
+nonwhite_deaths_per_zip <- nonwhite_deaths[,c(1,3)]
+colnames(nonwhite_deaths_per_zip)[2] <- "n_nonwhite_deaths"
+
+d <- merge(x=deaths_per_zip,y=white_deaths_per_zip, by="zip")
+d <- merge(x=d,y=nonwhite_deaths_per_zip, by="zip")
+#table(d$n_deaths-d$n_white_deaths-d$n_nonwhite_deaths)
+
+d <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_deaths"))],x=d,by.x = 'zip', by.y='GEOID10')
+#head(t)
+d$pct_deaths_white <- d$n_white_deaths/d$n_deaths*100
+d$pct_deaths_nonwhite <- 100-d$pct_deaths_white
+
+p9 <- ggplot(data=d, aes(x=pct_nonwhite,y=pct_deaths_nonwhite)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(d$n_deaths)))),alpha=0.5,shape=21) +
+  ggtitle("% Deaths vs. % of Zip (Non-White)") +
+  xlab("% of Zip Non-White") +
+  ylab("% of Deaths Non-White") +
+  labs(fill="Majority Race",size="log(# of Deaths)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p9
+ggsave(paste(tag,"scatterplot_Deaths-Vs-Population-NonWhite_byZip",extension),height=8,width=10)
+
+disp <- merge(disp,d)
+
+
+### Zip by Hispanic/Latino
+
+
+# Zip Disparity in Observed Cases 
+tests_per_zip <- data.frame(table(tested$patient_home_zip))
+colnames(tests_per_zip) <- c("zip","n_tests")
+z <- data.frame(table(tested$patient_home_zip,tested$race_eth=="Hispanic-Latino"))
+colnames(z) <- c("zip","maj_latino","n_tests")
+latino_tests <- subset(z,maj_latino==TRUE)
+nonlatino_tests <- subset(z,maj_latino==FALSE)
+
+latino_tests_per_zip <- latino_tests[,c(1,3)]
+colnames(latino_tests_per_zip)[2] <- "n_latino_tests"
+nonlatino_tests_per_zip <- nonlatino_tests[,c(1,3)]
+colnames(nonlatino_tests_per_zip)[2] <- "n_nonlatino_tests"
+
+t <- merge(x=tests_per_zip,y=latino_tests_per_zip)
+t <- merge(x=t,y=nonlatino_tests_per_zip)
+#table(t$n_tests-t$n_latino_tests-t$n_nonlatino_tests)
+
+t <- merge(y=merged_IL_cases,x=t,by.x = 'zip', by.y='GEOID10')
+#head(t)
+t$pct_tests_latino <- t$n_latino_tests/t$n_tests*100
+t$pct_tests_nonlatino <- 100-t$pct_tests_latino
+
+p1 <- ggplot(data=t, aes(x=pct_hispanic,y=pct_tests_latino)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(t$n_tests)))),alpha=0.5,shape=21) +
+  ggtitle("% Positive Tests vs. % of Zip (Latinx)") +
+  xlab("% of Zip Latinx") +
+  ylab("% of Positive Tests Latinx") +
+  labs(fill="Majority Race",size="log(# of Positive Tests)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p1
+ggsave(paste(tag,"scatterplot_Tests-Vs-Population-Latinx_byZip",extension),height=8,width=12)
+
+disp <- merge(disp,t)
+
+# ggplot(data=t, aes(x=log(n_tests),y=pct_tests_nonwhite)) + geom_point(aes(fill=majority,color = after_stat(fill), size=factor(trunc(log(t$n_tests)))),alpha=0.5,shape=21) +
+#   ggtitle("% Positive Tests vs. # Tests in Zip") +
+#   xlab("# Positive Tests") +
+#   ylab("% of Positive Tests Non-White") +
+#   labs(fill="Majority Race",size="log(# of Positive Tests)") +
+#   #geom_abline(slope=1,intercept = 0, linetype = 2) +
+#   guides(color = FALSE)
+
+
+# Zip Disparity in Hospital Admissions
+
+admissions_per_zip <- data.frame(table(admitted_all$patient_home_zip))
+colnames(admissions_per_zip) <- c("zip","n_admissions")
+z <- data.frame(table(admitted_all$patient_home_zip,admitted_all$race_eth=="Hispanic-Latino"))
+colnames(z) <- c("zip","maj_latino","n_admissions")
+latino_admissions <- subset(z,maj_latino==TRUE)
+nonlatino_admissions <- subset(z,maj_latino==FALSE)
+
+latino_admissions_per_zip <- latino_admissions[,c(1,3)]
+colnames(latino_admissions_per_zip)[2] <- "n_latino_admissions"
+nonlatino_admissions_per_zip <- nonlatino_admissions[,c(1,3)]
+colnames(nonlatino_admissions_per_zip)[2] <- "n_nonlatino_admissions"
+
+d <- merge(x=admissions_per_zip,y=latino_admissions_per_zip, by="zip")
+d <- merge(x=d,y=nonlatino_admissions_per_zip, by="zip")
+#table(d$n_admissions-d$n_latino_admissions-d$n_nonlatino_admissions)
+
+d <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_admissions"))],x=d,by.x = 'zip', by.y='GEOID10')
+#head(t)
+d$pct_admissions_latino <- d$n_latino_admissions/d$n_admissions*100
+d$pct_admissions_nonlatino <- 100-d$pct_admissions_latino
+
+p3 <- ggplot(data=d, aes(x=pct_hispanic,y=pct_admissions_latino)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(d$n_admitted)))),alpha=0.5,shape=21) +
+  ggtitle("% Admissions vs. % of Zip (Latinx)") +
+  xlab("% of Zip Latinx") +
+  ylab("% of Admissions Latinx") +
+  labs(fill="Majority Race",size="log(# of Admissions)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p3
+ggsave(paste(tag,"scatterplot_Admissions-Vs-Population-Latinx_byZip",extension),height=8,width=12)
+
+disp <- merge(disp,d)
+# Zip Disparity in Observed Deaths 
+
+deaths_per_zip <- data.frame(table(deceased$patient_home_zip))
+colnames(deaths_per_zip) <- c("zip","n_deaths")
+z <- data.frame(table(deceased$patient_home_zip,deceased$race_eth=="Hispanic-Latino"))
+colnames(z) <- c("zip","maj_latino","n_deaths")
+latino_deaths <- subset(z,maj_latino==TRUE)
+nonlatino_deaths <- subset(z,maj_latino==FALSE)
+
+latino_deaths_per_zip <- latino_deaths[,c(1,3)]
+colnames(latino_deaths_per_zip)[2] <- "n_latino_deaths"
+nonlatino_deaths_per_zip <- nonlatino_deaths[,c(1,3)]
+colnames(nonlatino_deaths_per_zip)[2] <- "n_nonlatino_deaths"
+
+e <- merge(x=deaths_per_zip,y=latino_deaths_per_zip, by="zip")
+e <- merge(x=e,y=nonlatino_deaths_per_zip, by="zip")
+#table(d$n_deaths-d$n_latino_deaths-d$n_nonlatino_deaths)
+
+e <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_deaths"))],x=e,by.x = 'zip', by.y='GEOID10')
+#head(t)
+e$pct_deaths_latino <- e$n_latino_deaths/e$n_deaths*100
+e$pct_deaths_nonlatino <- 100-e$pct_deaths_latino
+
+p5 <- ggplot(data=e, aes(x=pct_hispanic,y=pct_deaths_latino)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(e$n_deaths)))),alpha=0.5,shape=21) +
+  ggtitle("% Deaths vs. % of Zip (Latinx)") +
+  xlab("% of Zip Latinx") +
+  ylab("% of Deaths Latinx") +
+  labs(fill="Majority Race",size="log(# of Deaths)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p5
+ggsave(paste(tag,"scatterplot_Deaths-Vs-Population-Latinx_byZip",extension),height=8,width=10)
+
+disp <- merge(disp,e)
+
+
+### Zip by Black
+
+# Zip Disparity in Observed Cases 
+tests_per_zip <- data.frame(table(tested$patient_home_zip))
+colnames(tests_per_zip) <- c("zip","n_tests")
+z <- data.frame(table(tested$patient_home_zip,tested$race_eth=="Black"))
+colnames(z) <- c("zip","maj_black","n_tests")
+black_tests <- subset(z,maj_black==TRUE)
+nonblack_tests <- subset(z,maj_black==FALSE)
+
+black_tests_per_zip <- black_tests[,c(1,3)]
+colnames(black_tests_per_zip)[2] <- "n_black_tests"
+nonblack_tests_per_zip <- nonblack_tests[,c(1,3)]
+colnames(nonblack_tests_per_zip)[2] <- "n_nonblack_tests"
+
+t <- merge(x=tests_per_zip,y=black_tests_per_zip)
+t <- merge(x=t,y=nonblack_tests_per_zip)
+#table(t$n_tests-t$n_black_tests-t$n_nonblack_tests)
+
+t <- merge(y=merged_IL_cases,x=t,by.x = 'zip', by.y='GEOID10')
+#head(t)
+t$pct_tests_black <- t$n_black_tests/t$n_tests*100
+t$pct_tests_nonblack <- 100-t$pct_tests_black
+
+p2 <- ggplot(data=t, aes(x=pct_black,y=pct_tests_black)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(t$n_tests)))),alpha=0.5,shape=21) +
+  ggtitle("% Positive Tests vs. % of Zip (Black)") +
+  xlab("% of Zip Black") +
+  ylab("% of Positive Tests Black") +
+  labs(fill="Majority Race",size="log(# of Positive Tests)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p2
+ggsave(paste(tag,"scatterplot_Tests-Vs-Population-Black_byZip",extension),height=8,width=12)
+
+disp <- merge(disp,t)
+
+# ggplot(data=t, aes(x=log(n_tests),y=pct_tests_nonwhite)) + geom_point(aes(fill=majority,color = after_stat(fill), size=factor(trunc(log(t$n_tests)))),alpha=0.5,shape=21) +
+#   ggtitle("% Positive Tests vs. # Tests in Zip") +
+#   xlab("# Positive Tests") +
+#   ylab("% of Positive Tests Non-White") +
+#   labs(fill="Majority Race",size="log(# of Positive Tests)") +
+#   #geom_abline(slope=1,intercept = 0, linetype = 2) +
+#   guides(color = FALSE)
+
+
+# Zip Disparity in Hospital Admissions
+
+admissions_per_zip <- data.frame(table(admitted_all$patient_home_zip))
+colnames(admissions_per_zip) <- c("zip","n_admissions")
+z <- data.frame(table(admitted_all$patient_home_zip,admitted_all$race_eth=="Black"))
+colnames(z) <- c("zip","maj_black","n_admissions")
+black_admissions <- subset(z,maj_black==TRUE)
+nonblack_admissions <- subset(z,maj_black==FALSE)
+
+black_admissions_per_zip <- black_admissions[,c(1,3)]
+colnames(black_admissions_per_zip)[2] <- "n_black_admissions"
+nonblack_admissions_per_zip <- nonblack_admissions[,c(1,3)]
+colnames(nonblack_admissions_per_zip)[2] <- "n_nonblack_admissions"
+
+d <- merge(x=admissions_per_zip,y=black_admissions_per_zip, by="zip")
+d <- merge(x=d,y=nonblack_admissions_per_zip, by="zip")
+#table(d$n_admissions-d$n_black_admissions-d$n_nonblack_admissions)
+
+d <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_admissions"))],x=d,by.x = 'zip', by.y='GEOID10')
+#head(t)
+d$pct_admissions_black <- d$n_black_admissions/d$n_admissions*100
+d$pct_admissions_nonblack <- 100-d$pct_admissions_black
+
+p4 <- ggplot(data=d, aes(x=pct_black,y=pct_admissions_black)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(d$n_admitted)))),alpha=0.5,shape=21) +
+  ggtitle("% Admissions vs. % of Zip (Black)") +
+  xlab("% of Zip Black") +
+  ylab("% of Admissions Black") +
+  labs(fill="Majority Race",size="log(# of Admissions)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p4
+ggsave(paste(tag,"scatterplot_Admissions-Vs-Population-Black_byZip",extension),height=8,width=12)
+
+disp <- merge(disp,d)
+
+# Zip Disparity in Observed Deaths 
+
+deaths_per_zip <- data.frame(table(deceased$patient_home_zip))
+colnames(deaths_per_zip) <- c("zip","n_deaths")
+z <- data.frame(table(deceased$patient_home_zip,deceased$race_eth=="Black"))
+colnames(z) <- c("zip","maj_black","n_deaths")
+black_deaths <- subset(z,maj_black==TRUE)
+nonblack_deaths <- subset(z,maj_black==FALSE)
+
+black_deaths_per_zip <- black_deaths[,c(1,3)]
+colnames(black_deaths_per_zip)[2] <- "n_black_deaths"
+nonblack_deaths_per_zip <- nonblack_deaths[,c(1,3)]
+colnames(nonblack_deaths_per_zip)[2] <- "n_nonblack_deaths"
+
+e <- merge(x=deaths_per_zip,y=black_deaths_per_zip, by="zip")
+e <- merge(x=e,y=nonblack_deaths_per_zip, by="zip")
+#table(d$n_deaths-d$n_black_deaths-d$n_nonblack_deaths)
+
+e <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_deaths"))],x=e,by.x = 'zip', by.y='GEOID10')
+#head(t)
+e$pct_deaths_black <- e$n_black_deaths/e$n_deaths*100
+e$pct_deaths_nonblack <- 100-e$pct_deaths_black
+
+p6 <- ggplot(data=e, aes(x=pct_black,y=pct_deaths_black)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(e$n_deaths)))),alpha=0.5,shape=21) +
+  ggtitle("% Deaths vs. % of Zip (Black)") +
+  xlab("% of Zip Black") +
+  ylab("% of Deaths Black") +
+  labs(fill="Majority Race",size="log(# of Deaths)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+
+ggsave(paste(tag,"scatterplot_Deaths-Vs-Population-Black_byZip",extension),height=8,width=10)
+
+disp <- merge(disp,e)
+
+### Zip by WHITE
+
+# Zip Disparity in Observed Cases 
+tests_per_zip <- data.frame(table(tested$patient_home_zip))
+colnames(tests_per_zip) <- c("zip","n_tests")
+z <- data.frame(table(tested$patient_home_zip,tested$race_eth=="White"))
+colnames(z) <- c("zip","maj_white","n_tests")
+white_tests <- subset(z,maj_white==TRUE)
+nonwhite_tests <- subset(z,maj_white==FALSE)
+
+white_tests_per_zip <- white_tests[,c(1,3)]
+colnames(white_tests_per_zip)[2] <- "n_white_tests"
+nonwhite_tests_per_zip <- nonwhite_tests[,c(1,3)]
+colnames(nonwhite_tests_per_zip)[2] <- "n_nonwhite_tests"
+
+t <- merge(x=tests_per_zip,y=white_tests_per_zip)
+t <- merge(x=t,y=nonwhite_tests_per_zip)
+#table(t$n_tests-t$n_white_tests-t$n_nonwhite_tests)
+
+t <- merge(y=merged_IL_cases,x=t,by.x = 'zip', by.y='GEOID10')
+#head(t)
+t$pct_tests_white <- t$n_white_tests/t$n_tests*100
+t$pct_tests_nonwhite <- 100-t$pct_tests_white
+
+p7 <- ggplot(data=t, aes(x=pct_white,y=pct_tests_white)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(t$n_tests)))),alpha=0.5,shape=21) +
+  ggtitle("% Positive Tests vs. % of Zip (White)") +
+  xlab("% of Zip white") +
+  ylab("% of Positive Tests White") +
+  labs(fill="Majority Race",size="log(# of Positive Tests)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p7
+ggsave(paste(tag,"scatterplot_Tests-Vs-Population-White_byZip",extension),height=8,width=12)
+
+disp <- merge(disp,t)
+
+# ggplot(data=t, aes(x=log(n_tests),y=pct_tests_nonwhite)) + geom_point(aes(fill=majority,color = after_stat(fill), size=factor(trunc(log(t$n_tests)))),alpha=0.5,shape=21) +
+#   ggtitle("% Positive Tests vs. # Tests in Zip") +
+#   xlab("# Positive Tests") +
+#   ylab("% of Positive Tests Non-White") +
+#   labs(fill="Majority Race",size="log(# of Positive Tests)") +
+#   #geom_abline(slope=1,intercept = 0, linetype = 2) +
+#   guides(color = FALSE)
+
+
+# Zip Disparity in Hospital Admissions
+
+admissions_per_zip <- data.frame(table(admitted_all$patient_home_zip))
+colnames(admissions_per_zip) <- c("zip","n_admissions")
+z <- data.frame(table(admitted_all$patient_home_zip,admitted_all$race_eth=="White"))
+colnames(z) <- c("zip","maj_white","n_admissions")
+white_admissions <- subset(z,maj_white==TRUE)
+nonwhite_admissions <- subset(z,maj_white==FALSE)
+
+white_admissions_per_zip <- white_admissions[,c(1,3)]
+colnames(white_admissions_per_zip)[2] <- "n_white_admissions"
+nonwhite_admissions_per_zip <- nonwhite_admissions[,c(1,3)]
+colnames(nonwhite_admissions_per_zip)[2] <- "n_nonwhite_admissions"
+
+d <- merge(x=admissions_per_zip,y=white_admissions_per_zip, by="zip")
+d <- merge(x=d,y=nonwhite_admissions_per_zip, by="zip")
+#table(d$n_admissions-d$n_white_admissions-d$n_nonwhite_admissions)
+
+d <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_admissions"))],x=d,by.x = 'zip', by.y='GEOID10')
+#head(t)
+d$pct_admissions_white <- d$n_white_admissions/d$n_admissions*100
+d$pct_admissions_nonwhite <- 100-d$pct_admissions_white
+
+p8 <- ggplot(data=d, aes(x=pct_white,y=pct_admissions_white)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(d$n_admitted)))),alpha=0.5,shape=21) +
+  ggtitle("% Admissions vs. % of Zip (White)") +
+  xlab("% of Zip White") +
+  ylab("% of Admissions White") +
+  labs(fill="Majority Race",size="log(# of Admissions)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p8
+ggsave(paste(tag,"scatterplot_Admissions-Vs-Population-White_byZip",extension),height=8,width=12)
+
+disp <- merge(disp,d)
+
+# Zip Disparity in Observed Deaths 
+
+deaths_per_zip <- data.frame(table(deceased$patient_home_zip))
+colnames(deaths_per_zip) <- c("zip","n_deaths")
+z <- data.frame(table(deceased$patient_home_zip,deceased$race_eth=="White"))
+colnames(z) <- c("zip","maj_white","n_deaths")
+white_deaths <- subset(z,maj_white==TRUE)
+nonwhite_deaths <- subset(z,maj_white==FALSE)
+
+white_deaths_per_zip <- white_deaths[,c(1,3)]
+colnames(white_deaths_per_zip)[2] <- "n_white_deaths"
+nonwhite_deaths_per_zip <- nonwhite_deaths[,c(1,3)]
+colnames(nonwhite_deaths_per_zip)[2] <- "n_nonwhite_deaths"
+
+e <- merge(x=deaths_per_zip,y=white_deaths_per_zip, by="zip")
+e <- merge(x=e,y=nonwhite_deaths_per_zip, by="zip")
+#table(d$n_deaths-d$n_white_deaths-d$n_nonwhite_deaths)
+
+e <- merge(y=merged_IL_cases[,!(names(merged_IL_cases) %in% c("n_deaths"))],x=e,by.x = 'zip', by.y='GEOID10')
+#head(t)
+e$pct_deaths_white <- e$n_white_deaths/e$n_deaths*100
+e$pct_deaths_nonwhite <- 100-e$pct_deaths_white
+
+p9 <- ggplot(data=e, aes(x=pct_white,y=pct_deaths_white)) + geom_point(aes(fill=majority,color = majority, size=factor(trunc(log(e$n_deaths)))),alpha=0.5,shape=21) +
+  ggtitle("% Deaths vs. % of Zip (White)") +
+  xlab("% of Zip White") +
+  ylab("% of Deaths White") +
+  labs(fill="Majority Race",size="log(# of Deaths)") +
+  geom_abline(slope=1,intercept = 0, linetype = 2) +
+  guides(color = FALSE) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend")
+p9
+
+ggsave(paste(tag,"scatterplot_Deaths-Vs-Population-White_byZip",extension),height=8,width=10)
+
+disp <- merge(disp,e)
+
+IL_disp <- disp[,c("zip","majority",
+                   "population", "pct_white","pct_hispanic","pct_black",
+                   "n_tests","pct_tests_white","pct_tests_latino","pct_tests_black",
+                   "n_admitted","pct_admissions_white","pct_admissions_latino","pct_admissions_black",
+                   "n_deaths","pct_deaths_white","pct_deaths_latino","pct_deaths_black")]
+
+write.csv(IL_disp,paste(pull_date,"_Percent_Tests-Admissions-Deaths_byZip_byRace.csv",sep=""))
+ p1 <- p1+theme(legend.position="none")
+ p2 <- p2+theme(legend.position="none")
+ p3 <- p3+theme(legend.position="none")
+ p4 <- p4+theme(legend.position="none")
+ p5 <- p5+theme(legend.position="none")
+ p6 <- p6+theme(legend.position="none")
+ p7 <- p7+theme(legend.position="none")
+ p8 <- p8+theme(legend.position="none")
+ p9 <- p9+theme(legend.position="none")
+
+
+
+
+g <- arrangeGrob(p1, p2, p3,p4, nrow=2)
+
+ggsave(paste(tag,"_Zip_Disparities_Grid-BlackAndLatinx",extension),g,height=12,width=12)
+
+grid.arrange(p1,p2,p3,p4,p5,p6,nrow=3)
+
+g2 <- arrangeGrob(p1, p2, p3,p4,p5,p6, nrow=3)
+
+ggsave(paste(tag,"Zip_Disparities_Grid-BlackAndLatinx_withDeaths",extension),g2,height=18,width = 12)
+
+grid.arrange(p1,p2,p7,p3,p4,p8,p5,p6,p9,nrow=3)
+
+g3 <- arrangeGrob(p1,p2,p7,p3,p4,p8,p5,p6,p9,nrow=3)
+
+ggsave(paste(tag,"Zip_Disparities_Tests-Admissions-Deaths_Grid-BLW",extension),g3,height=18,width = 18)
+
+```
+
+
+```{r}
+### Zip Level Positive Tests vs. Cumulative Tests
+zip2ems <- data.frame(table(cases$patient_home_zip,cases$EMS))
+zip2ems <- subset(zip2ems,zip2ems$Freq != 0)
+
+zip2ems <- zip2ems[order(zip2ems$Var1, - zip2ems$Freq ), ]
+zip2ems <- zip2ems[ !duplicated(zip2ems$Var1), ]  
+colnames(zip2ems) <- c("Zip","EMS","n_zip")
+
+zip_with_totals <- merge(merged_IL_cases,idph,by.x="GEOID10",by.y="Zip")
+zip_with_totals <- merge(zip_with_totals,zip2ems, by.x="GEOID10",by.y="Zip")
+
+zip_with_totals$RR[zip_with_totals$EMS %in% c(1,2)] <- "North Central"
+zip_with_totals$RR[zip_with_totals$EMS %in% c(3,6)] <- "Central"
+zip_with_totals$RR[zip_with_totals$EMS %in% c(4,5)] <- "Southern"
+zip_with_totals$RR[zip_with_totals$EMS %in% c(7:11)] <- "Northeast"
+
+table(zip_with_totals$RR)
+RR_pal <- c("#eb4034","#4da2e3","#3c8c46","#9e6dcf")
+
+# Full Scale
+ggplot(data=zip_with_totals, aes(x=Tested/population*1000,y=Positive_Cases/population*1000)) + geom_point(aes(fill=majority,color = majority, size = trunc(log10(population))), alpha=0.5, shape = 21) +
+  ggtitle("Cumulative Cases vs. Cumulative Tests","By Zip Code") +
+  xlab("Cumulative Tests per 1,000") +
+  ylab("Cumulative Positive Tests per 1,000") +
+  labs(fill="Majority",size="Population", color ="Majority") +
+  #geom_abline(slope=1,intercept = 0, linetype = 2) +
+  scale_fill_manual(values = RR_pal, guide = "legend") +
+  scale_color_manual(values = RR_pal, guide = "legend")
+   scale_size_continuous(name = "Population", labels = c("100's", "1,000's", "10,000's","100,000's"))
+
+# Trimmed view (300 test - 30 positive)
+ggplot(data=zip_with_totals, aes(x=Tested/population*1000,y=Positive_Cases/population*1000)) + geom_point(aes(fill=majority,color = majority, size=trunc(log10(population))),alpha=0.5,shape=21) +
+   #geom_smooth(se=T,aes(fill=majority,color=majority)) +
+  ggtitle("Attack Rate vs. Test Volume","By Zip Code") +
+  xlab("Cumulative Tests per 1,000 pop.") +
+  ylab("Cumulative Positive Tests per 1,000 pop.") +
+  labs(fill="Majority",size="Population", color ="Majority") +
+  #geom_abline(slope=1,intercept = 0, linetype = 2) +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend") + xlim(0,300) + ylim(0,30) + 
+   scale_size_continuous(name = "Population",labels = c("100's", "1,000's", "10,000's","100,000's")) +
+   facet_wrap(~majority,ncol=2)
+
+ggsave(paste(tag,"_ScatterPlot_AttackRate-vs-TestVolume_perZip-byMajorityRace",extension),width=10,height=8)
+
+
+# Cumulative Cases vs. my Total Positives
+
+ggplot(data=zip_with_totals, aes(x=Positive_Cases,y=n_cases)) + geom_point(aes(fill=RR,color = RR, size=trunc(log10(population))),alpha=0.5,shape=21) +
+  ggtitle("Cumulative Cases in LineList vs. IDPH Reference","By Zip Code") +
+  xlab("Cumulative Cases (IDPH)") +
+  ylab("Cumulative Cases (Dataset)") +
+  labs(fill="Restore Region",size="Population", color ="Restore Region") +
+  scale_fill_manual(values = RR_pal, guide = "legend") +
+  scale_color_manual(values = RR_pal, guide = "legend") + 
+   scale_size_continuous(name = "Population", labels = c("100's", "1,000's", "10,000's","100,000's")) + 
+   geom_abline(slope=1,linetype=2)
+
+ggsave(paste(tag,"_ZipTotals_Validation",extension),width=10,height=8)
+
+
+# TPR vs. % White (by majority race)
+ggplot(data=zip_with_totals, aes(x=pct_white,y=TPR)) + geom_point(aes(fill=majority,color = majority, size=trunc(log10(Tested))),alpha=0.5,shape=21) +
+  #facet_wrap(~RR) + 
+  ggtitle("TPR vs. % of Zip White ") +
+  xlab("% of ZIP White") +
+  ylab("Cumulative Cases / Cumulative Tests") +
+  labs(fill="Majority Race",size="# Tests", color ="Majority Race") +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend") + 
+   scale_size_continuous(name = "# Tests", labels = c("10's", "100's", "1,000's","10,000's"))
+
+ggsave(paste(tag,"_Scatterplot_TPR_by-PctWhite_Per-Zip",extension),width=10,height=8)
+
+# TPR vs. % Black (by majority race)
+ggplot(data=zip_with_totals, aes(x=pct_black,y=TPR)) + geom_point(aes(fill=majority,color = majority, size=trunc(log10(Tested))),alpha=0.5,shape=21) +
+  #facet_wrap(~RR) + 
+  ggtitle("TPR vs. % of Zip Black ") +
+  xlab("% of ZIP Black") +
+  ylab("Cumulative Cases / Cumulative Tests") +
+  labs(fill="Majority Race",size="# Tests", color ="Majority Race") +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend") + 
+   scale_size_continuous(name = "# Tests", labels = c("10's", "100's", "1,000's","10,000's"))
+
+ggsave(paste(tag,"_Scatterplot_TPR_by-PctBlack_Per-Zip",extension),width=10,height=8)
+
+# TPR vs. % Latinx (by majority race)
+ggplot(data=zip_with_totals, aes(x=pct_hispanic,y=TPR)) + geom_point(aes(fill=majority,color = majority, size=trunc(log10(Tested))),alpha=0.5,shape=21) +
+  #facet_wrap(~RR) + 
+  ggtitle("TPR vs. % of Zip Latinx ") +
+  xlab("% of ZIP Latinx") +
+  ylab("Cumulative Cases / Cumulative Tests") +
+  labs(fill="Majority Race",size="# Tests", color ="Majority Race") +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend") + 
+   scale_size_continuous(name = "# Tests", labels = c("10's", "100's", "1,000's","10,000's"))
+
+ggsave(paste(tag,"_Scatterplot_TPR_by-PctLatinx_Per-Zip",extension),width=10,height=8)
+
+# TPR vs. % Attack Rate (by majority race)
+ggplot(data=zip_with_totals, aes(x=Positive_Cases/population,y=Positive_Cases/Tested)) + geom_point(aes(fill=majority,color = majority, size=trunc(log10(Tested))),alpha=0.5,shape=21) +
+  ggtitle("TPR vs. AttackRate ") +
+  xlab("Cumulative Cases / Population") +
+  ylab("Cumulative Cases / Cumulative Tests") +
+  facet_wrap(~majority) +
+  labs(fill="Majority Race",size="# Tests", color ="Majority Race") +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend") + 
+   scale_size_continuous(name = "# Tests", labels = c("10's", "100's", "1,000's","10,000's")) 
+ggsave(paste(tag,"_Scatterplot_TPR_vs-AttackRate_Per-Zip",extension),width=10,height=8)
+
+# % of ZIP Tested vs. % of Tests Positive
+ggplot(data=zip_with_totals, aes(x=Tested/population,y=Positive_Cases/Tested)) + geom_point(aes(fill=majority,color = majority, size=trunc(log10(population))),alpha=0.5,shape=21) +
+  ggtitle("TPR vs. Test Volume ") +
+  ylab("Cumulative Cases / Cumulative Tests") +
+  xlab("Cumulative Tests / Population") +
+  facet_wrap(~majority) +
+  labs(fill="Majority Race",size="Population", color ="Majority Race") +
+  scale_fill_manual(values = wespal[c(3,2,9,1)], guide = "legend") +
+  scale_color_manual(values = wespal[c(3,2,9,1)], guide = "legend") + 
+   scale_size_continuous(name = "Population", labels = c("100's", "1,000's", "10,000's","100,000's")) +
+   xlim(0,0.5)
+
+ggsave(paste(tag,"_Scatterplot_TPR_vs-TestVolume_Per-Zip",extension),width=10,height=8)
+
+
+```
+
+
+### Racial Breakdown by EMS Region
+
+```{r}
+
+## Positive Tests
+
+ems_race <- data.frame(table(tested$EMS,tested$race_eth))
+colnames(ems_race) <- c("EMS","race_eth","n")
+
+ems_tot <- aggregate(x=ems_race$n, by=list(ems_race$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_race <- merge(x=ems_race,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_race$frac <- ems_race$n/ems_race$tot
+
+ems_race$race_eth <- factor(ems_race$race_eth, levels = levels(ems_race$race_eth)[c(1,4:8,2,3)])
+
+ggplot(ems_race, aes(x=EMS,y=frac*100, fill=race_eth)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_manual(values = wespal[c(1,4:8,2,3)]) + 
+  ggtitle("Cases by Race x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1)
+
+  ggsave(paste(tag,"_BarPlot_PositiveTests-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+  ems_race$var <- "positives"
+  toplot_eth$var <- "population"
+  
+pos <- ems_race[,c(1,2,5,6)]
+pop <- toplot_eth[,c(1,2,3,4)]
+colnames(pop) <- colnames(pos)
+
+bound <- rbind.data.frame(pos,pop)
+melted <- melt(bound, c("EMS","race_eth","var"))
+
+melted$cat <- ''
+melted[melted$var == 'positives',]$cat <- "COVID (+)"
+melted[melted$var != 'positives',]$cat <- "Population"
+
+melted$race_eth <- factor(melted$race_eth,levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+melted$race_eth <- factor(melted$race_eth, levels = levels(melted$race_eth)[c(1,6,4,5,7,8,2,3)])
+
+
+ggplot(melted, aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population vs. Positive Tests","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(fill="Race/Ethnicity")
+  
+ggsave(paste(tag,"_BarPlot_Population_Vs_PositiveTests-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+  
+## Deaths
+
+ems_race <- data.frame(table(deceased$EMS,deceased$race_eth))
+colnames(ems_race) <- c("EMS","race_eth","n")
+
+ems_tot <- aggregate(x=ems_race$n, by=list(ems_race$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_race <- merge(x=ems_race,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_race$frac <- ems_race$n/ems_race$tot
+
+ems_race$race_eth <- factor(ems_race$race_eth, levels = levels(ems_race$race_eth)[c(1,6,4,5,7,8,2,3)])
+
+ggplot(ems_race, aes(x=EMS,y=frac*100, fill=race_eth)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) + 
+  ggtitle("COVID (+) Deaths by Race x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1)
+
+  ggsave(paste(tag,"_BarPlot_Deaths-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+  ems_race$var <- "deaths"
+  toplot_eth$var <- "population"
+  
+pos <- ems_race[,c(1,2,5,6)]
+pop <- toplot_eth[,c(1,2,3,4)]
+colnames(pop) <- colnames(pos)
+
+bound2 <- rbind.data.frame(pos,pop)
+melted2 <- melt(bound2, c("EMS","race_eth","var"))
+
+melted2$cat <- ''
+melted2[melted2$var == 'deaths',]$cat <- "Deaths"
+melted2[melted2$var != 'deaths',]$cat <- "Population"
+
+melted2$race_eth <- factor(melted2$race_eth,levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+melted2$race_eth <- factor(melted2$race_eth, levels = levels(melted2$race_eth)[c(1,6,4,5,7,8,2,3)])
+
+
+ggplot(melted2, aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population vs. Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Race/Ethnicity")
+  
+ggsave(paste(tag,"_BarPlot_Population_Vs_Deaths-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+  
+
+
+race_TestsDeaths <- rbind.data.frame(melted,melted2[which(melted2$var != "population"),])
+race_TestsDeaths$cat <- factor(race_TestsDeaths$cat, levels = c("Population","COVID (+)","Deaths"))
+
+ggplot(race_TestsDeaths, aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population, Cases, and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Race/Ethnicity") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAndDeaths-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+## Hospital Deaths
+
+deceased_admitted <- subset(deceased, deceased$id %in% admitted_all$id)
+
+ems_race <- data.frame(table(deceased_admitted$EMS,deceased_admitted$race_eth))
+colnames(ems_race) <- c("EMS","race_eth","n")
+
+ems_tot <- aggregate(x=ems_race$n, by=list(ems_race$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_race <- merge(x=ems_race,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_race$frac <- ems_race$n/ems_race$tot
+
+ggplot(ems_race, aes(x=EMS,y=frac*100, fill=race_eth)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_manual(values = wespal[c(1,8:4,2,3)]) + 
+  ggtitle("Hospital Deaths by Race x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1)
+
+  ggsave(paste(tag,"_BarPlot_HospitalDeaths-byRace-BLW-byEMS",extension, sep=""), width = 10, height = 8)
+
+
+  ems_race$var <- "hospdeaths"
+  toplot_eth$var <- "population"
+  
+pos <- ems_race[,c(1,2,5,6)]
+pop <- toplot_eth[,c(1,2,3,4)]
+colnames(pop) <- colnames(pos)
+
+bound3 <- rbind.data.frame(pos,pop)
+melted3 <- melt(bound3, c("EMS","race_eth","var"))
+
+melted3$cat <- ''
+melted3[melted3$var == 'hospdeaths',]$cat <- "Hospital Deaths"
+melted3[melted3$var != 'hospdeaths',]$cat <- "Population"
+
+melted3$race_eth <- factor(melted3$race_eth,levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing"))
+melted3$race_eth <- factor(melted3$race_eth, levels = levels(melted3$race_eth)[c(1,6,4,5,7,8,2,3)])
+
+
+ggplot(melted3, aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population vs. Hospital Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Race/Ethnicity")
+  
+ggsave(paste(tag,"_BarPlot_Population_Vs_HospitalDeaths-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+  
+
+
+race_TestsDeaths <- rbind.data.frame(melted,melted2[which(melted2$var != "population"),])
+race_TestsDeaths$cat <- factor(race_TestsDeaths$cat, levels = c("Population","COVID (+)","Deaths"))
+
+ggplot(race_TestsDeaths, aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population, Cases, and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Race/Ethnicity") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAndDeaths-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+
+race_TestsDeaths <- rbind.data.frame(melted,melted2[which(melted2$var != "population"),],melted3[which(melted3$var != "population"),])
+race_TestsDeaths$cat <- factor(race_TestsDeaths$cat, levels = c("Population","COVID (+)","Deaths", "Hospital Deaths"))
+
+ggplot(race_TestsDeaths, aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population, Cases, and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Race/Ethnicity") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAndDeaths-withHospital-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+
+### Race Breakdown (admitted) by EMS Region
+
+ems_race <- data.frame(table(admitted_all$EMS,admitted_all$race_eth))
+colnames(ems_race) <- c("EMS","race_eth","n")
+
+ems_tot <- aggregate(x=ems_race$n, by=list(ems_race$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","tot")
+
+ems_race <- merge(x=ems_race,y=ems_tot, by.x='EMS',by.y='EMS')
+ems_race$frac <- ems_race$n/ems_race$tot
+
+ems_race$race_eth<- factor(ems_race$race_eth, levels = c("White","Hispanic-Latino","Black","Asian","Native","Other","Unknown","Missing")[c(1,6,4,5,7,8,2,3)])
+
+admit_race <- ems_race
+
+ggplot(ems_race, aes(x=EMS,y=frac*100, fill=race_eth)) + geom_bar(stat="identity",position="stack") +
+  scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) + 
+  ggtitle("Hospitalized Population by Race x EMS") +
+  ylab("%") +
+  geom_hline(yintercept=seq(10,100,10), color = "white", size = 0.1) + scale_y_continuous(breaks=seq(0,100,10))
+
+  ggsave(paste(tag,"_BarPlot_Admissions-byRace-byEMS",extension, sep=""), width = 10, height = 8)
+
+### Adding Admissions to Grid
+
+admit_race$var <- "admissions"
+admit_race$variable <- "frac"
+admit_race <- admit_race[,c(1,2,6,7,5)]
+admit_race$cat <- "Hospitalizations"
+colnames(admit_race) <- colnames(race_TestsDeaths)
+
+race_TestsAdmissionsDeaths <- rbind.data.frame(race_TestsDeaths,admit_race)
+
+race_TestsAdmissionsDeaths$cat <- factor(race_TestsAdmissionsDeaths$cat, levels = c("Population","COVID (+)","Hospitalizations", "Hospital Deaths","Deaths"), labels = c("Population","COVID (+)","Hospitalizations", "Hospital Deaths","Total Deaths"))
+
+ggplot(race_TestsAdmissionsDeaths, aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population, Cases, Admissions, and Deaths","EMS Region:") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Race/Ethnicity") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAdmissionsDeaths-withHospital-byRace-byEMS",extension, sep=""), width = 15, height = 8)
+
+ggplot(race_TestsAdmissionsDeaths[race_TestsAdmissionsDeaths$EMS=="11",], aes(x = cat, y = value*100, fill = race_eth)) + 
+  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ EMS) +
+  xlab("") + ylab("%") + scale_fill_manual(values = wespal[c(1,6,4,5,7,8,2,3)]) +
+  ggtitle("Racial/Ethnic Breakdown of Population, Cases, Admissions, and Deaths","EMS Region:") +
+  #theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(fill="Race/Ethnicity") + 
+  geom_hline(yintercept = seq(5,100,5),color="white",size=0.2)
+
+ggsave(paste(tag,"_BarPlot_Population_Vs_TestsAdmissionsDeaths-withHospital-byRace-byEMS-EMS-11-Only",extension, sep=""), width = 12, height = 9)
+```
+
+
+```{r}
+colnames(toplot_eth) <- c("EMS","race_eth","perc_pop")
+
+positive_disparity <- merge(x=ems_race,y=toplot_eth,by=c('EMS','race_eth'))
+
+positive_disparity$change <- positive_disparity$frac/positive_disparity$perc_pop
+
+positive_disparity$norm_to_white <- NA
+
+for (i in 1:nrow(positive_disparity)){
+  ref <- positive_disparity$change[which((positive_disparity$EMS == positive_disparity$EMS[i]) & positive_disparity$race_eth == "White")]
+ positive_disparity$norm_to_white[i] <- positive_disparity$change[i]/ref
+}
+
+positive_disparity$race_eth <- factor(positive_disparity$race_eth, levels=c("White","Hispanic-Latino","Black","Asian","Native","Other")[c(1,6:4,2,3)])
+
+disp_plot <- positive_disparity[which(positive_disparity$race_eth %in% c("White","Black","Hispanic-Latino")),]
+disp_plot$race_eth <- factor(disp_plot$race_eth, levels=c("White","Black","Hispanic-Latino"))
+
+ggplot(disp_plot, aes(x=EMS,y=norm_to_white,fill=race_eth)) + geom_bar(stat="identity", position="dodge") + 
+  scale_fill_manual(values=wespal[c(1,3,2)]) + 
+  ggtitle("Ratio of % Positive Tests : % Population by Race and EMS","Relative to White") + 
+  xlab("EMS") + 
+  ylab("Ratio") + 
+  labs(fill="Comparison") + 
+  geom_hline(yintercept = 1,linetype=2)
+
+ggsave(paste(tag,"_barplot_RelativePositiveTests_byEMS_Black-Latino-White",extension, sep=""),width=10,height=8)
+
+```
+
+
+### Race/Ethnicity Data Completeness
+
+```{r}
+a <- as.data.frame(table(tested$EMS,tested$race_eth))
+colnames(a) <- c("EMS","race_eth","n")
+
+ems_tot <- aggregate(a$n, by = list(a$EMS), FUN = sum)
+colnames(ems_tot) <- c("EMS","total")
+
+a <- subset(a, a$race_eth %in% c("Missing","Unknown"))
+
+a <- merge(a,ems_tot,by="EMS",all=F)
+a$pct <- a$n/a$total*100
+
+theme_set(theme_bw(base_size=18))
+ggplot(a, aes(x= EMS, y=pct, fill=race_eth)) + geom_bar(stat="identity", position = "stack") + 
+  ggtitle("Incomplete Race/Ethnicity Data, by EMS") + 
+  ylab("%") + 
+  labs(fill="Race") + 
+  scale_fill_manual(values = wespal[c(7,8)]) + ylim(0,50)
+
+ggsave(paste(tag,"_barplot_IncompleteRace_byEMS",extension, sep=""),width=10,height=8)
+
+a <- as.data.frame(table(tested_with_age$age_group,tested_with_age$race_eth))
+colnames(a) <- c("age_group","race_eth","n")
+
+age_group_tot <- aggregate(a$n, by = list(a$age_group), FUN = sum)
+colnames(age_group_tot) <- c("age_group","total")
+
+a <- subset(a, a$race_eth %in% c("Missing","Unknown"))
+
+a <- merge(a,age_group_tot,by="age_group",all=F)
+a$pct <- a$n/a$total*100
+
+a$age_group <- factor(a$age_group, levels = c("Under 21", "21-30","31-40","41-50","51-60","61-70","71-80","Over 80"))
+ggplot(a, aes(x= age_group, y=pct, fill=race_eth)) + geom_bar(stat="identity", position = "stack") + 
+  ggtitle("Incomplete Race/Ethnicity Data, by Age Group") + 
+  ylab("%") + 
+  xlab("Age Group") +
+  labs(fill="Race") + 
+  scale_fill_manual(values = wespal[c(7,8)]) + ylim(0,50)
+
+ggsave(paste(tag,"_barplot_IncompleteRace_byAge",extension, sep=""),width=10,height=8)
+
+
+```
+
+### CFR by Race & Restore Region
+
+```{r}
+
+tested$RR <- NA
+tested$RR[tested$EMS %in% c("1","2")] <- "North-Central"
+tested$RR[tested$EMS %in% c("3","6")] <- "Central"
+tested$RR[tested$EMS %in% c("4","5")] <- "Southern"
+tested$RR[tested$EMS %in% c("7","8","9","10","11")] <- "Northeast"
+
+tested$RR <- as.factor(tested$RR)
+
+races <- c()
+rrs <- c()
+ns <- c()
+gs <- c()
+fs <- c()
+
+tested$race_for_cfr_plot <- "Other/NA"
+tested$race_for_cfr_plot[tested$race_eth=="White"] <- "White"
+tested$race_for_cfr_plot[tested$race_eth=="Black"] <- "Black"
+tested$race_for_cfr_plot[tested$race_eth=="Hispanic-Latino"] <- "Latinx"
+
+tested$race_for_cfr_plot <- factor(tested$race_for_cfr_plot)
+
+
+tested_under70 <- subset(tested, !(tested$age_group %in% c("71-80","Over 80")) & tested$age_group != "")
+#table(tested_under70$age_group,useNA = 'ifany')
+
+tested_june1 <- subset(tested_under70, tested_under70$specimen_collection >= "2020-06-01")
+
+
+for(i in 1:length(levels(tested_under70$RR))) 
+  {
+  
+  for (j in 1:length(levels(tested_under70$race_for_cfr_plot)))
+  {
+    re <- levels(tested_under70$race_for_cfr_plot)[j]
+    region <- levels(tested_under70$RR)[i]
+    
+    a <- subset(tested_under70, tested_under70$RR == region) # Just region
+    
+    b <- subset(a, a$race_for_cfr_plot == re) # Just race
+    
+    s <- subset(b, b$id %in% deceased$id) # Just deaths
+    
+    g <- nrow(b) #All + by race within region
+    n <- nrow(s) #Deaths within group
+    f <- n/g
+    
+      races <- c(races,re)
+      rrs <- c(rrs,region)
+      ns <- c(ns,n)
+      gs <- c(gs,g)
+      fs <- c(fs,f)
+    
+  }
+  
+}
+
+restore_cfr <- data.frame(races,rrs,gs,ns,fs)
+restore_cfr$races <- factor(restore_cfr$races,levels=c("White","Latinx","Black","Other/NA"))
+
+theme_set(theme_bw(base_size=12))
+ggplot(data=restore_cfr, aes(x=races,y=fs,fill=races)) + 
+  geom_bar(stat='identity',position='dodge') + 
+  scale_fill_manual(values = wespal[c(1:3,5)]) +
+  facet_wrap(~factor(rrs), scales="free_y") +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("CFR by Race and Restore Region", "Age ≤ 70") +
+  labs(fill="Race/Ethnicity") + xlab("") + ylab("(# Deaths / # Cases)")
+ggsave(paste(tag,"CFR_byRace_byRestoreRegion_free_y",extension,sep="_"),height=10,width=10)
+
+ggplot(data=restore_cfr, aes(x=races,y=fs,fill=races)) + 
+  geom_bar(stat='identity',position='dodge') + 
+  facet_wrap(~factor(rrs)) +
+  scale_fill_manual(values = wespal[c(1:3,5)]) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("CFR by Race and Restore Region", "Age ≤ 70") +
+  labs(fill="Race/Ethnicity") + xlab("") + ylab("(# Deaths / # Cases)") + 
+  geom_text(aes(label=paste(format(gs,big.mark = ','),"Cases"),y=fs), size=4, stat="identity", position=position_dodge(0.9),vjust=-0.2) +
+  geom_text(aes(label=paste(format(ns,big.mark = ','),"Deaths"),y=fs), size=4, stat="identity", position=position_dodge(0.9),vjust=-2) +ylim(0,0.05)
+ggsave(paste(tag,"CFR_byRace_byRestoreRegion",extension,sep="_"),height=10,width=10)
+
+
+for(i in 1:length(levels(tested_june1$RR))) 
+  {
+  
+  for (j in 1:length(levels(tested_june1$race_for_cfr_plot)))
+  {
+    re <- levels(tested_june1$race_for_cfr_plot)[j]
+    region <- levels(tested_june1$RR)[i]
+    
+    a <- subset(tested_june1, tested_june1$RR == region) # Just region
+    
+    b <- subset(a, a$race_for_cfr_plot == re) # Just race
+    
+    s <- subset(b, b$id %in% deceased$id) # Just deaths
+    
+    g <- nrow(b) #All + by race within region
+    n <- nrow(s) #Deaths within group
+    f <- n/g
+    
+      races <- c(races,re)
+      rrs <- c(rrs,region)
+      ns <- c(ns,n)
+      gs <- c(gs,g)
+      fs <- c(fs,f)
+    
+  }
+  
+}
+
+
+
+restore_cfr_june1 <- data.frame(races,rrs,gs,ns,fs)
+restore_cfr_june1$races <- factor(restore_cfr_june1$races,levels=c("White","Latinx","Black","Other/NA"))
+
+theme_set(theme_bw(base_size=12))
+ggplot(data=restore_cfr_june1, aes(x=races,y=fs,fill=races, label = ns)) + 
+  geom_bar(stat='identity',position='dodge') + 
+  scale_fill_manual(values = wespal[c(1:3,5)]) +
+  facet_wrap(~factor(rrs), scales="free_y") +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("CFR by Race and Restore Region", "Age ≤ 70, since June 1") +
+    labs(fill="Race/Ethnicity") + xlab("") + ylab("(# Deaths / # Cases)")
+ggsave(paste(tag,"CFR-sinceJune01-_byRace_byRestoreRegion_free_y",extension,sep="_"),height=10,width=10)
+
+ggplot(data=restore_cfr_june1, aes(x=races,y=fs,fill=races)) + geom_bar(stat='identity',position='dodge') + 
+  scale_fill_manual(values = wespal[c(1:3,5)]) +
+  facet_wrap(~factor(rrs)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("CFR by Race and Restore Region", "Age ≤ 70, since June 1") +
+  labs(fill="Race/Ethnicity") + xlab("") + ylab("(# Deaths / # Cases)")
+ggsave(paste(tag,"CFR-sinceJune01-_byRace_byRestoreRegion",extension,sep="_"),height=10,width=10)
+```
+
+### Incomplete Admission Data
+
+```{r}
+test_admit <- tested
+
+test_admit$admitted_to_hospital[which(test_admit$admission_date!="")] <- "Yes"
+test_admit$admitted_to_hospital[which(test_admit$admitted_to_hospital=="")] <- "Missing"
+
+test_admit_race <- data.frame(table(test_admit$admitted_to_hospital,test_admit$race_eth))
+colnames(test_admit_race) <- c("admit_status","race_eth","n")
+test_admit_race$admit_status <- factor(test_admit_race$admit_status,levels=c("Yes","No","Missing","Unknown"))
+
+ggplot(test_admit_race, aes(x=race_eth,y=n, fill=admit_status)) + geom_bar(stat='identity', position='fill') +
+   scale_fill_manual(values=c("#4e8a36","#e05f3f","#526db3","#909299")) + ylab("%") + ggtitle("Reporting Admission Status by Race/Ethnicity") + 
+   scale_y_continuous(labels = scales::percent)
+
+ggsave(paste(tag,"_Admitted-to-Hospital_Completeness_byRaceEth-pct",extension),width=10,height=8)
+
+ggplot(test_admit_race, aes(x=race_eth,y=n, fill=admit_status)) + geom_bar(stat='identity', position='dodge') +
+   scale_fill_manual(values=c("#4e8a36","#e05f3f","#526db3","#909299")) + ylab("%") + ggtitle("Reporting Admission Status by Race/Ethnicity") + facet_wrap(~race_eth,ncol=4,scales="free",drop=T) +
+   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+ggsave(paste(tag,"_Admitted-to-Hospital_Completeness_byRaceEth-raw",extension),width=10,height=8)
+
+
+# by EMS
+
+test_admit_ems <- data.frame(table(test_admit$admitted_to_hospital,test_admit$EMS))
+colnames(test_admit_ems) <- c("admit_status","ems","n")
+test_admit_ems$admit_status <- factor(test_admit_ems$admit_status,levels=c("Yes","No","Missing","Unknown"))
+test_admit_ems$ems <- factor(test_admit_ems$ems, levels = c("4","5","3","6","1","2","7","8","9","10","11"))
+
+ggplot(test_admit_ems, aes(x=ems,y=n, fill=admit_status)) + geom_bar(stat='identity', position='fill') +
+   ylab("%") + ggtitle("Reporting Admission Status by EMS") + 
+   scale_y_continuous(labels = scales::percent) + scale_fill_manual(values=c("#4e8a36","#e05f3f","#526db3","#909299"))
+
+ggsave(paste(tag,"_Admitted-to-Hospital_Completeness_byEMS-pct",extension),width=10,height=8)
+
+ggplot(test_admit_ems, aes(x=ems,y=n, fill=admit_status)) + geom_bar(stat='identity', position='dodge') +
+   scale_fill_manual(values=c("#4e8a36","#e05f3f","#526db3","#909299")) + ylab("%") + ggtitle("Reporting Admission Status by EMS") + facet_wrap(~ems,ncol=6,scales="free",drop=T) +
+   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+ggsave(paste(tag,"_Admitted-to-Hospital_Completeness_byEMS-raw",extension),width=10,height=8)
+
+```
+
+
+# Maps of IL  race
+```{r}
+### Zip by Majority Race
+
+merged_IL_cases$majority <- factor(merged_IL_cases$majority, levels = c("White","Hispanic","Black","None"))
+merged_IL_cases %>%
+  mutate(popup = str_c("<strong>", GEOID10, "</strong>",
+                       "<br/>",
+                       "Majority Race: ", majority,
+                       "<br/>",
+                       "Population: ", population) %>%
+           map(htmltools::HTML)) %>%
+  leaflet() %>%
+  #setView(lng = -87.618994, lat = 41.875619, zoom = 10) %>%
+  addPolygons(label = ~popup,
+              fillColor = wespal[c(4,2,3,9)][merged_IL_cases$majority],
+              color = "#444444",
+              weight = 1,
+              smoothFactor = 0.5,
+              opacity = 1.0,
+              fillOpacity = 0.5,
+              highlightOptions = highlightOptions(color = "white",
+              weight = 2,
+              bringToFront = TRUE))
+
+```
+
