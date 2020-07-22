@@ -27,10 +27,10 @@ def pop_by_ems(ems_shp, census_tract_shp) :
 
     df = pd.read_csv(os.path.join(pop_path, 'IL2018_Households'))
 
-    pop_df = pd.DataFrame( { 'EMS' : ems_shp['REGION'],
+    pop_df = pd.DataFrame( { 'covid_region' : ems_shp['new_restor'],
                              'population' : [count_total_pop_for_ems(df, x, census_tract_shp) for x in ems_shp['geometry']]})
 
-    pop_df.to_csv(os.path.join(datapath, 'EMS Population', 'EMS_population_from_RTI.csv'), index=False)
+    pop_df.to_csv(os.path.join(datapath, 'EMS Population', 'covid_region_population_from_RTI.csv'), index=False)
     print(np.sum(pop_df['population']))
 
 
@@ -153,4 +153,7 @@ def ems_race_and_ethnicity_structure() :
 if __name__ == '__main__' :
 
     # ems_race_and_ethnicity_structure()
-    ems_pop_structure()
+    # ems_pop_structure()
+    regions_shp = gpd.read_file(os.path.join(shp_path, 'covid_regions', 'covid_regions.shp'))
+    census_tract_shp = gpd.read_file(os.path.join(shp_path, 'tl_2019_17_tract', 'tl_2019_17_tract.shp'))
+    pop_by_ems(regions_shp, census_tract_shp)

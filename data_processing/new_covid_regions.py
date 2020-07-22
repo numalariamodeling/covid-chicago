@@ -39,9 +39,13 @@ if __name__ == '__main__' :
         if county == 'COOK' :
             intersection = poly.intersection(chicago_poly)
             suburb_cook_poly = poly.difference(intersection)
-            break
+        if county == 'DUPAGE' :
+            intersection = poly.intersection(chicago_poly)
+            dupage_poly = poly.difference(intersection)
+
     county_shp = county_shp.set_index('COUNTY_NAM')
     county_shp.at['COOK', 'geometry'] = suburb_cook_poly
+    county_shp.at['DUPAGE', 'geometry'] = dupage_poly
     county_shp = county_shp.reset_index()
     county_shp.loc[county_shp['COUNTY_NAM'] == 'DEWITT', 'COUNTY_NAM'] = 'DE WITT'
     county_shp = pd.concat([county_shp, ems_shp], sort=True)
