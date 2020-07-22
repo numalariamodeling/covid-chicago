@@ -170,7 +170,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
         ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
     ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'confirmed_covid_on_vents']
+                          'confirmed_covid_icu', 'covid_non_icu']
     ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
@@ -181,14 +181,14 @@ def compare_ems(exp_name, ems=0, source='EMR') :
 
     df['ventilators'] = get_vents(df['crit_det'].values)
     df['critical_with_suspected'] = df['critical']
-    channels = ['new_detected_deaths', 'crit_det', 'ventilators']
+    #channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det']
     ref_df_emr = ref_df
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
     #plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
                      #plot_path=plot_path, first_day=first_day)
     #plt.show()
-    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200520_jg_deceased_date_ems.csv'))
-    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200520_jg_admission_date_ems.csv'))
+    ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200708_jg_deceased_date_ems.csv'))
+    ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200708_jg_admission_date_ems.csv'))
     if ems > 0 :
         ref_df1 = ref_df1[ref_df1['EMS'] == ems]
         ref_df2 = ref_df2[ref_df2['EMS'] == ems]
@@ -210,9 +210,9 @@ def compare_ems(exp_name, ems=0, source='EMR') :
                      #plot_path=plot_path, first_day=first_day)
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
     ref_df = ref_df.sort_values('date')
-    channels = ['new_detected_deaths', 'crit_det', 'ventilators','new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
+    channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det','new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'confirmed_covid_on_vents','deaths', 'deaths', 'admissions']
+                          'confirmed_covid_icu', 'covid_non_icu','deaths', 'deaths', 'admissions']
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Ventilators (EMR)','New Detected\nDeaths (LL)','New Deaths (LL)', 'New Detected\nHospitalizations (LL)']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
     plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=5000,

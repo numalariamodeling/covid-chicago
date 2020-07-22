@@ -9,17 +9,17 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
-    'EMS_1':  [250,0,0,0,300,600]
-    'EMS_2':  [250,0,0,0,300,600]
-    'EMS_3':  [250,0,0,0,300,600]
-    'EMS_4':  [250,0,0,0,300,600]
-    'EMS_5':  [250,0,0,0,300,600]
-    'EMS_6':  [250,0,0,0,300,600]
-    'EMS_7':  [250,0,0,0,300,600]
-    'EMS_8':  [250,0,0,0,300,600]
-    'EMS_9':  [250,0,0,0,300,600]
-    'EMS_10': [250,0,0,0,300,600]
-    'EMS_11': [250,200,60,0,100,540]
+    'EMS_1':  [400,320,100,0,1000,5400]
+    'EMS_2':  [400,320,100,0,1000,5400]
+    'EMS_3':  [400,320,100,0,1000,5400]
+    'EMS_4':  [400,320,100,0,1000,5400]
+    'EMS_5':  [400,320,100,0,1000,5400]
+    'EMS_6':  [400,320,100,0,1000,5400]
+    'EMS_7':  [400,320,100,0,1000,5400]
+    'EMS_8':  [400,320,100,0,1000,5400]
+    'EMS_9':  [400,320,100,0,1000,5400]
+    'EMS_10': [400,320,100,0,1000,5400]
+    'EMS_11': [400,320,100,0,1000,5400]
 fixed_parameters_global:
   initialAs:
     expand_by_age: True
@@ -30,9 +30,9 @@ fixed_parameters_global:
     function_kwargs: {'x1': N, 'x2': initialAs}
   C:  # inside (outside is homogenerous, so no contact matrix)
     matrix:  # Unnormalized contact matrix 
-      - [1.6,0.21,1.0]
-      - [0.21,0.116,0]
-      - [1.0,0,0]
+      - [0.8,0.105,0.5]
+      - [0.105,0.058,0]
+      - [0.5,0,0]
 sampled_parameters:
   time_to_infectious:
     np.random: uniform
@@ -51,22 +51,22 @@ sampled_parameters:
     function_kwargs: {'low':0.016, 'high': 0.146}
   fraction_critical_residents:
     np.random: uniform
-    function_kwargs: {'low':0.226, 'high': 0.308}
+    function_kwargs: {'low':0.149, 'high': 0.226}
   fraction_critical_staff:
     np.random: uniform
-    function_kwargs: {'low':0.128, 'high': 0.308}
+    function_kwargs: {'low':0.155, 'high': 0.286}
   fraction_critical_visitors:
     np.random: uniform
-    function_kwargs: {'low':0.185, 'high': 0.308}
+    function_kwargs: {'low':0.155, 'high': 0.286}
   fraction_dead_residents:
     np.random: uniform
-    function_kwargs: {'low':0.223, 'high': 0.241}
+    function_kwargs: {'low':0.241, 'high': 0.375}
   fraction_dead_staff:
     np.random: uniform
-    function_kwargs: {'low':0.016, 'high': 0.139}
+    function_kwargs: {'low':0.016, 'high': 0.164}
   fraction_dead_visitors:
     np.random: uniform
-    function_kwargs: {'low':0.03, 'high': 0.139}
+    function_kwargs: {'low':0.016, 'high': 0.164}
   fraction_symptomatic_residents:
     np.random: uniform
     function_kwargs: {'low':0.997, 'high': 0.997}

@@ -9,85 +9,106 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
+from plotting.colors import load_color_palette
 
 
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+plotdir = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
 
 
-ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
+def plot_emresource(scale='') :
 
-sxmin='2020-03-24'
-xmin = datetime.strptime(sxmin, '%Y-%m-%d')
-xmax = datetime.today()
-datetoday=xmax.strftime('%y%m%d')
+    ems_regions = {
+        'northcentral' : [1, 2],
+        'northeast' : [7, 8, 9, 10, 11],
+        'central' : [3, 6],
+        'southern' : [4, 5]
+    }
 
-ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
-ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
-first_day=datetime.strptime('2020-03-24','%Y-%m-%d')
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
+                                      'emresource_by_region.csv'))
 
-eachname=['confirmed_covid_deaths_prev_24h','confirmed_covid_icu','confirmed_covid_on_vents','suspected_and_confirmed_covid_icu']
+    sxmin = '2020-03-24'
+    xmin = datetime.strptime(sxmin, '%Y-%m-%d')
+    xmax = datetime.today()
+    datetoday = xmax.strftime('%y%m%d')
+
+    ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
+    ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
+    first_day = datetime.strptime('2020-03-24', '%Y-%m-%d')
+
+    ref_df = ref_df.rename(columns={
+        'confirmed_covid_deaths_prev_24h' : 'deaths',
+        'confirmed_covid_icu' : 'ICU conf',
+        'confirmed_covid_on_vents' : 'vents conf',
+        'suspected_and_confirmed_covid_icu' : 'ICU conf+susp',
+        'covid_non_icu' : 'non ICU'
+    })
+
+    channels = ['ICU conf+susp', 'ICU conf', 'vents conf', 'deaths', 'non ICU']
+    ref_df = ref_df[['date', 'region'] + channels]
+
+    palette = load_color_palette('wes')
+    formatter = mdates.DateFormatter("%m-%d")
+
+    fig_all = plt.figure(figsize=(10,8))
+    fig = plt.figure(figsize=(14,10))
+    fig.subplots_adjust(left=0.07, right=0.97, top=0.95, bottom=0.05, hspace=0.25)
+
+    def format_plot(ax) :
+        ax.set_xlim(xmin, )
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        if scale == 'log' :
+            ax.set_yscale('log')
+
+    for ri, (restore_region, ems_list) in enumerate(ems_regions.items()) :
+        ax_all = fig_all.add_subplot(2,2,ri+1)
+        ax = fig.add_subplot(4,6,6*ri+1)
+
+        pdf = ref_df[ref_df['region'].isin(ems_list)].groupby('date').agg(np.sum).reset_index()
+        for (c,name) in enumerate(channels):
+            if name == 'non ICU' :
+                df = pdf[pdf['date'] >= date(2020,5,6)]
+            else :
+                df = pdf
+            df['moving_ave'] = df[name].rolling(window = 7, center=True).mean()
+            ax_all.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
+            ax_all.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
+            ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
+            ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
+        ax_all.set_title(restore_region)
+        format_plot(ax_all)
+        if ri == 1 :
+            ax_all.legend()
+
+        format_plot(ax)
+        ax.set_ylabel(restore_region)
+        ax.set_title('total')
+
+        for ei, ems in enumerate(ems_list) :
+            ax = fig.add_subplot(4,6,6*ri+1+ei+1)
+            df = ref_df[ref_df['region'] == ems]
+            for (c,name) in enumerate(channels):
+                df['moving_ave'] = df[name].rolling(window=7, center=True).mean()
+                ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
+                ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
+            ax.set_title('EMS %d' % ems)
+            format_plot(ax)
+            if ems == 2 :
+                ax.legend(bbox_to_anchor=(1.5, 1))
+
+    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.png' % scale))
+    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.pdf' % scale), format='PDF')
+    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region_%s.png' % scale))
+    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region_%s.pdf' % scale), format='PDF')
+
 
 if __name__ == '__main__' :
-    fig = plt.figure(figsize=(10,6))
-    for b,region_num in enumerate([1,2]):
-        ax = fig.add_subplot(1,2,b+1)
-        plt.xlim([xmin,xmax])
-    
-        for (c,name) in enumerate(eachname):
-            df=ref_df[ref_df['region']==region_num]
-            ax.plot(df['date'],df[name],label=name)
-        plt.legend()
-        plt.legend(loc='upper left')
-        plt.title('EMS'+str(region_num))
-        plt.gcf().autofmt_xdate()
-    plt.suptitle('Northwest',fontsize=20)
-    #plt.show()
-    fig.savefig(os.path.join(datapath, 'covid_chicago','Plots + Graphs', 'Emresource Plots','EMSresources_northwest_'+datetoday+'.pdf'), format='PDF')
 
-    fig = plt.figure(figsize=(10,6))
-    for b,region_num in enumerate([4,5]):
-        ax = fig.add_subplot(1,2,b+1)
-        plt.xlim([xmin,xmax])
-    
-        for (c,name) in enumerate(eachname):
-            df=ref_df[ref_df['region']==region_num]
-            ax.plot(df['date'],df[name],label=name)
-        plt.legend()
-        plt.title('EMS'+str(region_num))
-        plt.gcf().autofmt_xdate()
-    
-    plt.suptitle('Southern',fontsize=20)
-    fig.savefig(os.path.join(datapath, 'covid_chicago','Plots + Graphs', 'Emresource Plots','EMSresources_southern_'+datetoday+'.pdf'), format='PDF')
-
-    fig = plt.figure(figsize=(10,6))
-    for b,region_num in enumerate([3,6]):
-        ax = fig.add_subplot(1,2,b+1)
-        plt.xlim([xmin,xmax])
-    
-        for (c,name) in enumerate(eachname):
-            df=ref_df[ref_df['region']==region_num]
-            ax.plot(df['date'],df[name],label=name)
-        plt.legend()
-        plt.title('EMS'+str(region_num))
-        plt.gcf().autofmt_xdate()
-    
-    plt.suptitle('Central',fontsize=20)
-    fig.savefig(os.path.join(datapath, 'covid_chicago','Plots + Graphs', 'Emresource Plots','EMSresources_central_'+datetoday+'.pdf'), format='PDF')
-
-    fig = plt.figure(figsize=(14,6))
-    for b,region_num in enumerate([7,8,9,10,11]):
-        ax = fig.add_subplot(1,5,b+1)
-        for (c,name) in enumerate(eachname):
-            df=ref_df[ref_df['region']==region_num]
-            ax.plot(df['date'],df[name],label=name)
-    
-        plt.title('EMS'+str(region_num))
-        plt.xlim([xmin,xmax])
-        plt.gcf().autofmt_xdate()
-    plt.legend(loc='lower right')
-    
-    plt.suptitle('Northeast',fontsize=20)
-    fig.savefig(os.path.join(datapath, 'covid_chicago','Plots + Graphs', 'Emresource Plots','EMSresources_northeast_'+datetoday+'.pdf'), format='PDF')
+    plot_emresource('nolog')
+    plot_emresource('log')
+    plt.show()

@@ -14,7 +14,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
-simdate = "20200520"
+simdate = "20200624"
 
 plot_first_day = pd.to_datetime('2020/3/1')
 plot_last_day = pd.to_datetime('2021/4/1')
@@ -24,10 +24,10 @@ def get_scenarioName(exp_suffix) :
     if exp_suffix == "reopen": scenarioName = "reopen_gradual"
     if exp_suffix == "gradual": scenarioName = "reopen_gradual"
     if exp_suffix == "interventionStop": scenarioName = "endsip"
-    if exp_suffix == "scenario3": scenarioName = "baseline"
+    if exp_suffix == "scen3": scenarioName = "baseline"
     if exp_suffix == "neverSIP": scenarioName = "neversip"
-    if exp_suffix == "interventionSTOPadj30": scenarioName = "june1partial30"
-    if exp_suffix == "interventionSTOPadj10": scenarioName = "june1partial10"
+    if exp_suffix == "stopSIP30": scenarioName = "july1partial30"
+    if exp_suffix == "stopSIP10": scenarioName = "july1partial10"
 
     return(scenarioName)
 
@@ -105,7 +105,7 @@ def plot_sim(dat, suffix) :
 
 if __name__ == '__main__' :
 
-    stem = "interventionSTOPadj10"
+    stem = "20200624_IL_EMS_stopSIP10_changeTDdetSym60AsP30"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     #exp_name = "20200517_IL_tD_EMSgrp_reopen"
 

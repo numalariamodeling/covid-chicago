@@ -9,3 +9,4 @@ data/*
 .idea/
 
 _temp/
+Rfiles/.Rproj.user/
