@@ -12,13 +12,13 @@ from shapely.geometry import mapping, Point, Polygon
 mpl.rcParams['pdf.fonttype'] = 42
 
 
-idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling'
+idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 line_list_fname = os.path.join(idph_data_path,
-                               'LL_200520.csv')
-location_list_fname = os.path.join(idph_data_path,
-                                   'LL_200520_location_mapping.csv')
+                               'LL_200710.csv')
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'LL_200520_JGmerged.csv')
+                                       'LL_200710_JGcleaned.csv')
+cleaned_deduped_fname = os.path.join(idph_data_path,
+                                     'LL_200710_JGcleaned_no_race.csv')
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs')
@@ -37,15 +37,6 @@ def load_cleaned_line_list() :
     return df
 
 
-def merge_locations() :
-
-    df = load_line_list()
-    ldf = pd.read_csv(location_list_fname)
-    ldf = ldf[['id', 'ems_region', 'restore_region']]
-    df = pd.merge(left=df, right=ldf, on='id')
-    df.to_csv(cleaned_line_list_fname, index=False)
-
-
 def print_num_missing_rows() :
 
     df = load_line_list()
@@ -62,7 +53,7 @@ def compare_death_plots() :
     df = df.groupby('deceased_date')['id'].agg(len).reset_index()
     df = df.rename(columns={'id' : 'daily_deaths_line_list',
                             'deceased_date' : 'Deceased Date'})
-    # df.to_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_line_list_200515.csv'), index=False)
+    # df.to_csv(os.path.join(box_data_path, 'Cleaned Data', 'daily_deaths_line_list_200522.csv'), index=False)
     # exit()
 
     df['Deceased Date'] = pd.to_datetime(df['Deceased Date'])
@@ -183,13 +174,25 @@ def get_ems_counties_and_zips() :
                                                                  60732, 62711, 60116, 61604, 60598, 61764, 62353,
                                                                  61032, 62233, 62526, 61603, 61832, 62901, 61525,
                                                                  62259, 62650, 60197, 60864, 62702, 60206, 60801,
-                                                                 60822],
+                                                                 60822, 61103, 62206, 61614, 60058, 62040, 60400,
+                                                                 62002, 60824, 60159, 61341, 60809, 60146, 61821,
+                                                                 61937, 61085, 60495, 62226, 60997, 60059, 60880,
+                                                                 61282, 61239, 62242, 61011, 61435, 62082, 62992,
+                                                                 60037, 61401, 60957, 60840, 61008, 61804, 62208,
+                                                                 62230, 61111, 60290, 61068, 60530, 60353, 62265,
+                                                                 62615, 62232, 62220, 60808, 60208, 61544, 60001],
                                                         'ems' : [7, 7, 8, 8, 11, 2, 7,
                                                                  10, 1, 2, 3, 8, 5, 10,
                                                                  7, 3, 9, 2, 8, 2, 3,
                                                                  1, 4, 6, 2, 6, 5, 2,
                                                                  4, 3, 8, 8, 3, 10, 8,
-                                                                 8]})], sort=True)
+                                                                 8, 1, 4, 2, 10, 4, 7,
+                                                                 4, 7, 8, 2, 7, 8, 6,
+                                                                 6, 1, 7, 4, 6, 9, 7,
+                                                                 2, 2, 4, 1, 2, 3, 5,
+                                                                 10, 2, 6, 8, 1, 6, 4,
+                                                                 4, 1, 10, 1, 1, 8, 4,
+                                                                 3, 4, 4, 7, 10, 2, 9]})], sort=True)
     ems_zip_df['zip'] = ems_zip_df['zip'].astype(int)
     ems_zip_df = ems_zip_df.sort_values(by='zip')
 
@@ -200,8 +203,8 @@ def apply_ems() :
 
     ems_county_df, ems_zip_df = get_ems_counties_and_zips()
     df = load_line_list()
-    df.loc[df['County at Onset'] == 'St Clair', 'County at Onset'] = 'St. Clair'
-    df.loc[df['County at Onset'] == 'Jodaviess', 'County at Onset'] = 'Jo daviess'
+    df.loc[df['county_at_onset'] == 'St Clair', 'county_at_onset'] = 'St. Clair'
+    df.loc[df['county_at_onset'] == 'Jodaviess', 'county_at_onset'] = 'Jo daviess'
 
     def set_ems_in_line_list(county, zipcode, ems_county_df, ems_zip_df) :
         if isinstance(county, str) and county.upper() in ems_county_df['county'].values :
@@ -222,8 +225,8 @@ def apply_ems() :
         except ValueError :
             return np.nan
 
-    df['EMS'] = df.apply(lambda x : set_ems_in_line_list(x['County at Onset'],
-                                                         x['Patient Home Zip'],
+    df['EMS'] = df.apply(lambda x : set_ems_in_line_list(x['county_at_onset'],
+                                                         x['patient_home_zip'],
                                                          ems_county_df,
                                                          ems_zip_df), axis=1)
     df.to_csv(cleaned_line_list_fname, index=False)
@@ -254,15 +257,22 @@ if __name__ == '__main__' :
     # df = compare_death_plots()
     # exit()
 
-    merge_locations()
-    df = load_cleaned_line_list()
-    date_col = 'deceased_date'
-    df = df.groupby([date_col, 'ems_region'])['id'].agg(len).reset_index()
-    df = df.rename(columns={'id' : 'cases',
-                            date_col : 'date',
-                            'ems_region' : 'EMS'})
-    df = df.sort_values(by=['date', 'EMS'])
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200520_jg_%s_ems.csv' % date_col), index=False)
+    # apply_ems()
+    # exit()
 
-    # df.loc[df['County at Onset'] == 'St Clair', 'County at Onset'] = 'St. Clair'
-    # df.loc[df['County at Onset'] == 'Jodaviess', 'County at Onset'] = 'Jo daviess'
+    # merge_locations()
+    df = load_cleaned_line_list()
+    del df['race']
+    del df['ethnicity']
+    df = df.drop_duplicates()
+    df.to_csv(cleaned_deduped_fname, index=False)
+
+    date_col = 'admission_date'
+    df = df.groupby([date_col, 'EMS'])['id'].agg(len).reset_index()
+    df = df.rename(columns={'id' : 'cases',
+                            date_col : 'date'})
+    df = df.sort_values(by=['date', 'EMS'])
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200710_jg_%s_ems.csv' % date_col), index=False)
+
+    # df.loc[df['county_at_onset'] == 'St Clair', 'county_at_onset'] = 'St. Clair'
+    # df.loc[df['county_at_onset'] == 'Jodaviess', 'county_at_onset'] = 'Jo daviess'
