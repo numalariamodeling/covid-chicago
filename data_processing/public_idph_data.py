@@ -301,7 +301,7 @@ def plot_agg_by_region() :
 
         ax = fig.add_subplot(3,4,4+ri+1)
         colorbin = 1
-        cdf = cdf[cdf['update_date'] >= date(2020,5,15)]
+        cdf = cdf[cdf['update_date'] >= date(2020,5,3)]
         cdf['moving_ave'] = cdf['daily_test'].rolling(window=7, center=False).mean()
         ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=palette[colorbin])
         ax.fill_between(cdf['update_date'].values, [0]*len(cdf['moving_ave']), cdf['moving_ave'],
@@ -444,7 +444,7 @@ def plot_agg_by_new_region() :
 
         ax = fig.add_subplot(6,6,6+start_index+1)
         colorbin = 1
-        cdf = cdf[cdf['update_date'] >= date(2020,5,15)]
+        cdf = cdf[cdf['update_date'] >= date(2020,5,3)]
         cdf['moving_ave'] = cdf['daily_test'].rolling(window=7, center=False).mean()
         ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=palette[colorbin])
         ax.fill_between(cdf['update_date'].values, [0]*len(cdf['moving_ave']), cdf['moving_ave'],
@@ -535,9 +535,9 @@ if __name__ == '__main__' :
     # plot_cases_by_county_map()
     # plot_cases_by_county_line()
     # plot_county_line_by_region('restore_region')
-    plot_county_line_by_region('new_restore_region')
-    # plot_agg_by_region()
-    # plot_agg_by_new_region()
+    # plot_county_line_by_region('new_restore_region')
+    plot_agg_by_region()
+    plot_agg_by_new_region()
     # plot_county_scatter()
     # plot_IL_cases()
     # plt.show()

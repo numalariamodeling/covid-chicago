@@ -88,23 +88,10 @@ def aggregate_to_date_spec_collection() :
     df.to_csv(spec_coll_fname, index=False)
 
 
-def plot_EMS_by_line(datafield) :
+def plot_EMS_by_line(colname) :
 
-    if datafield == 'cases' :
-        df = pd.read_csv(spec_coll_fname)
-        colname = 'specimen_collection'
-        plot_title = 'cases by spec coll'
-    elif datafield == 'deaths' :
-        df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_deceased_date_ems.csv' % LL_date))
-        colname = 'cases'
-        plot_title = 'deaths'
-    elif datafield == 'admissions' :
-        df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_admission_date_ems.csv' % LL_date))
-        colname = 'cases'
-        plot_title = 'admissions'
-    else :
-        return
-
+    df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_covidregion.csv' % LL_date))
+    df = df[df['covid_region'].isin(range(1,12))]
     df['date'] = pd.to_datetime(df['date'])
     col = 'moving_ave'
 
@@ -112,22 +99,22 @@ def plot_EMS_by_line(datafield) :
     fig.subplots_adjust(left=0.07, right=0.97, bottom=0.05, top=0.95, hspace=0.3, wspace=0.25)
     palette = sns.color_palette('Set1')
     formatter = mdates.DateFormatter("%m-%d")
-    for e, (ems, edf) in enumerate(df.groupby('EMS')) :
+    for e, (ems, edf) in enumerate(df.groupby('covid_region')) :
         ax = fig.add_subplot(3,4,e+1)
         edf['moving_ave'] = edf[colname].rolling(window=7, center=False).mean()
         max_in_col = np.max(edf[col])
         ax.plot(edf['date'], edf[col], color=palette[0], label=ems)
         ax.fill_between(edf['date'].values, [0]*len(edf[col]), edf[col],
                         color=palette[0], linewidth=0, alpha=0.3)
-        ax.set_title('EMS %d' % ems)
+        ax.set_title('region %d' % ems)
         ax.set_ylim(0, max_in_col*1.05)
         ax.set_xlim(date(2020,3,10), np.max(df['date']))
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         if e%4 == 0 :
-            ax.set_ylabel(plot_title)
-    fig.suptitle(plot_title)
-    plt.savefig(os.path.join(plot_path, 'EMS_%s_%sLL.png' % (datafield, LL_date)))
+            ax.set_ylabel(colname)
+    fig.suptitle(colname)
+    plt.savefig(os.path.join(plot_path, 'covid_region_%s_%sLL.png' % (colname, LL_date)))
 
 
 def format_ax(ax, name) :
@@ -251,26 +238,9 @@ def plot_ratio_county() :
     plt.savefig(os.path.join(plot_path, 'county_weekly_case_ratio.png'))
 
 
-def generate_combo_LL_agg_csv() :
-
-    case_df = pd.read_csv(spec_coll_fname)
-    case_df = case_df.rename(columns={'specimen_collection' : 'cases'})
-    death_df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_deceased_date_ems.csv' % LL_date))
-    death_df = death_df.rename(columns={'cases' : 'deaths'})
-    adm_df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_admission_date_ems.csv' % LL_date))
-    adm_df = adm_df.rename(columns={'cases' : 'admissions'})
-
-    df = pd.merge(left=case_df, right=death_df, on=['date', 'EMS'], how='outer')
-    df = pd.merge(left=df, right=adm_df, on=['date', 'EMS'], how='outer')
-    df = df.fillna(0)
-    df['date'] = pd.to_datetime(df['date'])
-    df = df.sort_values(by='date')
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_ems.csv' % LL_date), index=False)
-
-
 def plot_LL_all_IL() :
 
-    df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_ems.csv' % LL_date))
+    df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_covidregion.csv' % LL_date))
     df = df.groupby('date')[['cases', 'deaths', 'admissions']].agg(np.sum).reset_index()
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
@@ -317,13 +287,12 @@ def combo_LL_emr() :
 
 if __name__ == '__main__' :
 
-    aggregate_to_date_spec_collection()
-    generate_combo_LL_agg_csv()
+    # aggregate_to_date_spec_collection()
     # combo_LL_emr()
     # heatmap()
-    # plot_EMS_by_line('cases')
-    # plot_EMS_by_line('admissions')
-    # plot_EMS_by_line('deaths')
+    plot_EMS_by_line('cases')
+    plot_EMS_by_line('admissions')
+    plot_EMS_by_line('deaths')
     # plot_ratio_ems()
     # plot_ratio_county()
     # plot_LL_all_IL()
