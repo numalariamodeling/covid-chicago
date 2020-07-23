@@ -14,7 +14,7 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
-    'IL': [736370,1124941,619366,698886,417674,788985,1814891,1673408,1970275,1052839,2716921]
+    'IL': [739378,1361816,630987,690786,420308,797973,890876,1674844,1097802,2990057,2716921]
 fixed_parameters_global:
   initialAs:
     expand_by_age: True
@@ -63,14 +63,14 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.200, 'high': 0.200}
         - {'low': 0.160, 'high': 0.160}
-        - {'low': 0.300, 'high': 0.300}
+        - {'low': 0.280, 'high': 0.280}
         - {'low': 0.155, 'high': 0.155}
         - {'low': 0.250, 'high': 0.250}
-        - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.115, 'high': 0.115}
-        - {'low': 0.090, 'high': 0.090}
+        - {'low': 0.200, 'high': 0.200}
+        - {'low': 0.095, 'high': 0.095}
+        - {'low': 0.105, 'high': 0.105}
+        - {'low': 0.110, 'high': 0.110}
         - {'low': 0.130, 'high': 0.130}
-        - {'low': 0.140, 'high': 0.140}
         - {'low': 0.090, 'high': 0.090}
   social_multiplier_4:
     IL:
@@ -78,15 +78,15 @@ sampled_parameters:
       np.random: uniform
       function_kwargs:
         - {'low': 0.140, 'high': 0.140}
-        - {'low': 0.125, 'high': 0.125}
-        - {'low': 0.250, 'high': 0.250}
-        - {'low': 0.155, 'high': 0.155}
-        - {'low': 0.190, 'high': 0.190}
-        - {'low': 0.155, 'high': 0.155}
-        - {'low': 0.105, 'high': 0.105}
+        - {'low': 0.110, 'high': 0.110}
+        - {'low': 0.200, 'high': 0.200}
+        - {'low': 0.135, 'high': 0.135}
+        - {'low': 0.160, 'high': 0.160}
+        - {'low': 0.200, 'high': 0.200}
+        - {'low': 0.095, 'high': 0.095}
         - {'low': 0.085, 'high': 0.085}
+        - {'low': 0.090, 'high': 0.090}
         - {'low': 0.100, 'high': 0.100}
-        - {'low': 0.105, 'high': 0.105}
         - {'low': 0.070, 'high': 0.070}
   social_multiplier_5:
     IL:
@@ -94,11 +94,11 @@ sampled_parameters:
       np.random: uniform
       function_kwargs:
         - {'low': 0.180, 'high': 0.180}
-        - {'low': 0.175, 'high': 0.175}
-        - {'low': 0.260, 'high': 0.260}
-        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.200, 'high': 0.200}
+        - {'low': 0.350, 'high': 0.350}
         - {'low': 0.190, 'high': 0.190}
-        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.190, 'high': 0.190}
+        - {'low': 0.200, 'high': 0.200}
         - {'low': 0.135, 'high': 0.135}
         - {'low': 0.120, 'high': 0.120}
         - {'low': 0.110, 'high': 0.110}
@@ -311,10 +311,10 @@ sampled_parameters:
         - {'low': 3.0, 'high':  3.0}
         - {'low': 7.0, 'high': 7.0}
         - {'low': 11.0, 'high': 11.0}
-        - {'low': 8.0, 'high': 8.0}
-        - {'low': 3.0, 'high':  3.0}
-        - {'low': 11.0, 'high':  11.0}
+        - {'low': 13.0, 'high': 13.0}
+        - {'low': 9.0, 'high':  9.0}
+        - {'low': 12.0, 'high':  12.0}
         - {'low': 12.0, 'high': 12.0}
-        - {'low': 7.0, 'high':  7.0}
+        - {'low': 5.0, 'high':  5.0}
         - {'low': 9.0, 'high':  9.0}    
 fitted_parameters:
