@@ -77,7 +77,7 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
 
     if ems > 0:
-        ref_df = ref_df[ref_df['region'] == ems]
+        ref_df = ref_df[ref_df['covid_region'] == ems]
     else:
         ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
     ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
@@ -100,11 +100,11 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     # plt.show()
     #ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200715_jg_deceased_date_ems.csv'))
     #ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200715_jg_admission_date_ems.csv'))
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200717_jg_aggregated_ems.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200720_jg_aggregated_covidregion.csv'))
     if ems > 0:
         #ref_df1 = ref_df1[ref_df1['EMS'] == ems]
         #ref_df2 = ref_df2[ref_df2['EMS'] == ems]
-        ref_df = ref_df[ref_df['EMS'] == ems]
+        ref_df = ref_df[ref_df['covid_region'] == ems]
     else:
         #ref_df1 = ref_df1.groupby('date').agg(np.sum).reset_index()
         #ref_df2 = ref_df2.groupby('date').agg(np.sum).reset_index()
