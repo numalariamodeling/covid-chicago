@@ -3382,7 +3382,7 @@ kable(table(excluded_by_zip$race_eth,useNA = 'ifany'),col.names = c("Race/Ethnic
 
 kable(table(excluded_by_zip$age_group,useNA = 'ifany'),col.names = c("Age Group", "# cases excluded from Zip Analysis"))
 
-# Crestwood (real zip excluded - 125 cases)
+# Crestwood (real zip excluded)
 
 crestwood <- subset(cases,cases$patient_home_zip==60418)
 
@@ -3398,37 +3398,102 @@ Create .csv of cases and deaths by date tested x race
 
 ```{r}
 
-tested$race_for_cfr_plot <- "Other/NA"
+tested$race_for_cfr_plot <- "All Others"
 tested$race_for_cfr_plot[tested$race_eth=="White"] <- "White"
 tested$race_for_cfr_plot[tested$race_eth=="Black"] <- "Black"
 tested$race_for_cfr_plot[tested$race_eth=="Hispanic-Latino"] <- "Latinx"
 
 tested$race_for_cfr_plot <- factor(tested$race_for_cfr_plot)
 
+tested$test_race_label <- paste(tested$race_for_cfr_plot,tested$specimen_collection,sep="_")
+tested$test_race_label <- as.factor(tested$test_race_label)
 
-tested$date_race_label <- paste(tested$race_for_cfr_plot,tested$specimen_collection,sep="_")
-tested$date_race_label <- as.factor(tested$date_race_label)
+tested$death_race_label <-  paste(tested$race_for_cfr_plot,tested$deceased_date,sep="_")
+tested$death_race_label <- as.factor(tested$death_race_label)
 
 reese <- subset(tested,!(tested$age_group %in% c("Under 21","21-30","71-80","Over 80")) & tested$age_group!="" )
-reese <- reese[,c("id","race_for_cfr_plot","specimen_collection","deceased_date","date_race_label")]
+reese <- reese[,c("id","race_for_cfr_plot","specimen_collection","deceased_date","test_race_label","death_race_label")]
 
-reese_cases <- aggregate(reese$id,by=list(reese$date_race_label),FUN=length)
-colnames(reese_cases) <- c("date_race_label","n_cases")
-reese_deaths <- aggregate(reese$deceased_date!="",by=list(reese$date_race_label),FUN=sum)
-colnames(reese_deaths) <- c("date_race_label","n_deaths")
 
-reese <- merge(reese,reese_cases, by="date_race_label")
-reese <- merge(reese,reese_deaths,by="date_race_label")
+ # reese_cases <- aggregate(reese$id,by=list(reese$test_race_label),FUN=length)
+ # colnames(reese_cases) <- c("date_race_label","n_cases")
+ # reese_deaths <- aggregate(reese$deceased_date!="",by=list(reese$death_race_label),FUN=sum)
+ # colnames(reese_deaths) <- c("date_race_label","n_deaths")
+ # 
+ # reese_long <- merge(reese,reese_cases, by.x="test_race_label",by.y="date_race_label")
+ # reese_long <- merge(reese_long,reese_deaths, by.x="death_race_label",by.y="date_race_label")
+ # 
+ # write.csv(reese_long,paste(pull_date,"Daily Cases and Deaths by Race - long.csv",sep=" - "))
+ # 
+ # reese_test <- reese_long[,c("test_race_label","race_for_cfr_plot","specimen_collection","n_cases","n_deaths")]
+ # reese_test <- distinct( reese_test)
+ # reese_test <-  reese_test[,c(2:5)]
+ # colnames(reese_test) <- c("race","specimen_collection","n_cases","n_deaths")
+ # 
+ # 
+ # 
+ # write.csv(reese_test,paste(pull_date,"Daily Cases and Deaths by Race (test Date).csv",sep=" - "))
 
-write.csv(reese,paste(pull_date,"Daily Cases and Deaths by Race - long.csv",sep=" - "))
+#### Trying another way
 
-reese_summary <- reese[,c("date_race_label","race_for_cfr_plot","specimen_collection","n_cases","n_deaths")]
-reese_summary <- distinct(reese_summary)
-reese_summary <- reese_summary[,c(2:5)]
-colnames(reese_summary) <- c("race","specimen_collection","n_cases","n_deaths")
+test_dates <- unique(paste(reese$specimen_collection))[order(unique(paste(reese$specimen_collection)))]
+death_dates <- unique(paste(reese$deceased_date[reese$deceased_date!=""]))[order(unique(paste(reese$deceased_date[reese$deceased_date!=""])))]
 
-write.csv(reese_summary,paste(pull_date,"Daily Cases and Deaths by Race.csv",sep=" - "))
+dates <- unique(c(test_dates,death_dates))[order(unique(c(test_dates,death_dates)))]
+dates <- dates[date!="NA"]
 
+rs <- c()
+ds <- c()
+nc <- c()
+nd <- c()
+
+for(i in 1:length(dates))
+{
+   for (r in levels(reese$race_for_cfr_plot))
+   {
+      sub <- subset(reese,paste(reese$race_for_cfr_plot) == r)
+      
+      c <- nrow(sub[sub$specimen_collection == dates[i],])
+      d <- nrow(sub[paste(sub$deceased_date) == dates[i],])
+      
+      
+      rs <- c(rs,r)
+      ds <- c(ds,dates[i])
+      nc <- c(nc,c)
+      nd <- c(nd,d)
+      
+   }
+}
+
+reese_summary <- data.frame(race = rs, date = ds, n_cases = nc, n_deaths = nd)
+write.csv(reese_summary,paste(pull_date,"Daily Cases and Deaths by Race (test or death date).csv",sep=" - "))
+
+rs <- c()
+ds <- c()
+nc <- c()
+nd <- c()
+
+for(i in 1:length(dates))
+{
+   for (r in levels(reese$race_for_cfr_plot))
+   {
+      sub <- subset(reese,paste(reese$race_for_cfr_plot) == r)
+      sub <- subset(sub,sub$specimen_collection==dates[i])
+      
+      c <- nrow(sub)
+      d <- nrow(sub[paste(sub$deceased_date) == dates[i],])
+      
+      
+      rs <- c(rs,r)
+      ds <- c(ds,dates[i])
+      nc <- c(nc,c)
+      nd <- c(nd,d)
+      
+   }
+}
+
+reese_summary <- data.frame(race = rs, date = ds, n_cases = nc, n_deaths = nd)
+write.csv(reese_summary,paste(pull_date,"Daily Cases and Deaths by Race (test Date).csv",sep=" - "))
 ```
 
 
