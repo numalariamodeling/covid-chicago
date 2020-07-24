@@ -3411,9 +3411,8 @@ tested$test_race_label <- as.factor(tested$test_race_label)
 tested$death_race_label <-  paste(tested$race_for_cfr_plot,tested$deceased_date,sep="_")
 tested$death_race_label <- as.factor(tested$death_race_label)
 
-reese <- subset(tested,!(tested$age_group %in% c("Under 21","21-30","71-80","Over 80")) & tested$age_group!="" )
-reese <- reese[,c("id","race_for_cfr_plot","specimen_collection","deceased_date","test_race_label","death_race_label")]
-
+daily_cases_deaths_31to70 <- subset(tested,!(tested$age_group %in% c("Under 21","21-30","71-80","Over 80")) & tested$age_group!="" )
+daily_cases_deaths_31to70 <- daily_cases_deaths_31to70[,c("id","race_for_cfr_plot","specimen_collection","deceased_date","test_race_label","death_race_label")]
 
  # reese_cases <- aggregate(reese$id,by=list(reese$test_race_label),FUN=length)
  # colnames(reese_cases) <- c("date_race_label","n_cases")
@@ -3436,8 +3435,8 @@ reese <- reese[,c("id","race_for_cfr_plot","specimen_collection","deceased_date"
 
 #### Trying another way
 
-test_dates <- unique(paste(reese$specimen_collection))[order(unique(paste(reese$specimen_collection)))]
-death_dates <- unique(paste(reese$deceased_date[reese$deceased_date!=""]))[order(unique(paste(reese$deceased_date[reese$deceased_date!=""])))]
+test_dates <- unique(paste(daily_cases_deaths_31to70$specimen_collection))[order(unique(paste(daily_cases_deaths_31to70$specimen_collection)))]
+death_dates <- unique(paste(daily_cases_deaths_31to70$deceased_date[daily_cases_deaths_31to70$deceased_date!=""]))[order(unique(paste(daily_cases_deaths_31to70$deceased_date[daily_cases_deaths_31to70$deceased_date!=""])))]
 
 dates <- unique(c(test_dates,death_dates))[order(unique(c(test_dates,death_dates)))]
 dates <- dates[date!="NA"]
@@ -3449,9 +3448,9 @@ nd <- c()
 
 for(i in 1:length(dates))
 {
-   for (r in levels(reese$race_for_cfr_plot))
+   for (r in levels(daily_cases_deaths_31to70$race_for_cfr_plot))
    {
-      sub <- subset(reese,paste(reese$race_for_cfr_plot) == r)
+      sub <- subset(daily_cases_deaths_31to70,paste(daily_cases_deaths_31to70$race_for_cfr_plot) == r)
       
       c <- nrow(sub[sub$specimen_collection == dates[i],])
       d <- nrow(sub[paste(sub$deceased_date) == dates[i],])
@@ -3465,8 +3464,8 @@ for(i in 1:length(dates))
    }
 }
 
-reese_summary <- data.frame(race = rs, date = ds, n_cases = nc, n_deaths = nd)
-write.csv(reese_summary,paste(pull_date,"Daily Cases and Deaths by Race (test or death date).csv",sep=" - "))
+daily_cases_deaths_31to70_summary <- data.frame(race = rs, date = ds, n_cases = nc, n_deaths = nd)
+write.csv(daily_cases_deaths_31to70_summary,paste(pull_date,"Daily Cases and Deaths by Race (test date).csv",sep=" - "))
 
 rs <- c()
 ds <- c()
@@ -3475,9 +3474,9 @@ nd <- c()
 
 for(i in 1:length(dates))
 {
-   for (r in levels(reese$race_for_cfr_plot))
+   for (r in levels(daily_cases_deaths_31to70$race_for_cfr_plot))
    {
-      sub <- subset(reese,paste(reese$race_for_cfr_plot) == r)
+      sub <- subset(daily_cases_deaths_31to70,paste(daily_cases_deaths_31to70$race_for_cfr_plot) == r)
       sub <- subset(sub,sub$specimen_collection==dates[i])
       
       c <- nrow(sub)
@@ -3492,8 +3491,80 @@ for(i in 1:length(dates))
    }
 }
 
-reese_summary <- data.frame(race = rs, date = ds, n_cases = nc, n_deaths = nd)
-write.csv(reese_summary,paste(pull_date,"Daily Cases and Deaths by Race (test Date).csv",sep=" - "))
+daily_cases_deaths_31to70_summary <- data.frame(race = rs, date = ds, n_cases = nc, n_deaths = nd)
+write.csv(daily_cases_deaths_31to70_summary,paste(pull_date,"Daily Cases and Deaths by Race (test or death Date).csv",sep=" - "))
+
+
+## By Region
+
+tested$RR[tested$EMS %in% c(7:11)] <- "Northeast"
+tested$RR[tested$EMS %in% c(1,2)] <- "North-Central"
+tested$RR[tested$EMS %in% c(3,6)] <- "Central"
+tested$RR[tested$EMS %in% c(4,5)] <- "Southern"
+
+tested$RR <- as.factor(tested$RR)
+
+daily_cases_deaths_31to70 <- subset(tested,!(tested$age_group %in% c("Under 21","21-30","71-80","Over 80")) & tested$age_group!="" )
+daily_cases_deaths_31to70 <- daily_cases_deaths_31to70[,c("id","RR","specimen_collection","deceased_date","test_race_label","death_race_label")]
+
+test_dates <- unique(paste(daily_cases_deaths_31to70$specimen_collection))[order(unique(paste(daily_cases_deaths_31to70$specimen_collection)))]
+death_dates <- unique(paste(daily_cases_deaths_31to70$deceased_date[daily_cases_deaths_31to70$deceased_date!=""]))[order(unique(paste(daily_cases_deaths_31to70$deceased_date[daily_cases_deaths_31to70$deceased_date!=""])))]
+
+dates <- unique(c(test_dates,death_dates))[order(unique(c(test_dates,death_dates)))]
+dates <- dates[date!="NA"]
+
+rs <- c()
+ds <- c()
+nc <- c()
+nd <- c()
+
+for(i in 1:length(dates))
+{
+   for (r in levels(daily_cases_deaths_31to70$RR))
+   {
+      sub <- subset(daily_cases_deaths_31to70,paste(daily_cases_deaths_31to70$RR) == r)
+      
+      c <- nrow(sub[sub$specimen_collection == dates[i],])
+      d <- nrow(sub[paste(sub$deceased_date) == dates[i],])
+      
+      
+      rs <- c(rs,r)
+      ds <- c(ds,dates[i])
+      nc <- c(nc,c)
+      nd <- c(nd,d)
+      
+   }
+}
+
+daily_cases_deaths_31to70_summary <- data.frame(region = rs, date = ds, n_cases = nc, n_deaths = nd)
+write.csv(daily_cases_deaths_31to70_summary,paste(pull_date,"Daily Cases and Deaths by Region (test date).csv",sep=" - "))
+
+rs <- c()
+ds <- c()
+nc <- c()
+nd <- c()
+
+for(i in 1:length(dates))
+{
+   for (r in levels(daily_cases_deaths_31to70$RR))
+   {
+      sub <- subset(daily_cases_deaths_31to70,paste(daily_cases_deaths_31to70$RR) == r)
+      sub <- subset(sub,sub$specimen_collection==dates[i])
+      
+      c <- nrow(sub)
+      d <- nrow(sub[paste(sub$deceased_date) == dates[i],])
+      
+      
+      rs <- c(rs,r)
+      ds <- c(ds,dates[i])
+      nc <- c(nc,c)
+      nd <- c(nd,d)
+      
+   }
+}
+
+daily_cases_deaths_31to70_summary <- data.frame(region = rs, date = ds, n_cases = nc, n_deaths = nd)
+write.csv(daily_cases_deaths_31to70_summary,paste(pull_date,"Daily Cases and Deaths by Region (test or death Date).csv",sep=" - "))
 ```
 
 
