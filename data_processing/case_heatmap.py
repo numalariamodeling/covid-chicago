@@ -276,7 +276,7 @@ def plot_ratio_county() :
         ds_shp['ratio'] = ds_shp['COUNTY_NAM'].apply(lambda x : get_ratio(df, x, week))
         ds_shp.plot(ax=ax, color='#969696', edgecolor='0.8',
                     linewidth=0.8, legend=False)
-        pdf = ds_shp[ds_shp['ratio'] == -1]
+        pdf = ds_shp[ds_shp['ratio'] < 0]
         pdf.plot(ax=ax, color='#313695', edgecolor='0.8',
                  linewidth=0.8, legend=False)
         pdf = ds_shp[ds_shp['ratio'] >= 0]
