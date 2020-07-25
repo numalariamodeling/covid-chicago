@@ -14,7 +14,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
-simdate = "20200624"
+simdate = "20200724"
 
 plot_first_day = pd.to_datetime('2020/3/1')
 plot_last_day = pd.to_datetime('2021/4/1')
@@ -98,9 +98,22 @@ def plot_sim(dat, suffix) :
         plotname = scenarioName +"_" + ems
         if ems == "All": ems = "IL"
         filename = 'nu_' + scenarioName + '_' + ems
-        plt.savefig(os.path.join(plot_path, plotname + '.png'))
-        plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
+        #plt.savefig(os.path.join(plot_path, plotname + '.png'))
+        #plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
         # plt.show()
+
+
+def rename_geography_and_save(df,filename) :
+
+    dfout = df.copy()
+    if "geography_modeled" not in dfout.columns:
+        dfout.rename(columns={'ems': 'covid_region'}, inplace=True)
+        dfout['covid_region'] = dfout['covid_region'].str.replace('EMS-', '')
+
+    if "geography_modeled" in dfout.columns:
+        dfout['geography_modeled'] = dfout['geography_modeled'].str.replace('ems', 'covidregion_')
+
+    dfout.to_csv(os.path.join(sim_output_path, filename), index=False)
 
 
 if __name__ == '__main__' :
@@ -128,7 +141,7 @@ if __name__ == '__main__' :
 
         dfAll = append_data_byGroup(df, suffix_names)
         filename = "nu_region_" + scenarioName + '_' + simdate + ".csv"
-        dfAll.to_csv(os.path.join(sim_output_path, filename), index=False)
+        rename_geography_and_save(dfAll,filename)
 
         channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
         adf = pd.DataFrame()
@@ -149,7 +162,8 @@ if __name__ == '__main__' :
                 adf = pd.merge(left=adf, right=mdf, on=['date', 'ems'])
 
         print(f'Writing "projection_for_civis.*" files to {sim_output_path}.')
-        adf.to_csv(os.path.join(sim_output_path, 'projection_for_civis.csv'), index=False)
+
+        rename_geography_and_save(adf,filename='projection_for_civis.csv')
 
         col_names = civis_colnames(reverse=False)
         adf = adf.rename(columns=col_names)
@@ -158,8 +172,8 @@ if __name__ == '__main__' :
         adf.geography_modeled = adf.geography_modeled.str.lower()
         adf.geography_modeled = adf.geography_modeled.str.replace('all', "illinois")
 
-        filename = "nu_ems_" + scenarioName + '_' + simdate+".csv"
-        adf.to_csv(os.path.join(sim_output_path, filename), index=False)
+        filename = "nu_covidregion_" + scenarioName + '_' + simdate+".csv"
+        rename_geography_and_save(adf,filename=filename)
 
         plot_sim(dfAll, suffix_names)
 
@@ -182,6 +196,6 @@ if __name__ == '__main__' :
         dfnew = pd.concat([adf, dfcombined],sort=True)
         dfnew['scenario_name'] = scenarioName
         filename_new = "nu_il_" + scenarioName + '_' + simdate + ".csv"
-        dfnew.to_csv(os.path.join(sim_output_path, filename_new), index=False)
+        rename_geography_and_save(dfnew,filename=filename_new)
 
 
