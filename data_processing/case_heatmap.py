@@ -13,7 +13,7 @@ from plotting.colors import load_color_palette
 mpl.rcParams['pdf.fonttype'] = 42
 
 
-LL_date = '200710'
+LL_date = '200724'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
@@ -23,6 +23,7 @@ project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs', '_trend_tracking')
 emr_fname = os.path.join(box_data_path, 'emresource_by_region.csv')
 spec_coll_fname = os.path.join(box_data_path, 'Corona virus reports', '%s_LL_cases_by_EMS_spec_collection.csv' % LL_date)
+spec_coll_fname2 = os.path.join(box_data_path, 'Cleaned Data', '%s_jg_specimen_collection_covidregion.csv' % LL_date)
 shp_path = os.path.join(box_data_path, 'shapefiles')
 
 
@@ -183,6 +184,43 @@ def plot_ratio_ems() :
     fig.suptitle('week over week ratio of cases by specimen collection date\nLL data ending ' + str(max_date))
     plt.savefig(os.path.join(plot_path, 'EMS_weekly_case_ratio_%sLL.png' % LL_date))
 
+def plot_ratio_covidregion() :
+
+    def get_ratio(adf, ems, w):
+        edf = adf[adf['covid_region'] == ems]
+        col = 'cases'
+        d = edf[col].values
+        if w == 0:
+            recent = np.mean(d[-7:])
+        else:
+            recent = np.mean(d[-7 * (w + 1):-7 * w])
+        back = np.mean(d[-7 * (w + 2):-7 * (w + 1)])
+        return recent / back
+
+    df = pd.read_csv(spec_coll_fname2)
+    df['date'] = pd.to_datetime(df['date'])
+    #df['date'] = df['date'].dt.date
+    max_date = date(2020, 7, 15)
+    df = df[df['date'] <= max_date]
+    covid_shp = gpd.read_file(os.path.join(shp_path, 'covid_regions', 'covid_regions.shp'))
+    covid_shp['covid_region'] = covid_shp['new_restor'].astype(int)
+
+    fig = plt.figure(figsize=(12, 10))
+    fig.subplots_adjust(top=0.95)
+    vmin, vmax = 0.4, 3
+    norm = MidpointNormalize(vmin=vmin, vcenter=1, vmax=vmax)
+    for week in range(6) :
+        ax = fig.add_subplot(2,3,6-week)
+        format_ax(ax, '%d weeks ago vs %d weeks ago' % (week, week+1))
+        covid_shp['ratio'] = covid_shp['covid_region'].apply(lambda x : get_ratio(df, x, week))
+        covid_shp.plot(column='ratio', ax=ax, cmap='RdYlBu_r', edgecolor='0.8',
+                     linewidth=0.8, legend=False, norm=norm)
+        sm = plt.cm.ScalarMappable(cmap='RdYlBu_r', norm=norm)
+        sm._A = []
+        cbar = fig.colorbar(sm, ax=ax)
+    fig.suptitle('week over week ratio of cases by specimen collection date\nLL data ending ' + str(max_date))
+    plt.savefig(os.path.join(plot_path, 'covidregion_weekly_case_ratio_%sLL.png' % LL_date))
+    plt.savefig(os.path.join(plot_path, 'covidregion_weekly_case_ratio_%sLL.pdf' % LL_date))
 
 def load_county_map_with_public_data() :
 
@@ -359,7 +397,8 @@ if __name__ == '__main__' :
     # plot_EMS_by_line('deaths')
     # plot_ratio_ems()
     plot_ratio_county()
-    #plot_ratio_region
+    plot_ratio_region()
+    plot_ratio_covidregion()
     # plot_LL_all_IL()
     plt.show()
 
