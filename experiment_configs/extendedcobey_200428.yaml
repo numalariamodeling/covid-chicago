@@ -148,22 +148,22 @@ sampled_parameters:
   ### d_Sym
   'd_Sym_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.020, 'high':0.067}
+    function_kwargs: {'low':0.000, 'high':0.049}
   'd_Sym_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.056, 'high':0.099}
+    function_kwargs: {'low':0.022, 'high':0.078}
   'd_Sym_incr3':
     np.random: uniform
-    function_kwargs: {'low':0.081, 'high':0.143}
+    function_kwargs: {'low':0.045, 'high':0.111}
   'd_Sym_incr4':
     np.random: uniform
-    function_kwargs: {'low':0.087, 'high':0.150}
+    function_kwargs: {'low':0.047, 'high':0.111}
   'd_Sym_incr5':
     np.random: uniform
-    function_kwargs: {'low':0.103, 'high':0.150}
+    function_kwargs: {'low':0.058, 'high':0.147}
   'd_Sym_incr6':
     np.random: uniform
-    function_kwargs: {'low':0.140, 'high':0.170}
+    function_kwargs: {'low':0.097, 'high':0.258}
   ### fraction_critical
   'fraction_critical_incr1':
     np.random: uniform
