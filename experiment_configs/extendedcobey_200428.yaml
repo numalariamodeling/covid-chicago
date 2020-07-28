@@ -9,7 +9,6 @@ fixed_parameters_region_specific:
   populations:
     'IL': 12830632
     'NMH_catchment': 315000
-    'Chicago': 2700000
     'EMS_1': 688393
     'EMS_2': 1269519
     'EMS_3': 581432
