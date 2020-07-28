@@ -14,12 +14,16 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 
 LL_date = '200724'
+LL_date = '200727'
+user_path = os.path.expanduser('~')
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
                                        'LL_%s_JGcleaned_no_race.csv' % LL_date)
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
+box_data_path = os.path.join(user_path,'Box/NU-malaria-team/data/covid_IDPH')
+project_path = os.path.join(user_path,'Box/NU-malaria-team/projects/covid_chicago')
 plot_path = os.path.join(project_path, 'Plots + Graphs', '_trend_tracking')
 emr_fname = os.path.join(box_data_path, 'emresource_by_region.csv')
 spec_coll_fname = os.path.join(box_data_path, 'Corona virus reports', '%s_LL_cases_by_EMS_spec_collection.csv' % LL_date)
@@ -163,7 +167,7 @@ def plot_ratio_ems() :
 
     df = pd.read_csv(spec_coll_fname)
     df['date'] = pd.to_datetime(df['date'])
-    max_date = date(2020, 7, 8)
+    max_date = date(2020, 7, 15)
     df = df[df['date'] <= max_date]
     ems_shp = gpd.read_file(os.path.join(shp_path, 'EMS_Regions', 'EMS_Regions.shp'))
     ems_shp['REGION'] = ems_shp['REGION'].astype(int)
@@ -199,8 +203,8 @@ def plot_ratio_covidregion() :
 
     df = pd.read_csv(spec_coll_fname2)
     df['date'] = pd.to_datetime(df['date'])
-    #df['date'] = df['date'].dt.date
-    max_date = date(2020, 7, 15)
+    df['date'] = df['date'].dt.date
+    max_date = date(2020, 7, 20)
     df = df[df['date'] <= max_date]
     covid_shp = gpd.read_file(os.path.join(shp_path, 'covid_regions', 'covid_regions.shp'))
     covid_shp['covid_region'] = covid_shp['new_restor'].astype(int)
@@ -286,8 +290,8 @@ def plot_ratio_county() :
         sm._A = []
         cbar = fig.colorbar(sm, ax=ax)
     fig.suptitle('week over week ratio of cases\npublic data ending ' + str(max_date))
-    plt.savefig(os.path.join(plot_path, 'county_weekly_case_ratio.png'))
-
+    plt.savefig(os.path.join(plot_path, 'county_weekly_case_ratio_%sLL.png' % LL_date))
+    plt.savefig(os.path.join(plot_path, 'county_weekly_case_ratio_%sLL.pdf' % LL_date))
 
 
 def plot_ratio_region() :
@@ -341,9 +345,8 @@ def plot_ratio_region() :
         sm._A = []
         cbar = fig.colorbar(sm, ax=ax)
     fig.suptitle('week over week ratio of cases\npublic data ending ' + str(max_date))
-    plt.savefig(os.path.join(plot_path, 'restoreRegion_weekly_case_ratio.png'))
-    plt.savefig(os.path.join(plot_path, 'restoreRegion_weekly_case_ratio.pdf'))
-
+    plt.savefig(os.path.join(plot_path, 'restoreRegion_weekly_case_ratio_%sLL.png' % LL_date))
+    plt.savefig(os.path.join(plot_path, 'restoreRegion_weekly_case_ratio_%sLL.pdf' % LL_date))
 
 def plot_LL_all_IL() :
 
