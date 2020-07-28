@@ -9,17 +9,16 @@ fixed_parameters_region_specific:
   populations:
     'IL': 12830632
     'NMH_catchment': 315000
-    'Chicago': 2700000
-    'EMS_1':  739378
-    'EMS_2':  1361816
-    'EMS_3':  630987
-    'EMS_4':  690786
-    'EMS_5':  420308
-    'EMS_6':  797973
-    'EMS_7':  890876
-    'EMS_8':  1674844
-    'EMS_9':  1097802
-    'EMS_10': 2990057
+    'EMS_1': 688393
+    'EMS_2': 1269519
+    'EMS_3': 581432
+    'EMS_4': 676017
+    'EMS_5': 424810
+    'EMS_6': 760362
+    'EMS_7': 791009
+    'EMS_8': 1432193
+    'EMS_9': 1012222
+    'EMS_10': 2477754
     'EMS_11': 2716921
   startdate:
     'NMH_catchment': 2020-02-28
