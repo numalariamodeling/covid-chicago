@@ -213,6 +213,12 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 # 4 Visualizing and analyzing simulation outputs
 - see [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/)
 
+# 5 Data sources
+- Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
+- EMS region (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
+- covid regions: http://dph.illinois.gov/regionmetrics?regionID=1 
+- restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
+- covid data: IDPH 
 
 # Resources 
 - CMS software publication [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
