@@ -14,7 +14,7 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
-    'IL': [739378,1361816,630987,690786,420308,797973,890876,1674844,1097802,2990057,2716921]
+    'IL': [688393,1269519, 581432, 676017, 424810, 760362, 791009, 1432193, 1012222, 2477754, 2716921]
 fixed_parameters_global:
   initialAs:
     expand_by_age: True
