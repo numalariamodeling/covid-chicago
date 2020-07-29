@@ -718,21 +718,37 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (observe d_As_t d_As)
 (observe d_P_t d_P)
 
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+(param d_Sym_ct1 (+ d_Sym_{grp} (* d_Sym_{grp} @d_Sym_ct1@ )))
+
+(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_{grp} d_Sym_ct1)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_{grp} @d_Sym_{grp}@)))
     """
 
     contactTracing_gradual_str = """
 (observe d_As_t d_As)
 (observe d_P_t d_P)
 
-(time-event contact_tracing_1 @contact_tracing_start_1@ ((d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
-(time-event contact_tracing_2 @contact_tracing_start_2@ ((d_As @d_AsP_ct2@) (d_P @d_AsP_ct2@) (d_Sym @d_Sym_ct2@)))
-(time-event contact_tracing_3 @contact_tracing_start_3@ ((d_As @d_AsP_ct3@) (d_P @d_AsP_ct3@) (d_Sym @d_Sym_ct3@)))
-(time-event contact_tracing_4 @contact_tracing_start_4@ ((d_As @d_AsP_ct4@) (d_P @d_AsP_ct4@) (d_Sym @d_Sym_ct4@)))
-(time-event contact_tracing_5 @contact_tracing_start_5@ ((d_As @d_AsP_ct5@) (d_P @d_AsP_ct5@) (d_Sym @d_Sym_ct5@)))
-(time-event contact_tracing_6 @contact_tracing_start_6@ ((d_As @d_AsP_ct6@) (d_P @d_AsP_ct6@) (d_Sym @d_Sym_ct6@)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+(param d_Sym_ct1 (+ d_Sym_{grp} (* d_Sym_{grp} 0.167 @d_Sym_ct6@ )))
+(param d_Sym_ct2 (+ d_Sym_{grp} (* d_Sym_{grp} 0.333 @d_Sym_ct6@ )))
+(param d_Sym_ct3 (+ d_Sym_{grp} (* d_Sym_{grp} 0.500 @d_Sym_ct6@ )))
+(param d_Sym_ct4 (+ d_Sym_{grp} (* d_Sym_{grp} 0.667 @d_Sym_ct6@ )))
+(param d_Sym_ct5 (+ d_Sym_{grp} (* d_Sym_{grp} 0.833 @d_Sym_ct6@ )))
+(param d_Sym_ct6 (+ d_Sym_{grp} (* d_Sym_{grp} @d_Sym_ct6@ )))
+
+(param d_AsP_ct1 (* 0.167 @d_AsP_ct6@ )))
+(param d_AsP_ct2 (* 0.333 @d_AsP_ct6@ )))
+(param d_AsP_ct3 (* 0.500 @d_AsP_ct6@ )))
+(param d_AsP_ct4 (* 0.667 @d_AsP_ct6@ )))
+(param d_AsP_ct5 (* 0.833 @d_AsP_ct6@ )))
+(param d_AsP_ct6 @d_AsP_ct6@ )
+                       
+(time-event contact_tracing_1 @contact_tracing_start_1@ ((d_As d_AsP_ct1) (d_P d_AsP_ct1) (d_Sym_{grp} d_Sym_ct1)))
+(time-event contact_tracing_2 @contact_tracing_start_2@ ((d_As d_AsP_ct2) (d_P d_AsP_ct2) (d_Sym_{grp} d_Sym_ct2)))
+(time-event contact_tracing_3 @contact_tracing_start_3@ ((d_As d_AsP_ct3) (d_P d_AsP_ct3) (d_Sym_{grp} d_Sym_ct3)))
+(time-event contact_tracing_4 @contact_tracing_start_4@ ((d_As d_AsP_ct4) (d_P d_AsP_ct4) (d_Sym_{grp} d_Sym_ct4)))
+(time-event contact_tracing_5 @contact_tracing_start_5@ ((d_As d_AsP_ct5) (d_P d_AsP_ct5) (d_Sym_{grp} d_Sym_ct5)))
+(time-event contact_tracing_6 @contact_tracing_start_6@ ((d_As d_AsP_ct6) (d_P d_AsP_ct6) (d_Sym_{grp} d_Sym_ct6)))
+;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym_{grp} @d_Sym_{grp}@)))
         """
 
     change_uniformtestDelay_str = """

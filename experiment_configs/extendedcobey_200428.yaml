@@ -199,6 +199,7 @@ intervention_parameters:
   'd_AsP_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
+  ### Since d_Sym differs per group, this parameter defines relative increase rather than fraction detected!
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0.170, 'high':0.170}
