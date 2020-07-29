@@ -146,13 +146,15 @@ def write_observed_param(grpList):
 (observe d_Sys_t d_Sys)
 """
 
-## If grp specific parameters  change over time and should be tracked
+## If grp specific parameters change over time and should be tracked
+## To distinguish model outputs from inputs per grp, the - vs the _ is used (i.e. EMS-1 vs EMS_1)
     observed_ageparam_str=""
     for grp in grpList:
         grp = str(grp)
         grpout = sub(grp)
         temp_str = """
-(observe Ki_{grpout} Ki_{grp})
+(observe Ki_t_{grpout} Ki_{grp})
+(observe d_Sym_t_{grpout} d_Sym_{grp})
 """.format(grpout=grpout, grp=grp)
         observed_ageparam_str = observed_ageparam_str + temp_str
 
