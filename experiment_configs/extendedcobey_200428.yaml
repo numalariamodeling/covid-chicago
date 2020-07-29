@@ -101,9 +101,10 @@ sampled_parameters:
     np.random: uniform
     function_kwargs: {'low':0, 'high':0.3}
   ## DETECTION RATES 
-  'd_Sym':
-    np.random: uniform
-    function_kwargs: {'low':0.00, 'high':0.02}
+  ## In locale model, d_Sym is group specific
+  #'d_Sym':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.00, 'high':0.02}
   'd_Sys':
     np.random: uniform
     function_kwargs: {'low':0.00, 'high':0.0185} 
@@ -145,24 +146,26 @@ sampled_parameters:
     np.random: uniform
     function_kwargs: {'low':0.95, 'high':1}
   ### d_Sym
-  'd_Sym_incr1':
-    np.random: uniform
-    function_kwargs: {'low':0.000, 'high':0.049}
-  'd_Sym_incr2':
-    np.random: uniform
-    function_kwargs: {'low':0.022, 'high':0.078}
-  'd_Sym_incr3':
-    np.random: uniform
-    function_kwargs: {'low':0.045, 'high':0.111}
-  'd_Sym_incr4':
-    np.random: uniform
-    function_kwargs: {'low':0.047, 'high':0.111}
-  'd_Sym_incr5':
-    np.random: uniform
-    function_kwargs: {'low':0.058, 'high':0.147}
-  'd_Sym_incr6':
-    np.random: uniform
-    function_kwargs: {'low':0.097, 'high':0.258}
+  ## In locale model, d_Sym  increase is group specific
+  ## However when using this yaml for running single groups or non locale models it would be needed here
+  #'d_Sym_incr1':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.000, 'high':0.049}
+  #'d_Sym_incr2':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.022, 'high':0.078}
+  #'d_Sym_incr3':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.045, 'high':0.111}
+  #'d_Sym_incr4':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.047, 'high':0.111}
+  #'d_Sym_incr5':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.058, 'high':0.147}
+  #'d_Sym_incr6':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.097, 'high':0.258}
   ### fraction_critical
   'fraction_critical_incr1':
     np.random: uniform
