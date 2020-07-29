@@ -680,9 +680,9 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 
 
 # gradual reopening from 'lowest' transmission level,  Ki_red5 == Ki_back1
-        gradual_reopening_str = ""
-        for grp in grpList:
-            temp_str = """
+    gradual_reopening_str = ""
+    for grp in grpList:
+        temp_str = """
 (param backtonormal_multiplier_1_adj_{grp}  (- @backtonormal_multiplier@ backtonormal_multiplier_1_{grp} ))
 (observe backtonormal_multiplier_1_adj_{grp}  backtonormal_multiplier_1_adj_{grp})
 
@@ -693,12 +693,12 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_{grp} Ki_back3_{grp})))
 (time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_{grp} Ki_back4_{grp})))
         """.format(grp=grp)
-            gradual_reopening_str = gradual_reopening_str + temp_str
+        gradual_reopening_str = gradual_reopening_str + temp_str
             
 # gradual reopening from 'current' transmission level 
-        gradual_reopening2_str = ""
-        for grp in grpList:
-            temp_str = """
+    gradual_reopening2_str = ""
+    for grp in grpList:
+        temp_str = """
 (param Ki_back1_{grp} (+ Ki_red5_{grp} (* @reopening_multiplier_4@ 0.25 (- Ki_{grp} Ki_red5_{grp}))))
 (param Ki_back2_{grp} (+ Ki_red5_{grp} (* @reopening_multiplier_4@ 0.50 (- Ki_{grp} Ki_red5_{grp}))))
 (param Ki_back3_{grp} (+ Ki_red5_{grp} (* @reopening_multiplier_4@ 0.75 (- Ki_{grp} Ki_red5_{grp}))))
@@ -708,20 +708,23 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
 (time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_{grp} Ki_back4_{grp})))
         """.format(grp=grp)
-            gradual_reopening2_str = gradual_reopening2_str + temp_str
+        gradual_reopening2_str = gradual_reopening2_str + temp_str
 
 
-    contactTracing_str = """
+    contactTracing_str = ""
+    for grp in grpList :
+        temp_str = """
 (observe d_As_t d_As)
 (observe d_P_t d_P)
-
 (param d_Sym_ct1 (+ d_Sym_{grp} (* d_Sym_{grp} @d_Sym_ct1@ )))
-
 (time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_{grp} d_Sym_ct1)))
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_{grp} @d_Sym_{grp}@)))
-    """
+        """.format(grp=grp)
+        contactTracing_str = contactTracing_str + temp_str
 
-    contactTracing_gradual_str = """
+    contactTracing_gradual_str = ""
+    for grp in grpList :
+        temp_str = """
 (observe d_As_t d_As)
 (observe d_P_t d_P)
 
@@ -746,7 +749,8 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (time-event contact_tracing_5 @contact_tracing_start_5@ ((d_As d_AsP_ct5) (d_P d_AsP_ct5) (d_Sym_{grp} d_Sym_ct5)))
 (time-event contact_tracing_6 @contact_tracing_start_6@ ((d_As d_AsP_ct6) (d_P d_AsP_ct6) (d_Sym_{grp} d_Sym_ct6)))
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((d_As @d_As@) (d_P @d_P@) (d_Sym_{grp} @d_Sym_{grp}@)))
-        """
+        """.format(grp=grp)
+        contactTracing_gradual_str = contactTracing_gradual_str + temp_str
 
     change_uniformtestDelay_str = """
 (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
