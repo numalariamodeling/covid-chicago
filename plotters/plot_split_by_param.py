@@ -17,6 +17,8 @@ mpl.rcParams['pdf.fonttype'] = 42
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
+first_plot_day = date(2020, 5, 1)
+last_plot_day = date(2020, 10, 1)
 
 def plot_on_fig(df, channels, axes, color, label) :
 
@@ -25,7 +27,7 @@ def plot_on_fig(df, channels, axes, color, label) :
         mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
         mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        mdf = mdf[(mdf['date'] >= date(2020, 5, 1)) & (mdf['date'] <= date(2020, 10, 1))]
+        mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
         ax.plot(mdf['date'], mdf['CI_50'], color=color, label=label)
         # ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
         #                 color=color, linewidth=0, alpha=0.2)
@@ -41,7 +43,7 @@ def plot_on_fig2(df, c, axes,channel, color,panel_heading, label) :
     mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
     mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    mdf = mdf[(mdf['date'] >= date(2020, 5, 1)) & (mdf['date'] <= date(2020, 10, 1))]
+    mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
     ax.plot(mdf['date'], mdf['CI_50'], color=color, label=label)
     ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                 color=color, linewidth=0, alpha=0.4)
@@ -129,19 +131,22 @@ def plot_subgroups_inone(channel='hospitalized') :
         axes[-1].legend()
         fig.suptitle(x=0.5, y=0.999,t=channel)
         plt.tight_layout()
-        plt.savefig(os.path.join(sim_output_path, 'iteration_comparison_2_%s.png' % channel))
-        #plt.savefig(os.path.join(sim_output_path, 'iteration_comparison_2_%s.pdf' % channel))
+    plt.savefig(os.path.join(sim_output_path, 'iteration_comparison_2_%s.png' % channel))
+    #plt.savefig(os.path.join(sim_output_path, 'iteration_comparison_2_%s.pdf' % channel))
         #plt.show()
 
 
 
 if __name__ == '__main__' :
 
-    exp_names = ['20200722_IL_RR_fitting_8',
-                 '20200728_IL_RR_fitting_3']
+    exp_names = ['20200729_IL_RR_baseline_0',
+                 '20200729_IL_RR_immediate_0',
+                 '20200729_IL_RR_1week_0',
+                 '20200729_IL_RR_2week_0',
+                 '20200729_IL_RR_3week_0']
 
     plot_main()
-    #plot_subgroups()
+    plot_subgroups()
     plot_subgroups_inone(channel='hospitalized')
 
 
