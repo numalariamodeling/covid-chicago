@@ -641,7 +641,7 @@ def write_reactions(grp, expandModel=None):
 
 def write_interventions(grpList, total_string, scenarioName, expandModel, change_testDelay=None) :
 
-    continuedSIP_str = ""
+    socialDistance_change_str = ""
     for grp in grpList:
         temp_str = """
 (param Ki_red1_{grp} (* Ki_{grp} @social_multiplier_1_{grp}@))
@@ -658,22 +658,27 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
 (time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_{grp} Ki_red5_{grp})))
+            """.format(grp=grp)
+        socialDistance_change_str = socialDistance_change_str + temp_str
 
+    d_Sym_change_str = ""
+    for grp in grpList:
+        temp_str = """
 (time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym_{grp} @d_Sym_change1_{grp}@)))
 (time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym_{grp} @d_Sym_change2_{grp}@)))
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_{grp} @d_Sym_change3_{grp}@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_{grp} @d_Sym_change4_{grp}@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_{grp} @d_Sym_change5_{grp}@)))
             """.format(grp=grp)
-        continuedSIP_str = continuedSIP_str + temp_str
-
-    interventiopnSTOP_str = ""
+        d_Sym_change_str = d_Sym_change_str + temp_str
+        
+    interventionSTOP_str = ""
     for grp in grpList :
         temp_str = """
 (param Ki_back_{grp} (* Ki_{grp} @backtonormal_multiplier@))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
         """.format(grp=grp)
-        interventiopnSTOP_str = interventiopnSTOP_str + temp_str
+        interventionSTOP_str = interventionSTOP_str + temp_str
 
 # % change from lowest transmission level - immediate
 # starting point is lowest level of transmission  Ki_red4
@@ -773,23 +778,24 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
 
+    fittedTimeEvents_str =  socialDistance_change_str + d_Sym_change_str
    
     if scenarioName == "interventionStop" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventiopnSTOP_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)
     if scenarioName == "interventionSTOP_adj" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_adj_str)
     if scenarioName == "interventionSTOP_adj2":
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + interventionSTOP_adj2_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_adj2_str)
     if scenarioName == "gradual_reopening" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening_str)
     if scenarioName == "gradual_reopening2" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening2_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str)
     if scenarioName == "continuedSIP" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str)
     if scenarioName == "contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening_str + contactTracing_str)
     if scenarioName == "gradual_contactTracing" :
-        total_string = total_string.replace(';[INTERVENTIONS]', continuedSIP_str + gradual_reopening_str + contactTracing_gradual_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening_str + contactTracing_gradual_str)
 
     if change_testDelay != None :
         if change_testDelay == "uniform" :
