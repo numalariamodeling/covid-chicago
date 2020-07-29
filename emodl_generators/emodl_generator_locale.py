@@ -643,7 +643,7 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
     for grp in grpList:
         temp_str = """
 (param d_Sym_{grp} @d_Sym_{grp}@)
-(observe d_Sym_t_{grpout} d_Sym_{grp})
+(observe d_Sym_t_{grp} d_Sym_{grp})
 
 (time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym_{grp} @d_Sym_change1_{grp}@)))
 (time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym_{grp} @d_Sym_change2_{grp}@)))
