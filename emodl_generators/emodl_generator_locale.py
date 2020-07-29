@@ -138,30 +138,6 @@ def write_observe(grp, expandModel=None):
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
-### Monitor time varying parameters
-def write_observed_param(grpList):
-    observed_param_str = """  
-(observe d_As_t d_As)
-(observe d_P_t d_P)
-(observe d_Sys_t d_Sys)
-"""
-
-## If grp specific parameters change over time and should be tracked
-## To distinguish model outputs from inputs per grp, the - vs the _ is used (i.e. EMS-1 vs EMS_1)
-    observed_ageparam_str=""
-    for grp in grpList:
-        grp = str(grp)
-        grpout = sub(grp)
-        temp_str = """
-(observe Ki_t_{grpout} Ki_{grp})
-(observe d_Sym_t_{grpout} d_Sym_{grp})
-""".format(grpout=grpout, grp=grp)
-        observed_ageparam_str = observed_ageparam_str + temp_str
-
-    observed_param_str = observed_param_str + "\n" + observed_ageparam_str
-    
-    return observed_param_str
-    
 
 def write_functions(grp, expandModel=None):
     grp = str(grp)
@@ -407,6 +383,7 @@ def write_Ki_timevents(grp):
     grp = str(grp)
     params_str = """
 (param Ki_{grp} @Ki_{grp}@)
+(observe Ki_t_{grp} Ki_{grp})
 (time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
 """.format(grp=grp)
     params_str = params_str.replace("  ", " ")
@@ -664,6 +641,7 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
     for grp in grpList:
         temp_str = """
 (param d_Sym_{grp} @d_Sym_{grp}@)
+(observe d_Sym_t_{grpout} d_Sym_{grp})
 
 (time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym_{grp} @d_Sym_change1_{grp}@)))
 (time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym_{grp} @d_Sym_change2_{grp}@)))
@@ -735,11 +713,17 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 
 
     contactTracing_str = """
+(observe d_As_t d_As)
+(observe d_P_t d_P)
+
 (time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
     """
 
     contactTracing_gradual_str = """
+(observe d_As_t d_As)
+(observe d_P_t d_P)
+
 (time-event contact_tracing_1 @contact_tracing_start_1@ ((d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
 (time-event contact_tracing_2 @contact_tracing_start_2@ ((d_As @d_AsP_ct2@) (d_P @d_AsP_ct2@) (d_Sym @d_Sym_ct2@)))
 (time-event contact_tracing_3 @contact_tracing_start_3@ ((d_As @d_AsP_ct3@) (d_P @d_AsP_ct3@) (d_Sym @d_Sym_ct3@)))
@@ -850,7 +834,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
         functions_string = functions_string + functions
         param_string = param_string + write_Ki_timevents(grp)
 
-    param_string =  write_params(expandModel) + param_string + write_observed_param(grpList) +  write_N_population(grpList)
+    param_string =  write_params(expandModel) + param_string +  write_N_population(grpList)
     if(add_migration) :
         param_string = param_string + write_migration_param(grpList)
     functions_string = functions_string + write_All(grpList)
