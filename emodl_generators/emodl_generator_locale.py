@@ -143,7 +143,6 @@ def write_observed_param(grpList):
     observed_param_str = """  
 (observe d_As_t d_As)
 (observe d_P_t d_P)
-(observe d_Sym_t d_Sym)
 (observe d_Sys_t d_Sys)
 """
 
@@ -274,7 +273,6 @@ def write_params(expandModel=None):
 
 (param d_As @d_As@)
 (param d_P @d_P@)
-(param d_Sym @d_Sym@)
 (param d_Sys @d_Sys@)
 
 ;(param Ki @Ki@)
@@ -289,12 +287,12 @@ def write_params(expandModel=None):
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
-(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) (d_Sym @d_Sym_incr1@) ))  
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) (d_Sym @d_Sym_incr2@) ))
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) (d_Sym @d_Sym_incr3@) )) 
-(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) (d_Sym @d_Sym_incr4@) )) 
-(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) (d_Sym @d_Sym_incr5@) )) 
-(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@) (d_Sym @d_Sym_incr6@) )) 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) ))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) ))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) )) 
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) )) 
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) )) 
+(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@) )) 
 
 """
 
@@ -407,6 +405,7 @@ def write_Ki_timevents(grp):
     grp = str(grp)
     params_str = """
 (param Ki_{grp} @Ki_{grp}@)
+(param d_Sym_{grp} @d_Sym_{grp}@)
 (time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
 """.format(grp=grp)
     params_str = params_str.replace("  ", " ")
@@ -506,8 +505,8 @@ def write_reactions(grp, expandModel=None):
 (reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks E::{grp} (- 1 d_P)))
 (reaction presymptomatic_{grp} (E::{grp})   (P_det::{grp})   (* Ks E::{grp} d_P))
 
-(reaction mild_symptomatic_undet_{grp} (P::{grp})  (Sym::{grp}) (* Ksym P::{grp} (- 1 d_Sym)))
-(reaction mild_symptomatic_det_{grp} (P::{grp})  (Sym_det2::{grp}) (* Ksym P::{grp} d_Sym))
+(reaction mild_symptomatic_undet_{grp} (P::{grp})  (Sym::{grp}) (* Ksym P::{grp} (- 1 d_Sym_{grp})))
+(reaction mild_symptomatic_det_{grp} (P::{grp})  (Sym_det2::{grp}) (* Ksym P::{grp} d_Sym_{grp}))
 (reaction severe_symptomatic_undet_{grp} (P::{grp})  (Sys::{grp})  (* Ksys P::{grp} (- 1 d_Sys)))
 (reaction severe_symptomatic_det_{grp} (P::{grp})  (Sys_det3::{grp})  (* Ksys P::{grp} d_Sys))
 
@@ -546,11 +545,11 @@ def write_reactions(grp, expandModel=None):
 (reaction severe_symptomatic_{grp} (P::{grp})  (Sys_preD::{grp})  (* Ksys P::{grp}))
 
 ; never detected 
-(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp})  (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym)))
+(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp})  (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym_{grp})))
 (reaction severe_symptomatic_undet_{grp} (Sys_preD::{grp})  (Sys::{grp})  (* Ksys_D Sys_preD::{grp} (- 1 d_Sys)))
 
 ; new detections  - time to detection is substracted from hospital time
-(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp})  (Sym_det2::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))
+(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp})  (Sym_det2::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym_{grp}))
 (reaction severe_symptomatic_det_{grp} (Sys_preD::{grp})  (Sys_det3::{grp})  (* Ksys_D Sys_preD::{grp} d_Sys))
 
 (reaction hospitalization_1_{grp}   (Sys::{grp})   (H1::{grp})   (* Kh1_D Sys::{grp}))
@@ -588,11 +587,11 @@ def write_reactions(grp, expandModel=None):
 (reaction severe_symptomatic_{grp} (P::{grp})  (Sys_preD::{grp})  (* Ksys P::{grp}))
 																   
 ; never detected 
-(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp})  (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym)))
+(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp})  (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym_{grp})))
 (reaction severe_symptomatic_undet_{grp} (Sys_preD::{grp})  (Sys::{grp})  (* Ksys_D Sys_preD::{grp} (- 1 d_Sys)))
 
 ; new detections  - time to detection is subtracted from hospital time
-(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp})  (Sym_det2a::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))
+(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp})  (Sym_det2a::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym_{grp}))
 (reaction severe_symptomatic_det_{grp} (Sys_preD::{grp})  (Sys_det3a::{grp})  (* Ksys_D Sys_preD::{grp} d_Sys))
 
 ; developing symptoms - already detected, same time to symptoms as in master emodl
@@ -657,6 +656,12 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
 (time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_{grp} Ki_red5_{grp})))
+
+(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym_{grp} @d_Sym_change1_{grp}@)))
+(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym_{grp} @d_Sym_change2_{grp}@)))
+(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_{grp} @d_Sym_change3_{grp}@)))
+(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_{grp} @d_Sym_change4_{grp}@)))
+(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_{grp} @d_Sym_change5_{grp}@)))
             """.format(grp=grp)
         continuedSIP_str = continuedSIP_str + temp_str
 
