@@ -711,23 +711,25 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
         gradual_reopening2_str = gradual_reopening2_str + temp_str
 
 
-    contactTracing_str = ""
-    for grp in grpList :
-        temp_str = """
+    contactTracing_str = """
 (observe d_As_t d_As)
 (observe d_P_t d_P)
+"""
+    for grp in grpList :
+        temp_str = """
 (param d_Sym_ct1_{grp} (+ d_Sym_{grp} (* d_Sym_{grp} @d_Sym_ct1@ )))
 (time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_{grp} d_Sym_ct1_{grp})))
 ;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_{grp} @d_Sym_{grp}@)))
         """.format(grp=grp)
         contactTracing_str = contactTracing_str + temp_str
 
-    contactTracing_gradual_str = ""
-    for grp in grpList :
-        temp_str = """
+    contactTracing_gradual_str = """
 (observe d_As_t d_As)
 (observe d_P_t d_P)
+"""
 
+    for grp in grpList :
+        temp_str = """
 (param d_Sym_ct1_{grp} (+ d_Sym_{grp} (* d_Sym_{grp} 0.167 @d_Sym_ct6@ )))
 (param d_Sym_ct2_{grp} (+ d_Sym_{grp} (* d_Sym_{grp} 0.333 @d_Sym_ct6@ )))
 (param d_Sym_ct3_{grp} (+ d_Sym_{grp} (* d_Sym_{grp} 0.500 @d_Sym_ct6@ )))
