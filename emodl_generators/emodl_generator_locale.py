@@ -253,9 +253,6 @@ def write_params(expandModel=None):
 (param d_P @d_P@)
 (param d_Sys @d_Sys@)
 
-;(param d_Sym @d_Sym@)
-;(param Ki @Ki@)
-
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
 (param Kr_h (/ 1 recovery_time_hosp))
