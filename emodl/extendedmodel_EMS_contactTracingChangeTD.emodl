@@ -2281,51 +2281,20 @@
         
 (observe d_As_t d_As)
 (observe d_P_t d_P)
-
+    
 (param d_Sym_ct1_EMS_1 (+ d_Sym_EMS_1 (* d_Sym_EMS_1 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_1 d_Sym_ct1_EMS_1)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_1 @d_Sym_EMS_1@)))
-        
 (param d_Sym_ct1_EMS_2 (+ d_Sym_EMS_2 (* d_Sym_EMS_2 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_2 d_Sym_ct1_EMS_2)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_2 @d_Sym_EMS_2@)))
-        
 (param d_Sym_ct1_EMS_3 (+ d_Sym_EMS_3 (* d_Sym_EMS_3 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_3 d_Sym_ct1_EMS_3)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_3 @d_Sym_EMS_3@)))
-        
 (param d_Sym_ct1_EMS_4 (+ d_Sym_EMS_4 (* d_Sym_EMS_4 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_4 d_Sym_ct1_EMS_4)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_4 @d_Sym_EMS_4@)))
-        
 (param d_Sym_ct1_EMS_5 (+ d_Sym_EMS_5 (* d_Sym_EMS_5 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_5 d_Sym_ct1_EMS_5)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_5 @d_Sym_EMS_5@)))
-        
 (param d_Sym_ct1_EMS_6 (+ d_Sym_EMS_6 (* d_Sym_EMS_6 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_6 d_Sym_ct1_EMS_6)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_6 @d_Sym_EMS_6@)))
-        
 (param d_Sym_ct1_EMS_7 (+ d_Sym_EMS_7 (* d_Sym_EMS_7 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_7 d_Sym_ct1_EMS_7)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_7 @d_Sym_EMS_7@)))
-        
 (param d_Sym_ct1_EMS_8 (+ d_Sym_EMS_8 (* d_Sym_EMS_8 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_8 d_Sym_ct1_EMS_8)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_8 @d_Sym_EMS_8@)))
-        
 (param d_Sym_ct1_EMS_9 (+ d_Sym_EMS_9 (* d_Sym_EMS_9 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_9 d_Sym_ct1_EMS_9)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_9 @d_Sym_EMS_9@)))
-        
 (param d_Sym_ct1_EMS_10 (+ d_Sym_EMS_10 (* d_Sym_EMS_10 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_10 d_Sym_ct1_EMS_10)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_10 @d_Sym_EMS_10@)))
-        
 (param d_Sym_ct1_EMS_11 (+ d_Sym_EMS_11 (* d_Sym_EMS_11 @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_EMS_11 d_Sym_ct1_EMS_11)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_EMS_11 @d_Sym_EMS_11@)))
-        
+    (time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@)
+    (d_Sym_EMS_1 d_Sym_ct1_EMS_1)(d_Sym_EMS_2 d_Sym_ct1_EMS_2)(d_Sym_EMS_3 d_Sym_ct1_EMS_3)(d_Sym_EMS_4 d_Sym_ct1_EMS_4)(d_Sym_EMS_5 d_Sym_ct1_EMS_5)(d_Sym_EMS_6 d_Sym_ct1_EMS_6)(d_Sym_EMS_7 d_Sym_ct1_EMS_7)(d_Sym_EMS_8 d_Sym_ct1_EMS_8)(d_Sym_EMS_9 d_Sym_ct1_EMS_9)(d_Sym_EMS_10 d_Sym_ct1_EMS_10)(d_Sym_EMS_11 d_Sym_ct1_EMS_11)))
 
 (time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_As @change_testDelay_As_1@) (Kl_D (/ 1 time_D_As)) (Kr_a_D (/ 1 (- recovery_time_asymp time_D_As ))) ))
     

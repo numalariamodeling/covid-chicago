@@ -13,7 +13,7 @@ source("load_paths.R")
 source("processing_helpers.R")
 outdir <- file.path("estimate_Rt/from_simulations")
 
-simdate = "20200610"
+simdate = "20200729"
 ### Load simulation outputs
 dat <- read.csv(file.path(project_path, "NU_civis_outputs",simdate,paste0("csv/nu_il_baseline_",simdate,".csv")))
 summary(as.Date(dat$Date))
@@ -77,21 +77,22 @@ for (region in unique(dat$geography_modeled)) {
 }
 
 
+
 ### Combine list to dataframe 
 Rt_dat <- Rt_list %>% bind_rows()
 table(Rt_dat$region)
 
 
 dat <- dat %>%
-  filter(geography_modeled %in% paste0("ems", c(1:11))) %>%
+  filter(geography_modeled %in% paste0("covidregion_", c(1:11))) %>%
   rename(region = geography_modeled)
 
-dat$EMS <- factor(dat$region,  levels = paste0("ems", c(1:11)), labels = paste0("EMS_", c(1:11)))
+dat$covidregion <- factor(dat$region,  levels = paste0("covidregion_", c(1:11)), labels = paste0("covidregion_", c(1:11)))
 
 
 dat <- dat %>%
-  arrange(EMS, Date) %>%
-  group_by(EMS) %>%
+  arrange(covidregion, Date) %>%
+  group_by(covidregion) %>%
   mutate(date = as.Date(Date), time = c(1:n_distinct(date)))
 
 
