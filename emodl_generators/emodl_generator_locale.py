@@ -773,13 +773,12 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
 (observe d_As_t d_As)
 (observe d_P_t d_P)
 """
+
+    temp_str_I = ""
+    temp_str_II = ""
     for grp in grpList :
-        temp_str = """
-(param d_Sym_ct1_{grp} (+ d_Sym_{grp} (* d_Sym_{grp} @d_Sym_ct1@ )))
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym_{grp} d_Sym_ct1_{grp})))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym_{grp} @d_Sym_{grp}@)))
-        """.format(grp=grp)
-        contactTracing_str = contactTracing_str + temp_str
+        temp_str_I = temp_str_I + "\n" + """(param d_Sym_ct1_{grp} (+ d_Sym_{grp} (* d_Sym_{grp} @d_Sym_ct1@ )))""".format(grp=grp)
+        temp_str_II = temp_str_II + """(d_Sym_{grp} d_Sym_ct1_{grp})""".format(grp=grp)
 
     contactTracing_gradual_str = """
 (observe d_As_t d_As)
