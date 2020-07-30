@@ -2282,6 +2282,7 @@
 (observe d_As_t d_As)
 (observe d_P_t d_P)
 
+
 (time-event contact_tracing_start @contact_tracing_start_1@ ( (reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ )(d_As @d_AsP_ct1@)(d_P @d_AsP_ct1@) ))
 
 (time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_As @change_testDelay_As_1@) (Kl_D (/ 1 time_D_As)) (Kr_a_D (/ 1 (- recovery_time_asymp time_D_As ))) ))
