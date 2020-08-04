@@ -14,23 +14,30 @@ runinBatchMode = TRUE
 if(runinBatchMode){
   cmd_agrs <- commandArgs()
   length(cmd_agrs)
-  ems <- cmd_agrs[length(cmd_agrs)]
+  area_nr <- cmd_agrs[length(cmd_agrs)]
   
   task_id <- Sys.getenv("SLURM_ARRAY_TASK_ID")
   print(task_id)
-  ems <- task_id
+  area_nr <- task_id
 } else {
-  ems <- "11"
+  area_nr <- "1"
 }
 
 
-print(ems)
+print(area_nr)
+if(area_nr==1)restoreRegion="northcentral"
+if(area_nr==2)restoreRegion="northeast"
+if(area_nr==3)restoreRegion="central"
+if(area_nr==4)restoreRegion="southern"
+if(area_nr==5)restoreRegion="All"
+print(restoreRegion)
+
 
 setwd("/home/mrm9534/gitrepos/covid-chicago/Rfiles/")
 source("/home/mrm9534/gitrepos/covid-chicago/Rfiles/load_paths.R")
 source("/home/mrm9534/gitrepos/covid-chicago/Rfiles/processing_helpers.R")
 
-exp_name = "20200731_IL_reopen_contactTracing"
+exp_name = "20200803_IL_baseline_reopeningScenarios"
 exp_dir <- file.path(simulation_output, exp_name)
 
 Rt_dir <- file.path(simulation_output, exp_name, "estimatedRt")
@@ -38,15 +45,9 @@ if (!dir.exists(Rt_dir)) dir.create(Rt_dir)
 
 
 ### Load simulation outputs
-tempdat <- read.csv(file.path(exp_dir, "trajectoriesDat.csv")) %>% 
-  dplyr::mutate(
-  startdate = as.Date(startdate),
-  Date = as.Date(time + startdate)
-)
+tempdat <- read.csv(file.path(exp_dir, "trajectoriesDat.csv")) 
 
-
-colnames(tempdat)[colnames(tempdat)== paste0( "infected_cumul_EMS.",ems)]  = "infected_cumul"
-colnames(tempdat)[colnames(tempdat)== paste0( "infected_cumul_EMS-",ems)]  = "infected_cumul"
+colnames(tempdat)[colnames(tempdat)== paste0( "infected_cumul_",restoreRegion)]  = "infected_cumul"
 colnames(tempdat)
 
 tempdat <- tempdat %>% 
@@ -54,20 +55,25 @@ tempdat <- tempdat %>%
     startdate = as.Date(startdate),
     Date = as.Date(time + startdate),
   ) %>%
-  dplyr::group_by(scen_num) %>%
-  dplyr::arrange(scen_num, Date) %>%
+  dplyr::group_by(scen_num,reopening_multiplier_4) %>%
+  dplyr::arrange(scen_num, reopening_multiplier_4, Date)
   dplyr::mutate(new_infections = infected_cumul - lag(infected_cumul) )
+
+tempdat <- tempdat %>% 
+  dplyr::group_by(Date, reopening_multiplier_4) %>%
+  dplyr::summarize(new_infections =mean(new_infections),
+                   infected_cumul = mean(infected_cumul))
 
 
 method <- "uncertain_si"
 Rt_list <- list()
 si_list <- list()
 count=0
-for (scen in unique(tempdat$scen_num)) {
+for (scen in unique(tempdat$reopening_multiplier_4)) {
   count = count + 1
-  # scen = unique(dat$scen_num)[1]
+  # scen = unique(tempdat$reopening_multiplier_4)[1]
   disease_incidence_data <- tempdat %>%
-    dplyr::filter(scen_num == scen) %>%
+    dplyr::filter(reopening_multiplier_4 == scen) %>%
     dplyr::rename(I = new_infections) %>%
     dplyr::mutate(I = ifelse(I <0,0,I)) %>%
     dplyr::select(Date, I ,  infected_cumul) %>%
@@ -115,14 +121,14 @@ for (scen in unique(tempdat$scen_num)) {
   }
   
 
-  Rt_tempdat  <- res$R %>% mutate(region = ems)
-  Rt_tempdat$scen_num = scen
+  Rt_tempdat  <- res$R %>% mutate(region = restoreRegion)
+  Rt_tempdat$reopening_multiplier_4 = scen
   
   if(count==1)Rt_tempdat_All  <- Rt_tempdat
   if(count!=1)Rt_tempdat_All  <- rbind(Rt_tempdat_All,Rt_tempdat)
   
-  SI_tempdat  <- res$SI.Moments %>% mutate(region = ems)
-  SI_tempdat$scen_num = scen
+  SI_tempdat  <- res$SI.Moments %>% mutate(region = restoreRegion)
+  SI_tempdat$reopening_multiplier_4 = scen
   
   if(count==1)SI_tempdat_All  <- SI_tempdat
   if(count!=1)SI_tempdat_All  <- rbind(SI_tempdat_All,SI_tempdat) 
@@ -130,7 +136,7 @@ for (scen in unique(tempdat$scen_num)) {
   rm(Rt_tempdat, SI_tempdat)
 }
 
-save(Rt_tempdat_All, file=file.path(Rt_dir, paste0(ems,"_temp_Rt_tempdat_All.Rdata")))
+save(Rt_tempdat_All, file=file.path(Rt_dir, paste0(restoreRegion,"_Rt_aggregated_scen_num.Rdata")))
 
 
 
