@@ -112,7 +112,7 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
     return adf
 
 
-def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False,addSamples = False, git_dir=GIT_DIR):
+def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False,addSamples = True, git_dir=GIT_DIR):
     sampledf = pd.read_csv(os.path.join(temp_exp_dir,"sampled_parameters.csv"))
     if addSamples == False:
         sampledf = sampledf[["scen_num","startdate"]]
