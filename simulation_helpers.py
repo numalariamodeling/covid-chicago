@@ -112,9 +112,10 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
     return adf
 
 
-def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False, git_dir=GIT_DIR):
+def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False,addSamples = True, git_dir=GIT_DIR):
     sampledf = pd.read_csv(os.path.join(temp_exp_dir,"sampled_parameters.csv"))
-
+    if addSamples == False:
+        sampledf = sampledf[["scen_num","startdate"]]
     df_list = []
     for scen_i in range(Nscenarios+1):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
@@ -139,7 +140,7 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
     return dfc
 
 
-def cleanup(temp_dir, temp_exp_dir, sim_output_path,plot_path, delete_temp_dir=False) :
+def cleanup(temp_dir, temp_exp_dir, sim_output_path,plot_path, delete_temp_dir=True) :
     # Delete simulation model and emodl files
     # But keeps per default the trajectories, better solution, zip folders and copy
     if delete_temp_dir:
