@@ -1,8 +1,8 @@
 experiment_setup_parameters:
   'number_of_samples': 50
   'number_of_runs': 1
-  'duration': 370
-  'monitoring_samples': 370 # needs to be smaller than duration
+  'duration': 400
+  'monitoring_samples': 400 # needs to be smaller than duration
   'random_seed': 19
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -237,11 +237,15 @@ time_parameters:
   'socialDistance_time5':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-21}
+  'socialDistance_rollback_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-15}
+    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01, 2020-08-15, 2020-08-30, 2020-09-15]}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}
+    function_kwargs: {'dates': 2020-07-15}
   ### Gradual reopening (time-wise)
   'gradual_reopening_time1':
     custom_function: DateToTimestep
@@ -305,14 +309,14 @@ time_parameters:
   ### (only used if corresponding emodl is defined)
   'contact_tracing_start_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-15}
+    function_kwargs: {'dates': 2020-08-05}
   ## stop after simulation end to simulate indefinite contact tracing
   'contact_tracing_stop1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2022-05-30}
   'change_testDelay_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-15}
+    function_kwargs: {'dates': 2020-08-05}
     #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
 fitted_parameters:
   Kis:
