@@ -114,15 +114,15 @@ def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', ou
 
 def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=False,addSamples = False, git_dir=GIT_DIR):
     sampledf = pd.read_csv(os.path.join(temp_exp_dir,"sampled_parameters.csv"))
-
+    if addSamples == False:
+        sampledf = sampledf[["scen_num","startdate"]]
     df_list = []
     for scen_i in range(Nscenarios+1):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
             df_i = reprocess(trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir, input_fname=input_name)
             df_i['scen_num'] = scen_i
-            if addSamples :
-                df_i = df_i.merge(sampledf, on=['scen_num'])
+            df_i = df_i.merge(sampledf, on=['scen_num'])
             df_list.append(df_i)
         except:
             continue
