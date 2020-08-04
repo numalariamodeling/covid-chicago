@@ -841,6 +841,8 @@ def write_interventions(grpList, total_string, scenarioName, expandModel, change
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str)
     if scenarioName == "rollback" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + rollback_str)
+    if scenarioName == "reopen_rollback":
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_adj2_str + rollback_str)
     if scenarioName == "contactTracing" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_str)
    # if scenarioName == "gradual_contactTracing" :
@@ -947,7 +949,7 @@ if __name__ == '__main__':
     ### Emodls without migration between EMS areas
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollback', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_rollback.emodl'))
-    #generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollback', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_rollback_gradual_reopening.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_rollback', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopen_rollback.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions=None, add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_neverSIP.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionStop', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionStop.emodl'))
