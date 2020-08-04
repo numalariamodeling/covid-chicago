@@ -222,8 +222,8 @@ def write_functions(grp, expandModel=None):
 
     if expandModel == None:
         functions_str = expand_base_str + functions_str
-    if expandModel == "testDelay_SymSys" or expandModel == "uniformtestDelay" :
-        functions_str = expand_testDelay_SymSys_str + functions_str
+    if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
+        functions_str =  expand_testDelay_SymSys_str + functions_str
     if expandModel == "testDelay_AsSymSys":
         functions_str = expand_testDelay_AsSymSys_str + functions_str
 
@@ -672,68 +672,7 @@ def write_reactions(grp, expandModel=None):
     return (reaction_str)
 
 
-
-def define_change_detection_and_isolation(grpList=None,
-                                          reduced_inf_of_det_cases=True,
-                                          d_As=True,
-                                          d_P = True ,
-                                          d_Sym_ct = True,
-                                          d_Sym_grp=False,
-                                          d_Sym_grp_option = None):
-    
-    observe_str = """
-(observe d_As_t d_As)
-(observe d_P_t d_P)
-"""
-    
-    reduced_inf_of_det_cases_str =""
-    d_As_str =""
-    d_P_str=""
-    d_Sym_ct_param_str = ""
-    d_Sym_ct_str = ""
-    
-    if reduced_inf_of_det_cases :
-        reduced_inf_of_det_cases_str = """(reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ )""" 
-    if d_As :
-        d_As_str = """(d_As @d_AsP_ct1@)""" 
-    if d_P :
-        d_P_str = """(d_P @d_AsP_ct1@)""" 
-    
-    if d_Sym_ct : 
-    
-        ### Simple, not group specific
-        if d_Sym_ct and not d_Sym_grp :
-            d_Sym_ct_str = """(d_Sym @d_Sym_ct1@)"""         
-        
-    
-        ### Group specific
-        if d_Sym_grp :  
-        
-            for grp in grpList:
-    
-                if d_Sym_grp_option == 'increase_to_grp_target' :
-                    d_Sym_ct_param_str = d_Sym_ct_param_str + """(param d_Sym_ct1_{grp} @d_Sym_ct1_{grp}@)""".format(grp=grp)
-            
-                if d_Sym_grp_option == 'increase_to_common_target' :
-                    d_Sym_ct_param_str = d_Sym_ct_param_str + "\n" + """(param d_Sym_ct1_{grp} @d_Sym_ct1@)""".format(grp=grp)
-                    
-                if d_Sym_grp_option == 'common_increase' :
-                    d_Sym_ct_param_str = d_Sym_ct_param_str + "\n" + """(param d_Sym_ct1_{grp} (+ @d_Sym_change5_{grp}@ (* @d_Sym_change5_{grp}@ @d_Sym_ct1@ )))""".format(grp=grp)
-                    
-                if d_Sym_grp_option == 'grp_specific_increase' :
-                    d_Sym_ct_param_str = d_Sym_ct_param_str + "\n" + """(param d_Sym_ct1_{grp} (+ @d_Sym_change5_{grp}@ (* @d_Sym_change5_{grp}@ @d_Sym_ct1_{grp}@ )))""".format(grp=grp)
-                    
-                d_Sym_ct_str = d_Sym_ct_str + """(d_Sym_{grp} d_Sym_ct1_{grp})""".format(grp=grp)
-
-    observe_str = observe_str + "\n" + d_Sym_ct_param_str
-    change_param_str = reduced_inf_of_det_cases_str + d_As_str + d_P_str + d_Sym_ct_str
-    time_event_str = """(time-event contact_tracing_start @contact_tracing_start_1@ ( {change_param} ))""".format(change_param=change_param_str)
-    
-    contactTracing_str = observe_str + "\n"  + time_event_str
-    
-    return(contactTracing_str)
-
-def write_interventions(grpList, total_string, scenarioName, change_testDelay=None) :
+def write_interventions(grpList, total_string, scenarioName, expandModel, change_testDelay=None) :
 
     socialDistance_change_str = ""
     for grp in grpList:
@@ -829,33 +768,26 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
         """.format(grp=grp)
         gradual_reopening2_str = gradual_reopening2_str + temp_str
 
-    improveHS_str = define_change_detection_and_isolation(grpList=grpList, 
-                                    reduced_inf_of_det_cases = False,
-                                    d_As = False,
-                                    d_P = False ,
-                                    d_Sym_ct = True,
-                                    d_Sym_grp = True,
-                                    d_Sym_grp_option = 'increase_to_common_target')
+        contactTracing_str = """
+(observe d_As_t d_As)
+(observe d_P_t d_P)
+    """
+
+        temp_str_I = ""
+        temp_str_II = ""
+        for grp in grpList:
+            temp_str_I = temp_str_I + "\n" + """(param d_Sym_ct1_{grp} (+ d_Sym_{grp} (* d_Sym_{grp} @d_Sym_ct1@ )))""".format(
+                grp=grp)
+            temp_str_II = temp_str_II + """(d_Sym_{grp} d_Sym_ct1_{grp})""".format(grp=grp)
+
+        contactTracing_event_str = """
+    (time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@)
+    """
+
+        contactTracing_event_str = contactTracing_event_str + temp_str_II + "))"
+        contactTracing_str = contactTracing_str + temp_str_I + contactTracing_event_str
 
 
-    contactTracing_str = define_change_detection_and_isolation(grpList=grpList, 
-                                    reduced_inf_of_det_cases = True,
-                                    d_As = True,
-                                    d_P = True ,
-                                    d_Sym_ct = False,
-                                    d_Sym_grp = False,
-                                    d_Sym_grp_option = None)
-                                    
-
-    contactTracing_improveHS_str = define_change_detection_and_isolation(grpList=grpList, 
-                                    reduced_inf_of_det_cases = True,
-                                    d_As = True,
-                                    d_P = True,
-                                    d_Sym_ct = True,
-                                    d_Sym_grp = True,
-                                    d_Sym_grp_option = 'increase_to_common_target')
-                                    
-                                    
     change_uniformtestDelay_str = """
 (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
     """.format("(time_D @change_testDelay_1@)",
@@ -895,19 +827,15 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
     if scenarioName == "interventionSTOP_adj2":
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_adj2_str)
     if scenarioName == "gradual_reopening" :
-        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening_str)
     if scenarioName == "gradual_reopening2" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str)
     if scenarioName == "continuedSIP" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str)
     if scenarioName == "contactTracing" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_str)
-    if scenarioName == "contactTracing_improveHS" :
-        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_improveHS_str)
-    if scenarioName == "improveHS" :
-        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + improveHS_str)
    # if scenarioName == "gradual_contactTracing" :
-   #    total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening_str + contactTracing_gradual_str)
+   #    total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_gradual_str)
 
     if change_testDelay != None :
         if change_testDelay == "uniform" :
@@ -983,7 +911,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
     total_string = total_string.replace('(species As::EMS_6 0)', '(species As::EMS_6 1)')
     ### Add interventions (optional)
     if add_interventions != None :
-        total_string = write_interventions(grpList, total_string, add_interventions, change_testDelay)
+        total_string = write_interventions(grpList, total_string, add_interventions, expandModel, change_testDelay)
 
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
@@ -1011,31 +939,15 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions=None, add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_neverSIP.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionStop', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionStop.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening.emodl'))
-
-    #generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_CT_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_CT_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_CT_ChangeTD_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='improveHS', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_improveHS_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='improveHS', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_improveHSChangeTD_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing_improveHS', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_CT_improveHS_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing_improveHS', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_CT_improveHSChangeTD_commonTarget.emodl'))
-
-    #generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_CT_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'baseline_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_ChangeTD_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='improveHS', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_improveHS_commonTarget.emodl'))
-    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='improveHS', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'reopen2_improveHSChangeTD_commonTarget.emodl'))
-
-
-
-    #generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_contactTracing', add_migration=False, change_testDelay = "Sym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradualCTChangeTD.emodl'))
-
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening2', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracing.emodl'))
+    generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_contactTracingChangeTD.emodl'))
+  
     ### % additional increase to latest transmission level
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj2', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionSTOPadj2.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening2', add_migration=False, observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening2.emodl'))
 
-    ### Emodls with migration between EMS areas  
+    ### Emodls with migration between EMS areas
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=True, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj', add_migration=True, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_interventionSTOPadj.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions=None, add_migration=True, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_neverSIP.emodl'))
@@ -1043,8 +955,3 @@ if __name__ == '__main__':
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening', add_migration=True, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_gradual_reopening.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=True,  observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_contactTracing.emodl'))
     generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=True, change_testDelay = "AsSym", observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_migration_EMS_contactTracingChangeTD.emodl'))
-    
-    
-    
-    
-    
