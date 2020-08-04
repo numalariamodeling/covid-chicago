@@ -34,8 +34,11 @@ print(restoreRegion)
 
 
 setwd("/home/mrm9534/gitrepos/covid-chicago/Rfiles/")
-source("/home/mrm9534/gitrepos/covid-chicago/Rfiles/load_paths.R")
-source("/home/mrm9534/gitrepos/covid-chicago/Rfiles/processing_helpers.R")
+
+source("load_paths.R")
+source("processing_helpers.R")
+source("estimate_Rt/getRt_function.R")
+
 
 exp_name = "20200803_IL_baseline_reopeningScenarios"
 exp_dir <- file.path(simulation_output, exp_name)
@@ -66,6 +69,7 @@ tempdat <- tempdat %>%
 
 
 method <- "uncertain_si"
+weekwindow=13
 Rt_list <- list()
 si_list <- list()
 count=0
@@ -79,47 +83,8 @@ for (scen in unique(tempdat$reopening_multiplier_4)) {
     dplyr::select(Date, I ,  infected_cumul) %>%
     dplyr::filter(!is.na(I))
   
-  ## check what si_distr to assume, or calculate from predictions, here using an example from the package
-  if(method=="non_parametric_si"){  
-    si_distr <- c(0.000, 0.233, 0.359, 0.198, 0.103, 0.053, 0.027 ,0.014 ,0.007, 0.003, 0.002 ,0.001)
-    res <- estimate_R(incid = disease_incidence_data$I,
-                      method = "non_parametric_si",
-                      config = make_config(list(si_distr = si_distr)))
-    
-  }
   
-  ### use parametric_si
-  if(method=="parametric_si"){  
-    res <- estimate_R(incid = disease_incidence_data$I,
-                      method = "parametric_si",
-                      config = make_config(list(mean_si = 2.6, std_si = 1.5)))
-  }
-  
-  ## biweekly sliding
-  t_start <- seq(2, nrow(disease_incidence_data)-13)   
-  t_end <- t_start + 13  
-  
-  ## weekly sliding
-  #t_start <- seq(2, nrow(disease_incidence_data)-7)   
-  #t_end <- t_start + 7  
-  
-  
-  ## estimate the reproduction number (method "uncertain_si")
-  if(method=="uncertain_si"){
-    res <- estimate_R(disease_incidence_data$I,
-                      method = "uncertain_si",
-                      config = make_config(list(
-                        t_start = t_start, 
-                        t_end = t_end,
-                        mean_si = 4.6, std_mean_si = 1,
-                        min_mean_si = 1, max_mean_si = 7.5,
-                        std_si = 1.5, std_std_si = 0.5,
-                        min_std_si = 0.5, max_std_si = 2.5,
-                        n1 = 100, n2 = 100
-                      ))
-    )
-  }
-  
+  res <- getRt(disease_incidence_data, method=method, weekwindow=weekwindow)
 
   Rt_tempdat  <- res$R %>% mutate(region = restoreRegion)
   Rt_tempdat$reopening_multiplier_4 = scen
