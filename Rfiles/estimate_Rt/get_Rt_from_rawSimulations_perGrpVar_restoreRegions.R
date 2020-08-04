@@ -86,17 +86,17 @@ for (scen in unique(tempdat$reopening_multiplier_4)) {
   
   res <- getRt(disease_incidence_data, method=method, weekwindow=weekwindow)
 
-  Rt_tempdat  <- res$R %>% mutate(region = restoreRegion)
+  Rt_tempdat  <- res$R %>% mutate(region = restoreRegion, weekwindow=weekwindow )
   Rt_tempdat$reopening_multiplier_4 = scen
   
   if(count==1)Rt_tempdat_All  <- Rt_tempdat
   if(count!=1)Rt_tempdat_All  <- rbind(Rt_tempdat_All,Rt_tempdat)
   
-  SI_tempdat  <- res$SI.Moments %>% mutate(region = restoreRegion)
+  SI_tempdat  <- res$SI.Moments %>% mutate(region = restoreRegion, weekwindow=weekwindow )
   SI_tempdat$reopening_multiplier_4 = scen
   
   if(count==1)SI_tempdat_All  <- SI_tempdat
-  if(count!=1)SI_tempdat_All  <- rbind(SI_tempdat_All,SI_tempdat) 
+  if(count!=1)SI_tempdat_All  <- rbind(SI_tempdat_All,SI_tempdat ) 
   
   rm(Rt_tempdat, SI_tempdat)
 }

@@ -81,13 +81,13 @@ for (scen in unique(tempdat$scen_num)) {
   res <- getRt(disease_incidence_data, method=method, weekwindow=weekwindow)
   
 
-  Rt_tempdat  <- res$R %>% mutate(region = ems)
+  Rt_tempdat  <- res$R %>% mutate(region = ems, weekwindow=weekwindow )
   Rt_tempdat$scen_num = scen
   
   if(count==1)Rt_tempdat_All  <- Rt_tempdat
   if(count!=1)Rt_tempdat_All  <- rbind(Rt_tempdat_All,Rt_tempdat)
   
-  SI_tempdat  <- res$SI.Moments %>% mutate(region = ems)
+  SI_tempdat  <- res$SI.Moments %>% mutate(region = ems, weekwindow=weekwindow )
   SI_tempdat$scen_num = scen
   
   if(count==1)SI_tempdat_All  <- SI_tempdat

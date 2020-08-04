@@ -38,8 +38,8 @@ for (region in unique(dat$geography_modeled)) {
     plot = pplot, path = file.path(outdir), width = 6, height = 10, dpi = 300, device = "pdf"
   )
 
-  Rt_list[[region]] <- res$R %>% mutate(region = region)
-  si_list[[region]] <- res$SI.Moments %>% mutate(region = region)
+  Rt_list[[region]] <- res$R %>% mutate(region = region, weekwindow=weekwindow )
+  si_list[[region]] <- res$SI.Moments %>% mutate(region = region , weekwindow=weekwindow)
 }
 
 ### Combine list to dataframe 
@@ -53,15 +53,14 @@ dat <- dat %>%
 
 dat$covidregion <- factor(dat$region,  levels = paste0("covidregion_", c(1:11)), labels = paste0("covidregion_", c(1:11)))
 
-
+### Write csv file with Rt 
 dat <- dat %>%
   arrange(covidregion, Date) %>%
   dplyr::group_by(covidregion) %>%
   mutate(date = as.Date(Date), time = c(1:n_distinct(date)))
 
-
-### Write csv file with Rt 
 Rt_dat %>%
+  mutate(t_start=t_start+weekwindow, t_end = t_end+weekwindow) %>%
   merge(unique(dat[, c("time", "Date")]), by.x = "t_start", by.y = "time") %>%
   rename(geography_modeled = region,
     Median.of.covid.19.Rt = `Median(R)`,
