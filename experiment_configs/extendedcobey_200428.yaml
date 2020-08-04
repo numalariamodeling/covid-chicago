@@ -237,6 +237,9 @@ time_parameters:
   'socialDistance_time5':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-21}
+  'socialDistance_rollback_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-15}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':
