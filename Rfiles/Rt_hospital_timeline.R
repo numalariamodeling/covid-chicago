@@ -119,10 +119,11 @@ f_combine_dat <- function(df_Rt, df_trajectories, region) {
       "northeast" = c(7, 8, 9, 10, 11),
       "central" = c(3, 6),
       "southern" = c(4, 5),
-      "illinois" = c(1:11)
+      "illinois" = c(1:11),
+      "all" = c(1:11)
     )
 
-    ems <- as.numeric(regionsList[[region]])
+    ems <- as.numeric(regionsList[[tolower(region)]])
     df_Rt <- df_Rt %>%
       filter(region %in% ems) %>%
       dplyr::group_by(Date, t_start, scen_num) %>%
@@ -206,7 +207,8 @@ f_stacked_timelines <- function(df_combined = dat_combined, startdate, enddate,
     f_timelinePlot(channel = "Ki", startdate, enddate) +
     geom_vline(xintercept = c(as.Date(startReopen), as.Date(endReopen))) +
     labs(title = "Ki") +
-    theme(legend.position = "none")
+    theme(legend.position = "none")+
+    customThemeNoFacet
 
 
   p1 <- df_combined %>%
@@ -217,7 +219,8 @@ f_stacked_timelines <- function(df_combined = dat_combined, startdate, enddate,
     geom_hline(yintercept = 1, linetype = "dashed") +
     geom_vline(xintercept = c(as.Date(startReopen), as.Date(endReopen))) +
     labs(title = "Rt") +
-    theme(legend.position = "none")
+    theme(legend.position = "none")+
+    customThemeNoFacet
 
   p2 <- df_combined %>%
     dplyr::group_by(Date, reopening_multiplier_4, reopening) %>%
@@ -225,7 +228,8 @@ f_stacked_timelines <- function(df_combined = dat_combined, startdate, enddate,
     f_timelinePlot(channel = "new_infected", startdate, enddate) +
     geom_vline(xintercept = c(as.Date(startReopen), as.Date(endReopen))) +
     labs(title = "new_infected") +
-    theme(legend.position = "none")
+    theme(legend.position = "none")+
+    customThemeNoFacet
 
 
   p3 <- df_combined %>%
@@ -233,7 +237,8 @@ f_stacked_timelines <- function(df_combined = dat_combined, startdate, enddate,
     dplyr::summarize(new_hospitalized = mean(new_hospitalized)) %>%
     f_timelinePlot(channel = "new_hospitalized", startdate, enddate) +
     geom_vline(xintercept = c(as.Date(startReopen), as.Date(endReopen))) +
-    labs(title = "new_hospitalized")
+    labs(title = "new_hospitalized")+
+    customThemeNoFacet
 
   legend <- get_legend(p3)
   p3 <- p3 + theme(legend.position = "none")
@@ -246,7 +251,7 @@ f_stacked_timelines <- function(df_combined = dat_combined, startdate, enddate,
     ggsave(paste0("reopening_timelines_", region, ".pdf"),
       plot = pall, path = file.path(exp_dir), width = 8, height = 12, device = "pdf"
     )
-    ggsave(paste0("reopening_timelines_", region, "png"),
+    ggsave(paste0("reopening_timelines_", region, ".png"),
       plot = pall, path = file.path(exp_dir), width = 8, height = 12, device = "png"
     )
   }
@@ -289,7 +294,6 @@ f_Rt_hosp_scatter_plot <- function(df_combined, startdate, enddate, SAVE=TRUE) {
 
 
   p1 <- df_combined %>%
-    dplyr::filter(Date >= as.Date("2020-06-21")) %>%
     mutate(week = week(Date)) %>%
     left_join(weeklyHosp, by = c("week", "scen_num", "reopening_multiplier_4", "reopening")) %>%
     dplyr::filter(Date >= as.Date(startdate) & Date <= as.Date(enddate)) %>%
@@ -305,7 +309,8 @@ f_Rt_hosp_scatter_plot <- function(df_combined, startdate, enddate, SAVE=TRUE) {
     mutate(week = week(Date)) %>%
     left_join(weeklyHosp, by = c("week", "scen_num", "reopening_multiplier_4", "reopening")) %>%
     filter(Date >= as.Date(startdate) & Date <= as.Date(enddate)) %>%
-    filter(new_hospitalized_weekavrg_perc >= -0.5 & new_hospitalized_weekavrg_perc < 0.8) %>%
+    filter(Rt_mean <=1.5,
+           new_hospitalized_weekavrg_perc >= -0.5 & new_hospitalized_weekavrg_perc < 0.8) %>%
     dplyr::group_by(Date, week, reopening_multiplier_4, reopening) %>%
     dplyr::summarize(new_hospitalized_weekavrg_perc = mean(new_hospitalized_weekavrg_perc)) %>%
     left_join(pdat0, by = c("week", "reopening_multiplier_4", "reopening")) %>%
@@ -314,7 +319,7 @@ f_Rt_hosp_scatter_plot <- function(df_combined, startdate, enddate, SAVE=TRUE) {
     geom_point(aes(x = new_hospitalized_weekavrg_perc, y = Rt_mean, group = as.factor(reopening))) +
     labs(x = "\nWeekly increase in new hospitalizations (%)", y = "\nEstimated Rt", subtitle = timetitle) +
     scale_x_continuous(breaks = seq(-0.2, 0.6, 0.1), labels = seq(-0.2, 0.6, 0.1) * 100, limits = c(-0.2,0.6)) +
-    scale_y_continuous(breaks = seq(0.8, 1.5, 0.1), labels = seq(0.8, 1.5, 0.1)) +
+    scale_y_continuous(breaks = seq(0.8, 1.5, 0.1), labels = seq(0.8, 1.5, 0.1), limits = c(0.8,1.5)) +
     geom_hline(yintercept = 1, linetype = "dashed") +
     geom_hline(yintercept = -Inf) +
     geom_vline(xintercept = -Inf) +
@@ -363,7 +368,7 @@ exp_name <- "20200803_IL_baseline_reopeningScenarios"
 exp_dir <- file.path(simulation_output, exp_name)
 
 ### Get trajectories
-region <- "All" #
+region <- "All" #"southern","northeast","central","northcentral"
 grepCol <- region
 if (region == "All" | region == "IL") grepCol <- "All"
 
@@ -372,7 +377,7 @@ enddate <- "2020-08-21"
 
 
 ### If file size is large, load only once and then set to FALSE
-loadDat=FALSE
+loadDat=TRUE
 if(loadDat)trajectoriesDat <- read.csv(file.path(exp_dir, "trajectoriesDat.csv"))
 
 Rtdat <- f_load_Rt(exp_dir, fname = "combined_temp_Rt_tempdat_All.Rdata") %>% as.data.frame()
