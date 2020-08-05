@@ -5,6 +5,7 @@
 - the region name is automatically added to the experiment name
 - some emodls require a different yaml file
 - naming conventions 1) compartmental model type 'extendedmodel' 2) grp specification if any '_EMS'  3) time event scenario specification '_dAsP'
+- baseline denotes continuing current trends as fitted to data and reopening an increase in transmission 
 
 Long form
 python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl --cfg_template model_B.cfg --name_suffix "EMS_scen3"						  
@@ -23,16 +24,27 @@ python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extende
 python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_rollback.emodl -cfg model_B.cfg -n "reopenRollback"	
 
  - Improved detection and 'speed' scenarios (increase in detection of Sym)
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_changeTD.emodl -cfg model_B.cfg -n "gradual_reopening_changeTD"						  
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dSym.emodl -cfg model_B.cfg -n "gradual_reopening_dSym"
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dSym_changeTD.emodl -cfg model_B.cfg -n "gradual_reopening_dSym_changeTD"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_changeTD.emodl -cfg model_B.cfg -n "baseline_changeTD"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dSym.emodl -cfg model_B.cfg -n "baseline_dSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dSym_changeTD.emodl -cfg model_B.cfg -n "baseline_dSym_changeTD"
+
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_changeTD.emodl -cfg model_B.cfg -n "reopen_changeTD"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dSym.emodl -cfg model_B.cfg -n "reopen_dSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dSym_changeTD.emodl -cfg model_B.cfg -n "reopen_dSym_changeTD"
+
 
  - Contact tracing scenarios (detection of As and P, optionally also increase in dSym)
- - note, per default contact tracing is combined with gradual reopening, to change, remove the reopening str in the emodl generator
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsP.emodl -cfg model_B.cfg -n "gradual_reopening_dAsP"						  
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsP_TD.emodl -cfg model_B.cfg -n "gradual_reopening_dAsP_TD"
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsPSym.emodl -cfg model_B.cfg -n "gradual_reopening_dAsPSym"
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsPSym_TD.emodl -cfg model_B.cfg -n "gradual_reopening_dAsPSym_TD"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsP.emodl -cfg model_B.cfg -n "baseline_dAsP"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsP_TD.emodl -cfg model_B.cfg -n "baseline_dAsP_TD"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsPSym.emodl -cfg model_B.cfg -n "baseline_dAsPSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsPSym_TD.emodl -cfg model_B.cfg -n "baseline_dAsPSym_TD"
+
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsP.emodl -cfg model_B.cfg -n "reopen_dAsP"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsP_TD.emodl -cfg model_B.cfg -n "reopen_dAsP_TD"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsPSym.emodl -cfg model_B.cfg -n "reopen_dAsPSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsPSym_TD.emodl -cfg model_B.cfg -n "reopen_dAsPSym_TD"
+
+
 
 #### When not using the locale model, each group needs to run separately
 python runScenarios.py -rl Local -r EMS_1 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
