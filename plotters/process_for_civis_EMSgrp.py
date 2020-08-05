@@ -14,7 +14,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
-simdate = "20200724"
+simdate = datetime.today().strftime('%Y%m%d') # "20200804"
 
 plot_first_day = pd.to_datetime('2020/3/1')
 plot_last_day = pd.to_datetime('2021/4/1')
@@ -65,9 +65,12 @@ def append_data_byGroup(dat, suffix) :
 def plot_sim(dat, suffix) :
     for ems in suffix:
 
-        if not ems == "All":
-            ems_nr = int(ems.split("-")[1])
-            capacity = load_capacity(ems_nr)
+        ems_nr = ems
+        if ems not in ["All","central","southern","northeast","northcentral"]:
+            ems_nr = str(ems.split("-")[1])
+        if ems == "All":
+            ems_nr ="illinois"
+        capacity = load_capacity(ems_nr)
 
         dfsub = dat[dat['ems'] == ems]
         fig = plt.figure(figsize=(18, 12))
@@ -98,8 +101,8 @@ def plot_sim(dat, suffix) :
         plotname = scenarioName +"_" + ems
         if ems == "All": ems = "IL"
         filename = 'nu_' + scenarioName + '_' + ems
-        #plt.savefig(os.path.join(plot_path, plotname + '.png'))
-        #plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
+        plt.savefig(os.path.join(plot_path, plotname + '.png'))
+        plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
         # plt.show()
 
 
@@ -136,6 +139,10 @@ if __name__ == '__main__' :
             os.makedirs(plot_path)
 
         df, first_day = load_trajectoriesDat(sim_output_path, plot_first_day=plot_first_day, plot_last_day=plot_last_day)
+        df = df[df.columns.drop(list(df.filter(regex='southern')))]
+        df = df[df.columns.drop(list(df.filter(regex='central')))]
+        df = df[df.columns.drop(list(df.filter(regex='northeast')))]
+        df = df[df.columns.drop(list(df.filter(regex='northcentral')))]
         suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
         #base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 

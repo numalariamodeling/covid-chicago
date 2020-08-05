@@ -134,6 +134,36 @@ def plot_covidregions_inone(channel='hospitalized') :
     plt.savefig(os.path.join(sim_output_path, 'iteration_comparison_covidregion_%s.pdf' % channel))
         #plt.show()
 
+def plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths']) :
+
+    subgroups = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9',
+                 '_EMS-10', '_EMS-11']
+
+    for channel in channels :
+        fig = plt.figure(figsize=(12, 8))
+        fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
+        palette = sns.color_palette('Set1', len(exp_names))
+        axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
+
+        for c, region_suffix in enumerate(subgroups) :
+
+            region_label= region_suffix.replace('_EMS-', 'covid region ')
+
+            for d, exp_name in enumerate(exp_names) :
+                sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+                df = load_sim_data(exp_name, region_suffix=region_suffix)
+
+                plot_on_fig2(df, c, axes, channel=channel, color=palette[d],panel_heading = region_label,  label="")
+
+            axes[-1].legend()
+            fig.suptitle(x=0.5, y=0.999,t=channel)
+            plt.tight_layout()
+        if os.path.isdir(os.path.join(sim_output_path,'_plots_covid_region_by_indicator')) ==False  :
+            os.mkdir(os.path.join(sim_output_path,'_plots_covid_region_by_indicator'))
+        plt.savefig(os.path.join(sim_output_path,'_plots_covid_region_by_indicator', 'covidregion_%s.png' % channel))
+        plt.savefig(os.path.join(sim_output_path,'_plots_covid_region_by_indicator', 'covidregion_%s.pdf' % channel))
+        #plt.show()
+
 
 def plot_restoreregions_inone(channel='hospitalized') :
 
@@ -164,16 +194,13 @@ def plot_restoreregions_inone(channel='hospitalized') :
 
 if __name__ == '__main__' :
 
-    exp_names = ['20200729_IL_RR_baseline_0',
-                 '20200729_IL_RR_immediate_0',
-                 '20200729_IL_RR_1week_0',
-                 '20200729_IL_RR_2week_0',
-                 '20200729_IL_RR_3week_0']
+    exp_names = ['20200804_IL_RR_fitting_0']
 
-    plot_main()
-    plot_covidregions()
-    plot_covidregions_inone(channel='hospitalized')
+    #plot_main()
+    #plot_covidregions()
+    #plot_covidregions_inone(channel='hospitalized')
     #plot_restoreregions_inone(channel='hospitalized')
-
-
+    #plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths'])
+    #plot_covidregions_inone2(channels=['prevalence','recoverged','symptomatic_mild','symptomatic_severe'])
+    plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild','hospitalized_det','deaths_det','infectious_det'])
 
