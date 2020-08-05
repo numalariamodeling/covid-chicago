@@ -81,7 +81,9 @@ def runExp(trajectories_dir, Location = 'Local' ):
         p = os.path.join(trajectories_dir,  'runSimulations.bat')
         subprocess.call([p])
     if Location =='NUCLUSTER' :
-        print('please submit sbatch runSimulations.sh in the terminal')
+        #p = os.path.join(trajectories_dir, 'submit_runSimulations.sh')
+        p = os.path.join(trajectories_dir,  'submit_runSimulations_homeDir.sh')
+        subprocess.call(['sh',p])
 
 
 def reprocess(trajectories_dir, temp_exp_dir, input_fname='trajectories.csv', output_fname=None):
@@ -195,7 +197,13 @@ echo end""")
     # Remaining issue:  /projects/p30781/covidproject/binaries/compartments/compartments.exe  cannot be found
     # Instead try to use /make accessible to all  /home/mrm9534/Box/NU-malaria-team/projects/binaries/compartments/compartments.exe   ?
     exp_name_short = exp_name[-20:]
-    header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 1\n#SBATCH --ntasks-per-node=1'
+    header = '#!/bin/bash\n' \
+             '#SBATCH -A p30781\n' \
+             '#SBATCH -p short\n' \
+             '#SBATCH -t 02:00:00\n' \
+             '#SBATCH -N 5\n' \
+             '#SBATCH --ntasks-per-node=1\n' \
+             '#SBATCH --mem=18G'
     jobname = '\n#SBATCH	--job-name="' + exp_name_short + '"'
     array = '\n#SBATCH --array=1-' + str(scen_num)
     err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
@@ -214,7 +222,13 @@ echo end""")
     # Submission script home directory on quest - hardcoded currently for mrm9534 - to do read in from load_path
     # additional parameters , ncores, time, queue...
     exp_name_short = exp_name[-20:]
-    header = '#!/bin/bash\n#SBATCH -A p30781\n#SBATCH -p short\n#SBATCH -t 04:00:00\n#SBATCH -N 1\n#SBATCH --ntasks-per-node=1'
+    header = '#!/bin/bash\n' \
+             '#SBATCH -A p30781\n' \
+             '#SBATCH -p short\n' \
+             '#SBATCH -t 02:00:00\n' \
+             '#SBATCH -N 5\n' \
+             '#SBATCH --ntasks-per-node=1\n' \
+             '#SBATCH --mem=18G'
     jobname = '\n#SBATCH	--job-name="' + exp_name_short + '"'
     array = '\n#SBATCH --array=1-' + str(scen_num)
     err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'

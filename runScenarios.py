@@ -533,6 +533,9 @@ if __name__ == '__main__':
         nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
         exe_dir=exe_dir, docker_image=docker_image)
 
+    if Location == 'NUCLUSTER':
+        runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER')
+
     if Location == 'Local':
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
