@@ -85,7 +85,7 @@ sampled_parameters:
         - {'low': 0.180, 'high': 0.180}
         - {'low': 0.095, 'high': 0.095}
         - {'low': 0.085, 'high': 0.085}
-        - {'low': 0.085, 'high': 0.085}
+        - {'low': 0.080, 'high': 0.080}
         - {'low': 0.100, 'high': 0.100}
         - {'low': 0.070, 'high': 0.070}
   social_multiplier_5:
@@ -101,7 +101,7 @@ sampled_parameters:
         - {'low': 0.240, 'high': 0.240}
         - {'low': 0.160, 'high': 0.160}
         - {'low': 0.120, 'high': 0.120}
-        - {'low': 0.140, 'high': 0.140}
+        - {'low': 0.150, 'high': 0.150}
         - {'low': 0.145, 'high': 0.145}
         - {'low': 0.115, 'high': 0.115}
   d_Sym:  
