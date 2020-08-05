@@ -65,9 +65,12 @@ def append_data_byGroup(dat, suffix) :
 def plot_sim(dat, suffix) :
     for ems in suffix:
 
-        if not ems == "All":
-            ems_nr = int(ems.split("-")[1])
-            capacity = load_capacity(ems_nr)
+        ems_nr = ems
+        if ems not in ["All","central","southern","northeast","northcentral"]:
+            ems_nr = str(ems.split("-")[1])
+        if ems == "All":
+            ems_nr ="illinois"
+        capacity = load_capacity(ems_nr)
 
         dfsub = dat[dat['ems'] == ems]
         fig = plt.figure(figsize=(18, 12))
