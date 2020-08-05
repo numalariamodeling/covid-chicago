@@ -942,12 +942,18 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + rollback_str)
     if scenarioName == "reopen_rollback":
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_adj2_str + rollback_str)
-    if scenarioName == "contactTracing" :
+    if scenarioName == "reopen_contactTracing" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_str)
-    if scenarioName == "contactTracing_improveHS" :
+    if scenarioName == "reopen_contactTracing_improveHS" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_improveHS_str)
-    if scenarioName == "improveHS" :
+    if scenarioName == "reopen_improveHS" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + improveHS_str)
+    if scenarioName == "contactTracing" :
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + contactTracing_str)
+    if scenarioName == "contactTracing_improveHS" :
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + contactTracing_improveHS_str)
+    if scenarioName == "improveHS" :
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + improveHS_str)
 
    # if scenarioName == "gradual_contactTracing" :
    #    total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_gradual_str)
@@ -1062,6 +1068,17 @@ if __name__ == '__main__':
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_dAsP_TD.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing_improveHS', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_dAsPSym.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='contactTracing_improveHS', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_dAsPSym_TD.emodl'))
+
+    generateImprovedDetectionEmodls_withReopening = True
+    if generateImprovedDetectionEmodls_withReopening:
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys",  add_interventions='gradual_reopening2', add_migration=False, observe_customGroups = True, change_testDelay = "Sym", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopening_changeTD.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_improveHS', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopening_dSym.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_improveHS', add_migration=False, change_testDelay = "Sym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopening_dSym_TD.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_contactTracing', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_dAsP.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_contactTracing', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopening_dAsP_TD.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_contactTracing_improveHS', add_migration=False,  observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopening_dAsPSym.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_contactTracing_improveHS', add_migration=False, change_testDelay = "AsSym", observe_customGroups = True, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopening_dAsPSym_TD.emodl'))
+
 
     ### Emodls with migration between EMS areas
     generateMigrationEmodls =False
