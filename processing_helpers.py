@@ -129,24 +129,19 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
 
 
 def load_capacity(ems) :
-
-    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/EMS_report_2020_03_21.xlsx')
-    ems_df = pd.read_excel(ems_fname)
-    ems_df = ems_df[ems_df['Date'] == '3/27/20']
-    ems_df['ems'] = ems_df['Region'].apply(lambda x : int(x.split('-')[0]))
+    ### note, names need to match, simulations and capacity data already include outouts for all illinois
+    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/capacity_by_covid_region.csv')
+    ems_df = pd.read_csv(ems_fname)
+    ems_df = ems_df[ems_df['date'] == max(ems_df['date'])]
+    #ems_df['ems'] = ems_df['Region'].apply(lambda x : int(x.split('-')[0]))
+    ems_df['ems'] = ems_df['geography_name']
+    ems_df['ems'] = ems_df['ems'].replace("restore_", "", regex=True)
     ems_df = ems_df.set_index('ems')
-    if ems > 0 :
-        capacity = {
-            'hospitalized' : ems_df.at[ems, 'Total_Med/_Surg_Beds'],
-            'critical' : ems_df.at[ems, 'Total_Adult_ICU_Beds'],
-            'ventilators' : ems_df.at[ems, 'Total_Vents']
-        }
-    else :
-        capacity = {
-            'hospitalized' : np.sum(ems_df['Total_Med/_Surg_Beds']),
-            'critical' : np.sum(ems_df['Total_Adult_ICU_Beds']),
-            'ventilators' : np.sum(ems_df['Total_Vents'])
-        }
+    capacity = {
+            'hospitalized' : ems_df.at[ems, 'medsurg_total'],
+            'critical' : ems_df.at[ems, 'icu_total'],
+            'ventilators' : ems_df.at[ems, 'vent_total']
+    }
     return capacity
 
 
