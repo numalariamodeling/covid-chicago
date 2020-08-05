@@ -1,0 +1,75 @@
+
+#### Some submission line examples for running simulations using the CMS-Python framework
+
+- specify running_location either Local or NUCLUSTER
+- the region name is automatically added to the experiment name
+- some emodls require a different yaml file
+- naming conventions 1) compartmental model type 'extendedmodel' 2) grp specification if any '_EMS'  3) time event scenario specification '_dAsP'
+- baseline denotes continuing current trends as fitted to data and reopening an increase in transmission 
+
+Long form
+python runScenarios.py --running_location Local --region IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl --cfg_template model_B.cfg --name_suffix "EMS_scen3"						  
+
+Abbreviated 
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS.emodl -cfg model_B.cfg -n "scen3"						  
+
+
+#### Current and past scenarios to submit for weekly updates
+
+ - Baseline and reopening scenarios
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS.emodl -cfg model_B.cfg -n "baseline"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_gradual_reopening.emodl -cfg model_B.cfg -n "gradual_reopening"
+
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_rollback.emodl -cfg model_B.cfg -n "rollback"	
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_rollback.emodl -cfg model_B.cfg -n "reopenRollback"	
+
+ - Improved detection and 'speed' scenarios (increase in detection of Sym)
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_changeTD.emodl -cfg model_B.cfg -n "baseline_changeTD"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dSym.emodl -cfg model_B.cfg -n "baseline_dSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dSym_changeTD.emodl -cfg model_B.cfg -n "baseline_dSym_changeTD"
+
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_changeTD.emodl -cfg model_B.cfg -n "reopen_changeTD"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dSym.emodl -cfg model_B.cfg -n "reopen_dSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dSym_changeTD.emodl -cfg model_B.cfg -n "reopen_dSym_changeTD"
+
+
+ - Contact tracing scenarios (detection of As and P, optionally also increase in dSym)
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsP.emodl -cfg model_B.cfg -n "baseline_dAsP"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsP_TD.emodl -cfg model_B.cfg -n "baseline_dAsP_TD"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsPSym.emodl -cfg model_B.cfg -n "baseline_dAsPSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_dAsPSym_TD.emodl -cfg model_B.cfg -n "baseline_dAsPSym_TD"
+
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsP.emodl -cfg model_B.cfg -n "reopen_dAsP"						  
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsP_TD.emodl -cfg model_B.cfg -n "reopen_dAsP_TD"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsPSym.emodl -cfg model_B.cfg -n "reopen_dAsPSym"
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_reopen_dAsPSym_TD.emodl -cfg model_B.cfg -n "reopen_dAsPSym_TD"
+
+
+
+#### When not using the locale model, each group needs to run separately
+python runScenarios.py -rl Local -r EMS_1 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_2 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_3 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_4 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_5 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_6 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_7 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_8 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_9 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_10 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl -n "baseline"
+python runScenarios.py -rl Local -r EMS_11 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl -n "baseline"
+
+
+#### For fitting
+python runScenarios.py -rl Local -r EMS_1 -c extendedcobey_forFitting.yaml -e extendedmodel_cobey_forFitting.emodl  -n "fit_test1"
+python runScenarios.py -rl Local -r EMS_2 -c extendedcobey_forFitting.yaml -e extendedmodel_cobey_forFitting.emodl  -n "fit_test1"
+...
+
+
+#### Age model with age specific parameter -not using locale model  (testing)
+python runScenarios.py -rl Local -r EMS_11 -c age8grp_experiment.yaml -e extendedmodel_age8_param.emodl -cfg model_B.cfg -n "age8_ageparam_test"
+
+#### Age model with age specific parameter and migration using locale emodl  (testing)
+python runScenarios.py -rl Local -r IL -c age_locale_experiment.yaml -e extendedmodel_agelocale_scen3.emodl -cfg model_B.cfg -n "agelocale_test2"
+python runScenarios.py -rl Local -r IL -c age_locale_experiment.yaml -e extendedmodel_agelocale_migration_scen3.emodl -cfg model_B.cfg -n "agelocale_migration_test2"
+

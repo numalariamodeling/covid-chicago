@@ -95,6 +95,7 @@ To generate or modify the emodl files use the [locale-age specific emmodl genera
 ## 1.4. Model updates
 
 ### Main updates in model structure and fitted parameters
+- 20200804 updated parameter fit
 - 20200729 updated parameter fit, added region specific evolution of dSym over time
 - 20200722 updated parameter fit, use covid regions instead of EMS regions for fitting (same numbering 1-11)
 - 20200715 updated parameter fit, added fifth social distancing multiplier (time event June 21st)
@@ -169,7 +170,7 @@ Note that the user-supplied configuration file is used to provide
 
 
 ## 3.5 Define age or region specific inputs 
-The [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) shows example command lines and scenarios that are currently being used. 
+The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
 ### Region specific sample parameters (i.e. using estimates parameters per EMS regions)
 - [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
@@ -216,7 +217,7 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 
 # 5 Data sources
 - Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
-- EMS region (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
+- Emergency Medical Service Areas (EMS) regions (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
 - covid regions: http://dph.illinois.gov/regionmetrics?regionID=1 
 - restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
 - covid data: IDPH 
