@@ -17,10 +17,10 @@ mpl.rcParams['pdf.fonttype'] = 42
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
-first_plot_day = date(2020, 5, 1)
-last_plot_day = date(2020, 10, 1)
+first_plot_day = date(2020, 7, 1)
+last_plot_day = date(2020, 12, 1)
 
-def plot_on_fig(df, channels, axes, color, label) :
+def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
 
     for c, channel in enumerate(channels) :
         ax = axes[c]
@@ -28,6 +28,8 @@ def plot_on_fig(df, channels, axes, color, label) :
 
         mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
         mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
+        if addgrid :
+            ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         ax.plot(mdf['date'], mdf['CI_50'], color=color, label=label)
         # ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
         #                 color=color, linewidth=0, alpha=0.2)
@@ -37,13 +39,17 @@ def plot_on_fig(df, channels, axes, color, label) :
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.set_ylim(0, max(mdf['CI_75']))
 
-def plot_on_fig2(df, c, axes,channel, color,panel_heading, label) :
+
+def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True) :
     ax = axes[c]
     mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
     mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
+    if addgrid:
+        ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
     ax.plot(mdf['date'], mdf['CI_50'], color=color, label=label)
     ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                 color=color, linewidth=0, alpha=0.4)
@@ -51,7 +57,7 @@ def plot_on_fig2(df, c, axes,channel, color,panel_heading, label) :
     formatter = mdates.DateFormatter("%m-%d")
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
-
+    ax.set_ylim(0, max(mdf['CI_75']))
 
 def plot_main() :
     fig = plt.figure(figsize=(8, 8))
