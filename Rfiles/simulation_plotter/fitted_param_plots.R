@@ -18,6 +18,19 @@ f_plot_param <- function(exp_name, paramname, emsname, timeVarying = TRUE, SAVE 
 
   ### Wide to long format and calculate date
   ### And aggregate samples
+  
+  paramvalues <- trajectoriesDat %>%
+    select(keepvars) %>%
+    mutate(date = as.Date(startdate) + time) %>%
+    pivot_longer(cols = -c("time", "date", "startdate"), names_to = "region") %>%
+    mutate(
+      region = gsub(emsname, "", gsub(paramname, "", region)),
+      region = as.numeric(region),
+      exp_name = exp_name,
+    ) %>%
+    group_by(date, region,exp_name) %>%
+    summarize(value = mean(value)) %>%
+    filter(date >= as.Date("2020-08-01") & date <= as.Date("2020-08-02"))
 
   if (timeVarying == FALSE) {
     pplot <- trajectoriesDat %>%
@@ -83,8 +96,8 @@ f_plot_param <- function(exp_name, paramname, emsname, timeVarying = TRUE, SAVE 
     )
   }
 
-
-  return(pplot)
+  out <- list(paramvalues, pplot)
+  return(out)
 }
 
 
