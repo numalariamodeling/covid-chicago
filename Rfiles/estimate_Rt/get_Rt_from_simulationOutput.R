@@ -9,15 +9,30 @@ library(tidyverse)
 library(EpiEstim)
 
 
+runViaSource = TRUE
+
+if(runViaSource){
+  
+  setwd("C:/Users/mrm9534/gitrepos/covid-chicago/Rfiles/")
+  
+  ## simdate and  exp_scenario  defined in NUcivis_filecopy.R
+
+}else{
+  
+  simdate = "20200805"
+  exp_scenario = "baseline"
+}
+
+
 source("load_paths.R")
 source("processing_helpers.R")
 source("estimate_Rt/getRt_function.R")
 
 outdir <- file.path("estimate_Rt/from_simulations")
 
-simdate = "20200729"
+
 ### Load simulation outputs
-dat <- read.csv(file.path(project_path, "NU_civis_outputs",simdate,paste0("csv/nu_il_baseline_",simdate,".csv")))
+dat <- read.csv(file.path(project_path, "NU_civis_outputs",simdate,paste0("csv/nu_il_", exp_scenario ,"_",simdate,".csv")))
 summary(as.Date(dat$Date))
 
 method <- "uncertain_si"
@@ -43,32 +58,39 @@ for (region in unique(dat$geography_modeled)) {
 }
 
 ### Combine list to dataframe 
-Rt_dat <- Rt_list %>% bind_rows()
-table(Rt_dat$region)
+Rt_dat <- Rt_list %>% bind_rows() %>% 
+          mutate( time =  t_start+weekwindow ) %>%
+          dplyr::rename( geography_modeled = region)
+
+table(Rt_dat$geography_modeled)
 
 
 dat <- dat %>%
   filter(geography_modeled %in% paste0("covidregion_", c(1:11))) %>%
-  rename(region = geography_modeled)
-
-dat$covidregion <- factor(dat$region,  levels = paste0("covidregion_", c(1:11)), labels = paste0("covidregion_", c(1:11)))
-
-### Write csv file with Rt 
-dat <- dat %>%
-  arrange(covidregion, Date) %>%
-  dplyr::group_by(covidregion) %>%
+  arrange( geography_modeled, Date) %>%
+  dplyr::group_by( geography_modeled) %>%
   mutate(date = as.Date(Date), time = c(1:n_distinct(date)))
 
-Rt_dat %>%
-  mutate(t_start=t_start+weekwindow, t_end = t_end+weekwindow) %>%
-  merge(unique(dat[, c("time", "Date")]), by.x = "t_start", by.y = "time") %>%
-  rename(geography_modeled = region,
+
+mergevars <- colnames(Rt_dat)[colnames(Rt_dat) %in% colnames(dat)]
+RtdatCOmbined <- Rt_dat %>%
+  merge(unique(dat), by=mergevars) %>%
+  dplyr::rename(
     Median.of.covid.19.Rt = `Median(R)`,
     Lower.error.bound.of.covid.19.Rt = `Quantile.0.025(R)`,
     Upper.error.bound.of.covid.19.Rt = `Quantile.0.975(R)`
   ) %>%
   arrange(Date, geography_modeled) %>%
-  filter(
-    Date <= "2020-12-01") %>%
+  filter(Date <= "2020-12-01") 
+
+
+fname =  paste0("nu_il_", exp_scenario ,"_estimated_Rt_",simdate,".csv")
+RtdatCOmbined %>% 
   dplyr::select(Date, geography_modeled, Median.of.covid.19.Rt, Lower.error.bound.of.covid.19.Rt, Upper.error.bound.of.covid.19.Rt) %>%
-  write.csv(file.path(project_path, "NU_civis_outputs" ,simdate, paste0("estimate_Rt","/nu_il_baseline_estimated_Rt_",simdate,".csv"), row.names = FALSE)
+  write.csv(file.path(project_path, "NU_civis_outputs" ,simdate, 'csv',fname), row.names = FALSE)
+
+
+
+
+
+  
