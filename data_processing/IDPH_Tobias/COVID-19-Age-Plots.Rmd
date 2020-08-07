@@ -36,11 +36,6 @@ theme_set(theme_bw(base_size = 18))
 ```
 
 ```{r}
-getmode <- function(v) {
-   uniqv <- unique(v)
-   uniqv[which.max(tabulate(match(v, uniqv)))]
-}
-
 #theme_set(theme_bw(base_size = 20))
 
 # Date cut-off
@@ -1849,6 +1844,9 @@ v <- ggplot(age_cfr[which(age_cfr$windows>9 & age_cfr$windows<max(age_cfr$window
    geom_vline(xintercept = as.Date((age_cfr$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
 v
 
+ggsave(paste(tag,"_AreaPlot_CFR_byAge_overTime_free-y",extension,sep="_"),height=10,width=10)
+
+
 w <- ggplot(age_cfr[which(age_cfr$windows>9 & age_cfr$windows<max(age_cfr$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = cfrs, fill = ages, color = ages)) + 
    geom_point() +
    geom_smooth() +
@@ -1861,5 +1859,6 @@ w <- ggplot(age_cfr[which(age_cfr$windows>9 & age_cfr$windows<max(age_cfr$window
    labs(fill="Age Group", color="Age Group") +
    geom_vline(xintercept = as.Date((age_cfr$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
 w
+ggsave(paste(tag,"_smoothCurves_CFR_byAge_overTime",extension,sep="_"),height=10,width=10)
 ```
 
