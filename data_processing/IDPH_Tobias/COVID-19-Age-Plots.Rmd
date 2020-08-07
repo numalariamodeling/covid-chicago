@@ -1,7 +1,7 @@
 ---
 title: "Covid-19 Age Plots"
 author: "Tobias Holden"
-date: "7/20/2020"
+date: "08/06/2020"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -36,18 +36,13 @@ theme_set(theme_bw(base_size = 18))
 ```
 
 ```{r}
-getmode <- function(v) {
-   uniqv <- unique(v)
-   uniqv[which.max(tabulate(match(v, uniqv)))]
-}
-
 #theme_set(theme_bw(base_size = 20))
 
 # Date cut-off
-pull_date <- as.Date("2020-07-20",format="%Y-%m-%d")
+pull_date <- as.Date("2020-08-06",format="%Y-%m-%d")
 
 # Tag for saved outputs
-tag <- "AgePlots/LL_200720_th"
+tag <- "AgePlots/LL_200806"
 # Filetype for images (.png or .pdf)
 extension <- ".pdf"
 
@@ -127,8 +122,6 @@ print(paste(format(nrow(cases),big.mark = ','), "unique patient IDs"))
 ```{r}
 kable(table(cases$race,useNA = 'ifany'), col.names = c("Race (alone)","n"))
 ```
-
-23,569 blanks. Different categories here...
 
 - White
 - Black
@@ -967,7 +960,7 @@ ggplot(f_admit, aes(x=ages, y= ft, fill=ages)) +
   xlab("Age Group") + ylab("Fraction of Cases Admitted") +
   ggtitle("Fraction Admitted | Positive by Age Group", paste(format(sum(f_admit$nt),big.mark=','),"admissions as of",max(admitted_with_age_all$admission_date)))
 
-ggsave(paste(tag,"_barplot_FractionAdmitted-Overall_byAgeGroup",extension,sep="",width=10,height=8)
+ggsave(paste(tag,"_barplot_FractionAdmitted-Overall_byAgeGroup",extension,sep="",width=10,height=8))
   
 ```
 
@@ -1108,7 +1101,7 @@ ggplot(f_dead, aes(x=ages,y=ft,fill=ages)) +
   ggtitle("Fraction Dead | Admitted, by age group",paste(format(sum(f_dead$nt),big.mark=','),"hospital deaths as of",max(deceased_with_age$deceased_date)))
   
 
-ggsave(paste(tag,"_barplot_FractionDead-GivenAdmitted-Overall_byAge",extension,sep="",width=10,height=8)
+ggsave(paste(tag,"_barplot_FractionDead-GivenAdmitted-Overall_byAge",extension,sep="",width=10,height=8))
 
 
   
@@ -1755,5 +1748,117 @@ p <- ggplot(bound_pos_melt, aes(fill=var, y=value*100, x=age_group, label = ifel
 p
 ggsave(plot=p,paste(tag,"_barplot_Age-Distribution-of-Positives_vs_Population_pct",extension, sep=""),height=10,width=12) 
 
+```
+
+### CFR by Age
+
+```{r}
+
+## Overall 
+
+ages <- c()
+nc <- c()
+nd <- c()
+cfrs <- c()
+
+cases_with_age <- subset(cases,cases$age_group!="")
+cases_with_age$age_group <- factor(cases_with_age$age_group)
+for (i in 1:length(levels(cases_with_age$age_group)))
+  {
+    a <- levels(cases_with_age$age_group)[i]
+    
+    
+    b <- subset(cases_with_age, cases_with_age$age_group==a) # all cases
+    
+    s <- subset(b, b$id %in% deceased$id) # Just deaths
+    
+    c <- nrow(b) 
+    d <- nrow(s)
+    cfr <- d/c
+    
+      ages <- c(ages,a)
+      nc <- c(nc,c)
+      nd <- c(nd,d)
+      cfrs <- c(cfrs,cfr)
+  
+}
+
+age_cfr <- data.frame(ages,nc,nd,cfrs)
+age_cfr$ages <- factor(age_cfr$ages,levels=age_key)
+
+theme_set(theme_bw(base_size=12))
+ggplot(data=age_cfr, aes(x=ages,y=cfrs,fill=ages)) + 
+  geom_bar(stat='identity',position='dodge') + 
+  scale_fill_brewer(palette = "Paired") +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("Cumulative CFR by Age") +
+  labs(fill="Age Group") + xlab("") + ylab("(# Deaths / # Cases)")
+ggsave(paste(tag,"_barplot_CFR_byAge",extension,sep="_"),height=10,width=10)
+
+
+## Over Time 
+tested_with_age$age_group <- factor(tested_with_age$age_group)
+
+ages <- c()
+windows <- c()
+nc <- c()
+nd <- c()
+cfrs <- c()
+
+for (i in 1:length(levels(tested_with_age$age_group)))
+  {
+  for (j in 1:length(unique(tested_with_age$window)))
+    {
+          a <- levels(tested_with_age$age_group)[i] 
+          slot <- unique(critical$window)[j]
+          
+          b <- subset(tested_with_age, tested_with_age$age_group==a) # all cases in age group
+          c <- subset(b, b$window == slot) # only cases in this window
+    
+          d <- subset(c, c$id %in% deceased$id) # deaths among cases tested in this window
+    
+          case_count <- nrow(c) 
+          death_count <- nrow(d)
+          cfr <- death_count/case_count
+          
+          ages <- c(ages,a)
+          nc <- c(nc,case_count)
+          nd <- c(nd,death_count)
+          cfrs <- c(cfrs,cfr)
+          windows <- c(windows,slot)
+  }
+}
+
+age_cfr <- data.frame(ages,windows,nc,nd,cfrs)
+age_cfr$ages <- factor(age_cfr$ages,levels=age_key)
+
+v <- ggplot(age_cfr[which(age_cfr$windows>9 & age_cfr$windows<max(age_cfr$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = cfrs, fill = factor(ages))) + 
+   facet_wrap(~ages, ncol=2, scales='free_y') +
+   geom_area() +
+   ggtitle("Weekly CFR by Age Group") +
+   labs(color = "Age Group") + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Fraction of Positive Cases who Later Died") +
+   scale_fill_brewer(palette = "Paired") +
+   labs(fill="Age Group") +
+   geom_vline(xintercept = as.Date((age_cfr$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+v
+
+ggsave(paste(tag,"_AreaPlot_CFR_byAge_overTime_free-y",extension,sep="_"),height=10,width=10)
+
+
+w <- ggplot(age_cfr[which(age_cfr$windows>9 & age_cfr$windows<max(age_cfr$windows)),], aes(x = as.Date((windows-1)*7+marker_test), y = cfrs, fill = ages, color = ages)) + 
+   geom_point() +
+   geom_smooth() +
+   ggtitle("Weekly CFR by Age Group") +
+   labs(color = "Age Group") + 
+   xlab("Date Tested (7-day bins)") + 
+   ylab("Fraction of Positive Cases who Later Died") +
+   scale_color_brewer(palette = "Paired") +
+   scale_fill_brewer(palette = "Paired") +
+   labs(fill="Age Group", color="Age Group") +
+   geom_vline(xintercept = as.Date((age_cfr$windows-1)*7+marker_test), colour = "white", linetype=1,size=0.1)
+w
+ggsave(paste(tag,"_smoothCurves_CFR_byAge_overTime",extension,sep="_"),height=10,width=10)
 ```
 
