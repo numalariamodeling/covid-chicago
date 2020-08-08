@@ -95,6 +95,7 @@ To generate or modify the emodl files use the [locale-age specific emmodl genera
 ## 1.4. Model updates
 
 ### Main updates in model structure and fitted parameters
+- 20200807 updated parameter fit
 - 20200804 updated parameter fit
 - 20200729 updated parameter fit, added region specific evolution of dSym over time
 - 20200722 updated parameter fit, use covid regions instead of EMS regions for fitting (same numbering 1-11)
