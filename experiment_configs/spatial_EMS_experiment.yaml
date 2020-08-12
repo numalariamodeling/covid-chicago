@@ -262,7 +262,7 @@ sampled_parameters:
         - {'low': 69  , 'high':     69    }
         - {'low': 59  ,  'high':    59    }
         - {'low': 91  , 'high':     91    }
-        - {'low': 73  , 'high':     73    
+        - {'low': 73  , 'high':     73     }
         - {'low': 243  , 'high':    243    }
         - {'low': 162  , 'high':    162    }
         - {'low': 399  , 'high':    399    }
