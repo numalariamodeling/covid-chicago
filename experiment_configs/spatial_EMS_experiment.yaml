@@ -81,7 +81,7 @@ sampled_parameters:
         - {'low': 0.110, 'high': 0.110}
         - {'low': 0.200, 'high': 0.200}
         - {'low': 0.135, 'high': 0.135}
-        - {'low': 0.160, 'high': 0.160}
+        - {'low': 0.135, 'high': 0.135}
         - {'low': 0.180, 'high': 0.180}
         - {'low': 0.095, 'high': 0.095}
         - {'low': 0.085, 'high': 0.085}
@@ -97,13 +97,13 @@ sampled_parameters:
         - {'low': 0.230, 'high': 0.230}
         - {'low': 0.400, 'high': 0.400}
         - {'low': 0.245, 'high': 0.245}
-        - {'low': 0.230, 'high': 0.230}
+        - {'low': 0.270, 'high': 0.270}
         - {'low': 0.240, 'high': 0.240}
         - {'low': 0.160, 'high': 0.160}
         - {'low': 0.120, 'high': 0.120}
         - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.155, 'high': 0.155}
-        - {'low': 0.120, 'high': 0.120}
+        - {'low': 0.150, 'high': 0.150}
+        - {'low': 0.115, 'high': 0.115}
   d_Sym:  
     IL:
       expand_by_age: True
