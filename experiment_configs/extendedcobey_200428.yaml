@@ -217,6 +217,9 @@ intervention_parameters:
   'reduced_inf_of_det_cases_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':1}
+  'capacity_multiplier':
+    np.random: uniform
+    function_kwargs: {'low':0.75, 'high':0.75}
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
