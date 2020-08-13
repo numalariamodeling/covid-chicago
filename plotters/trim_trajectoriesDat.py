@@ -6,7 +6,7 @@ from load_paths import load_box_paths
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-def trim_trajectories_Dat(exp_name, keepvars, keepTimes=None) :
+def trim_trajectories_Dat(exp_name, additionalVarsToKeep, keepTimes=None) :
     """Generate a subset of the trajectoriesDat dataframe
     The new csv file is saved under trajectoriesDat_trim.csv, no dataframe is returned
     Parameters
