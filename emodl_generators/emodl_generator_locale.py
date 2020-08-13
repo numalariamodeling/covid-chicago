@@ -749,7 +749,7 @@ def define_change_detection_and_isolation(grpList=None,
 
     return (contactTracing_str)
 
-def write_interventions(grpList, total_string, scenarioName, change_testDelay=None) :
+def write_interventions(grpList, total_string, scenarioName, change_testDelay=None, trigger_channel=None) :
 
     param_change_str = """
 ;(observe d_Sys_t d_Sys)
@@ -792,6 +792,14 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event socialDistance_change_rollback @socialDistance_rollback_time@ ((Ki_{grp} Ki_red4_{grp})))
                 """.format(grp=grp)
         rollback_str = rollback_str + temp_str
+
+
+    rollbacktriggered_str = ""
+    for grp in grpList:
+        temp_str = """
+(state-event rollbacktrigger_{grp} (> {channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@)) ((Ki_{grp} Ki_red4_{grp})))
+                    """.format(channel=trigger_channel,grp=grp)
+        rollbacktriggered_str = rollbacktriggered_str + temp_str
 
     d_Sym_change_str = ""
     for grp in grpList:
@@ -954,6 +962,9 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + contactTracing_improveHS_str)
     if scenarioName == "improveHS" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + improveHS_str)
+    if scenarioName == "rollbacktriggered" :
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + rollbacktriggered_str)
+
 
    # if scenarioName == "gradual_contactTracing" :
    #    total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_gradual_str)
@@ -981,7 +992,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
 ###stringing all of my functions together to make the file:
 
-def generate_emodl(grpList, file_output, expandModel, add_interventions, add_migration=True, change_testDelay =None, observe_customGroups = False, grpDic = None):
+def generate_emodl(grpList, file_output, expandModel, add_interventions, add_migration=True, change_testDelay =None, trigger_channel=None, observe_customGroups = False, grpDic = None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -1033,7 +1044,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
     total_string = total_string.replace('(species As::EMS_6 0)', '(species As::EMS_6 1)')
     ### Add interventions (optional)
     if add_interventions != None :
-        total_string = write_interventions(grpList, total_string, add_interventions, change_testDelay)
+        total_string = write_interventions(grpList, total_string, add_interventions, change_testDelay, trigger_channel)
 
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
@@ -1058,6 +1069,11 @@ if __name__ == '__main__':
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions=None, add_migration=False, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_neverSIP.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='interventionStop', add_migration=False,  observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_interventionStop.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening2', add_migration=False, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening.emodl'))
+
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', add_migration=False, observe_customGroups = False, trigger_channel = "critical", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_critical_triggeredrollback.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', add_migration=False, observe_customGroups = False, trigger_channel = "critical_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_criticaldet_triggeredrollback.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', add_migration=False, observe_customGroups = False, trigger_channel = "hospitalized", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_hosp_triggeredrollback.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', add_migration=False, observe_customGroups = False, trigger_channel = "hospitalized_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_hospdet_triggeredrollback.emodl'))
 
     generateImprovedDetectionEmodls = True
     if generateImprovedDetectionEmodls:

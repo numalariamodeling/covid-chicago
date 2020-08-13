@@ -66,7 +66,6 @@ table(Rt_dat$geography_modeled)
 
 
 dat <- dat %>%
-  filter(geography_modeled %in% paste0("covidregion_", c(1:11))) %>%
   arrange( geography_modeled, Date) %>%
   dplyr::group_by( geography_modeled) %>%
   mutate(date = as.Date(Date), time = c(1:n_distinct(date)))
