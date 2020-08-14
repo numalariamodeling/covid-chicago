@@ -1,5 +1,4 @@
-# Modelling the COVID-19 pandemic in Chicago
-
+﻿# Modelling the COVID-19 pandemic in Illinois
 
 
 # 1. Model overview
@@ -7,6 +6,7 @@
 ### 1.1 Compartmental model structure (emodl file)
 A basic SEIR model was extended to include symptom status (asymptomatic, presymptomatic, mild and severe symptoms), hospitalization, critical illness, and deaths, while allowing to track detected and undetected cases separately. In the model, the susceptible population is exposed (infected) at a constant rate described by the transmission probability and contact rate with the infectious population. After latent period of few days, the exposed population becomes infectious and moves either to the asymptomatic or pre-symptomatic compartments. At the end of the incubation period pre-symptomatic population develops either mild or severe symptoms. Mild symptomatic cases recover at a similar rate as asymptomatic cases, while all severe symptomatic cases that ‘should’ need professional care move to the hospitalization compartment. Hospitalized cases either recover or develop critical illness and then recover, or die. Once recovered, we assume that the population stays immune throughout the simulation period. The asymptomatic presymptomatic, mild symptomatic, severe symptomatic infections, undetected hospitalized are the infectious compartments with reduced infectiousness for the detected sub-compartments due to self-isolation. We assume that hospitalized cases that are detected are not infectious. 
 ![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure.png)
+Simulations run per [Emergency Medical Service Area (EMS)](https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf) and are aggregated for [restore regions](https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard), and for Illinois. As of the 22nd of July, the ['covid regions'](http://dph.illinois.gov/regionmetrics?regionID=1) are used. For simplicity, the term 'EMS' is kept in the modelling files. 
 
 ## 1.2. Model parameters
 Most of the parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. [UChicago](https://github.com/cobeylab/covid_IL/tree/master/Parameters)).
@@ -95,6 +95,13 @@ To generate or modify the emodl files use the [locale-age specific emmodl genera
 ## 1.4. Model updates
 
 ### Main updates in model structure and fitted parameters
+- 20200812 updated parameter fit
+- 20200807 updated parameter fit
+- 20200804 updated parameter fit
+- 20200729 updated parameter fit, added region specific evolution of dSym over time
+- 20200722 updated parameter fit, use covid regions instead of EMS regions for fitting (same numbering 1-11)
+- 20200715 updated parameter fit, added fifth social distancing multiplier (time event June 21st)
+- 20200706 added time-varying fraction_critical
 - 20200624 updated parameter fit
 - 20200622 adjusted increase in detection for severe and mild symptomatic cases 
 - 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
@@ -165,7 +172,7 @@ Note that the user-supplied configuration file is used to provide
 
 
 ## 3.5 Define age or region specific inputs 
-The [EMSscenario_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/EMSscenario_submission_template.txt) shows example command lines and scenarios that are currently being used. 
+The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
 ### Region specific sample parameters (i.e. using estimates parameters per EMS regions)
 - [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
@@ -210,6 +217,12 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 # 4 Visualizing and analyzing simulation outputs
 - see [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/)
 
+# 5 Data sources
+- Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
+- Emergency Medical Service Areas (EMS) regions (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
+- covid regions: http://dph.illinois.gov/regionmetrics?regionID=1 
+- restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
+- covid data: IDPH 
 
 # Resources 
 - CMS software publication [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
