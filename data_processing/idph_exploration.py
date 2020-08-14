@@ -11,7 +11,7 @@ from shapely.geometry import mapping, Point, Polygon
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-LL_date = '200720'
+LL_date = '200811'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 line_list_fname = os.path.join(idph_data_path,
@@ -182,7 +182,9 @@ def get_ems_counties_and_zips() :
                                                                  60037, 61401, 60957, 60840, 61008, 61804, 62208,
                                                                  62230, 61111, 60290, 61068, 60530, 60353, 62265,
                                                                  62615, 62232, 62220, 60808, 60208, 61544, 60001,
-                                                                 60567, 62837, 60985],
+                                                                 60567, 62837, 60985, 62939, 61231, 62634, 62869,
+                                                                 60115, 60821, 60167, 60122, 60717, 61021, 60978,
+                                                                 60413, 62098, 62864, 60884],
                                                         'ems' : [7, 7, 8, 8, 11, 2, 7,
                                                                  10, 1, 2, 3, 8, 5, 10,
                                                                  7, 3, 9, 2, 8, 2, 3,
@@ -195,7 +197,9 @@ def get_ems_counties_and_zips() :
                                                                  10, 2, 6, 8, 1, 6, 4,
                                                                  4, 1, 10, 1, 1, 8, 4,
                                                                  3, 4, 4, 7, 10, 2, 9,
-                                                                 8, 5, 6]})], sort=True)
+                                                                 8, 5, 6, 5, 2, 3, 5,
+                                                                 1, 10, 10, 8, 10, 1, 6,
+                                                                 10, 3, 5, 10]})], sort=True)
     ems_zip_df['zip'] = ems_zip_df['zip'].astype(int)
     ems_zip_df = ems_zip_df.sort_values(by='zip')
 
@@ -264,11 +268,11 @@ def assign_covid_region() :
     zip_shp = gpd.read_file(os.path.join(shp_path, 'IL_zipcodes', 'IL_zipcodes.shp'))
     zip_shp = zip_shp.set_index('GEOID10')
 
-    def assign_region(ems, county, zip) :
+    def assign_region(ems, county, my_zip) :
 
-        def by_zip(zip) :
+        def by_zip(my_zip) :
             try :
-                zpoly = zip_shp.at[zip, 'geometry']
+                zpoly = zip_shp.at[my_zip, 'geometry']
                 ems_match = 0
                 max_area = 0
                 for ems, ems_poly in zip(regions_shp['new_restor'], regions_shp['geometry']):
@@ -287,9 +291,9 @@ def assign_covid_region() :
         try :
             return ref_df.at[county.upper(), 'new_restore_region']
         except KeyError :
-            match = by_zip(zip)
+            match = by_zip(my_zip)
         except AttributeError :
-            match = by_zip(zip)
+            match = by_zip(my_zip)
         if match < 0 :
             return ems
 
@@ -320,10 +324,10 @@ def generate_combo_LL_agg_csv() :
 
 if __name__ == '__main__' :
 
-    # apply_ems()
+    apply_ems()
     # exit()
 
-    # assign_covid_region()
+    assign_covid_region()
     # df = load_cleaned_line_list()
     # df = df[df['covid_region'] < 1]
     # print(df[['patient_home_zip', 'county_at_onset', 'EMS', 'covid_region']].to_string())

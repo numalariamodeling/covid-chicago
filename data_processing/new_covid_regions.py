@@ -22,7 +22,7 @@ datapath = os.path.join(datapath, 'covid_IDPH')
 shp_path = os.path.join(datapath, 'shapefiles')
 
 
-if __name__ == '__main__' :
+def make_new_shapefiles() :
 
     county_shp = gpd.read_file(os.path.join(shp_path, 'IL_BNDY_County', 'IL_BNDY_County_Py.shp'))
     ems_shp = gpd.read_file(os.path.join(shp_path, 'EMS_Regions', 'EMS_Regions.shp'))
@@ -64,3 +64,8 @@ if __name__ == '__main__' :
         'restore_re' : 'restore_region'
     })
     ems_shp.to_file(os.path.join(shp_path, 'covid_regions', 'covid_regions.shp'))
+
+
+if __name__ == '__main__' :
+
+    make_new_shapefiles()
