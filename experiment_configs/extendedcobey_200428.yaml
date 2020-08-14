@@ -1,25 +1,24 @@
 experiment_setup_parameters:
-  'number_of_samples': 30
+  'number_of_samples': 50
   'number_of_runs': 1
-  'duration': 370
-  'monitoring_samples': 370 # needs to be smaller than duration
-  'random_seed': 18
+  'duration': 400
+  'monitoring_samples': 400 # needs to be smaller than duration
+  'random_seed': 19
   'initialAs': 10
 fixed_parameters_region_specific:
   populations:
     'IL': 12830632
     'NMH_catchment': 315000
-    'Chicago': 2700000
-    'EMS_1': 736370
-    'EMS_2': 1124941
-    'EMS_3': 619366
-    'EMS_4': 698886
-    'EMS_5': 417674
-    'EMS_6': 788985
-    'EMS_7': 1814891
-    'EMS_8': 1673408
-    'EMS_9': 1970275
-    'EMS_10': 1052839
+    'EMS_1': 688393
+    'EMS_2': 1269519
+    'EMS_3': 581432
+    'EMS_4': 676017
+    'EMS_5': 424810
+    'EMS_6': 760362
+    'EMS_7': 791009
+    'EMS_8': 1432193
+    'EMS_9': 1012222
+    'EMS_10': 2477754
     'EMS_11': 2716921
   startdate:
     'NMH_catchment': 2020-02-28
@@ -102,9 +101,10 @@ sampled_parameters:
     np.random: uniform
     function_kwargs: {'low':0, 'high':0.3}
   ## DETECTION RATES 
-  'd_Sym':
-    np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.05}
+  ## In locale model, d_Sym is group specific
+  #'d_Sym':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.00, 'high':0.02}
   'd_Sys':
     np.random: uniform
     function_kwargs: {'low':0.00, 'high':0.0185} 
@@ -146,24 +146,26 @@ sampled_parameters:
     np.random: uniform
     function_kwargs: {'low':0.95, 'high':1}
   ### d_Sym
-  'd_Sym_incr1':
-    np.random: uniform
-    function_kwargs: {'low':0.020, 'high':0.067}
-  'd_Sym_incr2':
-    np.random: uniform
-    function_kwargs: {'low':0.056, 'high':0.099}
-  'd_Sym_incr3':
-    np.random: uniform
-    function_kwargs: {'low':0.081, 'high':0.143}
-  'd_Sym_incr4':
-    np.random: uniform
-    function_kwargs: {'low':0.087, 'high':0.150}
-  'd_Sym_incr5':
-    np.random: uniform
-    function_kwargs: {'low':0.103, 'high':0.150}
-  'd_Sym_incr6':
-    np.random: uniform
-    function_kwargs: {'low':0.140, 'high':0.170}
+  ## In locale model, d_Sym  increase is group specific
+  ## However when using this yaml for running single groups or non locale models it would be needed here
+  #'d_Sym_incr1':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.000, 'high':0.049}
+  #'d_Sym_incr2':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.022, 'high':0.078}
+  #'d_Sym_incr3':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.045, 'high':0.111}
+  #'d_Sym_incr4':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.047, 'high':0.111}
+  #'d_Sym_incr5':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.058, 'high':0.147}
+  #'d_Sym_incr6':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.097, 'high':0.258}
   ### fraction_critical
   'fraction_critical_incr1':
     np.random: uniform
@@ -183,22 +185,24 @@ intervention_parameters:
     # Add 'size' in function_kwargs to have multiple values instead of just one
     function_kwargs: {'low':0.10, 'high':0.10}
   ### Gradual reopening (time-wise)
-  'reopening_multiplier_1':
-    np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.1}
-  'reopening_multiplier_2':
-    np.random: uniform
-    function_kwargs: {'low':0.3, 'high':0.3}
-  'reopening_multiplier_3':
-    np.random: uniform
-    function_kwargs: {'low':0.6, 'high':0.6}
+  ### Default in the yaml is a linear increase, scaling  reopening_multiplier_4 by 0.25, 0.5, 0.75 and 1
+  #'reopening_multiplier_1':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.02, 'high':0.02}
+  #'reopening_multiplier_2':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.04, 'high':0.04}
+  #'reopening_multiplier_3':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.06, 'high':0.06}
   'reopening_multiplier_4':
-    np.random: uniform
-    function_kwargs: {'low':0.9, 'high':0.9}
+    np: linspace
+    function_kwargs: {'start':0.08, 'stop':0.20, 'num' : 1}
   ### INCREASE DETECTION RATES of asymptomatic, presymptomatic and mild infections
   'd_AsP_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
+  ### Since d_Sym differs per group, this parameter defines relative increase rather than fraction detected!
   'd_Sym_ct1':
     np.random: uniform
     function_kwargs: {'low':0.170, 'high':0.170}
@@ -213,6 +217,9 @@ intervention_parameters:
   'reduced_inf_of_det_cases_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':1}
+  'capacity_multiplier':
+    np.random: uniform
+    function_kwargs: {'low':0.75, 'high':0.75}
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
@@ -230,24 +237,31 @@ time_parameters:
   'socialDistance_time4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-21}
+  'socialDistance_time5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-21}
+  'socialDistance_rollback_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-15}
+    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01, 2020-08-15, 2020-08-30, 2020-09-15]}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}
+    function_kwargs: {'dates': 2020-07-15}
   ### Gradual reopening (time-wise)
   'gradual_reopening_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-07-05}
   'gradual_reopening_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-15}        
+    function_kwargs: {'dates': 2020-07-12}        
   'gradual_reopening_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}    
+    function_kwargs: {'dates': 2020-07-19}    
   'gradual_reopening_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-15}  
+    function_kwargs: {'dates': 2020-07-26}  
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3
@@ -277,20 +291,35 @@ time_parameters:
     function_kwargs: {'dates': 2020-05-01} 
   'crit_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01} 
+    function_kwargs: {'dates': 2020-06-01}
+  'd_Sym_change_time_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-03-15}
+  'd_Sym_change_time_2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-01}
+  'd_Sym_change_time_3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-04-15}
+  'd_Sym_change_time_4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-01}
+  'd_Sym_change_time_5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)
   'contact_tracing_start_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-08-05}
   ## stop after simulation end to simulate indefinite contact tracing
   'contact_tracing_stop1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2022-05-30}
   'change_testDelay_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-15}
+    function_kwargs: {'dates': 2020-08-05}
     #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
 fitted_parameters:
   Kis:

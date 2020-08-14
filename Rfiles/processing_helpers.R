@@ -26,32 +26,27 @@ combineDat <- function(filelist, namelist){
 
 
 
-load_capacity <- function(selected_ems) {
-  ems_df <- read_excel(file.path(data_path, "covid_IDPH/Corona virus reports/EMS_report_2020_03_21.xlsx"))
-  ems_df <- ems_df %>%
-    filter(Date == as.Date("2020-03-27")) %>%
-    separate(Region, into = c("ems", "Hospital"), sep = "-") %>%
+load_capacity <- function(selected_ems=NULL) {
+  df <- read.csv(file.path(data_path, "covid_IDPH/Corona virus reports/capacity_by_covid_region.csv"))
+  
+  ## Take mean of last 2 weeks
+   filterDate <- max(as.Date(df$date))-14
+    
+   df = df %>%  filter(date ==filterDate & geography_name !="chicago") %>%
     mutate(
-      hospitalized = `Total_Med/_Surg_Beds`,
-      critical = `Total_Adult_ICU_Beds`,
-      ventilators = `Total_Vents`
-    )
+      geography_name = gsub("restore_","",geography_name),
+      medsurg_available = medsurg_total - medsurg_noncovid,
+      icu_available = icu_total - icu_noncovid,
+      vents_available = vent_total -vent_noncovid
+    ) %>%
+    group_by(geography_name) %>%
+    summarize(icu_available=mean(icu_available),
+              medsurg_available = mean(medsurg_available),
+              vents_available = mean(vents_available)) 
   
-  if (length(selected_ems) == 1) {
-    capacity <- ems_df %>%
-      filter(ems == selected_ems) %>%
-      dplyr::select(hospitalized, critical, ventilators)
-  } else {
-    capacity <- ems_df %>%
-      filter(ems %in% selected_ems) %>%
-      dplyr::summarize(
-        hospitalized = sum(hospitalized),
-        critical = sum(critical),
-        ventilators = sum(ventilators)
-      )
-  }
+  if(!(is.null(selected_ems))) df <-  df %>% filter(geography_name %in% selected_ems)
   
-  return(capacity)
+  return(df)
 }
 
 
