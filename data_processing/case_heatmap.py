@@ -13,7 +13,7 @@ from plotting.colors import load_color_palette
 mpl.rcParams['pdf.fonttype'] = 42
 
 
-LL_date = '200720'
+LL_date = '200811'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
@@ -295,6 +295,6 @@ if __name__ == '__main__' :
     plot_EMS_by_line('deaths')
     # plot_ratio_ems()
     # plot_ratio_county()
-    # plot_LL_all_IL()
+    plot_LL_all_IL()
     # plt.show()
 

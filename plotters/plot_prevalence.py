@@ -32,7 +32,7 @@ def trim_trajectories(simpath, scenario, colnames, ems) :
 
 if __name__ == '__main__' :
 
-    outdir = '20200715'
+    outdir = '20200729'
     scenario = 'baseline'
     ems = ['EMS-%d' % x for x in range(1, 12)] + ['All']
     colnames = ['infected', 'recovered', 'N']
