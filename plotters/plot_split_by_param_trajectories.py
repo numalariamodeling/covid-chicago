@@ -18,7 +18,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
 first_plot_day = date(2020, 7, 1)
-last_plot_day = date(2020, 12, 1)
+last_plot_day = date(2021, 6, 1)
 
 def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
 
