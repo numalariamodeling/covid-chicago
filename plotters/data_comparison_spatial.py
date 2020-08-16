@@ -37,7 +37,7 @@ def load_sim_data(exp_name, ems_nr,  input_wdir=None, input_sim_output_path=None
 
 
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day=date(2020, 2, 22),
-                     ymax=40, plot_path=None, logscale=False):
+                     ymax=40, plot_path=None, logscale=True):
     fig = plt.figure(figsize=(10, 6))
     palette = sns.color_palette('husl', 8)
     k = 0
