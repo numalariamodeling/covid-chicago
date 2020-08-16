@@ -368,11 +368,12 @@ def write_travel_reaction(grp, travelspeciesList=None):
 
 def write_Ki_timevents(grp):
     grp = str(grp)
+    grpout = sub(grp)
     params_str = """
 (param Ki_{grp} @Ki_{grp}@)
-(observe Ki_t_{grp} Ki_{grp})
+(observe Ki_t_{grpout} Ki_{grp})
 (time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
-""".format(grp=grp)
+""".format(grpout=grpout,grp=grp)
     params_str = params_str.replace("  ", " ")
 
     return (params_str)
@@ -803,9 +804,10 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
     d_Sym_change_str = ""
     for grp in grpList:
+        grpout = sub(grp)
         temp_str = """
 (param d_Sym_{grp} @d_Sym_{grp}@)
-(observe d_Sym_t_{grp} d_Sym_{grp})
+(observe d_Sym_t_{grpout} d_Sym_{grp})
 
 (time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym_{grp} @d_Sym_change1_{grp}@)))
 (time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym_{grp} @d_Sym_change2_{grp}@)))
