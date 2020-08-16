@@ -89,7 +89,7 @@ def plot_covidregions() :
         fig = plt.figure(figsize=(8, 8))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
         palette = sns.color_palette('GnBu_d', len(exp_names))
-        channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+        channels = ['infected', 'd_Sym_t', 'new_deaths', 'hospitalized', 'critical', 'Ki_t']
         axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
 
