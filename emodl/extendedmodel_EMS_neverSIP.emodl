@@ -1668,47 +1668,47 @@
 (param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
 
 (param Ki_EMS_1 @Ki_EMS_1@)
-(observe Ki_t_EMS_1 Ki_EMS_1)
+(observe Ki_t_EMS-1 Ki_EMS_1)
 (time-event time_infection_import @time_infection_import_EMS_1@ ((As::EMS_1 @initialAs_EMS_1@) (S::EMS_1 (- S::EMS_1 @initialAs_EMS_1@))))
 
 (param Ki_EMS_2 @Ki_EMS_2@)
-(observe Ki_t_EMS_2 Ki_EMS_2)
+(observe Ki_t_EMS-2 Ki_EMS_2)
 (time-event time_infection_import @time_infection_import_EMS_2@ ((As::EMS_2 @initialAs_EMS_2@) (S::EMS_2 (- S::EMS_2 @initialAs_EMS_2@))))
 
 (param Ki_EMS_3 @Ki_EMS_3@)
-(observe Ki_t_EMS_3 Ki_EMS_3)
+(observe Ki_t_EMS-3 Ki_EMS_3)
 (time-event time_infection_import @time_infection_import_EMS_3@ ((As::EMS_3 @initialAs_EMS_3@) (S::EMS_3 (- S::EMS_3 @initialAs_EMS_3@))))
 
 (param Ki_EMS_4 @Ki_EMS_4@)
-(observe Ki_t_EMS_4 Ki_EMS_4)
+(observe Ki_t_EMS-4 Ki_EMS_4)
 (time-event time_infection_import @time_infection_import_EMS_4@ ((As::EMS_4 @initialAs_EMS_4@) (S::EMS_4 (- S::EMS_4 @initialAs_EMS_4@))))
 
 (param Ki_EMS_5 @Ki_EMS_5@)
-(observe Ki_t_EMS_5 Ki_EMS_5)
+(observe Ki_t_EMS-5 Ki_EMS_5)
 (time-event time_infection_import @time_infection_import_EMS_5@ ((As::EMS_5 @initialAs_EMS_5@) (S::EMS_5 (- S::EMS_5 @initialAs_EMS_5@))))
 
 (param Ki_EMS_6 @Ki_EMS_6@)
-(observe Ki_t_EMS_6 Ki_EMS_6)
+(observe Ki_t_EMS-6 Ki_EMS_6)
 (time-event time_infection_import @time_infection_import_EMS_6@ ((As::EMS_6 @initialAs_EMS_6@) (S::EMS_6 (- S::EMS_6 @initialAs_EMS_6@))))
 
 (param Ki_EMS_7 @Ki_EMS_7@)
-(observe Ki_t_EMS_7 Ki_EMS_7)
+(observe Ki_t_EMS-7 Ki_EMS_7)
 (time-event time_infection_import @time_infection_import_EMS_7@ ((As::EMS_7 @initialAs_EMS_7@) (S::EMS_7 (- S::EMS_7 @initialAs_EMS_7@))))
 
 (param Ki_EMS_8 @Ki_EMS_8@)
-(observe Ki_t_EMS_8 Ki_EMS_8)
+(observe Ki_t_EMS-8 Ki_EMS_8)
 (time-event time_infection_import @time_infection_import_EMS_8@ ((As::EMS_8 @initialAs_EMS_8@) (S::EMS_8 (- S::EMS_8 @initialAs_EMS_8@))))
 
 (param Ki_EMS_9 @Ki_EMS_9@)
-(observe Ki_t_EMS_9 Ki_EMS_9)
+(observe Ki_t_EMS-9 Ki_EMS_9)
 (time-event time_infection_import @time_infection_import_EMS_9@ ((As::EMS_9 @initialAs_EMS_9@) (S::EMS_9 (- S::EMS_9 @initialAs_EMS_9@))))
 
 (param Ki_EMS_10 @Ki_EMS_10@)
-(observe Ki_t_EMS_10 Ki_EMS_10)
+(observe Ki_t_EMS-10 Ki_EMS_10)
 (time-event time_infection_import @time_infection_import_EMS_10@ ((As::EMS_10 @initialAs_EMS_10@) (S::EMS_10 (- S::EMS_10 @initialAs_EMS_10@))))
 
 (param Ki_EMS_11 @Ki_EMS_11@)
-(observe Ki_t_EMS_11 Ki_EMS_11)
+(observe Ki_t_EMS-11 Ki_EMS_11)
 (time-event time_infection_import @time_infection_import_EMS_11@ ((As::EMS_11 @initialAs_EMS_11@) (S::EMS_11 (- S::EMS_11 @initialAs_EMS_11@))))
 
 (param N_EMS_1 (+ @speciesS_EMS_1@ @initialAs_EMS_1@) )

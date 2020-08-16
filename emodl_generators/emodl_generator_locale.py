@@ -814,7 +814,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_{grp} @d_Sym_change3_{grp}@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_{grp} @d_Sym_change4_{grp}@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_{grp} @d_Sym_change5_{grp}@)))
-            """.format(grp=grp)
+            """.format(grpout=grpout,grp=grp)
         d_Sym_change_str = d_Sym_change_str + temp_str
         
     interventionSTOP_str = ""
