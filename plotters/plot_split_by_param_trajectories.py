@@ -55,7 +55,7 @@ def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True) 
     ax.set_ylim(0, max(mdf['CI_75']))
 
 def plot_main() :
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
     palette = sns.color_palette('GnBu_d', len(exp_names))
 
@@ -86,10 +86,10 @@ def plot_covidregions() :
         region_label= region_suffix.replace('_EMS-', 'covid region ')
         region_label2 = region_label.replace(' ', '_')
 
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=(12, 8))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
         palette = sns.color_palette('GnBu_d', len(exp_names))
-        channels = ['infected', 'd_Sym_t', 'new_deaths', 'hospitalized', 'critical', 'Ki_t']
+        channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'd_Sym_t','Ki_t']
         axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
 
@@ -114,7 +114,7 @@ def plot_covidregions_inone(channel='hospitalized') :
     subgroups = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9',
                  '_EMS-10', '_EMS-11']
 
-    fig = plt.figure(figsize=(12, 8))
+    fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
     palette = sns.color_palette('GnBu_d', len(exp_names))
     axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
@@ -142,7 +142,7 @@ def plot_covidregions_inone2(channels=['infected','new_detected','hospitalized',
                  '_EMS-10', '_EMS-11']
 
     for channel in channels :
-        fig = plt.figure(figsize=(12, 8))
+        fig = plt.figure(figsize=(16, 8))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
         palette = sns.color_palette('GnBu_d', len(exp_names))
         axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
@@ -173,7 +173,7 @@ if __name__ == '__main__' :
                   '20200812_IL_MR_critical75_triggeredrollback']
 
     plot_main()
-    #plot_covidregions()
+    plot_covidregions()
     #plot_covidregions_inone(channel='hospitalized')
     #plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths'])
     #plot_covidregions_inone2(channels=['prevalence','recoverged','symptomatic_mild','symptomatic_severe'])
