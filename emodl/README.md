@@ -18,10 +18,10 @@ Emodl examples:
 | structure      			| type                            | cms modifications        | intervention          | emodl name                                             |
 |---------------------------|---------------------------------|--------------------------|-----------------------|--------------------------------------------------------|
 | 1. BASE          			|                                 |                          |                       |                                                        |
-| base             			| master                          | none                     | continued SIP         | extendedmodel_cobey.emodl                              |                     
-| base             			| added intervention              | none                     | never SIP             | extendedmodel_cobey_noSIP.emodl                        |
-| base             			| added intervention              | none                     | immediate stop of SIP | extendedmodel_cobey_interventionStopy.emodl            |
-| base             			| added intervention              | none                     | gradual reopen        | extendedmodel_cobey_gradual_reopening.emodl            |
+| base             			| master                          | none                     | continued SIP         | extendedmodel.emodl                              |                     
+| base             			| added intervention              | none                     | never SIP             | extendedmodel_neverSIP.emodl                        |
+| base             			| added intervention              | none                     | immediate stop of SIP | extendedmodel_interventionStopadj.emodl            |
+| base             			| added intervention              | none                     | gradual reopen        | extendedmodel_gradual_reopening.emodl            |
 | 2. AGE           			|                                 |                          |                       |                                                        |
 | age-8            			| all location contact matrix     | age specific parameters  | continued SIP         | extendedmodel_age8.emodl                               |
 | age-8            			| all location contact matrix     | age specific parameters  | never SIP             | extendedmodel_age8_neverSIP.emodl                      |
