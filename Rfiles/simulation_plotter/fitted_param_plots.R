@@ -103,15 +103,15 @@ f_plot_param <- function(exp_name, paramname, emsname, timeVarying = TRUE, SAVE 
 
 
 ### Load trajectories Dat
-exp_name <- "20200730_IL_MR_improvedSym_all0.5"
+exp_name <- "20200816_IL_testbaseline"
 
 #simulation_output <-  file.path(simulation_output, "EMS/20200730_increasedSym/")
 
 
 f_plot_param(exp_name = exp_name, paramname = "social_multiplier_4_", emsname="EMS_", timeVarying = FALSE)
 f_plot_param(exp_name = exp_name, paramname = "backtonormal_multiplier_1_", emsname="EMS_", timeVarying = FALSE)
-f_plot_param(exp_name = exp_name, paramname = "Ki_t_", emsname = "EMS_", timeVarying = TRUE)
-f_plot_param(exp_name = exp_name, paramname = "d_Sym_t_", emsname = "EMS_", timeVarying = TRUE)
+f_plot_param(exp_name = exp_name, paramname = "Ki_t_", emsname = "EMS-", timeVarying = TRUE)
+f_plot_param(exp_name = exp_name, paramname = "d_Sym_t_", emsname = "EMS-", timeVarying = TRUE)
 
 
 
