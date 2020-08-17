@@ -52,24 +52,30 @@ python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extende
 
 
 #### When not using the locale model, each group needs to run separately
-python runScenarios.py -rl Local -r EMS_1 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_2 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_3 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_4 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_5 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_6 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_7 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_8 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_9 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl  -n "baseline"
-python runScenarios.py -rl Local -r EMS_10 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl -n "baseline"
-python runScenarios.py -rl Local -r EMS_11 -c EMSspecific_sample_parameters.yaml -e extendedmodel_cobey.emodl -n "baseline"
+python runScenarios.py -rl Local -r EMS_1 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_2 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_3 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_4 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_5 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_6 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_7 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_8 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_9 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "baseline"
+python runScenarios.py -rl Local -r EMS_10 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl -n "baseline"
+python runScenarios.py -rl Local -r EMS_11 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl -n "baseline"
 
 
 #### For fitting
-python runScenarios.py -rl Local -r EMS_1 -c extendedcobey_forFitting.yaml -e extendedmodel_cobey_forFitting.emodl  -n "fit_test1"
-python runScenarios.py -rl Local -r EMS_2 -c extendedcobey_forFitting.yaml -e extendedmodel_cobey_forFitting.emodl  -n "fit_test1"
+python runScenarios.py -rl Local -r EMS_1 -c extendedmodel_forFitting.yaml -e extendedmodel_forFitting.emodl  -n "fit_test1"
+python runScenarios.py -rl Local -r EMS_2 -c extendedmodel_forFitting.yaml -e extendedmodel_forFitting.emodl  -n "fit_test1"
 ...
 
+#### For startdate-Ki combinations
+Note: the runScenarios.py will need editing of the default yaml file form DEFAULT_CONFIG = 'extendedcobey_200428.yaml' to 'extendedcobey_200428_startdateKipair.yaml'
+python runScenarios.py -rl Local -r EMS_1 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "_startdateKi"
+python runScenarios.py -rl Local -r EMS_2 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "_startdateKi"
+python runScenarios.py -rl Local -r EMS_3 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "_startdateKi"
+...
 
 #### Age model with age specific parameter -not using locale model  (testing)
 python runScenarios.py -rl Local -r EMS_11 -c age8grp_experiment.yaml -e extendedmodel_age8_param.emodl -cfg model_B.cfg -n "age8_ageparam_test"
