@@ -5,7 +5,8 @@ For example, it defines the species, the transition rates, incubation time, dail
 The model file is in EMODL format; the syntax and available parameters are described in [Model file syntax](https://idmod.org/docs/cms/model-file.html).
 
 There are 5 types of models: 1) base, 2) age, 3) spatial, 4) spatial-age, and 5) specified long-term care facility model (LTCF). 
-Different "emodl-generators" are available to generate an emodl. 
+Different ["emodl-generators"](https://github.com/numalariamodeling/covid-chicago/tree/master/emodl_generators) are available to generate an emodl. 
+If one of the emodl files cannot be found in the emodl folder, one can check out the emodl generator and generate the needed scenario emodl file. 
 
 
 Naming conventions 
