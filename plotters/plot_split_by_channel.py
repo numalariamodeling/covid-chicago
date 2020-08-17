@@ -25,7 +25,9 @@ first_day = date(2020, 2, 13) # NMH
 def plot_on_fig(df, channels, axes, color, label) :
 
     for c, channel in enumerate(channels) :
-        channeltitle = re.sub('_det','', str(channel), count=1)
+        channeltitle = re.sub('_detected', '', str(channel), count=1)
+        channeltitle = re.sub('_det','', str(channeltitle), count=1)
+
         ax = axes[c]
         mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
@@ -44,16 +46,18 @@ def plot_on_fig(df, channels, axes, color, label) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200707_IL_EMS_MR4_scen3'
+    exp_name = '20200816_IL_testbaseline'
 
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
 
     nchannels = {'channels1': ['symptomatic_mild', 'infectious_undet', 'prevalence', 'seroprevalence', 'hospitalized'],
                  'channels2': ['symptomatic_mild_det',  'infectious_det', 'prevalence_det', 'seroprevalence_det', 'hospitalized_det'] }
+    #nchannels = {'channels1': ['hospitalized', 'new_hospitalized', 'hosp_cumul', 'critical', 'new_critical', 'crit_cumul'],
+    #             'channels2': ['hospitalized_det',  'new_detected_hospitalized', 'hosp_det_cumul','critical_det',  'new_detected_critical', 'crit_det_cumul'] }
 
     palette = sns.color_palette('Set1', len(nchannels))
-    axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(nchannels['channels1']))]
+    axes = [fig.add_subplot(2, 3, x + 1) for x in range(len(nchannels['channels1']))]
 
     for d, key in enumerate(nchannels.keys()) :
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
@@ -68,7 +72,7 @@ if __name__ == '__main__' :
         plot_on_fig(df, channels, axes, color=palette[d], label=label)
     axes[-1].legend()
 
-    plt.savefig(os.path.join(sim_output_path, '_channel.png'))
-    plt.savefig(os.path.join(sim_output_path, '_channel.pdf'), format='PDF')
+    plt.savefig(os.path.join(sim_output_path, 'channel_comparison.png'))
+    plt.savefig(os.path.join(sim_output_path, 'channel_comparison.pdf'), format='PDF')
     plt.show()
 
