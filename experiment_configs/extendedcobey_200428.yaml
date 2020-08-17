@@ -116,15 +116,15 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}  
   ## TIME EVENT EFFECT SIZE PARAMETER  
   ### Reduce Ki due to stay-at-home policy
-  'social_multiplier_1':
-    np.random: uniform
-    function_kwargs: {'low':0.7, 'high':0.9}
-  'social_multiplier_2':
-    np.random: uniform
-    function_kwargs: {'low':0.2, 'high':0.5}
-  'social_multiplier_3':
-    np.random: uniform
-    function_kwargs: {'low':0.08, 'high':0.08}        
+  #'social_multiplier_1':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.7, 'high':0.9}
+  #'social_multiplier_2':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.2, 'high':0.5}
+  #'social_multiplier_3':
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.08, 'high':0.08}        
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
