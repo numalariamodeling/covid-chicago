@@ -85,7 +85,7 @@ def write_observe(grp, expandModel=None):
 (observe susceptible_{grpout} S::{grp})
 (observe exposed_{grpout} E::{grp})
 (observe asymptomatic_{grpout} asymptomatic_{grp})
-(observe presymptomatic_{grpout} P_det::{grp})
+(observe presymptomatic_{grpout} presymptomatic_{grp})
 (observe symptomatic_mild_{grpout} symptomatic_mild_{grp})
 (observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
 (observe hospitalized_{grpout} hospitalized_{grp})
@@ -94,7 +94,7 @@ def write_observe(grp, expandModel=None):
 (observe recovered_{grpout} recovered_{grp})
 
 (observe asymptomatic_det_{grpout} asymptomatic_det_{grp})
-(observe presymptomatic_det{grpout} P_det::{grp} )
+(observe presymptomatic_det{grpout} presymptomatic_det_{grp} )
 (observe symptomatic_mild_det_{grpout} symptomatic_mild_det_{grp})
 (observe symptomatic_severe_det_{grpout} symptomatic_severe_det_{grp})
 (observe hospitalized_det_{grpout} hospitalized_det_{grp})
