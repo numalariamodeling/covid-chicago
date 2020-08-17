@@ -7,9 +7,8 @@ Currently the emodl files are generated independently of the runScenarios and em
 #### emodl_generator_base.py
 - Generates emodl files without any age groups 
 
-#### emodl_generator_cobey_age.py
+#### emodl_generator_age.py
 - Generates emodl files for different age groups, currently "4grp" and "8grp" with age specific transmission and disease parameter
-- Eventually could be combined with  emodl_generator_cobey_contact_mix.py and having an option "age_specific=T"
 
 #### emodl_generator_locale.py
 - Generates emodl files without 'locales' per EMS , referred to as spatial model or 'EMS locale'

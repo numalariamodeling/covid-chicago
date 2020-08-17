@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = datetime.datetime.today()
-DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
+DEFAULT_CONFIG = 'extendedmodel_200428.yaml'
 
 
 def _get_full_factorial_df(df, column_name, values):
@@ -250,7 +250,7 @@ def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=
 
 
 def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region):
-    """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
+    """ Given a yaml configuration file (e.g. ./extendedmodel.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
     """
@@ -433,7 +433,7 @@ def parse_args():
         "--emodl_template",
         type=str,
         help="Template emodl file to use",
-        default="extendedmodel_cobey.emodl"
+        default="extendedmodel.emodl"
     )
     parser.add_argument(
         "-cfg",

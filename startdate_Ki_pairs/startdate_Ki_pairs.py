@@ -71,12 +71,12 @@ writeTxt(txtdir=output_dir, filename= "date_ki_pairs_"+str(constrain)+".txt" , t
 
 ### Create yaml file from template
 
-fin = open(os.path.join(output_dir, "extendedcobey_200428_startdateKipair_template.yaml"), "rt")
+fin = open(os.path.join(output_dir, "extendedmodel_200428_startdateKipair_template.yaml"), "rt")
 yaml_template = fin.read()
 
 yaml_template = yaml_template.replace('[STARTDATES]', startdate_ranges)
 yaml_template = yaml_template.replace('[KIVALUES]', Ki_ranges)
 fin.close()
-fin = open(os.path.join(config_dir, "extendedcobey_200428_startdateKipair.yaml"), "wt")
+fin = open(os.path.join(config_dir, "extendedmodel_200428_startdateKipair.yaml"), "wt")
 fin.write(yaml_template)
 fin.close()
