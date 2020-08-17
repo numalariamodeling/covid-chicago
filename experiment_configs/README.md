@@ -3,7 +3,7 @@ The yaml file contains all input parameter and simulation settings.
 
 # 1. Config files and related scenario files
 
-## [experiment_setup_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_200428.yaml#L1)
+## [experiment_setup_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L1)
 Takes single integer values. 
 
 - number_of_samples: specifies the number of random samples drawn for 'sampled_parameters'
@@ -17,13 +17,13 @@ Of these values number_of_runs, duration, and monitoring_samples are replaced in
 The number_of_samples and random_seed are used in the runScenarios.py when generating the sampling parameters to be replaced in the emodl files.
 The initialAs is added to the sample dataset and replaced in the emodl file. 
 
-## [fixed_parameters_region_specific](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_200428.yaml#L8)
+## [fixed_parameters_region_specific](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L8)
 - populations: population size 
 - startdate: startdate of the simulation, defins the date at which the first infections occur. 
 
-## [fixed_parameters_global](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_200428.yaml#L42)
+## [fixed_parameters_global](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L42)
 
-### [sampled_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_200428.yaml#L43)
+### [sampled_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L43)
 - time_to_infectious
 - time_to_symptoms
 - time_to_hospitalization
@@ -121,14 +121,15 @@ The expand_by_age option means repeating compartments and parameters per sub-gro
 
 # 2. Config files and related scenario files
 
-- extendedmodel_200428.yaml (current master file) 
+- extendedcobey_200428.yaml (current master file) 
 
 ## 1.1. Base model scenario emodl files:
-- [extendedmodel.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel.emodl)
-- [extendedmodel_interventionStopadj.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_interventionStopadj.emodl)  
-- [extendedmodel_neverSIP.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_neverSIP.emodl)
-- [extendedmodel_gradual_reopening.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_gradual_reopening.emodl)
-- (among others)
+- [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
+- [extendedmodel_cobey_interventionStop.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_interventionStop.emodl)  
+- [extendedmodel_cobey_noSIP.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_noSIP.emodl)
+- [extendedmodel_cobey_gradual_reopening.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_gradual_reopening.emodl)
+
+Note the scenario emodl are [generated](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/locale_emodl_generator_extendedModel.py#L586) using emodl-generators.
 
 ## 1.2. Model extensions (in addition to master yaml file)
 
@@ -137,7 +138,7 @@ includes description on how to specifiy age and region specific sample parameter
 
 ### 1.2.1. [EMSspecific_sample_parameters.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml) 
 Adds EMS specific sample parameters, such as effect of social distancing multipler (using base, non spatial model)
-- [extendedmodel.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel.emodl)
+- [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
 
 
 ### 1.2.2. [spatial_EMS_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/spatial_EMS_experiment.yaml)
@@ -171,8 +172,8 @@ Runs with these emodl files:
 
 ## 1.4. Customized yaml + emodls  (replacing master yaml file)
 ### Fiting simulations
-- [extendedmodel_forFitting.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_forFitting.yaml)
-- [extendedmodel_forFitting.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_forFitting.emodl)(not used anymore)
+- [extendedcobey_forFitting.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_forFitting.yaml)
+- [extendedmodel_cobey_forFitting.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_forFitting.emodl)(not used anymore)
 Note the emodl file is outdated and the 'forFitting' yaml file can be run with a [base EMS emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_EMS.emodl), since the startdate can be directly varied. 
 
 
