@@ -798,7 +798,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
     rollbacktriggered_str = ""
     for grp in grpList:
         temp_str = """
-(state-event rollbacktrigger_{grp} (and (time > @triggertime@) (> {channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@)) ) ((Ki_{grp} Ki_red4_{grp})))
+(state-event rollbacktrigger_{grp} (and (> time @triggertime@) (> {channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@)) ) ((Ki_{grp} Ki_red4_{grp})))
                     """.format(channel=trigger_channel,grp=grp)
         rollbacktriggered_str = rollbacktriggered_str + temp_str
 
