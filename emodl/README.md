@@ -5,7 +5,8 @@ For example, it defines the species, the transition rates, incubation time, dail
 The model file is in EMODL format; the syntax and available parameters are described in [Model file syntax](https://idmod.org/docs/cms/model-file.html).
 
 There are 5 types of models: 1) base, 2) age, 3) spatial, 4) spatial-age, and 5) specified long-term care facility model (LTCF). 
-Different "emodl-generators" are available to generate an emodl. 
+Different ["emodl-generators"](https://github.com/numalariamodeling/covid-chicago/tree/master/emodl_generators) are available to generate an emodl. 
+If one of the emodl files cannot be found in the emodl folder, one can check out the emodl generator and generate the needed scenario emodl file. 
 
 
 Naming conventions 
@@ -18,10 +19,10 @@ Emodl examples:
 | structure      			| type                            | cms modifications        | intervention          | emodl name                                             |
 |---------------------------|---------------------------------|--------------------------|-----------------------|--------------------------------------------------------|
 | 1. BASE          			|                                 |                          |                       |                                                        |
-| base             			| master                          | none                     | continued SIP         | extendedmodel_cobey.emodl                              |                     
-| base             			| added intervention              | none                     | never SIP             | extendedmodel_cobey_noSIP.emodl                        |
-| base             			| added intervention              | none                     | immediate stop of SIP | extendedmodel_cobey_interventionStopy.emodl            |
-| base             			| added intervention              | none                     | gradual reopen        | extendedmodel_cobey_gradual_reopening.emodl            |
+| base             			| master                          | none                     | continued SIP         | extendedmodel.emodl                              |                     
+| base             			| added intervention              | none                     | never SIP             | extendedmodel_neverSIP.emodl                        |
+| base             			| added intervention              | none                     | immediate stop of SIP | extendedmodel_interventionStopadj.emodl            |
+| base             			| added intervention              | none                     | gradual reopen        | extendedmodel_gradual_reopening.emodl            |
 | 2. AGE           			|                                 |                          |                       |                                                        |
 | age-8            			| all location contact matrix     | age specific parameters  | continued SIP         | extendedmodel_age8.emodl                               |
 | age-8            			| all location contact matrix     | age specific parameters  | never SIP             | extendedmodel_age8_neverSIP.emodl                      |

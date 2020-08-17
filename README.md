@@ -89,7 +89,7 @@ To generate or modify the emodl files use the [locale specific emmodl generator]
 [...]
 
 ### 1.3.3. Spatial age-structured model
-A test verion is available under [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_locale_age_test.emodl).
+A test verion is available under [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_agelocale_scen3.emodl).
 To generate or modify the emodl files use the [locale-age specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/extended_cobey_age_locale_emodl_generator.py )
 
 ## 1.4. Model updates
@@ -123,7 +123,7 @@ To generate or modify the emodl files use the [locale-age specific emmodl genera
 # 2. Software used
 The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html) is used to simulate the COVID-19 transmission and disease progression. The CMS language defines 5 main type: species, observations, reactions, parameters and functions, in addition time-events can be added as well as state-events. Multiple compartments, called ‘species’ can be defined. The movement of populations between compartments is called reaction. The model runs with different solvers, including spatial solvers. The model is written in ['emodl' files](https://idmod.org/docs/cms/input-files.html) and model configurations are written in ['cfg' files](https://idmod.org/docs/cms/input-files.html). The output is written into [trajectories.csv files](https://idmod.org/docs/cms/output.html?searchText=output).
 
-The latest model description in emodl format is written in the [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl) file. 
+The latest model description in emodl format is written in the [extendedmodel.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel.emodl) file (note original emodl with history in [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl). 
 
 ## 2.1 Run simulations 
 The [runScenarios.py](runScenarios.py) is used to run multiple simulations
@@ -154,7 +154,7 @@ Note that the user-supplied configuration file is used to provide
   use for the simulation. If a parameter is not provided, the value in
   the default configuration will be used. (e.g. [sample_experiment.yaml](sample_experiment.yaml))
 - Emodl template (optional): The template emodl file to substitute in
-  parameter values. The default is [extendedmodel_cobey.emodl](extendedmodel_cobey.emodl). emodl
+  parameter values. The default is [extendedmodel.emodl](extendedmodel.emodl). emodl
   files are in the `./emodl` directory.
 - cfg template (optional): The default cfg file uses the [Tau leaping](https://idmod.org/docs/cms/tau-leaping.html) solver (recommended B solver).
 - Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
@@ -166,7 +166,7 @@ Note that the user-supplied configuration file is used to provide
 - Using a different emodl template: `python runScenarios.py
   --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
 - Specifying experiment name suffix and changing running_location : `python runScenarios.py
-  --running_location NUCLUSTER --region IL --experiment_config extendedcobey.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
+  --running_location NUCLUSTER --region IL --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
 - Specifiying cms configuration file and solver:`python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
 
@@ -205,7 +205,7 @@ The `source activate dotenv-py37` needs to be run before runnung the `runScenari
 
 ### Submit job 
 `cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel_cobey.emodl --name_suffix "quest_run_<your initial>"`
+`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel.emodl --name_suffix "quest_run_<your initial>"`
 
 The experiments will go to the _temp folder on the quest gitrepository. To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
 
