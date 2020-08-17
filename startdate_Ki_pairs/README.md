@@ -21,19 +21,19 @@ Example combinations:
     'EMS_10': [2020-02-03, 2020-02-22]
     'EMS_11': [2020-01-25, 2020-02-28]
 
-
+```
    'EMS_1':
-     np: linspace 
-     function_kwargs: {'start': 0.25, 'stop': 0.583333333333333, 'num': 3}
+    np: linspace 
+    function_kwargs: {'start': 0.25, 'stop': 0.583333333333333, 'num': 3}
    'EMS_2':
-     np: linspace 
-     function_kwargs: {'start': 0.28571428571428603, 'stop': 0.7142857142857142, 'num': 3}
+    np: linspace 
+    function_kwargs: {'start': 0.28571428571428603, 'stop': 0.7142857142857142, 'num': 3}
    'EMS_3':
-     np: linspace 
-     function_kwargs: {'start': 0.28571428571428603, 'stop': 0.5714285714285711, 'num': 3}
+    np: linspace 
+    function_kwargs: {'start': 0.28571428571428603, 'stop': 0.5714285714285711, 'num': 3}
    'EMS_4':
-     np: linspace 
-     function_kwargs: {'start': 0.28571428571428603, 'stop': 0.7142857142857142, 'num': 3}
+    np: linspace 
+    function_kwargs: {'start': 0.28571428571428603, 'stop': 0.7142857142857142, 'num': 3}
    'EMS_5':
      np: linspace 
      function_kwargs: {'start': 0.28571428571428603, 'stop': 1.28571428571429, 'num': 3}
@@ -55,4 +55,4 @@ Example combinations:
    'EMS_11':
      np: linspace 
      function_kwargs: {'start': 0.42857142857142894, 'stop': 1.14285714285714, 'num': 3}
-	 
+```	 
