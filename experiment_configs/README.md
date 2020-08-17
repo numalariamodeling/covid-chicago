@@ -36,7 +36,7 @@ In order to repeat one of the sample parameters for all other variables, the par
     np.random: uniform
     function_kwargs: {'low': 3.4, 'high':4.5}
 	
-### [intervention_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L101)
+### [intervention_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_200428.yaml#L101)
 Intervention parameters or also scenario parameter  are repeated for each sample, fitting parameter and startdate.
 Most of the intervention parameter include time varying parameters to simulate an intervention put in place or being lifted at any time point. 
 Since time in the cms model depends on the startdate, the effect size parameter and time event parameter have been separated (see time_parameter below). 
@@ -83,7 +83,7 @@ It is also possible to define multiple dates
 
 In contrast to the startdate, the dates here are taken ony by one and not as a range including all days inbetween. 	
 	
-## [fitted_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L227)
+## [fitted_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_200428.yaml#L227)
 
 - Ki (transmission parameter)
 
