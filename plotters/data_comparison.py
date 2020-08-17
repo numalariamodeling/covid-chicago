@@ -18,12 +18,12 @@ datetoday = date(today.year, today.month, today.day)
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, input_sim_output_path =None) :
+def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+    df = pd.read_csv(os.path.join(sim_output_path, fname))
     if 'Ki' not in df.columns.values :
         scen_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
