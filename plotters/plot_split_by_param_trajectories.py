@@ -24,7 +24,7 @@ def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
 
     for c, channel in enumerate(channels) :
         ax = axes[c]
-        mdf= df.groupby(['time','scen_num'])[channel].agg(CI_50).reset_index()
+        mdf= df #df.groupby(['time','scen_num'])[channel].agg(CI_50).reset_index()
         mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
         mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
 
@@ -44,7 +44,7 @@ def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
 
 def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True, ymax=50) :
     ax = axes[c]
-    mdf = df.groupby(['time', 'scen_num'])[channel].agg(CI_50).reset_index()
+    mdf = df #df.groupby(['time', 'scen_num'])[channel].agg(CI_50).reset_index()
     mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
 
