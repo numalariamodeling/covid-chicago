@@ -128,7 +128,7 @@ The latest model description in emodl format is written in the [extendedmodel.em
 ## 2.1 Run simulations 
 The [runScenarios.py](runScenarios.py) is used to run multiple simulations
 given a configuration file with the parameters. The script builds off
-a default configuration file [extendedmodel.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedmodel_200428.yaml)
+a default configuration file [extendedcobey.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml)
 and substitutes parameters with the values/functions in the
 user-provided configuration file using the `@param@` placeholder. Multiple trajectories.csv that are produced per single simulation are combined into a trajectoriesDat.csv, used for postprocessing and plotting.
 
@@ -205,7 +205,7 @@ The `source activate dotenv-py37` needs to be run before runnung the `runScenari
 
 ### Submit job 
 `cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedmodel_200428.yaml --emodl_template extendedmodel.emodl --name_suffix "quest_run_<your initial>"`
+`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel.emodl --name_suffix "quest_run_<your initial>"`
 
 The experiments will go to the _temp folder on the quest gitrepository. To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
 
