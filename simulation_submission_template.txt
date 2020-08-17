@@ -71,7 +71,7 @@ python runScenarios.py -rl Local -r EMS_2 -c extendedmodel_forFitting.yaml -e ex
 ...
 
 #### For startdate-Ki combinations
-Note: the runScenarios.py will need editing of the default yaml file form DEFAULT_CONFIG = 'extendedmodel_200428.yaml' to 'extended_200428_startdateKipair.yaml'
+Note: the runScenarios.py will need editing of the default yaml file form DEFAULT_CONFIG = 'extendedcobey_200428.yaml' to 'extendedcobey_200428_startdateKipair.yaml'
 python runScenarios.py -rl Local -r EMS_1 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "_startdateKi"
 python runScenarios.py -rl Local -r EMS_2 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "_startdateKi"
 python runScenarios.py -rl Local -r EMS_3 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "_startdateKi"
