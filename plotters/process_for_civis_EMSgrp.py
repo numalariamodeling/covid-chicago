@@ -121,7 +121,7 @@ def rename_geography_and_save(df,filename) :
 
 if __name__ == '__main__' :
 
-    stem = "20200624_IL_EMS_stopSIP10_changeTDdetSym60AsP30"
+    stem = sys.argv[1]
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     #exp_name = "20200517_IL_tD_EMSgrp_reopen"
 

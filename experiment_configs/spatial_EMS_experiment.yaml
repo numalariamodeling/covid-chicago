@@ -93,9 +93,9 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.200, 'high': 0.200}
+        - {'low': 0.170, 'high': 0.170}
         - {'low': 0.230, 'high': 0.230}
-        - {'low': 0.400, 'high': 0.400}
+        - {'low': 0.450, 'high': 0.450}
         - {'low': 0.245, 'high': 0.245}
         - {'low': 0.270, 'high': 0.270}
         - {'low': 0.240, 'high': 0.240}
@@ -104,102 +104,118 @@ sampled_parameters:
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.115, 'high': 0.115}
+  social_multiplier_6:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.230, 'high': 0.230}
+        - {'low': 0.300, 'high': 0.300}
+        - {'low': 0.175, 'high': 0.175}
+        - {'low': 0.150, 'high': 0.150}
+        - {'low': 0.240, 'high': 0.240}
+        - {'low': 0.160, 'high': 0.160}
+        - {'low': 0.120, 'high': 0.120}
+        - {'low': 0.090, 'high': 0.090}
+        - {'low': 0.150, 'high': 0.150}
+        - {'low': 0.115, 'high': 0.115}
   d_Sym:  
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
-        - {'low': 0.0, 'high': 0.02}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
+        - {'low': 0.0, 'high': 0.01}
   d_Sym_change1:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.0, 'high': 0.1}
-        - {'low': 0.0, 'high': 0.1}
-        - {'low': 0.0, 'high': 0.1}
-        - {'low': 0.0, 'high': 0.08}
-        - {'low': 0.0, 'high': 0.08}
-        - {'low': 0.0, 'high': 0.1}
-        - {'low': 0.02, 'high': 0.06}
-        - {'low': 0.02, 'high': 0.06}
-        - {'low': 0.02, 'high': 0.06}
-        - {'low': 0.02, 'high': 0.06}
-        - {'low': 0.02, 'high': 0.06}
+        - {'low': 0.0, 'high': 0.05}
+        - {'low': 0.0, 'high': 0.05}
+        - {'low': 0.0, 'high': 0.05}
+        - {'low': 0.0, 'high': 0.04}
+        - {'low': 0.0, 'high': 0.04}
+        - {'low': 0.0, 'high': 0.05}
+        - {'low': 0.01, 'high': 0.05}
+        - {'low': 0.01, 'high': 0.05}
+        - {'low': 0.01, 'high': 0.05}
+        - {'low': 0.01, 'high': 0.05}
+        - {'low': 0.01, 'high': 0.05}
   d_Sym_change2:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.02, 'high': 0.2}
-        - {'low': 0.02, 'high': 0.2}
-        - {'low': 0.02, 'high': 0.12}
-        - {'low': 0.02, 'high': 0.1}
-        - {'low': 0.02, 'high': 0.1}
-        - {'low': 0.02, 'high': 0.12}
-        - {'low': 0.04, 'high': 0.12}
-        - {'low': 0.04, 'high': 0.12}
-        - {'low': 0.04, 'high': 0.12}
-        - {'low': 0.04, 'high': 0.12}
-        - {'low': 0.04, 'high': 0.12}
+        - {'low': 0.05, 'high': 0.15}
+        - {'low': 0.05, 'high': 0.15}
+        - {'low': 0.03, 'high': 0.08}
+        - {'low': 0.02, 'high': 0.05}
+        - {'low': 0.02, 'high': 0.05}
+        - {'low': 0.03, 'high': 0.08}
+        - {'low': 0.05, 'high': 0.08}
+        - {'low': 0.05, 'high': 0.08}
+        - {'low': 0.05, 'high': 0.08}
+        - {'low': 0.05, 'high': 0.08}
+        - {'low': 0.05, 'high': 0.08}
   d_Sym_change3:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.04, 'high': 0.25}
-        - {'low': 0.04, 'high': 0.25}
-        - {'low': 0.04, 'high': 0.2}
-        - {'low': 0.04, 'high': 0.12}
-        - {'low': 0.04, 'high': 0.12}
-        - {'low': 0.04, 'high': 0.2}
-        - {'low': 0.08, 'high': 0.2}
-        - {'low': 0.08, 'high': 0.2}
-        - {'low': 0.08, 'high': 0.2}
-        - {'low': 0.08, 'high': 0.2}
-        - {'low': 0.08, 'high': 0.2}
+        - {'low': 0.10, 'high': 0.20}
+        - {'low': 0.10, 'high': 0.20}
+        - {'low': 0.05, 'high': 0.15}
+        - {'low': 0.05, 'high': 0.10}
+        - {'low': 0.05, 'high': 0.10}
+        - {'low': 0.05, 'high': 0.15}
+        - {'low': 0.08, 'high': 0.15}
+        - {'low': 0.08, 'high': 0.15}
+        - {'low': 0.08, 'high': 0.15}
+        - {'low': 0.08, 'high': 0.15}
+        - {'low': 0.08, 'high': 0.15}
   d_Sym_change4:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.06, 'high': 0.32}
-        - {'low': 0.06, 'high': 0.32}
-        - {'low': 0.04, 'high': 0.34}
-        - {'low': 0.04, 'high': 0.15}
-        - {'low': 0.04, 'high': 0.15}
-        - {'low': 0.04, 'high': 0.34}
-        - {'low': 0.1, 'high': 0.28}
-        - {'low': 0.1, 'high': 0.28}
-        - {'low': 0.1, 'high': 0.28}
-        - {'low': 0.1, 'high': 0.28}
-        - {'low': 0.1, 'high': 0.28}
+        - {'low': 0.10, 'high': 0.25}
+        - {'low': 0.10, 'high': 0.25}
+        - {'low': 0.10, 'high': 0.30}
+        - {'low': 0.05, 'high': 0.15}
+        - {'low': 0.05, 'high': 0.15}
+        - {'low': 0.10, 'high': 0.30}
+        - {'low': 0.1, 'high': 0.25}
+        - {'low': 0.1, 'high': 0.25}
+        - {'low': 0.1, 'high': 0.25}
+        - {'low': 0.1, 'high': 0.25}
+        - {'low': 0.1, 'high': 0.25}
   d_Sym_change5:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.06, 'high': 0.36}
-        - {'low': 0.06, 'high': 0.36}
-        - {'low': 0.0, 'high': 0.34}
-        - {'low': 0.02, 'high': 0.28}
-        - {'low': 0.02, 'high': 0.28}
-        - {'low': 0.0, 'high': 0.34}
-        - {'low': 0.08, 'high': 0.25}
-        - {'low': 0.08, 'high': 0.25}
-        - {'low': 0.08, 'high': 0.25}
-        - {'low': 0.08, 'high': 0.25}
-        - {'low': 0.08, 'high': 0.25}
+        - {'low': 0.15, 'high': 0.40}
+        - {'low': 0.15, 'high': 0.40}
+        - {'low': 0.15, 'high': 0.50}
+        - {'low': 0.15, 'high': 0.35}
+        - {'low': 0.15, 'high': 0.35}
+        - {'low': 0.15, 'high': 0.50}
+        - {'low': 0.20, 'high': 0.35}
+        - {'low': 0.20, 'high': 0.35}
+        - {'low': 0.20, 'high': 0.35}
+        - {'low': 0.20, 'high': 0.35}
+        - {'low': 0.20, 'high': 0.35}
   d_Sym_ct1:
     IL:
       expand_by_age: True

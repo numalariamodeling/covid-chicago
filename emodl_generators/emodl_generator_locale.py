@@ -760,6 +760,8 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@)))
 (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
 (time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
+(time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
+
 
 ;(observe frac_crit_t fraction_critical)
 (time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
@@ -775,6 +777,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (param Ki_red3_{grp} (* Ki_{grp} @social_multiplier_3_{grp}@))
 (param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
 (param Ki_red5_{grp} (* Ki_{grp} @social_multiplier_5_{grp}@))
+(param Ki_red6_{grp} (* Ki_{grp} @social_multiplier_6_{grp}@))
 
 (param backtonormal_multiplier_1_{grp}  (/ (- Ki_red5_{grp}  Ki_red4_{grp} ) (- Ki_{grp} Ki_red4_{grp} ) ) )  
 (observe backtonormal_multiplier_1_{grp} backtonormal_multiplier_1_{grp})
@@ -784,6 +787,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
 (time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_{grp} Ki_red5_{grp})))
+(time-event socialDistance_change_3 @socialDistance_time6@ ((Ki_{grp} Ki_red6_{grp})))
             """.format(grp=grp)
         socialDistance_change_str = socialDistance_change_str + temp_str
 
