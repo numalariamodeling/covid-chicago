@@ -100,7 +100,7 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     # plt.show()
     #ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200715_jg_deceased_date_ems.csv'))
     #ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200715_jg_admission_date_ems.csv'))
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200811_jg_aggregated_covidregion.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200817_jg_aggregated_covidregion.csv'))
     if ems > 0:
         #ref_df1 = ref_df1[ref_df1['EMS'] == ems]
         #ref_df2 = ref_df2[ref_df2['EMS'] == ems]

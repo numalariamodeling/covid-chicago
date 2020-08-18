@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 50
+  'number_of_samples': 30
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
@@ -129,22 +129,25 @@ sampled_parameters:
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.0726, 'high':0.157}
+    function_kwargs: {'low':0.029, 'high':0.090}
   'd_Sys_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.335, 'high':0.422}
+    function_kwargs: {'low':0.090, 'high':0.192}
   'd_Sys_incr3':
     np.random: uniform
-    function_kwargs: {'low':0.516, 'high':0.778}
+    function_kwargs: {'low':0.192, 'high':0.330}
   'd_Sys_incr4':
     np.random: uniform
-    function_kwargs: {'low':0.565, 'high':0.835}
+    function_kwargs: {'low':0.330, 'high':0.450}
   'd_Sys_incr5':
     np.random: uniform
-    function_kwargs: {'low':0.682, 'high':0.835}
+    function_kwargs: {'low':0.450, 'high':0.600}
   'd_Sys_incr6':
     np.random: uniform
-    function_kwargs: {'low':0.95, 'high':1}
+    function_kwargs: {'low':0.600, 'high':0.800}
+  'd_Sys_incr7':
+    np.random: uniform
+    function_kwargs: {'low':0.800, 'high':1.000}
   ### d_Sym
   ## In locale model, d_Sym  increase is group specific
   ## However when using this yaml for running single groups or non locale models it would be needed here
@@ -240,6 +243,9 @@ time_parameters:
   'socialDistance_time5':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-21}
+  'socialDistance_time6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-25}
   'socialDistance_rollback_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-15}
@@ -267,22 +273,25 @@ time_parameters:
   ### Use fixed dates or define detection time relative to  socialDistance_time3
   'detection_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-14}
+    function_kwargs: {'dates': 2020-03-07}
   'detection_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21}
+    function_kwargs: {'dates': 2020-03-14}
   'detection_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-28} 
+    function_kwargs: {'dates': 2020-03-21} 
   'detection_time_4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-04} 
+    function_kwargs: {'dates': 2020-03-28} 
   'detection_time_5':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-18} 
+    function_kwargs: {'dates': 2020-04-04}
   'detection_time_6':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-01}
+    function_kwargs: {'dates': 2020-04-18}
+  'detection_time_7':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01}
   'crit_time_1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-01} 
