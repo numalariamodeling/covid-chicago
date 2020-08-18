@@ -37,7 +37,7 @@ if __name__ == '__main__' :
     load_dotenv(dotenv_path="../.env")
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
-    stem = "20200522_EMS_1_scenario1_test"
+    stem = sys.argv[1]
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output'))
                  if stem in x]
