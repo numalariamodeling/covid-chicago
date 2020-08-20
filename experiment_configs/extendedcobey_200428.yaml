@@ -248,26 +248,26 @@ time_parameters:
     function_kwargs: {'dates': 2020-07-25}
   'socialDistance_rollback_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-15}
+    function_kwargs: {'dates': 2020-08-30}
     #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01, 2020-08-15, 2020-08-30, 2020-09-15]}
   ### Reset Ki to defined proporions of it's initial value  
   ### (only used if corresponding emodl is defined)    
   'socialDistanceSTOP_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-15}
+    function_kwargs: {'dates': 2020-08-30}
   ### Gradual reopening (time-wise)
   'gradual_reopening_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-05}
+    function_kwargs: {'dates': 2020-07-30}
   'gradual_reopening_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-12}        
+    function_kwargs: {'dates': 2020-08-03}        
   'gradual_reopening_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-19}    
+    function_kwargs: {'dates': 2020-08-08}    
   'gradual_reopening_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-26}  
+    function_kwargs: {'dates': 2020-08-13}  
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3
@@ -321,18 +321,18 @@ time_parameters:
   ### (only used if corresponding emodl is defined)
   'contact_tracing_start_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-05}
+    function_kwargs: {'dates': 2020-08-30}
   ## stop after simulation end to simulate indefinite contact tracing
   'contact_tracing_stop1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2022-05-30}
   'change_testDelay_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-05}
+    function_kwargs: {'dates': 2020-08-30}
     #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
   'triggertime' :
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-17}
+    function_kwargs: {'dates': 2020-08-30}
 fitted_parameters:
   Kis:
     'NMH_catchment':
