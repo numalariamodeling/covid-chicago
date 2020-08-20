@@ -272,33 +272,33 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 136  , 'high':    136    }
-        - {'low': 179  , 'high':    179    }
-        - {'low': 75  , 'high':     75    }
-        - {'low': 69  , 'high':     69    }
-        - {'low': 59  ,  'high':    59    }
-        - {'low': 91  , 'high':     91    }
-        - {'low': 73  , 'high':     73     }
-        - {'low': 243  , 'high':    243    }
-        - {'low': 162  , 'high':    162    }
-        - {'low': 399  , 'high':    399    }
-        - {'low': 552  ,'high':     552    }     
+        - {'low': 136   , 'high':   136 }
+        - {'low': 173   , 'high':   173 }
+        - {'low': 82    , 'high':   82  }
+        - {'low': 73    , 'high':   73  }
+        - {'low': 64    ,  'high':  64  }
+        - {'low': 90    , 'high':   90  }
+        - {'low': 70    , 'high':   70  }
+        - {'low': 220   , 'high':   220 }
+        - {'low': 150   , 'high':   150 }
+        - {'low': 362   , 'high':   362 }
+        - {'low': 529   ,'high':    529 }     
   trigger_notused:   # medsurg_total 
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 466 , 'high':  466 }
-        - {'low': 826 , 'high':  826 }
-        - {'low': 487 , 'high':  487 }
-        - {'low': 352 , 'high':  352 }
-        - {'low': 356 , 'high':  356 }
-        - {'low': 514 , 'high':  514 }
-        - {'low': 297 , 'high':  297 }
-        - {'low': 782 , 'high':  782 }
-        - {'low': 515 , 'high':  515 }
-        - {'low': 1358 , 'high': 1358 }
-        - {'low': 1671 , 'high': 1671 }         
+        - {'low': 953      , 'high':953   }
+        - {'low': 1698     , 'high':1698  }
+        - {'low': 975      , 'high':975   }
+        - {'low': 676      , 'high':676   }
+        - {'low': 726      , 'high':726   }
+        - {'low': 1065     , 'high':1065  }
+        - {'low': 704      , 'high':704   }
+        - {'low': 1520     , 'high':1520  }
+        - {'low': 919      , 'high':919   }
+        - {'low': 2496     , 'high':2496  }
+        - {'low': 3004     , 'high':3004  }         
 ### If using setting specific increase in symptomatic infections in future scenarios (i.e. contact tracing)
 #d_Sym_ct1:
 #    IL:
