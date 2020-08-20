@@ -969,7 +969,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
     if scenarioName == "improveHS" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + improveHS_str)
     if scenarioName == "rollbacktriggered" :
-        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + rollbacktriggered_str)
+        total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + rollbacktriggered_str)
 
 
    # if scenarioName == "gradual_contactTracing" :
