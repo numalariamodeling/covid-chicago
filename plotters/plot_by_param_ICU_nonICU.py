@@ -79,10 +79,7 @@ def compare_ems( ems,channel):
 
     return ref_df
 
-def plot_covidregions_inone(channel='hospitalized') :
-
-    #subgroups = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9', '_EMS-10', '_EMS-11']
-    subgroups = ['_EMS-1', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-9']
+def plot_covidregions(channel,subgroups, psuffix) :
 
     fig = plt.figure(figsize=(10, 8))
     fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.95, bottom=0.07)
@@ -104,8 +101,8 @@ def plot_covidregions_inone(channel='hospitalized') :
         #fig.suptitle(x=0.5, y=0.999,t=channel)
         plt.tight_layout()
 
-    plt.savefig(os.path.join(sim_output_path, 'covidregion13459_JulSep_%s.png' % channel))
-    plt.savefig(os.path.join(sim_output_path, 'covidregion13459_JulSep_%s.pdf' % channel))
+    plt.savefig(os.path.join(sim_output_path, 'covidregion_',psuffix,'_%s.png' % channel))
+    plt.savefig(os.path.join(sim_output_path, 'covidregion',psuffix,'_%s.pdf' % channel))
 
 
 if __name__ == '__main__' :
@@ -113,5 +110,8 @@ if __name__ == '__main__' :
     exp_names = ['20200811_IL_RR_fitting_0',
                  '20200818_IL_RR_baseline_0']
 
-    plot_covidregions_inone(channel='critical_det')
-    plot_covidregions_inone(channel='hospitalized_det')
+    #covidregionlist = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9', '_EMS-10', '_EMS-11']
+    covidregionlist = ['_EMS-1', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-9']
+
+    plot_covidregions(channel='critical_det', subgroups = covidregionlist, psuffix ='13459_JulSep')
+    plot_covidregions(channel='hospitalized_det', subgroups = covidregionlist,  psuffix ='13459_JulSep')
