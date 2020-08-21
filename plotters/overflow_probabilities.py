@@ -20,6 +20,7 @@ from statsmodels.distributions.empirical_distribution import ECDF
 import scipy
 import gc
 import sys
+import re
 
 
 datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
@@ -51,75 +52,35 @@ for ems_region in range(1,12):
     
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
-    capacity = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'capacity_by_covid_region.csv'))
-
+    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds_template', 'capacity_weekday_average.csv'))
+    civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
+    
     for ems_region in range(1,12):
         trajectories['total_hosp_census_EMS-' + str(ems_region)] = trajectories['hospitalized_det_EMS-'+str(ems_region)]+trajectories['crit_det_EMS-'+str(ems_region)]
 
 
-    #capacity = pd.read_csv('capacity_by_covid_region.csv')
-    capacity = capacity[capacity['geography_level'] == 'covid region']
-    capacity['date'] = pd.to_datetime(capacity['date'])
-    icu_available = []
-    hb_available = []
-    for region in range(1,12):
-
-        cap = capacity[(capacity['geography_name'] == str(region)) & (capacity['date'].dt.dayofweek < 5)].sort_values('date').reset_index()
-
-        cap['icu_covid_avail'] = cap['icu_total'] - cap['icu_noncovid']
-        icu_available.append(np.mean(cap['icu_covid_avail'].values[-10:]))
-        cap['beds_covid_avail'] = cap['hb_total'] - cap['hb_noncovid']
-        hb_available.append(np.mean(cap['beds_covid_avail'].values[-10:]))
-
-    ### Measure from tomorrow:
-    lower_limit = (dt.datetime.today() - dt.datetime(month=2, day=13, year=2020)).days + 1
-    ### Measure from today (uncomment):
-    #lower_limit = (dt.datetime.today() - dt.datetime(month=2, day=13, year=2020)).days
-    ### Measure from a week from now (uncomment):
-    #lower_limit = (dt.datetime.today() - dt.datetime(month=2, day=13, year=2020)).days + 7
-
-    probabilities = []
-    days_array = [7,14,21,28,30,60,90]
-    percents = [75,100]
-    bed_types = ['icu', 'hb']
+    lower_limit = 170
     unique_scen = np.array(list(set(trajectories['scen_num'].values)))
-    n_scenarios = len(unique_scen)
-    for region in range(1,12):
-        region_prob = [0]*len(days_array)*len(percents)*len(bed_types)
-        column_list_output = []
+    
+    for index, row in civis_template.iterrows():
+        upper_limit = (row['date_window_upper_bound'] - dt.datetime(month=2, day=13, year=2020)).days
+        if row['resource_type'] == 'hb_availforcovid':
+            metric_root = 'total_hosp_census_EMS-'
+        elif row['resource_type'] == 'icu_availforcovid':
+            metric_root = 'crit_det_EMS-'
+        thresh = row['avg_resource_available_prev2weeks']
+        region = int(re.sub('[^0-9]','', row['geography_modeled']))
+        prob = 0
         for scen in unique_scen:
             new = trajectories[(trajectories['scen_num'] == scen)].reset_index()
-            ii = 0
-            for bed_type in bed_types:
-                for percent in percents:
-                    if bed_type == 'icu':
-                        capacity = round(0.01*percent*icu_available[region-1])
-                        metric = 'crit_det_EMS-' + str(region)
-                    if bed_type == 'hb':
-                        capacity = round(0.01*percent*hb_available[region-1])
-                        metric = 'total_hosp_census_EMS-' + str(region)
-                    for day_num in days_array:
-                        if exceeds(new, metric, lower_limit, lower_limit+day_num, capacity):
-                            region_prob[ii] += 1
-                        ii += 1
-                        column_list_output.append('p_' + bed_type + '_overflow_' + str(percent) + '_next' + str(day_num))
-        probabilities.append(region_prob)
-    probabilities = np.array(probabilities)/len(unique_scen)
+            if exceeds(new, metric_root + str(region), lower_limit, upper_limit, thresh):
+                prob += 1/len(unique_scen)
+        civis_template.loc[index, 'percent_of_simulations_that_exceed'] = prob
+        
+    civis_template['scenario_name'] = 'baseline'
+    file_str = 'nu_hospitaloverflow_' + str(exp_name[:8]) + '.csv'
+    civis_template.to_csv(os.path.join(wdir, 'simulation_output', exp_name, file_str), index=False)
 
-    output = pd.DataFrame()#pd.DataFrame(probabilities).rename(get_name, axis='columns')
-    output['region'] = range(1,12)
-    output['icu_available'] = np.round(icu_available)
-    output['hb_available'] = np.round(hb_available)
-    
-    def get_name(ii):
-        return column_list_output[ii]
-
-    prob_output = pd.DataFrame(probabilities).rename(get_name, axis='columns')
-    prob_output['region'] = range(1,12)
-    true_output = pd.merge(output, prob_output)
-    #true_output = output[['region', 'icu_available', 'hb_available', 'p_icu_overflow_75_next30', 'p_icu_overflow_75_next60', 'p_hosp_overflow_75_next30', 'p_hosp_overflow_75_next60']]
-
-    true_output.to_csv(os.path.join(wdir, 'simulation_output', exp_name, 'overflow_probabilities.csv'), index=False)
     
 if __name__ == '__main__':
     stem = sys.argv[1]
