@@ -101,8 +101,8 @@ def plot_covidregions(channel,subgroups, psuffix) :
         #fig.suptitle(x=0.5, y=0.999,t=channel)
         plt.tight_layout()
 
-    plt.savefig(os.path.join(sim_output_path, 'covidregion_',psuffix,'_%s.png' % channel))
-    plt.savefig(os.path.join(sim_output_path, 'covidregion',psuffix,'_%s.pdf' % channel))
+    plt.savefig(os.path.join(sim_output_path, 'covidregion_'+psuffix+'_%s.png' % channel))
+    plt.savefig(os.path.join(sim_output_path, 'covidregion'+psuffix+'_%s.pdf' % channel))
 
 
 if __name__ == '__main__' :
