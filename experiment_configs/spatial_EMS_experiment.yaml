@@ -97,7 +97,7 @@ sampled_parameters:
         - {'low': 0.230, 'high': 0.230}
         - {'low': 0.450, 'high': 0.450}
         - {'low': 0.245, 'high': 0.245}
-        - {'low': 0.270, 'high': 0.270}
+        - {'low': 0.330, 'high': 0.330}
         - {'low': 0.240, 'high': 0.240}
         - {'low': 0.160, 'high': 0.160}
         - {'low': 0.120, 'high': 0.120}
@@ -110,14 +110,14 @@ sampled_parameters:
       np.random: uniform
       function_kwargs:
         - {'low': 0.170, 'high': 0.170}
-        - {'low': 0.230, 'high': 0.230}
+        - {'low': 0.170, 'high': 0.170}
         - {'low': 0.300, 'high': 0.300}
-        - {'low': 0.175, 'high': 0.175}
-        - {'low': 0.150, 'high': 0.150}
+        - {'low': 0.195, 'high': 0.195}
+        - {'low': 0.225, 'high': 0.225}
         - {'low': 0.240, 'high': 0.240}
         - {'low': 0.160, 'high': 0.160}
         - {'low': 0.120, 'high': 0.120}
-        - {'low': 0.090, 'high': 0.090}
+        - {'low': 0.110, 'high': 0.110}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.115, 'high': 0.115}
   d_Sym:  
