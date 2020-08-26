@@ -68,7 +68,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]].rolling(window = 7, center=True).mean(), c='k', alpha=1.0)
     fig.tight_layout()
     if plot_path:
-        plot_name = 'compare_to_data_EMS_' + str(ems_nr)
+        plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
         if logscale == False :
             plot_name = plot_name + "_nolog"
         plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.png'))
@@ -146,7 +146,6 @@ if __name__ == '__main__':
     stem = sys.argv[1]
     #stem = "20200616_IL_RR_fitting_0"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    #exp_name = "20200512_IL__EMSall_scenario3_v3"
 
     for exp_name in exp_names:
         for ems_nr in range(1,12):
