@@ -129,35 +129,33 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     return adf
 
 
-def load_capacity(ems) :
+def load_capacity(ems, simdate='20200825') :
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
-    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/capacity_by_covid_region.csv')
-    ems_df = pd.read_csv(ems_fname)
+    
+    fname = 'capacity_weekday_average_' + simdate + '.csv'
+    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds_template/', fname)
+    df = pd.read_csv(ems_fname)
 
-    filterdate = max(ems_df['date'])
-    filterdate = datetime.strptime(filterdate, "%Y-%m-%d")  # string to date
-    filterdate = filterdate - timedelta(days=14)  # date - days
-    filterdate = pd.to_datetime(filterdate)
+    df = df[df['overflow_threshold_percent']==1]
+    df['ems'] = df['geography_modeled']
+    df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
+    df =  df[['ems','resource_type','avg_resource_available_prev2weeks']]
+    df = df.drop_duplicates()
+   # df = df.sort_values(by=['ems'])
+    df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available_prev2weeks')
 
-    ems_df['date'] = pd.to_datetime(ems_df['date'])
-    ems_df = ems_df[ems_df['date'] > filterdate]
-    #ems_df['ems'] = ems_df['Region'].apply(lambda x : int(x.split('-')[0]))
-    ems_df['ems'] = ems_df['geography_name']
-    ems_df['ems'] = ems_df['ems'].replace("restore_", "", regex=True)
-    ems_df = ems_df.set_index('ems')
+    df.index.name = 'ems'
+    df.reset_index(inplace=True)
 
-    ems_df['hospitalized'] = ems_df[ 'medsurg_total'] - ems_df[ 'medsurg_noncovid']
-    ems_df['critical'] = ems_df[ 'icu_total'] - ems_df[ 'icu_noncovid']
-    ems_df['ventilators'] = ems_df[ 'vent_total'] - ems_df[ 'vent_noncovid']
-
-    ems_df = ems_df.groupby(['geography_name']).agg(np.mean).reset_index()
-
-    ems_df = ems_df[ems_df['geography_name']==str(ems)]
+    if ems =='illinois' :
+        df['grp']= 'illinois'
+        df = df.groupby('grp')[['hb_availforcovid','icu_availforcovid']].agg(np.sum).reset_index()
+    if ems != 'illinois':
+        df = df[df['ems'] == str(ems)]
 
     capacity = {
-            'hospitalized' :  int(ems_df['hospitalized']),
-            'critical' : int(ems_df['critical']),
-            'ventilators' : int(ems_df['ventilators'])
+            'hospitalized' :  int(df['hb_availforcovid']),
+            'critical' : int(df['icu_availforcovid'])
     }
     return capacity
 
