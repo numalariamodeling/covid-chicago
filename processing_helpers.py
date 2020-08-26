@@ -189,9 +189,9 @@ def civis_colnames(reverse=False) :
      "ventilators_median": "Number of ventilators used",
      "ventilators_95CI_lower": "Lower error bound of number of ventilators used",
      "ventilators_95CI_upper": "Upper error bound of number of ventilators used",
-     "recovered_median": "Total recovered",
-     "recovered_95CI_lower": "Lower error bound on recovered",
-     "recovered_95CI_upper": "Upper error bound on recovered"}
+     "recovered_median": "Number of recovered Covid-19 infections",
+     "recovered_95CI_lower": "Lower error bound on recovered Covid-19 infections",
+     "recovered_95CI_upper": "Upper error bound on recovered Covid-19 infections"}
 
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)
