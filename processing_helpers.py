@@ -147,14 +147,15 @@ def load_capacity(ems, simdate='20200825') :
     df.index.name = 'ems'
     df.reset_index(inplace=True)
 
-    df['hospitalized'] = df[ 'hb_availforcovid']
-    df['critical'] = df[ 'icu_availforcovid']
-
-    df = df[df['ems']==str(ems)]
+    if ems =='illinois' :
+        df['grp']= 'illinois'
+        df = df.groupby('grp')[['hb_availforcovid','icu_availforcovid']].agg(np.sum).reset_index()
+    if ems != 'illinois':
+        df = df[df['ems'] == str(ems)]
 
     capacity = {
-            'hospitalized' :  int(df['hospitalized']),
-            'critical' : int(df['critical'])
+            'hospitalized' :  int(df['hb_availforcovid']),
+            'critical' : int(df['icu_availforcovid'])
     }
     return capacity
 
