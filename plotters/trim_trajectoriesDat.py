@@ -14,20 +14,29 @@ def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes=None):
     """
 
     column_list = VarsToKeep
-    for ems_region in range(1, 12):
-        column_list.append('infected_EMS-' + str(ems_region))
-        column_list.append('infectious_undet_EMS-' + str(ems_region))
-        column_list.append('infectious_det_EMS-' + str(ems_region))
-        column_list.append('prevalence_EMS-' + str(ems_region))
-        column_list.append('recovered_EMS-' + str(ems_region))
-        column_list.append('hospitalized_EMS-' + str(ems_region))
-        column_list.append('hospitalized_det_EMS-' + str(ems_region))
-        column_list.append('critical_EMS-' + str(ems_region))
-        column_list.append('critical_det_EMS-' + str(ems_region))
-        column_list.append('crit_det_EMS-' + str(ems_region))
-        column_list.append('deaths_det_EMS-' + str(ems_region))
-        column_list.append('deaths_EMS-' + str(ems_region))
-        column_list.append('Ki_t_EMS-' + str(ems_region))
+    for ems_region in ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10', 'EMS-11']:
+        column_list.append('susceptible_' + str(ems_region))
+        column_list.append('infected_' + str(ems_region))
+        column_list.append('recovered_' + str(ems_region))
+        column_list.append('infected_cumul_' + str(ems_region))
+        column_list.append('asymp_cumul_' + str(ems_region))
+        column_list.append('asymp_det_cumul_' + str(ems_region))
+        column_list.append('symp_mild_cumul_' + str(ems_region))
+        column_list.append('symp_severe_cumul_' + str(ems_region))
+        column_list.append('symp_mild_det_cumul_' + str(ems_region))
+        column_list.append('symp_severe_det_cumul_' + str(ems_region))
+        column_list.append('hosp_det_cumul_' + str(ems_region))
+        column_list.append('hosp_cumul_' + str(ems_region))
+        column_list.append('detected_cumul_' + str(ems_region))
+        column_list.append('crit_cumul_' + str(ems_region))
+        column_list.append('crit_det_cumul_' + str(ems_region))
+        column_list.append('death_det_cumul_' + str(ems_region))
+        column_list.append('deaths_' + str(ems_region))
+        column_list.append('crit_det_' + str(ems_region))
+        column_list.append('critical_det_' + str(ems_region))
+        column_list.append('critical_' + str(ems_region))
+        column_list.append('hospitalized_det_' + str(ems_region))
+        column_list.append('hospitalized_' + str(ems_region))
 
     df = pd.read_csv(os.path.join(exp_dir, 'trajectoriesDat.csv'), usecols=column_list)
 
@@ -39,10 +48,7 @@ def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes=None):
 
 if __name__ == '__main__':
 
-    VarsToKeep = ['startdate', 'time', 'scen_num','sample_num', 'run_num', 'infectious_undet_All',
-                            'infectious_det_All', 'recovered_All', 'prevalence_All', 'infected_All', 'deaths_All',
-                            'deaths_det_All', 'hospitalized_det_All', 'crit_det_All', 'hospitalized_All',
-                            'critical_All', 'reopening_multiplier_4', 'reduced_inf_of_det_cases_ct1',
+    VarsToKeep = ['startdate', 'time', 'scen_num','sample_num', 'run_num',  'reopening_multiplier_4', 'reduced_inf_of_det_cases_ct1',
                             'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
 
     stem = sys.argv[1]
