@@ -129,9 +129,11 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     return adf
 
 
-def load_capacity(ems) :
+def load_capacity(ems, simdate='20200825') :
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
-    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/capacity_by_covid_region.csv')
+    
+    fname = 'capacity_by_covid_region_' + simdate + '.csv'
+    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports', fname)
     ems_df = pd.read_csv(ems_fname)
 
     filterdate = max(ems_df['date'])

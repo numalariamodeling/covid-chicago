@@ -4,7 +4,7 @@ library(dplyr)
 ## Define functions
 
 ### Load data
-f_loadData <- function(data_path) {
+f_loadData <- function(data_path, simdate ='200824') {
   emresource <- read.csv(file.path(data_path, "covid_IDPH/Corona virus reports/emresource_by_region.csv")) %>%
     dplyr::mutate(
       date_of_extract = as.Date(date_of_extract),
@@ -23,7 +23,7 @@ f_loadData <- function(data_path) {
     )
 
 
-  ref_df <- read.csv(file.path(data_path, "covid_IDPH/Cleaned Data", "200811_jg_aggregated_covidregion.csv"))
+  ref_df <- read.csv(file.path(data_path, "covid_IDPH/Cleaned Data", paste0(simdate, "_jg_aggregated_covidregion.csv")))
 
   ref_df <- ref_df %>%
     dplyr::rename(
@@ -82,13 +82,17 @@ combineDat <- function(filelist, namelist) {
 
 
 
-load_new_capacity <- function(selected_ems = NULL) {
-  df <- read.csv(file.path(data_path, "covid_IDPH/Corona virus reports/hospital_capacity_thresholds_template/capacity_weekday_average.csv"))
+load_new_capacity <- function(selected_ems = NULL, simdate = "20200825") {
+
+
+  fname <- paste0("capacity_weekday_average_",simdate,".csv")
+  df <- read.csv(file.path(data_path, "covid_IDPH/Corona virus reports/hospital_capacity_thresholds_template", fname))
 
 
   df <- df %>%
-    filter(overflow_threshold_percent == 1 & date_window_upper_bound == "2020-08-22") %>%
+    filter(overflow_threshold_percent == 1) %>%
     select(geography_modeled, resource_type, avg_resource_available_prev2weeks) %>%
+    unique() %>%
     pivot_wider(names_from = "resource_type", values_from = "avg_resource_available_prev2weeks") %>%
     mutate(geography_name = gsub("covidregion_", "", geography_modeled)) %>%
     select(geography_name, icu_availforcovid, hb_availforcovid)
