@@ -17,13 +17,13 @@ datetoday = date(today.year, today.month, today.day)
 
 datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
+def load_sim_data(exp_name, ems_nr,  input_wdir=None, input_sim_output_path=None, column_list=None):
 
-def load_sim_data(exp_name, ems_nr,  input_wdir=None, input_sim_output_path=None):
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), usecols=column_list)
     if 'Ki' not in df.columns.values:
         scen_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
         df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
@@ -68,7 +68,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]].rolling(window = 7, center=True).mean(), c='k', alpha=1.0)
     fig.tight_layout()
     if plot_path:
-        plot_name = 'compare_to_data_EMS_' + str(ems_nr)
+        plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
         if logscale == False :
             plot_name = plot_name + "_nolog"
         plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.png'))
@@ -76,7 +76,8 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
     # return a
 
 
-def compare_ems(exp_name, ems=0, source='EMR'):
+def compare_ems(exp_name, ems=0):
+
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
 
     if ems > 0:
@@ -88,45 +89,49 @@ def compare_ems(exp_name, ems=0, source='EMR'):
     ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
-    df = load_sim_data(exp_name, ems_nr)
-    # for x in df.columns:
-    #   print(x)
+    column_list = ['time', 'startdate', 'scen_num', 'sample_num','run_num']
+    for ems_region in range(1, 12):
+        column_list.append('susceptible_EMS-' + str(ems_region))
+        column_list.append('infected_EMS-' + str(ems_region))
+        column_list.append('recovered_EMS-' + str(ems_region))
+        column_list.append('infected_cumul_EMS-' + str(ems_region))
+        column_list.append('asymp_cumul_EMS-' + str(ems_region))
+        column_list.append('asymp_det_cumul_EMS-' + str(ems_region))
+        column_list.append('symp_mild_cumul_EMS-' + str(ems_region))
+        column_list.append('symp_severe_cumul_EMS-' + str(ems_region))
+        column_list.append('symp_mild_det_cumul_EMS-' + str(ems_region))
+        column_list.append('symp_severe_det_cumul_EMS-' + str(ems_region))
+        column_list.append('hosp_det_cumul_EMS-' + str(ems_region))
+        column_list.append('hosp_cumul_EMS-' + str(ems_region))
+        column_list.append('detected_cumul_EMS-' + str(ems_region))
+        column_list.append('crit_cumul_EMS-' + str(ems_region))
+        column_list.append('crit_det_cumul_EMS-' + str(ems_region))
+        column_list.append('death_det_cumul_EMS-' + str(ems_region))
+        column_list.append('deaths_EMS-' + str(ems_region))
+        column_list.append('crit_det_EMS-' + str(ems_region))
+        column_list.append('critical_det_EMS-' + str(ems_region))
+        column_list.append('critical_EMS-' + str(ems_region))
+        column_list.append('hospitalized_det_EMS-' + str(ems_region))
+        column_list.append('hospitalized_EMS-' + str(ems_region))
+
+    df = load_sim_data(exp_name, ems_nr, column_list=column_list)
     first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
-    #df['ventilators'] = get_vents(df['crit_det'].values)
     df['critical_with_suspected'] = df['critical']
-    channels = ['new_detected_deaths', 'crit_det', 'ventilators']
     ref_df_emr = ref_df
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
-    # plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=8000,
-    # plot_path=plot_path, first_day=first_day)
-    # plt.show()
-    #ref_df1 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200715_jg_deceased_date_ems.csv'))
-    #ref_df2 = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200715_jg_admission_date_ems.csv'))
+
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200824_jg_aggregated_covidregion.csv'))
+
     if ems > 0:
-        #ref_df1 = ref_df1[ref_df1['EMS'] == ems]
-        #ref_df2 = ref_df2[ref_df2['EMS'] == ems]
         ref_df = ref_df[ref_df['covid_region'] == ems]
     else:
-        #ref_df1 = ref_df1.groupby('date').agg(np.sum).reset_index()
-        #ref_df2 = ref_df2.groupby('date').agg(np.sum).reset_index()
         ref_df = ref_df.groupby('date').agg(np.sum).reset_index()
-    #ref_df1 = ref_df1.rename(columns={'cases': 'deaths'})
-    #ref_df2 = ref_df2.rename(columns={'cases': 'admissions'})
-    #del ref_df2['EMS']
-    #ref_df = pd.merge(left=ref_df1, left_on='date', right=ref_df2, right_on='date')
     ref_df['date'] = pd.to_datetime(ref_df['date'])
-    data_channel_names = ['deaths', 'deaths', 'admissions']
 
     first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df = df[df['date']  <=  datetime.today()]
-    #channels = ['new_detected_deaths', 'new_deaths', 'new_hospitalized']
     ref_df_ll = ref_df
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_line_list')
-    # plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=5000,
-    # plot_path=plot_path, first_day=first_day)
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
     ref_df = ref_df.sort_values('date')
     channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det', 'new_detected_deaths', 'new_deaths',
@@ -144,9 +149,8 @@ def compare_ems(exp_name, ems=0, source='EMR'):
 
 if __name__ == '__main__':
     stem = sys.argv[1]
-    #stem = "20200616_IL_RR_fitting_0"
+    #stem = "20200816_IL_testbaseline"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    #exp_name = "20200512_IL__EMSall_scenario3_v3"
 
     for exp_name in exp_names:
         for ems_nr in range(1,12):
