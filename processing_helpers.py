@@ -133,7 +133,7 @@ def load_capacity(ems, simdate='20200825') :
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
     
     fname = 'capacity_by_covid_region_' + simdate + '.csv'
-    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports', fname)
+    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds_template/', fname)
     ems_df = pd.read_csv(ems_fname)
 
     filterdate = max(ems_df['date'])
