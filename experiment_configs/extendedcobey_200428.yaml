@@ -330,7 +330,7 @@ time_parameters:
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
     #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
-  'triggertime' :
+  'today' :
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
 fitted_parameters:
