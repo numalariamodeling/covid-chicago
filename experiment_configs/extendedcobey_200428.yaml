@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 30
+  'number_of_samples': 20
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
@@ -198,9 +198,9 @@ intervention_parameters:
   #'reopening_multiplier_3':
   #  np.random: uniform
   #  function_kwargs: {'low':0.06, 'high':0.06}
-  'reopening_multiplier_4':
-    np: linspace
-    function_kwargs: {'start':0.08, 'stop':0.20, 'num' : 1}
+  #'reopening_multiplier_4':
+  #  np: linspace
+  #  function_kwargs: {'start':0, 'stop':0.20, 'num' : 4}
   ### INCREASE DETECTION RATES of asymptomatic, presymptomatic and mild infections
   'd_AsP_ct1':
     np.random: uniform
