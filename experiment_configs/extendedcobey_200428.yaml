@@ -223,6 +223,9 @@ intervention_parameters:
   'capacity_multiplier':
     np.random: uniform
     function_kwargs: {'low':0.75, 'high':0.75}
+  'trigger_delay_days':
+    np.random: uniform
+    function_kwargs: {'low':14, 'high':14}   
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
