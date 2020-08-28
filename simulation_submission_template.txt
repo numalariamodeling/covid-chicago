@@ -34,8 +34,13 @@ python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extende
 
  - triggered rollback (returns to Ki value before reopening once defined thresholds are reached per region and sample)
 Note to change between critical and hospitalizations, the spatial_EMS_experiment.yaml needs to be edited (see file)
-python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_critical_triggeredrollback.emodl -cfg model_B.cfg -n "critical_triggeredrollback"	
-python runScenarios.py -rl NUCLUSTER -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_hospitalized_triggeredrollback.emodl -cfg model_B.cfg -n "hosp_triggeredrollback"	
+Additional parameter to change: capacity_multiplier
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_criticaldet_triggeredrollback.emodl -cfg model_B.cfg -n "critical_triggeredrollback"	
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_hospdet_triggeredrollback.emodl -cfg model_B.cfg -n "hosp_triggeredrollback"	
+Additional parameter to change: capacity_multiplier, triggerdelay (number of days between trigger is activated and action is taken )
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_criticaldet_triggeredrollbackdelay.emodl -cfg model_B.cfg -n "critical_triggeredrollbackdelay"	
+python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_hospdet_triggeredrollbackdelay.emodl -cfg model_B.cfg -n "hosp_triggeredrollbackdelay"	
+
 
 
  - Contact tracing scenarios (detection of As and P, optionally also increase in dSym)
