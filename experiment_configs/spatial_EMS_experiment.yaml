@@ -216,22 +216,22 @@ sampled_parameters:
         - {'low': 0.20, 'high': 0.35}
         - {'low': 0.20, 'high': 0.35}
         - {'low': 0.20, 'high': 0.35}
-#  reopening_multiplier_4: #such that 100% exceed by Jan 1
-#    IL:
-#      expand_by_age: True
-#      np.random: uniform
-#      function_kwargs:
-#        - {'low': 0.16, 'high': 0.16}
-#        - {'low': 0.08, 'high': 0.08}
-#        - {'low': 0.19, 'high': 0.19}
-#        - {'low': 0.12, 'high': 0.12}
-#        - {'low': 0.15, 'high': 0.15}
-#        - {'low': 0.13, 'high': 0.13}
-#        - {'low': 0.07, 'high': 0.07}
-#        - {'low': 0.08, 'high': 0.08}
-#        - {'low': 0.10, 'high': 0.10}
-#        - {'low': 0.09, 'high': 0.09}
-#        - {'low': 0.07, 'high': 0.07}
+  reopening_multiplier_4_not_used: #such that 100% exceed by Jan 1
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.16, 'high': 0.16}
+        - {'low': 0.08, 'high': 0.08}
+        - {'low': 0.19, 'high': 0.19}
+        - {'low': 0.12, 'high': 0.12}
+        - {'low': 0.15, 'high': 0.15}
+        - {'low': 0.13, 'high': 0.13}
+        - {'low': 0.07, 'high': 0.07}
+        - {'low': 0.08, 'high': 0.08}
+        - {'low': 0.10, 'high': 0.10}
+        - {'low': 0.09, 'high': 0.09}
+        - {'low': 0.07, 'high': 0.07}
   reopening_multiplier_4: #such that 50% exceed by Jan 1
     IL:
       expand_by_age: True
