@@ -38,6 +38,13 @@ def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes=None):
         column_list.append('hospitalized_det_' + str(ems_region))
         column_list.append('hospitalized_' + str(ems_region))
 
+    for ems_region in [ 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10', 'EMS-11']:
+        column_list.append('Ki_t_' + str(ems_region))
+        #column_list.append('triggertime_' + str(ems_region))
+
+    #for ems_region in [ 'EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11']:
+    #    column_list.append('reopening_multiplier_4_' + str(ems_region))
+
     df = pd.read_csv(os.path.join(exp_dir, 'trajectoriesDat.csv'), usecols=column_list)
 
     if keepTimes is not None:
@@ -48,8 +55,10 @@ def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes=None):
 
 if __name__ == '__main__':
 
-    VarsToKeep = ['startdate', 'time', 'scen_num','sample_num', 'run_num',  'reopening_multiplier_4', 'reduced_inf_of_det_cases_ct1',
-                            'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
+    VarsToKeep = ['startdate', 'time', 'scen_num','sample_num', 'run_num']
+
+   # moreVarsToKeep = ['capacity_multiplier', 'reopening_multiplier_4','reduced_inf_of_det_cases_ct1', 'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
+   # VarsToKeep = VarsToKeep + moreVarsToKeep
 
     stem = sys.argv[1]
     #stem ="20200722_IL_EMS_scen3"
