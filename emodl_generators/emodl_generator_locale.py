@@ -808,13 +808,14 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
     rollbacktriggered_delay_str = ""
     for grp in grpList:
+        grpout = sub(grp)
         temp_str = """
 (param time_of_trigger_{grp} 10000)
 (state-event rollbacktrigger_{grp} (and (> time @today@) (> critical_det_{grp} (* @trigger_{grp}@ @capacity_multiplier@)) ) ((time_of_trigger_{grp} time)))
 (func time_since_trigger_{grp} (- time time_of_trigger_{grp}))
 (state-event apply_rollback_{grp} (> (- time_since_trigger_{grp} @trigger_delay_days@) 0) ((Ki_{grp} Ki_red4_{grp})))   
-(observe triggertime_{grp} time_of_trigger_{grp})
-                   """.format(channel=trigger_channel,grp=grp)
+(observe triggertime_{grpout} time_of_trigger_{grp})
+                   """.format(channel=trigger_channel,grpout=grpout,grp=grp)
         rollbacktriggered_delay_str = rollbacktriggered_delay_str + temp_str
         
     d_Sym_change_str = ""
