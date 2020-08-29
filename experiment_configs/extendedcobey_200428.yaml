@@ -225,7 +225,7 @@ intervention_parameters:
     function_kwargs: {'low':0.75, 'high':0.75}
   'trigger_delay_days':
     np.random: uniform
-    function_kwargs: {'low':14, 'high':14}   
+    function_kwargs: {'low':1, 'high':1}   
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
@@ -261,16 +261,16 @@ time_parameters:
   ### Gradual reopening (time-wise)
   'gradual_reopening_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-30}
+    function_kwargs: {'dates': 2020-08-30}
   'gradual_reopening_time2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-03}        
+    function_kwargs: {'dates': 2020-09-03}        
   'gradual_reopening_time3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-08}    
+    function_kwargs: {'dates': 2020-09-08}    
   'gradual_reopening_time4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-13}  
+    function_kwargs: {'dates': 2020-09-13}  
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3

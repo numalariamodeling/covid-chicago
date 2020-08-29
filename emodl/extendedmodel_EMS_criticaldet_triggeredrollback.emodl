@@ -2125,27 +2125,27 @@
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_11 Ki_back3_EMS_11)))
 (time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_11 Ki_back4_EMS_11)))
         
-(state-event rollbacktrigger_EMS_1 (and (> time @today@) (> critical_det_EMS_1 (* @trigger_EMS_1@ @capacity_multiplier@)) ) ((Ki_EMS_1 Ki_red4_EMS_1)))
+(state-event rollbacktrigger_EMS_1 (and (> time @today@) (> critical_det_EMS_1 (* @trigger_EMS_1@ @capacity_multiplier@)) ) ((Ki_EMS_1 Ki_red6_EMS_1)))
                     
-(state-event rollbacktrigger_EMS_2 (and (> time @today@) (> critical_det_EMS_2 (* @trigger_EMS_2@ @capacity_multiplier@)) ) ((Ki_EMS_2 Ki_red4_EMS_2)))
+(state-event rollbacktrigger_EMS_2 (and (> time @today@) (> critical_det_EMS_2 (* @trigger_EMS_2@ @capacity_multiplier@)) ) ((Ki_EMS_2 Ki_red6_EMS_2)))
                     
-(state-event rollbacktrigger_EMS_3 (and (> time @today@) (> critical_det_EMS_3 (* @trigger_EMS_3@ @capacity_multiplier@)) ) ((Ki_EMS_3 Ki_red4_EMS_3)))
+(state-event rollbacktrigger_EMS_3 (and (> time @today@) (> critical_det_EMS_3 (* @trigger_EMS_3@ @capacity_multiplier@)) ) ((Ki_EMS_3 Ki_red6_EMS_3)))
                     
-(state-event rollbacktrigger_EMS_4 (and (> time @today@) (> critical_det_EMS_4 (* @trigger_EMS_4@ @capacity_multiplier@)) ) ((Ki_EMS_4 Ki_red4_EMS_4)))
+(state-event rollbacktrigger_EMS_4 (and (> time @today@) (> critical_det_EMS_4 (* @trigger_EMS_4@ @capacity_multiplier@)) ) ((Ki_EMS_4 Ki_red6_EMS_4)))
                     
-(state-event rollbacktrigger_EMS_5 (and (> time @today@) (> critical_det_EMS_5 (* @trigger_EMS_5@ @capacity_multiplier@)) ) ((Ki_EMS_5 Ki_red4_EMS_5)))
+(state-event rollbacktrigger_EMS_5 (and (> time @today@) (> critical_det_EMS_5 (* @trigger_EMS_5@ @capacity_multiplier@)) ) ((Ki_EMS_5 Ki_red6_EMS_5)))
                     
-(state-event rollbacktrigger_EMS_6 (and (> time @today@) (> critical_det_EMS_6 (* @trigger_EMS_6@ @capacity_multiplier@)) ) ((Ki_EMS_6 Ki_red4_EMS_6)))
+(state-event rollbacktrigger_EMS_6 (and (> time @today@) (> critical_det_EMS_6 (* @trigger_EMS_6@ @capacity_multiplier@)) ) ((Ki_EMS_6 Ki_red6_EMS_6)))
                     
-(state-event rollbacktrigger_EMS_7 (and (> time @today@) (> critical_det_EMS_7 (* @trigger_EMS_7@ @capacity_multiplier@)) ) ((Ki_EMS_7 Ki_red4_EMS_7)))
+(state-event rollbacktrigger_EMS_7 (and (> time @today@) (> critical_det_EMS_7 (* @trigger_EMS_7@ @capacity_multiplier@)) ) ((Ki_EMS_7 Ki_red6_EMS_7)))
                     
-(state-event rollbacktrigger_EMS_8 (and (> time @today@) (> critical_det_EMS_8 (* @trigger_EMS_8@ @capacity_multiplier@)) ) ((Ki_EMS_8 Ki_red4_EMS_8)))
+(state-event rollbacktrigger_EMS_8 (and (> time @today@) (> critical_det_EMS_8 (* @trigger_EMS_8@ @capacity_multiplier@)) ) ((Ki_EMS_8 Ki_red6_EMS_8)))
                     
-(state-event rollbacktrigger_EMS_9 (and (> time @today@) (> critical_det_EMS_9 (* @trigger_EMS_9@ @capacity_multiplier@)) ) ((Ki_EMS_9 Ki_red4_EMS_9)))
+(state-event rollbacktrigger_EMS_9 (and (> time @today@) (> critical_det_EMS_9 (* @trigger_EMS_9@ @capacity_multiplier@)) ) ((Ki_EMS_9 Ki_red6_EMS_9)))
                     
-(state-event rollbacktrigger_EMS_10 (and (> time @today@) (> critical_det_EMS_10 (* @trigger_EMS_10@ @capacity_multiplier@)) ) ((Ki_EMS_10 Ki_red4_EMS_10)))
+(state-event rollbacktrigger_EMS_10 (and (> time @today@) (> critical_det_EMS_10 (* @trigger_EMS_10@ @capacity_multiplier@)) ) ((Ki_EMS_10 Ki_red6_EMS_10)))
                     
-(state-event rollbacktrigger_EMS_11 (and (> time @today@) (> critical_det_EMS_11 (* @trigger_EMS_11@ @capacity_multiplier@)) ) ((Ki_EMS_11 Ki_red4_EMS_11)))
+(state-event rollbacktrigger_EMS_11 (and (> time @today@) (> critical_det_EMS_11 (* @trigger_EMS_11@ @capacity_multiplier@)) ) ((Ki_EMS_11 Ki_red6_EMS_11)))
                     
 ;[ADDITIONAL_TIMEEVENTS]
 
