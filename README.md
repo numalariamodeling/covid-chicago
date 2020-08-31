@@ -149,6 +149,7 @@ Note that the user-supplied configuration file is used to provide
 *additional* or *updated* parameters from the base configutation file.
 
 ## 2.3 Inputs:
+- Master configuration: YAML file that defines the parameter input values for the model (if not specified uses the default `extendedcobey_200428.yaml`)
 - Running location: Where the simulation is being run (either `Local`
   or `NUCLUSTER`)
 - Region: The region of interest. (e.g. `EMS_1`, or `IL` for all EMS 1-11 inclued in the same model)
@@ -171,6 +172,8 @@ Note that the user-supplied configuration file is used to provide
   --running_location NUCLUSTER --region IL --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
 - Specifiying cms configuration file and solver:`python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
+- Specifiying master configuration file and using short form of arguments:`python runScenarios.py 
+  -mc config_param_delay7.yaml -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_criticaldet_triggeredrollbackdelay.emodl -cfg model_B.cfg
 
 
 ## 3.5 Define age or region specific inputs 
