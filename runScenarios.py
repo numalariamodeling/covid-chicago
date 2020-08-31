@@ -21,8 +21,6 @@ log = logging.getLogger(__name__)
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = datetime.datetime.today()
-DEFAULT_CONFIG = 'extendedcobey_200428.yaml'
-
 
 def _get_full_factorial_df(df, column_name, values):
     dfs = []
@@ -357,7 +355,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 
 def get_experiment_config(experiment_config_file):
-    config = yaml.load(open(os.path.join('./experiment_configs', DEFAULT_CONFIG)), Loader=yamlordereddictloader.Loader)
+    config = yaml.load(open(os.path.join('./experiment_configs', args.masterconfig)), Loader=yamlordereddictloader.Loader)
     yaml_file = open(os.path.join('./experiment_configs',experiment_config_file))
     expt_config = yaml.safe_load(yaml_file)
     for param_type, updated_params in expt_config.items():
@@ -403,6 +401,14 @@ def get_start_dates(start_date):
 def parse_args():
     description = "Simulation run for modeling Covid-19"
     parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-mc",
+        "--masterconfig",
+        type=str,
+        help="Master yaml file that includes all model parameters.",
+        default='model_param_CT.yaml',
+    )
 
     parser.add_argument(
         "-rl",
@@ -508,7 +514,7 @@ if __name__ == '__main__':
     # Generate folders and copy required files
     # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir, DEFAULT_CONFIG, args.experiment_config, wdir=wdir,
+        exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
