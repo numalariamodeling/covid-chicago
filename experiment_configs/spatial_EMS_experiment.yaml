@@ -231,7 +231,7 @@ sampled_parameters:
         - {'low': 0.08, 'high': 0.08}
         - {'low': 0.10, 'high': 0.10}
         - {'low': 0.09, 'high': 0.09}
-        - {'low': 0.07, 'high': 0.07}
+        - {'low': 0.08, 'high': 0.08}
   reopening_multiplier_4: #such that 50% exceed by Jan 1
     IL:
       expand_by_age: True
