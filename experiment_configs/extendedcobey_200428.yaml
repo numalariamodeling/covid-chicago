@@ -271,6 +271,11 @@ time_parameters:
   'gradual_reopening_time4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-09-13}  
+  ### 'today' parameter used to constrain after when state events can be activated
+  ### should be set to after reopening time events are completed
+  'today' :
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-14}
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
   ### Use fixed dates or define detection time relative to  socialDistance_time3
@@ -333,9 +338,6 @@ time_parameters:
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
     #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
-  'today' :
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
 fitted_parameters:
   Kis:
     'NMH_catchment':
