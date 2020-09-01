@@ -273,7 +273,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         df_copy = df.copy()
         df_copy['startdate'] = start_date
         df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins)
-        df_copy = add_computed_parameters(df_copy)
+        #df_copy = add_computed_parameters(df_copy)
         dfs.append(df_copy)
 
     result = pd.concat(dfs, ignore_index=True)
