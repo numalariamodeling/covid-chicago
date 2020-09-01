@@ -247,7 +247,7 @@ def write_params(expandModel=None):
 
 (param cfr @cfr@)
 (param fraction_dead (/ cfr fraction_severe))
-(param fraction_hospitalized (- 1 fraction_critical fraction_dead))
+(param fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))
 
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param reduced_inf_of_det_cases_ct 0)
@@ -781,7 +781,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event cfr_adjust1 @cfr_time_1@ ( {} {} {} {} {} ))
     """.format("(cfr @cfr_change1@) ",
                "(fraction_dead (/ cfr fraction_severe))",
-               "(fraction_hospitalized (- 1 (- fraction_critical fraction_dead )))",
+               "(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))",
                "(Kh1 (/ fraction_hospitalized time_to_hospitalization))",
                "(Kh2 (/ fraction_critical time_to_hospitalization ))",
                "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
