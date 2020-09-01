@@ -766,7 +766,9 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
 
 
-;(observe frac_crit_t fraction_critical)
+(observe frac_crit_t fraction_critical)
+(observe fraction_hospitalized_t fraction_hospitalized)
+(observe fraction_dead_t fraction_dead)
 (time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
 (time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
 (time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
@@ -775,9 +777,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
 
     cfr_change_str = """
-;(observe cfr_t cfr)
-;(observe fraction_hospitalized_t fraction_hospitalized)
-;(observe fraction_dead_t fraction_dead)
+(observe cfr_t cfr)
 (time-event cfr_adjust1 @cfr_time_1@ ( {} {} {} {} {} ))
     """.format("(cfr @cfr_change1@) ",
                "(fraction_dead (/ cfr fraction_severe))",
