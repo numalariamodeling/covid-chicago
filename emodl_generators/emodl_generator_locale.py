@@ -247,7 +247,7 @@ def write_params(expandModel=None):
 
 (param cfr @cfr@)
 (param fraction_dead (/ cfr fraction_severe))
-(param fraction_hospitalized (- 1 (- fraction_critical fraction_dead )))
+(param fraction_hospitalized (- 1 fraction_critical fraction_dead))
 
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param reduced_inf_of_det_cases_ct 0)
