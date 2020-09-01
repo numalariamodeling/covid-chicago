@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 20
+  'number_of_samples': 10
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
@@ -314,7 +314,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-06-01}
   'cfr_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-05}    
+    function_kwargs: {'dates': 2020-07-01}    
   'd_Sym_change_time_1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-15}

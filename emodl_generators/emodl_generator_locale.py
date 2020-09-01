@@ -776,6 +776,8 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
     cfr_change_str = """
 ;(observe cfr_t cfr)
+;(observe fraction_hospitalized_t fraction_hospitalized)
+;(observe fraction_dead_t fraction_dead)
 (time-event cfr_adjust1 @cfr_time_1@ ( {} {} {} {} {} ))
     """.format("(cfr @cfr_change1@) ",
                "(fraction_dead (/ cfr fraction_severe))",
