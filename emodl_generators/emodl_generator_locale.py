@@ -772,6 +772,20 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 """
 
+
+
+    cfr_change_str = """
+;(observe cfr_t cfr)
+(time-event cfr_adjust1 @cfr_time_1@ ( {} {} {} {} {} ))
+    """.format("(cfr @cfr_change1@) ",
+               "(fraction_dead (/ cfr fraction_severe))",
+               "(fraction_hospitalized (- 1 (- fraction_critical fraction_dead )))",
+               "(Kh1 (/ fraction_hospitalized time_to_hospitalization))",
+               "(Kh2 (/ fraction_critical time_to_hospitalization ))",
+               "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
+               "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))")
+
+
     socialDistance_change_str = ""
     for grp in grpList:
         temp_str = """
@@ -969,7 +983,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
 
-    fittedTimeEvents_str = param_change_str + socialDistance_change_str + d_Sym_change_str
+    fittedTimeEvents_str = param_change_str + cfr_change_str + socialDistance_change_str + d_Sym_change_str
    
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)
