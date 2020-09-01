@@ -1632,7 +1632,7 @@
 
 (param cfr @cfr@)
 (param fraction_dead (/ cfr fraction_severe))
-(param fraction_hospitalized (- 1 fraction_critical fraction_dead))
+(param fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))
 
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param reduced_inf_of_det_cases_ct 0)
@@ -1746,7 +1746,7 @@
 (time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 
 (observe cfr_t cfr)
-(time-event cfr_adjust1 @cfr_time_1@ ( (cfr @cfr_change1@)  (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (- fraction_critical fraction_dead ))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) ))
+(time-event cfr_adjust1 @cfr_time_1@ ( (cfr @cfr_change1@)  (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) ))
     
 (param Ki_red1_EMS_1 (* Ki_EMS_1 @social_multiplier_1_EMS_1@))
 (param Ki_red2_EMS_1 (* Ki_EMS_1 @social_multiplier_2_EMS_1@))
