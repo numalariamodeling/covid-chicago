@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
+  'number_of_samples': 20
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
@@ -179,9 +179,6 @@ sampled_parameters:
   'fraction_critical_incr3':
     np.random: uniform
     function_kwargs: {'low':0.05, 'high':0.09}
-  'cfr_change1':
-    np.random: uniform
-    function_kwargs: {'low':0.003, 'high':0.01}
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reset Ki to defined proporions of it's initial value  
@@ -312,9 +309,6 @@ time_parameters:
   'crit_time_3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}
-  'cfr_time_1':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}    
   'd_Sym_change_time_1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-15}

@@ -236,12 +236,9 @@ def write_params(expandModel=None):
 (param recovery_time_crit @recovery_time_crit@)
 (param fraction_symptomatic @fraction_symptomatic@)
 (param fraction_severe @fraction_severe@)
+(param fraction_hospitalized @fraction_hospitalized@)
 (param fraction_critical @fraction_critical@ )
-
-(param cfr @cfr@)
-(param fraction_dead (/ cfr fraction_severe))
-(param fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))
-
+(param fraction_dead @fraction_dead@)
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param reduced_inf_of_det_cases_ct 0)	
 
@@ -560,23 +557,11 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
 (time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
 
-(time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
-(time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
-(time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
     """
 
-    cfr_change_str = """
-(observe cfr_t cfr)
-(time-event cfr_adjust1 @cfr_time_1@ ( {} {} {} {} {} ))
-    """.format("(cfr @cfr_change1@) ",
-               "(fraction_dead (/ cfr fraction_severe))",
-               "(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))",
-               "(Kh1 (/ fraction_hospitalized time_to_hospitalization))",
-               "(Kh2 (/ fraction_critical time_to_hospitalization ))",
-               "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
-               "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))")
-               
-               
     socialDistance_change_str = """
 (param Ki_red1 (* Ki @social_multiplier_1@))
 (param Ki_red2 (* Ki @social_multiplier_2@))
@@ -697,7 +682,7 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")
 
-    fittedTimeEvents_str = param_change_str + cfr_change_str + socialDistance_change_str + d_Sym_change_str
+    fittedTimeEvents_str = param_change_str + socialDistance_change_str + d_Sym_change_str
 
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)
