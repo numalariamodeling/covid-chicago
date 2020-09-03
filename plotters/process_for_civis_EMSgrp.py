@@ -225,13 +225,18 @@ if __name__ == '__main__' :
             df['geography_modeled'] = region
             df.drop(columns=['ems_nr'])
 
-            tdf = df.groupby(['geography_modeled','Date']).agg(np.sum).reset_index()
+            tdf = df.groupby(['geography_modeled','date']).agg(np.sum).reset_index()
             dfcombined = pd.concat([dfcombined, tdf])
             del df, tdf
 
         dfnew = pd.concat([adf, dfcombined],sort=True)
         dfnew['scenario_name'] = scenarioName
-        filename_new = "nu_il_" + scenarioName + '_' + simdate + ".csv"
+
+        dfnew = dfnew[['date' ,'geography_modeled' ,'scenario_name' ,'cases_median' ,'cases_lower' ,'cases_upper' ,'cases_new_median' ,'cases_new_lower' ,'cases_new_upper' ,
+           'deaths_median' ,'deaths_lower' ,'deaths_upper' ,'deaths_det_median' ,'deaths_det_lower' ,'deaths_det_upper' ,'hosp_bed_median' ,'hosp_bed_lower' ,'hosp_bed_upper' ,
+            'icu_median' ,'icu_lower' ,'icu_upper' , 'vent_median' ,'vent_lower' ,'vent_upper' ,'recovered_median' ,'recovered_lower' ,'recovered_upper' ]]
+
+        filename_new = "nu_" + simdate + ".csv"
         rename_geography_and_save(dfnew,filename=filename_new)
 
 
