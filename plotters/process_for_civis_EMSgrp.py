@@ -176,8 +176,6 @@ if __name__ == '__main__' :
         #base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
         dfAll = append_data_byGroup(df, suffix_names)
-        filename = "nu_region_" + scenarioName + '_' + simdate + ".csv"
-        rename_geography_and_save(dfAll,filename)
 
         channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
         adf = pd.DataFrame()
@@ -199,8 +197,6 @@ if __name__ == '__main__' :
 
         print(f'Writing "projection_for_civis.*" files to {sim_output_path}.')
 
-        rename_geography_and_save(adf,filename='projection_for_civis.csv')
-
         col_names = civis_colnames(reverse=False)
         adf = adf.rename(columns=col_names)
 
@@ -208,30 +204,15 @@ if __name__ == '__main__' :
         adf.geography_modeled = adf.geography_modeled.str.lower()
         adf.geography_modeled = adf.geography_modeled.str.replace('all', "illinois")
 
-        filename = "nu_covidregion_" + scenarioName + '_' + simdate+".csv"
-        rename_geography_and_save(adf,filename=filename)
-
         plot_sim(dfAll, suffix_names)
 
-        ## Add aggregation per super-region
-        EMSregion = loadEMSregions('all')
-        dfcombined  = pd.DataFrame()
-        for region in EMSregion.keys():
-            df = adf.copy()
-            df= df[df['geography_modeled']!="illinois"]
-            ems_nr = [x.split('_')[1] for x in EMSregion[region]]
-            df['ems_nr'] = [x.split('ems')[1] for x in df['geography_modeled'] ]
-            df = df[df.ems_nr.isin(ems_nr) ]
-            df['geography_modeled'] = region
-            df.drop(columns=['ems_nr'])
+        adf['scenario_name'] = scenarioName
 
-            tdf = df.groupby(['geography_modeled','Date']).agg(np.sum).reset_index()
-            dfcombined = pd.concat([dfcombined, tdf])
-            del df, tdf
+        adf = adf[['date' ,'geography_modeled' ,'scenario_name' ,'cases_median' ,'cases_lower' ,'cases_upper' ,'cases_new_median' ,'cases_new_lower' ,'cases_new_upper' ,
+           'deaths_median' ,'deaths_lower' ,'deaths_upper' ,'deaths_det_median' ,'deaths_det_lower' ,'deaths_det_upper' ,'hosp_bed_median' ,'hosp_bed_lower' ,'hosp_bed_upper' ,
+            'icu_median' ,'icu_lower' ,'icu_upper' , 'vent_median' ,'vent_lower' ,'vent_upper' ,'recovered_median' ,'recovered_lower' ,'recovered_upper' ]]
 
-        dfnew = pd.concat([adf, dfcombined],sort=True)
-        dfnew['scenario_name'] = scenarioName
-        filename_new = "nu_il_" + scenarioName + '_' + simdate + ".csv"
-        rename_geography_and_save(dfnew,filename=filename_new)
+        filename_new = "nu_" + simdate + ".csv"
+        rename_geography_and_save(adf,filename=filename_new)
 
 
