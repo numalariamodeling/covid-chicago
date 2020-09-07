@@ -407,7 +407,7 @@ def parse_args():
         "--masterconfig",
         type=str,
         help="Master yaml file that includes all model parameters.",
-        default='model_param_CT.yaml',
+        default='extendedcobey_200428.yaml',
     )
 
     parser.add_argument(
