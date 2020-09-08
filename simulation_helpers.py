@@ -206,7 +206,7 @@ echo end""")
     err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
     out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
     module = '\n\nmodule load singularity'
-    singularity = '\n\nsingularity exec /software/singularity/images/singwine-v1.img wine /projects/p30781/covidproject/binaries/compartments/compartments.exe  -c /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg  -m /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
+    singularity = '\n\nsingularity exec -B /projects:/projects/ /software/singularity/images/singwine-v1.img wine /projects/p30781/covidproject/binaries/compartments/compartments.exe  -c /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg  -m /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
     file = open(os.path.join(trajectories_dir, 'runSimulations.sh'), 'w')
     file.write(header + jobname + array + err + out + module + singularity)
     file.close()
