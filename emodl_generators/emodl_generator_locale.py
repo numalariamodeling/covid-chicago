@@ -241,9 +241,12 @@ def write_params(expandModel=None):
 (param recovery_time_crit @recovery_time_crit@)
 (param fraction_symptomatic @fraction_symptomatic@)
 (param fraction_severe @fraction_severe@)
-(param fraction_hospitalized @fraction_hospitalized@)
 (param fraction_critical @fraction_critical@ )
-(param fraction_dead @fraction_dead@)
+
+(param cfr @cfr@)
+(param fraction_dead (/ cfr fraction_severe))
+(param fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))
+
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param reduced_inf_of_det_cases_ct 0)
 
@@ -750,7 +753,7 @@ def define_change_detection_and_isolation(grpList=None,
 def write_interventions(grpList, total_string, scenarioName, change_testDelay=None, trigger_channel=None) :
 
     param_change_str = """
-;(observe d_Sys_t d_Sys)
+(observe d_Sys_t d_Sys)
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
 (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
@@ -760,10 +763,19 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
 
 
-;(observe frac_crit_t fraction_critical)
+(observe frac_crit_t fraction_critical)
+(observe fraction_hospitalized_t fraction_hospitalized)
+(observe fraction_dead_t fraction_dead)
+
 (time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
 (time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
 (time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param cfr_change1 (* @cfr@ (/ 2 3) ) )
+(param cfr_change2 (* @cfr@ (/ 1 3) ) )
+(observe cfr_t cfr)
+(time-event cfr_adjust1 @cfr_time_1@ ((cfr cfr_change1) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event cfr_adjust2 @cfr_time_2@ ((cfr cfr_change2) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 """
 
     socialDistance_change_str = ""
