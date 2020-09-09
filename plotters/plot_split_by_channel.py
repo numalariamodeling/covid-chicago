@@ -54,7 +54,7 @@ if __name__ == '__main__' :
     nchannels = {'channels1': ['symptomatic_mild', 'infectious_undet', 'prevalence', 'seroprevalence', 'hospitalized'],
                  'channels2': ['symptomatic_mild_det',  'infectious_det', 'prevalence_det', 'seroprevalence_det', 'hospitalized_det'] }
     #nchannels = {'channels1': ['hospitalized', 'new_hospitalized', 'hosp_cumul', 'critical', 'new_critical', 'crit_cumul'],
-    #             'channels2': ['hospitalized_det',  'new_detected_hospitalized', 'hosp_det_cumul','critical_det',  'new_detected_critical', 'crit_det_cumul'] }
+    #             'channels2': ['hospitalized_det',  'new_detected_hospitalized', 'hosp_det_cumul','crit_det',  'new_detected_critical', 'crit_det_cumul'] }
 
     palette = sns.color_palette('Set1', len(nchannels))
     axes = [fig.add_subplot(2, 3, x + 1) for x in range(len(nchannels['channels1']))]

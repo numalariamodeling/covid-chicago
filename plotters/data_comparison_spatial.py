@@ -109,7 +109,6 @@ def compare_ems(exp_name, ems=0):
         column_list.append('death_det_cumul_EMS-' + str(ems_region))
         column_list.append('deaths_EMS-' + str(ems_region))
         column_list.append('crit_det_EMS-' + str(ems_region))
-        column_list.append('critical_det_EMS-' + str(ems_region))
         column_list.append('critical_EMS-' + str(ems_region))
         column_list.append('hospitalized_det_EMS-' + str(ems_region))
         column_list.append('hospitalized_EMS-' + str(ems_region))

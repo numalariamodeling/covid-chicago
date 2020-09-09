@@ -26,7 +26,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajec
 
     column_list = ['scen_num',  'time', 'startdate']
     for ems_region in range(1, 12):
-        column_list.append('critical_det_EMS-' + str(ems_region))
+        column_list.append('crit_det_EMS-' + str(ems_region))
         column_list.append('hospitalized_det_EMS-' + str(ems_region))
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
@@ -55,7 +55,7 @@ def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgr
 
     if channel=="hospitalized_det":
         datachannel = 'covid_non_icu'
-    if channel=="critical_det":
+    if channel=="crit_det":
         datachannel = 'confirmed_covid_icu'
 
     ax.plot(ref_df['date'], ref_df[datachannel], 'o', color='#303030', linewidth=0, ms=3)
@@ -70,7 +70,7 @@ def compare_ems( ems,channel):
 
     if channel == "hospitalized_det":
         data_channel_names = ['covid_non_icu']
-    if channel == "critical_det":
+    if channel == "crit_det":
         data_channel_names = ['confirmed_covid_icu']
 
     ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
