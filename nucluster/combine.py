@@ -170,6 +170,6 @@ if __name__ == '__main__':
     
     dfc = combineTrajectories(Nscenarios=Nscenarios,trajectories_dir=trajectories_dir, temp_exp_dir=temp_exp_dir,addSamples=add_samples)
     
-    dfctrim = trim_trajectories_Dat(df=dfc,exp_dir =temp_exp_dir,lagtime_days = int(lagtime_days))
+    dfctrim = trim_trajectories_Dat(df=dfc,exp_dir =temp_exp_dir,lagtime_days = int(args.lagtime_days))
     dfctrim.to_csv(os.path.join(exp_dir, 'trajectoriesDat_trim.csv'), index=False)   
 
