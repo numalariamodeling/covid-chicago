@@ -1628,7 +1628,7 @@
 (param recovery_time_crit @recovery_time_crit@)
 (param fraction_symptomatic @fraction_symptomatic@)
 (param fraction_severe @fraction_severe@)
-(param fraction_hospitalized @fraction_hospitalized@)
+(param fraction_critical @fraction_critical@ )
 
 (param cfr @cfr@)
 (param fraction_dead (/ cfr fraction_severe))
