@@ -11,7 +11,7 @@
 
 
 # load modules you need to use
-ml python/3.8.4
+ml python
 
 # A command you actually want to execute:
 python /projects/p30781/covidproject/covid-chicago/plotters/data_comparison_spatial.py --stem "20200826_IL_baseline" --Location "NUCLUSTER"

@@ -11,7 +11,7 @@
 
 
 # load modules you need to use
-ml python/3.8.4
+ml python
 
 # A command you actually want to execute:
 python /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "20200828_IL_testrun" --delete_simsfiles "True"
