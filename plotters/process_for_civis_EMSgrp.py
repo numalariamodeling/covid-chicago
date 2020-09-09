@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,7 +11,6 @@ import sys
 sys.path.append('../')
 from processing_helpers import *
 from load_paths import load_box_paths
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
@@ -19,6 +19,25 @@ simdate = datetime.today().strftime('%Y%m%d') # "20200804"
 plot_first_day = pd.to_datetime('2020/3/1')
 plot_last_day = pd.to_datetime('2021/4/1')
 
+def parse_args():
+    description = "Process simulation outputs to send to Civis"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-s", "--stem",
+        type=str,
+        help="Process only experiment names containing this string",
+        default=None,
+    )
+    parser.add_argument(
+        "-l", "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default='Local',
+    )
+
+    return parser.parse_args()
+    
 def get_scenarioName(exp_suffix) :
     scenarioName = exp_suffix
     if exp_suffix == "reopen": scenarioName = "reopen_gradual"
@@ -124,8 +143,12 @@ def rename_geography_and_save(df,filename) :
 
 if __name__ == '__main__' :
 
-    #stem = sys.argv[1]
-    stem = "20200816_IL_testbaseline"
+    args = parse_args()  
+    Location = args.Location
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+
+    stem = args.stem
+    #stem = "20200816_IL_testbaseline"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
 

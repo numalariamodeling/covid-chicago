@@ -17,22 +17,22 @@ today = datetime.today()
 datetoday = date(today.year, today.month, today.day)
 
 def parse_args():
-    description = "Simulation run for modeling Covid-19"
+    description = "Process simulation outputs to send to Civis"
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
-        "-stem",
-        "--stem",
+        "-s", "--stem",
         type=str,
-        help="Name of simulation experiment"
+        help="Process only experiment names containing this string",
+        default=None,
     )
     parser.add_argument(
-        "-loc",
-        "--Location",
+        "-l", "--Location",
         type=str,
         help="Local or NUCLUSTER",
-        default = "Local"
+        default='Local',
     )
+
     return parser.parse_args()
     
 def load_sim_data(exp_name, ems_nr,  input_wdir=None, input_sim_output_path=None, column_list=None):
