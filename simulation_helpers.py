@@ -211,33 +211,34 @@ echo end""")
     file.write(header + jobname + array + err + out + module + singularity)
     file.close()
     
-    pymodule = '\n\nml python/3.8.4'
+    pymodule = '\n\nml python'
     pycommand = '\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py --stem "' +exp_name+ '"' + ' --addsamples "True"' + ' --lagtime_days "15"'
-    file = open(os.path.join(trajectories_dir, 'combineSimulations.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'combineSimulations.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
     
-    pymodule = '\n\nml python/3.8.4'
+    pymodule = '\n\nml python'
     pycommand = '\npython /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "' +exp_name+ '"' + ' --delete_simsfiles "True"'
-    file = open(os.path.join(trajectories_dir, 'cleanupSimulations.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'cleanupSimulations.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
     
-    pymodule = '\n\nml python/3.8.4'
+    pymodule = '\n\nml python'
     pycommand = '\npython /projects/p30781/covidproject/covid-chicago/plotters/data_comparison_spatial.py --stem "' +exp_name+ '"' + ' --Location "NUCLUSTER"'
-    file = open(os.path.join(trajectories_dir, 'compareToData.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'compareToData.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
     
-    pymodule = '\n\nml python/3.8.4'
+    pymodule = '\n\nml python'
     pycommand = '\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --stem "' +exp_name+ '"' + ' --Location "NUCLUSTER"'
-    file = open(os.path.join(trajectories_dir, 'processForCivis.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'processForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
     submit_runSimulations = 'cd /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
     file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
     file.write(submit_runSimulations)
+    file.write('\n\n#cd ' + temp_exp_dir)  
     file.write('\n\n#Submit after simulation are finished using job id\n#sbatch --dependency=afterok:<jobid> combineSimulations.sh')   
     file.write('\n\n#Submit after combineSimulations using job id\n#sbatch --dependency=afterok:<jobid> cleanupSimulations.sh')  
     file.write('\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterok:<jobid> compareToData.sh')   
