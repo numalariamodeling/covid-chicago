@@ -93,7 +93,7 @@ def write_observe(expandModel=None):
 (observe symptomatic_mild_det symptomatic_mild_det)
 (observe symptomatic_severe_det symptomatic_severe_det)
 (observe hospitalized_det hospitalized_det)
-(observe critical_det critical_det)
+(observe crit_det crit_det)
 (observe deaths_det D3_det3)
 (observe recovered_det recovered_det)
 
@@ -146,7 +146,7 @@ def write_functions(expandModel=None):
 (func hospitalized  (+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
 (func hospitalized_det  (+ H1_det3 H2_det3 H3_det3))
 (func critical (+ C2 C3 C2_det3 C3_det3))
-(func critical_det (+ C2_det3 C3_det3))
+(func crit_det (+ C2_det3 C3_det3))
 (func deaths (+ D3 D3_det3))
 (func recovered (+ RAs RSym RH1 RC2 RAs_det1 RSym_det2 RH1_det3 RC2_det3))
 (func recovered_det (+ RAs_det1 RSym_det2 RH1_det3 RC2_det3))
@@ -160,7 +160,6 @@ def write_functions(expandModel=None):
 (func hosp_det_cumul (+ H1_det3 H2_det3 H3_det3 C2_det3 C3_det3 D3_det3 RH1_det3 RC2_det3))
 (func crit_cumul (+ deaths critical RC2 RC2_det3))
 (func crit_det_cumul (+ C2_det3 C3_det3 D3_det3 RC2_det3))
-(func crit_det (+ C2_det3 C3_det3))
 (func detected_cumul (+ (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
 (func death_det_cumul D3_det3 )
 
@@ -799,7 +798,7 @@ if __name__ == '__main__':
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening2' , file_output=os.path.join(emodl_dir, 'extendedmodel_gradual_reopening.emodl'))
 
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "critical", file_output=os.path.join(emodl_dir, 'extendedmodel_critical_triggeredrollback.emodl'))
-        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "critical_det", file_output=os.path.join(emodl_dir, 'extendedmodel_criticaldet_triggeredrollback.emodl'))
+        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "crit_det", file_output=os.path.join(emodl_dir, 'extendedmodel_criticaldet_triggeredrollback.emodl'))
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "hospitalized", file_output=os.path.join(emodl_dir, 'extendedmodel_hosp_triggeredrollback.emodl'))
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "hospitalized_det", file_output=os.path.join(emodl_dir, 'extendedmodel_hospdet_triggeredrollback.emodl'))
 
