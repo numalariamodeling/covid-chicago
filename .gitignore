@@ -10,3 +10,5 @@ data/*
 
 _temp/
 Rfiles/.Rproj.user/
+nucluster/errors/
+nucluster/outputs/
