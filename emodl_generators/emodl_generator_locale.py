@@ -97,7 +97,7 @@ def write_observe(grp, expandModel=None):
 (observe presymptomatic_det{grpout} presymptomatic_det_{grp} )
 (observe symptomatic_mild_det_{grpout} symptomatic_mild_det_{grp})
 (observe symptomatic_severe_det_{grpout} symptomatic_severe_det_{grp})
-(observe hospitalized_det_{grpout} hospitalized_det_{grp})
+(observe hosp_det_{grpout} hosp_det_{grp})
 (observe crit_det_{grpout} crit_det_{grp})
 (observe deaths_det_{grpout} D3_det3::{grp})
 (observe recovered_det_{grpout} recovered_det_{grp})
@@ -148,7 +148,7 @@ def write_functions(grp, expandModel=None):
 (func symptomatic_severe_det_{grp}  (- symptomatic_severe_{grp} Sys::{grp}))
 
 (func hospitalized_{grp}  (+ H1::{grp} H2::{grp} H3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
-(func hospitalized_det_{grp}  (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
+(func hosp_det_{grp}  (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
 (func critical_{grp} (+ C2::{grp} C3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func crit_det_{grp} (+ C2_det3::{grp} C3_det3::{grp}))
 (func deaths_{grp} (+ D3::{grp} D3_det3::{grp}))
@@ -415,7 +415,7 @@ def write_All(grpList):
     obs_All_str = obs_All_str + "\n(observe symptomatic_severe_All (+ " + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe symptomatic_severe_det_All (+ " + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe hospitalized_det_All (+ " + repeat_string_by_grp('hospitalized_det_', grpList) + "))"
+    obs_All_str = obs_All_str + "\n(observe hosp_det_All (+ " + repeat_string_by_grp('hosp_det_', grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe critical_All (+ " + repeat_string_by_grp('critical_',    grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe crit_det_All (+ " + repeat_string_by_grp('crit_det_',    grpList) + "))"
     obs_All_str = obs_All_str + "\n(observe deaths_All (+ " + repeat_string_by_grp('deaths_',   grpList) + "))"
@@ -466,7 +466,7 @@ def write_Custom_Groups(grpDic):
         obs_customGrp_str = obs_customGrp_str + """\n(observe symptomatic_severe_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
         obs_customGrp_str = obs_customGrp_str + """\n(observe symptomatic_severe_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
         obs_customGrp_str = obs_customGrp_str + """\n(observe hospitalized_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hospitalized_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe hospitalized_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hospitalized_det_', grpList) + "))"
+        obs_customGrp_str = obs_customGrp_str + """\n(observe hosp_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hosp_det_', grpList) + "))"
         obs_customGrp_str = obs_customGrp_str + """\n(observe critical_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('critical_',    grpList) + "))"
         obs_customGrp_str = obs_customGrp_str + """\n(observe crit_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('crit_det_',    grpList) + "))"
         obs_customGrp_str = obs_customGrp_str + """\n(observe deaths_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('deaths_',   grpList) + "))"
@@ -1118,9 +1118,9 @@ if __name__ == '__main__':
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening3', add_migration=False, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_gradual_reopening_region_specific.emodl'))
 
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', add_migration=False, observe_customGroups = False, trigger_channel = "crit_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_criticaldet_triggeredrollback.emodl'))
-        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', add_migration=False, observe_customGroups = False, trigger_channel = "hospitalized_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_hospdet_triggeredrollback.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', add_migration=False, observe_customGroups = False, trigger_channel = "hosp_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_hospdet_triggeredrollback.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered_delay', add_migration=False, observe_customGroups = False, trigger_channel = "crit_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_criticaldet_triggeredrollbackdelay.emodl'))
-        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered_delay', add_migration=False, observe_customGroups = False, trigger_channel = "hospitalized_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_hospdet_triggeredrollbackdelay.emodl'))
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered_delay', add_migration=False, observe_customGroups = False, trigger_channel = "hosp_det", file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_hospdet_triggeredrollbackdelay.emodl'))
 
 
     generateImprovedDetectionEmodls = True

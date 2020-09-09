@@ -27,7 +27,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajec
     column_list = ['scen_num',  'time', 'startdate']
     for ems_region in range(1, 12):
         column_list.append('crit_det_EMS-' + str(ems_region))
-        column_list.append('hospitalized_det_EMS-' + str(ems_region))
+        column_list.append('hosp_det_EMS-' + str(ems_region))
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
     df.columns = df.columns.str.replace(region_suffix, '')
@@ -53,7 +53,7 @@ def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgr
 
     ref_df  = compare_ems(ems=ems, channel=channel)
 
-    if channel=="hospitalized_det":
+    if channel=="hosp_det":
         datachannel = 'covid_non_icu'
     if channel=="crit_det":
         datachannel = 'confirmed_covid_icu'
@@ -68,7 +68,7 @@ def compare_ems( ems,channel):
     ref_df = ref_df[ref_df['covid_region'] == ems]
     ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
 
-    if channel == "hospitalized_det":
+    if channel == "hosp_det":
         data_channel_names = ['covid_non_icu']
     if channel == "crit_det":
         data_channel_names = ['confirmed_covid_icu']
@@ -114,4 +114,4 @@ if __name__ == '__main__' :
     covidregionlist = ['_EMS-1', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-9']
 
     plot_covidregions(channel='critical_det', subgroups = covidregionlist, psuffix ='13459_JulSep')
-    plot_covidregions(channel='hospitalized_det', subgroups = covidregionlist,  psuffix ='13459_JulSep')
+    plot_covidregions(channel='hosp_det', subgroups = covidregionlist,  psuffix ='13459_JulSep')

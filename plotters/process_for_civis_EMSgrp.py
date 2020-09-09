@@ -163,7 +163,7 @@ if __name__ == '__main__' :
             column_list.append('deaths_' + str(ems_region))
             column_list.append('crit_det_' + str(ems_region))
             column_list.append('critical_' + str(ems_region))
-            column_list.append('hospitalized_det_' + str(ems_region))
+            column_list.append('hosp_det_' + str(ems_region))
             column_list.append('hospitalized_' + str(ems_region))
 
         df, first_day = load_trajectoriesDat(sim_output_path, plot_first_day=plot_first_day, plot_last_day=plot_last_day,column_list=column_list)

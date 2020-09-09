@@ -64,7 +64,7 @@
 (func symptomatic_severe_det(- symptomatic_severe Sys))
 
 (func hospitalized(+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
-(func hospitalized_det(+ H1_det3 H2_det3 H3_det3))
+(func hosp_det(+ H1_det3 H2_det3 H3_det3))
 (func critical (+ C2 C3 C2_det3 C3_det3))
 (func crit_det (+ C2_det3 C3_det3))
 (func deaths (+ D3 D3_det3))
@@ -112,7 +112,7 @@
 (observe presymptomatic_det presymptomatic_det )
 (observe symptomatic_mild_det symptomatic_mild_det)
 (observe symptomatic_severe_det symptomatic_severe_det)
-(observe hospitalized_det hospitalized_det)
+(observe hosp_det hosp_det)
 (observe crit_det crit_det)
 (observe deaths_det D3_det3)
 (observe recovered_det recovered_det)

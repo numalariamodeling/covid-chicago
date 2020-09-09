@@ -195,7 +195,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
     ref_df_ll = ref_df
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
     ref_df = ref_df.sort_values('date')
-    channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det', 'new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',

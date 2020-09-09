@@ -110,7 +110,7 @@ def compare_ems(exp_name, ems=0):
         column_list.append('deaths_EMS-' + str(ems_region))
         column_list.append('crit_det_EMS-' + str(ems_region))
         column_list.append('critical_EMS-' + str(ems_region))
-        column_list.append('hospitalized_det_EMS-' + str(ems_region))
+        column_list.append('hosp_det_EMS-' + str(ems_region))
         column_list.append('hospitalized_EMS-' + str(ems_region))
 
     df = load_sim_data(exp_name, ems_nr, column_list=column_list)
@@ -133,7 +133,7 @@ def compare_ems(exp_name, ems=0):
     ref_df_ll = ref_df
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
     ref_df = ref_df.sort_values('date')
-    channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det', 'new_detected_deaths', 'new_deaths',
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths',
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
