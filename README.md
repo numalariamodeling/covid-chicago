@@ -146,6 +146,7 @@ To generate or modify the emodl files use the [locale-age specific emmodl genera
 ## 1.5. Model updates
 
 ### Main updates in model structure and fitted parameters
+- 20200909 updated parameter fit, updated evolution of CFR
 - 20200825 updated parameter fit
 - 20200818 updated parameter fit, updated evolution of dSys and region-specific evolution of dSym
 - 20200812 updated parameter fit
