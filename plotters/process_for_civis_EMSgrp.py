@@ -8,6 +8,7 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import sys
 sys.path.append('../')
+from data_comparison import load_sim_data
 from processing_helpers import *
 from load_paths import load_box_paths
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
@@ -31,83 +32,110 @@ def get_scenarioName(exp_suffix) :
 
     return(scenarioName)
 
-def load_trajectoriesDat(sim_output_path, plot_first_day=None, plot_last_day=None, column_list=None) :
 
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), usecols=column_list)
+def plot_sim(dat,suffix,channels) :
 
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    df['Date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df['Date'] = pd.to_datetime(df['Date'])
+        if suffix not in ["All","central","southern","northeast","northcentral"]:
+            suffix_nr = str(suffix.split("-")[1])
+        if suffix == "All":
+            suffix_nr ="illinois"
+        capacity = load_capacity(suffix_nr)
 
-    if plot_first_day == None: plot_first_day = first_day
-    if plot_last_day == None: plot_last_day = max(df['Date']).unique()
-
-    df = df[(df['Date'] >= plot_first_day) & (df['Date'] <= plot_last_day)]
-    return(df,first_day)
-
-def append_data_byGroup(dat, suffix) :
-    dfAll = pd.DataFrame()
-    for grp in suffix:
-        observe_col = [col for col in dat.columns if grp == col.split('_')[-1]]
-        model_col = ['time', 'run_num', 'scen_num', 'sample_num']
-        adf = dat[model_col + observe_col].copy()
-        adf.columns = adf.columns.str.replace('_' + grp, "")
-        adf = calculate_incidence(adf)
-        adf['ems'] = grp
-        dfAll = pd.concat([dfAll, adf])
-        del adf
-
-    #pd.crosstab(index=dfAll["ems"], columns="count")
-    dfAll['ventilators'] = get_vents(dfAll['crit_det'].values)
-    dfAll['new_symptomatic'] = dfAll['new_symptomatic_severe'] + dfAll['new_symptomatic_mild'] + dfAll[ 'new_detected_symptomatic_severe'] + dfAll['new_detected_symptomatic_mild']
-
-    return(dfAll)
-
-
-def plot_sim(dat, suffix) :
-    for ems in suffix:
-
-        ems_nr = ems
-        if ems not in ["All","central","southern","northeast","northcentral"]:
-            ems_nr = str(ems.split("-")[1])
-        if ems == "All":
-            ems_nr ="illinois"
-        capacity = load_capacity(ems_nr)
-
-        dfsub = dat[dat['ems'] == ems]
         fig = plt.figure(figsize=(18, 12))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.07, hspace=0.15)
         palette = sns.color_palette('Set1', len(channels))
 
         for c, channel in enumerate(channels):
             ax = fig.add_subplot(3, 3, c + 1)
-            mdf = dfsub.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-            mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
 
-            ax.plot(mdf['date'], mdf['CI_50'], color=palette[c])
-            ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
+            ax.plot(dat['date'], dat['%s_median' % channel], color=palette[c])
+            ax.fill_between(dat['date'].values, dat['%s_95CI_lower' % channel], dat['%s_95CI_upper' % channel],
                             color=palette[c], linewidth=0, alpha=0.2)
-            ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
+            ax.fill_between(dat['date'].values, dat[ '%s_50CI_lower' % channel], dat[ '%s_50CI_upper' % channel],
                             color=palette[c], linewidth=0, alpha=0.4)
 
-            if not ems == "All":
-                if channel in capacity.keys():
-                    ax.plot([np.min(mdf['date']), np.max(mdf['date'])],
-                            [capacity[channel], capacity[channel]], '--', linewidth=2, color=palette[c])
+            if channel in capacity.keys():
+                ax.plot([np.min(dat['date']), np.max(dat['date'])],
+                      [capacity[channel], capacity[channel]], '--', linewidth=2, color=palette[c])
 
             ax.set_title(channel, y=0.85)
             formatter = mdates.DateFormatter("%m-%d")
             ax.xaxis.set_major_formatter(formatter)
             ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-        plotname = scenarioName +"_" + ems
+        plotname = scenarioName +"_" + suffix
         plotname = plotname.replace('EMS-','covidregion_')
-        if ems == "All": ems = "IL"
-        filename = 'nu_' + scenarioName + '_' + ems
+
         plt.savefig(os.path.join(plot_path, plotname + '.png'))
         plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
         # plt.show()
 
+def load_and_plot_data(ems_region, fname='trajectoriesDat.csv' , savePlot=True) :
+
+    column_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
+
+    outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
+        'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'death_det_cumul',
+        'deaths', 'crit_det',  'critical', 'hospitalized_det', 'hospitalized']
+
+    for channel in outcome_channels:
+        column_list.append(channel + "_" + str(ems_region))
+
+    df = load_sim_data(exp_name,region_suffix = '_'+ems_region,fname=fname, column_list=column_list)
+
+    df['ems'] = ems_region
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
+
+    df['ventilators'] = get_vents(df['crit_det'].values)
+    df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
+
+    channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
+
+    adf = pd.DataFrame()
+    for c, channel in enumerate(channels):
+        mdf = df.groupby(['date', 'ems'])[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+
+        mdf = mdf.rename(columns={'CI_50': '%s_median' % channel,
+                              'CI_2pt5': '%s_95CI_lower' % channel,
+                              'CI_97pt5': '%s_95CI_upper' % channel,
+                              'CI_25': '%s_50CI_lower' % channel,
+                              'CI_75': '%s_50CI_upper' % channel})
+        if adf.empty:
+            adf = mdf
+        else:
+            adf = pd.merge(left=adf, right=mdf, on=['date', 'ems'])
+
+    if savePlot :
+        plot_sim(adf, ems_region, channels)
+
+    return adf
+
+
+def process_and_save(adf,ems_region, SAVE = True) :
+    col_names = civis_colnames(reverse=False)
+    adf = adf.rename(columns=col_names)
+
+    adf.geography_modeled = adf.geography_modeled.str.replace('-', "")
+    adf.geography_modeled = adf.geography_modeled.str.lower()
+    adf.geography_modeled = adf.geography_modeled.str.replace('all', "illinois")
+
+    adf['scenario_name'] = scenarioName
+
+    dfout = adf[
+        ['date', 'geography_modeled', 'scenario_name', 'cases_median', 'cases_lower', 'cases_upper', 'cases_new_median',
+         'cases_new_lower', 'cases_new_upper',
+         'deaths_median', 'deaths_lower', 'deaths_upper', 'deaths_det_median', 'deaths_det_lower', 'deaths_det_upper',
+         'hosp_bed_median', 'hosp_bed_lower', 'hosp_bed_upper',
+         'icu_median', 'icu_lower', 'icu_upper', 'vent_median', 'vent_lower', 'vent_upper', 'recovered_median',
+         'recovered_lower', 'recovered_upper']]
+
+    if SAVE :
+        filename = "nu_" + simdate + "_" + ems_region + ".csv"
+        rename_geography_and_save(dfout, filename=filename)
+
+    return dfout
 
 def rename_geography_and_save(df,filename) :
 
@@ -124,95 +152,45 @@ def rename_geography_and_save(df,filename) :
 
 if __name__ == '__main__' :
 
-    #stem = sys.argv[1]
-    stem = "20200816_IL_testbaseline"
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    exp_name = sys.argv[1]
+    processStep = sys.argv[2]
+    #exp_name = "20200910_IL_RR_baseline_combined"
+    #processStep = 'generate_outputs'
 
+    regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
 
-    for exp_name in exp_names:
-        exp_suffix = exp_name.split("_")[-1]
-        scenarioName = get_scenarioName(exp_suffix)
+    exp_suffix = exp_name.split("_")[-1]
+    scenarioName = get_scenarioName(exp_suffix)
 
-        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-        plot_path = os.path.join(sim_output_path, '_plots')
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    plot_path = os.path.join(sim_output_path, '_plots')
 
-        if not os.path.exists(sim_output_path):
-            os.makedirs(sim_output_path)
+    if not os.path.exists(sim_output_path):
+        os.makedirs(sim_output_path)
 
-        if not os.path.exists(plot_path):
-            os.makedirs(plot_path)
+    if not os.path.exists(plot_path):
+        os.makedirs(plot_path)
 
-        column_list =  ['startdate', 'time', 'scen_num','sample_num', 'run_num']
-        for ems_region in ['All', 'EMS-1', 'EMS-2','EMS-3','EMS-4','EMS-5','EMS-6','EMS-7','EMS-8','EMS-9','EMS-10','EMS-11']:
-            column_list.append('susceptible_' + str(ems_region))
-            column_list.append('infected_' + str(ems_region))
-            column_list.append('recovered_' + str(ems_region))
-            column_list.append('infected_cumul_' + str(ems_region))
-            column_list.append('asymp_cumul_' + str(ems_region))
-            column_list.append('asymp_det_cumul_' + str(ems_region))
-            column_list.append('symp_mild_cumul_' + str(ems_region))
-            column_list.append('symp_severe_cumul_' + str(ems_region))
-            column_list.append('symp_mild_det_cumul_' + str(ems_region))
-            column_list.append('symp_severe_det_cumul_' + str(ems_region))
-            column_list.append('hosp_det_cumul_' + str(ems_region))
-            column_list.append('hosp_cumul_' + str(ems_region))
-            column_list.append('detected_cumul_' + str(ems_region))
-            column_list.append('crit_cumul_' + str(ems_region))
-            column_list.append('crit_det_cumul_' + str(ems_region))
-            column_list.append('death_det_cumul_' + str(ems_region))
-            column_list.append('deaths_' + str(ems_region))
-            column_list.append('crit_det_' + str(ems_region))
-            column_list.append('critical_det_' + str(ems_region))
-            column_list.append('critical_' + str(ems_region))
-            column_list.append('hospitalized_det_' + str(ems_region))
-            column_list.append('hospitalized_' + str(ems_region))
+    if processStep == 'generate_outputs' :
+        dfAll = pd.DataFrame()
+        for reg in regions :
+            tdf = load_and_plot_data(reg,fname='trajectoriesDat.csv' , savePlot=True)
+            adf = process_and_save(tdf, reg, SAVE=True)
+            dfAll = pd.concat([dfAll, adf])
+            del tdf
 
-        df, first_day = load_trajectoriesDat(sim_output_path, plot_first_day=plot_first_day, plot_last_day=plot_last_day,column_list=column_list)
-        df = df[df.columns.drop(list(df.filter(regex='southern')))]
-        df = df[df.columns.drop(list(df.filter(regex='central')))]
-        df = df[df.columns.drop(list(df.filter(regex='northeast')))]
-        df = df[df.columns.drop(list(df.filter(regex='northcentral')))]
-        suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
-        #base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
+        if len(regions) == 12 :
+            filename = "nu_" + simdate + ".csv"
+            rename_geography_and_save(dfAll,filename=filename)
 
-        dfAll = append_data_byGroup(df, suffix_names)
+    ### Optional
+    if processStep == 'combine_outputs' :
 
-        channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
-        adf = pd.DataFrame()
-        for c, channel in enumerate(channels) :
-            mdf = dfAll.groupby(['time','ems'])[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-            mdf['date'] = mdf['time'].apply(lambda x : first_day + timedelta(days=int(x)))
-
-            mdf = mdf.rename(columns={'CI_50' : '%s_median' % channel,
-                                      'CI_2pt5' : '%s_95CI_lower' % channel,
-                                      'CI_97pt5' : '%s_95CI_upper' % channel})
-            mdf = mdf[mdf['time'] >= 22]
-            del mdf['time']
-            del mdf['CI_25']
-            del mdf['CI_75']
-            if adf.empty :
-                adf = mdf
-            else :
-                adf = pd.merge(left=adf, right=mdf, on=['date', 'ems'])
-
-        print(f'Writing "projection_for_civis.*" files to {sim_output_path}.')
-
-        col_names = civis_colnames(reverse=False)
-        adf = adf.rename(columns=col_names)
-
-        adf.geography_modeled = adf.geography_modeled.str.replace('-' , "")
-        adf.geography_modeled = adf.geography_modeled.str.lower()
-        adf.geography_modeled = adf.geography_modeled.str.replace('all', "illinois")
-
-        plot_sim(dfAll, suffix_names)
-
-        adf['scenario_name'] = scenarioName
-
-        adf = adf[['date' ,'geography_modeled' ,'scenario_name' ,'cases_median' ,'cases_lower' ,'cases_upper' ,'cases_new_median' ,'cases_new_lower' ,'cases_new_upper' ,
-           'deaths_median' ,'deaths_lower' ,'deaths_upper' ,'deaths_det_median' ,'deaths_det_lower' ,'deaths_det_upper' ,'hosp_bed_median' ,'hosp_bed_lower' ,'hosp_bed_upper' ,
-            'icu_median' ,'icu_lower' ,'icu_upper' , 'vent_median' ,'vent_lower' ,'vent_upper' ,'recovered_median' ,'recovered_lower' ,'recovered_upper' ]]
+        for reg in ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11'] :
+            filename = "nu_" + simdate + "_" + reg + ".csv"
+            adf = pd.read_csv(os.path.join(sim_output_path, filename))
+            dfAll = pd.concat([dfAll, adf])
 
         filename_new = "nu_" + simdate + ".csv"
-        rename_geography_and_save(adf,filename=filename_new)
-
+        rename_geography_and_save(dfAll, filename=filename_new)
 
