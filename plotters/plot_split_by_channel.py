@@ -46,15 +46,27 @@ def plot_on_fig(df, channels, axes, color, label) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200816_IL_testbaseline'
+    exp_name = '20200909_IL_mr_test_observeLevel_v3'
+    channelGrp =  "symp" # "symp" "infect"  "hospCrit"
 
     fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
 
-    nchannels = {'channels1': ['symptomatic_mild', 'infectious_undet', 'prevalence', 'seroprevalence', 'hospitalized'],
-                 'channels2': ['symptomatic_mild_det',  'infectious_det', 'prevalence_det', 'seroprevalence_det', 'hosp_det'] }
-    #nchannels = {'channels1': ['hospitalized', 'new_hospitalized', 'hosp_cumul', 'critical', 'new_critical', 'crit_cumul'],
-    #             'channels2': ['hosp_det',  'new_detected_hospitalized', 'hosp_det_cumul','crit_det',  'new_detected_critical', 'crit_det_cumul'] }
+    nchannels_symp = {'channels1': ['symp_severe_cumul', 'symp_mild_cumul', 'symptomatic_severe', 'symptomatic_mild'],
+                 'channels2': ['symp_severe_det_cumul',  'symp_mild_det_cumul', 'symptomatic_severe_det', 'symptomatic_mild_det'] }
+
+    nchannels_infect = {'channels1': ['infected', 'presymptomatic', 'infectious_undet', 'asymptomatic', 'asymp_cumul'],
+                 'channels2': ['infected_det',  'presymptomatic_det', 'infectious_det', 'asymptomatic_det', 'asymp_det_cumul'] }
+
+    nchannels_hospCrit = {'channels1': ['hospitalized', 'new_hospitalized', 'hosp_cumul', 'critical', 'new_critical', 'crit_cumul'],
+                 'channels2': ['hospitalized_det',  'new_detected_hospitalized', 'hosp_det_cumul','crit_det',  'new_detected_critical', 'crit_det_cumul'] }
+
+    if channelGrp == "symp":
+        nchannels = nchannels_symp
+    if channelGrp == "infect" :
+        nchannels = nchannels_infect
+    if channelGrp == "hospCrit" :
+        nchannels = nchannels_hospCrit
 
     palette = sns.color_palette('Set1', len(nchannels))
     axes = [fig.add_subplot(2, 3, x + 1) for x in range(len(nchannels['channels1']))]
@@ -72,7 +84,8 @@ if __name__ == '__main__' :
         plot_on_fig(df, channels, axes, color=palette[d], label=label)
     axes[-1].legend()
 
-    plt.savefig(os.path.join(sim_output_path, 'channel_comparison.png'))
-    plt.savefig(os.path.join(sim_output_path, 'channel_comparison.pdf'), format='PDF')
+    fname = 'channel_'+ channelGrp +'_comparison'
+    plt.savefig(os.path.join(sim_output_path, fname + '.png'))
+    #plt.savefig(os.path.join(sim_output_path, fname + '.pdf'), format='PDF')
     plt.show()
 
