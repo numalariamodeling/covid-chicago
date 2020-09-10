@@ -54,6 +54,20 @@ Example:
 ```
 
 #### write_observe (required)
+
+A complete list of the available channels to observe is included in the main readme file.
+
+##### Selection of channels to observe
+With
+
+ observeLevel='primary'
+
+in the emodl generator function is it possible to select between three priority levels to observe.
+Primary are the essential outcomes required for the weekly deliverables and standard plots.
+Secondary are related additional channels.
+Tertiary are channels rarely used or those that can be easily calculated during postprocessing.
+
+##### Structure per model type
 Defines the compartments, parameters and aggregated compartments that are written into output files
 Example: 
 
@@ -229,17 +243,22 @@ Currently added interventions:
 - interventionStop 
 	- `add_interventions = 'interventionSTOP_adj'`
 - gradual_reopen
-	- `add_interventions = 'gradual_reopening'`
-- increased testing
-	- `add_interventions = 'contactTracing'` and keep detection of As and P at 0  
+	- `add_interventions = 'gradual_reopening3'`
+- increased testing of mild symptomatic infections
+	- `add_interventions = 'improveHS'` 
+- increased testing of a-, pre- and mild symptomatic infections
+	- `add_interventions = 'contactTracing'` 
 - reduced test delays
-	- `change_testDelay = 'AsSym'`check in yaml config file proper test delay reduction parameters
-- contact_tracing 
-	- `add_interventions = 'contactTracing'` and change detection of As and P in yaml config file
-- contact_tracing and reduced test delays
-	- `add_interventions = 'contactTracing'` and change detection of As and P in yaml config file
+	- `change_testDelay = "AsSym"`
+- increased testing of a-, pre- and mild symptomatic infections and reduced test delays
+	- `add_interventions = 'contactTracing'` 
 	- `change_testDelay = 'AsSym'`
-- gradual contact_tracing 
-	- `add_interventions = 'gradual_contactTracing'` and change detection of As and P in yaml config file
-And any combination of these (i.e. contact tracing on top of continued SIP, SIP stop or gradual reopening. 
+- gradual reopening and increased testing of a-, pre- and mild symptomatic infections 
+	- `add_interventions = 'reopen_contactTracing'` 
+- triggered rollback
+	- `add_interventions = 'rollbacktriggered'` 
+	- `trigger_channel = 'crit_det'` 
+- triggered rollback with region specific reopening and generic delay
+	- `add_interventions = 'rollbacktriggered_delay'` 
+	- `trigger_channel = 'crit_det'` 
 
