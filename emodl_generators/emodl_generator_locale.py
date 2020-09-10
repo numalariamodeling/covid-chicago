@@ -77,63 +77,80 @@ def sub(x):
     xout = re.sub('_','-', str(x), count=1)
     return(xout)
     
-def write_observe(grp, expandModel=None):
+def write_observe(grp, observeLevel='primary'):
     grp = str(grp)
     grpout = sub(grp)
 
-    observe_str = """
+    observe_primary_channels_str = """
 (observe susceptible_{grpout} S::{grp})
+(observe infected_{grpout} infected_{grp})
+(observe recovered_{grpout} recovered_{grp})
+(observe infected_cumul_{grpout} infected_cumul_{grp})
+
+(observe asymp_cumul_{grpout} asymp_cumul_{grp} )
+(observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
+(observe symptomatic_mild_{grpout} symptomatic_mild_{grp})
+(observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
+(observe symp_mild_cumul_{grpout} symp_mild_cumul_{grp})
+(observe symp_severe_cumul_{grpout} symp_severe_cumul_{grp})
+(observe symp_mild_det_cumul_{grpout} symp_mild_det_cumul_{grp})
+(observe symp_severe_det_cumul_{grpout} symp_severe_det_cumul_{grp})
+
+(observe hosp_det_cumul_{grpout} hosp_det_cumul_{grp} )
+(observe hosp_cumul_{grpout} hosp_cumul_{grp})
+(observe detected_cumul_{grpout} detected_cumul_{grp} )
+
+(observe crit_cumul_{grpout} crit_cumul_{grp})
+(observe crit_det_cumul_{grpout} crit_det_cumul_{grp})
+(observe death_det_cumul_{grpout} death_det_cumul_{grp} )
+
+(observe deaths_det_{grpout} D3_det3::{grp})
+(observe deaths_{grpout} deaths_{grp})
+
+(observe crit_det_{grpout} crit_det_{grp})
+(observe critical_{grpout} critical_{grp})
+(observe hosp_det_{grpout} hosp_det_{grp})
+(observe hospitalized_{grpout} hospitalized_{grp})
+""".format(grpout=grpout, grp=grp)
+
+
+    observe_secondary_channels_str = """
 (observe exposed_{grpout} E::{grp})
 (observe asymptomatic_{grpout} asymptomatic_{grp})
 (observe presymptomatic_{grpout} presymptomatic_{grp})
-(observe symptomatic_mild_{grpout} symptomatic_mild_{grp})
-(observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
-(observe hospitalized_{grpout} hospitalized_{grp})
-(observe critical_{grpout} critical_{grp})
-(observe deaths_{grpout} deaths_{grp})
-(observe recovered_{grpout} recovered_{grp})
 
 (observe asymptomatic_det_{grpout} asymptomatic_det_{grp})
 (observe presymptomatic_det{grpout} presymptomatic_det_{grp} )
 (observe symptomatic_mild_det_{grpout} symptomatic_mild_det_{grp})
 (observe symptomatic_severe_det_{grpout} symptomatic_severe_det_{grp})
-(observe hosp_det_{grpout} hosp_det_{grp})
-(observe crit_det_{grpout} crit_det_{grp})
-(observe deaths_det_{grpout} D3_det3::{grp})
 (observe recovered_det_{grpout} recovered_det_{grp})
 
-(observe asymp_cumul_{grpout} asymp_cumul_{grp} )
-(observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
-(observe symp_mild_cumul_{grpout} symp_mild_cumul_{grp})
-
-(observe symp_severe_cumul_{grpout} symp_severe_cumul_{grp})
- 
-(observe hosp_cumul_{grpout} hosp_cumul_{grp})
-(observe hosp_det_cumul_{grpout} hosp_det_cumul_{grp} )
 (observe crit_cumul_{grpout} crit_cumul_{grp})
 (observe crit_det_cumul_{grpout} crit_det_cumul_{grp})
 (observe death_det_cumul_{grpout} death_det_cumul_{grp} )
+""".format(grpout=grpout, grp=grp)
 
-(observe infected_{grpout} infected_{grp})
-(observe infected_cumul_{grpout} infected_cumul_{grp})
-
+    observe_tertiary_channels_str = """
 (observe infectious_undet_{grpout} infectious_undet_{grp})
 (observe infectious_det_{grpout} infectious_det_{grp})
 (observe infectious_det_symp_{grpout} infectious_det_symp_{grp})
 (observe infectious_det_AsP_{grpout} infectious_det_AsP_{grp})
-
-(observe symp_mild_det_cumul_{grpout} symp_mild_det_cumul_{grp})
-(observe symp_severe_det_cumul_{grpout} symp_severe_det_cumul_{grp})
 (observe detected_{grpout} detected_{grp})
-(observe detected_cumul_{grpout} detected_cumul_{grp} )
-
 (observe prevalence_{grpout} prevalence_{grp})    
 (observe seroprevalence_{grpout} seroprevalence_{grp} )
 (observe prevalence_det_{grpout} prevalence_det_{grp})    
 (observe seroprevalence_det_{grpout} seroprevalence_det_{grp} )
-
 """.format(grpout=grpout, grp=grp)
-    
+
+    if observeLevel == 'primary' :
+        observe_str = observe_primary_channels_str
+    if observeLevel == 'secondary' :
+        observe_str = observe_primary_channels_str + observe_secondary_channels_str
+    if observeLevel == 'tertiary' :
+        observe_str = observe_primary_channels_str +  observe_tertiary_channels_str
+    if observeLevel == 'all' :
+        observe_str = observe_primary_channels_str + observe_secondary_channels_str + observe_tertiary_channels_str
+        
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
@@ -156,12 +173,14 @@ def write_functions(grp, expandModel=None):
 (func recovered_det_{grp} (+ RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
 (func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
 (func asymp_det_cumul_{grp} (+ As_det1::{grp} RAs_det1::{grp}))
+
 (func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym::{grp} RSym_det2::{grp}))
 (func symp_mild_det_cumul_{grp} (+ RSym_det2::{grp} Sym_det2::{grp}))
 (func symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
 (func symp_severe_det_cumul_{grp} (+ Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+
 (func hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(func hosp_det_cumul_{grp} (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(func hosp_det_cumul_{grp} (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp}  RH1_det3::{grp}  RC2_det3::{grp}))
 (func crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
 (func crit_det_cumul_{grp} (+ C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RC2_det3::{grp}))
 (func detected_cumul_{grp} (+ (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} C2_det3::{grp} C3_det3::{grp}) RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
@@ -179,7 +198,7 @@ def write_functions(grp, expandModel=None):
 (func seroprevalence_det_{grp} (/ (+ infected_det_{grp} recovered_det_{grp}) N_{grp}))    
 
 """.format(grp=grp)
-    functions_str = functions_str.replace("  ", "")
+    functions_str = functions_str.replace("  ", " ")
     
 
     expand_base_str = """
@@ -1037,7 +1056,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
 ###stringing all of my functions together to make the file:
 
-def generate_emodl(grpList, file_output, expandModel, add_interventions, add_migration=True, change_testDelay =None, trigger_channel=None, observe_customGroups = False, grpDic = None):
+def generate_emodl(grpList, file_output, expandModel, add_interventions, observeLevel ='primary', add_migration=True, change_testDelay =None, trigger_channel=None, observe_customGroups = False, grpDic = None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -1060,7 +1079,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, add_mig
         total_string = total_string + "(set-locale site-{})\n".format(grp)
         total_string = total_string + write_species(grp, expandModel)
         functions = write_functions(grp, expandModel)
-        observe_string = observe_string + write_observe(grp, expandModel)
+        observe_string = observe_string + write_observe(grp, observeLevel=observeLevel)
         if (add_migration):
             reaction_string = reaction_string + write_travel_reaction(grp)
         reaction_string = reaction_string + write_reactions(grp, expandModel)
