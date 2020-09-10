@@ -195,7 +195,6 @@ def write_functions(grp, expandModel=None):
 (func seroprevalence_det_{grp} (/ (+ infected_det_{grp} recovered_det_{grp}) N_{grp}))    
 
 """.format(grp=grp)
-    functions_str = functions_str.replace("  ", " ")
     
 
     expand_base_str = """
@@ -262,6 +261,7 @@ def write_functions(grp, expandModel=None):
     if expandModel == "testDelay_AsSymSys":
         functions_str = expand_testDelay_AsSymSys_str + functions_str
 
+    functions_str = functions_str.replace("  ", " ")
     return (functions_str)
 
 ###
