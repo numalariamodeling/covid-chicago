@@ -64,46 +64,41 @@ def append_data_byGroup(dat, suffix) :
     return(dfAll)
 
 
-def plot_sim(dat, suffix) :
-    for ems in suffix:
+def plot_sim(dat,suffix_names) :
 
-        ems_nr = ems
-        if ems not in ["All","central","southern","northeast","northcentral"]:
-            ems_nr = str(ems.split("-")[1])
-        if ems == "All":
-            ems_nr ="illinois"
-        capacity = load_capacity(ems_nr)
+    for suffix in suffix_names :
+        if suffix not in ["All","central","southern","northeast","northcentral"]:
+            suffix_nr = str(suffix.split("-")[1])
+        if suffix == "All":
+            suffix_nr ="illinois"
+        capacity = load_capacity(suffix_nr)
 
-        dfsub = dat[dat['ems'] == ems]
+        dfsub = dat[dat['ems'] == suffix]
         fig = plt.figure(figsize=(18, 12))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.07, hspace=0.15)
         palette = sns.color_palette('Set1', len(channels))
 
         for c, channel in enumerate(channels):
             ax = fig.add_subplot(3, 3, c + 1)
-            mdf = dfsub.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-            mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
 
-            ax.plot(mdf['date'], mdf['CI_50'], color=palette[c])
-            ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
+            ax.plot(dfsub['date'], dfsub['%s_median' % channel], color=palette[c])
+            ax.fill_between(dfsub['date'].values, dfsub['%s_95CI_lower' % channel], dfsub['%s_95CI_upper' % channel],
                             color=palette[c], linewidth=0, alpha=0.2)
-            ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
+            ax.fill_between(dfsub['date'].values, dfsub[ '%s_50CI_lower' % channel], dfsub[ '%s_50CI_upper' % channel],
                             color=palette[c], linewidth=0, alpha=0.4)
 
-            if not ems == "All":
-                if channel in capacity.keys():
-                    ax.plot([np.min(mdf['date']), np.max(mdf['date'])],
-                            [capacity[channel], capacity[channel]], '--', linewidth=2, color=palette[c])
+            if channel in capacity.keys():
+                ax.plot([np.min(mdf['date']), np.max(mdf['date'])],
+                      [capacity[channel], capacity[channel]], '--', linewidth=2, color=palette[c])
 
             ax.set_title(channel, y=0.85)
             formatter = mdates.DateFormatter("%m-%d")
             ax.xaxis.set_major_formatter(formatter)
             ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-        plotname = scenarioName +"_" + ems
+        plotname = scenarioName +"_" + suffix
         plotname = plotname.replace('EMS-','covidregion_')
-        if ems == "All": ems = "IL"
-        filename = 'nu_' + scenarioName + '_' + ems
+        filename = 'nu_' + scenarioName + '_' + suffix
         plt.savefig(os.path.join(plot_path, plotname + '.png'))
         plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
         # plt.show()
@@ -125,7 +120,7 @@ def rename_geography_and_save(df,filename) :
 if __name__ == '__main__' :
 
     #stem = sys.argv[1]
-    stem = "20200816_IL_testbaseline"
+    stem = "20200901_IL_MR_test_revert_baseline_v3"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
 
@@ -168,34 +163,29 @@ if __name__ == '__main__' :
             column_list.append('hospitalized_' + str(ems_region))
 
         df, first_day = load_trajectoriesDat(sim_output_path, plot_first_day=plot_first_day, plot_last_day=plot_last_day,column_list=column_list)
-        df = df[df.columns.drop(list(df.filter(regex='southern')))]
-        df = df[df.columns.drop(list(df.filter(regex='central')))]
-        df = df[df.columns.drop(list(df.filter(regex='northeast')))]
-        df = df[df.columns.drop(list(df.filter(regex='northcentral')))]
         suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
-        #base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
         dfAll = append_data_byGroup(df, suffix_names)
+        dfAll['date'] = dfAll['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+        dfAll = dfAll[dfAll['time'] >= 22]
 
         channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
         adf = pd.DataFrame()
         for c, channel in enumerate(channels) :
-            mdf = dfAll.groupby(['time','ems'])[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-            mdf['date'] = mdf['time'].apply(lambda x : first_day + timedelta(days=int(x)))
+            mdf = dfAll.groupby(['date','ems'])[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
             mdf = mdf.rename(columns={'CI_50' : '%s_median' % channel,
                                       'CI_2pt5' : '%s_95CI_lower' % channel,
-                                      'CI_97pt5' : '%s_95CI_upper' % channel})
-            mdf = mdf[mdf['time'] >= 22]
-            del mdf['time']
-            del mdf['CI_25']
-            del mdf['CI_75']
+                                      'CI_97pt5' : '%s_95CI_upper' % channel,
+                                      'CI_25' : '%s_50CI_lower' % channel,
+                                      'CI_75' : '%s_50CI_upper' % channel})
             if adf.empty :
                 adf = mdf
             else :
                 adf = pd.merge(left=adf, right=mdf, on=['date', 'ems'])
 
-        print(f'Writing "projection_for_civis.*" files to {sim_output_path}.')
+        plot_sim(adf, suffix_names)
+       # print(f'Writing "projection_for_civis.*" files to {sim_output_path}.')  ## gives error on quest
 
         col_names = civis_colnames(reverse=False)
         adf = adf.rename(columns=col_names)
@@ -203,8 +193,6 @@ if __name__ == '__main__' :
         adf.geography_modeled = adf.geography_modeled.str.replace('-' , "")
         adf.geography_modeled = adf.geography_modeled.str.lower()
         adf.geography_modeled = adf.geography_modeled.str.replace('all', "illinois")
-
-        plot_sim(dfAll, suffix_names)
 
         adf['scenario_name'] = scenarioName
 
