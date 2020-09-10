@@ -840,7 +840,7 @@ if __name__ == '__main__':
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening2' , file_output=os.path.join(emodl_dir, 'extendedmodel_gradual_reopening.emodl'))
 
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "critical", file_output=os.path.join(emodl_dir, 'extendedmodel_critical_triggeredrollback.emodl'))
-        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "critical_det", file_output=os.path.join(emodl_dir, 'extendedmodel_criticaldet_triggeredrollback.emodl'))
+        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "crit_det", file_output=os.path.join(emodl_dir, 'extendedmodel_criticaldet_triggeredrollback.emodl'))
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "hospitalized", file_output=os.path.join(emodl_dir, 'extendedmodel_hosp_triggeredrollback.emodl'))
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "hosp_det", file_output=os.path.join(emodl_dir, 'extendedmodel_hospdet_triggeredrollback.emodl'))
 

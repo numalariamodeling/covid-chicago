@@ -120,45 +120,80 @@ def sub2(x):
     xout = re.sub('_','', str(x), count=1)
     return(xout)
     
-def write_observe(age, region, expandModel=None):
+def write_observe(age, region, observeLevel='primary'):
     region = str(region)
     grpout = sub(region)
 
-    observe_str = """
-(observe susceptible_{age}_{grpout} S_{age}::{region})
-(observe exposed_{age}_{grpout} E_{age}::{region})
-(observe asymptomatic_{age}_{grpout} asymptomatic_{age}_{region})
-(observe presymptomatic_{age}_{grpout} presymptomatic_{age}_{region})
-(observe symptomatic_mild_{age}_{grpout} symptomatic_mild_{age}_{region})
-(observe symptomatic_severe_{age}_{grpout} symptomatic_severe_{age}_{region})
-(observe hospitalized_{age}_{grpout} hospitalized_{age}_{region})
-(observe critical_{age}_{grpout} critical_{age}_{region})
-(observe deaths_{age}_{grpout} deaths_{age}_{region})
-(observe recovered_{age}_{grpout} recovered_{age}_{region})
+    observe_primary_channels_str = """
+(observe susceptible_{age}_{age}_{grpout} S_{age}::{region})
+(observe infected_{age}_{age}_{grpout} infected_{age}_{region})
+(observe recovered_{age}_{age}_{grpout} recovered_{age}_{region})
+(observe infected_cumul_{age}_{age}_{grpout} infected_cumul_{age}_{region})
 
-(observe asymp_cumul_{age}_{grpout} asymp_cumul_{age}_{region} )
-(observe asymp_det_cumul_{age}_{grpout} asymp_det_cumul_{age}_{region})
-(observe symp_mild_cumul_{age}_{grpout} symp_mild_cumul_{age}_{region})
+(observe asymp_cumul_{age}_{age}_{grpout} asymp_cumul_{age}_{region} )
+(observe asymp_det_cumul_{age}_{age}_{grpout} asymp_det_cumul_{age}_{region})
+(observe symptomatic_mild_{age}_{age}_{grpout} symptomatic_mild_{age}_{region})
+(observe symptomatic_severe_{age}_{age}_{grpout} symptomatic_severe_{age}_{region})
+(observe symp_mild_cumul_{age}_{age}_{grpout} symp_mild_cumul_{age}_{region})
+(observe symp_severe_cumul_{age}_{age}_{grpout} symp_severe_cumul_{age}_{region})
+(observe symp_mild_det_cumul_{age}_{age}_{grpout} symp_mild_det_cumul_{age}_{region})
+(observe symp_severe_det_cumul_{age}_{age}_{grpout} symp_severe_det_cumul_{age}_{region})
 
-(observe symp_severe_cumul_{age}_{grpout} symp_severe_cumul_{age}_{region})
- 
-(observe hosp_cumul_{age}_{grpout} hosp_cumul_{age}_{region})
-(observe hosp_det_cumul_{age}_{grpout} hosp_det_cumul_{age}_{region} )
-(observe crit_cumul_{age}_{grpout} crit_cumul_{age}_{region})
-(observe crit_det_cumul_{age}_{grpout} crit_det_cumul_{age}_{region})
-(observe crit_det_{age}_{grpout} crit_det_{age}_{region})
-(observe death_det_cumul_{age}_{grpout} death_det_cumul_{age}_{region} )
+(observe hosp_det_cumul_{age}_{age}_{grpout} hosp_det_cumul_{age}_{region} )
+(observe hosp_cumul_{age}_{age}_{grpout} hosp_cumul_{age}_{region})
+(observe detected_cumul_{age}_{age}_{grpout} detected_cumul_{age}_{region} )
 
-(observe infected_{age}_{grpout} infected_{age}_{region})
-(observe infected_cumul_{age}_{grpout} infected_cumul_{age}_{region})
+(observe crit_cumul_{age}_{age}_{grpout} crit_cumul_{age}_{region})
+(observe crit_det_cumul_{age}_{age}_{grpout} crit_det_cumul_{age}_{region})
+(observe death_det_cumul_{age}_{age}_{grpout} death_det_cumul_{age}_{region} )
 
-(observe symp_mild_det_cumul_{age}_{grpout} symp_mild_det_cumul_{age}_{region})
-(observe symp_severe_det_cumul_{age}_{grpout} symp_severe_det_cumul_{age}_{region})
-(observe detected_{age}_{grpout} detected_{age}_{region})
-(observe detected_cumul_{age}_{grpout} detected_cumul_{age}_{region} )
+(observe deaths_det_{age}_{age}_{grpout} D3_det3_{age}::{region})
+(observe deaths_{age}_{age}_{grpout} deaths_{age}_{region})
 
+(observe crit_det_{age}_{age}_{grpout} crit_det_{age}_{region})
+(observe critical_{age}_{age}_{grpout} critical_{age}_{region})
+(observe hosp_det_{age}_{age}_{grpout} hosp_det_{age}_{region})
+(observe hospitalized_{age}_{age}_{grpout} hospitalized_{age}_{region})
 """.format(grpout=grpout, age=age, region=region)
-    
+
+
+    observe_secondary_channels_str = """
+(observe exposed_{age}_{age}_{grpout} E_{age}::{region})
+
+(observe asymptomatic_det_{age}_{age}_{grpout} As_det1_{age}::{region})
+(observe asymptomatic_{age}_{age}_{grpout} asymptomatic_{age}_{region})
+
+(observe presymptomatic_{age}_{age}_{grpout} presymptomatic_{age}_{region})
+(observe presymptomatic_det{grpout} P_det_{age}::{region} )
+
+(observe detected_{age}_{age}_{grpout} detected_{age}_{region})
+
+(observe symptomatic_mild_det_{age}_{age}_{grpout} symptomatic_mild_det_{age}_{region})
+(observe symptomatic_severe_det_{age}_{age}_{grpout} symptomatic_severe_det_{age}_{region})
+(observe recovered_det_{age}_{age}_{grpout} recovered_det_{age}_{region})
+""".format(grpout=grpout, age=age, region=region)
+
+    observe_tertiary_channels_str = """
+(observe infectious_undet_{age}_{age}_{grpout} infectious_undet_{age}_{region})
+(observe infectious_det_{age}_{age}_{grpout} infectious_det_{age}_{region})
+(observe infectious_det_symp_{age}_{age}_{grpout} infectious_det_symp_{age}_{region})
+(observe infectious_det_AsP_{age}_{age}_{grpout} infectious_det_AsP_{age}_{region})
+
+(observe prevalence_{age}_{age}_{grpout} prevalence_{age}_{region})    
+(observe seroprevalence_{age}_{age}_{grpout} seroprevalence_{age}_{region} )
+(observe prevalence_det_{age}_{age}_{grpout} prevalence_det_{age}_{region})    
+(observe seroprevalence_det_{age}_{age}_{grpout} seroprevalence_det_{age}_{region} )
+""".format(grpout=grpout, age=age, region=region)
+
+    if observeLevel == 'primary' :
+        observe_str = observe_primary_channels_str
+    if observeLevel == 'secondary' :
+        observe_str = observe_primary_channels_str + observe_secondary_channels_str
+    if observeLevel == 'tertiary' :
+        observe_str = observe_primary_channels_str +  observe_tertiary_channels_str
+    if observeLevel == 'all' :
+        observe_str = observe_primary_channels_str + observe_secondary_channels_str + observe_tertiary_channels_str
+        
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
@@ -185,59 +220,101 @@ def write_observed_param(ageList, regionList):
 def write_functions(age, region, expandModel=None):
 
     functions_str = """
+(func presymptomatic_{age}_{region}  (+ P_{age}::{region} P_det_{age}::{region}))
+
 (func hospitalized_{age}_{region}  (+ H1_{age}::{region} H2_{age}::{region} H3_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region}))
+(func hosp_det_{age}_{region}  (+ H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region}))
 (func critical_{age}_{region} (+ C2_{age}::{region} C3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
+(func crit_det_{age}_{region} (+ C2_det3_{age}::{region} C3_det3_{age}::{region}))
 (func deaths_{age}_{region} (+ D3_{age}::{region} D3_det3_{age}::{region}))
 (func recovered_{age}_{region} (+ RAs_{age}::{region} RSym_{age}::{region} RH1_{age}::{region} RC2_{age}::{region} RAs_det1_{age}::{region} RSym_det2_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region}))
+(func recovered_det_{age}_{region} (+ RAs_det1_{age}::{region} RSym_det2_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region}))
+
 (func asymp_cumul_{age}_{region} (+ asymptomatic_{age}_{region} RAs_{age}::{region} RAs_det1_{age}::{region} ))
 (func asymp_det_cumul_{age}_{region} (+ As_det1_{age}::{region} RAs_det1_{age}::{region}))
+
 (func symp_mild_cumul_{age}_{region} (+ symptomatic_mild_{age}_{region} RSym_{age}::{region} RSym_det2_{age}::{region}))
-(func symp_mild_det_cumul_{age}_{region} (+ RSym_det2_{age}::{region} Sym_det2_{age}::{region}))
+(func symp_mild_det_cumul_{age}_{region} (+ symptomatic_mild_det_{age}_{region} RSym_det2_{age}::{region} ))
+
 (func symp_severe_cumul_{age}_{region} (+ symptomatic_severe_{age}_{region} hospitalized_{age}_{region} critical_{age}_{region} deaths_{age}_{region} RH1_{age}::{region} RC2_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region}))
-(func symp_severe_det_cumul_{age}_{region} (+ Sys_det3_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region} D3_det3_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region}))
+(func symp_severe_det_cumul_{age}_{region} (+ symptomatic_severe_det_{age}_{region} hosp_det_{age}_{region} crit_det_{age}_{region} D3_det3_{age}::{region}  RH1_det3_{age}::{region} RC2_det3_{age}::{region}))
+
 (func hosp_cumul_{age}_{region} (+ hospitalized_{age}_{region} critical_{age}_{region} deaths_{age}_{region} RH1_{age}::{region} RC2_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region}))
-(func hosp_det_cumul_{age}_{region} (+ H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region} D3_det3_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region}))
+(func hosp_det_cumul_{age}_{region} (+ H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region} D3_det3_{age}::{region}  RH1_det3_{age}::{region}  RC2_det3_{age}::{region}))
 (func crit_cumul_{age}_{region} (+ deaths_{age}_{region} critical_{age}_{region} RC2_{age}::{region} RC2_det3_{age}::{region}))
 (func crit_det_cumul_{age}_{region} (+ C2_det3_{age}::{region} C3_det3_{age}::{region} D3_det3_{age}::{region} RC2_det3_{age}::{region}))
-(func crit_det_{age}_{region} (+ C2_det3_{age}::{region} C3_det3_{age}::{region}))
-(func detected_cumul_{age}_{region} (+ (+ As_det1_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}) RAs_det1_{age}::{region} RSym_det2_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region} D3_det3_{age}::{region}))
+(func detected_cumul_{age}_{region} (+ As_det1_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region} RAs_det1_{age}::{region} RSym_det2_{age}::{region} RH1_det3_{age}::{region} RC2_det3_{age}::{region} D3_det3_{age}::{region}))
 (func death_det_cumul_{age}_{region} D3_det3_{age}::{region} )
 
-(func detected_{age}_{region} (+ As_det1_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
 (func infected_{age}_{region} (+ infectious_det_{age}_{region} infectious_undet_{age}_{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
+(func infected_det_{age}_{region} (+ infectious_det_{age}_{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
 (func infected_cumul_{age}_{region} (+ infected_{age}_{region} recovered_{age}_{region} deaths_{age}_{region}))    
+
+(func prevalence_{age}_{region} (/ infected_{age}_{region} N_{age}_{region}))    
+(func seroprevalence_{age}_{region} (/ (+ infected_{age}_{region} recovered_{age}_{region}) N_{age}_{region}))    
+
+(func prevalence_det_{age}_{region} (/ infected_det_{age}_{region} N_{age}_{region}))    
+(func seroprevalence_det_{age}_{region} (/ (+ infected_det_{age}_{region} recovered_det_{age}_{region}) N_{age}_{region}))    
+
 """.format(age=age, region=region)
-    functions_str = functions_str.replace("  ", "")
     
 
     expand_base_str = """
 (func asymptomatic_{age}_{region}  (+ As_{age}::{region} As_det1_{age}::{region}))
-(func presymptomatic_{age}_{region}  (+ P_{age}::{region} P_det_{age}::{region}))
+
 (func symptomatic_mild_{age}_{region}  (+ Sym_{age}::{region} Sym_det2_{age}::{region}))
+(func symptomatic_mild_det_{age}_{region}  (- symptomatic_mild_{age}_{region}  Sym_{age}::{region}))
+
 (func symptomatic_severe_{age}_{region}  (+ Sys_{age}::{region} Sys_det3_{age}::{region}))
+(func symptomatic_severe_det_{age}_{region}   (- symptomatic_severe_{age}_{region} Sys_{age}::{region}))
+
+(func detected_{age}_{region} (+ As_det1_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
+
 (func infectious_undet_{age}_{region} (+ As_{age}::{region} P_{age}::{region} Sym_{age}::{region} Sys_{age}::{region} H1_{age}::{region} H2_{age}::{region} H3_{age}::{region} C2_{age}::{region} C3_{age}::{region}))
 (func infectious_det_{age}_{region} (+ As_det1_{age}::{region} P_det_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} ))
+
+(func infectious_det_symp_{age}_{region} (+ Sym_det2_{age}::{region} Sys_det3_{age}::{region} ))
+(func infectious_det_AsP_{age}_{region} (+ As_det1_{age}::{region} P_det_{age}::{region}))
 """.format(age=age, region=region)
 
 
     expand_testDelay_SymSys_str = """
 (func asymptomatic_{age}_{region}  (+ As_{age}::{region} As_det1_{age}::{region}))
-(func presymptomatic_{age}_{region}  (+ P_{age}::{region} P_det_{age}::{region}))
+
 (func symptomatic_mild_{age}_{region}  (+ Sym_{age}::{region} Sym_preD_{age}::{region} Sym_det2_{age}::{region}))
+(func symptomatic_mild_det_{age}_{region}  (-  symptomatic_mild_{age}_{region} Sym_{age}::{region} Sym_preD_{age}::{region} ))
+
 (func symptomatic_severe_{age}_{region}  (+ Sys_{age}::{region} Sys_preD_{age}::{region} Sys_det3_{age}::{region}))
+(func symptomatic_severe_det_{age}_{region}  (- symptomatic_severe_{age}_{region} Sys_{age}::{region} Sys_preD_{age}::{region} ))
+
+(func detected_{age}_{region} (+ As_det1_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
+
 (func infectious_undet_{age}_{region} (+ As_{age}::{region} P_{age}::{region} Sym_preD_{age}::{region} Sym_{age}::{region} Sys_preD_{age}::{region} Sys_{age}::{region} H1_{age}::{region} H2_{age}::{region} H3_{age}::{region} C2_{age}::{region} C3_{age}::{region}))
 (func infectious_det_{age}_{region} (+ As_det1_{age}::{region} P_det_{age}::{region} Sym_det2_{age}::{region} Sys_det3_{age}::{region} ))
+
+(func infectious_det_symp_{age}_{region} (+ Sym_det2_{age}::{region} Sys_det3_{age}::{region} ))
+(func infectious_det_AsP_{age}_{region} (+ As_det1_{age}::{region} P_det_{age}::{region}))
 """.format(age=age, region=region)
 
 
     expand_testDelay_AsSymSys_str = """
 (func asymptomatic_{age}_{region}  (+ As_preD_{age}::{region} As_{age}::{region} As_det1_{age}::{region}))
-(func presymptomatic_{age}_{region}  (+ P_{age}::{region} P_det_{age}::{region}))
+
 (func symptomatic_mild_{age}_{region}  (+ Sym_{age}::{region} Sym_preD_{age}::{region} Sym_det2a_{age}::{region} Sym_det2b_{age}::{region}))
+(func symptomatic_mild_det_{age}_{region}  (- symptomatic_mild_{age}_{region} Sym_{age}::{region} Sym_preD_{age}::{region} ))
+
 (func symptomatic_severe_{age}_{region}  (+ Sys_{age}::{region} Sys_preD_{age}::{region} Sys_det3a_{age}::{region} Sys_det3b_{age}::{region}))
+(func symptomatic_severe_det_{age}_{region}  (- symptomatic_severe_{age}_{region} Sys_{age}::{region} Sys_preD_{age}::{region} ))
+
+(func detected_{age}_{region} (+ As_det1_{age}::{region} Sym_det2a_{age}::{region} Sym_det2b_{age}::{region} Sys_det3a_{age}::{region} Sys_det3b_{age}::{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
+
 (func infectious_undet_{age}_{region} (+ As_preD_{age}::{region} As_{age}::{region} P_{age}::{region} Sym_{age}::{region} Sym_preD_{age}::{region} Sys_{age}::{region} Sys_preD_{age}::{region} H1_{age}::{region} H2_{age}::{region} H3_{age}::{region} C2_{age}::{region} C3_{age}::{region}))
 (func infectious_det_{age}_{region} (+ As_det1_{age}::{region} P_det_{age}::{region} Sym_det2a_{age}::{region} Sym_det2b_{age}::{region} Sys_det3a_{age}::{region} Sys_det3b_{age}::{region}))
+
+(func infectious_det_symp_{age}_{region} (+ Sym_det2a_{age}::{region} Sym_det2b_{age}::{region} Sys_det3a_{age}::{region} Sys_det3b_{age}::{region} ))
+(func infectious_det_AsP_{age}_{region} (+ As_det1_{age}::{region} P_det_{age}::{region}))
 """.format(age=age, region=region)
+
 
 
     if expandModel == None:
@@ -331,58 +408,53 @@ def write_params(expandModel=None):
 
 def write_age_specific_param(grp, expandModel):
     grp = str(grp)
-    params_str =  """
-(param fraction_severe_{grp} @fraction_severe_{grp}@)
-(param Ksys{grp} (* fraction_severe_{grp} (/ 1 time_to_symptoms)))
-(param Ksym{grp} (* (- 1 fraction_severe_{grp}) (/ 1 time_to_symptoms))) 
 
-(param fraction_dead_{grp} @fraction_dead_{grp}@)
-
-(param fraction_critical_{grp} @fraction_critical_{grp}@ )
-(param fraction_hospitalized_{grp} @fraction_hospitalized_{grp}@)
-
-(param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
-(param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) time_to_infectious))
-(param Ks{grp} (/ fraction_symptomatic_{grp}  time_to_infectious))
-
-(param recovery_time_hosp_{grp} @recovery_time_hosp_{grp}@)
-(param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))
-
-""".format(grp=grp)    
+    params_str = """
+    (param fraction_severe_{grp} @fraction_severe_{grp}@)
+    (param Ksys{grp} (* fraction_severe_{grp} (/ 1 time_to_symptoms)))
+    (param Ksym{grp} (* (- 1 fraction_severe_{grp}) (/ 1 time_to_symptoms))) 
+    (param fraction_dead_{grp} @fraction_dead_{grp}@)
+    (param fraction_critical_{grp} @fraction_critical_{grp}@ )
+    (param fraction_hospitalized_{grp} @fraction_hospitalized_{grp}@)
+    (param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
+    (param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) time_to_infectious))
+    (param Ks{grp} (/ fraction_symptomatic_{grp}  time_to_infectious))
+    (param recovery_time_hosp_{grp} @recovery_time_hosp_{grp}@)
+    (param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))
+    """.format(grp=grp)
 
     expand_base_str = """
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-""".format(grp=grp)    
+    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+    """.format(grp=grp)
 
     expand_uniformtestDelay_str = """
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
-(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
-(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
-""".format(grp=grp)    
-
+    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+    (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
+    (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
+    (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
+    """.format(grp=grp)
 
     expand_testDelay_SymSys_str = """
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
-(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
-""".format(grp=grp)    
+    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+    (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+    (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+    (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+    """.format(grp=grp)
 
     expand_testDelay_AsSymSys_str = """
-(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
-(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
-""".format(grp=grp)    
+    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+    (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+    (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+    (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+    """.format(grp=grp)
 
     if expandModel == None:
         params_str = params_str + expand_base_str
@@ -394,7 +466,6 @@ def write_age_specific_param(grp, expandModel):
         params_str = params_str + expand_testDelay_AsSymSys_str
 
     params_str = params_str.replace("  ", " ")
-
 
     return params_str
 
@@ -814,7 +885,7 @@ def write_interventions(regionList, total_string, scenarioName, expandModel, cha
 
 
 ###stringing all of my functions together to make the file:
-def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_output, expandModel, add_interventions, add_migration=True, change_testDelay =None):
+def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_output, expandModel, add_interventions,observeLevel ='secondary', add_migration=True, change_testDelay =None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -845,7 +916,7 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
             total_string = total_string + species_init + species
 
     for age, region in [(x, y) for x in age_list for y in region_list]:
-         observe_string = observe_string + write_observe(age, region)
+         observe_string = observe_string + write_observe(age, region,observeLevel=observeLevel)
          if (add_migration):
             if age == "age20to29" or age == "age30to39" or age == "age40to49"  or age == "age50to59"  or age == "age60to69" :
                 reaction_string = reaction_string + write_travel_reaction(age, region)
