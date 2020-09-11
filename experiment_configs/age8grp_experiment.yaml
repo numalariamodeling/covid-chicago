@@ -581,31 +581,31 @@ sampled_parameters:
   fraction_dead_age70to100:
     np.random: uniform
     function_kwargs: {'low':0.241, 'high': 0.318}
-  #####  CFR
-  cfr_age0to9:
-    np.random: uniform
-    function_kwargs: {'low':0.0004, 'high': 0.0004}
-  cfr_age10to19:
-    np.random: uniform
-    function_kwargs: {'low':0.0015, 'high': 0.0015}
-  cfr_age20to29:
-    np.random: uniform
-    function_kwargs: {'low':0.0026, 'high': 0.0026}
-  cfr_age30to39:
-    np.random: uniform
-    function_kwargs: {'low':0.0044, 'high':0.0044}
-  cfr_age40to49:
-    np.random: uniform
-    function_kwargs: {'low':0.0062, 'high':0.0062}
-  cfr_age50to59:
-    np.random: uniform
-    function_kwargs: {'low':0.0169, 'high': 0.0169}
-  cfr_age60to69:
-    np.random: uniform
-    function_kwargs: {'low':0.0442, 'high': 0.0442}
-  cfr_age70to100:
-    np.random: uniform
-    function_kwargs: {'low':0.1609, 'high': 0.1609}
+  #####  CFR - placeholders from Verity et al 2020
+  #cfr_age0to9:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.0004, 'high': 0.0004}
+  #cfr_age10to19:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.0015, 'high': 0.0015}
+  #cfr_age20to29:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.0026, 'high': 0.0026}
+  #cfr_age30to39:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.0044, 'high':0.0044}
+  #cfr_age40to49:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.0062, 'high':0.0062}
+  #cfr_age50to59:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.0169, 'high': 0.0169}
+  #cfr_age60to69:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.0442, 'high': 0.0442}
+  #cfr_age70to100:
+  #  np.random: uniform
+  #  function_kwargs: {'low':0.1609, 'high': 0.1609}
   #####  fraction_symptomatic
   fraction_symptomatic_age0to9:
     np.random: uniform
