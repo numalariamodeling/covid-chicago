@@ -486,7 +486,7 @@ def repeat_string_by_grp(fixedstring, grpList1, grpList2):
 def write_All(ageList, regionList, observeLevel='primary'):
     
     obs_primary_All_str = ""
-    obs_primary_All_str = obs_primary_All_str + "\n(observe susceptible_All (+ " + repeat_string_by_grp('S::',  ageList, regionList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe susceptible_All (+ " + repeat_string_by_grp('S_',  ageList, regionList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe infected_All (+ " + repeat_string_by_grp('infected_',  ageList, regionList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',     ageList, regionList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe infected_cumul_All (+ " + repeat_string_by_grp('infected_cumul_',  ageList, regionList) + "))"
@@ -518,12 +518,12 @@ def write_All(ageList, regionList, observeLevel='primary'):
     
     
     obs_secondary_All_str = ""
-    obs_secondary_All_str = obs_secondary_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E::',   ageList, regionList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E_',   ageList, regionList) + "))"
     
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_All (+ " + repeat_string_by_grp( 'asymptomatic_',  ageList, regionList) + "))"
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_det_All (+ "  + repeat_string_by_grp('As_det1::',   ageList, regionList) + "))"
     
-    obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P::',  ageList, regionList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P_',  ageList, regionList) + "))"
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_det_All (+ " + repeat_string_by_grp('P_det::',  ageList, regionList) + "))"
 
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe detected_All (+ " + repeat_string_by_grp( 'detected_',  ageList, regionList) + "))"
