@@ -233,33 +233,34 @@ echo end""")
             fname,exp_name
         ))
 
-        file = open(os.path.join(temp_exp_dir, 'runTrimTrajectories.bat'), 'w')
-        file.write('cd {} \n python trim_trajectoriesDat.py "{}" "{}" "{}" \npause'.format(
-            os.path.join(git_dir, "plotters"),
-            exp_name,'120','15',
-        ))
+        if experiment_config == "spatial_EMS_experiment.yaml" :
+            file = open(os.path.join(temp_exp_dir, 'runTrimTrajectories.bat'), 'w')
+            file.write('cd {} \n python trim_trajectoriesDat.py "{}" "{}" "{}" \npause'.format(
+                os.path.join(git_dir, "plotters"),
+                exp_name,'120','15',
+            ))
 
-        ## runProcessForCivis
-        file = open(os.path.join(temp_exp_dir, 'runProcessForCivis.bat'), 'w')
-        file.write('cd {} \n python process_for_civis_EMSgrp.py "{}" "{}" \npause'.format(
-            os.path.join(git_dir, "plotters"),
-            exp_name, "generate_outputs"
-        ))
+            ## runProcessForCivis
+            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis.bat'), 'w')
+            file.write('cd {} \n python process_for_civis_EMSgrp.py "{}" "{}" \npause'.format(
+                os.path.join(git_dir, "plotters"),
+                exp_name, "generate_outputs"
+            ))
 
+            ## runOverflow_probabilities
+            file = open(os.path.join(temp_exp_dir, 'runOverflow_probabilities.bat'), 'w')
+            file.write('cd {} \n python overflow_probabilities.py "{}" \npause'.format(
+                os.path.join(git_dir, "plotters"),
+                exp_name
+            ))
 
-        ## runOverflow_probabilities
-        file = open(os.path.join(temp_exp_dir, 'runOverflow_probabilities.bat'), 'w')
-        file.write('cd {} \n python overflow_probabilities.py "{}" \npause'.format(
-            os.path.join(git_dir, "plotters"),
-            exp_name
-        ))
-
-        ## locale_age_postprocessing
-        file = open(os.path.join(temp_exp_dir, 'locale_age_postprocessing.bat'), 'w')
-        file.write('cd {} \n python locale_age_postprocessing.py "{}"  \npause'.format(
-            os.path.join(git_dir, "plotters"),
-            exp_name
-        ))
+        if experiment_config != "EMSspecific_sample_parameters.yaml" :
+            ## locale_age_postprocessing
+            file = open(os.path.join(temp_exp_dir, 'locale_age_postprocessing.bat'), 'w')
+            file.write('cd {} \n python locale_age_postprocessing.py "{}"  \npause'.format(
+                os.path.join(git_dir, "plotters"),
+                exp_name
+            ))
 
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir,  temp_exp_dir) :
