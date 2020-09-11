@@ -1,9 +1,9 @@
 experiment_setup_parameters:
-  'number_of_samples': 20
+  'number_of_samples': 700
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
-  'random_seed': 19
+  'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
   populations:
@@ -198,9 +198,9 @@ intervention_parameters:
   #'reopening_multiplier_3':
   #  np.random: uniform
   #  function_kwargs: {'low':0.06, 'high':0.06}
-  #'reopening_multiplier_4':
-  #  np: linspace
-  #  function_kwargs: {'start':0, 'stop':0.20, 'num' : 4}
+  'reopening_multiplier_4':
+    np: linspace
+    function_kwargs: {'start':0, 'stop':0.20, 'num' : 1}
   ### INCREASE DETECTION RATES of asymptomatic, presymptomatic and mild infections
   'd_AsP_ct1':
     np.random: uniform
@@ -338,6 +338,12 @@ time_parameters:
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
     #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
+  'cfr_time_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01}   
+  'cfr_time_2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-01}   
 fitted_parameters:
   Kis:
     'NMH_catchment':

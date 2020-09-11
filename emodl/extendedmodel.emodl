@@ -48,107 +48,100 @@
 
 
 
-(func asymptomatic  (+ As_preD As As_det1))
-(func symptomatic_mild  (+ Sym Sym_preD Sym_det2a Sym_det2b))
-(func symptomatic_severe  (+ Sys Sys_preD Sys_det3a Sys_det3b))
+(func asymptomatic (+ As_preD As As_det1))
+
+(func symptomatic_mild (+ Sym Sym_preD Sym_det2a Sym_det2b))
+(func symptomatic_mild_det (+ Sym_preD Sym_det2a Sym_det2b))
+
+(func symptomatic_severe (+ Sys Sys_preD Sys_det3a Sys_det3b))
+(func symptomatic_severe_det (+ Sys_preD Sys_det3a Sys_det3b))
+
+(func detected (+ As_det1 Sym_det2a Sym_det2b Sys_det3a Sys_det3b H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
+
 (func infectious_undet (+ As_preD As P Sym Sym_preD Sys Sys_preD H1 H2 H3 C2 C3))
 (func infectious_det (+ As_det1 P_det Sym_det2a Sym_det2b Sys_det3a Sys_det3b))
 
 (func infectious_det_symp (+ Sym_det2a Sym_det2b Sys_det3a Sys_det3b ))
 (func infectious_det_AsP (+ As_det1 P_det))
 
-(func presymptomatic(+ P P_det))
-(func presymptomatic_det(- presymptomatic P))
-(func asymptomatic_det(- asymptomatic As))
-(func symptomatic_mild_det(- symptomatic_mild Sym))
-(func symptomatic_severe_det(- symptomatic_severe Sys))
+(func presymptomatic (+ P P_det))
 
-(func hospitalized(+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
-(func hospitalized_det(+ H1_det3 H2_det3 H3_det3))
+(func hospitalized (+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
+(func hosp_det (+ H1_det3 H2_det3 H3_det3))
 (func critical (+ C2 C3 C2_det3 C3_det3))
-(func critical_det (+ C2_det3 C3_det3))
+(func crit_det (+ C2_det3 C3_det3))
 (func deaths (+ D3 D3_det3))
 (func recovered (+ RAs RSym RH1 RC2 RAs_det1 RSym_det2 RH1_det3 RC2_det3))
 (func recovered_det (+ RAs_det1 RSym_det2 RH1_det3 RC2_det3))
+
 (func asymp_cumul (+ asymptomatic RAs RAs_det1 ))
 (func asymp_det_cumul (+ As_det1 RAs_det1))
+
 (func symp_mild_cumul (+ symptomatic_mild RSym RSym_det2))
-(func symp_mild_det_cumul (+ RSym_det2 Sym_det2))
+(func symp_mild_det_cumul (+ symptomatic_mild_det RSym_det2 ))
+
 (func symp_severe_cumul (+ symptomatic_severe hospitalized critical deaths RH1 RC2 RH1_det3 RC2_det3))
-(func symp_severe_det_cumul (+ Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3 D3_det3 RH1_det3 RC2_det3))
+(func symp_severe_det_cumul (+ symptomatic_severe_det hosp_det crit_det D3_det3 RH1_det3 RC2_det3))
+
 (func hosp_cumul (+ hospitalized critical deaths RH1 RC2 RH1_det3 RC2_det3))
 (func hosp_det_cumul (+ H1_det3 H2_det3 H3_det3 C2_det3 C3_det3 D3_det3 RH1_det3 RC2_det3))
 (func crit_cumul (+ deaths critical RC2 RC2_det3))
 (func crit_det_cumul (+ C2_det3 C3_det3 D3_det3 RC2_det3))
-(func crit_det (+ C2_det3 C3_det3))
-(func detected_cumul (+ (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
+(func detected_cumul (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3 RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
 (func death_det_cumul D3_det3 )
 
-(func detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected (+ infectious_det infectious_undet H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected_det (+ infectious_det H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
-(func infected_cumul (+ infected recovered deaths))
+(func infected_cumul (+ infected recovered deaths))  
 
-(func prevalence (/ infected N))
-(func seroprevalence (/ (+ infected recovered) N))
+(func prevalence (/ infected N))  
+(func seroprevalence (/ (+ infected recovered) N))  
 
-(func prevalence_det (/ infected_det N))
-(func seroprevalence_det (/ (+ infected_det recovered_det) N))
+(func prevalence_det (/ infected_det N))  
+(func seroprevalence_det (/ (+ infected_det recovered_det) N))  
 
 
 
 
 (observe susceptible S)
-(observe exposed E)
-(observe asymptomatic asymptomatic)
-(observe presymptomatic presymptomatic)
-(observe symptomatic_mild symptomatic_mild)
-(observe symptomatic_severe symptomatic_severe)
-(observe hospitalized hospitalized)
-(observe critical critical)
-(observe deaths deaths)
+(observe infected infected)
 (observe recovered recovered)
-
-(observe asymptomatic_det asymptomatic_det)
-(observe presymptomatic_det presymptomatic_det )
-(observe symptomatic_mild_det symptomatic_mild_det)
-(observe symptomatic_severe_det symptomatic_severe_det)
-(observe hospitalized_det hospitalized_det)
-(observe critical_det critical_det)
-(observe deaths_det D3_det3)
-(observe recovered_det recovered_det)
+(observe infected_cumul infected_cumul)
 
 (observe asymp_cumul asymp_cumul )
 (observe asymp_det_cumul asymp_det_cumul)
+(observe symptomatic_mild symptomatic_mild)
+(observe symptomatic_severe symptomatic_severe)
 (observe symp_mild_cumul symp_mild_cumul)
-
 (observe symp_severe_cumul symp_severe_cumul)
- 
-(observe hosp_cumul hosp_cumul)
-(observe hosp_det_cumul hosp_det_cumul )
-(observe crit_cumul crit_cumul)
-(observe crit_det_cumul crit_det_cumul)
-(observe crit_det crit_det)
-(observe death_det_cumul death_det_cumul )
-
-(observe infected infected)
-(observe infected_cumul infected_cumul)
-
-(observe infectious_undet infectious_undet)
-(observe infectious_det infectious_det)
-(observe infectious_det_symp infectious_det_symp)
-(observe infectious_det_AsP infectious_det_AsP)
-
 (observe symp_mild_det_cumul symp_mild_det_cumul)
 (observe symp_severe_det_cumul symp_severe_det_cumul)
-(observe detected detected)
+
+(observe hosp_det_cumul hosp_det_cumul )
+(observe hosp_cumul hosp_cumul)
 (observe detected_cumul detected_cumul )
 
-(observe prevalence prevalence)  
-(observe seroprevalence seroprevalence )
-(observe prevalence_det prevalence_det)  
-(observe seroprevalence_det seroprevalence_det )
+(observe crit_cumul crit_cumul)
+(observe crit_det_cumul crit_det_cumul)
+(observe death_det_cumul death_det_cumul )
 
+(observe deaths_det D3_det3)
+(observe deaths deaths)
+
+(observe crit_det crit_det)
+(observe critical critical)
+(observe hosp_det hosp_det)
+(observe hospitalized hospitalized)
+
+(observe exposed E)
+(observe asymptomatic asymptomatic)
+(observe presymptomatic presymptomatic)
+(observe detected detected)
+(observe asymptomatic_det As_det1)
+(observe presymptomatic_det P_det )
+(observe symptomatic_mild_det symptomatic_mild_det)
+(observe symptomatic_severe_det symptomatic_severe_det)
+(observe recovered_det recovered_det)
 
 
 
@@ -163,9 +156,12 @@
 (param recovery_time_crit @recovery_time_crit@)
 (param fraction_symptomatic @fraction_symptomatic@)
 (param fraction_severe @fraction_severe@)
-(param fraction_hospitalized @fraction_hospitalized@)
 (param fraction_critical @fraction_critical@ )
-(param fraction_dead @fraction_dead@)
+
+(param cfr @cfr@)
+(param fraction_dead (/ cfr fraction_severe))
+(param fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))
+
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
 (param reduced_inf_of_det_cases_ct 0)	
 
@@ -209,8 +205,11 @@
 (observe d_As_t d_As)
 (observe d_P_t d_P)
 (observe d_Sym_t d_Sym)
+(observe frac_crit_t fraction_critical)
+(observe fraction_hospitalized_t fraction_hospitalized)
+(observe fraction_dead_t fraction_dead)
+(observe cfr_t cfr)
 (observe d_Sys_t d_Sys)
-;(observe frac_crit_t fraction_critical)
 
 (param N (+ @speciesS@ @initialAs@) )
 
@@ -225,7 +224,12 @@
 (time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
 (time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
 (time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-    
+
+(param cfr_change1 (* @cfr@ (/ 2 3) ) )
+(param cfr_change2 (* @cfr@ (/ 1 3) ) )
+(time-event cfr_adjust1 @cfr_time_1@ ((cfr cfr_change1) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event cfr_adjust2 @cfr_time_2@ ((cfr cfr_change2) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+
 (param Ki_red1 (* Ki @social_multiplier_1@))
 (param Ki_red2 (* Ki @social_multiplier_2@))
 (param Ki_red3 (* Ki @social_multiplier_3@))

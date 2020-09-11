@@ -68,9 +68,60 @@ Current scenarios include:
 
 For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
-## 1.3. Age and spatial model structures
+## 1.3. Model outcomes
 
-### 1.3.1. Age-structured model 
+Currently the model includes 28 compartments of wich 43 outcome variables are generated.
+The outcome variables or channels, as referred to in the py plotters, are different aggregates of the main compartments by type (i.e. all detected, all severe symptomatic) and includes cumulative counts for the calculation of incidences during postprocessing. 
+A ranking 'observeLevel' was introduced to select subsets of the outcomes. The primary outcomes are those required for the weekly deliverables, the secondary are the related outcomes that are not required for the standard outputs and tertiary are those that can easily be calculated outside the model, such as prevalence, or outcomes rarely used such as infectiousness by symptomatic type and detection level. 
+
+
+| alphabet.   No | name                   | description                                                                            | observeLevel | compartments  included                                                                                                   |
+|----------------|------------------------|----------------------------------------------------------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------|
+| 1              | asymp_cumul            | Number of all asymptomatic infections that happened (cumulative)                       | primary      | asymptomatic, RA, RAs_det1                                                                                             |
+| 2              | asymp_det_cumul        | Number of all detected asymptomatic infections that happened (cumulative)              | secondary    | As_det1, RAs_det1                                                                                                      |
+| 3              | asymptomatic           | Number of asymptomatic infections                                                      | secondary    | As                                                                                                                     |
+| 4              | asymptomatic_det       | Number of  detected asymptomatic   infections                                          | secondary    | As_det1                                                                                                                |
+| 5              | crit_cumul             | Number of all critical cases that happened (cumulative)                                | primary      | deaths, critical, RC2,RC2_det3                                                                                         |
+| 6              | crit_det               | Number of critical cases that are detected                                             | primary      | C2_det3, C3_det3                                                                                                       |
+| 7              | crit_det_cumul         | Number of all detected critical cases that happened (cumulative)                       | primary      | C2_det3, C3_det3, D3_det3, RC2_det3                                                                                    |
+| 8              | critical               | Number of severe symptomatic infections that are hospitalized that are   critical      | primary      | C2, C3,  C2_det3,  C3_det3                                                                                             |
+| 9              | death                  | Number of COVID-19 deaths in the population                                            | primary      | D3, D3_det3                                                                                                            |
+| 11             | death_det_cumul        | Number of all detected COVID-19 deaths in the population that happened                 | primary      | D3_det3                                                                                                                |
+| 12             | detected               | Number of detected COVID-19 infections regardless of symptomaticity                    | primary      |  As_det1, Sym_det2, Sys_det3,   H1_det3, H2_det3, H3_det3, C2_det3, C3_det3                                            |
+| 13             | detected_cumul         | Number of all detected COVID-19 infections regardless of symptomaticity   (cumulative) | primary      | As_det1, Sym_det2, Sys_det3, H1_det3, H2_det3, C2_det3, C3_det3,   RAs_det1, RSym_det2, RH1_det3, RC2_det3,    D3_det3 |
+| 14             | exposed                | Number of exposed (infected not yet infectious) in the population                      | secondary    | E                                                                                                                      |
+| 15             | hosp_cumul             | Number of all hospitalizations due to COVID-19 that happened (cumulative)              | primary      | hospitalized,  critical,  deaths,    RH1,  RC2,  RH1_det3,    RC2_det3                                                 |
+| 16             | hosp_det               | Number of detected COVID-19 hospitalizations                                           | primary      | H1_det3,  H2_det3,  H3_det3                                                                                            |
+| 17             | hosp_det_cumul         | Number of all detected COVID-19 hospitalizations that happened   (cumulative)          | primary      | H1_det3, H2_det3, H3_det3, C2_det3, C3_det3, D3_det3, RH1_det3,   RC2_det3                                             |
+| 18             | hospitalized           | Number of severe symptomatic infections that are hospitalized                          | primary      | H1,  H2,   H3,     H1_det3,  H2_det3,  H3_det3                                                                         |
+| 19             | infected               | Number of all infected in the population                                               | primary      | all except susceptibles                                                                                                |
+| 20             | infected_cumul         | Number of all that were infected (cumulative)                                          | secondary    | infected, recovered, deaths                                                                                            |
+| 21             | infected_det           | Number of all  infected that are   detected                                            | secondary    | infectious_det,  H1_det3,  H2_det3,    H3_det3,  C2_det3, C3_det3                                                      |
+| 23             | infectious_det         | Number of all infectious that are detected                                             | tertiary     | As_det1, P_det , Sym_det2, Sys_det3                                                                                    |
+| 24             | infectious_det_AsP     | Number of all non-symptomatic that are infectious and detected                         | tertiary     | As_det1, P_det                                                                                                         |
+| 25             | infectious_det_symp    | Number of all  symptomatic that are   infectious and detected                          | tertiary     | Sym_det2,  Sys_det3                                                                                                    |
+| 26             | infectious_undet       | Number of infectious that are not detected                                             | tertiary     | As, P, Sym, Sys, H1, H2, H3, C2, C3                                                                                    |
+| 27             | presymptomatic         | Number of presymptomatic infections                                                    | primary      | P, Pdet                                                                                                                |
+| 28             | presymptomatic_det     | Number of all detected presymptomatic infections                                       | secondary    | Pdet                                                                                                                   |
+| 29             | prevalence             | Number of infected (cumul) over total population                                       | tertiary     | infected /  N                                                                                                          |
+| 30             | prevalence_det         | Number of detected infected (cumul) over total population                              | tertiary     | infected_det /  N                                                                                                      |
+| 31             | recovered              | Number of recovered COVID-19 cases    in the population                                | primary      | RAs,RSym, RH1,  RC2, RAs_det1,   RSym_det2, RH1_det3, RC2_det3                                                         |
+| 32             | recovered_det          | Number of detected recovered COVID-19 cases in the population                          | primary      | RAs_det1, RSym_det2, RH1_det3, RC2_det3                                                                                |
+| 33             | seroprevalence         | Number of recovered (cumul) over total population                                      | tertiary     | (infected + recovered) /  N                                                                                            |
+| 34             | seroprevalence_det     | Number of detected recovered (cumul) over total population                             | tertiary     | (infected_det + recovered_det) /  N                                                                                    |
+| 35             | susceptible            | Number of susceptibles in the population                                               | primary      | S                                                                                                                      |
+| 36             | symp_mild_cumul        | Number of all mild symptomatic infections that happened (cumulative)                   | primary      | symptomatic_mild, RSym,  RSym_det2                                                                                     |
+| 37             | symp_mild_det_cumul    | Number of all detected mild symptomatic infections that happened   (cumulative)        | primary      | symptomatic_mild_det, RSym_det2                                                                                        |
+| 38             | symp_severe_cumul      | Number of all severe symptomatic infections that happened (cumulative)                 | primary      | symptomatic_severe, hospitalized,    critical,  deaths,  RH1,    RC2,  RH1_det3,  RC2_det3                             |
+| 39             | symp_severe_det_cumul  | Number of all detected severe symptomatic infections that happened   (cumulative)      | primary      | symptomatic_severe_det, hosp_det,    crit_det,  deaths_det                                                             |
+| 40             | symptomatic_mild       | Number of  mild symptomatic   infections                                               | primary      | Sym,  Sym_det2; Sym,  Sym_preD, Sym_det2 ;  Sym,    Sym_preD, Sym_det2a, Sym_det2b                                     |
+| 41             | symptomatic_mild_det   | Number of detected mild infections in the population                                   | secondary    | symptomatic_mild_det                                                                                                   |
+| 42             | symptomatic_severe     | Number of severe symptomatic infections                                                | secondary    | Sys, Sys_det3; Sys, Sys_preD, Sys_det3 ; Sys, Sys_preD, Sys_det3a,   Sys_det3b                                         |
+| 43             | symptomatic_severe_det | Number of detected severe symptomatic infections                                       | secondary    | symptomatic_severe_det                                                                                                 |
+
+## 1.4. Age and spatial model structures
+
+### 1.4.1. Age-structured model 
 The "age_model" duplicates each compartment of the simple or the extended model for n age groups. To allow the age groups to get in contact with each other at different rates, the Ki (contact rate * probability of transmission) needs to be specified for a all age-combinations. 
 
 -  Age groups: "0to9", "10to19", "20to29", "30to39", "40to49", "50to59", "60to69", "70to100" 
@@ -80,7 +131,7 @@ To generate or modify the emodl files use the [age specific emodl generator](htt
 #### Contact matrix
 The contacts between age groups were previously extracted for running an [EMOD model](https://idmod.org/documentation) from [Prem et al 2017](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005697). [Script that extracts the contact matrix values](https://github.com/numalariamodeling/covid-chicago/blob/master/age_model/age_contact/age_matrix_reducer.py). 
 
-### 1.3.2. Spatial model
+### 1.4.2. Spatial model
 The "spatial_model" uses a special syntax as described [here](https://idmod.org/docs/cms/create-spatial-model.html?searchText=spatial). 
 To generate or modify the emodl files use the [locale specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/locale_emodl_generator_extendedModel.py )
 - View the [EMS specific emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_EMS.emodl)
@@ -88,38 +139,9 @@ To generate or modify the emodl files use the [locale specific emmodl generator]
 #### Movement between areas
 [...]
 
-### 1.3.3. Spatial age-structured model
+### 1.4.3. Spatial age-structured model
 A test verion is available under [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_agelocale_scen3.emodl).
 To generate or modify the emodl files use the [locale-age specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/extended_cobey_age_locale_emodl_generator.py )
-
-## 1.4. Model updates
-
-### Main updates in model structure and fitted parameters
-- 20200825 updated parameter fit
-- 20200818 updated parameter fit, updated evolution of dSys and region-specific evolution of dSym
-- 20200812 updated parameter fit
-- 20200807 updated parameter fit
-- 20200804 updated parameter fit
-- 20200729 updated parameter fit, added region-specific evolution of dSym over time
-- 20200722 updated parameter fit, use covid regions instead of EMS regions for fitting (same numbering 1-11)
-- 20200715 updated parameter fit, added fifth social distancing multiplier (time event June 21st)
-- 20200706 added time-varying fraction_critical
-- 20200624 updated parameter fit
-- 20200622 adjusted increase in detection for severe and mild symptomatic cases 
-- 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
-- 20200616 updated parameter fit 
-- 20200610 updated parameter fit 
-- 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
-- 20200602 updated parameter fit 
-- 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
-- 20200521 added s_m_4, parameter fitting
-- 20200515 parameter fitting (also 20200512, 20200501)
-- 20200428 updated model disease and transmission parameters (previously 20200421, 20200419)
-- 20200428 added d_Sys_incr1-3  
-- 20200421 adding scale-invariant Ki
-- 20200407 add more detected observables
-- 20200402 [cobey](https://github.com/cobeylab/covid_IL) model alignment (including presymptomatic)
-- 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
 
 
 # 2. Software used
@@ -229,8 +251,41 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
 - covid data: IDPH 
 
-# Resources 
-- CMS software publication [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
+
+## 6. Model updates
+
+### Updates in model structure and fitted parameters
+- 20200909 updated parameter fit, updated evolution of CFR
+- 20200825 updated parameter fit
+- 20200818 updated parameter fit, updated evolution of dSys and region-specific evolution of dSym
+- 20200812 updated parameter fit
+- 20200807 updated parameter fit
+- 20200804 updated parameter fit
+- 20200729 updated parameter fit, added region-specific evolution of dSym over time
+- 20200722 updated parameter fit, use covid regions instead of EMS regions for fitting (same numbering 1-11)
+- 20200715 updated parameter fit, added fifth social distancing multiplier (time event June 21st)
+- 20200706 added time-varying fraction_critical
+- 20200624 updated parameter fit
+- 20200622 adjusted increase in detection for severe and mild symptomatic cases 
+- 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
+- 20200616 updated parameter fit 
+- 20200610 updated parameter fit 
+- 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
+- 20200602 updated parameter fit 
+- 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
+- 20200521 added s_m_4, parameter fitting
+- 20200515 parameter fitting (also 20200512, 20200501)
+- 20200428 updated model disease and transmission parameters (previously 20200421, 20200419)
+- 20200428 added d_Sys_incr1-3  
+- 20200421 adding scale-invariant Ki
+- 20200407 add more detected observables
+- 20200402 [cobey](https://github.com/cobeylab/covid_IL) model alignment (including presymptomatic)
+- 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
+
+
+# 7. Resources 
+- CMS software [publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [online documentation](https://idmod.org/docs/cms/index.html)
 - [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 - [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
 - [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
+

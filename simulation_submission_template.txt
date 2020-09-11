@@ -94,7 +94,7 @@ python runScenarios.py -rl Local -r EMS_3 -c EMSspecific_sample_parameters.yaml 
 ...
 
 ## Age model with age specific parameter -not using locale model  (testing)
-python runScenarios.py -rl Local -r EMS_11 -c age8grp_experiment.yaml -e extendedmodel_age8_param.emodl -cfg model_B.cfg -n "age8_ageparam_test"
+python runScenarios.py -rl Local -r EMS_11 -c age8grp_experiment.yaml -e extendedmodel_age8.emodl -cfg model_B.cfg -n "age8_ageparam_test"
 
 ## Age model with age specific parameter and migration using locale emodl  (testing)
 python runScenarios.py -rl Local -r IL -c age_locale_experiment.yaml -e extendedmodel_agelocale_scen3.emodl -cfg model_B.cfg -n "agelocale_test2"

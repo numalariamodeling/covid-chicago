@@ -43,20 +43,20 @@ def when_exceeds(trajectory, metric, lower_limit, upper_limit, maximum):
         ii += 1
     return ii
 
-column_list = ['scen_num', 'reopening_multiplier_4', 'hospitalized_det_All', 'crit_det_All']
+column_list = ['scen_num', 'reopening_multiplier_4', 'hosp_det_All', 'crit_det_All']
 for ems_region in range(1,12):
-    column_list.append('hospitalized_det_EMS-' + str(ems_region))
+    column_list.append('hosp_det_EMS-' + str(ems_region))
     column_list.append('crit_det_EMS-' + str(ems_region))
     #column_list.append('death_det_cumul_EMS-' + str(ems_region))
     
     
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
-    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds_template', 'capacity_weekday_average_20200901.csv'))
+    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds_template', 'capacity_weekday_average_20200908.csv'))
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
     
     for ems_region in range(1,12):
-        trajectories['total_hosp_census_EMS-' + str(ems_region)] = trajectories['hospitalized_det_EMS-'+str(ems_region)]+trajectories['crit_det_EMS-'+str(ems_region)]
+        trajectories['total_hosp_census_EMS-' + str(ems_region)] = trajectories['hosp_det_EMS-'+str(ems_region)]+trajectories['crit_det_EMS-'+str(ems_region)]
 
 
     lower_limit = 170

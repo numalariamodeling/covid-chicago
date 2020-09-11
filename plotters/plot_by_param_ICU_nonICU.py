@@ -15,8 +15,8 @@ mpl.rcParams['pdf.fonttype'] = 42
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
-first_plot_day = date(2020, 7, 1)
-last_plot_day = date(2020, 9, 15)
+first_plot_day = date(2020, 7, 15)
+last_plot_day = date(2020, 10, 15)
 
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
@@ -26,8 +26,8 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajec
 
     column_list = ['scen_num',  'time', 'startdate']
     for ems_region in range(1, 12):
-        column_list.append('critical_det_EMS-' + str(ems_region))
-        column_list.append('hospitalized_det_EMS-' + str(ems_region))
+        column_list.append('crit_det_EMS-' + str(ems_region))
+        column_list.append('hosp_det_EMS-' + str(ems_region))
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
     df.columns = df.columns.str.replace(region_suffix, '')
@@ -53,9 +53,9 @@ def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgr
 
     ref_df  = compare_ems(ems=ems, channel=channel)
 
-    if channel=="hospitalized_det":
+    if channel=="hosp_det":
         datachannel = 'covid_non_icu'
-    if channel=="critical_det":
+    if channel=="crit_det":
         datachannel = 'confirmed_covid_icu'
 
     ax.plot(ref_df['date'], ref_df[datachannel], 'o', color='#303030', linewidth=0, ms=3)
@@ -68,9 +68,9 @@ def compare_ems( ems,channel):
     ref_df = ref_df[ref_df['covid_region'] == ems]
     ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
 
-    if channel == "hospitalized_det":
+    if channel == "hosp_det":
         data_channel_names = ['covid_non_icu']
-    if channel == "critical_det":
+    if channel == "crit_det":
         data_channel_names = ['confirmed_covid_icu']
 
     ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
@@ -81,10 +81,10 @@ def compare_ems( ems,channel):
 
 def plot_covidregions(channel,subgroups, psuffix) :
 
-    fig = plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(14, 8))
     fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.95, bottom=0.07)
     palette = sns.color_palette('Set1', len(exp_names))
-    axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(subgroups))]
+    axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(subgroups))]
 
     for c, region_suffix in enumerate(subgroups) :
 
@@ -107,11 +107,10 @@ def plot_covidregions(channel,subgroups, psuffix) :
 
 if __name__ == '__main__' :
 
-    exp_names = ['20200811_IL_RR_fitting_0',
-                 '20200818_IL_RR_baseline_0']
+    exp_names = ['20200910_IL_test_v3']
 
-    #covidregionlist = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9', '_EMS-10', '_EMS-11']
-    covidregionlist = ['_EMS-1', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-9']
+    covidregionlist = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9', '_EMS-10', '_EMS-11']
+    #covidregionlist = ['_EMS-1', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-9']
 
-    plot_covidregions(channel='critical_det', subgroups = covidregionlist, psuffix ='13459_JulSep')
-    plot_covidregions(channel='hospitalized_det', subgroups = covidregionlist,  psuffix ='13459_JulSep')
+    plot_covidregions(channel='crit_det', subgroups = covidregionlist, psuffix ='_AugOct')
+    plot_covidregions(channel='hosp_det', subgroups = covidregionlist,  psuffix ='_AugOct')

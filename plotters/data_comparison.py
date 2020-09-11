@@ -18,15 +18,15 @@ datetoday = date(today.year, today.month, today.day)
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
+def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None, column_list=None) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, fname))
-    if 'Ki' not in df.columns.values :
-        scen_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
-        df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
+    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
+    #if 'Ki' not in df.columns.values :
+    #    scen_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
+    #    df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
 
     df.columns = df.columns.str.replace(region_suffix, '')
     df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
@@ -181,7 +181,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
 
     df['critical_with_suspected'] = df['critical']
     ref_df_emr = ref_df
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200824_jg_aggregated_covidregion.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200910_jg_aggregated_covidregion.csv'))
     if ems > 0:
         ref_df = ref_df[ref_df['covid_region'] == ems]
     else:
@@ -195,7 +195,7 @@ def compare_ems(exp_name, ems=0, source='EMR') :
     ref_df_ll = ref_df
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
     ref_df = ref_df.sort_values('date')
-    channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det', 'new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',

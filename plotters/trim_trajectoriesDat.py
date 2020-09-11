@@ -25,8 +25,8 @@ def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes='today',lagtime_days=15
                     'asymp_cumul', 'asymp_det_cumul',
                     'symp_mild_cumul', 'symptomatic_mild', 'symp_mild_det_cumul',
                     'symp_severe_cumul','symptomatic_severe', 'symp_severe_det_cumul',
-                    'hosp_det_cumul', 'hosp_cumul', 'hospitalized_det', 'hospitalized',
-                    'crit_cumul','crit_det_cumul', 'crit_det', 'critical_det', 'critical',
+                    'hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
+                    'crit_cumul','crit_det_cumul', 'crit_det',  'critical',
                     'death_det_cumul',  'deaths' ]
 
     if grpspecific_params == None:

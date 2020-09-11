@@ -1,4 +1,3 @@
-import argparse
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,35 +15,15 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 datetoday = date(today.year, today.month, today.day)
 
-def parse_args():
-    description = "Process simulation outputs to send to Civis"
-    parser = argparse.ArgumentParser(description=description)
+datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
-    parser.add_argument(
-        "-s", "--stem",
-        type=str,
-        help="Process only experiment names containing this string",
-        default=None,
-    )
-    parser.add_argument(
-        "-l", "--Location",
-        type=str,
-        help="Local or NUCLUSTER",
-        default='Local',
-    )
-
-    return parser.parse_args()
-    
-def load_sim_data(exp_name, ems_nr,  input_wdir=None, input_sim_output_path=None, column_list=None):
+def load_sim_data(exp_name, ems_nr,  input_wdir=None, fname= 'trajectoriesDat.csv', input_sim_output_path=None, column_list=None):
 
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), usecols=column_list)
-    if 'Ki' not in df.columns.values:
-        scen_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
-        df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
+    df = pd.read_csv(os.path.join(sim_output_path,fname), usecols=column_list)
 
     #df.columns = df.columns.str.replace('_All', '')
     df.columns = df.columns.str.replace('_EMS-' +str(ems_nr), '')
@@ -94,12 +73,12 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
     # return a
 
 
-def compare_ems(exp_name, ems=0):
+def compare_ems(exp_name,fname, ems_nr=0):
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
 
-    if ems > 0:
-        ref_df = ref_df[ref_df['covid_region'] == ems]
+    if ems_nr > 0:
+        ref_df = ref_df[ref_df['covid_region'] == ems_nr]
     else:
         ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
     ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
@@ -108,40 +87,24 @@ def compare_ems(exp_name, ems=0):
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
 
     column_list = ['time', 'startdate', 'scen_num', 'sample_num','run_num']
-    for ems_region in range(1, 12):
-        column_list.append('susceptible_EMS-' + str(ems_region))
-        column_list.append('infected_EMS-' + str(ems_region))
-        column_list.append('recovered_EMS-' + str(ems_region))
-        column_list.append('infected_cumul_EMS-' + str(ems_region))
-        column_list.append('asymp_cumul_EMS-' + str(ems_region))
-        column_list.append('asymp_det_cumul_EMS-' + str(ems_region))
-        column_list.append('symp_mild_cumul_EMS-' + str(ems_region))
-        column_list.append('symp_severe_cumul_EMS-' + str(ems_region))
-        column_list.append('symp_mild_det_cumul_EMS-' + str(ems_region))
-        column_list.append('symp_severe_det_cumul_EMS-' + str(ems_region))
-        column_list.append('hosp_det_cumul_EMS-' + str(ems_region))
-        column_list.append('hosp_cumul_EMS-' + str(ems_region))
-        column_list.append('detected_cumul_EMS-' + str(ems_region))
-        column_list.append('crit_cumul_EMS-' + str(ems_region))
-        column_list.append('crit_det_cumul_EMS-' + str(ems_region))
-        column_list.append('death_det_cumul_EMS-' + str(ems_region))
-        column_list.append('deaths_EMS-' + str(ems_region))
-        column_list.append('crit_det_EMS-' + str(ems_region))
-        column_list.append('critical_det_EMS-' + str(ems_region))
-        column_list.append('critical_EMS-' + str(ems_region))
-        column_list.append('hospitalized_det_EMS-' + str(ems_region))
-        column_list.append('hospitalized_EMS-' + str(ems_region))
 
-    df = load_sim_data(exp_name, ems_nr, column_list=column_list)
+    outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
+        'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'death_det_cumul',
+        'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
+
+    for channel in outcome_channels:
+        column_list.append(channel + "_EMS-" + str(ems_nr))
+
+    df = load_sim_data(exp_name, ems_nr, fname=fname,column_list=column_list)
     first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
     df['critical_with_suspected'] = df['critical']
     ref_df_emr = ref_df
 
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200831_jg_aggregated_covidregion.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200910_jg_aggregated_covidregion.csv'))
 
-    if ems > 0:
-        ref_df = ref_df[ref_df['covid_region'] == ems]
+    if ems_nr > 0:
+        ref_df = ref_df[ref_df['covid_region'] == ems_nr]
     else:
         ref_df = ref_df.groupby('date').agg(np.sum).reset_index()
     ref_df['date'] = pd.to_datetime(ref_df['date'])
@@ -152,7 +115,7 @@ def compare_ems(exp_name, ems=0):
     ref_df_ll = ref_df
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
     ref_df = ref_df.sort_values('date')
-    channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det', 'new_detected_deaths', 'new_deaths',
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths',
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
@@ -166,16 +129,12 @@ def compare_ems(exp_name, ems=0):
 
 
 if __name__ == '__main__':
-
-    args = parse_args()  
-    #Location = 'Local'
-    Location = args.Location
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
-
-    stem = args.stem
+    stem = sys.argv[1]
     #stem = "20200816_IL_testbaseline"
+    fname = 'trajectoriesDat.csv'  # 'trajectoriesDat_trim.csv'
+
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:
         for ems_nr in range(1,12):
-            compare_ems(exp_name, ems=int(ems_nr))
+            compare_ems(exp_name,fname=fname, ems_nr=int(ems_nr))
