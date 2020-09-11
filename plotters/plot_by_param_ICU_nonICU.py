@@ -15,8 +15,8 @@ mpl.rcParams['pdf.fonttype'] = 42
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
-first_plot_day = date(2020, 8, 1)
-last_plot_day = date(2020, 10, 1)
+first_plot_day = date(2020, 7, 15)
+last_plot_day = date(2020, 10, 15)
 
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
