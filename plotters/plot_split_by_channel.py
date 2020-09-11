@@ -59,7 +59,7 @@ if __name__ == '__main__' :
                  'channels2': ['infected_det',  'presymptomatic_det', 'infectious_det', 'asymptomatic_det', 'asymp_det_cumul'] }
 
     nchannels_hospCrit = {'channels1': ['hospitalized', 'new_hospitalized', 'hosp_cumul', 'critical', 'new_critical', 'crit_cumul'],
-                 'channels2': ['hospitalized_det',  'new_detected_hospitalized', 'hosp_det_cumul','crit_det',  'new_detected_critical', 'crit_det_cumul'] }
+                 'channels2': ['hosp_det',  'new_detected_hospitalized', 'hosp_det_cumul','crit_det',  'new_detected_critical', 'crit_det_cumul'] }
 
     if channelGrp == "symp":
         nchannels = nchannels_symp
