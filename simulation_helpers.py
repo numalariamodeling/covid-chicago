@@ -165,6 +165,7 @@ def writeTxt(txtdir, filename, textstring) :
 
 def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,
                            exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR):
+
     fname = 'runSimulations.bat'
     log.debug(f"Generating submission file {fname}")
     if sys.platform not in ["win32", "cygwin"]:
@@ -223,44 +224,36 @@ echo end""")
                         '\npause'.format(nscen=str(scen_num), dir=trajectories_dir))
 
         ## runDataComparison
+        plotters_dir = os.path.join(git_dir, "plotters")
         if experiment_config == "spatial_EMS_experiment.yaml" :
             fname = "data_comparison_spatial.py"
         if experiment_config != "spatial_EMS_experiment.yaml" :
             fname = "data_comparison.py"
         file = open(os.path.join(temp_exp_dir, 'runDataComparison.bat'), 'w')
-        file.write('cd {} \n python {} "{}"\npause'.format(
-            os.path.join(git_dir, "plotters"),
-            fname,exp_name
-        ))
+        file.write(f'cd {plotters_dir} \n python {fname} "{exp_name}"\npause')
 
         if experiment_config == "spatial_EMS_experiment.yaml" :
             file = open(os.path.join(temp_exp_dir, 'runTrimTrajectories.bat'), 'w')
-            file.write('cd {} \n python trim_trajectoriesDat.py "{}" "{}" "{}" \npause'.format(
-                os.path.join(git_dir, "plotters"),
-                exp_name,'120','15',
-            ))
+            file.write(f'cd {plotters_dir} \n python trim_trajectoriesDat.py "{exp_name}" "{120}" "{15}" \npause')
 
             ## runProcessForCivis
-            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis.bat'), 'w')
-            file.write('cd {} \n python process_for_civis_EMSgrp.py "{}" "{}" \npause'.format(
-                os.path.join(git_dir, "plotters"),
-                exp_name, "generate_outputs"
-            ))
+            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_1.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "{exp_name}" "{"generate_outputs"}" \npause')
+
+            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "{exp_name}" \npause')
+
+            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "{exp_name}" \npause')
 
             ## runOverflow_probabilities
             file = open(os.path.join(temp_exp_dir, 'runOverflow_probabilities.bat'), 'w')
-            file.write('cd {} \n python overflow_probabilities.py "{}" \npause'.format(
-                os.path.join(git_dir, "plotters"),
-                exp_name
-            ))
+            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \npause')
 
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
             file = open(os.path.join(temp_exp_dir, 'locale_age_postprocessing.bat'), 'w')
-            file.write('cd {} \n python locale_age_postprocessing.py "{}"  \npause'.format(
-                os.path.join(git_dir, "plotters"),
-                exp_name
-            ))
+            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py "{exp_name}"  \npause')
 
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir,  temp_exp_dir) :
@@ -274,24 +267,30 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
                  '#SBATCH -N 5\n' \
                  '#SBATCH --ntasks-per-node=1\n' \
                  '#SBATCH --mem=18G'
-        jobname = '\n#SBATCH	--job-name="' + exp_name_short + '"'
-        array = '\n#SBATCH --array=1-' + str(scen_num)
+        jobname = f'\n#SBATCH	--job-name="{exp_name_short}"'
+        array = f'\n#SBATCH --array=1-{str(scen_num)}'
         err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
         out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
         module = '\n\nmodule load singularity'
-        singularity = '\n\nsingularity exec -B /projects:/projects/ /software/singularity/images/singwine-v1.img wine /projects/p30781/covidproject/binaries/compartments/compartments.exe  -c /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/model_${SLURM_ARRAY_TASK_ID}.cfg  -m /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/simulations/simulation_${SLURM_ARRAY_TASK_ID}.emodl'
+        slurmID = '${SLURM_ARRAY_TASK_ID}'
+        singularity = '\n\nsingularity exec -B /projects:/projects/ /software/singularity/images/singwine-v1.img wine ' \
+                      '/projects/p30781/covidproject/binaries/compartments/compartments.exe ' \
+                      f'-c /projects/p30781/covidproject/covid-chicago/_temp/{exp_name}/simulations/model_{slurmID}.cfg ' \
+                      f'-m /projects/p30781/covidproject/covid-chicago/_temp/{exp_name}/simulations/simulation_{slurmID}.emodl'
         file = open(os.path.join(trajectories_dir, 'runSimulations.sh'), 'w')
         file.write(header + jobname + array + err + out + module + singularity)
         file.close()
 
         pymodule = '\n\nml python'
-        pycommand = '\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py --stem "' +exp_name+ '"' + ' --addsamples "True"' + ' --lagtime_days "15"'
+        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py --stem "{exp_name}"' \
+                    ' --addsamples "True" --lagtime_days "15"'
         file = open(os.path.join(temp_exp_dir, 'combineSimulations.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
 
         pymodule = '\n\nml python'
-        pycommand = '\npython /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "' +exp_name+ '"' + ' --delete_simsfiles "True"'
+        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "{exp_name}"' \
+                    ' --delete_simsfiles "True"'
         file = open(os.path.join(temp_exp_dir, 'cleanupSimulations.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
@@ -301,25 +300,25 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         if experiment_config != "spatial_EMS_experiment.yaml" :
             fname = "data_comparison.py"
         pymodule = '\n\nml python'
-        pycommand = '\npython /projects/p30781/covidproject/covid-chicago/plotters/'+fname+' --stem "' +exp_name+ '"' + ' --Location "NUCLUSTER"'
+        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
         file = open(os.path.join(temp_exp_dir, 'compareToData.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
 
         pymodule = '\n\nml python'
-        pycommand = '\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --stem "' +exp_name+ '"' + ' --Location "NUCLUSTER"'
+        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --stem "{exp_name}"' + ' --Location "NUCLUSTER"'
         file = open(os.path.join(temp_exp_dir, 'processForCivis.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
 
-        submit_runSimulations = 'cd /projects/p30781/covidproject/covid-chicago/_temp/' + exp_name + '/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
+        submit_runSimulations = f'cd /projects/p30781/covidproject/covid-chicago/_temp/{exp_name}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
         file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
         file.write(submit_runSimulations)
-        file.write('\n\n#cd ' + temp_exp_dir)
-        file.write('\n\n#Submit after simulation are finished using job id\n#sbatch --dependency=afterok:<jobid> combineSimulations.sh')
-        file.write('\n\n#Submit after combineSimulations using job id\n#sbatch --dependency=afterok:<jobid> cleanupSimulations.sh')
-        file.write('\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterok:<jobid> compareToData.sh')
-        file.write('\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterok:<jobid> processForCivis.sh')
+        file.write(f'\n\n#cd {temp_exp_dir}'
+                   '\n\n#Submit after simulation are finished using job id\n#sbatch --dependency=afterok:<jobid> combineSimulations.sh'
+                   '\n\n#Submit after combineSimulations using job id\n#sbatch --dependency=afterok:<jobid> cleanupSimulations.sh'
+                   '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterok:<jobid> compareToData.sh'
+                   '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterok:<jobid> processForCivis.sh'
         file.close()
 
 
