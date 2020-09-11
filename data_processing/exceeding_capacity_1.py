@@ -17,7 +17,7 @@ import gc
 
 column_list = ['scen_num', 'reopening_multiplier_4']
 for ems_region in range(1,12):
-    column_list.append('hospitalized_det_EMS-' + str(ems_region))
+    column_list.append('hosp_det_EMS-' + str(ems_region))
     column_list.append('hosp_det_cumul_EMS-' + str(ems_region))
     column_list.append('detected_cumul_EMS-' + str(ems_region))
 
@@ -107,11 +107,11 @@ for region in ['NE', 'NC', 'CE', 'SO']:
 
             #NE Region
 
-            trajectories['hospitalized_det_NE'] = trajectories['hospitalized_det_EMS-11'] + \
-            trajectories['hospitalized_det_EMS-10'] + \
-            trajectories['hospitalized_det_EMS-9'] + \
-            trajectories['hospitalized_det_EMS-8'] + \
-            trajectories['hospitalized_det_EMS-7']
+            trajectories['hosp_det_NE'] = trajectories['hosp_det_EMS-11'] + \
+            trajectories['hosp_det_EMS-10'] + \
+            trajectories['hosp_det_EMS-9'] + \
+            trajectories['hosp_det_EMS-8'] + \
+            trajectories['hosp_det_EMS-7']
 
             trajectories['hosp_det_cumul_NE'] = trajectories['hosp_det_cumul_EMS-11'] + \
             trajectories['hosp_det_cumul_EMS-10'] + \
@@ -127,19 +127,19 @@ for region in ['NE', 'NC', 'CE', 'SO']:
 
             #NC Region
 
-            trajectories['hospitalized_det_NC'] = trajectories['hospitalized_det_EMS-1'] + trajectories['hospitalized_det_EMS-2'] 
+            trajectories['hosp_det_NC'] = trajectories['hosp_det_EMS-1'] + trajectories['hosp_det_EMS-2'] 
             trajectories['hosp_det_cumul_NC'] = trajectories['hosp_det_cumul_EMS-1'] + trajectories['hosp_det_cumul_EMS-2'] 
             trajectories['detected_cumul_NC'] = trajectories['detected_cumul_EMS-1'] + trajectories['detected_cumul_EMS-2']
 
             #CE Region
 
-            trajectories['hospitalized_det_CE'] = trajectories['hospitalized_det_EMS-3'] + trajectories['hospitalized_det_EMS-6'] 
+            trajectories['hosp_det_CE'] = trajectories['hosp_det_EMS-3'] + trajectories['hosp_det_EMS-6'] 
             trajectories['hosp_det_cumul_CE'] = trajectories['hosp_det_cumul_EMS-3'] + trajectories['hosp_det_cumul_EMS-6'] 
             trajectories['detected_cumul_CE'] = trajectories['detected_cumul_EMS-3'] + trajectories['detected_cumul_EMS-6']
 
             #SO Region
 
-            trajectories['hospitalized_det_SO'] = trajectories['hospitalized_det_EMS-4'] + trajectories['hospitalized_det_EMS-5'] 
+            trajectories['hosp_det_SO'] = trajectories['hosp_det_EMS-4'] + trajectories['hosp_det_EMS-5'] 
             trajectories['hosp_det_cumul_SO'] = trajectories['hosp_det_cumul_EMS-4'] + trajectories['hosp_det_cumul_EMS-5'] 
             trajectories['detected_cumul_SO'] = trajectories['detected_cumul_EMS-4'] + trajectories['detected_cumul_EMS-5']
 
@@ -183,7 +183,7 @@ for region in ['NE', 'NC', 'CE', 'SO']:
                     new['new_det_CE'] = np.append(np.array([0.0]), np.diff(new['detected_cumul_CE'].values))
                     new['new_hosp_det_SO'] = np.append(np.array([0.0]), np.diff(new['hosp_det_cumul_SO'].values))
                     new['new_det_SO'] = np.append(np.array([0.0]), np.diff(new['detected_cumul_SO'].values))
-                    hosp = new['hospitalized_det_' + region].values #new['hospitalized_det'].values
+                    hosp = new['hosp_det_' + region].values #new['hosp_det'].values
                     i = 0
                     traj.append(hosp)
                     while (hosp[i] < hospital_capacity) & (i < len(hosp)-1):

@@ -43,9 +43,9 @@ def when_exceeds(trajectory, metric, lower_limit, upper_limit, maximum):
         ii += 1
     return ii
 
-column_list = ['scen_num', 'reopening_multiplier_4', 'hospitalized_det_All', 'crit_det_All']
+column_list = ['scen_num', 'reopening_multiplier_4', 'hosp_det_All', 'crit_det_All']
 for ems_region in range(1,12):
-    column_list.append('hospitalized_det_EMS-' + str(ems_region))
+    column_list.append('hosp_det_EMS-' + str(ems_region))
     column_list.append('crit_det_EMS-' + str(ems_region))
     #column_list.append('death_det_cumul_EMS-' + str(ems_region))
     
@@ -56,7 +56,7 @@ def get_probs(exp_name):
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
     
     for ems_region in range(1,12):
-        trajectories['total_hosp_census_EMS-' + str(ems_region)] = trajectories['hospitalized_det_EMS-'+str(ems_region)]+trajectories['crit_det_EMS-'+str(ems_region)]
+        trajectories['total_hosp_census_EMS-' + str(ems_region)] = trajectories['hosp_det_EMS-'+str(ems_region)]+trajectories['crit_det_EMS-'+str(ems_region)]
 
 
     lower_limit = 170

@@ -90,7 +90,7 @@ def compare_ems(exp_name,fname, ems_nr=0):
 
     outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
         'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'death_det_cumul',
-        'deaths', 'crit_det',  'critical', 'hospitalized_det', 'hospitalized']
+        'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
 
     for channel in outcome_channels:
         column_list.append(channel + "_EMS-" + str(ems_nr))
@@ -115,7 +115,7 @@ def compare_ems(exp_name,fname, ems_nr=0):
     ref_df_ll = ref_df
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
     ref_df = ref_df.sort_values('date')
-    channels = ['new_detected_deaths', 'crit_det', 'hospitalized_det', 'new_detected_deaths', 'new_deaths',
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths',
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']

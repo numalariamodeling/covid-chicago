@@ -73,98 +73,106 @@ def sub(x):
     xout = re.sub('_','-', str(x), count=1)
     return(xout)
     
-def write_observe(expandModel=None):
+def write_observe(observeLevel='primary'):
 
-
-    observe_str = """
+    observe_primary_channels_str = """
 (observe susceptible S)
-(observe exposed E)
-(observe asymptomatic asymptomatic)
-(observe presymptomatic presymptomatic)
-(observe symptomatic_mild symptomatic_mild)
-(observe symptomatic_severe symptomatic_severe)
-(observe hospitalized hospitalized)
-(observe critical critical)
-(observe deaths deaths)
+(observe infected infected)
 (observe recovered recovered)
-
-(observe asymptomatic_det asymptomatic_det)
-(observe presymptomatic_det presymptomatic_det )
-(observe symptomatic_mild_det symptomatic_mild_det)
-(observe symptomatic_severe_det symptomatic_severe_det)
-(observe hospitalized_det hospitalized_det)
-(observe critical_det critical_det)
-(observe deaths_det D3_det3)
-(observe recovered_det recovered_det)
+(observe infected_cumul infected_cumul)
 
 (observe asymp_cumul asymp_cumul )
 (observe asymp_det_cumul asymp_det_cumul)
+(observe symptomatic_mild symptomatic_mild)
+(observe symptomatic_severe symptomatic_severe)
 (observe symp_mild_cumul symp_mild_cumul)
-
 (observe symp_severe_cumul symp_severe_cumul)
- 
-(observe hosp_cumul hosp_cumul)
+(observe symp_mild_det_cumul symp_mild_det_cumul)
+(observe symp_severe_det_cumul symp_severe_det_cumul)
+
 (observe hosp_det_cumul hosp_det_cumul )
+(observe hosp_cumul hosp_cumul)
+(observe detected_cumul detected_cumul )
+
 (observe crit_cumul crit_cumul)
 (observe crit_det_cumul crit_det_cumul)
-(observe crit_det crit_det)
 (observe death_det_cumul death_det_cumul )
 
-(observe infected infected)
-(observe infected_cumul infected_cumul)
+(observe deaths_det D3_det3)
+(observe deaths deaths)
 
+(observe crit_det crit_det)
+(observe critical critical)
+(observe hosp_det hosp_det)
+(observe hospitalized hospitalized)
+"""
+
+
+    observe_secondary_channels_str = """
+(observe exposed E)
+(observe asymptomatic asymptomatic)
+(observe presymptomatic presymptomatic)
+(observe detected detected)
+(observe asymptomatic_det As_det1)
+(observe presymptomatic_det P_det )
+(observe symptomatic_mild_det symptomatic_mild_det)
+(observe symptomatic_severe_det symptomatic_severe_det)
+(observe recovered_det recovered_det)
+"""
+
+    observe_tertiary_channels_str = """
 (observe infectious_undet infectious_undet)
 (observe infectious_det infectious_det)
 (observe infectious_det_symp infectious_det_symp)
 (observe infectious_det_AsP infectious_det_AsP)
-
-(observe symp_mild_det_cumul symp_mild_det_cumul)
-(observe symp_severe_det_cumul symp_severe_det_cumul)
-(observe detected detected)
-(observe detected_cumul detected_cumul )
-
 (observe prevalence prevalence)    
 (observe seroprevalence seroprevalence )
 (observe prevalence_det prevalence_det)    
 (observe seroprevalence_det seroprevalence_det )
-
 """
-    
+
+    if observeLevel == 'primary' :
+        observe_str = observe_primary_channels_str
+    if observeLevel == 'secondary' :
+        observe_str = observe_primary_channels_str + observe_secondary_channels_str
+    if observeLevel == 'tertiary' :
+        observe_str = observe_primary_channels_str +  observe_tertiary_channels_str
+    if observeLevel == 'all' :
+        observe_str = observe_primary_channels_str + observe_secondary_channels_str + observe_tertiary_channels_str
+        
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
 
 def write_functions(expandModel=None):
-    
+
     functions_str = """
 (func presymptomatic  (+ P P_det))
-(func presymptomatic_det  (- presymptomatic P))
-(func asymptomatic_det  (- asymptomatic As))
-(func symptomatic_mild_det  (- symptomatic_mild Sym))
-(func symptomatic_severe_det  (- symptomatic_severe Sys))
 
 (func hospitalized  (+ H1 H2 H3 H1_det3 H2_det3 H3_det3))
-(func hospitalized_det  (+ H1_det3 H2_det3 H3_det3))
+(func hosp_det  (+ H1_det3 H2_det3 H3_det3))
 (func critical (+ C2 C3 C2_det3 C3_det3))
-(func critical_det (+ C2_det3 C3_det3))
+(func crit_det (+ C2_det3 C3_det3))
 (func deaths (+ D3 D3_det3))
 (func recovered (+ RAs RSym RH1 RC2 RAs_det1 RSym_det2 RH1_det3 RC2_det3))
 (func recovered_det (+ RAs_det1 RSym_det2 RH1_det3 RC2_det3))
+
 (func asymp_cumul (+ asymptomatic RAs RAs_det1 ))
 (func asymp_det_cumul (+ As_det1 RAs_det1))
+
 (func symp_mild_cumul (+ symptomatic_mild RSym RSym_det2))
-(func symp_mild_det_cumul (+ RSym_det2 Sym_det2))
+(func symp_mild_det_cumul (+ symptomatic_mild_det RSym_det2 ))
+
 (func symp_severe_cumul (+ symptomatic_severe hospitalized critical deaths RH1 RC2 RH1_det3 RC2_det3))
-(func symp_severe_det_cumul (+ Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3 D3_det3 RH1_det3 RC2_det3))
+(func symp_severe_det_cumul (+ symptomatic_severe_det hosp_det crit_det D3_det3  RH1_det3 RC2_det3))
+
 (func hosp_cumul (+ hospitalized critical deaths RH1 RC2 RH1_det3 RC2_det3))
-(func hosp_det_cumul (+ H1_det3 H2_det3 H3_det3 C2_det3 C3_det3 D3_det3 RH1_det3 RC2_det3))
+(func hosp_det_cumul (+ H1_det3 H2_det3 H3_det3 C2_det3 C3_det3 D3_det3  RH1_det3  RC2_det3))
 (func crit_cumul (+ deaths critical RC2 RC2_det3))
 (func crit_det_cumul (+ C2_det3 C3_det3 D3_det3 RC2_det3))
-(func crit_det (+ C2_det3 C3_det3))
-(func detected_cumul (+ (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3) RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
+(func detected_cumul (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 C2_det3 C3_det3 RAs_det1 RSym_det2 RH1_det3 RC2_det3 D3_det3))
 (func death_det_cumul D3_det3 )
 
-(func detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected (+ infectious_det infectious_undet H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected_det (+ infectious_det H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected_cumul (+ infected recovered deaths))    
@@ -174,17 +182,24 @@ def write_functions(expandModel=None):
 
 (func prevalence_det (/ infected_det N))    
 (func seroprevalence_det (/ (+ infected_det recovered_det) N))    
-  
+
 """
-    functions_str = functions_str.replace("  ", "")
-    
+
 
     expand_base_str = """
 (func asymptomatic  (+ As As_det1))
+
 (func symptomatic_mild  (+ Sym Sym_det2))
+(func symptomatic_mild_det  ( Sym_det2))
+
 (func symptomatic_severe  (+ Sys Sys_det3))
+(func symptomatic_severe_det   ( Sys_det3))
+
+(func detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
+
 (func infectious_undet (+ As P Sym Sys H1 H2 H3 C2 C3))
 (func infectious_det (+ As_det1 P_det Sym_det2 Sys_det3 ))
+
 (func infectious_det_symp (+ Sym_det2 Sys_det3 ))
 (func infectious_det_AsP (+ As_det1 P_det))
 """
@@ -192,8 +207,15 @@ def write_functions(expandModel=None):
 
     expand_testDelay_SymSys_str = """
 (func asymptomatic  (+ As As_det1))
+
 (func symptomatic_mild  (+ Sym Sym_preD Sym_det2))
+(func symptomatic_mild_det  (+  Sym_preD Sym_det2))
+
 (func symptomatic_severe  (+ Sys Sys_preD Sys_det3))
+(func symptomatic_severe_det  (+ Sys_preD Sys_det3))
+
+(func detected (+ As_det1 Sym_det2 Sys_det3 H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
+
 (func infectious_undet (+ As P Sym_preD Sym Sys_preD Sys H1 H2 H3 C2 C3))
 (func infectious_det (+ As_det1 P_det Sym_det2 Sys_det3 ))
 
@@ -204,8 +226,15 @@ def write_functions(expandModel=None):
 
     expand_testDelay_AsSymSys_str = """
 (func asymptomatic  (+ As_preD As As_det1))
+
 (func symptomatic_mild  (+ Sym Sym_preD Sym_det2a Sym_det2b))
+(func symptomatic_mild_det  (+ Sym_preD Sym_det2a Sym_det2b))
+
 (func symptomatic_severe  (+ Sys Sys_preD Sys_det3a Sys_det3b))
+(func symptomatic_severe_det  (+ Sys_preD Sys_det3a Sys_det3b))
+
+(func detected (+ As_det1 Sym_det2a Sym_det2b Sys_det3a Sys_det3b H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
+
 (func infectious_undet (+ As_preD As P Sym Sym_preD Sys Sys_preD H1 H2 H3 C2 C3))
 (func infectious_det (+ As_det1 P_det Sym_det2a Sym_det2b Sys_det3a Sys_det3b))
 
@@ -220,6 +249,7 @@ def write_functions(expandModel=None):
     if expandModel == "testDelay_AsSymSys":
         functions_str = expand_testDelay_AsSymSys_str + functions_str
 
+    functions_str = functions_str.replace("  ", " ")
     return (functions_str)
 
 ###
@@ -751,7 +781,7 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 
 ###stringing all of my functions together to make the file:
 
-def generate_emodl( file_output, expandModel, add_interventions,  trigger_channel=None, change_testDelay =None):
+def generate_emodl( file_output, expandModel, add_interventions, observeLevel='secondary', trigger_channel=None, change_testDelay =None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -771,7 +801,7 @@ def generate_emodl( file_output, expandModel, add_interventions,  trigger_channe
 
     total_string = total_string + write_species(expandModel)
     functions = write_functions(expandModel)
-    observe_string = observe_string + write_observe(expandModel)
+    observe_string = observe_string + write_observe(observeLevel=observeLevel)
     reaction_string = reaction_string + write_reactions(expandModel)
     functions_string = functions_string + functions
 
@@ -810,9 +840,9 @@ if __name__ == '__main__':
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='gradual_reopening2' , file_output=os.path.join(emodl_dir, 'extendedmodel_gradual_reopening.emodl'))
 
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "critical", file_output=os.path.join(emodl_dir, 'extendedmodel_critical_triggeredrollback.emodl'))
-        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "critical_det", file_output=os.path.join(emodl_dir, 'extendedmodel_criticaldet_triggeredrollback.emodl'))
+        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "crit_det", file_output=os.path.join(emodl_dir, 'extendedmodel_criticaldet_triggeredrollback.emodl'))
         generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "hospitalized", file_output=os.path.join(emodl_dir, 'extendedmodel_hosp_triggeredrollback.emodl'))
-        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "hospitalized_det", file_output=os.path.join(emodl_dir, 'extendedmodel_hospdet_triggeredrollback.emodl'))
+        generate_emodl(expandModel="testDelay_AsSymSys", add_interventions='rollbacktriggered', trigger_channel = "hosp_det", file_output=os.path.join(emodl_dir, 'extendedmodel_hospdet_triggeredrollback.emodl'))
 
     generateImprovedDetectionEmodls = True
     if generateImprovedDetectionEmodls:
