@@ -202,7 +202,6 @@ def write_observed_param(ageList, regionList):
     observed_param_str = """  
 (observe d_As_t d_As)
 (observe d_P_t d_P)
-(observe d_Sym_t d_Sym)
 (observe d_Sys_t d_Sys)
 """
 
@@ -467,7 +466,7 @@ def repeat_string_by_grp(fixedstring, grpList1, grpList2):
     stringAll = ""
     middlesymbol = "_"
     
-    if fixedstring == "S_" or fixedstring == "E_" or fixedstring == "P_":
+    if fixedstring == "S_" or fixedstring == "E_" or fixedstring == "P_"  or fixedstring == "P_det_" or fixedstring =="As_det1_" or fixedstring == "D3_det3_":
         middlesymbol = "::"
 
     if grpList2 !=  None :
@@ -508,7 +507,7 @@ def write_All(ageList, regionList, observeLevel='primary'):
     obs_primary_All_str = obs_primary_All_str + "\n(observe crit_det_cumul_All (+ " + repeat_string_by_grp(  'crit_det_cumul_',  ageList, regionList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe death_det_cumul_All (+ " + repeat_string_by_grp('death_det_cumul_',  ageList, regionList) + "))"    
     
-    obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_det_All (+ " + repeat_string_by_grp('D3_det3::',   ageList, regionList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_det_All (+ " + repeat_string_by_grp('D3_det3_',   ageList, regionList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_All (+ " + repeat_string_by_grp('deaths_',    ageList, regionList) + "))"
 
     obs_primary_All_str = obs_primary_All_str + "\n(observe crit_det_All (+ " + repeat_string_by_grp('crit_det_',     ageList, regionList) + "))"
@@ -521,10 +520,10 @@ def write_All(ageList, regionList, observeLevel='primary'):
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E_',   ageList, regionList) + "))"
     
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_All (+ " + repeat_string_by_grp( 'asymptomatic_',  ageList, regionList) + "))"
-    obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_det_All (+ "  + repeat_string_by_grp('As_det1::',   ageList, regionList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_det_All (+ "  + repeat_string_by_grp('As_det1_',   ageList, regionList) + "))"
     
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P_',  ageList, regionList) + "))"
-    obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_det_All (+ " + repeat_string_by_grp('P_det::',  ageList, regionList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_det_All (+ " + repeat_string_by_grp('P_det_',  ageList, regionList) + "))"
 
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe detected_All (+ " + repeat_string_by_grp( 'detected_',  ageList, regionList) + "))"
     
@@ -670,8 +669,8 @@ def write_reactions(age, region, expandModel=None):
 (reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_{age}::{region})   (* Ks{age} E_{age}::{region} (- 1 d_P)))
 (reaction presymptomatic_{age}_{region} (E_{age}::{region})   (P_det_{age}::{region})   (* Ks{age} E_{age}::{region} d_P))
 
-(reaction mild_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sym_{age}::{region}) (* Ksym{age} P_{age}::{region} (- 1 d_Sym)))
-(reaction mild_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym{age} P_{age}::{region} d_Sym))
+(reaction mild_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sym_{age}::{region}) (* Ksym{age} P_{age}::{region} (- 1 d_Sym_{region})))
+(reaction mild_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym{age} P_{age}::{region} d_Sym_{region}))
 (reaction severe_symptomatic_undet_{age}_{region} (P_{age}::{region})  (Sys_{age}::{region})  (* Ksys{age} P_{age}::{region} (- 1 d_Sys)))
 (reaction severe_symptomatic_det_{age}_{region} (P_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys{age} P_{age}::{region} d_Sys))
 
@@ -710,11 +709,11 @@ def write_reactions(age, region, expandModel=None):
 (reaction severe_symptomatic_{age}_{region} (P_{age}::{region})  (Sys_preD_{age}::{region})  (* Ksys{age} P_{age}::{region}))
 
 ; never detected 
-(reaction mild_symptomatic_undet_{age}_{region} (Sym_preD_{age}::{region})  (Sym_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} (- 1 d_Sym)))
+(reaction mild_symptomatic_undet_{age}_{region} (Sym_preD_{age}::{region})  (Sym_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} (- 1 d_Sym_{region})))
 (reaction severe_symptomatic_undet_{age}_{region} (Sys_preD_{age}::{region})  (Sys_{age}::{region})  (* Ksys_D Sys_preD_{age}::{region} (- 1 d_Sys)))
 
 ; new detections  - time to detection is substracted from hospital time
-(reaction mild_symptomatic_det_{age}_{region} (Sym_preD_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} d_Sym))
+(reaction mild_symptomatic_det_{age}_{region} (Sym_preD_{age}::{region})  (Sym_det2_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} d_Sym_{region}))
 (reaction severe_symptomatic_det_{age}_{region} (Sys_preD_{age}::{region})  (Sys_det3_{age}::{region})  (* Ksys_D Sys_preD_{age}::{region} d_Sys))
 
 (reaction hospitalization_1_{age}_{region}   (Sys_{age}::{region})   (H1_{age}::{region})   (* Kh1_D{age} Sys_{age}::{region}))
@@ -752,11 +751,11 @@ def write_reactions(age, region, expandModel=None):
 (reaction severe_symptomatic_{age}_{region} (P_{age}::{region})  (Sys_preD_{age}::{region})  (* Ksys{age} P_{age}::{region}))
 																   
 ; never detected 
-(reaction mild_symptomatic_undet_{age}_{region} (Sym_preD_{age}::{region})  (Sym_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} (- 1 d_Sym)))
+(reaction mild_symptomatic_undet_{age}_{region} (Sym_preD_{age}::{region})  (Sym_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} (- 1 d_Sym_{region})))
 (reaction severe_symptomatic_undet_{age}_{region} (Sys_preD_{age}::{region})  (Sys_{age}::{region})  (* Ksys_D Sys_preD_{age}::{region} (- 1 d_Sys)))
 
 ; new detections  - time to detection is subtracted from hospital time
-(reaction mild_symptomatic_det_{age}_{region} (Sym_preD_{age}::{region})  (Sym_det2a_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} d_Sym))
+(reaction mild_symptomatic_det_{age}_{region} (Sym_preD_{age}::{region})  (Sym_det2a_{age}::{region}) (* Ksym_D Sym_preD_{age}::{region} d_Sym_{region}))
 (reaction severe_symptomatic_det_{age}_{region} (Sys_preD_{age}::{region})  (Sys_det3a_{age}::{region})  (* Ksys_D Sys_preD_{age}::{region} d_Sys))
 
 ; developing symptoms - already detected, same time to symptoms as in master emodl
@@ -893,7 +892,7 @@ def define_change_detection_and_isolation(grpList=None,
     return (contactTracing_str)
     
 
-def write_interventions(regionList, total_string, scenarioName, expandModel, change_testDelay=None, trigger_channel=None) :
+def write_interventions(regionList, ageList,total_string, scenarioName, expandModel, change_testDelay=None, trigger_channel=None) :
 
     param_change_str = """
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
@@ -903,22 +902,36 @@ def write_interventions(regionList, total_string, scenarioName, expandModel, cha
 (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
 (time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
 (time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
-
-
-(observe frac_crit_t fraction_critical)
-(observe fraction_hospitalized_t fraction_hospitalized)
-(observe fraction_dead_t fraction_dead)
-
-(time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
-(time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
-(time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-
-(param cfr_change1 (* @cfr@ (/ 2 3) ) )
-(param cfr_change2 (* @cfr@ (/ 1 3) ) )
-(observe cfr_t cfr)
-(time-event cfr_adjust1 @cfr_time_1@ ((cfr cfr_change1) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event cfr_adjust2 @cfr_time_2@ ((cfr cfr_change2) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 """
+
+#TODO results in negative counts
+#(param cfr_change1_{age} (* @cfr_{age}@ (/ 2 3) ) )
+#(param cfr_change2_{age} (* @cfr_{age}@ (/ 1 3) ) )
+#(observe cfr_t_{age} cfr_{age})
+#(time-event cfr_adjust1_{age} @cfr_time_1@ ((cfr_{age} cfr_change1_{age}) (fraction_dead_{age} (/ cfr fraction_severe_{age})) (fraction_hospitalized_{age} (- 1 (+ fraction_critical fraction_dead_{age}))) (Kh1{age} (/ fraction_hospitalized_{age} time_to_hospitalization)) (Kh2{age} (/ fraction_critical_{age} time_to_hospitalization )) (Kh1_D{age} (/ fraction_hospitalized_{age} (- time_to_hospitalization time_D_Sys))) (Kh2_D{age} (/ fraction_critical_{age} (- time_to_hospitalization time_D_Sys) )) ))
+#(time-event cfr_adjust2_{age} @cfr_time_2@ ((cfr_{age} cfr_change2_{age}) (fraction_dead_{age} (/ cfr fraction_severe_{age})) (fraction_hospitalized_{age} (- 1 (+ fraction_critical fraction_dead_{age}))) (Kh1{age} (/ fraction_hospitalized_{age} time_to_hospitalization)) (Kh2{age} (/ fraction_critical_{age} time_to_hospitalization )) (Kh1_D{age} (/ fraction_hospitalized_{age} (- time_to_hospitalization time_D_Sys))) (Kh2_D{age} (/ fraction_critical_{age} (- time_to_hospitalization time_D_Sys) )) ))
+
+    param_change_age_specific_str = ""
+    for age in ageList:
+        temp_str =  """
+(observe frac_crit_t_{age} fraction_critical_{age})
+(observe fraction_hospitalized_t_{age} fraction_hospitalized_{age})
+(observe fraction_dead_t_{age} fraction_dead_{age})
+
+(time-event frac_crit_adjust1_{age} @crit_time_1@ ((fraction_critical_{age} @fraction_critical_incr1@) (fraction_hospitalized_{age} (- 1 (+ @fraction_critical_incr1@ fraction_dead_{age}))) (Kh1{age} (/ fraction_hospitalized_{age} time_to_hospitalization)) (Kh2{age} (/ fraction_critical_{age} time_to_hospitalization )) (Kh1_D{age} (/ fraction_hospitalized_{age} (- time_to_hospitalization time_D_Sys))) (Kh2_D{age} (/ fraction_critical_{age} (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_{age} @crit_time_2@ ((fraction_critical_{age} @fraction_critical_incr2@) (fraction_hospitalized_{age} (- 1 (+ @fraction_critical_incr2@ fraction_dead_{age}))) (Kh1{age} (/ fraction_hospitalized_{age} time_to_hospitalization)) (Kh2{age} (/ fraction_critical_{age} time_to_hospitalization )) (Kh1_D{age} (/ fraction_hospitalized_{age} (- time_to_hospitalization time_D_Sys))) (Kh2_D{age} (/ fraction_critical_{age} (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_{age} @crit_time_3@ ((fraction_critical_{age} @fraction_critical_incr3@) (fraction_hospitalized_{age} (- 1 (+ @fraction_critical_incr3@ fraction_dead_{age}))) (Kh1{age} (/ fraction_hospitalized_{age} time_to_hospitalization)) (Kh2{age} (/ fraction_critical_{age} time_to_hospitalization )) (Kh1_D{age} (/ fraction_hospitalized_{age} (- time_to_hospitalization time_D_Sys))) (Kh2_D{age} (/ fraction_critical_{age} (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_{age} (* @fraction_dead_{age}@ (/ 2 3) ) )
+(param fraction_dead_change2_{age} (* @fraction_dead_{age}@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_{age} @cfr_time_1@ ((fraction_dead_{age} fraction_dead_change1_{age}) (fraction_hospitalized_{age} (- 1 (+ fraction_critical_{age} fraction_dead_{age}))) (Kh1{age} (/ fraction_hospitalized_{age} time_to_hospitalization)) (Kh2{age} (/ fraction_critical_{age} time_to_hospitalization )) (Kh1_D{age} (/ fraction_hospitalized_{age} (- time_to_hospitalization time_D_Sys))) (Kh2_D{age} (/ fraction_critical_{age} (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_{age} @cfr_time_2@ ((fraction_dead_{age} fraction_dead_change2_{age}) (fraction_hospitalized_{age} (- 1 (+ fraction_critical_{age} fraction_dead_{age}))) (Kh1{age} (/ fraction_hospitalized_{age} time_to_hospitalization)) (Kh2{age} (/ fraction_critical_{age} time_to_hospitalization )) (Kh1_D{age} (/ fraction_hospitalized_{age} (- time_to_hospitalization time_D_Sys))) (Kh2_D{age} (/ fraction_critical_{age} (- time_to_hospitalization time_D_Sys) )) )) 
+""".format(age=age)
+        param_change_age_specific_str = param_change_age_specific_str + temp_str
+
+    # TODO results in worse fitting?
+    #param_change_str = param_change_str + param_change_age_specific_str
+    
 
     socialDistance_change_str = ""
     for region in regionList:
@@ -1094,7 +1107,7 @@ def write_interventions(regionList, total_string, scenarioName, expandModel, cha
                "(Ksym_D (/ 1 time_D))",
                "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))",
                "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))",
-               "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D)))",
+               "(Kh3_D (/ fraction_dead_{age} (- time_to_hospitalization time_D)))",
                "(Kr_m_D (/ 1 (- recovery_time_mild time_D )))")
 
     change_testDelay_Sym_str = """
@@ -1109,7 +1122,7 @@ def write_interventions(regionList, total_string, scenarioName, expandModel, cha
                "(Ksys_D (/ 1 time_D_Sys))",
                "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
                "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))",
-               "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))")
+               "(Kh3_D (/ fraction_dead_{age} (- time_to_hospitalization time_D_Sys)))")
                
     change_testDelay_As_str = """
 (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
@@ -1234,7 +1247,7 @@ def generate_emodl(age_list, region_list,pop_dic, import_dic, import_dic2,file_o
     #total_string = total_string.replace('(species As::EMS_6 0)', '(species As::EMS_6 1)')
     ### Add interventions (optional)
     if add_interventions != None :
-        total_string = write_interventions(region_list, total_string, add_interventions, expandModel, change_testDelay, trigger_channel)
+        total_string = write_interventions(region_list,age_list, total_string, add_interventions, expandModel, change_testDelay, trigger_channel)
 
     print(total_string)
     emodl = open(file_output, "w")  ## again, can make this more dynamic
