@@ -13,7 +13,7 @@ import yamlordereddictloader
 
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
-                                generateSubmissionFile, makeExperimentFolder,
+                                generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
                                 runExp, sampleplot)
 
 log = logging.getLogger(__name__)
@@ -535,14 +535,16 @@ if __name__ == '__main__':
         region=region,
     )
 
-    generateSubmissionFile(
-        nscen, exp_name, trajectories_dir, temp_dir, temp_exp_dir,
-        exe_dir=exe_dir, docker_image=docker_image)
-
     if Location == 'NUCLUSTER':
+        generateSubmissionFile_quest(nscen, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir)
+
         runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER')
 
     if Location == 'Local':
+        generateSubmissionFile(
+            nscen, exp_name, experiment_config,trajectories_dir, temp_dir, temp_exp_dir,
+            exe_dir=exe_dir, docker_image=docker_image)
+
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
         combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,

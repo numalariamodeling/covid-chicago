@@ -137,4 +137,5 @@ if __name__ == '__main__':
 
     for exp_name in exp_names:
         for ems_nr in range(1,12):
+            print("Start processing region " + str(ems_nr))
             compare_ems(exp_name,fname=fname, ems_nr=int(ems_nr))

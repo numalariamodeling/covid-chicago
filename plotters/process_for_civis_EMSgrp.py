@@ -194,6 +194,7 @@ if __name__ == '__main__' :
     if processStep == 'generate_outputs' :
         dfAll = pd.DataFrame()
         for reg in regions :
+            print("Start processing " + reg)
             tdf = load_and_plot_data(reg,fname='trajectoriesDat.csv' , savePlot=True)
             adf = process_and_save(tdf, reg, SAVE=True)
             dfAll = pd.concat([dfAll, adf])
@@ -207,6 +208,7 @@ if __name__ == '__main__' :
     if processStep == 'combine_outputs' :
 
         for reg in ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11'] :
+            print("Start processing" + reg)
             filename = "nu_" + simdate + "_" + reg + ".csv"
             adf = pd.read_csv(os.path.join(sim_output_path, filename))
             dfAll = pd.concat([dfAll, adf])

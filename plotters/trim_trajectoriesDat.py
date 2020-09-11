@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import sys
+from datetime import date,  datetime
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -62,17 +63,23 @@ def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes='today',lagtime_days=15
 
 if __name__ == '__main__':
 
+    stem = sys.argv[1]
+    keepTimes = sys.argv[2]
+    lagtime_days = sys.argv[3]  
+    
+    #stem ="20200907_IL_baseline_cfr_test"
+    #keepTimes ="today"
+    #lagtime_days ="15"
+    
     VarsToKeep = ['startdate', 'time', 'scen_num','sample_num', 'run_num']
+    moreVarsToKeep = ['reopening_multiplier_4'] #['capacity_multiplier', 'reopening_multiplier_4','reduced_inf_of_det_cases_ct1', 'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
+    VarsToKeep = VarsToKeep + moreVarsToKeep
 
-   # moreVarsToKeep = ['capacity_multiplier', 'reopening_multiplier_4','reduced_inf_of_det_cases_ct1', 'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
-   # VarsToKeep = VarsToKeep + moreVarsToKeep
-
-    #stem = sys.argv[1]
-    stem ="20200907_IL_baseline_cfr_test"
     exp_names = [x for x in os.listdir(os.path.join(sim_output_path)) if stem in x]
-
-    from datetime import date,  datetime
-
     for exp_name in exp_names:
         exp_dir = os.path.join(sim_output_path, exp_name)
-        trim_trajectories_Dat(exp_dir=exp_dir, VarsToKeep=VarsToKeep, keepTimes='today', lagtime_days=15)
+        trim_trajectories_Dat(exp_dir=exp_dir, VarsToKeep=VarsToKeep, keepTimes=keepTimes, lagtime_days=lagtime_days)
+        if os.path.exists(exp_dir, 'trajectoriesDat_trim.csv') :
+            print('trajectoriesDat_trim.csv successfully generated')
+        else :
+            print('ERROR trajectoriesDat_trim.csv not generated')
