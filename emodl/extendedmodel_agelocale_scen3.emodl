@@ -12076,7 +12076,6 @@
 (param C8_1 (/ C81 norm_factor))
 
 
-(observe d_Sys_t d_Sys)
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
 (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))

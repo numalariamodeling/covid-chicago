@@ -896,7 +896,6 @@ def define_change_detection_and_isolation(grpList=None,
 def write_interventions(regionList, total_string, scenarioName, expandModel, change_testDelay=None, trigger_channel=None) :
 
     param_change_str = """
-(observe d_Sys_t d_Sys)
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
 (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
 (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
