@@ -1170,10 +1170,13 @@
 (param fraction_severe_age0to9 @fraction_severe_age0to9@)
 (param Ksysage0to9 (* fraction_severe_age0to9 (/ 1 time_to_symptoms)))
 (param Ksymage0to9 (* (- 1 fraction_severe_age0to9) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age0to9 @fraction_critical_age0to9@ )
 
+;(param cfr_age0to9 @cfr_age0to9@)
+;(param fraction_dead_age0to9 (/ cfr_age0to9 fraction_severe_age0to9))
 (param fraction_dead_age0to9 @fraction_dead_age0to9@)
 
-(param fraction_critical_age0to9 @fraction_critical_age0to9@ )
+;(param fraction_hospitalized_age0to9 (- 1 (+ fraction_critical_age0to9 fraction_dead_age0to9)))
 (param fraction_hospitalized_age0to9 @fraction_hospitalized_age0to9@)
 
 (param fraction_symptomatic_age0to9 @fraction_symptomatic_age0to9@)
@@ -1194,10 +1197,13 @@
 (param fraction_severe_age10to19 @fraction_severe_age10to19@)
 (param Ksysage10to19 (* fraction_severe_age10to19 (/ 1 time_to_symptoms)))
 (param Ksymage10to19 (* (- 1 fraction_severe_age10to19) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age10to19 @fraction_critical_age10to19@ )
 
+;(param cfr_age10to19 @cfr_age10to19@)
+;(param fraction_dead_age10to19 (/ cfr_age10to19 fraction_severe_age10to19))
 (param fraction_dead_age10to19 @fraction_dead_age10to19@)
 
-(param fraction_critical_age10to19 @fraction_critical_age10to19@ )
+;(param fraction_hospitalized_age10to19 (- 1 (+ fraction_critical_age10to19 fraction_dead_age10to19)))
 (param fraction_hospitalized_age10to19 @fraction_hospitalized_age10to19@)
 
 (param fraction_symptomatic_age10to19 @fraction_symptomatic_age10to19@)
@@ -1218,10 +1224,13 @@
 (param fraction_severe_age20to29 @fraction_severe_age20to29@)
 (param Ksysage20to29 (* fraction_severe_age20to29 (/ 1 time_to_symptoms)))
 (param Ksymage20to29 (* (- 1 fraction_severe_age20to29) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age20to29 @fraction_critical_age20to29@ )
 
+;(param cfr_age20to29 @cfr_age20to29@)
+;(param fraction_dead_age20to29 (/ cfr_age20to29 fraction_severe_age20to29))
 (param fraction_dead_age20to29 @fraction_dead_age20to29@)
 
-(param fraction_critical_age20to29 @fraction_critical_age20to29@ )
+;(param fraction_hospitalized_age20to29 (- 1 (+ fraction_critical_age20to29 fraction_dead_age20to29)))
 (param fraction_hospitalized_age20to29 @fraction_hospitalized_age20to29@)
 
 (param fraction_symptomatic_age20to29 @fraction_symptomatic_age20to29@)
@@ -1242,10 +1251,13 @@
 (param fraction_severe_age30to39 @fraction_severe_age30to39@)
 (param Ksysage30to39 (* fraction_severe_age30to39 (/ 1 time_to_symptoms)))
 (param Ksymage30to39 (* (- 1 fraction_severe_age30to39) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age30to39 @fraction_critical_age30to39@ )
 
+;(param cfr_age30to39 @cfr_age30to39@)
+;(param fraction_dead_age30to39 (/ cfr_age30to39 fraction_severe_age30to39))
 (param fraction_dead_age30to39 @fraction_dead_age30to39@)
 
-(param fraction_critical_age30to39 @fraction_critical_age30to39@ )
+;(param fraction_hospitalized_age30to39 (- 1 (+ fraction_critical_age30to39 fraction_dead_age30to39)))
 (param fraction_hospitalized_age30to39 @fraction_hospitalized_age30to39@)
 
 (param fraction_symptomatic_age30to39 @fraction_symptomatic_age30to39@)
@@ -1266,10 +1278,13 @@
 (param fraction_severe_age40to49 @fraction_severe_age40to49@)
 (param Ksysage40to49 (* fraction_severe_age40to49 (/ 1 time_to_symptoms)))
 (param Ksymage40to49 (* (- 1 fraction_severe_age40to49) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age40to49 @fraction_critical_age40to49@ )
 
+;(param cfr_age40to49 @cfr_age40to49@)
+;(param fraction_dead_age40to49 (/ cfr_age40to49 fraction_severe_age40to49))
 (param fraction_dead_age40to49 @fraction_dead_age40to49@)
 
-(param fraction_critical_age40to49 @fraction_critical_age40to49@ )
+;(param fraction_hospitalized_age40to49 (- 1 (+ fraction_critical_age40to49 fraction_dead_age40to49)))
 (param fraction_hospitalized_age40to49 @fraction_hospitalized_age40to49@)
 
 (param fraction_symptomatic_age40to49 @fraction_symptomatic_age40to49@)
@@ -1290,10 +1305,13 @@
 (param fraction_severe_age50to59 @fraction_severe_age50to59@)
 (param Ksysage50to59 (* fraction_severe_age50to59 (/ 1 time_to_symptoms)))
 (param Ksymage50to59 (* (- 1 fraction_severe_age50to59) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age50to59 @fraction_critical_age50to59@ )
 
+;(param cfr_age50to59 @cfr_age50to59@)
+;(param fraction_dead_age50to59 (/ cfr_age50to59 fraction_severe_age50to59))
 (param fraction_dead_age50to59 @fraction_dead_age50to59@)
 
-(param fraction_critical_age50to59 @fraction_critical_age50to59@ )
+;(param fraction_hospitalized_age50to59 (- 1 (+ fraction_critical_age50to59 fraction_dead_age50to59)))
 (param fraction_hospitalized_age50to59 @fraction_hospitalized_age50to59@)
 
 (param fraction_symptomatic_age50to59 @fraction_symptomatic_age50to59@)
@@ -1314,10 +1332,13 @@
 (param fraction_severe_age60to69 @fraction_severe_age60to69@)
 (param Ksysage60to69 (* fraction_severe_age60to69 (/ 1 time_to_symptoms)))
 (param Ksymage60to69 (* (- 1 fraction_severe_age60to69) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age60to69 @fraction_critical_age60to69@ )
 
+;(param cfr_age60to69 @cfr_age60to69@)
+;(param fraction_dead_age60to69 (/ cfr_age60to69 fraction_severe_age60to69))
 (param fraction_dead_age60to69 @fraction_dead_age60to69@)
 
-(param fraction_critical_age60to69 @fraction_critical_age60to69@ )
+;(param fraction_hospitalized_age60to69 (- 1 (+ fraction_critical_age60to69 fraction_dead_age60to69)))
 (param fraction_hospitalized_age60to69 @fraction_hospitalized_age60to69@)
 
 (param fraction_symptomatic_age60to69 @fraction_symptomatic_age60to69@)
@@ -1338,10 +1359,13 @@
 (param fraction_severe_age70to100 @fraction_severe_age70to100@)
 (param Ksysage70to100 (* fraction_severe_age70to100 (/ 1 time_to_symptoms)))
 (param Ksymage70to100 (* (- 1 fraction_severe_age70to100) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age70to100 @fraction_critical_age70to100@ )
 
+;(param cfr_age70to100 @cfr_age70to100@)
+;(param fraction_dead_age70to100 (/ cfr_age70to100 fraction_severe_age70to100))
 (param fraction_dead_age70to100 @fraction_dead_age70to100@)
 
-(param fraction_critical_age70to100 @fraction_critical_age70to100@ )
+;(param fraction_hospitalized_age70to100 (- 1 (+ fraction_critical_age70to100 fraction_dead_age70to100)))
 (param fraction_hospitalized_age70to100 @fraction_hospitalized_age70to100@)
 
 (param fraction_symptomatic_age70to100 @fraction_symptomatic_age70to100@)

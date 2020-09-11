@@ -1170,10 +1170,13 @@
 (param fraction_severe_age0to9 @fraction_severe_age0to9@)
 (param Ksysage0to9 (* fraction_severe_age0to9 (/ 1 time_to_symptoms)))
 (param Ksymage0to9 (* (- 1 fraction_severe_age0to9) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age0to9 @fraction_critical_age0to9@ )
 
+;(param cfr_age0to9 @cfr_age0to9@)
+;(param fraction_dead_age0to9 (/ cfr_age0to9 fraction_severe_age0to9))
 (param fraction_dead_age0to9 @fraction_dead_age0to9@)
 
-(param fraction_critical_age0to9 @fraction_critical_age0to9@ )
+;(param fraction_hospitalized_age0to9 (- 1 (+ fraction_critical_age0to9 fraction_dead_age0to9)))
 (param fraction_hospitalized_age0to9 @fraction_hospitalized_age0to9@)
 
 (param fraction_symptomatic_age0to9 @fraction_symptomatic_age0to9@)
@@ -1194,10 +1197,13 @@
 (param fraction_severe_age10to19 @fraction_severe_age10to19@)
 (param Ksysage10to19 (* fraction_severe_age10to19 (/ 1 time_to_symptoms)))
 (param Ksymage10to19 (* (- 1 fraction_severe_age10to19) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age10to19 @fraction_critical_age10to19@ )
 
+;(param cfr_age10to19 @cfr_age10to19@)
+;(param fraction_dead_age10to19 (/ cfr_age10to19 fraction_severe_age10to19))
 (param fraction_dead_age10to19 @fraction_dead_age10to19@)
 
-(param fraction_critical_age10to19 @fraction_critical_age10to19@ )
+;(param fraction_hospitalized_age10to19 (- 1 (+ fraction_critical_age10to19 fraction_dead_age10to19)))
 (param fraction_hospitalized_age10to19 @fraction_hospitalized_age10to19@)
 
 (param fraction_symptomatic_age10to19 @fraction_symptomatic_age10to19@)
@@ -1218,10 +1224,13 @@
 (param fraction_severe_age20to29 @fraction_severe_age20to29@)
 (param Ksysage20to29 (* fraction_severe_age20to29 (/ 1 time_to_symptoms)))
 (param Ksymage20to29 (* (- 1 fraction_severe_age20to29) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age20to29 @fraction_critical_age20to29@ )
 
+;(param cfr_age20to29 @cfr_age20to29@)
+;(param fraction_dead_age20to29 (/ cfr_age20to29 fraction_severe_age20to29))
 (param fraction_dead_age20to29 @fraction_dead_age20to29@)
 
-(param fraction_critical_age20to29 @fraction_critical_age20to29@ )
+;(param fraction_hospitalized_age20to29 (- 1 (+ fraction_critical_age20to29 fraction_dead_age20to29)))
 (param fraction_hospitalized_age20to29 @fraction_hospitalized_age20to29@)
 
 (param fraction_symptomatic_age20to29 @fraction_symptomatic_age20to29@)
@@ -1242,10 +1251,13 @@
 (param fraction_severe_age30to39 @fraction_severe_age30to39@)
 (param Ksysage30to39 (* fraction_severe_age30to39 (/ 1 time_to_symptoms)))
 (param Ksymage30to39 (* (- 1 fraction_severe_age30to39) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age30to39 @fraction_critical_age30to39@ )
 
+;(param cfr_age30to39 @cfr_age30to39@)
+;(param fraction_dead_age30to39 (/ cfr_age30to39 fraction_severe_age30to39))
 (param fraction_dead_age30to39 @fraction_dead_age30to39@)
 
-(param fraction_critical_age30to39 @fraction_critical_age30to39@ )
+;(param fraction_hospitalized_age30to39 (- 1 (+ fraction_critical_age30to39 fraction_dead_age30to39)))
 (param fraction_hospitalized_age30to39 @fraction_hospitalized_age30to39@)
 
 (param fraction_symptomatic_age30to39 @fraction_symptomatic_age30to39@)
@@ -1266,10 +1278,13 @@
 (param fraction_severe_age40to49 @fraction_severe_age40to49@)
 (param Ksysage40to49 (* fraction_severe_age40to49 (/ 1 time_to_symptoms)))
 (param Ksymage40to49 (* (- 1 fraction_severe_age40to49) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age40to49 @fraction_critical_age40to49@ )
 
+;(param cfr_age40to49 @cfr_age40to49@)
+;(param fraction_dead_age40to49 (/ cfr_age40to49 fraction_severe_age40to49))
 (param fraction_dead_age40to49 @fraction_dead_age40to49@)
 
-(param fraction_critical_age40to49 @fraction_critical_age40to49@ )
+;(param fraction_hospitalized_age40to49 (- 1 (+ fraction_critical_age40to49 fraction_dead_age40to49)))
 (param fraction_hospitalized_age40to49 @fraction_hospitalized_age40to49@)
 
 (param fraction_symptomatic_age40to49 @fraction_symptomatic_age40to49@)
@@ -1290,10 +1305,13 @@
 (param fraction_severe_age50to59 @fraction_severe_age50to59@)
 (param Ksysage50to59 (* fraction_severe_age50to59 (/ 1 time_to_symptoms)))
 (param Ksymage50to59 (* (- 1 fraction_severe_age50to59) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age50to59 @fraction_critical_age50to59@ )
 
+;(param cfr_age50to59 @cfr_age50to59@)
+;(param fraction_dead_age50to59 (/ cfr_age50to59 fraction_severe_age50to59))
 (param fraction_dead_age50to59 @fraction_dead_age50to59@)
 
-(param fraction_critical_age50to59 @fraction_critical_age50to59@ )
+;(param fraction_hospitalized_age50to59 (- 1 (+ fraction_critical_age50to59 fraction_dead_age50to59)))
 (param fraction_hospitalized_age50to59 @fraction_hospitalized_age50to59@)
 
 (param fraction_symptomatic_age50to59 @fraction_symptomatic_age50to59@)
@@ -1314,10 +1332,13 @@
 (param fraction_severe_age60to69 @fraction_severe_age60to69@)
 (param Ksysage60to69 (* fraction_severe_age60to69 (/ 1 time_to_symptoms)))
 (param Ksymage60to69 (* (- 1 fraction_severe_age60to69) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age60to69 @fraction_critical_age60to69@ )
 
+;(param cfr_age60to69 @cfr_age60to69@)
+;(param fraction_dead_age60to69 (/ cfr_age60to69 fraction_severe_age60to69))
 (param fraction_dead_age60to69 @fraction_dead_age60to69@)
 
-(param fraction_critical_age60to69 @fraction_critical_age60to69@ )
+;(param fraction_hospitalized_age60to69 (- 1 (+ fraction_critical_age60to69 fraction_dead_age60to69)))
 (param fraction_hospitalized_age60to69 @fraction_hospitalized_age60to69@)
 
 (param fraction_symptomatic_age60to69 @fraction_symptomatic_age60to69@)
@@ -1338,10 +1359,13 @@
 (param fraction_severe_age70to100 @fraction_severe_age70to100@)
 (param Ksysage70to100 (* fraction_severe_age70to100 (/ 1 time_to_symptoms)))
 (param Ksymage70to100 (* (- 1 fraction_severe_age70to100) (/ 1 time_to_symptoms))) 
+(param fraction_critical_age70to100 @fraction_critical_age70to100@ )
 
+;(param cfr_age70to100 @cfr_age70to100@)
+;(param fraction_dead_age70to100 (/ cfr_age70to100 fraction_severe_age70to100))
 (param fraction_dead_age70to100 @fraction_dead_age70to100@)
 
-(param fraction_critical_age70to100 @fraction_critical_age70to100@ )
+;(param fraction_hospitalized_age70to100 (- 1 (+ fraction_critical_age70to100 fraction_dead_age70to100)))
 (param fraction_hospitalized_age70to100 @fraction_hospitalized_age70to100@)
 
 (param fraction_symptomatic_age70to100 @fraction_symptomatic_age70to100@)
@@ -1523,23 +1547,200 @@
 (param C8_1 (/ C81 norm_factor))
 
 
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@)))
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
+(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
+(time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
+
+(observe frac_crit_t_age0to9 fraction_critical_age0to9)
+(observe fraction_hospitalized_t_age0to9 fraction_hospitalized_age0to9)
+(observe fraction_dead_t_age0to9 fraction_dead_age0to9)
+
+(time-event frac_crit_adjust1_age0to9 @crit_time_1@ ((fraction_critical_age0to9 @fraction_critical_incr1@) (fraction_hospitalized_age0to9 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age0to9))) (Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization)) (Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization )) (Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age0to9 @crit_time_2@ ((fraction_critical_age0to9 @fraction_critical_incr2@) (fraction_hospitalized_age0to9 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age0to9))) (Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization)) (Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization )) (Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age0to9 @crit_time_3@ ((fraction_critical_age0to9 @fraction_critical_incr3@) (fraction_hospitalized_age0to9 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age0to9))) (Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization)) (Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization )) (Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age0to9 (* @cfr_age0to9@ (/ 2 3) ) )
+;(param cfr_change2_age0to9 (* @cfr_age0to9@ (/ 1 3) ) )
+;(observe cfr_t_age0to9 cfr_age0to9)
+;(time-event cfr_adjust1_age0to9 @cfr_time_1@ ((cfr_age0to9 cfr_change1_age0to9) (fraction_dead_age0to9 (/ cfr fraction_severe_age0to9)) (fraction_hospitalized_age0to9 (- 1 (+ fraction_critical fraction_dead_age0to9))) (Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization)) (Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization )) (Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age0to9 @cfr_time_2@ ((cfr_age0to9 cfr_change2_age0to9) (fraction_dead_age0to9 (/ cfr fraction_severe_age0to9)) (fraction_hospitalized_age0to9 (- 1 (+ fraction_critical fraction_dead_age0to9))) (Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization)) (Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization )) (Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age0to9 (* @fraction_dead_age0to9@ (/ 2 3) ) )
+(param fraction_dead_change2_age0to9 (* @fraction_dead_age0to9@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age0to9 @cfr_time_1@ ((fraction_dead_age0to9 fraction_dead_change1_age0to9) (fraction_hospitalized_age0to9 (- 1 (+ fraction_critical_age0to9 fraction_dead_age0to9))) (Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization)) (Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization )) (Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age0to9 @cfr_time_2@ ((fraction_dead_age0to9 fraction_dead_change2_age0to9) (fraction_hospitalized_age0to9 (- 1 (+ fraction_critical_age0to9 fraction_dead_age0to9))) (Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization)) (Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization )) (Kh1_Dage0to9 (/ fraction_hospitalized_age0to9 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage0to9 (/ fraction_critical_age0to9 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(observe frac_crit_t_age10to19 fraction_critical_age10to19)
+(observe fraction_hospitalized_t_age10to19 fraction_hospitalized_age10to19)
+(observe fraction_dead_t_age10to19 fraction_dead_age10to19)
+
+(time-event frac_crit_adjust1_age10to19 @crit_time_1@ ((fraction_critical_age10to19 @fraction_critical_incr1@) (fraction_hospitalized_age10to19 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age10to19))) (Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization)) (Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization )) (Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age10to19 @crit_time_2@ ((fraction_critical_age10to19 @fraction_critical_incr2@) (fraction_hospitalized_age10to19 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age10to19))) (Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization)) (Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization )) (Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age10to19 @crit_time_3@ ((fraction_critical_age10to19 @fraction_critical_incr3@) (fraction_hospitalized_age10to19 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age10to19))) (Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization)) (Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization )) (Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age10to19 (* @cfr_age10to19@ (/ 2 3) ) )
+;(param cfr_change2_age10to19 (* @cfr_age10to19@ (/ 1 3) ) )
+;(observe cfr_t_age10to19 cfr_age10to19)
+;(time-event cfr_adjust1_age10to19 @cfr_time_1@ ((cfr_age10to19 cfr_change1_age10to19) (fraction_dead_age10to19 (/ cfr fraction_severe_age10to19)) (fraction_hospitalized_age10to19 (- 1 (+ fraction_critical fraction_dead_age10to19))) (Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization)) (Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization )) (Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age10to19 @cfr_time_2@ ((cfr_age10to19 cfr_change2_age10to19) (fraction_dead_age10to19 (/ cfr fraction_severe_age10to19)) (fraction_hospitalized_age10to19 (- 1 (+ fraction_critical fraction_dead_age10to19))) (Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization)) (Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization )) (Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age10to19 (* @fraction_dead_age10to19@ (/ 2 3) ) )
+(param fraction_dead_change2_age10to19 (* @fraction_dead_age10to19@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age10to19 @cfr_time_1@ ((fraction_dead_age10to19 fraction_dead_change1_age10to19) (fraction_hospitalized_age10to19 (- 1 (+ fraction_critical_age10to19 fraction_dead_age10to19))) (Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization)) (Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization )) (Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age10to19 @cfr_time_2@ ((fraction_dead_age10to19 fraction_dead_change2_age10to19) (fraction_hospitalized_age10to19 (- 1 (+ fraction_critical_age10to19 fraction_dead_age10to19))) (Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization)) (Kh2age10to19 (/ fraction_critical_age10to19 time_to_hospitalization )) (Kh1_Dage10to19 (/ fraction_hospitalized_age10to19 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage10to19 (/ fraction_critical_age10to19 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(observe frac_crit_t_age20to29 fraction_critical_age20to29)
+(observe fraction_hospitalized_t_age20to29 fraction_hospitalized_age20to29)
+(observe fraction_dead_t_age20to29 fraction_dead_age20to29)
+
+(time-event frac_crit_adjust1_age20to29 @crit_time_1@ ((fraction_critical_age20to29 @fraction_critical_incr1@) (fraction_hospitalized_age20to29 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age20to29))) (Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization)) (Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization )) (Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age20to29 @crit_time_2@ ((fraction_critical_age20to29 @fraction_critical_incr2@) (fraction_hospitalized_age20to29 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age20to29))) (Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization)) (Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization )) (Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age20to29 @crit_time_3@ ((fraction_critical_age20to29 @fraction_critical_incr3@) (fraction_hospitalized_age20to29 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age20to29))) (Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization)) (Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization )) (Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age20to29 (* @cfr_age20to29@ (/ 2 3) ) )
+;(param cfr_change2_age20to29 (* @cfr_age20to29@ (/ 1 3) ) )
+;(observe cfr_t_age20to29 cfr_age20to29)
+;(time-event cfr_adjust1_age20to29 @cfr_time_1@ ((cfr_age20to29 cfr_change1_age20to29) (fraction_dead_age20to29 (/ cfr fraction_severe_age20to29)) (fraction_hospitalized_age20to29 (- 1 (+ fraction_critical fraction_dead_age20to29))) (Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization)) (Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization )) (Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age20to29 @cfr_time_2@ ((cfr_age20to29 cfr_change2_age20to29) (fraction_dead_age20to29 (/ cfr fraction_severe_age20to29)) (fraction_hospitalized_age20to29 (- 1 (+ fraction_critical fraction_dead_age20to29))) (Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization)) (Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization )) (Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age20to29 (* @fraction_dead_age20to29@ (/ 2 3) ) )
+(param fraction_dead_change2_age20to29 (* @fraction_dead_age20to29@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age20to29 @cfr_time_1@ ((fraction_dead_age20to29 fraction_dead_change1_age20to29) (fraction_hospitalized_age20to29 (- 1 (+ fraction_critical_age20to29 fraction_dead_age20to29))) (Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization)) (Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization )) (Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age20to29 @cfr_time_2@ ((fraction_dead_age20to29 fraction_dead_change2_age20to29) (fraction_hospitalized_age20to29 (- 1 (+ fraction_critical_age20to29 fraction_dead_age20to29))) (Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization)) (Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization )) (Kh1_Dage20to29 (/ fraction_hospitalized_age20to29 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage20to29 (/ fraction_critical_age20to29 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(observe frac_crit_t_age30to39 fraction_critical_age30to39)
+(observe fraction_hospitalized_t_age30to39 fraction_hospitalized_age30to39)
+(observe fraction_dead_t_age30to39 fraction_dead_age30to39)
+
+(time-event frac_crit_adjust1_age30to39 @crit_time_1@ ((fraction_critical_age30to39 @fraction_critical_incr1@) (fraction_hospitalized_age30to39 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age30to39))) (Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization)) (Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization )) (Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age30to39 @crit_time_2@ ((fraction_critical_age30to39 @fraction_critical_incr2@) (fraction_hospitalized_age30to39 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age30to39))) (Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization)) (Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization )) (Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age30to39 @crit_time_3@ ((fraction_critical_age30to39 @fraction_critical_incr3@) (fraction_hospitalized_age30to39 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age30to39))) (Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization)) (Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization )) (Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age30to39 (* @cfr_age30to39@ (/ 2 3) ) )
+;(param cfr_change2_age30to39 (* @cfr_age30to39@ (/ 1 3) ) )
+;(observe cfr_t_age30to39 cfr_age30to39)
+;(time-event cfr_adjust1_age30to39 @cfr_time_1@ ((cfr_age30to39 cfr_change1_age30to39) (fraction_dead_age30to39 (/ cfr fraction_severe_age30to39)) (fraction_hospitalized_age30to39 (- 1 (+ fraction_critical fraction_dead_age30to39))) (Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization)) (Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization )) (Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age30to39 @cfr_time_2@ ((cfr_age30to39 cfr_change2_age30to39) (fraction_dead_age30to39 (/ cfr fraction_severe_age30to39)) (fraction_hospitalized_age30to39 (- 1 (+ fraction_critical fraction_dead_age30to39))) (Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization)) (Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization )) (Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age30to39 (* @fraction_dead_age30to39@ (/ 2 3) ) )
+(param fraction_dead_change2_age30to39 (* @fraction_dead_age30to39@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age30to39 @cfr_time_1@ ((fraction_dead_age30to39 fraction_dead_change1_age30to39) (fraction_hospitalized_age30to39 (- 1 (+ fraction_critical_age30to39 fraction_dead_age30to39))) (Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization)) (Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization )) (Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age30to39 @cfr_time_2@ ((fraction_dead_age30to39 fraction_dead_change2_age30to39) (fraction_hospitalized_age30to39 (- 1 (+ fraction_critical_age30to39 fraction_dead_age30to39))) (Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization)) (Kh2age30to39 (/ fraction_critical_age30to39 time_to_hospitalization )) (Kh1_Dage30to39 (/ fraction_hospitalized_age30to39 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage30to39 (/ fraction_critical_age30to39 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(observe frac_crit_t_age40to49 fraction_critical_age40to49)
+(observe fraction_hospitalized_t_age40to49 fraction_hospitalized_age40to49)
+(observe fraction_dead_t_age40to49 fraction_dead_age40to49)
+
+(time-event frac_crit_adjust1_age40to49 @crit_time_1@ ((fraction_critical_age40to49 @fraction_critical_incr1@) (fraction_hospitalized_age40to49 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age40to49))) (Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization)) (Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization )) (Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age40to49 @crit_time_2@ ((fraction_critical_age40to49 @fraction_critical_incr2@) (fraction_hospitalized_age40to49 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age40to49))) (Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization)) (Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization )) (Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age40to49 @crit_time_3@ ((fraction_critical_age40to49 @fraction_critical_incr3@) (fraction_hospitalized_age40to49 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age40to49))) (Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization)) (Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization )) (Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age40to49 (* @cfr_age40to49@ (/ 2 3) ) )
+;(param cfr_change2_age40to49 (* @cfr_age40to49@ (/ 1 3) ) )
+;(observe cfr_t_age40to49 cfr_age40to49)
+;(time-event cfr_adjust1_age40to49 @cfr_time_1@ ((cfr_age40to49 cfr_change1_age40to49) (fraction_dead_age40to49 (/ cfr fraction_severe_age40to49)) (fraction_hospitalized_age40to49 (- 1 (+ fraction_critical fraction_dead_age40to49))) (Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization)) (Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization )) (Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age40to49 @cfr_time_2@ ((cfr_age40to49 cfr_change2_age40to49) (fraction_dead_age40to49 (/ cfr fraction_severe_age40to49)) (fraction_hospitalized_age40to49 (- 1 (+ fraction_critical fraction_dead_age40to49))) (Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization)) (Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization )) (Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age40to49 (* @fraction_dead_age40to49@ (/ 2 3) ) )
+(param fraction_dead_change2_age40to49 (* @fraction_dead_age40to49@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age40to49 @cfr_time_1@ ((fraction_dead_age40to49 fraction_dead_change1_age40to49) (fraction_hospitalized_age40to49 (- 1 (+ fraction_critical_age40to49 fraction_dead_age40to49))) (Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization)) (Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization )) (Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age40to49 @cfr_time_2@ ((fraction_dead_age40to49 fraction_dead_change2_age40to49) (fraction_hospitalized_age40to49 (- 1 (+ fraction_critical_age40to49 fraction_dead_age40to49))) (Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization)) (Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization )) (Kh1_Dage40to49 (/ fraction_hospitalized_age40to49 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage40to49 (/ fraction_critical_age40to49 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(observe frac_crit_t_age50to59 fraction_critical_age50to59)
+(observe fraction_hospitalized_t_age50to59 fraction_hospitalized_age50to59)
+(observe fraction_dead_t_age50to59 fraction_dead_age50to59)
+
+(time-event frac_crit_adjust1_age50to59 @crit_time_1@ ((fraction_critical_age50to59 @fraction_critical_incr1@) (fraction_hospitalized_age50to59 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age50to59))) (Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization)) (Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization )) (Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age50to59 @crit_time_2@ ((fraction_critical_age50to59 @fraction_critical_incr2@) (fraction_hospitalized_age50to59 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age50to59))) (Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization)) (Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization )) (Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age50to59 @crit_time_3@ ((fraction_critical_age50to59 @fraction_critical_incr3@) (fraction_hospitalized_age50to59 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age50to59))) (Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization)) (Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization )) (Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age50to59 (* @cfr_age50to59@ (/ 2 3) ) )
+;(param cfr_change2_age50to59 (* @cfr_age50to59@ (/ 1 3) ) )
+;(observe cfr_t_age50to59 cfr_age50to59)
+;(time-event cfr_adjust1_age50to59 @cfr_time_1@ ((cfr_age50to59 cfr_change1_age50to59) (fraction_dead_age50to59 (/ cfr fraction_severe_age50to59)) (fraction_hospitalized_age50to59 (- 1 (+ fraction_critical fraction_dead_age50to59))) (Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization)) (Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization )) (Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age50to59 @cfr_time_2@ ((cfr_age50to59 cfr_change2_age50to59) (fraction_dead_age50to59 (/ cfr fraction_severe_age50to59)) (fraction_hospitalized_age50to59 (- 1 (+ fraction_critical fraction_dead_age50to59))) (Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization)) (Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization )) (Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age50to59 (* @fraction_dead_age50to59@ (/ 2 3) ) )
+(param fraction_dead_change2_age50to59 (* @fraction_dead_age50to59@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age50to59 @cfr_time_1@ ((fraction_dead_age50to59 fraction_dead_change1_age50to59) (fraction_hospitalized_age50to59 (- 1 (+ fraction_critical_age50to59 fraction_dead_age50to59))) (Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization)) (Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization )) (Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age50to59 @cfr_time_2@ ((fraction_dead_age50to59 fraction_dead_change2_age50to59) (fraction_hospitalized_age50to59 (- 1 (+ fraction_critical_age50to59 fraction_dead_age50to59))) (Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization)) (Kh2age50to59 (/ fraction_critical_age50to59 time_to_hospitalization )) (Kh1_Dage50to59 (/ fraction_hospitalized_age50to59 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage50to59 (/ fraction_critical_age50to59 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(observe frac_crit_t_age60to69 fraction_critical_age60to69)
+(observe fraction_hospitalized_t_age60to69 fraction_hospitalized_age60to69)
+(observe fraction_dead_t_age60to69 fraction_dead_age60to69)
+
+(time-event frac_crit_adjust1_age60to69 @crit_time_1@ ((fraction_critical_age60to69 @fraction_critical_incr1@) (fraction_hospitalized_age60to69 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age60to69))) (Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization)) (Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization )) (Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age60to69 @crit_time_2@ ((fraction_critical_age60to69 @fraction_critical_incr2@) (fraction_hospitalized_age60to69 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age60to69))) (Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization)) (Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization )) (Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age60to69 @crit_time_3@ ((fraction_critical_age60to69 @fraction_critical_incr3@) (fraction_hospitalized_age60to69 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age60to69))) (Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization)) (Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization )) (Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age60to69 (* @cfr_age60to69@ (/ 2 3) ) )
+;(param cfr_change2_age60to69 (* @cfr_age60to69@ (/ 1 3) ) )
+;(observe cfr_t_age60to69 cfr_age60to69)
+;(time-event cfr_adjust1_age60to69 @cfr_time_1@ ((cfr_age60to69 cfr_change1_age60to69) (fraction_dead_age60to69 (/ cfr fraction_severe_age60to69)) (fraction_hospitalized_age60to69 (- 1 (+ fraction_critical fraction_dead_age60to69))) (Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization)) (Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization )) (Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age60to69 @cfr_time_2@ ((cfr_age60to69 cfr_change2_age60to69) (fraction_dead_age60to69 (/ cfr fraction_severe_age60to69)) (fraction_hospitalized_age60to69 (- 1 (+ fraction_critical fraction_dead_age60to69))) (Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization)) (Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization )) (Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age60to69 (* @fraction_dead_age60to69@ (/ 2 3) ) )
+(param fraction_dead_change2_age60to69 (* @fraction_dead_age60to69@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age60to69 @cfr_time_1@ ((fraction_dead_age60to69 fraction_dead_change1_age60to69) (fraction_hospitalized_age60to69 (- 1 (+ fraction_critical_age60to69 fraction_dead_age60to69))) (Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization)) (Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization )) (Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age60to69 @cfr_time_2@ ((fraction_dead_age60to69 fraction_dead_change2_age60to69) (fraction_hospitalized_age60to69 (- 1 (+ fraction_critical_age60to69 fraction_dead_age60to69))) (Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization)) (Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization )) (Kh1_Dage60to69 (/ fraction_hospitalized_age60to69 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage60to69 (/ fraction_critical_age60to69 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(observe frac_crit_t_age70to100 fraction_critical_age70to100)
+(observe fraction_hospitalized_t_age70to100 fraction_hospitalized_age70to100)
+(observe fraction_dead_t_age70to100 fraction_dead_age70to100)
+
+(time-event frac_crit_adjust1_age70to100 @crit_time_1@ ((fraction_critical_age70to100 @fraction_critical_incr1@) (fraction_hospitalized_age70to100 (- 1 (+ @fraction_critical_incr1@ fraction_dead_age70to100))) (Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization)) (Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization )) (Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_age70to100 @crit_time_2@ ((fraction_critical_age70to100 @fraction_critical_incr2@) (fraction_hospitalized_age70to100 (- 1 (+ @fraction_critical_incr2@ fraction_dead_age70to100))) (Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization)) (Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization )) (Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_age70to100 @crit_time_3@ ((fraction_critical_age70to100 @fraction_critical_incr3@) (fraction_hospitalized_age70to100 (- 1 (+ @fraction_critical_incr3@ fraction_dead_age70to100))) (Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization)) (Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization )) (Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) )) )) 
+
+; COMMENT results in negative counts TODO
+;(param cfr_change1_age70to100 (* @cfr_age70to100@ (/ 2 3) ) )
+;(param cfr_change2_age70to100 (* @cfr_age70to100@ (/ 1 3) ) )
+;(observe cfr_t_age70to100 cfr_age70to100)
+;(time-event cfr_adjust1_age70to100 @cfr_time_1@ ((cfr_age70to100 cfr_change1_age70to100) (fraction_dead_age70to100 (/ cfr fraction_severe_age70to100)) (fraction_hospitalized_age70to100 (- 1 (+ fraction_critical fraction_dead_age70to100))) (Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization)) (Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization )) (Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) )) )) 
+;(time-event cfr_adjust2_age70to100 @cfr_time_2@ ((cfr_age70to100 cfr_change2_age70to100) (fraction_dead_age70to100 (/ cfr fraction_severe_age70to100)) (fraction_hospitalized_age70to100 (- 1 (+ fraction_critical fraction_dead_age70to100))) (Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization)) (Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization )) (Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_age70to100 (* @fraction_dead_age70to100@ (/ 2 3) ) )
+(param fraction_dead_change2_age70to100 (* @fraction_dead_age70to100@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_age70to100 @cfr_time_1@ ((fraction_dead_age70to100 fraction_dead_change1_age70to100) (fraction_hospitalized_age70to100 (- 1 (+ fraction_critical_age70to100 fraction_dead_age70to100))) (Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization)) (Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization )) (Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_age70to100 @cfr_time_2@ ((fraction_dead_age70to100 fraction_dead_change2_age70to100) (fraction_hospitalized_age70to100 (- 1 (+ fraction_critical_age70to100 fraction_dead_age70to100))) (Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization)) (Kh2age70to100 (/ fraction_critical_age70to100 time_to_hospitalization )) (Kh1_Dage70to100 (/ fraction_hospitalized_age70to100 (- time_to_hospitalization time_D_Sys))) (Kh2_Dage70to100 (/ fraction_critical_age70to100 (- time_to_hospitalization time_D_Sys) )) )) 
+
 (param Ki_red1 (* Ki @social_multiplier_1@))
 (param Ki_red2 (* Ki @social_multiplier_2@))
 (param Ki_red3 (* Ki @social_multiplier_3@))
 (param Ki_red4 (* Ki @social_multiplier_4@))
+(param Ki_red5 (* Ki @social_multiplier_5@))
+(param Ki_red6 (* Ki @social_multiplier_6@))
+
+(param backtonormal_multiplier_1  (/ (- Ki_red5  Ki_red4 ) (- Ki Ki_red4 ) ) )  
+(observe backtonormal_multiplier_1 backtonormal_multiplier_1)
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
 (time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
+(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki Ki_red5)))
+(time-event socialDistance_change_3 @socialDistance_time6@ ((Ki Ki_red6)))
 
-(param Ki_back (+ Ki_red4 (* @backtonormal_multiplier@ (- Ki Ki_red4))))
-(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@)))
+(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@)))
+(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@)))
+(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@)))
+(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@)))
 
-(time-event contact_tracing_start @contact_tracing_start_1@ ((reduced_inf_of_det_cases @reduced_inf_of_det_cases_ct1@ ) (d_As @d_AsP_ct1@) (d_P @d_AsP_ct1@) (d_Sym @d_Sym_ct1@)))
-;(time-event contact_tracing_end @contact_tracing_stop1@ ((reduced_inf_of_det_cases @reduced_inf_of_det_cases@ ) (d_As @d_As@) (d_P @d_P@) (d_Sym @d_Sym@)))
+
+(time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_Sym @change_testDelay_Sym_1@) (Ksym_D (/ 1 time_D_Sym)) (Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym ))) ))
     
-;[ADDITIONAL_TIMEEVENTS]
 
   
 (reaction exposure_age0to9 (S_age0to9) (E_age0to9) (* Ki S_age0to9 (+ (* C1_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C1_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C1_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C1_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C1_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C1_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C1_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C1_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
