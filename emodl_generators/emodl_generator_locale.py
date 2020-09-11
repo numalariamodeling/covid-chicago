@@ -439,106 +439,158 @@ def repeat_string_by_grp(fixedstring, grpList):
     return stringAll
 
 
-def write_All(grpList):
-    obs_All_str = ""
-    obs_All_str = obs_All_str + "\n(observe susceptible_All (+ " + repeat_string_by_grp('S::', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E::',  grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe asymptomatic_All (+ " + repeat_string_by_grp( 'asymptomatic_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe asymptomatic_det_All (+ "  + repeat_string_by_grp('As_det1::',  grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P::', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe presymptomatic_det_All (+ " + repeat_string_by_grp('P_det::', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symptomatic_mild_All (+ " + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symptomatic_mild_det_All (+ " + repeat_string_by_grp(  'symptomatic_mild_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symptomatic_severe_All (+ " + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symptomatic_severe_det_All (+ " + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe hosp_det_All (+ " + repeat_string_by_grp('hosp_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe critical_All (+ " + repeat_string_by_grp('critical_',    grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe crit_det_All (+ " + repeat_string_by_grp('crit_det_',    grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe deaths_All (+ " + repeat_string_by_grp('deaths_',   grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe deaths_det_All (+ " + repeat_string_by_grp('D3_det3::',  grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infected_All (+ " + repeat_string_by_grp('infected_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infected_det_All (+ " + repeat_string_by_grp('infected_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',    grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe recovered_det_All (+ " + repeat_string_by_grp('recovered_det_',    grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe asymp_cumul_All (+ " + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe asymp_det_cumul_All (+ " + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symp_mild_cumul_All (+ " + repeat_string_by_grp( 'symp_mild_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symp_mild_det_cumul_All (+ " + repeat_string_by_grp( 'symp_mild_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symp_severe_cumul_All (+ " + repeat_string_by_grp( 'symp_severe_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe symp_severe_det_cumul_All  (+ " + repeat_string_by_grp(  'symp_severe_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe hosp_cumul_All (+ " + repeat_string_by_grp('hosp_cumul_',  grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe hosp_det_cumul_All (+ " + repeat_string_by_grp( 'hosp_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe crit_cumul_All (+ " + repeat_string_by_grp('crit_cumul_',   grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe crit_det_cumul_All (+ " + repeat_string_by_grp(  'crit_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe detected_cumul_All (+ " + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe death_det_cumul_All (+ " + repeat_string_by_grp('death_det_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infected_cumul_All (+ " + repeat_string_by_grp('infected_cumul_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infectious_det_All (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infectious_det_symp_All (+ " + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe infectious_det_AsP_All (+ " + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
+def write_All(grpList, observeLevel='primary'):
+    
+    obs_primary_All_str = ""
+    obs_primary_All_str = obs_primary_All_str + "\n(observe susceptible_All (+ " + repeat_string_by_grp('S::', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe infected_All (+ " + repeat_string_by_grp('infected_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',    grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe infected_cumul_All (+ " + repeat_string_by_grp('infected_cumul_', grpList) + "))"
+ 
+    obs_primary_All_str = obs_primary_All_str + "\n(observe asymp_cumul_All (+ " + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe asymp_det_cumul_All (+ " + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe symptomatic_mild_All (+ " + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe symptomatic_severe_All (+ " + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe symp_mild_cumul_All (+ " + repeat_string_by_grp( 'symp_mild_cumul_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe symp_severe_cumul_All (+ " + repeat_string_by_grp( 'symp_severe_cumul_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe symp_mild_det_cumul_All (+ " + repeat_string_by_grp( 'symp_mild_det_cumul_', grpList) + "))"   
+    obs_primary_All_str = obs_primary_All_str + "\n(observe symp_severe_det_cumul_All  (+ " + repeat_string_by_grp(  'symp_severe_det_cumul_', grpList) + "))"   
+    
+    obs_primary_All_str = obs_primary_All_str + "\n(observe hosp_det_cumul_All (+ " + repeat_string_by_grp( 'hosp_det_cumul_', grpList) + "))"    
+    obs_primary_All_str = obs_primary_All_str + "\n(observe hosp_cumul_All (+ " + repeat_string_by_grp('hosp_cumul_',  grpList) + "))"   
+    obs_primary_All_str = obs_primary_All_str + "\n(observe detected_cumul_All (+ " + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
 
-    obs_All_str = obs_All_str + "\n(observe prevalence_All (+ " + repeat_string_by_grp( 'prevalence_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe seroprevalence_All (+ " + repeat_string_by_grp( 'seroprevalence_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe prevalence_det_All (+ " + repeat_string_by_grp( 'prevalence_det_', grpList) + "))"
-    obs_All_str = obs_All_str + "\n(observe seroprevalence_det_All (+ " + repeat_string_by_grp( 'seroprevalence_det_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe crit_cumul_All (+ " + repeat_string_by_grp('crit_cumul_',   grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe crit_det_cumul_All (+ " + repeat_string_by_grp(  'crit_det_cumul_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe death_det_cumul_All (+ " + repeat_string_by_grp('death_det_cumul_', grpList) + "))"    
+    
+    obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_det_All (+ " + repeat_string_by_grp('D3_det3::',  grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_All (+ " + repeat_string_by_grp('deaths_',   grpList) + "))"
 
+    obs_primary_All_str = obs_primary_All_str + "\n(observe crit_det_All (+ " + repeat_string_by_grp('crit_det_',    grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe critical_All (+ " + repeat_string_by_grp('critical_',    grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe hosp_det_All (+ " + repeat_string_by_grp('hosp_det_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"    
+    
+    
+    obs_secondary_All_str = ""
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E::',  grpList) + "))"
+    
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_All (+ " + repeat_string_by_grp( 'asymptomatic_', grpList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_det_All (+ "  + repeat_string_by_grp('As_det1::',  grpList) + "))"
+    
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_All (+ " + repeat_string_by_grp('P::', grpList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_det_All (+ " + repeat_string_by_grp('P_det::', grpList) + "))"
+
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe detected_All (+ " + repeat_string_by_grp( 'detected_', grpList) + "))"
+    
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_mild_det_All (+ " + repeat_string_by_grp(  'symptomatic_mild_det_', grpList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_severe_det_All (+ " + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
+    obs_secondary_All_str = obs_secondary_All_str + "\n(observe recovered_det_All (+ " + repeat_string_by_grp('recovered_det_',    grpList) + "))"   
+    
+    
+    obs_tertiary_All_str = ""
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_All (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_symp_All (+ " + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_AsP_All (+ " + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
+   
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_All (+ " + repeat_string_by_grp( 'prevalence_', grpList) + "))"
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_All (+ " + repeat_string_by_grp( 'seroprevalence_', grpList) + "))"
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_det_All (+ " + repeat_string_by_grp( 'prevalence_det_', grpList) + "))"
+    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_det_All (+ " + repeat_string_by_grp( 'seroprevalence_det_', grpList) + "))"
+
+    if observeLevel == 'primary' :
+        obs_All_str = obs_primary_All_str
+    if observeLevel == 'secondary' :
+        obs_All_str = obs_primary_All_str + obs_secondary_All_str
+    if observeLevel == 'tertiary' :
+        obs_All_str = obs_primary_All_str +  obs_tertiary_All_str
+    if observeLevel == 'all' :
+        obs_All_str = obs_primary_All_str + obs_secondary_All_str + obs_tertiary_All_str
+
+    obs_All_str = obs_All_str.replace("  ", " ")
     return (obs_All_str)
 
 
-def write_Custom_Groups(grpDic):
+def write_Custom_Groups(grpDic,observeLevel):
 
-    def write_Custom_Group_Sub(obs_customGrp, grpList) :
-        obs_customGrp_str = ""
-        obs_customGrp_str = obs_customGrp_str + """\n(observe susceptible_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('S::', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe exposed_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('E::',  grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe asymptomatic_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymptomatic_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe asymptomatic_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('As_det1::',  grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe presymptomatic_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('P::', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe presymptomatic_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp)  + repeat_string_by_grp('P_det::', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symptomatic_mild_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symptomatic_mild_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp(  'symptomatic_mild_det_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symptomatic_severe_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symptomatic_severe_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe hospitalized_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hospitalized_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe hosp_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hosp_det_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe critical_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('critical_',    grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe crit_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('crit_det_',    grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe deaths_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('deaths_',   grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe deaths_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('D3_det3::',  grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe infected_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe infected_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_det_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe recovered_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('recovered_',    grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe recovered_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('recovered_det_',    grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe asymp_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe asymp_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symp_mild_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symp_mild_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symp_mild_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symp_mild_det_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symp_severe_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symp_severe_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe symp_severe_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp(  'symp_severe_det_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe hosp_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hosp_cumul_',  grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe hosp_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'hosp_det_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe crit_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('crit_cumul_',   grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe crit_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp(  'crit_det_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe detected_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe death_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('death_det_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe infected_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_cumul_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe infectious_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infectious_det_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe infectious_undet_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe infectious_det_symp_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe infectious_det_AsP_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe prevalence_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'prevalence_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe seroprevalence_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'seroprevalence_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe prevalence_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'prevalence_det_', grpList) + "))"
-        obs_customGrp_str = obs_customGrp_str + """\n(observe seroprevalence_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'seroprevalence_det_', grpList) + "))"
+    def write_Custom_Group_Sub(obs_customGrp, grpList,observeLevel) :
+        
+        obs_customGrp_primary_str = ""
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe susceptible_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('S::', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe infected_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe recovered_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('recovered_',    grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe infected_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_cumul_', grpList) + "))"
 
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe asymp_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe asymp_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe symptomatic_mild_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe symptomatic_severe_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symptomatic_severe_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe symp_mild_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symp_mild_cumul_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe symp_severe_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symp_severe_cumul_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe symp_mild_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symp_mild_det_cumul_', grpList) + "))"   
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe symp_severe_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('symp_severe_det_cumul_', grpList) + "))"   
+
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe hosp_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'hosp_det_cumul_', grpList) + "))"    
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe hosp_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hosp_cumul_',  grpList) + "))"   
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe detected_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'detected_cumul_', grpList) + "))"
+
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe crit_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('crit_cumul_',   grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe crit_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp(  'crit_det_cumul_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe death_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('death_det_cumul_', grpList) + "))"    
+
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe deaths_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('D3_det3::',  grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe deaths_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('deaths_',   grpList) + "))"
+
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe crit_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('crit_det_',    grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe critical_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('critical_',    grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe hosp_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hosp_det_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe hospitalized_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('hospitalized_', grpList) + "))"    
+        
+        
+        obs_customGrp_secondary_str = ""
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe exposed_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('E::',  grpList) + "))"
+
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe asymptomatic_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymptomatic_', grpList) + "))"
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe asymptomatic_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'As_det1::',  grpList) + "))"
+
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe presymptomatic_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('P::', grpList) + "))"
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe presymptomatic_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('P_det::', grpList) + "))"
+
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe detected_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'detected_', grpList) + "))"
+
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe symptomatic_mild_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp(  'symptomatic_mild_det_', grpList) + "))"
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe symptomatic_severe_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
+        obs_customGrp_secondary_str = obs_customGrp_secondary_str + """\n(observe recovered_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('recovered_det_',    grpList) + "))"   
+        
+        
+        obs_customGrp_tertiary_str = ""
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe infectious_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infectious_det_', grpList) + "))"
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe infectious_undet_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe infectious_det_symp_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe infectious_det_AsP_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
+
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe prevalence_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'prevalence_', grpList) + "))"
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe seroprevalence_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'seroprevalence_', grpList) + "))"
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe prevalence_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'prevalence_det_', grpList) + "))"
+        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe seroprevalence_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'seroprevalence_det_', grpList) + "))"
+    
+        if observeLevel == 'primary' :
+            obs_customGrp_str = obs_customGrp_primary_str
+        if observeLevel == 'secondary' :
+            obs_customGrp_str = obs_customGrp_primary_str + obs_customGrp_secondary_str
+        if observeLevel == 'tertiary' :
+            obs_customGrp_str = obs_customGrp_primary_str +  obs_customGrp_tertiary_str
+        if observeLevel == 'all' :
+            obs_customGrp_str = obs_customGrp_primary_str + obs_customGrp_secondary_str + obs_customGrp_tertiary_str
+           
         return obs_customGrp_str
 
     obs_All_str = ""
     for key in grpDic.keys() :
 
-        temp_str = write_Custom_Group_Sub(obs_customGrp=key, grpList=grpDic[key] )
+        temp_str = write_Custom_Group_Sub(obs_customGrp=key, grpList=grpDic[key],observeLevel=observeLevel )
         obs_All_str = obs_All_str + temp_str
 
     return (obs_All_str)
@@ -1107,7 +1159,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, observe
     param_string =  write_params(expandModel) + param_string +  write_N_population(grpList)
     if(add_migration) :
         param_string = param_string + write_migration_param(grpList)
-    functions_string = functions_string + write_All(grpList)
+    functions_string = functions_string + write_All(grpList, observeLevel=observeLevel)
     
     if(observe_customGroups) :
         if grpDic == None :
@@ -1116,7 +1168,7 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions, observe
                'central' : ['EMS_3', 'EMS_6'],
                'southern': ['EMS_4', 'EMS_5']}
                
-        functions_string = functions_string + write_Custom_Groups(grpDic)
+        functions_string = functions_string + write_Custom_Groups(grpDic, observeLevel)
     
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
 
