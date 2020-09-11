@@ -143,36 +143,6 @@ To generate or modify the emodl files use the [locale specific emmodl generator]
 A test verion is available under [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_agelocale_scen3.emodl).
 To generate or modify the emodl files use the [locale-age specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/extended_cobey_age_locale_emodl_generator.py )
 
-## 1.5. Model updates
-
-### Main updates in model structure and fitted parameters
-- 20200909 updated parameter fit, updated evolution of CFR
-- 20200825 updated parameter fit
-- 20200818 updated parameter fit, updated evolution of dSys and region-specific evolution of dSym
-- 20200812 updated parameter fit
-- 20200807 updated parameter fit
-- 20200804 updated parameter fit
-- 20200729 updated parameter fit, added region-specific evolution of dSym over time
-- 20200722 updated parameter fit, use covid regions instead of EMS regions for fitting (same numbering 1-11)
-- 20200715 updated parameter fit, added fifth social distancing multiplier (time event June 21st)
-- 20200706 added time-varying fraction_critical
-- 20200624 updated parameter fit
-- 20200622 adjusted increase in detection for severe and mild symptomatic cases 
-- 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
-- 20200616 updated parameter fit 
-- 20200610 updated parameter fit 
-- 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
-- 20200602 updated parameter fit 
-- 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
-- 20200521 added s_m_4, parameter fitting
-- 20200515 parameter fitting (also 20200512, 20200501)
-- 20200428 updated model disease and transmission parameters (previously 20200421, 20200419)
-- 20200428 added d_Sys_incr1-3  
-- 20200421 adding scale-invariant Ki
-- 20200407 add more detected observables
-- 20200402 [cobey](https://github.com/cobeylab/covid_IL) model alignment (including presymptomatic)
-- 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
-
 
 # 2. Software used
 The [Compartmental Modeling Software (CMS)](https://idmod.org/docs/cms/index.html) is used to simulate the COVID-19 transmission and disease progression. The CMS language defines 5 main type: species, observations, reactions, parameters and functions, in addition time-events can be added as well as state-events. Multiple compartments, called ‘species’ can be defined. The movement of populations between compartments is called reaction. The model runs with different solvers, including spatial solvers. The model is written in ['emodl' files](https://idmod.org/docs/cms/input-files.html) and model configurations are written in ['cfg' files](https://idmod.org/docs/cms/input-files.html). The output is written into [trajectories.csv files](https://idmod.org/docs/cms/output.html?searchText=output).
@@ -281,8 +251,41 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
 - covid data: IDPH 
 
-# Resources 
-- CMS software publication [published paper](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18)
+
+## 6. Model updates
+
+### Updates in model structure and fitted parameters
+- 20200909 updated parameter fit, updated evolution of CFR
+- 20200825 updated parameter fit
+- 20200818 updated parameter fit, updated evolution of dSys and region-specific evolution of dSym
+- 20200812 updated parameter fit
+- 20200807 updated parameter fit
+- 20200804 updated parameter fit
+- 20200729 updated parameter fit, added region-specific evolution of dSym over time
+- 20200722 updated parameter fit, use covid regions instead of EMS regions for fitting (same numbering 1-11)
+- 20200715 updated parameter fit, added fifth social distancing multiplier (time event June 21st)
+- 20200706 added time-varying fraction_critical
+- 20200624 updated parameter fit
+- 20200622 adjusted increase in detection for severe and mild symptomatic cases 
+- 20200622 updated model structure, added test delay in Asymptomatics and detections in presymptomatic 
+- 20200616 updated parameter fit 
+- 20200610 updated parameter fit 
+- 20200609 separat time delay for dSym and dSys, added d_Sym_incr 1-5 proportional to d_Sys_incr
+- 20200602 updated parameter fit 
+- 20200523 added d_Sys_incr4 and d_Sys_incr5, parameter fitting, including test delay per default
+- 20200521 added s_m_4, parameter fitting
+- 20200515 parameter fitting (also 20200512, 20200501)
+- 20200428 updated model disease and transmission parameters (previously 20200421, 20200419)
+- 20200428 added d_Sys_incr1-3  
+- 20200421 adding scale-invariant Ki
+- 20200407 add more detected observables
+- 20200402 [cobey](https://github.com/cobeylab/covid_IL) model alignment (including presymptomatic)
+- 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
+
+
+# 7. Resources 
+- CMS software [publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [online documentation](https://idmod.org/docs/cms/index.html)
 - [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 - [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
 - [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
+
