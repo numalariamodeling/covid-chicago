@@ -536,13 +536,13 @@ if __name__ == '__main__':
     )
 
     if Location == 'NUCLUSTER':
-        generateSubmissionFile_quest(nscen, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir)
+        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir, temp_dir, temp_exp_dir)
 
         runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER')
 
     if Location == 'Local':
         generateSubmissionFile(
-            nscen, exp_name, experiment_config,trajectories_dir, temp_dir, temp_exp_dir,
+            nscen, exp_name, args.experiment_config,trajectories_dir, temp_dir, temp_exp_dir,
             exe_dir=exe_dir, docker_image=docker_image)
 
         runExp(trajectories_dir=trajectories_dir, Location='Local')
@@ -556,11 +556,11 @@ if __name__ == '__main__':
         if args.post_process:
 
             log.info("Compare to data")
-            p1 = os.path.join(trajectories_dir, 'runDataComparison.bat')
+            p1 = os.path.join(sim_output_path, 'runDataComparison.bat')
             subprocess.call([p1])
 
             log.info("Process for civis")
-            p2 = os.path.join(trajectories_dir, 'runProcessForCivis.bat')
+            p2 = os.path.join(sim_output_path, 'runProcessForCivis.bat')
             subprocess.call([p2])
 
 
