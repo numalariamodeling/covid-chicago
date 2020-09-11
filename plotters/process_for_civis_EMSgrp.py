@@ -76,7 +76,7 @@ def load_and_plot_data(ems_region, fname='trajectoriesDat.csv' , savePlot=True) 
 
     outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
         'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'death_det_cumul',
-        'deaths', 'crit_det',  'critical', 'hospitalized_det', 'hospitalized']
+        'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
 
     for channel in outcome_channels:
         column_list.append(channel + "_" + str(ems_region))

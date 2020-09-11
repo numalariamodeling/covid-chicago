@@ -33,9 +33,8 @@ def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes=None):
         column_list.append('death_det_cumul_' + str(ems_region))
         column_list.append('deaths_' + str(ems_region))
         column_list.append('crit_det_' + str(ems_region))
-        column_list.append('critical_det_' + str(ems_region))
         column_list.append('critical_' + str(ems_region))
-        column_list.append('hospitalized_det_' + str(ems_region))
+        column_list.append('hosp_det_' + str(ems_region))
         column_list.append('hospitalized_' + str(ems_region))
 
     for ems_region in [ 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10', 'EMS-11']:

@@ -208,5 +208,5 @@ if __name__ == '__main__' :
     #plot_restoreregions_inone(channel='hospitalized')
     #plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths'])
     #plot_covidregions_inone2(channels=['prevalence','recoverged','symptomatic_mild','symptomatic_severe'])
-    plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild','hospitalized_det','deaths_det','infectious_det'])
+    plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild','hosp_det','deaths_det','infectious_det'])
 
