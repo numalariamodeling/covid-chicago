@@ -4,7 +4,7 @@ import logging
 import os
 import re
 import sys
-
+import subprocess
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
@@ -554,6 +554,17 @@ if __name__ == '__main__':
         log.info(f"Outputs are in {sim_output_path}")
 
         if args.post_process:
+
+            log.info("Compare to data")
+            p1 = os.path.join(trajectories_dir, 'runDataComparison.bat')
+            subprocess.call([p1])
+
+            log.info("Process for civis")
+            p2 = os.path.join(trajectories_dir, 'runProcessForCivis.bat')
+            subprocess.call([p2])
+
+
+            log.info("Sample plot")
             # Once the simulations are done
             # number_of_samples*len(Kivalues) == nscen ### to check
             df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
@@ -568,7 +579,7 @@ if __name__ == '__main__':
             #    especially when we have multiple first days.
             sampleplot(df, allchannels=master_channel_list, start_date=start_dates[0],
                        plot_fname=os.path.join(plot_path, 'main_channels.png'))
-            sampleplot(df, allchannels=detection_channel_list, start_date=start_dates[0],
-                       plot_fname=os.path.join('detection_channels.png'))
-            sampleplot(df, allchannels=custom_channel_list, start_date=start_dates[0],
-                       plot_fname=os.path.join('cumulative_channels.png'))
+            #sampleplot(df, allchannels=detection_channel_list, start_date=start_dates[0],
+            #           plot_fname=os.path.join('detection_channels.png'))
+            #sampleplot(df, allchannels=custom_channel_list, start_date=start_dates[0],
+            #           plot_fname=os.path.join('cumulative_channels.png'))
