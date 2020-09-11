@@ -891,7 +891,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
     interventionSTOP_adj_str = ""
     for grp in grpList :
         temp_str = """
-(param Ki_back_{grp} (+ Ki_red4_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red4_{grp}))))
+(param Ki_back_{grp} (+ Ki_red6_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red6_{grp}))))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
         """.format(grp=grp)
         interventionSTOP_adj_str = interventionSTOP_adj_str + temp_str
