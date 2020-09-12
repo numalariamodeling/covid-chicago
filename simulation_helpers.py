@@ -202,29 +202,29 @@ echo end""")
         if experiment_config != "spatial_EMS_experiment.yaml" :
             fname = "data_comparison.py"
         file = open(os.path.join(temp_exp_dir, 'runDataComparison.bat'), 'w')
-        file.write(f'cd {plotters_dir} \n python {fname} "{exp_name}"\npause')
+        file.write(f'cd {plotters_dir} \n python {fname} "{exp_name}"\n')
 
         if experiment_config == "spatial_EMS_experiment.yaml" :
             file = open(os.path.join(temp_exp_dir, 'runTrimTrajectories.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python trim_trajectoriesDat.py "{exp_name}" "{120}" "{15}" \npause')
+            file.write(f'cd {plotters_dir} \n python trim_trajectoriesDat.py "{exp_name}" "{120}" "{15}" \n')
 
             ## runProcessForCivis
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_1.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py --exp_name "{exp_name}" --processStep "generate_outputs" \npause')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \npause')
+            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.bat'), 'w')
             file.write(f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" \npause')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.bat'), 'w')
-            file.write(f'cd {rfiles_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \npause')
+            file.write(f'cd {rfiles_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n')
 
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
             file = open(os.path.join(temp_exp_dir, 'locale_age_postprocessing.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py "{exp_name}"  \npause')
+            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py "{exp_name}"  \n')
 
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir,  temp_exp_dir) :
