@@ -225,6 +225,7 @@ echo end""")
 
         ## runDataComparison
         plotters_dir = os.path.join(git_dir, "plotters")
+        rfiles_dir = os.path.join(git_dir, "Rfiles")
         if experiment_config == "spatial_EMS_experiment.yaml" :
             fname = "data_comparison_spatial.py"
         if experiment_config != "spatial_EMS_experiment.yaml" :
@@ -241,14 +242,13 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "{exp_name}" "{"generate_outputs"}" \npause')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "{exp_name}" \npause')
+            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \npause')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "{exp_name}" \npause')
+            file.write(f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" \npause')
 
-            ## runOverflow_probabilities
-            file = open(os.path.join(temp_exp_dir, 'runOverflow_probabilities.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \npause')
+            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.bat'), 'w')
+            file.write(f'cd {rfiles_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \npause')
 
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
