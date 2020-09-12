@@ -209,7 +209,7 @@ echo end""")
 
             ## runProcessForCivis
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_1.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "{exp_name}" "{"generate_outputs"}" \npause')
+            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "--exp_name {exp_name}" "--processStep {"generate_outputs"}" \npause')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \npause')
