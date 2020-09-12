@@ -216,7 +216,7 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "{Location}"  "{rfiles_dir}" \n')
+            file.write(f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n')
