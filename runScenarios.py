@@ -446,7 +446,7 @@ def parse_args():
         "--cfg_template",
         type=str,
         help="Template cfg file to use",
-        default="model.cfg"
+        default="model_B.cfg"
     )
     parser.add_argument(
         "--post_process",
@@ -556,12 +556,24 @@ if __name__ == '__main__':
         if args.post_process:
 
             log.info("Compare to data")
-            p1 = os.path.join(sim_output_path, 'runDataComparison.bat')
+            p0 = os.path.join(sim_output_path, 'runDataComparison.bat')
+            subprocess.call([p0])
+
+            log.info("Process for civis - csv file")
+            p1 = os.path.join(sim_output_path, 'runProcessForCivis_1.bat')
             subprocess.call([p1])
 
-            log.info("Process for civis")
-            p2 = os.path.join(sim_output_path, 'runProcessForCivis.bat')
+            log.info("Process for civis - overflow probabilities")
+            p2 = os.path.join(sim_output_path, 'runProcessForCivis_2.bat')
             subprocess.call([p2])
+
+            log.info("Process for civis - Rt estimation")
+            p3 = os.path.join(sim_output_path, 'runProcessForCivis_3.bat')
+            subprocess.call([p3])
+
+            log.info("Process for civis - file copy and changelog")
+            p4 = os.path.join(sim_output_path, 'runProcessForCivis_4.bat')
+            subprocess.call([p4])
 
 
             log.info("Sample plot")
