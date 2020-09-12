@@ -14,7 +14,7 @@ import yamlordereddictloader
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
                                 generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
-                                runExp, sampleplot)
+                                runExp, runSamplePlot)
 
 log = logging.getLogger(__name__)
 
@@ -448,11 +448,7 @@ def parse_args():
         help="Template cfg file to use",
         default="model_B.cfg"
     )
-    parser.add_argument(
-        "--post_process",
-        action='store_true',
-        help="Whether or not to run post-processing functions",
-    )
+
     parser.add_argument(
         "-n",
         "--name_suffix",
@@ -460,12 +456,27 @@ def parse_args():
         help="Adding custom suffix to the experiment name. Ignored if '--name' specified.",
         default= f"_test_rn{str(today.microsecond)[-2:]}"
     )
+
     parser.add_argument(
         "--exp-name",
         type=str,
         help="Experiment name; also the output directory name",
         default=None,
     )
+
+    parser.add_argument(
+        "--post_process",
+        type=str,
+        help="Whether or not to run post-processing functions current options are 'dataComparison'  'processForCivis' 'SamplePlot' ",
+        default=None,
+    )
+
+    parser.add_argument(
+        "--noSamplePlot",
+        action='store_true',
+        help="If specified, no sample plot with main trajectories will be generated",
+    )
+
 
     return parser.parse_args()
 
@@ -553,7 +564,16 @@ if __name__ == '__main__':
                 plot_path=plot_path, delete_temp_dir=True)
         log.info(f"Outputs are in {sim_output_path}")
 
-        if args.post_process:
+        if not args.noSamplePlot:
+            log.info("Sample plot")
+            runSamplePlot(sim_output_path=sim_output_path, plot_path=plot_path,start_dates=start_dates,channel_list="master")
+
+        if args.post_process == 'dataComparison':
+            log.info("Compare to data")
+            p0 = os.path.join(sim_output_path, 'runDataComparison.bat')
+            subprocess.call([p0])
+
+        if args.post_process == 'processForCivis':
 
             log.info("Compare to data")
             p0 = os.path.join(sim_output_path, 'runDataComparison.bat')
@@ -576,22 +596,4 @@ if __name__ == '__main__':
             subprocess.call([p4])
 
 
-            log.info("Sample plot")
-            # Once the simulations are done
-            # number_of_samples*len(Kivalues) == nscen ### to check
-            df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
-            master_channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
-                                   'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-            detection_channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-            custom_channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
-                                   'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
-
-            # FIXME: Timesteps shouldn't be all relative to start_dates[0],
-            #    especially when we have multiple first days.
-            sampleplot(df, allchannels=master_channel_list, start_date=start_dates[0],
-                       plot_fname=os.path.join(plot_path, 'main_channels.png'))
-            #sampleplot(df, allchannels=detection_channel_list, start_date=start_dates[0],
-            #           plot_fname=os.path.join('detection_channels.png'))
-            #sampleplot(df, allchannels=custom_channel_list, start_date=start_dates[0],
-            #           plot_fname=os.path.join('cumulative_channels.png'))

@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 
-from processing_helpers import CI_5, CI_25, CI_75, CI_95
+from processing_helpers import CI_50, CI_25, CI_75,CI_2pt5, CI_97pt5
 
 ### GE added 04/10/20 to fix "wdir not defined error"
 #import sys
@@ -147,14 +147,15 @@ def cleanup(temp_dir, temp_exp_dir, sim_output_path,plot_path, delete_temp_dir=T
     if delete_temp_dir:
         shutil.rmtree(temp_dir, ignore_errors=True)
         print('temp_dir folder deleted')
-    shutil.copytree(temp_exp_dir, sim_output_path)
-    if not os.path.exists(plot_path):
-        os.makedirs(plot_path)
-    # Delete files after being copied to the project folder
-    if os.path.exists(sim_output_path):
-        shutil.rmtree(temp_exp_dir, ignore_errors=True)
-    elif not os.path.exists(sim_output_path):
-        print('Sim_output_path does not exists')
+    if not os.path.exists(sim_output_path):
+        shutil.copytree(temp_exp_dir, sim_output_path)
+        if not os.path.exists(plot_path):
+            os.makedirs(plot_path)
+        # Delete files after being copied to the project folder
+        if os.path.exists(sim_output_path):
+            shutil.rmtree(temp_exp_dir, ignore_errors=True)
+        elif not os.path.exists(sim_output_path):
+            print('Sim_output_path does not exists')
 
 
 def writeTxt(txtdir, filename, textstring) :
@@ -209,7 +210,7 @@ echo end""")
 
             ## runProcessForCivis
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_1.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py "--exp_name {exp_name}" "--processStep {"generate_outputs"}" \npause')
+            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py --exp_name "{exp_name}" --processStep "generate_outputs" \npause')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \npause')
@@ -276,8 +277,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         file.close()
 
         pymodule = '\n\nml python'
-        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --stem "{exp_name}"' + ' --Location "NUCLUSTER"'
-        file = open(os.path.join(temp_exp_dir, 'processForCivis.sh'), 'w')
+        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --exp_name "{exp_name}"' + ' --processStep "generate_outputs"'
+        file = open(os.path.join(temp_exp_dir, 'runProcessForCivis.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
 
@@ -321,18 +322,40 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 
+def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list = "master" ):
+        # Once the simulations are done
+        # number_of_samples*len(Kivalues) == nscen ### to check
+        df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
+        df.columns = df.columns.str.replace('_All', '')
+
+        if channel_list =="master" :
+            channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+                               'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
+        if channel_list == "detection":
+            channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
+        if channel_list == "custom":
+            channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
+                               'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
+
+        # FIXME: Timesteps shouldn't be all relative to start_dates[0],
+        #    especially when we have multiple first days.
+        sampleplot(df, allchannels=channel_list, start_date=start_dates[0],
+                   plot_fname=os.path.join(plot_path, f'{channel_list}_channels.png'))
+
+
+
 def sampleplot(adf, allchannels, start_date, plot_fname=None):
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(14, 8))
     palette = sns.color_palette('Set1', 10)
 
     axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
+        mdf = adf.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
         ax = axes[c]
         dates = [start_date + timedelta(days=int(x)) for x in mdf['time']]
-        ax.plot(dates, mdf['mean'], label=channel, color=palette[c])
-        ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
+        ax.plot(dates, mdf['CI_50'], label=channel, color=palette[c])
+        ax.fill_between(dates, mdf['CI_2pt5'], mdf['CI_97pt5'],
                         color=palette[c], linewidth=0, alpha=0.2)
         ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
                         color=palette[c], linewidth=0, alpha=0.4)
