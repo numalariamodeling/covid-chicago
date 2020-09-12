@@ -192,36 +192,6 @@ echo end""")
             os.path.join(temp_exp_dir)
         ) + "\n ECHO end")
 
-        runParallel = False
-        if runParallel :
-            ## FIXME use parallel processing for local run,
-            #    loop runs simulation in batches of 5 but breaks if single simulation returns error
-            #    combine trajectories should only start after all trajectories were generated
-            file = open(os.path.join(trajectories_dir, 'runSimulations_loop.bat'), 'w')
-            file.write('ECHO Run simulation number %x% to  %y%' + '\n' +
-                       '\nFOR /L %%j IN (%x%,1,%y%) DO ( "{}" -c "{}" -m "{}") >> "{}/log/log_%x%_to_%y%.txt"'.format(
-                get_cms_cmd(exe_dir, temp_exp_dir),
-                os.path.join(temp_dir, "model_%%j" + ".cfg"),
-                os.path.join(temp_dir, "simulation_%%j" + ".emodl"),
-                os.path.join(trajectories_dir)
-            ) + "\n ECHO end")
-
-            file = open(os.path.join(trajectories_dir, 'runSimulations_parallel.bat'), 'w')
-            file.write('@echo off' \
-                        '\ncd {dir}\nfor /l %%i in (1,5,{nscen}]) do call :loop %%i' \
-                        '\ngoto :eof' \
-                        '\n\n:loop \ncall :checkinstances \nif %INSTANCES% LSS 5 (' \
-                        '\n    echo Starting processing instance for %1' \
-                        '\n    @set x=%1' \
-                        '\n    @set step=%1+5' \
-                        '\n    @set /a y=%x%+%step%' \
-                        '\n    copy runSimulations_loop.bat runSimulations_loop%1.bat' \
-                        '\n    start /min runSimulations_loop%1.bat 2 sec' \
-                        '\n    goto :eof' \
-                        '\n) \necho Waiting for instances to close ...\nping -n 2 ::1 >nul 2>&1\ngoto loop\ngoto :eof' \
-                        '\n:checkinstances\nfor /f "usebackq" %%t in (`tasklist /fo csv /fi "imagename eq wait.bat"^|find /c /v ""`) do set INSTANCES=%%t' \
-                        '\ngoto :eof' \
-                        '\npause'.format(nscen=str(scen_num), dir=trajectories_dir))
 
         ## runDataComparison
         plotters_dir = os.path.join(git_dir, "plotters")
