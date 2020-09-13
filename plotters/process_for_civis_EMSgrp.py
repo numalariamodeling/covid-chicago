@@ -105,7 +105,7 @@ def load_and_plot_data(ems_region, fname='trajectoriesDat.csv' , savePlot=True) 
         'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
 
     for channel in outcome_channels:
-        column_list.append(f'{channel}_{str(ems_region)}')
+        column_list.append(channel + "_" + str(grp))
 
     df = load_sim_data(exp_name,region_suffix = '_'+ems_region,fname=fname, column_list=column_list)
 
