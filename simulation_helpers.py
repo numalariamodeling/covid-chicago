@@ -216,7 +216,7 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "estimate_Rt/get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n')
+            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "estimate_Rt/get_Rt_forCivisOutputs.R" "{exp_name}" "Local" "{rfiles_dir}" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n')
@@ -287,7 +287,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
         file.close()
 
-        rcommand =  f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n'
+        rcommand =  f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "NUCLUSTER" "{rfiles_dir}" \n'
         file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.sh'), 'w')
         file.write(header + jobname + err + out + rmodule + rcommand)
         file.close()
