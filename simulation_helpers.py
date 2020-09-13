@@ -202,7 +202,7 @@ echo end""")
         if experiment_config != "spatial_EMS_experiment.yaml" :
             fname = "data_comparison.py"
         file = open(os.path.join(temp_exp_dir, 'runDataComparison.bat'), 'w')
-        file.write(f'cd {plotters_dir} \n python {fname} "{exp_name}"\n')
+        file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" \n')
 
         if experiment_config == "spatial_EMS_experiment.yaml" :
             file = open(os.path.join(temp_exp_dir, 'runTrimTrajectories.bat'), 'w')
@@ -216,7 +216,7 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n')
+            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "estimate_Rt/get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n')
@@ -287,7 +287,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
         file.close()
 
-        rcommand =  f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n')
+        rcommand =  f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n'
         file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.sh'), 'w')
         file.write(header + jobname + err + out + rmodule + rcommand)
         file.close()
@@ -338,25 +338,25 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 
-def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list = "master" ):
+def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list_name = "master" ):
         # Once the simulations are done
         # number_of_samples*len(Kivalues) == nscen ### to check
         df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
         df.columns = df.columns.str.replace('_All', '')
 
-        if channel_list =="master" :
+        if channel_list_name =="master" :
             channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
                                'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
-        if channel_list == "detection":
+        if channel_list_name == "detection":
             channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
-        if channel_list == "custom":
+        if channel_list_name == "custom":
             channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
                                'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
         # FIXME: Timesteps shouldn't be all relative to start_dates[0],
         #    especially when we have multiple first days.
         sampleplot(df, allchannels=channel_list, start_date=start_dates[0],
-                   plot_fname=os.path.join(plot_path, f'{channel_list}_channels.png'))
+                   plot_fname=os.path.join(plot_path, f'{channel_list_name}_sample_plot.png'))
 
 
 
