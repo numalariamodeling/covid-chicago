@@ -11,7 +11,7 @@
 
 
 # load modules you need to use
-ml python
+ml python/anaconda3.6
 
 # A command you actually want to execute:
 python /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --stem "20200826_IL_baseline" --Location "NUCLUSTER"
