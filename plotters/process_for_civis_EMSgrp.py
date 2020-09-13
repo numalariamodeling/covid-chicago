@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,12 +15,43 @@ from load_paths import load_box_paths
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
-testMode = True
-simdate = datetime.today().strftime('%Y%m%d') # "20200804"
+
+simdate = datetime.today().strftime('%Y%m%d') 
 
 plot_first_day = pd.to_datetime('2020/3/1')
 plot_last_day = pd.to_datetime('2021/4/1')
 
+def parse_args():
+    description = "Process simulation outputs to send to Civis"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-e", "--exp_name",
+        type=str,
+        help="Name of experiment and folder name",
+        default=None,
+    )
+    parser.add_argument(
+        "-p", "--processStep",
+        type=str,
+        help="Only required if files are too large to process regions in a loop",
+        default='generate_outputs',
+    )
+    parser.add_argument(
+        "-l", "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default='Local',
+    )
+    parser.add_argument(
+        "-t", "--trajectoriesName",
+        type=str,
+        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
+        default='trajectoriesDat.csv',
+    )
+
+    return parser.parse_args()
+    
 def get_scenarioName(exp_suffix) :
     scenarioName = exp_suffix
     if exp_suffix == "reopen": scenarioName = "reopen_gradual"
@@ -63,14 +95,14 @@ def plot_sim(dat,suffix,channels) :
             ax.xaxis.set_major_formatter(formatter)
             ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-        plotname = scenarioName +"_" + suffix
+        plotname = f'{scenarioName}_{suffix}'
         plotname = plotname.replace('EMS-','covidregion_')
 
         plt.savefig(os.path.join(plot_path, plotname + '.png'))
         plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
         # plt.show()
 
-def load_and_plot_data(ems_region, fname='trajectoriesDat.csv' , savePlot=True) :
+def load_and_plot_data(ems_region, fname , savePlot=True) :
 
     column_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
 
@@ -152,10 +184,14 @@ def rename_geography_and_save(df,filename) :
 
 if __name__ == '__main__' :
 
-    exp_name = sys.argv[1]
-    processStep = sys.argv[2]
-    #exp_name = "20200910_IL_RR_baseline_combined"
-    #processStep = 'generate_outputs'
+    args = parse_args()
+
+    exp_name = args.exp_name
+    processStep = args.processStep
+    trajectoriesName = args.trajectoriesName
+    # exp_name = "20200910_IL_RR_baseline_combined"
+    # processStep = 'generate_outputs'
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
 
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
 
@@ -174,23 +210,25 @@ if __name__ == '__main__' :
     if processStep == 'generate_outputs' :
         dfAll = pd.DataFrame()
         for reg in regions :
-            tdf = load_and_plot_data(reg,fname='trajectoriesDat.csv' , savePlot=True)
+            print( f'Start processing {reg}')
+            tdf = load_and_plot_data(reg,fname=trajectoriesName , savePlot=True)
             adf = process_and_save(tdf, reg, SAVE=True)
             dfAll = pd.concat([dfAll, adf])
             del tdf
 
         if len(regions) == 12 :
-            filename = "nu_" + simdate + ".csv"
+            filename = f'nu_{simdate}.csv'
             rename_geography_and_save(dfAll,filename=filename)
 
     ### Optional
     if processStep == 'combine_outputs' :
 
         for reg in ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11'] :
+            print("Start processing" + reg)
             filename = "nu_" + simdate + "_" + reg + ".csv"
             adf = pd.read_csv(os.path.join(sim_output_path, filename))
             dfAll = pd.concat([dfAll, adf])
 
-        filename_new = "nu_" + simdate + ".csv"
-        rename_geography_and_save(dfAll, filename=filename_new)
+        filename = f'nu_{simdate}.csv'
+        rename_geography_and_save(dfAll, filename=filename)
 

@@ -7,3 +7,15 @@ more-itertools==8.2.0
 numpy==1.18.1
 pandas==1.0.1
 seaborn==0.10.0
+
+
+R
+R version 4.0.2
+tidyverse (inlcudes ggplot2, tidyr, dplyr among others)
+readr
+cowplot
+scales
+# install.packages("devtools")
+# library(devtools)
+# install_github("annecori/EpiEstim", force = TRUE)
+EpiEstim

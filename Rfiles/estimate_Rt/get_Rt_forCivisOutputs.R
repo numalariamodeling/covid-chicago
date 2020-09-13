@@ -16,15 +16,15 @@ runInBatchMode <- TRUE
 if (runInBatchMode) {
   cmd_agrs <- commandArgs()
   length(cmd_agrs)
-  exp_name <- cmd_agrs[length(cmd_agrs) - 1]
-  Location <- cmd_agrs[length(cmd_agrs)]
+  exp_name <- cmd_agrs[length(cmd_agrs) - 2]
+  Location <- cmd_agrs[length(cmd_agrs)-1]
+  workingDir <- cmd_agrs[length(cmd_agrs)]
 } else {
   exp_name <- "20200911_IL_test_v3"
   Location <- "Local"
 }
 
-
-if (Location == "NUCLUSTER") setwd("/projects/p30781/covidproject/covid-chicago/")
+setwd(workingDir)
 
 source("load_paths.R")
 source("processing_helpers.R")
