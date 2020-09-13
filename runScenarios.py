@@ -565,7 +565,7 @@ if __name__ == '__main__':
 
         if not args.noSamplePlot:
             log.info("Sample plot")
-            runSamplePlot(sim_output_path=sim_output_path, plot_path=plot_path,start_dates=start_dates,channel_list="master")
+            runSamplePlot(sim_output_path=sim_output_path, plot_path=plot_path,start_dates=start_dates,channel_list_name="master")
 
         if args.post_process == 'dataComparison':
             log.info("Compare to data")
