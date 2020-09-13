@@ -1,5 +1,7 @@
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
 
 def load_box_paths(user_path=None, Location='Local'):
     if Location == 'NUCLUSTER':
@@ -12,9 +14,6 @@ def load_box_paths(user_path=None, Location='Local'):
         exe_dir = os.path.join(home_path, 'binaries', 'compartments')
 
     else:
-        from dotenv import load_dotenv
-        load_dotenv()
-
         home_path = os.getenv("HOME_PATH")
         data_path = os.getenv("DATA_PATH")
         project_path = os.getenv("PROJECT_PATH")
