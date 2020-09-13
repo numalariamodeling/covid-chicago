@@ -10,3 +10,8 @@ data/*
 
 _temp/
 Rfiles/.Rproj.user/
+nucluster/errors/
+nucluster/outputs/
+Rfiles/estimate_Rt/from_simulations/
+Rfiles/estimate_Rt/using default mean si/
+Rfiles/old/

@@ -242,14 +242,19 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - `sbatch runSimulations.sh`  # submits the simulations as an array job , note maximum array <5000 scenarios. 
 
 # 4 Visualizing and analyzing simulation outputs
-- see [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/)
+Via the --postprocess argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
+A sample plot is produced automatically, can be disabled via --noSamplePlot.
+Even if no postprocess is specified, default batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl).
+Additional batch files or postprocesses can be linked to runScenarios of needed, otherwise the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) provides a range of python files that do different visualizations (see readme in folder for details).
 
 # 5 Data sources
 - Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
-- Emergency Medical Service Areas (EMS) regions (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
-- covid regions: http://dph.illinois.gov/regionmetrics?regionID=1 
-- restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
-- covid data: IDPH 
+- Region boundaries and operational units
+  - Emergency Medical Service Areas (EMS) regions (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
+  - Covid regions: http://dph.illinois.gov/regionmetrics?regionID=1 
+  - Restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
+- Hospital census data: daily occupancy of ICU and non_ICU beds 
+- Positive case line list data: Of each individual tested positive for COVID-19: age, sex, race, ethnicity, date of specimen collection, date of hospital admission (if admitted), date of death (if died)
 
 
 ## 6. Model updates
