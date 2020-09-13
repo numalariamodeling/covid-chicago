@@ -1,3 +1,4 @@
+import argparse
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,8 +16,25 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 datetoday = date(today.year, today.month, today.day)
 
+def parse_args():
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-stem",
+        "--stem",
+        type=str,
+        help="Name of simulation experiment"
+    )
+    parser.add_argument(
+        "-loc",
+        "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default = "Local"
+    )
+    return parser.parse_args()
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None, column_list=None) :
     input_wdir = input_wdir or wdir
@@ -207,8 +225,11 @@ def compare_ems(exp_name, ems=0, source='EMR') :
 
 if __name__ == '__main__' :
 
-    stem = sys.argv[1]
-    #stem = "20200816_IL_testbaseline"
+    args = parse_args()  
+    #Location = 'Local'
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location = args.Location)
+
+    stem = args.stem   
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names :
