@@ -253,8 +253,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         file.close()
 
         pymodule = '\n\nml python/anaconda3.6'
-        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py --stem "{exp_name}"' \
-                    ' --addsamples "True" --lagtime_days "15"'
+        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py  "{exp_name}" "120" "10"'
         file = open(os.path.join(temp_exp_dir, 'combineSimulations.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
