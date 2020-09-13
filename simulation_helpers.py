@@ -252,14 +252,14 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         file.write(header + jobname + array + err + out + module + singularity)
         file.close()
 
-        pymodule = '\n\nml python'
+        pymodule = '\n\nml python/anaconda3.6'
         pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py --stem "{exp_name}"' \
                     ' --addsamples "True" --lagtime_days "15"'
         file = open(os.path.join(temp_exp_dir, 'combineSimulations.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
 
-        pymodule = '\n\nml python'
+        pymodule = '\n\nml python/anaconda3.6'
         pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "{exp_name}"' \
                     ' --delete_simsfiles "True"'
         file = open(os.path.join(temp_exp_dir, 'cleanupSimulations.sh'), 'w')
@@ -270,13 +270,13 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
             fname = "data_comparison_spatial.py"
         if experiment_config != "spatial_EMS_experiment.yaml" :
             fname = "data_comparison.py"
-        pymodule = '\n\nml python'
+        pymodule = '\n\nml python/anaconda3.6 '
         pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
         file = open(os.path.join(temp_exp_dir, 'compareToData.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
 
-        pymodule = '\n\nml python'
+        pymodule = '\n\nml python/anaconda3.6'
         pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --exp_name "{exp_name}"' + ' --processStep "generate_outputs"'
         file = open(os.path.join(temp_exp_dir, 'runProcessForCivis.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
