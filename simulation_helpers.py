@@ -276,7 +276,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         file.close()
 
         pymodule = '\n\nml python/anaconda3.6'
-        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --exp_name "{exp_name}"' + ' --processStep "generate_outputs"'
+        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
         file = open(os.path.join(temp_exp_dir, 'runProcessForCivis.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
@@ -369,4 +369,4 @@ def sampleplot(adf, allchannels, start_date, plot_fname=None):
     if plot_fname:
         log.info(f"Writing plot to {plot_fname}")
         plt.savefig(plot_fname)
-    plt.show()
+    #plt.show()

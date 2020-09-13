@@ -14,5 +14,5 @@
 ml python/anaconda3.6
 
 # A command you actually want to execute:
-python /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --stem "20200826_IL_baseline" --Location "NUCLUSTER"
+python /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py  --exp_name "20200912_IL_baseline" --processStep "generate_outputs" --Location "NUCLUSTER"
 
