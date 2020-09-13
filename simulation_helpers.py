@@ -252,34 +252,51 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         file.write(header + jobname + array + err + out + module + singularity)
         file.close()
 
+        plotters_dir = os.path.join(git_dir, "plotters")
+        rfiles_dir = os.path.join(git_dir, "Rfiles")
         pymodule = '\n\nml python/anaconda3.6'
+        rmodule = '\n\nml module load R/4.0.0'
+
         pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py  "{exp_name}" "120" "10"'
         file = open(os.path.join(temp_exp_dir, 'combineSimulations.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + pycommand)
         file.close()
 
-        pymodule = '\n\nml python/anaconda3.6'
         pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "{exp_name}"' \
                     ' --delete_simsfiles "True"'
         file = open(os.path.join(temp_exp_dir, 'cleanupSimulations.sh'), 'w')
-        file.write(header + jobname + err + out + pymodule + pycommand)
+        file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
         file.close()
 
         if experiment_config == "spatial_EMS_experiment.yaml" :
             fname = "data_comparison_spatial.py"
         if experiment_config != "spatial_EMS_experiment.yaml" :
             fname = "data_comparison.py"
-        pymodule = '\n\nml python/anaconda3.6 '
-        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
+        pycommand = f'\npython {plotters_dir}{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
         file = open(os.path.join(temp_exp_dir, 'compareToData.sh'), 'w')
-        file.write(header + jobname + err + out + pymodule + pycommand)
+        file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
         file.close()
 
-        pymodule = '\n\nml python/anaconda3.6'
-        pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/plotters/process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
-        file = open(os.path.join(temp_exp_dir, 'runProcessForCivis.sh'), 'w')
-        file.write(header + jobname + err + out + pymodule + pycommand)
+        pycommand = f'\npython {plotters_dir}process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
+        file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_1.sh'), 'w')
+        file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
         file.close()
+
+        pycommand = f'\npython {plotters_dir}overflow_probabilities.py "{exp_name}"'
+        file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.sh'), 'w')
+        file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
+        file.close()
+
+        rcommand =  f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "{rfiles_dir}" \n')
+        file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.sh'), 'w')
+        file.write(header + jobname + err + out + rmodule + rcommand)
+        file.close()
+
+        pycommand = f'\npython {plotters_dir}NUcivis_filecopy.py "{exp_name}"'
+        file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.sh'), 'w')
+        file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
+        file.close()
+
 
         submit_runSimulations = f'cd /projects/p30781/covidproject/covid-chicago/_temp/{exp_name}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
         file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
