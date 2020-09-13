@@ -43,6 +43,12 @@ def parse_args():
         help="Local or NUCLUSTER",
         default='Local',
     )
+    parser.add_argument(
+        "-t", "--trajectoriesName",
+        type=str,
+        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
+        default='trajectoriesDat.csv',
+    )
 
     return parser.parse_args()
     
@@ -96,7 +102,7 @@ def plot_sim(dat,suffix,channels) :
         plt.savefig(os.path.join(plot_path, plotname + '.pdf'), format='PDF')
         # plt.show()
 
-def load_and_plot_data(ems_region, fname='trajectoriesDat.csv' , savePlot=True) :
+def load_and_plot_data(ems_region, fname , savePlot=True) :
 
     column_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
 
@@ -105,7 +111,7 @@ def load_and_plot_data(ems_region, fname='trajectoriesDat.csv' , savePlot=True) 
         'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
 
     for channel in outcome_channels:
-        column_list.append(channel + "_" + str(grp))
+        column_list.append(channel + "_" + str(ems_region))
 
     df = load_sim_data(exp_name,region_suffix = '_'+ems_region,fname=fname, column_list=column_list)
 
@@ -182,6 +188,7 @@ if __name__ == '__main__' :
 
     exp_name = args.exp_name
     processStep = args.processStep
+    trajectoriesName = args.trajectoriesName
     # exp_name = "20200910_IL_RR_baseline_combined"
     # processStep = 'generate_outputs'
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
@@ -204,7 +211,7 @@ if __name__ == '__main__' :
         dfAll = pd.DataFrame()
         for reg in regions :
             print( f'Start processing {reg}')
-            tdf = load_and_plot_data(reg,fname='trajectoriesDat.csv' , savePlot=True)
+            tdf = load_and_plot_data(reg,fname=trajectoriesName , savePlot=True)
             adf = process_and_save(tdf, reg, SAVE=True)
             dfAll = pd.concat([dfAll, adf])
             del tdf
