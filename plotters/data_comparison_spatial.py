@@ -126,7 +126,7 @@ def compare_ems(exp_name,fname, ems_nr=0):
     df['critical_with_suspected'] = df['critical']
     ref_df_emr = ref_df
 
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200910_jg_aggregated_covidregion.csv'))
+    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200915_jg_aggregated_covidregion.csv'))
 
     if ems_nr > 0:
         ref_df = ref_df[ref_df['covid_region'] == ems_nr]
