@@ -875,6 +875,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
 (param Ki_red5_{grp} (* Ki_{grp} @social_multiplier_5_{grp}@))
 (param Ki_red6_{grp} (* Ki_{grp} @social_multiplier_6_{grp}@))
+(param Ki_red7_{grp} (* Ki_{grp} @social_multiplier_7_{grp}@))
 
 (param backtonormal_multiplier_1_{grp}  (/ (- Ki_red5_{grp}  Ki_red4_{grp} ) (- Ki_{grp} Ki_red4_{grp} ) ) )  
 (observe backtonormal_multiplier_1_{grp} backtonormal_multiplier_1_{grp})
@@ -885,6 +886,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
 (time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_{grp} Ki_red5_{grp})))
 (time-event socialDistance_change_3 @socialDistance_time6@ ((Ki_{grp} Ki_red6_{grp})))
+(time-event socialDistance_change_4 @socialDistance_time7@ ((Ki_{grp} Ki_red7_{grp})))
             """.format(grp=grp)
         socialDistance_change_str = socialDistance_change_str + temp_str
 
