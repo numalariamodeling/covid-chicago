@@ -129,7 +129,7 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     return adf
 
 
-def load_capacity(ems, simdate='20200908') :
+def load_capacity(ems, simdate='20200915') :
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
     
     fname = 'capacity_weekday_average_' + simdate + '.csv'
