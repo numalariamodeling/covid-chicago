@@ -77,7 +77,7 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.135, 'high': 0.135}
+        - {'low': 0.125, 'high': 0.125}
         - {'low': 0.110, 'high': 0.110}
         - {'low': 0.200, 'high': 0.200}
         - {'low': 0.135, 'high': 0.135}
@@ -103,7 +103,7 @@ sampled_parameters:
         - {'low': 0.120, 'high': 0.120}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.115, 'high': 0.115}
+        - {'low': 0.110, 'high': 0.110}
   social_multiplier_6:
     IL:
       expand_by_age: True
@@ -111,7 +111,7 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.170, 'high': 0.170}
         - {'low': 0.167, 'high': 0.167}
-        - {'low': 0.330, 'high': 0.330}
+        - {'low': 0.300, 'high': 0.300}
         - {'low': 0.195, 'high': 0.195}
         - {'low': 0.265, 'high': 0.265}
         - {'low': 0.240, 'high': 0.240}
@@ -119,15 +119,15 @@ sampled_parameters:
         - {'low': 0.120, 'high': 0.120}
         - {'low': 0.130, 'high': 0.130}
         - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.115, 'high': 0.115}
+        - {'low': 0.110, 'high': 0.110}
   social_multiplier_7:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.185, 'high': 0.185}
         - {'low': 0.167, 'high': 0.167}
-        - {'low': 0.180, 'high': 0.180}
+        - {'low': 0.200, 'high': 0.200}
         - {'low': 0.190, 'high': 0.190}
         - {'low': 0.265, 'high': 0.265}
         - {'low': 0.240, 'high': 0.240}
@@ -135,7 +135,7 @@ sampled_parameters:
         - {'low': 0.120, 'high': 0.120}
         - {'low': 0.110, 'high': 0.110}
         - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.098, 'high': 0.098}
+        - {'low': 0.100, 'high': 0.100}
   d_Sym:  
     IL:
       expand_by_age: True
