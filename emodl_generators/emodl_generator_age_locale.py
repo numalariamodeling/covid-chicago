@@ -942,6 +942,7 @@ def write_interventions(regionList, ageList,total_string, scenarioName, expandMo
 (param Ki_red4_{region} (* Ki_{region} @social_multiplier_4_{region}@))
 (param Ki_red5_{region} (* Ki_{region} @social_multiplier_5_{region}@))
 (param Ki_red6_{region} (* Ki_{region} @social_multiplier_6_{region}@))
+(param Ki_red7_{region} (* Ki_{region} @social_multiplier_7_{region}@))
 
 (param backtonormal_multiplier_1_{region}  (/ (- Ki_red5_{region}  Ki_red4_{region} ) (- Ki_{region} Ki_red4_{region} ) ) )  
 (observe backtonormal_multiplier_1_{region} backtonormal_multiplier_1_{region})
@@ -952,6 +953,7 @@ def write_interventions(regionList, ageList,total_string, scenarioName, expandMo
 (time-event socialDistance_change @socialDistance_time4@ ((Ki_{region} Ki_red4_{region})))
 (time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_{region} Ki_red5_{region})))
 (time-event socialDistance_change_3 @socialDistance_time6@ ((Ki_{region} Ki_red6_{region})))
+(time-event socialDistance_change_4 @socialDistance_time7@ ((Ki_{region} Ki_red7_{region})))
             """.format(region=region)
         socialDistance_change_str = socialDistance_change_str + temp_str
 
