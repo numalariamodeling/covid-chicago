@@ -608,11 +608,17 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 (param Ki_red2 (* Ki @social_multiplier_2@))
 (param Ki_red3 (* Ki @social_multiplier_3@))
 (param Ki_red4 (* Ki @social_multiplier_4@))
+(param Ki_red5 (* Ki @social_multiplier_5@))
+(param Ki_red6 (* Ki @social_multiplier_6@))
+(param Ki_red7 (* Ki @social_multiplier_7@))
 
 (time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
 (time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
 (time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
+(time-event socialDistance_change1 @socialDistance_time4@ ((Ki Ki_red4)))
+(time-event socialDistance_change2 @socialDistance_time5@ ((Ki Ki_red5)))
+(time-event socialDistance_change3 @socialDistance_time6@ ((Ki Ki_red6)))
+(time-event socialDistance_change4 @socialDistance_time7@ ((Ki Ki_red7)))
             """
     rollback_str ="""
 (time-event socialDistance_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red4)))
