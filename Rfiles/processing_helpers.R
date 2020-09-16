@@ -81,6 +81,25 @@ combineDat <- function(filelist, namelist) {
 }
 
 
+load_population <- function(){
+  geography_name <- c('illinois',c(1:11))
+  pop <- c("12830632", "688393","1269519","581432",'676017','424810','760362','791009','1432193','1012222','2477754','2716921')
+  df <-as.data.frame( cbind(geography_name, pop))
+  
+  perRR=F
+  if(perRR){
+    popdat <- load_population() %>% 
+      mutate(region =as.character(geography_name) ) %>% 
+      filter(region !="illinois") %>%
+      f_addRestoreRegion() %>% 
+      group_by(restore_region) %>%
+      summarize(pop=sum(as.numeric(pop))) %>%
+      mutate(geography_name = tolower(restore_region))
+    
+  }
+  return(df)
+}
+
 
 load_new_capacity <- function(selected_ems = NULL, simdate = "20200915") {
 
