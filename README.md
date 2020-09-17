@@ -242,7 +242,7 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - `sbatch runSimulations.sh`  # submits the simulations as an array job , note maximum array <5000 scenarios. 
 
 # 4 Visualizing and analyzing simulation outputs
-Via the --postprocess argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
+Via the `--post_process` argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
 A sample plot is produced automatically, can be disabled via --noSamplePlot.
 Even if no postprocess is specified, default batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl).
 Additional batch files or postprocesses can be linked to runScenarios of needed, otherwise the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) provides a range of python files that do different visualizations (see readme in folder for details).
