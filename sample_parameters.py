@@ -80,7 +80,6 @@ def get_parameters_from_configs(sub_samples=None):
 def check_and_save_parameters(df, emodl_template,sample_csv_name):
     """ Given an emodl template file, replaces the placeholder names
     (which are bookended by '@') with the sampled parameter value.
-    This is saved as a (temporary) emodl file to be used in simulation runs.
 
     Parameters
     ----------
