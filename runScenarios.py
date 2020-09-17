@@ -280,7 +280,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     else :
         fname = args.sample_csv
-        result = pd.read_csv(os.path.join(git_dir,"input_csv",fname))
+        result = pd.read_csv(os.path.join('./experiment_configs', "input_csv",fname))
         result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
 
     return result
