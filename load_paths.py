@@ -75,7 +75,7 @@ def load_box_paths(user_path=None, Location='Local'):
             if 'HP1' in user_path:
                 # user_path = r'\~/'
                 git_dir = os.path.join(user_path, 'Documents', 'covid-chicago')
-                home_path = os.path.join(user_path, 'Box', 'covid_chicago')
+                home_path = os.path.join(user_path, 'Box')
                 data_path = os.path.join(user_path, 'Box')
                 # project_path = os.path.join(home_path, 'Box', 'covid_chicago')
 
