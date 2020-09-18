@@ -58,24 +58,46 @@ def get_experiment_config(experiment_config_file):
     return config
 
 
-def get_parameters_from_configs(sub_samples=None):
-    experiment_config = get_experiment_config(exp_config)
-    experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
-    np.random.seed(experiment_setup_parameters['random_seed'])
+def get_parameters(from_configs=True, sub_samples=None, sample_csv_name='sampled_parameters.csv'):
+    if from_configs :
+        experiment_config = get_experiment_config(exp_config)
+        experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
+        np.random.seed(experiment_setup_parameters['random_seed'])
 
-    fixed_parameters = get_region_specific_fixed_parameters(experiment_config, region)
-    simulation_population = fixed_parameters['populations']
-    start_dates = get_start_dates(fixed_parameters['startdate'])
-    Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
-    age_bins = experiment_setup_parameters.get('age_bins')
+        fixed_parameters = get_region_specific_fixed_parameters(experiment_config, region)
+        simulation_population = fixed_parameters['populations']
+        start_dates = get_start_dates(fixed_parameters['startdate'])
+        Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
+        age_bins = experiment_setup_parameters.get('age_bins')
 
-    if sub_samples == None :
-        sub_samples = experiment_setup_parameters['number_of_samples']
+        if sub_samples == None :
+            sub_samples = experiment_setup_parameters['number_of_samples']
 
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
-                                       config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region)
+        dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
+                                           config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region)
+
+    if not from_configs :
+        dfparam = pd.read_csv(os.path.join('./experiment_configs', 'input_csv', sample_csv_name))
+
     return dfparam
 
+def change_param(df, param_dic):
+
+    dic_old = {}
+    for key in param_dic.keys():
+        dic_i = {key : [float(df[key].unique()), param_dic[key] ] }
+        dic_old = dict(dic_old, **dic_i)
+
+        if df[key][0] == param_dic[key]:
+            raise ValueError("The parameter value to replace is identical. "
+                             f"Value in df param {df[key][0]} value defined in param_dic {param_dic[key]}")
+        if len(df[key].unique()) >1:
+            raise ValueError("The parameter to replace holds more than 1 unique value. "
+                             f"Parameter values to replace {len(df[key].unique())}")
+        else :
+            df[key] = param_dic[key]
+
+    return dic_old, df
 
 def check_and_save_parameters(df, emodl_template,sample_csv_name):
     """ Given an emodl template file, replaces the placeholder names
@@ -125,10 +147,16 @@ if __name__ == '__main__':
     cfg_dir = os.path.join(git_dir, 'cfg')
     yaml_dir = os.path.join(git_dir, 'experiment_configs')
 
-    dfparam = get_parameters_from_configs()
+    dfparam = get_parameters(from_configs=True, sub_samples=None)
+    dfparam = get_parameters(from_configs=False, sample_csv_name ="sampled_parameters.csv")
+
+    ###If change single parameter - example
+    #param_dic = {'capacity_multiplier': 0.8, 'contact_tracing_stop1': 838}
+    param_dic = {'capacity_multiplier': 0.5}
+    dic, dfparam = change_param(df=dfparam, param_dic=param_dic)
 
 
-    check_and_save_parameters(df=dfparam, emodl_template=modelname, sample_csv_name ="sample_parameters.csv")
+    check_and_save_parameters(df=dfparam, emodl_template=modelname, sample_csv_name ="sampled_parameters_v2.csv")
 
 
 
