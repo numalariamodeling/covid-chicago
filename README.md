@@ -200,16 +200,19 @@ Note that the user-supplied configuration file is used to provide
 ## 2.5 Sampled parameters 
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
 The [sample_parameters.py](sample_parameters.py) script handles only the sampled_parameters.csv, it allows to: 
-- generate csv file from configuration files without running simulations
-- load and modify an existing sampled_parameters.csv (change or add single or multiple parameter) (default location `experiment_configs\input_csv`)
-- it currently does not allow for generating new parameter combination (in process)
+(1) generate csv file from configuration files without running simulations
+(2) load and modify an existing sampled_parameters.csv (change or add single or multiple parameter) (default location `experiment_configs\input_csv`)
+(3) it currently does not allow for generating new parameter combination (in process).
+
+Running examples: 
 - nsamples: optional, if specified if overwrites the nsamples in the base configuration, if loading an existing csv the first n samples will be selected (i.e. when selecting samples from an excisting csv file, could be modified to be random if needed)
 - emodl_template: the emodl template is required to test whether the parameter csv table includes all required parameters defined in the desired emodl file to run
 - example1: `python sample_parameters.py -rl Local -r 'IL' --experiment_config 'spatial_EMS_experiment.yaml' --emodl_template 'extendedmodel_EMS.emodl'  -save "sampled_parameters.csv"`
 - example2: `python sample_parameters.py -rl Local -save "sampled_parameters_1000.csv" --nsamples "1000"`
 - example3: `python sample_parameters.py -rl Local -load "sampled_parameters_1000.csv" -save "sampled_parameters_1000_v2.csv"  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
 
-When running simulations with an pre-existing csv file, specify `--load_sample_parameters` (boolean) and `--sample_csv` (name of csv file in `experiment_configs\input_csv` )
+When running simulations with an pre-existing csv file, specify `--load_sample_parameters` (boolean) and `--sample_csv` (name of csv file in `experiment_configs\input_csv` ).
+
 Note: except the loaded "sampled_parameters.csv" and "sampled_parameters_1000.csv", csv files should not be added to version control on git. 
 
 ## 3.5 Define age or region specific inputs 
