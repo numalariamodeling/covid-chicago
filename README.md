@@ -209,6 +209,9 @@ The [sample_parameters.py](sample_parameters.py) script handles only the sampled
 - example2: `python sample_parameters.py -rl Local -save "sampled_parameters_1000.csv" --nsamples "1000"`
 - example3: `python sample_parameters.py -rl Local -load "sampled_parameters_1000.csv" -save "sampled_parameters_1000_v2.csv"  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
 
+When running simulations with an pre-existing csv file, specify `--load_sample_parameters` (boolean) and `--sample_csv` (name of csv file in `experiment_configs\input_csv` )
+Note: except the loaded "sampled_parameters.csv" and "sampled_parameters_1000.csv", csv files should not be added to version control on git. 
+
 ## 3.5 Define age or region specific inputs 
 The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
