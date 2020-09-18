@@ -201,9 +201,9 @@ Note that the user-supplied configuration file is used to provide
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
 The [sample_parameters.py](sample_parameters.py) script handles only the sampled_parameters.csv, it allows to: 
 - generate csv file from configuration files without running simulations
-- load and modify an excisting sampled_parameters.csv (change or add single or multiple parameter)
+- load and modify an existing sampled_parameters.csv (change or add single or multiple parameter) (default location `experiment_configs\input_csv`)
 - it currently does not allow for generating new parameter combination (in process)
-- nsamples: optional, if specified if overwrites the nsamples in the base configuration, if loading an excisting csv the first n samples will be selected (i.e. when selecting samples from an excisting csv file, could be modified to be random if needed)
+- nsamples: optional, if specified if overwrites the nsamples in the base configuration, if loading an existing csv the first n samples will be selected (i.e. when selecting samples from an excisting csv file, could be modified to be random if needed)
 - emodl_template: the emodl template is required to test whether the parameter csv table includes all required parameters defined in the desired emodl file to run
 - example1: `python sample_parameters.py -rl Local -r 'IL' --experiment_config 'spatial_EMS_experiment.yaml' --emodl_template 'extendedmodel_EMS.emodl'  -save "sampled_parameters.csv"`
 - example2: `python sample_parameters.py -rl Local -save "sampled_parameters_1000.csv" --nsamples "1000"`
