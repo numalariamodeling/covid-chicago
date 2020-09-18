@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import subprocess
+import json
 import os
 import matplotlib as mpl
 import matplotlib.dates as mdates
@@ -12,6 +12,95 @@ from runScenarios import *
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = date.today()
+
+def parse_args():
+    description = "Defining sample parameters for simulations, default set to locale emodl. "
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-mc",
+        "--masterconfig",
+        type=str,
+        help="Master yaml file that includes all model parameters.",
+        default='extendedcobey_200428.yaml'
+    )
+
+    parser.add_argument(
+        "-rl",
+        "--running_location",
+        type=str,
+        help="Location where the simulation is being run.",
+        choices=["Local", "NUCLUSTER"],
+        default="Local"
+    )
+    parser.add_argument(
+        "-r",
+        "--region",
+        type=str,
+        help="Region on which to run simulation. E.g. 'IL'",
+        default='IL'
+    )
+    parser.add_argument(
+        "-c",
+        "--experiment_config",
+        type=str,
+        help=("Config file (in YAML) containing the parameters to override the default config. "
+              "This file should have the same structure as the default config. "
+              "example: ./experiment_configs/sample_experiment.yaml "),
+        default='spatial_EMS_experiment.yaml'
+    )
+
+    parser.add_argument(
+        "-e",
+        "--emodl_template",
+        type=str,
+        help="Template emodl file to use",
+        default="extendedmodel_EMS.emodl"
+    )
+
+    parser.add_argument(
+        "-load",
+        "--csv_name_load",
+        type=str,
+        help="Name of sampled_parameters.csv to read in, if none parameters are read from config files",
+        default=None
+    )
+
+    parser.add_argument(
+        "-save",
+        "--csv_name_save",
+        type=str,
+        help="Name of sampled_parameters.csv to save",
+        default='sampled_parameters.csv'
+    )
+
+    parser.add_argument(
+        "-param",
+        "--param_dic",
+        type=json.loads,
+        help="Dictionary for single parameter change, for more changes, edit the py file, example:  {\"capacity_multiplier\":\"0.5\"}",
+        default={}
+    )
+
+    parser.add_argument(
+        "-n",
+        "--nsamples",
+        type=str,
+        help="If specified overwrites the number of samples defined in the masterconfig, or used to subset excisting parameter csv file",
+        default=None
+    )
+
+
+    return parser.parse_args()
+
+def _get_full_factorial_df(df, column_name, values):
+    dfs = []
+    for value in values:
+        df_copy = df.copy()
+        df_copy[column_name] = value
+        dfs.append(df_copy)
+    result = pd.concat(dfs, ignore_index=True)
+    return result
 
 def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
@@ -45,7 +134,6 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
 
     return result
 
-
 def get_experiment_config(experiment_config_file):
     config = yaml.load(open(os.path.join('./experiment_configs', master_config)), Loader=yamlordereddictloader.Loader)
     yaml_file = open(os.path.join('./experiment_configs',experiment_config_file))
@@ -56,7 +144,6 @@ def get_experiment_config(experiment_config_file):
         if updated_params:
             config[param_type].update(updated_params)
     return config
-
 
 def get_parameters(from_configs=True, sub_samples=None, sample_csv_name='sampled_parameters.csv'):
     if from_configs :
@@ -72,12 +159,17 @@ def get_parameters(from_configs=True, sub_samples=None, sample_csv_name='sampled
 
         if sub_samples == None :
             sub_samples = experiment_setup_parameters['number_of_samples']
+        else :
+            sub_samples = int(sub_samples)
 
         dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
                                            config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region)
 
     if not from_configs :
         dfparam = pd.read_csv(os.path.join('./experiment_configs', 'input_csv', sample_csv_name))
+
+        if sub_samples != None :
+            dfparam[dfparam['sample_num'] <= sub_samples ]
 
     return dfparam
 
@@ -96,26 +188,26 @@ def change_param(df, param_dic):
 
     dic_old = {}
     for key in param_dic.keys():
+        new_val = float(param_dic[key])
 
         if key in df.columns :
             dic_i = {key : [float(df[key].unique()), param_dic[key] ] }
             dic_old = dict(dic_old, **dic_i)
 
-            if df[key][0] == param_dic[key]:
+            if df[key][0] == new_val:
                 raise ValueError("The parameter value to replace is identical. "
-                                 f"Value in df param {df[key][0]} value defined in param_dic {param_dic[key]}")
+                                 f"Value in df param {df[key][0]} value defined in param_dic {new_val}")
             if len(df[key].unique()) >1:
                 raise ValueError("The parameter to replace holds more than 1 unique value. "
                                  f"Parameter values to replace {len(df[key].unique())}")
             else :
-                df[key] = param_dic[key]
+                df[key] = new_val
 
         else:
-            df[key] = param_dic[key]
+            df[key] = new_val
             #print(f"Parameter  {key} was added to the parameter dataframe")
 
     return dic_old, df
-
 
 def check_and_save_parameters(df, emodl_template,sample_csv_name):
     """ Given an emodl template file, replaces the placeholder names
@@ -148,15 +240,14 @@ def check_and_save_parameters(df, emodl_template,sample_csv_name):
               f"File saved in {os.path.join('./experiment_configs', 'input_csv', sample_csv_name)}")
 
 
-
-
 if __name__ == '__main__':
     
     args = parse_args()
-    master_config =  args.masterconfig # "extendedcobey_200428.yaml"
-    exp_config = args.experiment_config  # "spatial_EMS_experiment.yaml"  #args.experiment_config
-    region = args.region #"IL"
-    modelname  = args.emodl_template   #"extendedmodel_EMS.emodl"
+    master_config = args.masterconfig
+    exp_config = args.experiment_config
+    region = args.region
+    emodl_name = args.emodl_template
+    sub_samples = args.nsamples
 
     _, _, wdir, exe_dir, git_dir = load_box_paths(Location='Local') #args.running_location
     Location = os.getenv("LOCATION") or args.running_location
@@ -165,13 +256,17 @@ if __name__ == '__main__':
     cfg_dir = os.path.join(git_dir, 'cfg')
     yaml_dir = os.path.join(git_dir, 'experiment_configs')
 
-    dfparam = get_parameters(from_configs=True, sub_samples=None)
-    dfparam = get_parameters(from_configs=False, sample_csv_name ="sampled_parameters.csv")
+    if args.csv_name_load == None :
 
-    ###If change single parameter - example
-    #param_dic = {'capacity_multiplier': 0.8, 'contact_tracing_stop1': 838}
-    param_dic = {'capacity_multiplier': 0.5}
-    dic, dfparam = change_param(df=dfparam, param_dic=param_dic)
+        dfparam = get_parameters(from_configs=True, sub_samples=sub_samples)
 
-    check_and_save_parameters(df=dfparam, emodl_template=modelname, sample_csv_name ="sampled_parameters_v2.csv")
+    else :
+
+        dfparam = get_parameters(from_configs=False, sample_csv_name = args.csv_name_load)
+
+    if  bool(args.param_dic) :
+
+        dic, dfparam = change_param(df=dfparam, param_dic=args.param_dic)
+
+    check_and_save_parameters(df=dfparam, emodl_template=emodl_name, sample_csv_name =args.csv_name_save)
 

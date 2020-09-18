@@ -450,7 +450,7 @@ def parse_args():
         "--emodl_template",
         type=str,
         help="Template emodl file to use",
-        default="extendedmodel_cobey.emodl"
+        default="extendedmodel.emodl"
     )
     parser.add_argument(
         "-cfg",
