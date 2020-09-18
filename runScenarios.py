@@ -247,36 +247,42 @@ def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=
     return df
 
 
-def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region):
+def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region, generateNew):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
     """
-    # Time-independent parameters. No full factorial across parameters.
-    df = pd.DataFrame()
-    df['sample_num'] = range(samples)
-    df['speciesS'] = pop
-    df['initialAs'] = config['experiment_setup_parameters']['initialAs']
-    df = add_fixed_parameters_region_specific(df, config, region, age_bins)
-    df = add_parameters(df, "sampled_parameters", config, region, age_bins, full_factorial=False)
+    if generateNew :
+        # Time-independent parameters. No full factorial across parameters.
+        df = pd.DataFrame()
+        df['sample_num'] = range(samples)
+        df['speciesS'] = pop
+        df['initialAs'] = config['experiment_setup_parameters']['initialAs']
+        df = add_fixed_parameters_region_specific(df, config, region, age_bins)
+        df = add_parameters(df, "sampled_parameters", config, region, age_bins, full_factorial=False)
 
-    # Time-independent parameters. Create full factorial.
-    df = add_parameters(df, "intervention_parameters", config, region, age_bins)
-    df = add_parameters(df, "fixed_parameters_global", config, region, age_bins)
-    df = _get_full_factorial_df(df, "Ki", Kivalues)
+        # Time-independent parameters. Create full factorial.
+        df = add_parameters(df, "intervention_parameters", config, region, age_bins)
+        df = add_parameters(df, "fixed_parameters_global", config, region, age_bins)
+        df = _get_full_factorial_df(df, "Ki", Kivalues)
 
-    # Time-varying parameters for each start date.
-    dfs = []
-    for start_date in start_dates:
-        df_copy = df.copy()
-        df_copy['startdate'] = start_date
-        df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins)
-        df_copy = add_computed_parameters(df_copy)
-        dfs.append(df_copy)
+        # Time-varying parameters for each start date.
+        dfs = []
+        for start_date in start_dates:
+            df_copy = df.copy()
+            df_copy['startdate'] = start_date
+            df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins)
+            df_copy = add_computed_parameters(df_copy)
+            dfs.append(df_copy)
 
-    result = pd.concat(dfs, ignore_index=True)
-    result["scen_num"] = range(1, len(result) + 1)
-    result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
+        result = pd.concat(dfs, ignore_index=True)
+        result["scen_num"] = range(1, len(result) + 1)
+        result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
+    else :
+        fname = args.sample_csv
+        result = pd.read_csv(os.path.join('./experiment_configs', "input_csv",fname))
+        result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
+
     return result
 
 
@@ -319,8 +325,13 @@ def replaceParameters(df, row_i, Ki_i, emodl_template, scen_num):
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
                       nruns, sub_samples, modelname, cfg_file, start_dates, Location,
                       experiment_config, age_bins, region):
+
+    generateNew = True
+    if args.load_sample_parameters :
+        generateNew = False
+
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
-                                       config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region)
+                                       config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region, generateNew=generateNew)
 
     for row_i, row in dfparam.iterrows():
         Ki = row['Ki']
@@ -439,7 +450,7 @@ def parse_args():
         "--emodl_template",
         type=str,
         help="Template emodl file to use",
-        default="extendedmodel_cobey.emodl"
+        default="extendedmodel.emodl"
     )
     parser.add_argument(
         "-cfg",
@@ -477,6 +488,20 @@ def parse_args():
         help="If specified, no sample plot with main trajectories will be generated",
     )
 
+    parser.add_argument(
+        "-s",
+        "--load_sample_parameters",
+        action='store_true',
+        help="If specified reads samples from CSV instead regenerating from config yaml files"
+    )
+
+    parser.add_argument(
+        "-csv",
+        "--sample_csv",
+        type=str,
+        help="Name of sampled_parameters.csv, only used if load_sample_parameters exists",
+        default='sampled_parameters.csv'
+    )
 
     return parser.parse_args()
 
