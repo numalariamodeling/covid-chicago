@@ -82,22 +82,40 @@ def get_parameters(from_configs=True, sub_samples=None, sample_csv_name='sampled
     return dfparam
 
 def change_param(df, param_dic):
+    """ Modify a parameter dataframe by replacing excisting parameters or adding new parameters.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        DataFrame containing all the sampled parameters
+    param_dic: str
+        Dictionary with parameter name and new value.
+        Ideally one one parameter is changed, but multiple parameter can be changed as well.
+        Example: param_dic = {'capacity_multiplier': 0.8, 'contact_tracing_stop1': 838}
+    """
 
     dic_old = {}
     for key in param_dic.keys():
-        dic_i = {key : [float(df[key].unique()), param_dic[key] ] }
-        dic_old = dict(dic_old, **dic_i)
 
-        if df[key][0] == param_dic[key]:
-            raise ValueError("The parameter value to replace is identical. "
-                             f"Value in df param {df[key][0]} value defined in param_dic {param_dic[key]}")
-        if len(df[key].unique()) >1:
-            raise ValueError("The parameter to replace holds more than 1 unique value. "
-                             f"Parameter values to replace {len(df[key].unique())}")
-        else :
+        if key in df.columns :
+            dic_i = {key : [float(df[key].unique()), param_dic[key] ] }
+            dic_old = dict(dic_old, **dic_i)
+
+            if df[key][0] == param_dic[key]:
+                raise ValueError("The parameter value to replace is identical. "
+                                 f"Value in df param {df[key][0]} value defined in param_dic {param_dic[key]}")
+            if len(df[key].unique()) >1:
+                raise ValueError("The parameter to replace holds more than 1 unique value. "
+                                 f"Parameter values to replace {len(df[key].unique())}")
+            else :
+                df[key] = param_dic[key]
+
+        else:
             df[key] = param_dic[key]
+            #print(f"Parameter  {key} was added to the parameter dataframe")
 
     return dic_old, df
+
 
 def check_and_save_parameters(df, emodl_template,sample_csv_name):
     """ Given an emodl template file, replaces the placeholder names
@@ -155,10 +173,5 @@ if __name__ == '__main__':
     param_dic = {'capacity_multiplier': 0.5}
     dic, dfparam = change_param(df=dfparam, param_dic=param_dic)
 
-
     check_and_save_parameters(df=dfparam, emodl_template=modelname, sample_csv_name ="sampled_parameters_v2.csv")
-
-
-
-
 
