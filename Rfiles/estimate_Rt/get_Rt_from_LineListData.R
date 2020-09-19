@@ -12,11 +12,14 @@ library(EpiEstim)
 source("load_paths.R")
 source("setup.R")
 source("processing_helpers.R")
-outdir <- "C:/Users/mrm9534/Box/NU-malaria-team/projects/covid_chicago/Plots + Graphs/simulated_scenarios/Rt_plots"
+source("estimate_Rt/getRt_function.R")
+
+outdir <- file.path(project_path,"Plots + Graphs/Rt_plots")
 today <- gsub("-", "", Sys.Date())
+data_date = "200917"
 
 ### Load simulation outputs
-dat <- read.csv(file.path(data_path, "covid_IDPH/Cleaned Data/200917_jg_aggregated_covidregion.csv"))
+dat <- read.csv(file.path(data_path, "covid_IDPH/Cleaned Data/",data_date,"_jg_aggregated_covidregion.csv"))
 summary(as.Date(dat$date))
 
 dat <- dat %>%
@@ -32,60 +35,26 @@ ggplot(data = dat) +
 ### Fill in missing dates ?
 
 method <- "uncertain_si"
+weekwindow <- 13
 Rt_list <- list()
 si_list <- list()
+
 for (region in unique(dat$covid_region)) {
   # region = unique(dat$covid_region)[1]
   disease_incidence_data <- dat %>%
     filter(covid_region == region) %>%
     rename(I = cases)
 
-  ## check what si_distr to assume, or calculate from predictions, here using an example from the package
-  if (method == "non_parametric_si") {
-    si_distr <- c(0.000, 0.233, 0.359, 0.198, 0.103, 0.053, 0.027, 0.014, 0.007, 0.003, 0.002, 0.001)
-    res <- estimate_R(
-      incid = disease_incidence_data$I,
-      method = "non_parametric_si",
-      config = make_config(list(si_distr = si_distr))
-    )
-  }
-
-  ### use parametric_si
-  if (method == "parametric_si") {
-    res <- estimate_R(
-      incid = disease_incidence_data$I,
-      method = "parametric_si",
-      config = make_config(list(mean_si = 2.6, std_si = 1.5))
-    )
-  }
-
-  ## estimate the reproduction number (method "uncertain_si")
-
-  ## biweekly sliding
-  t_start <- seq(2, nrow(disease_incidence_data) - 13)
-  t_end <- t_start + 13
-
-  if (method == "uncertain_si") {
-    res <- estimate_R(disease_incidence_data$I,
-      method = "uncertain_si",
-      config = make_config(list(
-        t_start = t_start,
-        t_end = t_end,
-        mean_si = 4.6, std_mean_si = 1,
-        min_mean_si = 1, max_mean_si = 7.5,
-        std_si = 1.5, std_std_si = 0.5,
-        min_std_si = 0.5, max_std_si = 2.5,
-        n1 = 100, n2 = 100
-      ))
-    )
-  }
+  res <- getRt(disease_incidence_data, method = method, weekwindow = weekwindow)
 
   pplot <- plot(res)
 
-
-  ggsave(paste0(region, "_EpiEstim_default_", method, ".pdf"),
+  SAVE_plot =FALSE
+  if(SAVE_plot){
+   ggsave(paste0(region, "_EpiEstim_default_", method, ".pdf"),
     plot = pplot, path = file.path(outdir), width = 6, height = 10, dpi = 300, device = "pdf"
-  )
+   )
+  }
 
 
   Rt_list[[region]] <- res$R %>% mutate(region = region)
