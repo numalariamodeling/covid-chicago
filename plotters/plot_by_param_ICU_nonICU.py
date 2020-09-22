@@ -19,7 +19,7 @@ first_plot_day = date(2020, 7, 15)
 last_plot_day = date(2020, 10, 15)
 
 
-def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
+def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat_trim.csv', input_sim_output_path =None) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
@@ -36,10 +36,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajec
 
 def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgrid=True) :
     ax = axes[c]
-    mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-
-    mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
+    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+    mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
     if addgrid:
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
@@ -81,7 +80,7 @@ def compare_ems( ems,channel):
 
 def plot_covidregions(channel,subgroups, psuffix) :
 
-    fig = plt.figure(figsize=(14, 8))
+    fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.95, bottom=0.07)
     palette = sns.color_palette('Set1', len(exp_names))
     axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(subgroups))]
@@ -91,13 +90,14 @@ def plot_covidregions(channel,subgroups, psuffix) :
         region_label= region_suffix.replace('_EMS-', 'covid region ')
         ems = int(region_suffix.replace('_EMS-', ''))
 
+
         for d, exp_name in enumerate(exp_names) :
             sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
             df = load_sim_data(exp_name, region_suffix=region_suffix)
+            exp_name_label = int(exp_name.replace('_IL_RR_baseline_0', ''))
+            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems, panel_heading = region_label, label=exp_name_label)
 
-            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems, panel_heading = region_label, label=exp_name)
-
-        #axes[-1].legend()
+        axes[-1].legend()
         #fig.suptitle(x=0.5, y=0.999,t=channel)
         plt.tight_layout()
 

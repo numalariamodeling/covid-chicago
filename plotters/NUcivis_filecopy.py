@@ -42,7 +42,7 @@ def writeChangelog(A1=None,A2=None, A3=None, A4=None, A5=None, A6=None):
     if A3 == None :A3 = "- updated fitting "
     if A4 == None :A4 = "..."
     if A5 == None :  A5 = "- Reduction in transmission rate due to 'shelter in place policies': 2020-03-12, 2020-03-17, 2020-03-21, 2020-04-21 " \
-         "\n- Increase in transmission rate due to relaxation of 'shelter in place policies' : 2020-06-21 ,2020-07-25 " \
+         "\n- Change in transmission rate during reopening period : 2020-06-21 ,2020-07-25, 2020-08-25 " \
          "\n- Decrease in cfr : 2020-06-01 , 2020-07-01"
     if A6 == None : A6 = "- No additional scenarios "
 
