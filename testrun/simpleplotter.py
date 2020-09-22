@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 def plot(adf, plot_path, channels = None ) :
 
     if channels == None :
-        channels = ['susceptible','exposed','infectious','recovered']
+        channels = ['susceptible','exposed','infected','recovered']
         
     fig = plt.figure(figsize=(8,6))
     ax = fig.add_subplot(1, 1,  1)
@@ -46,6 +46,9 @@ def reprocess(test_dir, input_fname='trajectories.csv') :
 
     adf = adf.reset_index()
     del adf['index']
+
+    adf.columns = adf.columns.str.replace("_All", '')
+    adf.columns = adf.columns.str.replace("infectious", 'infected')
     return adf
 
 if __name__ == '__main__':
