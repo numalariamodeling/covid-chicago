@@ -57,7 +57,7 @@ def get_scenarioName(exp_suffix) :
     if exp_suffix == "reopen": scenarioName = "reopen_gradual"
     if exp_suffix == "gradual": scenarioName = "reopen_gradual"
     if exp_suffix == "interventionStop": scenarioName = "endsip"
-    if exp_suffix == "scen3": scenarioName = "baseline"
+    if exp_suffix == "0": scenarioName = "baseline"
     if exp_suffix == "neverSIP": scenarioName = "neversip"
     if exp_suffix == "stopSIP30": scenarioName = "july1partial30"
     if exp_suffix == "stopSIP10": scenarioName = "july1partial10"
