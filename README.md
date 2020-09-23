@@ -279,6 +279,7 @@ Additional batch files or postprocesses can be linked to runScenarios of needed,
 ## 6. Model updates
 
 ### Updates in model structure and fitted parameters
+- 20200922 updated parameter fit
 - 20200915 updated parameter fit, added social multiplier 7 (time event Aug 25)
 - 20200909 updated parameter fit, updated evolution of CFR
 - 20200825 updated parameter fit
