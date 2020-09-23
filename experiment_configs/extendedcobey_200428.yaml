@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 700
+  'number_of_samples': 100
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
@@ -317,16 +317,16 @@ time_parameters:
     function_kwargs: {'dates': 2020-03-15}
   'd_Sym_change_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-01}
+    function_kwargs: {'dates': 2020-04-15}
   'd_Sym_change_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-15}
+    function_kwargs: {'dates': 2020-05-01}
   'd_Sym_change_time_4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-01}
+    function_kwargs: {'dates': 2020-06-01}
   'd_Sym_change_time_5':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-07-01}
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
   ### (only used if corresponding emodl is defined)
