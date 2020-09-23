@@ -16,8 +16,6 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-simdate = datetime.today().strftime('%Y%m%d') 
-
 plot_first_day = pd.to_datetime('2020/3/1')
 plot_last_day = pd.to_datetime('2021/4/1')
 
@@ -186,11 +184,11 @@ if __name__ == '__main__' :
 
     args = parse_args()
 
-    exp_name = args.exp_name
-    processStep = args.processStep
+    exp_name = args.exp_name # "20200910_IL_RR_baseline_combined"
+    simdate = exp_name.split("_")[0]
+    processStep = args.processStep # 'generate_outputs'
     trajectoriesName = args.trajectoriesName
-    # exp_name = "20200910_IL_RR_baseline_combined"
-    # processStep = 'generate_outputs'
+
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
 
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
