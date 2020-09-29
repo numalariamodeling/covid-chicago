@@ -8,10 +8,12 @@ from datetime import date, timedelta
 from load_paths import load_box_paths
 from simulation_helpers import *
 from runScenarios import *
+import itertools
 
 mpl.rcParams['pdf.fonttype'] = 42
 
 today = date.today()
+
 
 def parse_args():
     description = "Defining sample parameters for simulations, default set to locale emodl. "
@@ -83,6 +85,14 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-combo",
+        "--csv_name_combo",
+        type=str,
+        help="Name of csv file with parameters to add to main sampled parameters",
+        default=None
+    )
+
+    parser.add_argument(
         "-n",
         "--nsamples",
         type=str,
@@ -90,10 +100,10 @@ def parse_args():
         default=None
     )
 
-
     return parser.parse_args()
 
-def _get_full_factorial_df(df, column_name, values):
+
+def get_full_factorial_df(df, column_name, values):
     dfs = []
     for value in values:
         df_copy = df.copy()
@@ -101,6 +111,7 @@ def _get_full_factorial_df(df, column_name, values):
         dfs.append(df_copy)
     result = pd.concat(dfs, ignore_index=True)
     return result
+
 
 def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
@@ -118,7 +129,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
     # Time-independent parameters. Create full factorial.
     df = add_parameters(df, "intervention_parameters", config, region, age_bins)
     df = add_parameters(df, "fixed_parameters_global", config, region, age_bins)
-    df = _get_full_factorial_df(df, "Ki", Kivalues)
+    df = get_full_factorial_df(df, "Ki", Kivalues)
 
     # Time-varying parameters for each start date.
     dfs = []
@@ -134,9 +145,10 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
 
     return result
 
+
 def get_experiment_config(experiment_config_file):
     config = yaml.load(open(os.path.join('./experiment_configs', master_config)), Loader=yamlordereddictloader.Loader)
-    yaml_file = open(os.path.join('./experiment_configs',experiment_config_file))
+    yaml_file = open(os.path.join('./experiment_configs', experiment_config_file))
     expt_config = yaml.safe_load(yaml_file)
     for param_type, updated_params in expt_config.items():
         if not config[param_type]:
@@ -145,8 +157,9 @@ def get_experiment_config(experiment_config_file):
             config[param_type].update(updated_params)
     return config
 
+
 def get_parameters(from_configs=True, sub_samples=None, sample_csv_name='sampled_parameters.csv'):
-    if from_configs :
+    if from_configs:
         experiment_config = get_experiment_config(exp_config)
         experiment_setup_parameters = get_experiment_setup_parameters(experiment_config)
         np.random.seed(experiment_setup_parameters['random_seed'])
@@ -157,25 +170,26 @@ def get_parameters(from_configs=True, sub_samples=None, sample_csv_name='sampled
         Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
         age_bins = experiment_setup_parameters.get('age_bins')
 
-        if sub_samples == None :
+        if sub_samples == None:
             sub_samples = experiment_setup_parameters['number_of_samples']
-        else :
+        else:
             sub_samples = int(sub_samples)
 
         dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
-                                           config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region)
+                                           config=experiment_config, age_bins=age_bins, Kivalues=Kivalues,
+                                           region=region)
 
-    if not from_configs :
+    if not from_configs:
         dfparam = pd.read_csv(os.path.join('./experiment_configs', 'input_csv', sample_csv_name))
 
-        if sub_samples != None :
-            dfparam[dfparam['sample_num'] <= sub_samples ]
+        if sub_samples != None:
+            dfparam[dfparam['sample_num'] <= sub_samples]
 
     return dfparam
 
+
 def change_param(df, param_dic):
     """ Modify a parameter dataframe by replacing excisting parameters or adding new parameters.
-
     Parameters
     ----------
     df: pd.DataFrame
@@ -190,29 +204,29 @@ def change_param(df, param_dic):
     for key in param_dic.keys():
         new_val = float(param_dic[key])
 
-        if key in df.columns :
-            dic_i = {key : [float(df[key].unique()), param_dic[key] ] }
+        if key in df.columns:
+            dic_i = {key: [float(df[key].unique()), param_dic[key]]}
             dic_old = dict(dic_old, **dic_i)
 
             if df[key][0] == new_val:
                 raise ValueError("The parameter value to replace is identical. "
                                  f"Value in df param {df[key][0]} value defined in param_dic {new_val}")
-            if len(df[key].unique()) >1:
+            if len(df[key].unique()) > 1:
                 raise ValueError("The parameter to replace holds more than 1 unique value. "
                                  f"Parameter values to replace {len(df[key].unique())}")
-            else :
+            else:
                 df[key] = new_val
 
         else:
             df[key] = new_val
-            #print(f"Parameter  {key} was added to the parameter dataframe")
+            # print(f"Parameter  {key} was added to the parameter dataframe")
 
     return dic_old, df
 
-def check_and_save_parameters(df, emodl_template,sample_csv_name):
+
+def check_and_save_parameters(df, emodl_template, sample_csv_name):
     """ Given an emodl template file, replaces the placeholder names
     (which are bookended by '@') with the sampled parameter value.
-
     Parameters
     ----------
     df: pd.DataFrame
@@ -234,14 +248,68 @@ def check_and_save_parameters(df, emodl_template,sample_csv_name):
     if remaining_placeholders:
         raise ValueError("Not all placeholders have been defined in the sample parameters. "
                          f"Remaining placeholders: {remaining_placeholders}")
-    else :
+    else:
         dfparam.to_csv(os.path.join('./experiment_configs', 'input_csv', sample_csv_name), index=False)
         print("All placeholders have been defined in the sample parameters. \n "
               f"File saved in {os.path.join('./experiment_configs', 'input_csv', sample_csv_name)}")
 
 
+def make_identifier(df):
+    """https://stackoverflow.com/a/44294454"""
+    str_id = df.apply(lambda x: '_'.join(map(str, x)), axis=1)
+    return pd.factorize(str_id)[0]
+
+
+def gen_combos(csv_base, csv_add):
+    """
+    Function takes list of csv bases, generates a master
+    csv file with all combinations of parameters contained therein.
+    Ensure that all parameters have unique names in input files
+    and that multiple input files are supplied.
+    Function adapted from Reese Richardson 'condensed workflow' for running simulations.
+    """
+
+    ## Drop columns from csv_add in csv_base, as being replaced
+    csv_base.drop(list(csv_add.columns), axis=1, inplace=True, errors='ignore')
+
+    ## Rename unique scenario identifier
+    csv_base = csv_base.rename(columns={"scen_num": "scen_num1"})
+    ## Add unique scenario identifier
+    csv_add['scen_num2'] = csv_add.reset_index().index
+
+    dfs_list = [''] * (2)
+    dfs_list[0] = csv_base.copy()
+    dfs_list[1] = csv_add.copy()
+
+    cool_list = np.array(list(itertools.product(dfs_list[0].to_numpy(), dfs_list[1].to_numpy())))
+    cool_list = np.array(list(np.concatenate(x) for x in cool_list))
+
+    # Creating a list of columns for use in the final DataFrame...
+    master_columns = []
+    for df in dfs_list:
+        master_columns.extend(np.array(df.columns))
+
+    # Isolating index columns...
+    index_columns = []
+    for col in master_columns:
+        if 'index' in col:
+            index_columns.append(col)
+
+    # Writing all data to master DataFrame...
+    master_df = pd.DataFrame(data=cool_list, columns=master_columns)
+
+    # Restructuring master DataFrame to bring index columns to front...
+    master_df = master_df[
+        [c for c in master_df if c in index_columns] + [c for c in master_df if c not in index_columns]]
+
+    ### Generate new unique scen_num
+    master_df['scen_num'] = make_identifier(master_df[['scen_num1', 'scen_num2']])
+
+    return master_df
+
+
 if __name__ == '__main__':
-    
+
     args = parse_args()
     master_config = args.masterconfig
     exp_config = args.experiment_config
@@ -249,24 +317,28 @@ if __name__ == '__main__':
     emodl_name = args.emodl_template
     sub_samples = args.nsamples
 
-    _, _, wdir, exe_dir, git_dir = load_box_paths(Location='Local') #args.running_location
+    _, _, wdir, exe_dir, git_dir = load_box_paths(Location='Local')  # args.running_location
     Location = os.getenv("LOCATION") or args.running_location
 
     emodl_dir = os.path.join(git_dir, 'emodl')
     cfg_dir = os.path.join(git_dir, 'cfg')
     yaml_dir = os.path.join(git_dir, 'experiment_configs')
 
-    if args.csv_name_load == None :
+    if args.csv_name_load == None:
 
         dfparam = get_parameters(from_configs=True, sub_samples=sub_samples)
 
-    else :
+    else:
 
-        dfparam = get_parameters(from_configs=False, sample_csv_name = args.csv_name_load)
+        dfparam = get_parameters(from_configs=False, sample_csv_name=args.csv_name_load)
 
-    if  bool(args.param_dic) :
-
+    if bool(args.param_dic) and args.csv_name_combo == None:
         dic, dfparam = change_param(df=dfparam, param_dic=args.param_dic)
 
-    check_and_save_parameters(df=dfparam, emodl_template=emodl_name, sample_csv_name =args.csv_name_save)
+    if args.csv_name_combo != None:
+        dfparam2 = pd.read_csv(os.path.join('./experiment_configs', 'input_csv', args.csv_name_combo))
+        dfparam1 = dfparam
+        del dfparam
+        dfparam = gen_combos(csv_base=dfparam1, csv_add=dfparam2)
 
+    check_and_save_parameters(df=dfparam, emodl_template=emodl_name, sample_csv_name=args.csv_name_save)

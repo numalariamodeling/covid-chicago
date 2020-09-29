@@ -202,14 +202,17 @@ As described in 2.1. and 2.2 parameters are sampled from the base configuration 
 The [sample_parameters.py](sample_parameters.py) script handles only the sampled_parameters.csv, it allows to: 
 (1) generate csv file from configuration files without running simulations
 (2) load and modify an existing sampled_parameters.csv (change or add single or multiple parameter) (default location `experiment_configs\input_csv`)
-(3) it currently does not allow for generating new parameter combination (in process).
+(3) replace single values for one or more parameter use python dictionary  `--param_dic  {\"capacity_multiplier\":\"0.5\"}`
+(4) combine with multiple values for one or more parameters define additional csv file   `--csv_name_combo startdate_Ki_sets.csv`
 
 Running examples: 
 - nsamples: optional, if specified if overwrites the nsamples in the base configuration, if loading an existing csv the first n samples will be selected (i.e. when selecting samples from an excisting csv file, could be modified to be random if needed)
 - emodl_template: the emodl template is required to test whether the parameter csv table includes all required parameters defined in the desired emodl file to run
-- example1: `python sample_parameters.py -rl Local -r 'IL' --experiment_config 'spatial_EMS_experiment.yaml' --emodl_template 'extendedmodel_EMS.emodl'  -save "sampled_parameters.csv"`
-- example2: `python sample_parameters.py -rl Local -save "sampled_parameters_1000.csv" --nsamples "1000"`
-- example3: `python sample_parameters.py -rl Local -load "sampled_parameters_1000.csv" -save "sampled_parameters_1000_v2.csv"  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
+- example 1: `python sample_parameters.py -rl Local -r IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl  -save sampled_parameters2.csv`
+- example 2: `python sample_parameters.py -rl Local -save sampled_parameters_1000.csv --nsamples 1000`
+- example 3: `python sample_parameters.py -rl Local -load sampled_parameters_1000.csv -save sampled_parameters_1000_v2.csv  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
+- example 4: `python sample_parameters.py   --csv_name_combo  sampled_parameters_sm7.csv   -save sampled_parameters_sm7_combo.csv`
+   -(sampled_parameters_sm7.csv not under version control, but would for example include 10 values for social multiplier 7 for all 11 regions, the base sample parameters are repeated for each of the 10 rows of the additional csv)
 
 When running simulations with an pre-existing csv file, specify 
 - `--load_sample_parameters` (boolean) and 
