@@ -52,7 +52,7 @@ for ems_region in range(1,12):
     
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
-    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', 'capacity_weekday_average_20200922.csv'))
+    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', 'capacity_weekday_average_20200929.csv'))
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
     
     for ems_region in range(1,12):
@@ -68,7 +68,7 @@ def get_probs(exp_name):
             metric_root = 'total_hosp_census_EMS-'
         elif row['resource_type'] == 'icu_availforcovid':
             metric_root = 'crit_det_EMS-'
-        thresh = row['avg_resource_available_prev2weeks']
+        thresh = row['avg_resource_available']
         region = int(re.sub('[^0-9]','', row['geography_modeled']))
         prob = 0
         for scen in unique_scen:

@@ -129,20 +129,20 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     return adf
 
 
-def load_capacity(ems, simdate='20200915') :
+def load_capacity(ems, simdate='20200929') :
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
     
     fname = 'capacity_weekday_average_' + simdate + '.csv'
-    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds_template/', fname)
+    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds/', fname)
     df = pd.read_csv(ems_fname)
 
     df = df[df['overflow_threshold_percent']==1]
     df['ems'] = df['geography_modeled']
     df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
-    df =  df[['ems','resource_type','avg_resource_available_prev2weeks']]
+    df =  df[['ems','resource_type','avg_resource_available']]
     df = df.drop_duplicates()
    # df = df.sort_values(by=['ems'])
-    df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available_prev2weeks')
+    df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available')
 
     df.index.name = 'ems'
     df.reset_index(inplace=True)
