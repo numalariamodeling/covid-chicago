@@ -4,7 +4,7 @@ library(dplyr)
 ## Define functions
 
 ### Load data
-f_loadData <- function(data_path, simdate ='200915') {
+f_loadData <- function(data_path, simdate ='200928') {
   emresource <- read.csv(file.path(data_path, "covid_IDPH/Corona virus reports/emresource_by_region.csv")) %>%
     dplyr::mutate(
       date_of_extract = as.Date(date_of_extract),
@@ -101,18 +101,18 @@ load_population <- function(){
 }
 
 
-load_new_capacity <- function(selected_ems = NULL, simdate = "20200915") {
+load_new_capacity <- function(selected_ems = NULL, simdate = "20200929") {
 
 
   fname <- paste0("capacity_weekday_average_",simdate,".csv")
-  df <- read.csv(file.path(data_path, "covid_IDPH/Corona virus reports/hospital_capacity_thresholds_template", fname))
+  df <- read.csv(file.path(data_path, "covid_IDPH/Corona virus reports/hospital_capacity_thresholds", fname))
 
 
   df <- df %>%
     filter(overflow_threshold_percent == 1) %>%
-    select(geography_modeled, resource_type, avg_resource_available_prev2weeks) %>%
+    select(geography_modeled, resource_type, avg_resource_available) %>%
     unique() %>%
-    pivot_wider(names_from = "resource_type", values_from = "avg_resource_available_prev2weeks") %>%
+    pivot_wider(names_from = "resource_type", values_from = "avg_resource_available") %>%
     mutate(geography_name = gsub("covidregion_", "", geography_modeled)) %>%
     select(geography_name, icu_availforcovid, hb_availforcovid)
 
