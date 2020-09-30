@@ -155,7 +155,7 @@
 (func infectious_adjusted (+ infectious_adjusted_campus infectious_adjusted_evanston infectious_adjusted_unofficial))
 (func recovered (+ R_det_campus_As R_det_campus_Sym R_campus R_evanston R_unofficial))
 (func prevalence (/ infected N))
-(func seroprevalence (/ infected recovered N))
+(func seroprevalence (/ (+ infected recovered) N))
 (func campus_isolation_pop (+ As_det_campus P_det_campus Sym_det_campus1 Sym_det_campus2 R_det_campus_Sym R_det_campus_As))
 
 (observe susceptible susceptible)
