@@ -1,0 +1,92 @@
+experiment_setup_parameters:
+  'number_of_samples': 100
+  'number_of_runs': 10
+  'duration': 150
+  'monitoring_samples': 150 # needs to be smaller than duration
+  'random_seed': 1
+fixed_parameters_region_specific:
+fixed_parameters_global:
+sampled_parameters:
+  'expected_campus':
+    np.random: uniform
+    function_kwargs: {'low': 3600, 'high':4200}
+  'expected_evanston':
+    np.random: uniform
+    function_kwargs: {'low': 2800, 'high':3700}
+  'expected_unofficial':
+    np.random: uniform
+    function_kwargs: {'low': 300, 'high':500}
+  'expected_prevalence':
+    np.random: uniform
+    function_kwargs: {'low': 0.01, 'high':0.02}
+  'expected_seroprevalence':
+    np.random: uniform
+    function_kwargs: {'low': 0.06, 'high':0.10}
+  'time_to_infectious':
+    np.random: uniform
+    function_kwargs: {'low': 3.4, 'high':4.5}
+  'time_to_recovery':
+    np.random: uniform
+    function_kwargs: {'low': 7.0, 'high':10.0}
+  'reduced_inf_of_det_campus':
+    np.random: uniform
+    function_kwargs: {'low': 0.0, 'high':0.3}
+  'reduced_inf_of_det_evanston':
+    np.random: uniform
+    function_kwargs: {'low': 0.0, 'high':0.5}
+  'reduced_inf_of_det_unofficial':
+    np.random: uniform
+    function_kwargs: {'low': 0.00, 'high':0.75}
+  'reduced_inf_of_As':
+    np.random: uniform
+    function_kwargs: {'low': 0.75, 'high':1.00}
+  'time_to_symptoms':
+    np.random: uniform
+    function_kwargs: {'low': 2.4, 'high':3.5}
+  'prob_Sym':
+    np.random: uniform
+    function_kwargs: {'low': 0.1, 'high':0.2}
+  'prob_det_As_campus':
+    np.random: uniform
+    function_kwargs: {'low': 0.8, 'high':0.9}
+  'prob_det_Sym_campus':
+    np.random: uniform
+    function_kwargs: {'low': 0.9, 'high':1.0}
+  'prob_det_As_evanston':
+    np.random: uniform
+    function_kwargs: {'low': 0.7, 'high':0.8}
+  'prob_det_Sym_evanston':
+    np.random: uniform
+    function_kwargs: {'low': 0.8, 'high':0.9}
+  'prob_det_As_unofficial':
+    np.random: uniform
+    function_kwargs: {'low': 0.0, 'high':0.0}
+  'prob_det_Sym_unofficial':
+    np.random: uniform
+    function_kwargs: {'low': 0.2, 'high':0.6}
+  'turnaround_time':
+    np.random: uniform
+    function_kwargs: {'low': 1.0, 'high':2.0}
+  'time_to_isolate':
+    np.random: uniform
+    function_kwargs: {'low': 0.5, 'high':1.0}
+  'testing_period':
+    np.random: uniform
+    function_kwargs: {'low': 7.0, 'high':7.0}
+  'isolation_period':
+    np.random: uniform
+    function_kwargs: {'low': 10.0, 'high':10.0}
+  'reduced_detection_time_Sym':
+    np.random: uniform
+    function_kwargs: {'low': 0.85, 'high':1.00}
+  'detection_time_As_unofficial':
+    np.random: uniform
+    function_kwargs: {'low': 7.0, 'high':7.0}
+  'detection_time_Sym_unofficial':
+    np.random: uniform
+    function_kwargs: {'low': 6.0, 'high':7.0}
+  'Ki_NU':
+    np.random: uniform
+    function_kwargs: {'low': 0.2, 'high':0.2}
+intervention_parameters:
+fitted_parameters:
