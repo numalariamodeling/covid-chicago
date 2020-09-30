@@ -9,6 +9,7 @@
 (param expected_unofficial @expected_unofficial@)
 (param expected_prevalence @expected_prevalence@)
 (param expected_seroprevalence @expected_seroprevalence@)
+(param nonNU_prevalence @nonNU_prevalence@)
 
 (param E_campus_init (floor (* expected_campus expected_prevalence)))
 (param R_campus_init (floor (* expected_campus expected_seroprevalence)))
@@ -82,8 +83,9 @@
 (time-event time_infection_import 0.0 ((E_campus E_campus_init) (E_evanston E_evanston_init) (E_unofficial E_unofficial_init)))
 (time-event time_infection_import 0.0 ((R_campus R_campus_init) (R_evanston R_evanston_init) (R_unofficial R_unofficial_init)))
 
-; transmission parameter
+; transmission parameters
 (param Ki_NU @Ki_NU@)
+(param Ki_nonNU @Ki_nonNU@)
 
 ; time to infectious
 (param time_to_infectious @time_to_infectious@)
@@ -167,15 +169,18 @@
 (observe infected_campus infected_campus)
 (observe infected_evanston infected_evanston)
 (observe infected_unofficial infected_unofficial)
+(observe infectious_adjusted_campus infectious_adjusted_campus)
+(observe infectious_adjusted_evanston infectious_adjusted_evanston)
+(observe infectious_adjusted_unofficial infectious_adjusted_unofficial)
 (observe prevalence prevalence)
 (observe seroprevalence seroprevalence)
 (observe prob_det_before_symptoms_campus prob_det_before_symptoms_campus)
 (observe N N)
 
 ; exposure reactions
-(reaction campus_exposure (S_campus) (E_campus) (/ (* Ki_NU S_campus infectious_adjusted) N))
-(reaction evanston_exposure (S_evanston) (E_evanston) (/ (* Ki_NU S_evanston infectious_adjusted) N))
-(reaction unofficial_exposure (S_unofficial) (E_unofficial) (/ (* Ki_NU S_unofficial infectious_adjusted) N))
+(reaction campus_exposure (S_campus) (E_campus) (+ (/ (* Ki_NU S_campus infectious_adjusted) N) (* Ki_nonNU S_campus nonNU_prevalence)))
+(reaction evanston_exposure (S_evanston) (E_evanston) (+ (/ (* Ki_NU S_evanston infectious_adjusted) N) (* Ki_nonNU S_evanston nonNU_prevalence)))
+(reaction unofficial_exposure (S_unofficial) (E_unofficial) (+ (/ (* Ki_NU S_unofficial infectious_adjusted) N) (* Ki_nonNU S_unofficial nonNU_prevalence)))
 
 ; on campus reactions
 (reaction campus_presym (E_campus) (P_campus) (/ (* prob_Sym E_campus) time_to_infectious))
