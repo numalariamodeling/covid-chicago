@@ -125,17 +125,33 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.185, 'high': 0.185}
-        - {'low': 0.160, 'high': 0.160}
-        - {'low': 0.200, 'high': 0.200}
-        - {'low': 0.180, 'high': 0.180}
-        - {'low': 0.165, 'high': 0.265}
-        - {'low': 0.240, 'high': 0.240}
-        - {'low': 0.170, 'high': 0.170}
-        - {'low': 0.120, 'high': 0.120}
-        - {'low': 0.110, 'high': 0.110}
-        - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.100, 'high': 0.100}
+        - {'low':  0.20, 'high': 0.228571429}
+        - {'low':  0.160, 'high': 0.191428571}
+        - {'low':  0.191428571, 'high': 0.228571429}
+        - {'low':  0.117142857, 'high': 0.135714286}
+        - {'low':  0.135714286, 'high': 0.135714286}
+        - {'low':  0.191428571, 'high': 0.21}
+        - {'low':  0.135714286, 'high': 0.154285714}
+        - {'low':  0.117142857, 'high': 0.135714286}
+        - {'low':  0.117142857, 'high': 0.135714286}
+        - {'low':  0.135714286, 'high': 0.135714286}
+        - {'low':  0.100, 'high': 0.125714286}
+  socialDistance_time7:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 189, 'high': 194}
+        - {'low': 189, 'high': 199}
+        - {'low': 199, 'high': 199}
+        - {'low': 189, 'high': 194}
+        - {'low': 189, 'high': 199}
+        - {'low': 189, 'high': 199}
+        - {'low': 194, 'high': 199}
+        - {'low': 194, 'high': 199}
+        - {'low': 194, 'high': 199}
+        - {'low': 194, 'high': 199}
+        - {'low': 194, 'high': 199}
   d_Sym:  
     IL:
       expand_by_age: True

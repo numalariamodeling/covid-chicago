@@ -880,13 +880,13 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (param backtonormal_multiplier_1_{grp}  (/ (- Ki_red5_{grp}  Ki_red4_{grp} ) (- Ki_{grp} Ki_red4_{grp} ) ) )  
 (observe backtonormal_multiplier_1_{grp} backtonormal_multiplier_1_{grp})
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
-(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki_{grp} Ki_red5_{grp})))
-(time-event socialDistance_change_3 @socialDistance_time6@ ((Ki_{grp} Ki_red6_{grp})))
-(time-event socialDistance_change_4 @socialDistance_time7@ ((Ki_{grp} Ki_red7_{grp})))
+(time-event socialDistance_change_1 @socialDistance_time1@ ((Ki_{grp} Ki_red1_{grp})))
+(time-event socialDistance_change_2 @socialDistance_time2@ ((Ki_{grp} Ki_red2_{grp})))
+(time-event socialDistance_change_3 @socialDistance_time3@ ((Ki_{grp} Ki_red3_{grp})))
+(time-event socialDistance_change_4 @socialDistance_time4@ ((Ki_{grp} Ki_red4_{grp})))
+(time-event socialDistance_change_5 @socialDistance_time5@ ((Ki_{grp} Ki_red5_{grp})))
+(time-event socialDistance_change_6 @socialDistance_time6@ ((Ki_{grp} Ki_red6_{grp})))
+(time-event socialDistance_change_7 @socialDistance_time7_{grp}@ ((Ki_{grp} Ki_red7_{grp})))
             """.format(grp=grp)
         socialDistance_change_str = socialDistance_change_str + temp_str
 
