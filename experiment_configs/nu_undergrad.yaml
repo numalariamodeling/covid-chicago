@@ -4,7 +4,12 @@ experiment_setup_parameters:
   'duration': 150
   'monitoring_samples': 150 # needs to be smaller than duration
   'random_seed': 1
+  'initialAs': 0 # Used only to retain current framework.
 fixed_parameters_region_specific:
+  populations:
+    'NU': 12830632 # Used only to retain current framework.
+  startdate:
+    'NU': 2021-01-01
 fixed_parameters_global:
 sampled_parameters:
   'expected_campus':
@@ -88,5 +93,22 @@ sampled_parameters:
   'Ki_NU':
     np.random: uniform
     function_kwargs: {'low': 0.2, 'high':0.2}
+  'Ki_nonNU':
+    np.random: uniform
+    function_kwargs: {'low': 0.2, 'high':0.2}
+  'cfr': # Used only to retain current framework.
+    np.random: uniform
+    function_kwargs: {'low': 0.2, 'high':0.2}
+  'fraction_severe': # Used only to retain current framework.
+    np.random: uniform
+    function_kwargs: {'low': 0.2, 'high':0.2}
+  'fraction_critical': # Used only to retain current framework.
+    np.random: uniform
+    function_kwargs: {'low': 0.2, 'high':0.2}
 intervention_parameters:
+time_parameters:
 fitted_parameters:
+  Kis: # Used only to retain current framework.
+    'NU':
+      np: linspace
+      function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 1}
