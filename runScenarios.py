@@ -345,6 +345,9 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
         data_cfg = data_cfg.replace('@duration@', str(duration))
         data_cfg = data_cfg.replace('@monitoring_samples@', str(monitoring_samples))
         data_cfg = data_cfg.replace('@nruns@', str(nruns))
+
+        if 'prng_seed' in data_cfg:
+            data_cfg = data_cfg.replace('@prng_seed@', str(np.random.randint(100000000)))     
         if not Location == 'Local':
             data_cfg = data_cfg.replace('trajectories', f'trajectories_scen{scen_num}')
         elif sys.platform not in ["win32", "cygwin"]:
