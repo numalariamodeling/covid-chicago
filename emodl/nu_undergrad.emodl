@@ -172,6 +172,7 @@
 (observe infectious_adjusted_campus infectious_adjusted_campus)
 (observe infectious_adjusted_evanston infectious_adjusted_evanston)
 (observe infectious_adjusted_unofficial infectious_adjusted_unofficial)
+(observe infectious_adjusted infectious_adjusted)
 (observe prevalence prevalence)
 (observe seroprevalence seroprevalence)
 (observe prob_det_before_symptoms_campus prob_det_before_symptoms_campus)
