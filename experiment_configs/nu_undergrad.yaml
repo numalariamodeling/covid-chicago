@@ -71,10 +71,10 @@ sampled_parameters:
     function_kwargs: {'low': 0.2, 'high':0.6}
   'turnaround_time':
     np.random: uniform
-    function_kwargs: {'low': 1.0, 'high':2.0}
+    function_kwargs: {'low': 1.5, 'high':2.5}
   'time_to_isolate':
     np.random: uniform
-    function_kwargs: {'low': 0.5, 'high':1.0}
+    function_kwargs: {'low': 0, 'high':0}
   'testing_period':
     np.random: uniform
     function_kwargs: {'low': 7, 'high':7}
