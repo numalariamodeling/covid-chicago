@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 100
+  'number_of_samples': 25
   'number_of_runs': 10
   'duration': 150
   'monitoring_samples': 150 # needs to be smaller than duration
@@ -71,13 +71,13 @@ sampled_parameters:
     function_kwargs: {'low': 0.2, 'high':0.6}
   'turnaround_time':
     np.random: uniform
-    function_kwargs: {'low': 1.0, 'high':2.0}
+    function_kwargs: {'low': 1.5, 'high':2.5}
   'time_to_isolate':
     np.random: uniform
-    function_kwargs: {'low': 0.5, 'high':1.0}
+    function_kwargs: {'low': 0, 'high':0}
   'testing_period':
     np.random: uniform
-    function_kwargs: {'low': 7.0, 'high':7.0}
+    function_kwargs: {'low': 7, 'high':7}
   'isolation_period':
     np.random: uniform
     function_kwargs: {'low': 10.0, 'high':10.0}
@@ -92,10 +92,13 @@ sampled_parameters:
     function_kwargs: {'low': 6.0, 'high':7.0}
   'Ki_NU':
     np.random: uniform
-    function_kwargs: {'low': 0.2, 'high':0.2}
+    function_kwargs: {'low': 0.1, 'high':0.1}
   'Ki_nonNU':
     np.random: uniform
-    function_kwargs: {'low': 0.2, 'high':0.2}
+    function_kwargs: {'low': 0.1, 'high':0.1}
+  'nonNU_prevalence':
+    np.random: uniform
+    function_kwargs: {'low': 0.005, 'high':0.010}
   'cfr': # Used only to retain current framework.
     np.random: uniform
     function_kwargs: {'low': 0.2, 'high':0.2}
