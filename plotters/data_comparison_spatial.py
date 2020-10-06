@@ -59,8 +59,8 @@ def load_sim_data(exp_name, ems_nr,  input_wdir=None, fname= 'trajectoriesDat.cs
 
 
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day=date(2020, 2, 22),
-                     ymax=40, plot_path=None, logscale=True):
-    fig = plt.figure(figsize=(10, 6))
+                     ymax=40, logscale=True):
+    fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
     k = 0
     for c, channel in enumerate(channels):
@@ -82,24 +82,26 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, datetoday)
+        ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         if logscale :
             ax.set_ylim(0.1, ymax)
             ax.set_yscale('log')
 
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0, ms=1)
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]].rolling(window = 7, center=True).mean(), c='k', alpha=1.0)
+
+    fig.suptitle(f'Covidregion {ems_nr}', y=1, fontsize=14)
     fig.tight_layout()
-    if plot_path:
-        plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
-        if logscale == False :
-            plot_name = plot_name + "_nolog"
-        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.png'))
-        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.pdf'), format='PDF')
+    fig.subplots_adjust(top=0.88)
+
+    plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
+    if logscale == False :
+        plot_name = plot_name + "_nolog"
+    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.png'))
+    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.pdf'), format='PDF')
     # return a
 
-
-def compare_ems(exp_name,fname, ems_nr=0):
-
+def load_ref_df(ems_nr):
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
 
     if ems_nr > 0:
@@ -138,25 +140,16 @@ def compare_ems(exp_name,fname, ems_nr=0):
         column_list.append(channel + "_EMS-" + str(ems_nr))
 
     df = load_sim_data(exp_name, ems_nr, fname=fname,column_list=column_list)
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0],  '%Y-%m-%d')
 
     df['critical_with_suspected'] = df['critical']
-    ref_df_emr = ref_df
 
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', '200928_jg_aggregated_covidregion.csv'))
 
-    if ems_nr > 0:
-        ref_df = ref_df[ref_df['covid_region'] == ems_nr]
-    else:
-        ref_df = ref_df.groupby('date').agg(np.sum).reset_index()
-    ref_df['date'] = pd.to_datetime(ref_df['date'])
-
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df = df[df['date']  <=  datetime.today()]
-    ref_df_ll = ref_df
-    ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
-    ref_df = ref_df.sort_values('date')
+
+    ref_df = load_ref_df(ems_nr)
+
     channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths',
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
@@ -165,7 +158,7 @@ def compare_ems(exp_name,fname, ems_nr=0):
               'New Deaths (LL)', 'New Detected\nHospitalizations (LL)']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
     plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
-                     plot_path=plot_path, first_day=first_day)
+                      first_day=first_day)
 
     # return ref_df_emr, ref_df_ll
 
