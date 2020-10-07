@@ -20,6 +20,14 @@ def get_vents(crit_det_array):
 	
 	return crit_det_array * vent_frac_global
 
+def get_latest_LLfiledate(file_path, split_string ='_jg_' , file_pattern='aggregated_covidregion.csv'):
+
+    files= os.listdir(file_path)
+    filedates = [x.split(split_string)[0] for x in files if file_pattern in x]
+    latest_filedate = max([int(x) for x in filedates])
+
+    return latest_filedate
+
 def loadEMSregions(regionname) :
     regions = {'northcentral' : ['EMS_1', 'EMS_2'],
                'northeast' : ['EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11'],

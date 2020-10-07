@@ -1,0 +1,32 @@
+  socialDistance_time@monthnr@:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': @socialDistance_time_EMS_1_lwr@,  'high': @socialDistance_time_EMS_1_upr@}
+        - {'low': @socialDistance_time_EMS_2_lwr@,  'high': @socialDistance_time_EMS_2_upr@}
+        - {'low': @socialDistance_time_EMS_3_lwr@,  'high': @socialDistance_time_EMS_3_upr@}
+        - {'low': @socialDistance_time_EMS_4_lwr@,  'high': @socialDistance_time_EMS_4_upr@}
+        - {'low': @socialDistance_time_EMS_5_lwr@,  'high': @socialDistance_time_EMS_5_upr@}
+        - {'low': @socialDistance_time_EMS_6_lwr@,  'high': @socialDistance_time_EMS_6_upr@}
+        - {'low': @socialDistance_time_EMS_7_lwr@,  'high': @socialDistance_time_EMS_7_upr@}
+        - {'low': @socialDistance_time_EMS_8_lwr@,  'high': @socialDistance_time_EMS_8_upr@}
+        - {'low': @socialDistance_time_EMS_9_lwr@,  'high': @socialDistance_time_EMS_9_upr@}
+        - {'low': @socialDistance_time_EMS_10_lwr@, 'high': @socialDistance_time_EMS_10_upr@}
+        - {'low': @socialDistance_time_EMS_11_lwr@, 'high': @socialDistance_time_EMS_11_upr@}
+  social_multiplier_@monthnr@:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': @social_multiplier_EMS_1_lwr@,  'high': @social_multiplier_EMS_1_upr@}
+        - {'low': @social_multiplier_EMS_2_lwr@,  'high': @social_multiplier_EMS_2_upr@}
+        - {'low': @social_multiplier_EMS_3_lwr@,  'high': @social_multiplier_EMS_3_upr@}
+        - {'low': @social_multiplier_EMS_4_lwr@,  'high': @social_multiplier_EMS_4_upr@}
+        - {'low': @social_multiplier_EMS_5_lwr@,  'high': @social_multiplier_EMS_5_upr@}
+        - {'low': @social_multiplier_EMS_6_lwr@,  'high': @social_multiplier_EMS_6_upr@}
+        - {'low': @social_multiplier_EMS_7_lwr@,  'high': @social_multiplier_EMS_7_upr@}
+        - {'low': @social_multiplier_EMS_8_lwr@,  'high': @social_multiplier_EMS_8_upr@}
+        - {'low': @social_multiplier_EMS_9_lwr@,  'high': @social_multiplier_EMS_9_upr@}
+        - {'low': @social_multiplier_EMS_10_lwr@, 'high': @social_multiplier_EMS_10_upr@}
+        - {'low': @social_multiplier_EMS_11_lwr@, 'high': @social_multiplier_EMS_11_upr@}

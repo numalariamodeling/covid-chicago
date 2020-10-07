@@ -263,11 +263,36 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - `dos2unix runSimulations.sh`  # converts windows format to linux format
 - `sbatch runSimulations.sh`  # submits the simulations as an array job , note maximum array <5000 scenarios. 
 
-# 4 Visualizing and analyzing simulation outputs
+# 4 Postprocess and analyse simulation outputs
 Via the `--post_process` argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
 A sample plot is produced automatically, can be disabled via --noSamplePlot.
 Even if no postprocess is specified, default batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl).
 Additional batch files or postprocesses can be linked to runScenarios of needed, otherwise the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) provides a range of python files that do different visualizations (see readme in folder for details).
+
+## Sample plot
+Per default a `master_sample_plot.png` is generated for every simulation regardless of type (base, age, spatial) for all Illinois. 
+- `locale_age_postprocessing.bat` - generates trajectories for pre-specified outcome channels per age group.
+
+## Data comparison 
+- `runDataComparison.bat`
+
+## Fitting
+- runFittingProcess.bat
+In the experiment folder is per default a `runFittingProcess.bat` file created, which run the fitting script.
+Note, currently hardcoded for the spatial model.
+The fitting script estimates the effect size multiplier and effect size change time event as parameters to estimate and write out in csv files. 
+Per default the social multiplier and time event number from the exoeriment name suffix is taken, which needs to be in the form of `fitki9` (fitki is removed and 9 is used in the parameter name).
+Example experiment name:  `20201006_IL_mr_local_fitki9` , example submission command:
+`python runScenarios.py -rl Local -r IL -mc masterconfig_forFitting.yaml -c spatial_EMS_forFitting.yaml -e extendedmodel_EMS_forFitting.emodl -n "mr_local_fitki9"`
+
+
+## Process for civis
+- (`runDataComparison.bat`)
+- `runProcessForCivis_1.bat` generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
+- `runProcessForCivis_2.bat` calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv)
+- `runProcessForCivis_3.bat` runs the Rt estimation (r script), the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
+- `runProcessForCivis_4.bat` generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
+These batch files are automatically generated when running the spatial model using the `spatial_EMS_experiment.yaml` in the runScenario submission command. 
 
 # 5 Data sources
 - Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
@@ -282,6 +307,7 @@ Additional batch files or postprocesses can be linked to runScenarios of needed,
 ## 6. Model updates
 
 ### Updates in model structure and fitted parameters
+- 20201007 updated parameter fit
 - 20200929 updated parameter fit, changed fitting method
 - 20200922 updated parameter fit
 - 20200915 updated parameter fit, added social multiplier 7 (time event Aug 25)

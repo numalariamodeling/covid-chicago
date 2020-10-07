@@ -87,8 +87,7 @@ python runScenarios.py -rl Local -r EMS_11 -c EMSspecific_sample_parameters.yaml
 
 
 ## For fitting
-python runScenarios.py -rl Local -r EMS_1 -c extendedmodel_forFitting.yaml -e extendedmodel_forFitting.emodl -n "fit_test1"
-python runScenarios.py -rl Local -r EMS_2 -c extendedmodel_forFitting.yaml -e extendedmodel_forFitting.emodl -n "fit_test1"
+python runScenarios.py -rl Local -r IL -mc extendedmodel_forFitting.yaml -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_forFitting.emodl -n "local_fitki9"
 ...
 
 ## For startdate-Ki combinations
