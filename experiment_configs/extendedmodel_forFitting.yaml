@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 1000
+  'number_of_samples': 100 # ideally run on nucluster with >1000 samples
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
@@ -9,15 +9,15 @@ fixed_parameters_region_specific:
   populations:
     'IL': 12830632
   startdate:
-    'IL': 2020-02-13  # used for spatial model    
+    'IL': 2020-02-13  
 fixed_parameters_global:
 sampled_parameters:
   ### TRANSMISSION MULTIPLIER PARAMETER TO ESTIMATE WHEN FITTING TO DATA
   ### NOTE: railing number refers to months of time event ~one multiplier per months
-  'social_multiplier_9':
+  'ki_multiplier_9':
     np.random: uniform
     function_kwargs: {'low': 0, 'high': 0.5}
-  'social_multiplier_time_9':
+  'ki_multiplier_time_9':
     np.random: uniform
     function_kwargs: {'low': 202.0, 'high': 231.0}
   ### Transmission and disease progression parameters fixed to mean 
@@ -131,24 +131,24 @@ intervention_parameters:
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
-  'social_multiplier_time_3a':
+  'ki_multiplier_time_3a':
     custom_function: DateToTimestep
     # To use multiple dates instead of just one date, use an array of dates,
     # e.g., function_kwargs: {'dates': [2020-03-12, 2020-03-13]}
     function_kwargs: {'dates': 2020-03-12}
-  'social_multiplier_time_3b':
+  'ki_multiplier_time_3b':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-17}
-  'social_multiplier_time_3c':
+  'ki_multiplier_time_3c':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-21}
-  'social_multiplier_time_4':
+  'ki_multiplier_time_4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-21}
-  'social_multiplier_time_6':
+  'ki_multiplier_time_6':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-21}
-  'social_multiplier_time_7':
+  'ki_multiplier_time_7':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-25}
   'detection_time_1':

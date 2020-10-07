@@ -866,32 +866,32 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event cfr_adjust2 @cfr_time_2@ ((cfr cfr_change2) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 """
 
-    social_multiplier_change_str = ""
+    ki_multiplier_change_str = ""
     for grp in grpList:
         temp_str = """
-(param Ki_red3a_{grp} (* Ki_{grp} @social_multiplier_3a_{grp}@))
-(param Ki_red3b_{grp} (* Ki_{grp} @social_multiplier_3b_{grp}@))
-(param Ki_red3c_{grp} (* Ki_{grp} @social_multiplier_3c_{grp}@))
-(param Ki_red4_{grp} (* Ki_{grp} @social_multiplier_4_{grp}@))
-(param Ki_red6_{grp} (* Ki_{grp} @social_multiplier_6_{grp}@))
-(param Ki_red7_{grp} (* Ki_{grp} @social_multiplier_7_{grp}@))
-(param Ki_red8_{grp} (* Ki_{grp} @social_multiplier_8_{grp}@))
+(param Ki_red3a_{grp} (* Ki_{grp} @ki_multiplier_3a_{grp}@))
+(param Ki_red3b_{grp} (* Ki_{grp} @ki_multiplier_3b_{grp}@))
+(param Ki_red3c_{grp} (* Ki_{grp} @ki_multiplier_3c_{grp}@))
+(param Ki_red4_{grp} (* Ki_{grp} @ki_multiplier_4_{grp}@))
+(param Ki_red6_{grp} (* Ki_{grp} @ki_multiplier_6_{grp}@))
+(param Ki_red7_{grp} (* Ki_{grp} @ki_multiplier_7_{grp}@))
+(param Ki_red8_{grp} (* Ki_{grp} @ki_multiplier_8_{grp}@))
 
 
-(time-event social_multiplier_change_3a @social_multiplier_time_3a@ ((Ki_{grp} Ki_red3a_{grp})))
-(time-event social_multiplier_change_3b @social_multiplier_time_3b@ ((Ki_{grp} Ki_red3b_{grp})))
-(time-event social_multiplier_change_3c @social_multiplier_time_3c@ ((Ki_{grp} Ki_red3c_{grp})))
-(time-event social_multiplier_change_4 @social_multiplier_time_4@ ((Ki_{grp} Ki_red4_{grp})))
-(time-event social_multiplier_change_6 @social_multiplier_time_6@ ((Ki_{grp} Ki_red6_{grp})))
-(time-event social_multiplier_change_7 @social_multiplier_time_7@ ((Ki_{grp} Ki_red7_{grp})))
-(time-event social_multiplier_change_8 @social_multiplier_time_8_{grp}@ ((Ki_{grp} Ki_red8_{grp})))
+(time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki_{grp} Ki_red3a_{grp})))
+(time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_{grp} Ki_red3b_{grp})))
+(time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_{grp} Ki_red3c_{grp})))
+(time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_{grp} Ki_red4_{grp})))
+(time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_{grp} Ki_red6_{grp})))
+(time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_{grp} Ki_red7_{grp})))
+(time-event ki_multiplier_change_8 @ki_multiplier_time_8_{grp}@ ((Ki_{grp} Ki_red8_{grp})))
             """.format(grp=grp)
-        social_multiplier_change_str = social_multiplier_change_str + temp_str
+        ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
     rollback_str = ""
     for grp in grpList:
         temp_str = """
-(time-event social_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_{grp} Ki_red7_{grp})))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_{grp} Ki_red7_{grp})))
                 """.format(grp=grp)
         rollback_str = rollback_str + temp_str
 
@@ -1063,7 +1063,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
 
-    fittedTimeEvents_str = param_change_str + social_multiplier_change_str + d_Sym_change_str
+    fittedTimeEvents_str = param_change_str + ki_multiplier_change_str + d_Sym_change_str
    
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)

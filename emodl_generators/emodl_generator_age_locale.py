@@ -933,34 +933,34 @@ def write_interventions(regionList, ageList,total_string, scenarioName, expandMo
     #param_change_str = param_change_str + param_change_age_specific_str
     
 
-    social_multiplier_change_str = ""
+    ki_multiplier_change_str = ""
     for region in regionList:
         temp_str = """
-(param Ki_red3a_{region} (* Ki_{region} @social_multiplier_3a_{region}@))
-(param Ki_red3b_{region} (* Ki_{region} @social_multiplier_3b_{region}@))
-(param Ki_red3c_{region} (* Ki_{region} @social_multiplier_3c_{region}@))
-(param Ki_red4_{region} (* Ki_{region} @social_multiplier_4_{region}@))
-(param Ki_red6_{region} (* Ki_{region} @social_multiplier_6_{region}@))
-(param Ki_red7_{region} (* Ki_{region} @social_multiplier_7_{region}@))
-(param Ki_red8_{region} (* Ki_{region} @social_multiplier_8_{region}@))
+(param Ki_red3a_{region} (* Ki_{region} @ki_multiplier_3a_{region}@))
+(param Ki_red3b_{region} (* Ki_{region} @ki_multiplier_3b_{region}@))
+(param Ki_red3c_{region} (* Ki_{region} @ki_multiplier_3c_{region}@))
+(param Ki_red4_{region} (* Ki_{region} @ki_multiplier_4_{region}@))
+(param Ki_red6_{region} (* Ki_{region} @ki_multiplier_6_{region}@))
+(param Ki_red7_{region} (* Ki_{region} @ki_multiplier_7_{region}@))
+(param Ki_red8_{region} (* Ki_{region} @ki_multiplier_8_{region}@))
 
 (param backtonormal_multiplier_1_{region}  (/ (- Ki_red6_{region}  Ki_red4_{region} ) (- Ki_{region} Ki_red4_{region} ) ) )  
 (observe backtonormal_multiplier_1_{region} backtonormal_multiplier_1_{region})
 
-(time-event social_multiplier_change_3a @social_multiplier_time_3a@ ((Ki_{region} Ki_red3a_{region})))
-(time-event social_multiplier_change_3b @social_multiplier_time_3b@ ((Ki_{region} Ki_red3b_{region})))
-(time-event social_multiplier_change_3c @social_multiplier_time_3c@ ((Ki_{region} Ki_red3c_{region})))
-(time-event social_multiplier_change_4 @social_multiplier_time_4@ ((Ki_{region} Ki_red4_{region})))
-(time-event social_multiplier_change_6 @social_multiplier_time_6@ ((Ki_{region} Ki_red6_{region})))
-(time-event social_multiplier_change_7 @social_multiplier_time_7@ ((Ki_{region} Ki_red7_{region})))
-(time-event social_multiplier_change_8 @social_multiplier_time_8_{region}@ ((Ki_{region} Ki_red8_{region})))
+(time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki_{region} Ki_red3a_{region})))
+(time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_{region} Ki_red3b_{region})))
+(time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_{region} Ki_red3c_{region})))
+(time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_{region} Ki_red4_{region})))
+(time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_{region} Ki_red6_{region})))
+(time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_{region} Ki_red7_{region})))
+(time-event ki_multiplier_change_8 @ki_multiplier_time_8_{region}@ ((Ki_{region} Ki_red8_{region})))
             """.format(region=region)
-        social_multiplier_change_str = social_multiplier_change_str + temp_str
+        ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
     rollback_str = ""
     for region in regionList:
         temp_str = """
-(time-event social_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_{region} Ki_red7_{region})))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_{region} Ki_red7_{region})))
                 """.format(region=region)
         rollback_str = rollback_str + temp_str
 
@@ -1132,7 +1132,7 @@ def write_interventions(regionList, ageList,total_string, scenarioName, expandMo
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
 
-    fittedTimeEvents_str = param_change_str + social_multiplier_change_str + d_Sym_change_str
+    fittedTimeEvents_str = param_change_str + ki_multiplier_change_str + d_Sym_change_str
    
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)

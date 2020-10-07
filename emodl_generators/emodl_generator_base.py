@@ -603,25 +603,25 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 (time-event cfr_adjust2 @cfr_time_2@ ((cfr cfr_change2) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 """
 
-    social_multiplier_change_str = """
-(param Ki_red3a (* Ki @social_multiplier_3a@))
-(param Ki_red3b (* Ki @social_multiplier_3b@))
-(param Ki_red3c (* Ki @social_multiplier_3c@))
-(param Ki_red4 (* Ki @social_multiplier_4@))
-(param Ki_red6 (* Ki @social_multiplier_6@))
-(param Ki_red7 (* Ki @social_multiplier_7@))
-(param Ki_red8 (* Ki @social_multiplier_8@))
+    ki_multiplier_change_str = """
+(param Ki_red3a (* Ki @ki_multiplier_3a@))
+(param Ki_red3b (* Ki @ki_multiplier_3b@))
+(param Ki_red3c (* Ki @ki_multiplier_3c@))
+(param Ki_red4 (* Ki @ki_multiplier_4@))
+(param Ki_red6 (* Ki @ki_multiplier_6@))
+(param Ki_red7 (* Ki @ki_multiplier_7@))
+(param Ki_red8 (* Ki @ki_multiplier_8@))
 
-(time-event social_multiplier_change_3a @social_multiplier_time_3a@ ((Ki Ki_red3a)))
-(time-event social_multiplier_change_3b @social_multiplier_time_3b@ ((Ki Ki_red3b)))
-(time-event social_multiplier_change_3c @social_multiplier_time_3c@ ((Ki Ki_red3c)))
-(time-event social_multiplier_change4 @social_multiplier_time_4@ ((Ki Ki_red4)))
-(time-event social_multiplier_change6 @social_multiplier_time_6@ ((Ki Ki_red6)))
-(time-event social_multiplier_change7 @social_multiplier_time_7@ ((Ki Ki_red7)))
-(time-event social_multiplier_change8 @social_multiplier_time_8@ ((Ki Ki_red8)))
+(time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki Ki_red3a)))
+(time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki Ki_red3b)))
+(time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki Ki_red3c)))
+(time-event ki_multiplier_change4 @ki_multiplier_time_4@ ((Ki Ki_red4)))
+(time-event ki_multiplier_change6 @ki_multiplier_time_6@ ((Ki Ki_red6)))
+(time-event ki_multiplier_change7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
+(time-event ki_multiplier_change8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
             """
     rollback_str ="""
-(time-event social_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red4)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red4)))
                 """
 
     rollbacktriggered_str =  """
@@ -729,7 +729,7 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")
 
-    fittedTimeEvents_str = param_change_str + social_multiplier_change_str + d_Sym_change_str
+    fittedTimeEvents_str = param_change_str + ki_multiplier_change_str + d_Sym_change_str
 
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)

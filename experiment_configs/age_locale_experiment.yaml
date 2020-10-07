@@ -25,7 +25,7 @@ fixed_parameters_global:
     - [0.259550957473471, 0.269607762589848, 0.228935133009809, 0.364703817168388, 0.365736948403847, 0.372508504487997, 0.339232088620295, 0.386823813502125]
 
 sampled_parameters:
-  social_multiplier_3a:
+  ki_multiplier_3a:
     IL:
       expand_by_age: True
       np.random: uniform
@@ -41,7 +41,7 @@ sampled_parameters:
         - {'low': 0.7, 'high': 0.9}
         - {'low': 0.7, 'high': 0.9}
         - {'low': 0.6, 'high': 0.8}
-  social_multiplier_3b:
+  ki_multiplier_3b:
     IL:
       expand_by_age: True
       np.random: uniform
@@ -57,7 +57,7 @@ sampled_parameters:
         - {'low': 0.2, 'high': 0.5}
         - {'low': 0.2, 'high': 0.5}
         - {'low': 0.1, 'high': 0.4} 
-  social_multiplier_3c:
+  ki_multiplier_3c:
     IL:
       expand_by_age: True
       np.random: uniform
@@ -73,7 +73,7 @@ sampled_parameters:
         - {'low': 0.115, 'high': 0.115}
         - {'low': 0.130, 'high': 0.130}
         - {'low': 0.090, 'high': 0.090}
-  social_multiplier_4:
+  ki_multiplier_4:
     IL:
       expand_by_age: True
       np.random: uniform
@@ -89,7 +89,7 @@ sampled_parameters:
         - {'low': 0.080, 'high': 0.080}
         - {'low': 0.100, 'high': 0.100}
         - {'low': 0.070, 'high': 0.070}
-  social_multiplier_6:
+  ki_multiplier_6:
     IL:
       expand_by_age: True
       np.random: uniform
@@ -105,7 +105,7 @@ sampled_parameters:
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.110, 'high': 0.110}
-  social_multiplier_7:
+  ki_multiplier_7:
     IL:
       expand_by_age: True
       np.random: uniform
@@ -121,7 +121,7 @@ sampled_parameters:
         - {'low': 0.130, 'high': 0.130}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.110, 'high': 0.110}
-  social_multiplier_8:
+  ki_multiplier_8:
     IL:
       expand_by_age: True
       np.random: uniform
@@ -137,7 +137,7 @@ sampled_parameters:
         - {'low':  0.117142857, 'high': 0.135714286}
         - {'low':  0.135714286, 'high': 0.135714286}
         - {'low':  0.100, 'high': 0.125714286}
-  social_multiplier_time_8:
+  ki_multiplier_time_8:
     IL:
       expand_by_age: True
       np.random: uniform

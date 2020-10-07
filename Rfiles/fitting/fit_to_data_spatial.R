@@ -78,7 +78,7 @@ exp_name_split <- str_split(exp_name, "_")[[1]]
 simdate <- exp_name_split[1]
 monthnr <- gsub("fitki","",exp_name_split[length(exp_name_split)])
 
-fittingParam <- c(paste0("socialDistance_time_",monthnr), paste0("social_multiplier_",monthnr))
+fittingParam <- c(paste0("ki_multiplier_time_",monthnr), paste0("ki_multiplier_",monthnr))
 start_date <- as.Date(paste0("2020-",monthnr,"-01"))
 stop_date <- start_date + 30 
 
