@@ -224,6 +224,11 @@ echo end""")
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" >> "{sim_output_path}/log/runProcessForCivis_4.txt" \n')
 
+            # R Iteration comparison plot 
+            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_5_optional.bat'), 'w')
+            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/compare_simulation_iterations.R" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/runProcessForCivis_5_optional.txt" \n')
+
+
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
             file = open(os.path.join(temp_exp_dir, 'locale_age_postprocessing.bat'), 'w')
