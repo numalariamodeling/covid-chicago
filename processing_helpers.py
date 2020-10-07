@@ -6,6 +6,14 @@ from datetime import datetime, timedelta
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+def get_latest_LLfiledate(file_path, split_string ='_jg_' , file_pattern='aggregated_covidregion.csv'):
+
+    files= os.listdir(file_path)
+    filedates = [x.split(split_string)[0] for x in files if file_pattern in x]
+    latest_filedate = max([int(x) for x in filedates])
+
+    return latest_filedate
+    
 def get_vents(crit_det_array):
 
 	vent_frac_global = 0.660
