@@ -472,7 +472,7 @@ f_run_fitting <- function(i, sim_ems_emresource, sim_ems_LL, scens, useSmoothedD
   return(use_values)
 }
 
-f_export_sumary_csv <- function(use_values_list, npairs = 10) {
+f_export_sumary_csv <- function(use_values_list,fittingParam, npairs = 10) {
 
   #' Export csv files with different format of best parameters
   #'
@@ -508,7 +508,24 @@ f_export_sumary_csv <- function(use_values_list, npairs = 10) {
     dplyr::mutate(counter = 1:n()) %>%
     pivot_wider(names_from = "region", values_from = fittingParam) %>%
     fwrite(file.path(out_dir, "csv", "best_n_pairs_parameters_emsAll.csv"))
+  
+  
+  #### Generate yaml snippet 
+  range_dat <- fread(file.path(out_dir, "csv", "range_parameters_emsAll.csv")) %>% as.data.frame()
+  yaml_snippet <- suppressWarnings(readLines(file.path(git_dir,'experiment_configs','snippets','templates','config_weekly_ki_multiplier_fit.txt')))
+  yaml_snippet <- gsub("@monthnr@",monthnr,yaml_snippet )
+  
+  for(i in c(1:11)){
+    
+    yaml_snippet <- gsub(paste0("@socialDistance_time_EMS_",i,"_lwr@"), round(range_dat[i ,paste0(fittingParam[1],"_min")] ,0),yaml_snippet )
+    yaml_snippet <- gsub(paste0("@social_multiplier_EMS_",i,"_lwr@"), round(range_dat[i ,paste0(fittingParam[2],"_min")] ,3) ,yaml_snippet )
+    yaml_snippet <- gsub(paste0("@socialDistance_time_EMS_",i,"_upr@"), round(range_dat[i ,paste0(fittingParam[1],"_max")] ,0) ,yaml_snippet )
+    yaml_snippet <- gsub(paste0("@social_multiplier_EMS_",i,"_upr@"), round(range_dat[i ,paste0(fittingParam[2],"_max")] ,3) ,yaml_snippet )
+  }
+  writeLines(yaml_snippet,file.path(git_dir,'experiment_configs','snippets','config_weekly_ki_multiplier_fit.txt'))
+  
 }
+
 
 ## ----------------------------------------------
 ## Wrapper function to run for all
@@ -587,4 +604,4 @@ for (i in c(1:11)) {
 }
 
 
-f_export_sumary_csv(use_values_list, npairs = 10)
+f_export_sumary_csv(use_values_list, fittingParam, npairs = 10)
