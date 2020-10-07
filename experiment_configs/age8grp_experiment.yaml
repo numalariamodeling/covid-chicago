@@ -727,3 +727,28 @@ sampled_parameters:
   recovery_time_hosp_age70to100:
     np.random: uniform
     function_kwargs: {'low':4, 'high':6}
+  #####  time_to_critical
+  time_to_critical_age0to9:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
+  time_to_critical_age10to19:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
+  time_to_critical_age20to29:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
+  time_to_critical_age30to39:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
+  time_to_critical_age40to49:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
+  time_to_critical_age50to59:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
+  time_to_critical_age60to69:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
+  time_to_critical_age70to100:
+    np.random: uniform
+    function_kwargs: {'low':4, 'high':6}
