@@ -43,8 +43,8 @@ if (runInBatchMode) {
   cmd_agrs <- commandArgs()
   length(cmd_agrs)
   exp_name <- cmd_agrs[length(cmd_agrs) - 3]
-  useSmoothedData <- cmd_agrs[length(cmd_agrs) - 1]
-  Location <- cmd_agrs[length(cmd_agrs) - 2]
+  useSmoothedData <- cmd_agrs[length(cmd_agrs) - 2]
+  Location <- cmd_agrs[length(cmd_agrs) - 1]
   workingDir <- cmd_agrs[length(cmd_agrs)]
   
   if(tolower(useSmoothedData)=="false")useSmoothedData=FALSE
@@ -59,6 +59,10 @@ if (runInBatchMode) {
 
 }
 
+## Print out for log
+print(exp_name)
+print(Location)
+print(useSmoothedData)
 ## --------------------------------
 ### Set working directory to the GitHub repository R files
 ## --------------------------------
@@ -70,7 +74,6 @@ setwd(workingDir)
 ## --------------------------------
 ### Experiment specifc parameters
 ## --------------------------------
-source("load_paths.R")
 exp_name_split <- str_split(exp_name, "_")[[1]]
 simdate <- exp_name_split[1]
 monthnr <- gsub("fitki","",exp_name_split[length(exp_name_split)])
