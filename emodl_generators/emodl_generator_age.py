@@ -882,41 +882,41 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
     # TODO results in worse fitting?
     #param_change_str = param_change_str + param_change_age_specific_str
 
-    socialDistance_change_str = """
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
+    social_multiplier_change_str = """
+(param Ki_red3a (* Ki @social_multiplier_3a@))
+(param Ki_red3b (* Ki @social_multiplier_3b@))
+(param Ki_red3c (* Ki @social_multiplier_3c@))
 (param Ki_red4 (* Ki @social_multiplier_4@))
-(param Ki_red5 (* Ki @social_multiplier_5@))
 (param Ki_red6 (* Ki @social_multiplier_6@))
 (param Ki_red7 (* Ki @social_multiplier_7@))
+(param Ki_red8 (* Ki @social_multiplier_8@))
 
-(param backtonormal_multiplier_1  (/ (- Ki_red5  Ki_red4 ) (- Ki Ki_red4 ) ) )  
+(param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
 (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
-(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki Ki_red5)))
-(time-event socialDistance_change_3 @socialDistance_time6@ ((Ki Ki_red6)))
-(time-event socialDistance_change_4 @socialDistance_time7@ ((Ki Ki_red7)))
+(time-event social_multiplier_change_3a @social_multiplier_time_3a@ ((Ki Ki_red3a)))
+(time-event social_multiplier_change_3b @social_multiplier_time_3b@ ((Ki Ki_red3b)))
+(time-event social_multiplier_change_3c @social_multiplier_time_3c@ ((Ki Ki_red3c)))
+(time-event social_multiplier_change_4 @social_multiplier_time_4@ ((Ki Ki_red4)))
+(time-event social_multiplier_change_6 @social_multiplier_time_6@ ((Ki Ki_red6)))
+(time-event social_multiplier_change_7 @social_multiplier_time_7@ ((Ki Ki_red7)))
+(time-event social_multiplier_change_8 @social_multiplier_time_8@ ((Ki Ki_red8)))
 """
 
     rollback_str = """
-(time-event socialDistance_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red6)))
+(time-event social_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red7)))
 """
 
 
     rollbacktriggered_str =  """
-(state-event rollbacktrigger (and (> time @today@) (> {channel} (* @trigger@ @capacity_multiplier@)) ) ((Ki Ki_red6)))
+(state-event rollbacktrigger (and (> time @today@) (> {channel} (* @trigger@ @capacity_multiplier@)) ) ((Ki Ki_red7)))
 """
 
     rollbacktriggered_delay_str = """
 (param time_of_trigger 10000)
 (state-event rollbacktrigger (and (> time @today@) (> crit_det (* @trigger@ @capacity_multiplier@)) ) ((time_of_trigger time)))
 (func time_since_trigger (- time time_of_trigger))
-(state-event apply_rollback (> (- time_since_trigger @trigger_delay_days@) 0) ((Ki Ki_red6)))   
+(state-event apply_rollback (> (- time_since_trigger @trigger_delay_days@) 0) ((Ki Ki_red7)))   
 (observe triggertime_{grpout} time_of_trigger)
 """
         
@@ -936,26 +936,26 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 # % change from lowest transmission level - immediate
 # starting point is lowest level of transmission  Ki_red4
     interventionSTOP_adj_str = """
-(param Ki_back (+ Ki_red6 (* @backtonormal_multiplier@ (- Ki Ki_red6))))
+(param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
 """
 
 # % change from current transmission level - immediate
-# starting point is current level of transmission  Ki_red5
+# starting point is current level of transmission  Ki_red6
     interventionSTOP_adj2_str = """
-(param Ki_back (+ Ki_red6 (* @backtonormal_multiplier@ (- Ki Ki_red6))))
+(param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
 """
 
 
-# gradual reopening from 'lowest' transmission level,  Ki_red5 == Ki_back1
+# gradual reopening from 'lowest' transmission level,  Ki_red6 == Ki_back1
     gradual_reopening_str = """
 (param backtonormal_multiplier_1_adj  (- @backtonormal_multiplier@ backtonormal_multiplier_1 ))
 (observe backtonormal_multiplier_1_adj  backtonormal_multiplier_1_adj)
 
-(param Ki_back2 (+ Ki_red5 (* backtonormal_multiplier_1_adj 0.3333 (- Ki Ki_red4))))
-(param Ki_back3 (+ Ki_red5 (* backtonormal_multiplier_1_adj 0.6666 (- Ki Ki_red4))))
-(param Ki_back4 (+ Ki_red5 (* backtonormal_multiplier_1_adj 1.00 (- Ki Ki_red4))))
+(param Ki_back2 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.3333 (- Ki Ki_red4))))
+(param Ki_back3 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.6666 (- Ki Ki_red4))))
+(param Ki_back4 (+ Ki_red6 (* backtonormal_multiplier_1_adj 1.00 (- Ki Ki_red4))))
 (time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki Ki_back3)))
 (time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki Ki_back4)))
@@ -963,10 +963,10 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
             
 # gradual reopening from 'current' transmission level 
     gradual_reopening2_str = """
-(param Ki_back1 (+ Ki_red6 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red6))))
-(param Ki_back2 (+ Ki_red6 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red6))))
-(param Ki_back3 (+ Ki_red6 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red6))))
-(param Ki_back4 (+ Ki_red6 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red6))))
+(param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
+(param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
+(param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
+(param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
@@ -975,10 +975,10 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
 # gradual reopening from 'current' transmission level with region-specific reopening
     gradual_reopening3_str = """
-(param Ki_back1 (+ Ki_red6 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red6))))
-(param Ki_back2 (+ Ki_red6 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red6))))
-(param Ki_back3 (+ Ki_red6 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red6))))
-(param Ki_back4 (+ Ki_red6 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red6))))
+(param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
+(param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
+(param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
+(param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
@@ -1056,7 +1056,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
 
-    fittedTimeEvents_str = param_change_str + socialDistance_change_str + d_Sym_change_str
+    fittedTimeEvents_str = param_change_str + social_multiplier_change_str + d_Sym_change_str
    
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)
