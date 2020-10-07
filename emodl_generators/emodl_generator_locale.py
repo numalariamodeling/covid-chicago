@@ -876,10 +876,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (param Ki_red6_{grp} (* Ki_{grp} @social_multiplier_6_{grp}@))
 (param Ki_red7_{grp} (* Ki_{grp} @social_multiplier_7_{grp}@))
 (param Ki_red8_{grp} (* Ki_{grp} @social_multiplier_8_{grp}@))
-(param Ki_red8_{grp} (* Ki_{grp} @social_multiplier_8_{grp}@))
 
-(param backtonormal_multiplier_1_{grp}  (/ (- Ki_red6_{grp}  Ki_red4_{grp} ) (- Ki_{grp} Ki_red4_{grp} ) ) )  
-(observe backtonormal_multiplier_1_{grp} backtonormal_multiplier_1_{grp})
 
 (time-event social_multiplier_change_3a @social_multiplier_time_3a@ ((Ki_{grp} Ki_red3a_{grp})))
 (time-event social_multiplier_change_3b @social_multiplier_time_3b@ ((Ki_{grp} Ki_red3b_{grp})))
