@@ -243,6 +243,9 @@ time_parameters:
   'ki_multiplier_time_4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-21}
+  'ki_multiplier_time_5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-21}
   'ki_multiplier_time_6':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-21}
@@ -252,6 +255,9 @@ time_parameters:
   'ki_multiplier_time_8':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-25}
+  'ki_multiplier_time_9':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-25}
   'socialDistance_rollback_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
