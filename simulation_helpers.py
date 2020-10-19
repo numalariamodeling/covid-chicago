@@ -131,7 +131,7 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
         if deleteFiles == True: os.remove(os.path.join(git_dir, input_name))
 
     dfc = pd.concat(df_list)
-    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False)
+    dfc.to_csv( os.path.join(temp_exp_dir,"trajectoriesDat.csv"), index=False, date_format='%Y-%m-%d')
 
     nscenarios = sampledf['scen_num'].max()
     nscenarios_processed = len(dfc['scen_num'].unique())
@@ -164,7 +164,7 @@ def writeTxt(txtdir, filename, textstring) :
     file.close()
 
 
-def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,
+def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
                            exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR):
 
     fname = 'runSimulations.bat'
@@ -202,32 +202,40 @@ echo end""")
         if experiment_config != "spatial_EMS_experiment.yaml" :
             fname = "data_comparison.py"
         file = open(os.path.join(temp_exp_dir, 'runDataComparison.bat'), 'w')
-        file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" \n')
+        file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" >> "{sim_output_path}/log/runDataComparison.txt"  \n')
 
         if experiment_config == "spatial_EMS_experiment.yaml" :
             file = open(os.path.join(temp_exp_dir, 'runTrimTrajectories.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python trim_trajectoriesDat.py "{exp_name}" "{120}" "{15}" \n')
 
+            file = open(os.path.join(temp_exp_dir, 'runFittingProcess.bat'), 'w')
+            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fitting/fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/runFittingProcess.txt" \n')
+
             ## runProcessForCivis
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_1.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py --exp_name "{exp_name}" --processStep "generate_outputs" \n')
+            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py --exp_name "{exp_name}" --processStep "generate_outputs" >> "{sim_output_path}/log/runProcessForCivis_1.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" \n')
+            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" >> "{sim_output_path}/log/runProcessForCivis_2.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "estimate_Rt/get_Rt_forCivisOutputs.R" "{exp_name}" "Local" "{rfiles_dir}" \n')
+            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "estimate_Rt/get_Rt_forCivisOutputs.R" "{exp_name}" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/runProcessForCivis_3.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n')
+            file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" >> "{sim_output_path}/log/runProcessForCivis_4.txt" \n')
+
+            # R Iteration comparison plot 
+            file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_5_optional.bat'), 'w')
+            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/compare_simulation_iterations.R" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/runProcessForCivis_5_optional.txt" \n')
+
 
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
             file = open(os.path.join(temp_exp_dir, 'locale_age_postprocessing.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py "{exp_name}"  \n')
+            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py "{exp_name}" >> "{sim_output_path}/log/locale_age_postprocessing.txt" \n')
 
 
-def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir,  temp_exp_dir) :
+def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,sim_output_path) :
         # Generic shell submission script that should run for all having access to  projects/p30781
         # submit_runSimulations.sh
         exp_name_short = exp_name[-20:]
@@ -275,6 +283,11 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         pycommand = f'\npython {plotters_dir}{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
         file = open(os.path.join(temp_exp_dir, 'compareToData.sh'), 'w')
         file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
+        file.close()
+        
+        rcommand =  f'cd {os.path.join(rfiles_dir, "fitting")} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
+        file = open(os.path.join(temp_exp_dir, 'runFittingProcess.sh'), 'w')
+        file.write(header + jobname + err + out + rmodule + rcommand)
         file.close()
 
         pycommand = f'\npython {plotters_dir}process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'

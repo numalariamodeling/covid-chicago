@@ -1137,7 +1137,6 @@
 (param time_to_infectious @time_to_infectious@)
 (param time_to_symptoms @time_to_symptoms@)
 (param time_to_hospitalization @time_to_hospitalization@)
-(param time_to_critical @time_to_critical@)
 (param time_to_death @time_to_death@)
 (param recovery_time_asymp @recovery_time_asymp@)
 (param recovery_time_mild @recovery_time_mild@)
@@ -1151,7 +1150,6 @@
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
 (param Kr_c (/ 1 recovery_time_crit))
-(param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) )) 
@@ -1187,6 +1185,9 @@
 (param recovery_time_hosp_age0to9 @recovery_time_hosp_age0to9@)
 (param Kr_hage0to9 (/ 1 recovery_time_hosp_age0to9))
 
+(param time_to_critical_age0to9 @time_to_critical_age0to9@)
+(param Kcage0to9 (/ 1 time_to_critical_age0to9))
+
 
 (param Kh1age0to9 (/ fraction_hospitalized_age0to9 time_to_hospitalization))
 (param Kh2age0to9 (/ fraction_critical_age0to9 time_to_hospitalization ))
@@ -1210,6 +1211,9 @@
 
 (param recovery_time_hosp_age10to19 @recovery_time_hosp_age10to19@)
 (param Kr_hage10to19 (/ 1 recovery_time_hosp_age10to19))
+
+(param time_to_critical_age10to19 @time_to_critical_age10to19@)
+(param Kcage10to19 (/ 1 time_to_critical_age10to19))
 
 
 (param Kh1age10to19 (/ fraction_hospitalized_age10to19 time_to_hospitalization))
@@ -1235,6 +1239,9 @@
 (param recovery_time_hosp_age20to29 @recovery_time_hosp_age20to29@)
 (param Kr_hage20to29 (/ 1 recovery_time_hosp_age20to29))
 
+(param time_to_critical_age20to29 @time_to_critical_age20to29@)
+(param Kcage20to29 (/ 1 time_to_critical_age20to29))
+
 
 (param Kh1age20to29 (/ fraction_hospitalized_age20to29 time_to_hospitalization))
 (param Kh2age20to29 (/ fraction_critical_age20to29 time_to_hospitalization ))
@@ -1258,6 +1265,9 @@
 
 (param recovery_time_hosp_age30to39 @recovery_time_hosp_age30to39@)
 (param Kr_hage30to39 (/ 1 recovery_time_hosp_age30to39))
+
+(param time_to_critical_age30to39 @time_to_critical_age30to39@)
+(param Kcage30to39 (/ 1 time_to_critical_age30to39))
 
 
 (param Kh1age30to39 (/ fraction_hospitalized_age30to39 time_to_hospitalization))
@@ -1283,6 +1293,9 @@
 (param recovery_time_hosp_age40to49 @recovery_time_hosp_age40to49@)
 (param Kr_hage40to49 (/ 1 recovery_time_hosp_age40to49))
 
+(param time_to_critical_age40to49 @time_to_critical_age40to49@)
+(param Kcage40to49 (/ 1 time_to_critical_age40to49))
+
 
 (param Kh1age40to49 (/ fraction_hospitalized_age40to49 time_to_hospitalization))
 (param Kh2age40to49 (/ fraction_critical_age40to49 time_to_hospitalization ))
@@ -1306,6 +1319,9 @@
 
 (param recovery_time_hosp_age50to59 @recovery_time_hosp_age50to59@)
 (param Kr_hage50to59 (/ 1 recovery_time_hosp_age50to59))
+
+(param time_to_critical_age50to59 @time_to_critical_age50to59@)
+(param Kcage50to59 (/ 1 time_to_critical_age50to59))
 
 
 (param Kh1age50to59 (/ fraction_hospitalized_age50to59 time_to_hospitalization))
@@ -1331,6 +1347,9 @@
 (param recovery_time_hosp_age60to69 @recovery_time_hosp_age60to69@)
 (param Kr_hage60to69 (/ 1 recovery_time_hosp_age60to69))
 
+(param time_to_critical_age60to69 @time_to_critical_age60to69@)
+(param Kcage60to69 (/ 1 time_to_critical_age60to69))
+
 
 (param Kh1age60to69 (/ fraction_hospitalized_age60to69 time_to_hospitalization))
 (param Kh2age60to69 (/ fraction_critical_age60to69 time_to_hospitalization ))
@@ -1354,6 +1373,9 @@
 
 (param recovery_time_hosp_age70to100 @recovery_time_hosp_age70to100@)
 (param Kr_hage70to100 (/ 1 recovery_time_hosp_age70to100))
+
+(param time_to_critical_age70to100 @time_to_critical_age70to100@)
+(param Kcage70to100 (/ 1 time_to_critical_age70to100))
 
 
 (param Kh1age70to100 (/ fraction_hospitalized_age70to100 time_to_hospitalization))
@@ -1535,24 +1557,24 @@
 (time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
 (time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
 
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
-(param Ki_red4 (* Ki @social_multiplier_4@))
-(param Ki_red5 (* Ki @social_multiplier_5@))
-(param Ki_red6 (* Ki @social_multiplier_6@))
-(param Ki_red7 (* Ki @social_multiplier_7@))
+(param Ki_red3a (* Ki @ki_multiplier_3a@))
+(param Ki_red3b (* Ki @ki_multiplier_3b@))
+(param Ki_red3c (* Ki @ki_multiplier_3c@))
+(param Ki_red4 (* Ki @ki_multiplier_4@))
+(param Ki_red6 (* Ki @ki_multiplier_6@))
+(param Ki_red7 (* Ki @ki_multiplier_7@))
+(param Ki_red8 (* Ki @ki_multiplier_8@))
 
-(param backtonormal_multiplier_1  (/ (- Ki_red5  Ki_red4 ) (- Ki Ki_red4 ) ) )  
+(param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
 (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
-(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki Ki_red5)))
-(time-event socialDistance_change_3 @socialDistance_time6@ ((Ki Ki_red6)))
-(time-event socialDistance_change_4 @socialDistance_time7@ ((Ki Ki_red7)))
+(time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki Ki_red3a)))
+(time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki Ki_red3b)))
+(time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki Ki_red3c)))
+(time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki Ki_red4)))
+(time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki Ki_red6)))
+(time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
+(time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
 
 (time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@)))
 (time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@)))
@@ -1602,8 +1624,8 @@
 (reaction hospitalization_1_age0to9 (Sys_age0to9)  (H1_age0to9)  (* Kh1_Dage0to9 Sys_age0to9))
 (reaction hospitalization_2_age0to9  (Sys_age0to9)  (H2_age0to9)  (* Kh2_Dage0to9 Sys_age0to9))
 (reaction hospitalization_3_age0to9  (Sys_age0to9)  (H3_age0to9)  (* Kh3_Dage0to9 Sys_age0to9))
-(reaction critical_2_age0to9 (H2_age0to9)  (C2_age0to9)  (* Kc H2_age0to9))
-(reaction critical_3_age0to9  (H3_age0to9)  (C3_age0to9)  (* Kc H3_age0to9))
+(reaction critical_2_age0to9 (H2_age0to9)  (C2_age0to9)  (* Kcage0to9 H2_age0to9))
+(reaction critical_3_age0to9  (H3_age0to9)  (C3_age0to9)  (* Kcage0to9 H3_age0to9))
 (reaction death_age0to9  (C3_age0to9)  (D3_age0to9)  (* Km C3_age0to9))
 
 (reaction hospitalization_1_det_age0to9  (Sys_det3a_age0to9)  (H1_det3_age0to9)  (* Kh1_Dage0to9 Sys_det3a_age0to9))
@@ -1614,8 +1636,8 @@
 (reaction hospitalization_2_det_age0to9  (Sys_det3b_age0to9)  (H2_det3_age0to9)  (* Kh2age0to9 Sys_det3b_age0to9))
 (reaction hospitalization_3_det_age0to9  (Sys_det3b_age0to9)  (H3_det3_age0to9)  (* Kh3age0to9 Sys_det3b_age0to9))
 
-(reaction critical_2_det2_age0to9  (H2_det3_age0to9)  (C2_det3_age0to9)  (* Kc H2_det3_age0to9))
-(reaction critical_3_det2_age0to9  (H3_det3_age0to9)  (C3_det3_age0to9)  (* Kc H3_det3_age0to9))
+(reaction critical_2_det2_age0to9  (H2_det3_age0to9)  (C2_det3_age0to9)  (* Kcage0to9 H2_det3_age0to9))
+(reaction critical_3_det2_age0to9  (H3_det3_age0to9)  (C3_det3_age0to9)  (* Kcage0to9 H3_det3_age0to9))
 (reaction death_det3_age0to9  (C3_det3_age0to9)  (D3_det3_age0to9)  (* Km C3_det3_age0to9))
 
 (reaction recovery_As_age0to9  (As_age0to9)  (RAs_age0to9)  (* Kr_a_D As_age0to9))
@@ -1656,8 +1678,8 @@
 (reaction hospitalization_1_age10to19 (Sys_age10to19)  (H1_age10to19)  (* Kh1_Dage10to19 Sys_age10to19))
 (reaction hospitalization_2_age10to19  (Sys_age10to19)  (H2_age10to19)  (* Kh2_Dage10to19 Sys_age10to19))
 (reaction hospitalization_3_age10to19  (Sys_age10to19)  (H3_age10to19)  (* Kh3_Dage10to19 Sys_age10to19))
-(reaction critical_2_age10to19 (H2_age10to19)  (C2_age10to19)  (* Kc H2_age10to19))
-(reaction critical_3_age10to19  (H3_age10to19)  (C3_age10to19)  (* Kc H3_age10to19))
+(reaction critical_2_age10to19 (H2_age10to19)  (C2_age10to19)  (* Kcage10to19 H2_age10to19))
+(reaction critical_3_age10to19  (H3_age10to19)  (C3_age10to19)  (* Kcage10to19 H3_age10to19))
 (reaction death_age10to19  (C3_age10to19)  (D3_age10to19)  (* Km C3_age10to19))
 
 (reaction hospitalization_1_det_age10to19  (Sys_det3a_age10to19)  (H1_det3_age10to19)  (* Kh1_Dage10to19 Sys_det3a_age10to19))
@@ -1668,8 +1690,8 @@
 (reaction hospitalization_2_det_age10to19  (Sys_det3b_age10to19)  (H2_det3_age10to19)  (* Kh2age10to19 Sys_det3b_age10to19))
 (reaction hospitalization_3_det_age10to19  (Sys_det3b_age10to19)  (H3_det3_age10to19)  (* Kh3age10to19 Sys_det3b_age10to19))
 
-(reaction critical_2_det2_age10to19  (H2_det3_age10to19)  (C2_det3_age10to19)  (* Kc H2_det3_age10to19))
-(reaction critical_3_det2_age10to19  (H3_det3_age10to19)  (C3_det3_age10to19)  (* Kc H3_det3_age10to19))
+(reaction critical_2_det2_age10to19  (H2_det3_age10to19)  (C2_det3_age10to19)  (* Kcage10to19 H2_det3_age10to19))
+(reaction critical_3_det2_age10to19  (H3_det3_age10to19)  (C3_det3_age10to19)  (* Kcage10to19 H3_det3_age10to19))
 (reaction death_det3_age10to19  (C3_det3_age10to19)  (D3_det3_age10to19)  (* Km C3_det3_age10to19))
 
 (reaction recovery_As_age10to19  (As_age10to19)  (RAs_age10to19)  (* Kr_a_D As_age10to19))
@@ -1710,8 +1732,8 @@
 (reaction hospitalization_1_age20to29 (Sys_age20to29)  (H1_age20to29)  (* Kh1_Dage20to29 Sys_age20to29))
 (reaction hospitalization_2_age20to29  (Sys_age20to29)  (H2_age20to29)  (* Kh2_Dage20to29 Sys_age20to29))
 (reaction hospitalization_3_age20to29  (Sys_age20to29)  (H3_age20to29)  (* Kh3_Dage20to29 Sys_age20to29))
-(reaction critical_2_age20to29 (H2_age20to29)  (C2_age20to29)  (* Kc H2_age20to29))
-(reaction critical_3_age20to29  (H3_age20to29)  (C3_age20to29)  (* Kc H3_age20to29))
+(reaction critical_2_age20to29 (H2_age20to29)  (C2_age20to29)  (* Kcage20to29 H2_age20to29))
+(reaction critical_3_age20to29  (H3_age20to29)  (C3_age20to29)  (* Kcage20to29 H3_age20to29))
 (reaction death_age20to29  (C3_age20to29)  (D3_age20to29)  (* Km C3_age20to29))
 
 (reaction hospitalization_1_det_age20to29  (Sys_det3a_age20to29)  (H1_det3_age20to29)  (* Kh1_Dage20to29 Sys_det3a_age20to29))
@@ -1722,8 +1744,8 @@
 (reaction hospitalization_2_det_age20to29  (Sys_det3b_age20to29)  (H2_det3_age20to29)  (* Kh2age20to29 Sys_det3b_age20to29))
 (reaction hospitalization_3_det_age20to29  (Sys_det3b_age20to29)  (H3_det3_age20to29)  (* Kh3age20to29 Sys_det3b_age20to29))
 
-(reaction critical_2_det2_age20to29  (H2_det3_age20to29)  (C2_det3_age20to29)  (* Kc H2_det3_age20to29))
-(reaction critical_3_det2_age20to29  (H3_det3_age20to29)  (C3_det3_age20to29)  (* Kc H3_det3_age20to29))
+(reaction critical_2_det2_age20to29  (H2_det3_age20to29)  (C2_det3_age20to29)  (* Kcage20to29 H2_det3_age20to29))
+(reaction critical_3_det2_age20to29  (H3_det3_age20to29)  (C3_det3_age20to29)  (* Kcage20to29 H3_det3_age20to29))
 (reaction death_det3_age20to29  (C3_det3_age20to29)  (D3_det3_age20to29)  (* Km C3_det3_age20to29))
 
 (reaction recovery_As_age20to29  (As_age20to29)  (RAs_age20to29)  (* Kr_a_D As_age20to29))
@@ -1764,8 +1786,8 @@
 (reaction hospitalization_1_age30to39 (Sys_age30to39)  (H1_age30to39)  (* Kh1_Dage30to39 Sys_age30to39))
 (reaction hospitalization_2_age30to39  (Sys_age30to39)  (H2_age30to39)  (* Kh2_Dage30to39 Sys_age30to39))
 (reaction hospitalization_3_age30to39  (Sys_age30to39)  (H3_age30to39)  (* Kh3_Dage30to39 Sys_age30to39))
-(reaction critical_2_age30to39 (H2_age30to39)  (C2_age30to39)  (* Kc H2_age30to39))
-(reaction critical_3_age30to39  (H3_age30to39)  (C3_age30to39)  (* Kc H3_age30to39))
+(reaction critical_2_age30to39 (H2_age30to39)  (C2_age30to39)  (* Kcage30to39 H2_age30to39))
+(reaction critical_3_age30to39  (H3_age30to39)  (C3_age30to39)  (* Kcage30to39 H3_age30to39))
 (reaction death_age30to39  (C3_age30to39)  (D3_age30to39)  (* Km C3_age30to39))
 
 (reaction hospitalization_1_det_age30to39  (Sys_det3a_age30to39)  (H1_det3_age30to39)  (* Kh1_Dage30to39 Sys_det3a_age30to39))
@@ -1776,8 +1798,8 @@
 (reaction hospitalization_2_det_age30to39  (Sys_det3b_age30to39)  (H2_det3_age30to39)  (* Kh2age30to39 Sys_det3b_age30to39))
 (reaction hospitalization_3_det_age30to39  (Sys_det3b_age30to39)  (H3_det3_age30to39)  (* Kh3age30to39 Sys_det3b_age30to39))
 
-(reaction critical_2_det2_age30to39  (H2_det3_age30to39)  (C2_det3_age30to39)  (* Kc H2_det3_age30to39))
-(reaction critical_3_det2_age30to39  (H3_det3_age30to39)  (C3_det3_age30to39)  (* Kc H3_det3_age30to39))
+(reaction critical_2_det2_age30to39  (H2_det3_age30to39)  (C2_det3_age30to39)  (* Kcage30to39 H2_det3_age30to39))
+(reaction critical_3_det2_age30to39  (H3_det3_age30to39)  (C3_det3_age30to39)  (* Kcage30to39 H3_det3_age30to39))
 (reaction death_det3_age30to39  (C3_det3_age30to39)  (D3_det3_age30to39)  (* Km C3_det3_age30to39))
 
 (reaction recovery_As_age30to39  (As_age30to39)  (RAs_age30to39)  (* Kr_a_D As_age30to39))
@@ -1818,8 +1840,8 @@
 (reaction hospitalization_1_age40to49 (Sys_age40to49)  (H1_age40to49)  (* Kh1_Dage40to49 Sys_age40to49))
 (reaction hospitalization_2_age40to49  (Sys_age40to49)  (H2_age40to49)  (* Kh2_Dage40to49 Sys_age40to49))
 (reaction hospitalization_3_age40to49  (Sys_age40to49)  (H3_age40to49)  (* Kh3_Dage40to49 Sys_age40to49))
-(reaction critical_2_age40to49 (H2_age40to49)  (C2_age40to49)  (* Kc H2_age40to49))
-(reaction critical_3_age40to49  (H3_age40to49)  (C3_age40to49)  (* Kc H3_age40to49))
+(reaction critical_2_age40to49 (H2_age40to49)  (C2_age40to49)  (* Kcage40to49 H2_age40to49))
+(reaction critical_3_age40to49  (H3_age40to49)  (C3_age40to49)  (* Kcage40to49 H3_age40to49))
 (reaction death_age40to49  (C3_age40to49)  (D3_age40to49)  (* Km C3_age40to49))
 
 (reaction hospitalization_1_det_age40to49  (Sys_det3a_age40to49)  (H1_det3_age40to49)  (* Kh1_Dage40to49 Sys_det3a_age40to49))
@@ -1830,8 +1852,8 @@
 (reaction hospitalization_2_det_age40to49  (Sys_det3b_age40to49)  (H2_det3_age40to49)  (* Kh2age40to49 Sys_det3b_age40to49))
 (reaction hospitalization_3_det_age40to49  (Sys_det3b_age40to49)  (H3_det3_age40to49)  (* Kh3age40to49 Sys_det3b_age40to49))
 
-(reaction critical_2_det2_age40to49  (H2_det3_age40to49)  (C2_det3_age40to49)  (* Kc H2_det3_age40to49))
-(reaction critical_3_det2_age40to49  (H3_det3_age40to49)  (C3_det3_age40to49)  (* Kc H3_det3_age40to49))
+(reaction critical_2_det2_age40to49  (H2_det3_age40to49)  (C2_det3_age40to49)  (* Kcage40to49 H2_det3_age40to49))
+(reaction critical_3_det2_age40to49  (H3_det3_age40to49)  (C3_det3_age40to49)  (* Kcage40to49 H3_det3_age40to49))
 (reaction death_det3_age40to49  (C3_det3_age40to49)  (D3_det3_age40to49)  (* Km C3_det3_age40to49))
 
 (reaction recovery_As_age40to49  (As_age40to49)  (RAs_age40to49)  (* Kr_a_D As_age40to49))
@@ -1872,8 +1894,8 @@
 (reaction hospitalization_1_age50to59 (Sys_age50to59)  (H1_age50to59)  (* Kh1_Dage50to59 Sys_age50to59))
 (reaction hospitalization_2_age50to59  (Sys_age50to59)  (H2_age50to59)  (* Kh2_Dage50to59 Sys_age50to59))
 (reaction hospitalization_3_age50to59  (Sys_age50to59)  (H3_age50to59)  (* Kh3_Dage50to59 Sys_age50to59))
-(reaction critical_2_age50to59 (H2_age50to59)  (C2_age50to59)  (* Kc H2_age50to59))
-(reaction critical_3_age50to59  (H3_age50to59)  (C3_age50to59)  (* Kc H3_age50to59))
+(reaction critical_2_age50to59 (H2_age50to59)  (C2_age50to59)  (* Kcage50to59 H2_age50to59))
+(reaction critical_3_age50to59  (H3_age50to59)  (C3_age50to59)  (* Kcage50to59 H3_age50to59))
 (reaction death_age50to59  (C3_age50to59)  (D3_age50to59)  (* Km C3_age50to59))
 
 (reaction hospitalization_1_det_age50to59  (Sys_det3a_age50to59)  (H1_det3_age50to59)  (* Kh1_Dage50to59 Sys_det3a_age50to59))
@@ -1884,8 +1906,8 @@
 (reaction hospitalization_2_det_age50to59  (Sys_det3b_age50to59)  (H2_det3_age50to59)  (* Kh2age50to59 Sys_det3b_age50to59))
 (reaction hospitalization_3_det_age50to59  (Sys_det3b_age50to59)  (H3_det3_age50to59)  (* Kh3age50to59 Sys_det3b_age50to59))
 
-(reaction critical_2_det2_age50to59  (H2_det3_age50to59)  (C2_det3_age50to59)  (* Kc H2_det3_age50to59))
-(reaction critical_3_det2_age50to59  (H3_det3_age50to59)  (C3_det3_age50to59)  (* Kc H3_det3_age50to59))
+(reaction critical_2_det2_age50to59  (H2_det3_age50to59)  (C2_det3_age50to59)  (* Kcage50to59 H2_det3_age50to59))
+(reaction critical_3_det2_age50to59  (H3_det3_age50to59)  (C3_det3_age50to59)  (* Kcage50to59 H3_det3_age50to59))
 (reaction death_det3_age50to59  (C3_det3_age50to59)  (D3_det3_age50to59)  (* Km C3_det3_age50to59))
 
 (reaction recovery_As_age50to59  (As_age50to59)  (RAs_age50to59)  (* Kr_a_D As_age50to59))
@@ -1926,8 +1948,8 @@
 (reaction hospitalization_1_age60to69 (Sys_age60to69)  (H1_age60to69)  (* Kh1_Dage60to69 Sys_age60to69))
 (reaction hospitalization_2_age60to69  (Sys_age60to69)  (H2_age60to69)  (* Kh2_Dage60to69 Sys_age60to69))
 (reaction hospitalization_3_age60to69  (Sys_age60to69)  (H3_age60to69)  (* Kh3_Dage60to69 Sys_age60to69))
-(reaction critical_2_age60to69 (H2_age60to69)  (C2_age60to69)  (* Kc H2_age60to69))
-(reaction critical_3_age60to69  (H3_age60to69)  (C3_age60to69)  (* Kc H3_age60to69))
+(reaction critical_2_age60to69 (H2_age60to69)  (C2_age60to69)  (* Kcage60to69 H2_age60to69))
+(reaction critical_3_age60to69  (H3_age60to69)  (C3_age60to69)  (* Kcage60to69 H3_age60to69))
 (reaction death_age60to69  (C3_age60to69)  (D3_age60to69)  (* Km C3_age60to69))
 
 (reaction hospitalization_1_det_age60to69  (Sys_det3a_age60to69)  (H1_det3_age60to69)  (* Kh1_Dage60to69 Sys_det3a_age60to69))
@@ -1938,8 +1960,8 @@
 (reaction hospitalization_2_det_age60to69  (Sys_det3b_age60to69)  (H2_det3_age60to69)  (* Kh2age60to69 Sys_det3b_age60to69))
 (reaction hospitalization_3_det_age60to69  (Sys_det3b_age60to69)  (H3_det3_age60to69)  (* Kh3age60to69 Sys_det3b_age60to69))
 
-(reaction critical_2_det2_age60to69  (H2_det3_age60to69)  (C2_det3_age60to69)  (* Kc H2_det3_age60to69))
-(reaction critical_3_det2_age60to69  (H3_det3_age60to69)  (C3_det3_age60to69)  (* Kc H3_det3_age60to69))
+(reaction critical_2_det2_age60to69  (H2_det3_age60to69)  (C2_det3_age60to69)  (* Kcage60to69 H2_det3_age60to69))
+(reaction critical_3_det2_age60to69  (H3_det3_age60to69)  (C3_det3_age60to69)  (* Kcage60to69 H3_det3_age60to69))
 (reaction death_det3_age60to69  (C3_det3_age60to69)  (D3_det3_age60to69)  (* Km C3_det3_age60to69))
 
 (reaction recovery_As_age60to69  (As_age60to69)  (RAs_age60to69)  (* Kr_a_D As_age60to69))
@@ -1980,8 +2002,8 @@
 (reaction hospitalization_1_age70to100 (Sys_age70to100)  (H1_age70to100)  (* Kh1_Dage70to100 Sys_age70to100))
 (reaction hospitalization_2_age70to100  (Sys_age70to100)  (H2_age70to100)  (* Kh2_Dage70to100 Sys_age70to100))
 (reaction hospitalization_3_age70to100  (Sys_age70to100)  (H3_age70to100)  (* Kh3_Dage70to100 Sys_age70to100))
-(reaction critical_2_age70to100 (H2_age70to100)  (C2_age70to100)  (* Kc H2_age70to100))
-(reaction critical_3_age70to100  (H3_age70to100)  (C3_age70to100)  (* Kc H3_age70to100))
+(reaction critical_2_age70to100 (H2_age70to100)  (C2_age70to100)  (* Kcage70to100 H2_age70to100))
+(reaction critical_3_age70to100  (H3_age70to100)  (C3_age70to100)  (* Kcage70to100 H3_age70to100))
 (reaction death_age70to100  (C3_age70to100)  (D3_age70to100)  (* Km C3_age70to100))
 
 (reaction hospitalization_1_det_age70to100  (Sys_det3a_age70to100)  (H1_det3_age70to100)  (* Kh1_Dage70to100 Sys_det3a_age70to100))
@@ -1992,8 +2014,8 @@
 (reaction hospitalization_2_det_age70to100  (Sys_det3b_age70to100)  (H2_det3_age70to100)  (* Kh2age70to100 Sys_det3b_age70to100))
 (reaction hospitalization_3_det_age70to100  (Sys_det3b_age70to100)  (H3_det3_age70to100)  (* Kh3age70to100 Sys_det3b_age70to100))
 
-(reaction critical_2_det2_age70to100  (H2_det3_age70to100)  (C2_det3_age70to100)  (* Kc H2_det3_age70to100))
-(reaction critical_3_det2_age70to100  (H3_det3_age70to100)  (C3_det3_age70to100)  (* Kc H3_det3_age70to100))
+(reaction critical_2_det2_age70to100  (H2_det3_age70to100)  (C2_det3_age70to100)  (* Kcage70to100 H2_det3_age70to100))
+(reaction critical_3_det2_age70to100  (H3_det3_age70to100)  (C3_det3_age70to100)  (* Kcage70to100 H3_det3_age70to100))
 (reaction death_det3_age70to100  (C3_det3_age70to100)  (D3_det3_age70to100)  (* Km C3_det3_age70to100))
 
 (reaction recovery_As_age70to100  (As_age70to100)  (RAs_age70to100)  (* Kr_a_D As_age70to100))

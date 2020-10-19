@@ -7,12 +7,27 @@ require(tidyverse)
 require(cowplot)
 require(scales)
 
+
+runInBatchMode <- TRUE
+
+if (runInBatchMode) {
+  cmd_agrs <- commandArgs()
+  length(cmd_agrs)
+  Location <- cmd_agrs[length(cmd_agrs) - 1]
+  workingDir <- cmd_agrs[length(cmd_agrs)]
+} else {
+  Location <- "Local"
+  workingDir <- getwd()
+}
+
+
 source("load_paths.R")
 source("processing_helpers.R")
 
+folder_dates <- list.dirs(file.path(project_path,"NU_civis_outputs" ), recursive = F, full.names = F)
 
-simdates <- c(  "20200902","20200910","20200916")
-scenario <- "baseline" # june1partial10  , june1partial30
+simdates <- tail(folder_dates, n=3)
+scenario <- "baseline" 
 
 dat1 <- read_csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[1], "/csv/nu_",  simdates[1], ".csv")))
 dat2 <- read_csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[2], "/csv/nu_",  simdates[2], ".csv")))
