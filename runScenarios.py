@@ -571,8 +571,7 @@ if __name__ == '__main__':
         cfg_file=args.cfg_template,
         experiment_config=experiment_config,
         age_bins=experiment_setup_parameters.get('age_bins'),
-        region=region,
-    )
+        region=region    )
 
     if Location == 'NUCLUSTER':
         generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,  temp_exp_dir)
