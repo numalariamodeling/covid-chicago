@@ -94,7 +94,7 @@ def plot_covidregions(channel,subgroups, psuffix) :
         for d, exp_name in enumerate(exp_names) :
             sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
             df = load_sim_data(exp_name, region_suffix=region_suffix)
-            exp_name_label = int(exp_name.replace('_IL_RR_baseline_0', ''))
+            exp_name_label =  int(exp_name.split('_')[0])
             plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems, panel_heading = region_label, label=exp_name_label)
 
         axes[-1].legend()

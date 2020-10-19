@@ -308,7 +308,6 @@ def write_params(expandModel=None):
 (param time_to_infectious @time_to_infectious@)
 (param time_to_symptoms @time_to_symptoms@)
 (param time_to_hospitalization @time_to_hospitalization@)
-(param time_to_critical @time_to_critical@)
 (param time_to_death @time_to_death@)
 (param recovery_time_asymp @recovery_time_asymp@)
 (param recovery_time_mild @recovery_time_mild@)
@@ -322,7 +321,6 @@ def write_params(expandModel=None):
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
 (param Kr_c (/ 1 recovery_time_crit))
-(param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
 (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) ))  
@@ -399,6 +397,9 @@ def write_age_specific_param(grp, expandModel):
 
 (param recovery_time_hosp_{grp} @recovery_time_hosp_{grp}@)
 (param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))
+
+(param time_to_critical_{grp} @time_to_critical_{grp}@)
+(param Kc{grp}  (/ 1 time_to_critical_{grp}))
 
 """.format(grp=grp)
 
@@ -631,15 +632,15 @@ def write_reactions(grp, expandModel=None):
 (reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1{grp} Sys_{grp}))
 (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2{grp} Sys_{grp}))
 (reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3{grp} Sys_{grp}))
-(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc H2_{grp}))
-(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc H3_{grp}))
+(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
+(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
 (reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1{grp} Sys_det3_{grp}))
 (reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3_{grp}))
 (reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3_{grp}))
-(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc H2_det3_{grp}))
-(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
+(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
+(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
 (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
 (reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
@@ -670,15 +671,15 @@ def write_reactions(grp, expandModel=None):
 (reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1_D{grp} Sys_{grp}))
 (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2_D{grp} Sys_{grp}))
 (reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3_D{grp} Sys_{grp}))
-(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc H2_{grp}))
-(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc H3_{grp}))
+(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
+(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
 (reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1_D{grp} Sys_det3_{grp}))
 (reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2_D{grp} Sys_det3_{grp}))
 (reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3_D{grp} Sys_det3_{grp}))
-(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc H2_det3_{grp}))
-(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
+(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
+(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
 (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
 (reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
@@ -716,8 +717,8 @@ def write_reactions(grp, expandModel=None):
 (reaction hospitalization_1_{grp}  (Sys_{grp})   (H1_{grp})   (* Kh1_D{grp} Sys_{grp}))
 (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2_D{grp} Sys_{grp}))
 (reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3_D{grp} Sys_{grp}))
-(reaction critical_2_{grp}  (H2_{grp})   (C2_{grp})   (* Kc H2_{grp}))
-(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc H3_{grp}))
+(reaction critical_2_{grp}  (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
+(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
 (reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3a_{grp})   (H1_det3_{grp})   (* Kh1_D{grp} Sys_det3a_{grp}))
@@ -728,8 +729,8 @@ def write_reactions(grp, expandModel=None):
 (reaction hospitalization_2_det_{grp}   (Sys_det3b_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3b_{grp}))
 (reaction hospitalization_3_det_{grp}   (Sys_det3b_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3b_{grp}))
 
-(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc H2_det3_{grp}))
-(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc H3_det3_{grp}))
+(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
+(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
 (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
 
 (reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a_D As_{grp}))
@@ -881,41 +882,41 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
     # TODO results in worse fitting?
     #param_change_str = param_change_str + param_change_age_specific_str
 
-    socialDistance_change_str = """
-(param Ki_red1 (* Ki @social_multiplier_1@))
-(param Ki_red2 (* Ki @social_multiplier_2@))
-(param Ki_red3 (* Ki @social_multiplier_3@))
-(param Ki_red4 (* Ki @social_multiplier_4@))
-(param Ki_red5 (* Ki @social_multiplier_5@))
-(param Ki_red6 (* Ki @social_multiplier_6@))
-(param Ki_red7 (* Ki @social_multiplier_7@))
+    ki_multiplier_change_str = """
+(param Ki_red3a (* Ki @ki_multiplier_3a@))
+(param Ki_red3b (* Ki @ki_multiplier_3b@))
+(param Ki_red3c (* Ki @ki_multiplier_3c@))
+(param Ki_red4 (* Ki @ki_multiplier_4@))
+(param Ki_red6 (* Ki @ki_multiplier_6@))
+(param Ki_red7 (* Ki @ki_multiplier_7@))
+(param Ki_red8 (* Ki @ki_multiplier_8@))
 
-(param backtonormal_multiplier_1  (/ (- Ki_red5  Ki_red4 ) (- Ki Ki_red4 ) ) )  
+(param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
 (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
 
-(time-event socialDistance_no_large_events_start @socialDistance_time1@ ((Ki Ki_red1)))
-(time-event socialDistance_school_closure_start @socialDistance_time2@ ((Ki Ki_red2)))
-(time-event socialDistance_start @socialDistance_time3@ ((Ki Ki_red3)))
-(time-event socialDistance_change @socialDistance_time4@ ((Ki Ki_red4)))
-(time-event socialDistance_change_2 @socialDistance_time5@ ((Ki Ki_red5)))
-(time-event socialDistance_change_3 @socialDistance_time6@ ((Ki Ki_red6)))
-(time-event socialDistance_change_4 @socialDistance_time7@ ((Ki Ki_red7)))
+(time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki Ki_red3a)))
+(time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki Ki_red3b)))
+(time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki Ki_red3c)))
+(time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki Ki_red4)))
+(time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki Ki_red6)))
+(time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
+(time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
 """
 
     rollback_str = """
-(time-event socialDistance_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red6)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red7)))
 """
 
 
     rollbacktriggered_str =  """
-(state-event rollbacktrigger (and (> time @today@) (> {channel} (* @trigger@ @capacity_multiplier@)) ) ((Ki Ki_red6)))
+(state-event rollbacktrigger (and (> time @today@) (> {channel} (* @trigger@ @capacity_multiplier@)) ) ((Ki Ki_red7)))
 """
 
     rollbacktriggered_delay_str = """
 (param time_of_trigger 10000)
 (state-event rollbacktrigger (and (> time @today@) (> crit_det (* @trigger@ @capacity_multiplier@)) ) ((time_of_trigger time)))
 (func time_since_trigger (- time time_of_trigger))
-(state-event apply_rollback (> (- time_since_trigger @trigger_delay_days@) 0) ((Ki Ki_red6)))   
+(state-event apply_rollback (> (- time_since_trigger @trigger_delay_days@) 0) ((Ki Ki_red7)))   
 (observe triggertime_{grpout} time_of_trigger)
 """
         
@@ -935,26 +936,26 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 # % change from lowest transmission level - immediate
 # starting point is lowest level of transmission  Ki_red4
     interventionSTOP_adj_str = """
-(param Ki_back (+ Ki_red6 (* @backtonormal_multiplier@ (- Ki Ki_red6))))
+(param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
 """
 
 # % change from current transmission level - immediate
-# starting point is current level of transmission  Ki_red5
+# starting point is current level of transmission  Ki_red6
     interventionSTOP_adj2_str = """
-(param Ki_back (+ Ki_red6 (* @backtonormal_multiplier@ (- Ki Ki_red6))))
+(param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
 """
 
 
-# gradual reopening from 'lowest' transmission level,  Ki_red5 == Ki_back1
+# gradual reopening from 'lowest' transmission level,  Ki_red6 == Ki_back1
     gradual_reopening_str = """
 (param backtonormal_multiplier_1_adj  (- @backtonormal_multiplier@ backtonormal_multiplier_1 ))
 (observe backtonormal_multiplier_1_adj  backtonormal_multiplier_1_adj)
 
-(param Ki_back2 (+ Ki_red5 (* backtonormal_multiplier_1_adj 0.3333 (- Ki Ki_red4))))
-(param Ki_back3 (+ Ki_red5 (* backtonormal_multiplier_1_adj 0.6666 (- Ki Ki_red4))))
-(param Ki_back4 (+ Ki_red5 (* backtonormal_multiplier_1_adj 1.00 (- Ki Ki_red4))))
+(param Ki_back2 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.3333 (- Ki Ki_red4))))
+(param Ki_back3 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.6666 (- Ki Ki_red4))))
+(param Ki_back4 (+ Ki_red6 (* backtonormal_multiplier_1_adj 1.00 (- Ki Ki_red4))))
 (time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki Ki_back3)))
 (time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki Ki_back4)))
@@ -962,10 +963,10 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
             
 # gradual reopening from 'current' transmission level 
     gradual_reopening2_str = """
-(param Ki_back1 (+ Ki_red6 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red6))))
-(param Ki_back2 (+ Ki_red6 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red6))))
-(param Ki_back3 (+ Ki_red6 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red6))))
-(param Ki_back4 (+ Ki_red6 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red6))))
+(param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
+(param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
+(param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
+(param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
@@ -974,10 +975,10 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
 # gradual reopening from 'current' transmission level with region-specific reopening
     gradual_reopening3_str = """
-(param Ki_back1 (+ Ki_red6 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red6))))
-(param Ki_back2 (+ Ki_red6 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red6))))
-(param Ki_back3 (+ Ki_red6 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red6))))
-(param Ki_back4 (+ Ki_red6 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red6))))
+(param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
+(param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
+(param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
+(param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
 (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
 (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
 (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
@@ -1055,7 +1056,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
                "(Kl_D (/ 1 time_D_As))",
                "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")  
 
-    fittedTimeEvents_str = param_change_str + socialDistance_change_str + d_Sym_change_str
+    fittedTimeEvents_str = param_change_str + ki_multiplier_change_str + d_Sym_change_str
    
     if scenarioName == "interventionStop" :
         total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)

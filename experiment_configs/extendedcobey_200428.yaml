@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 100
+  'number_of_samples': 50
   'number_of_runs': 1
   'duration': 400
   'monitoring_samples': 400 # needs to be smaller than duration
@@ -116,13 +116,13 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}  
   ## TIME EVENT EFFECT SIZE PARAMETER  
   ### Reduce Ki due to stay-at-home policy
-  #'social_multiplier_1':
+  #'ki_multiplier_3a':
   #  np.random: uniform
   #  function_kwargs: {'low':0.7, 'high':0.9}
-  #'social_multiplier_2':
+  #'ki_multiplier_3b':
   #  np.random: uniform
   #  function_kwargs: {'low':0.2, 'high':0.5}
-  #'social_multiplier_3':
+  #'ki_multiplier_3c':
   #  np.random: uniform
   #  function_kwargs: {'low':0.08, 'high':0.08}        
   ### Increased testing - increased detectioon of severe symptomatic infections
@@ -229,29 +229,35 @@ intervention_parameters:
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 
-  'socialDistance_time1':
+  'ki_multiplier_time_3a':
     custom_function: DateToTimestep
     # To use multiple dates instead of just one date, use an array of dates,
     # e.g., function_kwargs: {'dates': [2020-03-12, 2020-03-13]}
     function_kwargs: {'dates': 2020-03-12}
-  'socialDistance_time2':
+  'ki_multiplier_time_3b':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-17}
-  'socialDistance_time3':
+  'ki_multiplier_time_3c':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-21}
-  'socialDistance_time4':
+  'ki_multiplier_time_4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-04-21}
-  'socialDistance_time5':
+  'ki_multiplier_time_5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-21}
+  'ki_multiplier_time_6':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-21}
-  'socialDistance_time6':
+  'ki_multiplier_time_7':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-25}
-  'socialDistance_time7':
+  'ki_multiplier_time_8':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-25}
+  'ki_multiplier_time_9':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-25}
   'socialDistance_rollback_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
@@ -281,7 +287,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-09-14}
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)
-  ### Use fixed dates or define detection time relative to  socialDistance_time3
+  ### Use fixed dates or define detection time relative to  ki_multiplier_time_3c
   'detection_time_1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-07}
