@@ -131,14 +131,6 @@
 (param cov_det_Sym_unofficial @cov_det_Sym_unofficial@)
 (param test_sensitivity @test_sensitivity@)
 
-; probability of detection for particular groups
-(param prob_det_As_campus (* test_sensitivity cov_det_As_campus))
-(param prob_det_Sym_campus (* test_sensitivity cov_det_Sym_campus))
-(param prob_det_As_evanston (* test_sensitivity cov_det_As_evanston))
-(param prob_det_Sym_evanston (* test_sensitivity cov_det_Sym_evanston))
-(param prob_det_As_unofficial (* test_sensitivity cov_det_As_unofficial))
-(param prob_det_Sym_unofficial (* test_sensitivity cov_det_Sym_unofficial))
-
 ; contact tracing parameters
 (param prob_of_isolation_campus @prob_of_isolation_campus@)
 (param prob_of_isolation_evanston @prob_of_isolation_evanston@)
@@ -158,6 +150,25 @@
 (param detection_time_Sym_evanston detection_time_Sym_campus)
 (param detection_time_As_unofficial @detection_time_As_unofficial@)
 (param detection_time_Sym_unofficial @detection_time_Sym_unofficial@)
+
+; probability of detection for particular groups (as a function of testing period)
+(param prob_det_As_campus_prior (* test_sensitivity cov_det_As_campus))
+(param prob_det_Sym_campus_prior (* test_sensitivity cov_det_Sym_campus))
+(param prob_det_As_evanston_prior (* test_sensitivity cov_det_As_evanston))
+(param prob_det_Sym_evanston_prior (* test_sensitivity cov_det_Sym_evanston))
+
+;(param prob_det_As_campus (* test_sensitivity cov_det_As_campus))
+;(param prob_det_Sym_campus (* test_sensitivity cov_det_Sym_campus))
+;(param prob_det_As_evanston (* test_sensitivity cov_det_As_evanston))
+;(param prob_det_Sym_evanston (* test_sensitivity cov_det_Sym_evanston))
+(param prob_det_As_unofficial (* test_sensitivity cov_det_As_unofficial))
+(param prob_det_Sym_unofficial (* test_sensitivity cov_det_Sym_unofficial))
+
+(param prob_det_As_campus (- 1 (/ (* testing_period (- 1 prob_det_As_campus_prior)) 7)))
+(param prob_det_Sym_campus (- 1 (/ (* testing_period (- 1 prob_det_Sym_campus_prior)) 7)))
+(param prob_det_As_evanston (- 1 (/ (* testing_period (- 1 prob_det_As_evanston_prior)) 7)))
+(param prob_det_Sym_evanston (- 1 (/ (* testing_period (- 1 prob_det_Sym_evanston_prior)) 7)))
+(observe prob_det_As_campus prob_det_As_campus)
 
 ; testing time parameters related to detection before and after symptoms
 (param prob_det_before_symptoms_campus (max 0 (* prob_det_As_campus (/ (- time_to_symptoms (+ turnaround_time time_to_isolate)) testing_period))))
@@ -231,9 +242,9 @@
 (func total_E_contacts_id (* prob_of_correct_id Ki_NU (+ adjusted_detection_rate_campus_presym_det adjusted_detection_rate_campus_sym_undet_to_sym_det adjusted_detection_rate_campus_As_det adjusted_detection_rate_evanston_presym_det adjusted_detection_rate_evanston_sym_undet_to_sym_det adjusted_detection_rate_evanston_As_det)))
 (func total_contacts_id (* no_of_contacts_id (+ detection_rate_campus_presym_det detection_rate_campus_sym_undet_to_sym_det detection_rate_campus_As_det detection_rate_evanston_presym_det detection_rate_evanston_sym_undet_to_sym_det detection_rate_evanston_As_det)))
 (func total_S_contacts_id (- total_contacts_id total_E_contacts_id))
-(func E_campus_contacts_isolated (* prob_of_isolation_campus (/ N_campus N) total_E_contacts_id))
+(func E_campus_contacts_isolated (min E_campus (* prob_of_isolation_campus (/ N_campus N) total_E_contacts_id)))
 (func S_campus_contacts_isolated (* prob_of_isolation_campus (/ N_campus N) total_S_contacts_id))
-(func E_evanston_contacts_isolated (* prob_of_isolation_evanston (/ N_evanston N) total_E_contacts_id))
+(func E_evanston_contacts_isolated (min E_campus (* prob_of_isolation_evanston (/ N_evanston N) total_E_contacts_id)))
 (func S_evanston_contacts_isolated (* prob_of_isolation_evanston (/ N_evanston N) total_S_contacts_id))
 (observe E_campus_contacts_isolated E_campus_contacts_isolated)
 (observe S_campus_contacts_isolated S_campus_contacts_isolated)
@@ -242,6 +253,8 @@
 (observe S_campus_quarantine S_campus_quarantine)
 (observe S_evanston_quarantine S_evanston_quarantine)
 (observe E_campus E_campus)
+(func detection_rate_official (+ detection_rate_campus_presym_det detection_rate_campus_sym_undet_to_sym_det detection_rate_campus_As_det detection_rate_evanston_presym_det detection_rate_evanston_sym_undet_to_sym_det detection_rate_evanston_As_det))
+(observe detection_rate_official detection_rate_official)
 
 ; exposure reactions
 (reaction campus_exposure (S_campus) (E_campus) (+ (/ (* Ki_NU S_campus infectious_adjusted) N) (* Ki_nonNU S_campus nonNU_prevalence)))

@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 25
+  'number_of_samples': 100
   'number_of_runs': 10
   'duration': 150
   'monitoring_samples': 150 # needs to be smaller than duration
@@ -14,7 +14,7 @@ fixed_parameters_global:
 sampled_parameters:
   'expected_campus':
     np.random: uniform
-    function_kwargs: {'low': 3600, 'high':4200}
+    function_kwargs: {'low': 800, 'high':800}
   'expected_evanston':
     np.random: uniform
     function_kwargs: {'low': 2800, 'high':3700}
@@ -95,7 +95,7 @@ sampled_parameters:
     function_kwargs: {'low': 6.0, 'high':7.0}
   'Ki_nonNU':
     np.random: uniform
-    function_kwargs: {'low': 0.1, 'high':0.1}
+    function_kwargs: {'low': 0.05, 'high':0.05}
   'nonNU_prevalence':
     np.random: uniform
     function_kwargs: {'low': 0.002, 'high':0.006}
