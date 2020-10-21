@@ -257,7 +257,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-08-25}
   'ki_multiplier_time_9':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-25}
+    function_kwargs: {'dates': 2020-09-17}
   'socialDistance_rollback_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
@@ -366,7 +366,7 @@ fitted_parameters:
       function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
     'EMS_1':
       np: linspace
-      function_kwargs: {'start': 0.592, 'stop': 0.592, 'num': 1}
+      function_kwargs: {'start': 0.628, 'stop': 0.628, 'num': 1}
     'EMS_2':
       np: linspace
       function_kwargs: {'start': 0.654, 'stop': 0.654, 'num': 1}
@@ -378,7 +378,7 @@ fitted_parameters:
       function_kwargs: {'start': 0.571, 'stop': 0.571, 'num': 1}
     'EMS_5':
       np: linspace
-      function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
+      function_kwargs: {'start': 0.498, 'stop': 0.498, 'num': 1}
     'EMS_6':
       np: linspace
       function_kwargs: {'start': 0.501, 'stop': 0.501, 'num': 1}
