@@ -117,13 +117,23 @@ def load_ref_df(ems_nr):
     LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
     ref_df_ll = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
 
+    ref_df_cli  = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports','CLI_admissions_by_covidregion.csv'))
+
     if ems_nr > 0:
         ref_df_ll = ref_df_ll[ref_df_ll['covid_region'] == ems_nr]
     else:
         ref_df_ll = ref_df_ll.groupby('date').agg(np.sum).reset_index()
     ref_df_ll['date'] = pd.to_datetime(ref_df_ll['date'])
+    ref_df_cli['date'] = pd.to_datetime(ref_df_cli['date'])
+
+    if ems_nr > 0:
+        ref_df_cli = ref_df_cli[ref_df_cli['covidregion'] == ems_nr]
+    else:
+        ref_df_cli = ref_df_cli.groupby('date').agg(np.sum).reset_index()
 
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
+    ref_df = pd.merge(how='outer', left=ref_df, left_on='date', right=ref_df_cli, right_on='date')
+
     ref_df = ref_df.sort_values('date')
 
     return ref_df
@@ -150,12 +160,12 @@ def compare_ems(exp_name,fname, ems_nr=0):
 
     ref_df = load_ref_df(ems_nr)
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths',
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'New Deaths (LL)', 'New Detected\nHospitalizations (LL)']
+              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
     plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
                       first_day=first_day)
