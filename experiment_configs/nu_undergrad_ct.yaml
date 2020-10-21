@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 100
+  'number_of_samples': 25
   'number_of_runs': 10
   'duration': 150
   'monitoring_samples': 150 # needs to be smaller than duration
@@ -14,13 +14,13 @@ fixed_parameters_global:
 sampled_parameters:
   'expected_campus':
     np.random: uniform
-    function_kwargs: {'low': 800, 'high':800}
+    function_kwargs: {'low': 3600, 'high':4000}
   'expected_evanston':
     np.random: uniform
-    function_kwargs: {'low': 2800, 'high':3700}
+    function_kwargs: {'low': 4500, 'high':4900}
   'expected_unofficial':
     np.random: uniform
-    function_kwargs: {'low': 300, 'high':500}
+    function_kwargs: {'low': 0, 'high':0}
   'expected_prevalence':
     np.random: uniform
     function_kwargs: {'low': 0.002, 'high':0.006}
@@ -53,34 +53,31 @@ sampled_parameters:
     function_kwargs: {'low': 0.1, 'high':0.3}
   'cov_det_As_campus':
     np.random: uniform
-    function_kwargs: {'low': 0.8, 'high':0.9}
+    function_kwargs: {'low': 0.7, 'high':0.8}
   'cov_det_Sym_campus':
     np.random: uniform
-    function_kwargs: {'low': 0.9, 'high':1.0}
+    function_kwargs: {'low': 0.8, 'high':0.9}
   'cov_det_As_evanston':
     np.random: uniform
-    function_kwargs: {'low': 0.7, 'high':0.8}
+    function_kwargs: {'low': 0.6, 'high':0.7}
   'cov_det_Sym_evanston':
     np.random: uniform
-    function_kwargs: {'low': 0.8, 'high':0.9}
+    function_kwargs: {'low': 0.7, 'high':0.8}
   'cov_det_As_unofficial':
     np.random: uniform
     function_kwargs: {'low': 0.0, 'high':0.0}
   'cov_det_Sym_unofficial':
     np.random: uniform
-    function_kwargs: {'low': 0.2, 'high':0.6}
+    function_kwargs: {'low': 0.2, 'high':0.5}
   'test_sensitivity':
     np.random: uniform
     function_kwargs: {'low': 0.95, 'high':0.99}
   'turnaround_time':
     np.random: uniform
-    function_kwargs: {'low': 1.5, 'high':2.5}
+    function_kwargs: {'low': 1.25, 'high':2.25}
   'time_to_isolate':
     np.random: uniform
     function_kwargs: {'low': 0, 'high':0}
-  'testing_period':
-    np.random: uniform
-    function_kwargs: {'low': 7, 'high':7}
   'isolation_period':
     np.random: uniform
     function_kwargs: {'low': 10.0, 'high':10.0}
@@ -98,7 +95,7 @@ sampled_parameters:
     function_kwargs: {'low': 0.05, 'high':0.05}
   'nonNU_prevalence':
     np.random: uniform
-    function_kwargs: {'low': 0.002, 'high':0.006}
+    function_kwargs: {'low': 0.006, 'high':0.012}
   'prob_of_isolation_campus':
     np.random: uniform
     function_kwargs: {'low': 0.9, 'high':1.0}
@@ -126,7 +123,10 @@ sampled_parameters:
 intervention_parameters:
   'Ki_NU':
     np: linspace
-    function_kwargs: {'start': 0.1, 'stop': 0.2, 'num':1}
+    function_kwargs: {'start': 0.1, 'stop': 0.2, 'num':3}
+  'testing_period':
+    np: linspace
+    function_kwargs: {'start': 3.5, 'stop': 7.0, 'num':2}
 time_parameters:
 fitted_parameters:
   Kis: # Used only to retain current framework.
