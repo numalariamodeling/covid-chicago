@@ -43,7 +43,7 @@ column_list = ['scen_num', 'run_num', 'campus_quarantine_pop', 'campus_isolation
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
     #filedate = get_latest_filedate()
-    qi_path=os.path.join(datapath, 'covid_modeling_northwestern', '201014_QI_tracking.csv')
+    qi_path=os.path.join(datapath, 'covid_modeling_northwestern', '201021_QI_tracking.csv')
     qi = pd.read_csv(qi_path)
     tests = pd.read_csv(os.path.join(datapath, 'covid_modeling_northwestern', 'Depersonalized_Test_Result.csv'))
 
