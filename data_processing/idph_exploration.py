@@ -11,14 +11,15 @@ from shapely.geometry import mapping, Point, Polygon
 
 mpl.rcParams['pdf.fonttype'] = 42
 
+LL_date = '201020'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 line_list_fname = os.path.join(idph_data_path,
-                               'LL_200710.csv')
+                               'LL_%s.csv' % LL_date)
 cleaned_line_list_fname = os.path.join(idph_data_path,
-                                       'LL_200710_JGcleaned.csv')
+                                       'LL_%s_JGcleaned.csv' % LL_date)
 cleaned_deduped_fname = os.path.join(idph_data_path,
-                                     'LL_200710_JGcleaned_no_race.csv')
+                                     'LL_%s_JGcleaned_no_race.csv' % LL_date)
 box_data_path = '/Users/jlg1657/Box/NU-malaria-team/data/covid_IDPH'
 project_path = '/Users/jlg1657/Box/NU-malaria-team/projects/covid_chicago'
 plot_path = os.path.join(project_path, 'Plots + Graphs')
@@ -180,7 +181,12 @@ def get_ems_counties_and_zips() :
                                                                  61282, 61239, 62242, 61011, 61435, 62082, 62992,
                                                                  60037, 61401, 60957, 60840, 61008, 61804, 62208,
                                                                  62230, 61111, 60290, 61068, 60530, 60353, 62265,
-                                                                 62615, 62232, 62220, 60808, 60208, 61544, 60001],
+                                                                 62615, 62232, 62220, 60808, 60208, 61544, 60001,
+                                                                 60567, 62837, 60985, 62939, 61231, 62634, 62869,
+                                                                 60115, 60821, 60167, 60122, 60717, 61021, 60978,
+                                                                 60413, 62098, 62864, 60884, 62035, 60833, 60926,
+                                                                 60362, 60785, 61704, 61373, 61920, 61107, 61462,
+                                                                 61820, 62817, 62301],
                                                         'ems' : [7, 7, 8, 8, 11, 2, 7,
                                                                  10, 1, 2, 3, 8, 5, 10,
                                                                  7, 3, 9, 2, 8, 2, 3,
@@ -192,7 +198,12 @@ def get_ems_counties_and_zips() :
                                                                  2, 2, 4, 1, 2, 3, 5,
                                                                  10, 2, 6, 8, 1, 6, 4,
                                                                  4, 1, 10, 1, 1, 8, 4,
-                                                                 3, 4, 4, 7, 10, 2, 9]})], sort=True)
+                                                                 3, 4, 4, 7, 10, 2, 9,
+                                                                 8, 5, 6, 5, 2, 3, 5,
+                                                                 1, 10, 10, 8, 10, 1, 6,
+                                                                 10, 3, 5, 10, 4, 10, 6,
+                                                                 10, 10, 2, 2, 6, 1, 2,
+                                                                 6, 5, 3]})], sort=True)
     ems_zip_df['zip'] = ems_zip_df['zip'].astype(int)
     ems_zip_df = ems_zip_df.sort_values(by='zip')
 
@@ -215,8 +226,8 @@ def apply_ems() :
                 return ems_zip_df[ems_zip_df['zip'] == z]['ems'].values[0]
             elif z-1 in ems_zip_df['zip'].values :
                 return ems_zip_df[ems_zip_df['zip'] == z-1]['ems'].values[0]
-            elif z < 60000 or z > 63000 :
-                return 11
+            # elif z < 60000 or z > 63000 :
+            #     return 11
             elif z >= 60600 and z < 60700 :
                 return 11
             else :
@@ -252,27 +263,94 @@ def plot_days_between_onset_and_specimen() :
     plt.show()
 
 
-if __name__ == '__main__' :
+def assign_covid_region() :
 
-    # df = compare_death_plots()
-    # exit()
+    ref_df = pd.read_csv(os.path.join(box_data_path , 'Corona virus reports', 'county_restore_region_map.csv'))
+    ref_df = ref_df.set_index('county')
+
+    regions_shp = gpd.read_file(os.path.join(shp_path, 'covid_regions', 'covid_regions.shp'))
+    zip_shp = gpd.read_file(os.path.join(shp_path, 'IL_zipcodes', 'IL_zipcodes.shp'))
+    zip_shp = zip_shp.set_index('GEOID10')
+
+    def assign_region(ems, county, my_zip) :
+
+        def by_zip(my_zip) :
+            try :
+                zpoly = zip_shp.at[my_zip, 'geometry']
+                ems_match = 0
+                max_area = 0
+                for ems, ems_poly in zip(regions_shp['new_restor'], regions_shp['geometry']):
+                    a = zpoly.intersection(ems_poly).area
+                    if a > max_area:
+                        max_area = a
+                        ems_match = ems
+                    return ems_match
+            except KeyError :
+                return -1
+
+        if ems in [1, 2, 3, 4, 5, 6, 11] or np.isnan(ems):
+            return ems
+        if county in ['Out Of State'] :
+            return 0
+        try :
+            return ref_df.at[county.upper(), 'new_restore_region']
+        except KeyError :
+            match = by_zip(my_zip)
+        except AttributeError :
+            match = by_zip(my_zip)
+        if match < 0 :
+            return ems
+
+    df = load_cleaned_line_list()
+    df['covid_region'] = df.apply(lambda x : assign_region(x['EMS'],
+                                                           x['county_at_onset'],
+                                                           x['patient_home_zip']), axis=1)
+    df.to_csv(cleaned_line_list_fname, index=False)
+
+
+def generate_combo_LL_agg_csv() :
+
+    spec_coll_fname = os.path.join(box_data_path, 'Cleaned Data', '%s_jg_specimen_collection_covidregion.csv' % LL_date)
+    case_df = pd.read_csv(spec_coll_fname)
+    case_df = case_df.rename(columns={'specimen_collection' : 'cases'})
+    death_df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_deceased_date_covidregion.csv' % LL_date))
+    death_df = death_df.rename(columns={'cases' : 'deaths'})
+    adm_df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_admission_date_covidregion.csv' % LL_date))
+    adm_df = adm_df.rename(columns={'cases' : 'admissions'})
+
+    df = pd.merge(left=case_df, right=death_df, on=['date', 'covid_region'], how='outer')
+    df = pd.merge(left=df, right=adm_df, on=['date', 'covid_region'], how='outer')
+    df = df.fillna(0)
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values(by='date')
+    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_covidregion.csv' % LL_date), index=False)
+
+
+if __name__ == '__main__' :
 
     # apply_ems()
     # exit()
 
-    # merge_locations()
+    # assign_covid_region()
     df = load_cleaned_line_list()
+    # df = df[df['covid_region'] < 1]
+    # print(df[['patient_home_zip', 'county_at_onset', 'EMS', 'covid_region']].to_string())
+
+    # df = load_line_list()
     del df['race']
     del df['ethnicity']
     df = df.drop_duplicates()
     df.to_csv(cleaned_deduped_fname, index=False)
+    adf = pd.read_csv(cleaned_deduped_fname)
 
-    date_col = 'admission_date'
-    df = df.groupby([date_col, 'EMS'])['id'].agg(len).reset_index()
-    df = df.rename(columns={'id' : 'cases',
-                            date_col : 'date'})
-    df = df.sort_values(by=['date', 'EMS'])
-    df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '200710_jg_%s_ems.csv' % date_col), index=False)
+    for date_col in ['admission_date', 'deceased_date', 'specimen_collection'] :
+        df = adf.groupby([date_col, 'covid_region'])['id'].agg(len).reset_index()
+        df = df.rename(columns={'id' : 'cases',
+                                date_col : 'date'})
+        df = df.sort_values(by=['date', 'covid_region'])
+        df['date'] = pd.to_datetime(df['date'])
+        df.to_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_%s_covidregion.csv' % (LL_date, date_col)), index=False)
+    generate_combo_LL_agg_csv()
 
     # df.loc[df['county_at_onset'] == 'St Clair', 'county_at_onset'] = 'St. Clair'
     # df.loc[df['county_at_onset'] == 'Jodaviess', 'county_at_onset'] = 'Jo daviess'

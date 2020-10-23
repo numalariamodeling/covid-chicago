@@ -16,10 +16,10 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
-#datetoday = date(2020, 10,1) # date(today.year, today.month, today.day)
+datetoday = date(today.year, today.month, today.day) #date(2020, 10,1)
 
 first_plot_day = pd.to_datetime(date(2020, 3, 1))
-last_plot_day = pd.to_datetime(date(2020, 5,15))
+last_plot_day = pd.to_datetime(datetoday)
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -80,13 +80,23 @@ def load_ref_df(ems_nr):
     LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
     ref_df_ll = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
 
+    ref_df_cli  = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports','CLI_admissions_by_covidregion.csv'))
+
     if ems_nr > 0:
         ref_df_ll = ref_df_ll[ref_df_ll['covid_region'] == ems_nr]
     else:
         ref_df_ll = ref_df_ll.groupby('date').agg(np.sum).reset_index()
     ref_df_ll['date'] = pd.to_datetime(ref_df_ll['date'])
+    ref_df_cli['date'] = pd.to_datetime(ref_df_cli['date'])
+
+    if ems_nr > 0:
+        ref_df_cli = ref_df_cli[ref_df_cli['covidregion'] == ems_nr]
+    else:
+        ref_df_cli = ref_df_cli.groupby('date').agg(np.sum).reset_index()
 
     ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
+    ref_df = pd.merge(how='outer', left=ref_df, left_on='date', right=ref_df_cli, right_on='date')
+
     ref_df = ref_df.sort_values('date')
 
     return ref_df
@@ -96,13 +106,12 @@ def plot_sim_and_ref(exp_names, ems_nr,
                      first_plot_day=first_plot_day,last_plot_day=last_plot_day,
                      ymax=10000, logscale=True, fname="trajectoriesDat.csv"):
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths',
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
-    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)',
-              'New Detected\nDeaths (LL)',
-              'New Deaths (LL)', 'New Detected\nHospitalizations (LL)']
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
+    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
+              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
 
     ref_df = load_ref_df(ems_nr)
     ref_df = ref_df[(ref_df['date'] >= first_plot_day) & (ref_df['date'] <= last_plot_day)]
@@ -126,10 +135,7 @@ def plot_sim_and_ref(exp_names, ems_nr,
                 column_list.append(chn + "_EMS-" + str(ems_nr))
 
             df = load_sim_data(exp_name, ems_nr, fname=fname, column_list=column_list)
-            if exp_name== '20200929_IL_mr_baseline' :   #  exp_names =['20200922_IL_RR_baseline_0','20200929_IL_mr_baseline']
-                first_day = datetime.strptime(df['startdate'].unique()[0],  '%m/%d/%Y' )  # '%Y-%m-%d'
-            if exp_name ==  '20200922_IL_RR_baseline_0':
-                first_day = datetime.strptime(df['startdate'].unique()[0],  '%Y-%m-%d' )  # '%Y-%m-%d'
+            first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d') #  '%m/%d/%Y'
             df['critical_with_suspected'] = df['critical']
             df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
             df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]

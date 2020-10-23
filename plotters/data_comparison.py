@@ -132,6 +132,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, datetoday)
+        ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         if logscale :
             ax.set_ylim(0.1, ymax)
             ax.set_yscale('log')
@@ -181,45 +182,64 @@ def compare_county(exp_name, county_name) :
                      plot_path=plot_path, first_day=first_day)
     plt.show()
 
-
-def compare_ems(exp_name, ems=0, source='EMR') :
+def load_ref_df(ems_nr):
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
 
-    if ems > 0:
-        ref_df = ref_df[ref_df['covid_region'] == ems]
+    if ems_nr > 0:
+        ref_df = ref_df[ref_df['covid_region'] == ems_nr]
     else:
         ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
     ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
-    data_channel_names = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu']
-    ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
+    data_channel_names_emr = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu']
+    ref_df = ref_df.groupby('date_of_extract')[data_channel_names_emr].agg(np.sum).reset_index()
     ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
+    ref_df_emr = ref_df
+
+    LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
+    ref_df_ll = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
+
+    ref_df_cli  = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports','CLI_admissions_by_covidregion.csv'))
+
+    if ems_nr > 0:
+        ref_df_ll = ref_df_ll[ref_df_ll['covid_region'] == ems_nr]
+    else:
+        ref_df_ll = ref_df_ll.groupby('date').agg(np.sum).reset_index()
+    ref_df_ll['date'] = pd.to_datetime(ref_df_ll['date'])
+    ref_df_cli['date'] = pd.to_datetime(ref_df_cli['date'])
+
+    if ems_nr > 0:
+        ref_df_cli = ref_df_cli[ref_df_cli['covidregion'] == ems_nr]
+    else:
+        ref_df_cli = ref_df_cli.groupby('date').agg(np.sum).reset_index()
+
+    ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
+    ref_df = pd.merge(how='outer', left=ref_df, left_on='date', right=ref_df_cli, right_on='date')
+
+    ref_df = ref_df.sort_values('date')
+
+    return ref_df
+
+
+def compare_ems(exp_name, ems=0) :
+
+    ref_df = load_ref_df(ems_nr=ems)
 
     df = load_sim_data(exp_name) #ems_nr
     first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
     df['critical_with_suspected'] = df['critical']
-    ref_df_emr = ref_df
-
-    LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
-    if ems > 0:
-        ref_df = ref_df[ref_df['covid_region'] == ems]
-    else:
-        ref_df = ref_df.groupby('date').agg(np.sum).reset_index()
-    ref_df['date'] = pd.to_datetime(ref_df['date'])
-
 
     first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df = df[df['date']  <=  datetime.today()]
-    ref_df_ll = ref_df
-    ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
-    ref_df = ref_df.sort_values('date')
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_deaths', 'new_deaths', 'new_detected_hospitalized']
+
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
+                'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'deaths', 'admissions']
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'New Deaths (LL)', 'New Detected\nHospitalizations (LL)']
+              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
     plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
                      plot_path=plot_path, first_day=first_day)
