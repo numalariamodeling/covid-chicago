@@ -14,17 +14,8 @@ from load_paths import load_box_paths
 mpl.rcParams['pdf.fonttype'] = 42
 testMode = True
 
-exp_name = '20200423_EMS_1_test_spatial_full'
+
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
-sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-plot_path = os.path.join(sim_output_path, '_plots')
-
-if not os.path.exists(sim_output_path):
-    os.makedirs(sim_output_path)
-
-if not os.path.exists(plot_path):
-    os.makedirs(plot_path)
 
 
 def calculate_mean_and_CI(adf, channel, output_filename=None) :
@@ -34,9 +25,9 @@ def calculate_mean_and_CI(adf, channel, output_filename=None) :
         mdf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
 
 
-def plot(adf, channels, age_group, filename=None) :
+def plot(adf, channels, grp, filename=None) :
 
-    plotchannels = [ '%s_%s' % (x, age_group) for x in channels]
+    plotchannels = [ '%s_%s' % (x, grp) for x in channels]
 
     fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
@@ -66,22 +57,37 @@ def plot(adf, channels, age_group, filename=None) :
 
 if __name__ == '__main__' :
 
+    exp_name = sys.argv[1]
+    #exp_name = "20200911_IL_test6"
+
+    first_plot_day = date(2020, 3, 1)
+    last_plot_day = date(2020, 10, 1)
+
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    plot_path = os.path.join(sim_output_path, '_plots')
+
+    if not os.path.exists(sim_output_path):
+        os.makedirs(sim_output_path)
+
+    if not os.path.exists(plot_path):
+        os.makedirs(plot_path)
+
     df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
 
     suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
     base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
-    first_day = date(2020, 2, 25)  #datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    first_plot_day =datetime.strptime(str(first_plot_day), '%Y-%m-%d')
+    last_plot_day =datetime.strptime(str(last_plot_day), '%Y-%m-%d')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    plot_first_day = date(2020, 3, 1)
-    plot_last_day = date(2020, 10, 1)
-    df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
+    df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
 
     #channels = ['infected', 'new_detected', 'new_deaths',
     #           'asymptomatic', 'symptomatic_mild', 'symptomatic_severe',
     #           'hospitalized', 'critical', 'ventilators']
     # Same channels as in process for civis
-    channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+    channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators','recovered']
 
     fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
@@ -91,32 +97,32 @@ if __name__ == '__main__' :
     days_to_plot = len(df['date'].unique())
     last = {x: [0] * days_to_plot for x in channels}
     a = 0
-    for age_group in suffix_names :
-        df['ventilators_%s' % age_group] = df['crit_det_%s' % age_group]
-        df['infected_%s' % age_group] = df['asymptomatic_%s' % age_group] + df['presymptomatic_%s' % age_group] + \
-                                        df['symptomatic_mild_%s' % age_group] + df['symptomatic_severe_%s' % age_group] + \
-                                        df['hospitalized_%s' % age_group] + df['critical_%s' % age_group]
-        df = calculate_incidence_by_age(df, age_group,
+    for grp in suffix_names :
+        df['ventilators_%s' % grp] = df['crit_det_%s' % grp]
+        df['infected_%s' % grp] = df['asymptomatic_%s' % grp] + df['presymptomatic_%s' % grp] + \
+                                        df['symptomatic_mild_%s' % grp] + df['symptomatic_severe_%s' % grp] + \
+                                        df['hospitalized_%s' % grp] + df['critical_%s' % grp]
+        df = calculate_incidence_by_age(df, grp,
                                         output_filename=os.path.join(sim_output_path,
-                                                                     'trajectoriesDat_withIncidence_%s.csv' % age_group))
-        df['infections_cumul_%s' % age_group] = df['asymp_cumul_%s' % age_group] + \
-                                                df['symp_mild_cumul_%s' % age_group] + \
-                                                df['symp_severe_cumul_%s' % age_group]
-        for channel in ['infections_cumul_%s' % age_group, 'detected_cumul_%s' % age_group] :
-            calculate_mean_and_CI(df, channel, output_filename='%s_%s.csv' % (channel, age_group))
+                                                                     'trajectoriesDat_withIncidence_%s.csv' % grp))
+        df['infections_cumul_%s' % grp] = df['asymp_cumul_%s' % grp] + \
+                                                df['symp_mild_cumul_%s' % grp] + \
+                                                df['symp_severe_cumul_%s' % grp]
+        for channel in ['infections_cumul_%s' % grp, 'detected_cumul_%s' % grp] :
+            calculate_mean_and_CI(df, channel, output_filename='%s_%s.csv' % (channel, grp))
 
-        plot(df, channels, age_group, 'plot_withIncidence_%s' % age_group)
-        if 'All' in age_group :
+        plot(df, channels, grp, 'plot_withIncidence_%s' % grp)
+        if 'All' in grp :
             continue
 
         for c, channel in enumerate(channels) :
             ax = axes[c]
-            col = '%s_%s' % (channel, age_group)
+            col = '%s_%s' % (channel, grp)
             mdf = df.groupby('date')[col].agg(CI_50).reset_index()
 
             ax.fill_between(mdf['date'].values, last[channel],
                             [x + y for x, y in zip(last[channel], mdf[col].values)],
-                            color=palette[a], label=age_group,
+                            color=palette[a], label=grp,
                             linewidth=0)
             last[channel] = [x + y for x, y in zip(last[channel], mdf[col].values)]
 
@@ -130,5 +136,5 @@ if __name__ == '__main__' :
     axes[-1].legend()
     fig.savefig(os.path.join(plot_path, 'stacked_median.png'))
     fig.savefig(os.path.join(plot_path, 'stacked.median.pdf'), format='PDF')
-    plt.show()
+    #plt.show()
 

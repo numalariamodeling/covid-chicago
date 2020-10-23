@@ -6,11 +6,27 @@ from datetime import datetime, timedelta
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+def get_latest_LLfiledate(file_path, split_string ='_jg_' , file_pattern='aggregated_covidregion.csv'):
+
+    files= os.listdir(file_path)
+    filedates = [x.split(split_string)[0] for x in files if file_pattern in x]
+    latest_filedate = max([int(x) for x in filedates])
+
+    return latest_filedate
+    
 def get_vents(crit_det_array):
 
 	vent_frac_global = 0.660
 	
 	return crit_det_array * vent_frac_global
+
+def get_latest_LLfiledate(file_path, split_string ='_jg_' , file_pattern='aggregated_covidregion.csv'):
+
+    files= os.listdir(file_path)
+    filedates = [x.split(split_string)[0] for x in files if file_pattern in x]
+    latest_filedate = max([int(x) for x in filedates])
+
+    return latest_filedate
 
 def loadEMSregions(regionname) :
     regions = {'northcentral' : ['EMS_1', 'EMS_2'],
@@ -129,69 +145,66 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     return adf
 
 
-def load_capacity(ems) :
+def load_capacity(ems, simdate='20200929') :
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
-    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/capacity_by_covid_region.csv')
-    ems_df = pd.read_csv(ems_fname)
+    
+    fname = 'capacity_weekday_average_' + simdate + '.csv'
+    ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds/', fname)
+    df = pd.read_csv(ems_fname)
 
-    filterdate = max(ems_df['date'])
-    filterdate = datetime.strptime(filterdate, "%Y-%m-%d")  # string to date
-    filterdate = filterdate - timedelta(days=14)  # date - days
-    filterdate = pd.to_datetime(filterdate)
+    df = df[df['overflow_threshold_percent']==1]
+    df['ems'] = df['geography_modeled']
+    df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
+    df =  df[['ems','resource_type','avg_resource_available']]
+    df = df.drop_duplicates()
+   # df = df.sort_values(by=['ems'])
+    df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available')
 
-    ems_df['date'] = pd.to_datetime(ems_df['date'])
-    ems_df = ems_df[ems_df['date'] > filterdate]
-    #ems_df['ems'] = ems_df['Region'].apply(lambda x : int(x.split('-')[0]))
-    ems_df['ems'] = ems_df['geography_name']
-    ems_df['ems'] = ems_df['ems'].replace("restore_", "", regex=True)
-    ems_df = ems_df.set_index('ems')
+    df.index.name = 'ems'
+    df.reset_index(inplace=True)
 
-    ems_df['hospitalized'] = ems_df[ 'medsurg_total'] - ems_df[ 'medsurg_noncovid']
-    ems_df['critical'] = ems_df[ 'icu_total'] - ems_df[ 'icu_noncovid']
-    ems_df['ventilators'] = ems_df[ 'vent_total'] - ems_df[ 'vent_noncovid']
-
-    ems_df = ems_df.groupby(['geography_name']).agg(np.mean).reset_index()
-
-    ems_df = ems_df[ems_df['geography_name']==str(ems)]
+    if ems =='illinois' :
+        df['grp']= 'illinois'
+        df = df.groupby('grp')[['hb_availforcovid','icu_availforcovid']].agg(np.sum).reset_index()
+    if ems != 'illinois':
+        df = df[df['ems'] == str(ems)]
 
     capacity = {
-            'hospitalized' :  int(ems_df['hospitalized']),
-            'critical' : int(ems_df['critical']),
-            'ventilators' : int(ems_df['ventilators'])
+            'hospitalized' :  int(df['hb_availforcovid']),
+            'critical' : int(df['icu_availforcovid'])
     }
     return capacity
 
 
 def civis_colnames(reverse=False) :
-    colnames = {"date": "Date",
-     "ems": "geography_modeled",
-     "infected_median": "Number of Covid-19 infections",
-     "infected_95CI_lower": "Lower error bound of covid-19 infections",
-     "infected_95CI_upper": "Upper error bound of covid-19 infections",
-     "new_infected_95CI_upper": "Upper error bound of covid-19 new infections",
-     "new_infected_median": "Number of Covid-19 new infections",
-     "new_infected_95CI_lower": "Lower error bound of covid-19 new infections",
-     "new_symptomatic_median": "Number of Covid-19 symptomatic",
-     "new_symptomatic_95CI_lower": "Lower error bound of covid-19 symptomatic",
-     "new_symptomatic_95CI_upper": "Upper error bound of covid-19 symptomatic",
-     "new_deaths_median": "Number of covid-19 deaths",
-     "new_deaths_95CI_lower": "Lower error bound of covid-19 deaths",
-     "new_deaths_95CI_upper": "Upper error bound of covid-19 deaths",
-     "new_detected_deaths_median": "Number of detected covid-19 deaths",
-     "new_detected_deaths_95CI_lower": "Lower error bound of detected covid-19 deaths",
-     "new_detected_deaths_95CI_upper": "Upper error bound of detected covid-19 deaths",
-     "hospitalized_median": "Number of hospital beds occupied",
-     "hospitalized_95CI_lower": "Lower error bound of number of hospital beds occupied",
-     "hospitalized_95CI_upper": "Upper error bound of number of hospital beds occupied",
-     "critical_median": "Number of ICU beds occupied",
-     "critical_95CI_lower": "Lower error bound of number of ICU beds occupied",
-     "critical_95CI_upper": "Upper error bound of number of ICU beds occupied",
-     "ventilators_median": "Number of ventilators used",
-     "ventilators_95CI_lower": "Lower error bound of number of ventilators used",
-     "ventilators_95CI_upper": "Upper error bound of number of ventilators used",
-     "recovered_median": "Total recovered",
-     "recovered_95CI_lower": "Lower error bound on recovered",
-     "recovered_95CI_upper": "Upper error bound on recovered"}
+    colnames = { "ems": "geography_modeled",
+     "infected_median": "cases_median",
+     "infected_95CI_lower": "cases_lower",
+     "infected_95CI_upper": "cases_upper",
+     "new_infected_median": "cases_new_median",
+     "new_infected_95CI_lower": "cases_new_lower",
+     "new_infected_95CI_upper": "cases_new_upper",
+     "new_symptomatic_median": "symptomatic_new_median",
+     "new_symptomatic_95CI_lower": "symptomatic_new_lower",
+     "new_symptomatic_95CI_upper": "symptomatic_new_upper",
+     "new_deaths_median": "deaths_median",
+     "new_deaths_95CI_lower": "deaths_lower",
+     "new_deaths_95CI_upper": "deaths_upper",
+     "new_detected_deaths_median": "deaths_det_median",
+     "new_detected_deaths_95CI_lower": "deaths_det_lower",
+     "new_detected_deaths_95CI_upper": "deaths_det_upper",
+     "hospitalized_median": "hosp_bed_median",
+     "hospitalized_95CI_lower": "hosp_bed_lower",
+     "hospitalized_95CI_upper": "hosp_bed_upper",
+     "critical_median": "icu_median",
+     "critical_95CI_lower": "icu_lower",
+     "critical_95CI_upper": "icu_upper",
+     "ventilators_median": "vent_median",
+     "ventilators_95CI_lower": "vent_lower",
+     "ventilators_95CI_upper": "vent_upper",
+     "recovered_median": "recovered_median",
+     "recovered_95CI_lower": "recovered_lower",
+     "recovered_95CI_upper": "recovered_upper"}
 
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)
