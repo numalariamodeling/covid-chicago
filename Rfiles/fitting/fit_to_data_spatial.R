@@ -46,17 +46,18 @@ if (runInBatchMode) {
   useSmoothedData <- cmd_agrs[length(cmd_agrs) - 2]
   Location <- cmd_agrs[length(cmd_agrs) - 1]
   workingDir <- cmd_agrs[length(cmd_agrs)]
-  
-  if(tolower(useSmoothedData)=="false")useSmoothedData=FALSE
-  if(tolower(useSmoothedData)=="true")useSmoothedData=TRUE
-  
+
+  if (tolower(useSmoothedData) == "false") useSmoothedData <- FALSE
+  if (tolower(useSmoothedData) == "true") useSmoothedData <- TRUE
 } else {
-  exp_name <- "20201006_IL_mr_local_fitki8"  
+  exp_name <- "20201020_IL_mr_quest_fitki9"
 
   Location <- "Local"
   workingDir <- getwd()
-  useSmoothedData <- FALSE
-
+  useSmoothedData <- TRUE
+  weightDeath <- FALSE
+  excludeDeaths <- FALSE
+  includeLLadmissions <- FALSE
 }
 
 ## Print out for log
@@ -76,11 +77,13 @@ setwd(workingDir)
 ## --------------------------------
 exp_name_split <- str_split(exp_name, "_")[[1]]
 simdate <- exp_name_split[1]
-monthnr <- gsub("fitki","",exp_name_split[length(exp_name_split)])
+monthnr <- gsub("fitki", "", exp_name_split[length(exp_name_split)])
 
-fittingParam <- c(paste0("ki_multiplier_time_",monthnr), paste0("ki_multiplier_",monthnr))
-start_date <- as.Date(paste0("2020-",monthnr,"-01"))
-stop_date <- start_date + 30 
+#### TODO fix to automatic selection , needs manual editing when multiplier + time is fitted vs multiplier only or multiple multipliers
+fittingParam <- paste0("ki_multiplier_", monthnr) # (paste0("ki_multiplier_time_",monthnr), paste0("ki_multiplier_",monthnr))
+
+start_date <- as.Date(paste0("2020-", monthnr, "-01"))
+stop_date <- start_date + 30
 
 smooth_n_days <- 7
 
@@ -266,7 +269,7 @@ merge_sim_and_ref_dat <- function(sim_ems, i, start_date, stop_date, smooth_n_da
 
 
 ## Plotting
-pre_fit_plot <- function(fittingVar, logscale = TRUE) {
+pre_fit_plot <- function(sim_ems_emresource, sim_ems_LL, fittingVar, logscale = TRUE) {
 
   #' Generates custom pre-fitting plots to assess whether data lies within simulated parameter space
   #'
@@ -419,7 +422,8 @@ f_post_fit_plot <- function(use_values_dat, i, logscale = TRUE) {
 
 
 ## Fitting + export csv's
-f_run_fitting <- function(i, sim_ems_emresource, sim_ems_LL, scens, useSmoothedData = FALSE) {
+f_run_fitting <- function(i, sim_ems_emresource, sim_ems_LL, scens, useSmoothedData = TRUE, weightDeath = FALSE,
+                          excludeDeaths = FALSE, includeLLadmissions = FALSE) {
 
   #' Fitting function
   #'
@@ -447,16 +451,26 @@ f_run_fitting <- function(i, sim_ems_emresource, sim_ems_LL, scens, useSmoothedD
       nll1 <- -1 * sum(dpois(emresource_sub$confirmed_covid_icu, emresource_sub$crit_det + 1e-10, log = T), na.rm = TRUE)
       nll2 <- -1 * sum(dpois(emresource_sub$covid_non_icu, emresource_sub$hosp_det + 1e-10, log = T))
       nll3 <- -1 * sum(dpois(LL_sub$deaths, LL_sub$new_detected_deaths + 1e-10, log = T), na.rm = TRUE)
+      nll4 <- -1 * sum(dpois(LL_sub$admissions, LL_sub$new_detected_hospitalized + 1e-10, log = T), na.rm = TRUE)
     }
 
     if (useSmoothedData) {
       nll1 <- -1 * sum(dpois(emresource_sub$confirmed_covid_icu_avrg, emresource_sub$crit_det + 1e-10, log = T), na.rm = TRUE)
       nll2 <- -1 * sum(dpois(emresource_sub$covid_non_icu_avrg, emresource_sub$hosp_det + 1e-10, log = T), na.rm = TRUE)
       nll3 <- -1 * sum(dpois(LL_sub$deaths_avrg, LL_sub$new_detected_deaths + 1e-10, log = T), na.rm = TRUE)
+      nll4 <- -1 * sum(dpois(LL_sub$admissions, LL_sub$new_detected_hospitalized + 1e-10, log = T), na.rm = TRUE)
     }
 
-    # Sum all Likelihood, weighting emresource data higher
+    # Sum all Likelihood
     nll <- nll1 + nll2 + nll3
+    if (weightDeath) nll <- nll1 + nll2 + (nll3) * (length(emresource_sub$confirmed_covid_icu) / length(LL_sub$cases)) / 2
+    if (excludeDeaths) nll <- nll1 + nll2
+
+    if (includeLLadmissions) {
+      nll <- nll1 + nll2 + nll3 + nll4
+      if (weightDeath) nll <- nll1 + nll2 + (nll3 + nll4) * (length(emresource_sub$confirmed_covid_icu) / length(LL_sub$cases)) / 2
+      if (excludeDeaths) nll <- nll1 + nll2 + nll4
+    }
 
     # Put Likelihood values and corresponding start date and Ki in output dataframe
     for (z in c(1:length(fittingParam))) {
@@ -475,7 +489,7 @@ f_run_fitting <- function(i, sim_ems_emresource, sim_ems_LL, scens, useSmoothedD
   return(use_values)
 }
 
-f_export_sumary_csv <- function(use_values_list,fittingParam, npairs = 10) {
+f_export_sumary_csv <- function(use_values_list, fittingParam, npairs = 10, writeYamlSnippet = FALSE) {
 
   #' Export csv files with different format of best parameters
   #'
@@ -511,22 +525,34 @@ f_export_sumary_csv <- function(use_values_list,fittingParam, npairs = 10) {
     dplyr::mutate(counter = 1:n()) %>%
     pivot_wider(names_from = "region", values_from = fittingParam) %>%
     fwrite(file.path(out_dir, "csv", "best_n_pairs_parameters_emsAll.csv"))
-  
-  
-  #### Generate yaml snippet 
-  range_dat <- fread(file.path(out_dir, "csv", "range_parameters_emsAll.csv")) %>% as.data.frame()
-  yaml_snippet <- suppressWarnings(readLines(file.path(git_dir,'experiment_configs','snippets','templates','config_weekly_ki_multiplier_fit.txt')))
-  yaml_snippet <- gsub("@monthnr@",monthnr,yaml_snippet )
-  
-  for(i in c(1:11)){
+
+
+  #### Generate yaml snippet
+  if (writeYamlSnippet) {
+    range_dat <- fread(file.path(out_dir, "csv", "range_parameters_emsAll.csv")) %>% as.data.frame()
+    yaml_snippet <- suppressWarnings(readLines(file.path(git_dir, "experiment_configs", "snippets", "templates", "config_weekly_ki_multiplier_fit.txt")))
+    yaml_snippet <- gsub("@monthnr@", monthnr, yaml_snippet)
+    yaml_snippet <- gsub("social_multiplier_","ki_multiplier_",yaml_snippet)
+    yaml_snippet <- gsub("socialDistance_time","ki_multiplier_time_",yaml_snippet)
+    yaml_snippet <- gsub("__","_",yaml_snippet)
     
-    yaml_snippet <- gsub(paste0("@socialDistance_time_EMS_",i,"_lwr@"), round(range_dat[i ,paste0(fittingParam[1],"_min")] ,0),yaml_snippet )
-    yaml_snippet <- gsub(paste0("@social_multiplier_EMS_",i,"_lwr@"), round(range_dat[i ,paste0(fittingParam[2],"_min")] ,3) ,yaml_snippet )
-    yaml_snippet <- gsub(paste0("@socialDistance_time_EMS_",i,"_upr@"), round(range_dat[i ,paste0(fittingParam[1],"_max")] ,0) ,yaml_snippet )
-    yaml_snippet <- gsub(paste0("@social_multiplier_EMS_",i,"_upr@"), round(range_dat[i ,paste0(fittingParam[2],"_max")] ,3) ,yaml_snippet )
+    if (length(fittingParam) == 1) {
+      yaml_snippet <- yaml_snippet[17:length(yaml_snippet)]
+      for (i in c(1:11)) {
+        yaml_snippet <- gsub(paste0("@ki_multiplier_EMS_", i, "_lwr@"), round(range_dat[i, "min"], 3), yaml_snippet)
+        yaml_snippet <- gsub(paste0("@ki_multiplier_EMS_", i, "_upr@"), round(range_dat[i, "max"], 3), yaml_snippet)
+      }
+    }
+    if (length(fittingParam) == 2) {
+      for (i in c(1:11)) {
+        yaml_snippet <- gsub(paste0("@ki_multiplier_time_EMS_", i, "_lwr@"), round(range_dat[i, paste0(fittingParam[1], "_min")], 0), yaml_snippet)
+        yaml_snippet <- gsub(paste0("@ki_multiplier_EMS_", i, "_lwr@"), round(range_dat[i, paste0(fittingParam[2], "_min")], 3), yaml_snippet)
+        yaml_snippet <- gsub(paste0("@ki_multiplier_time_EMS_", i, "_upr@"), round(range_dat[i, paste0(fittingParam[1], "_max")], 0), yaml_snippet)
+        yaml_snippet <- gsub(paste0("@ki_multiplier_EMS_", i, "_upr@"), round(range_dat[i, paste0(fittingParam[2], "_max")], 3), yaml_snippet)
+      }
+    }
+    writeLines(yaml_snippet, file.path(git_dir, "experiment_configs", "snippets", "config_weekly_ki_multiplier_fit.txt"))
   }
-  writeLines(yaml_snippet,file.path(git_dir,'experiment_configs','snippets','config_weekly_ki_multiplier_fit.txt'))
-  
 }
 
 
@@ -536,7 +562,7 @@ prefit_plots <- function(start_date, stop_date) {
   for (i in c(1:11)) {
     print(paste0("Region ", i))
 
-    sim_ems <- load_sim_dat(fittingParam, exp_name, i)
+    sim_ems <- load_sim_dat(fittingParam, exp_name, i, start_date, stop_date)
 
     str(sim_ems)
     summary(sim_ems$scen_num)
@@ -545,15 +571,15 @@ prefit_plots <- function(start_date, stop_date) {
     sapply(sim_ems[fittingParam], unique)
 
     ### Prepare for merge and merge ref_dat to sim_dat
-    sim_ems_emresource <- merge_sim_and_ref_dat(sim_ems, i, LLdate = LLdate)[[1]]
-    sim_ems_LL <- merge_sim_and_ref_dat(sim_ems, i, LLdate = LLdate)[[2]]
+    sim_ems_emresource <- merge_sim_and_ref_dat(sim_ems, i, start_date, stop_date, smooth_n_days)[[1]]
+    sim_ems_LL <- merge_sim_and_ref_dat(sim_ems, i, start_date, stop_date, smooth_n_days)[[2]]
 
     ggplot(data = sim_ems) +
       geom_line(aes(x = date, y = crit_det, group = scen_num)) +
       scale_x_date(lim = c(as.Date("2020-01-01"), as.Date("2020-05-01")))
 
     for (paramVar in fittingParam) {
-      pplot <- pre_fit_plot(fittingVar = paramVar, logscale = TRUE)
+      pplot <- pre_fit_plot(sim_ems_emresource, sim_ems_LL, fittingVar = paramVar, logscale = TRUE)
 
       ggsave(paste0(i, "_pre_fit_plot_", paramVar, ".png"),
         plot = pplot,
@@ -569,8 +595,8 @@ prefit_plots <- function(start_date, stop_date) {
 ## --------------------------------
 #### Pre-fi plots (optional)
 ## --------------------------------
-runPreFitPlot <- FALSE
-if (runPreFitPlot) prefit_plots()
+runPreFitPlot <- TRUE
+if (runPreFitPlot) prefit_plots(start_date, stop_date)
 
 
 ## --------------------------------
@@ -594,7 +620,10 @@ for (i in c(1:11)) {
   ## get a list of all scenario numbers run for this EMS
   scens <- unique(sim_ems_emresource$scen_num)
 
-  use_values <- f_run_fitting(i, sim_ems_emresource, sim_ems_LL, scens, useSmoothedData = useSmoothedData)
+  use_values <- f_run_fitting(i, sim_ems_emresource, sim_ems_LL, scens,
+    useSmoothedData = useSmoothedData,
+    weightDeath = weightDeath, excludeDeaths = excludeDeaths, includeLLadmissions = includeLLadmissions
+  )
 
 
   use_values_list[[i]] <- use_values

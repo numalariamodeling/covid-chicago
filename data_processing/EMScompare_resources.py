@@ -19,6 +19,18 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 plotdir = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
 
 
+def emresource_by_ems() :
+
+    df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_hospital.csv'))
+    cols = ['confirmed_covid_deaths_prev_24h',
+            'confirmed_covid_icu',
+            'covid_non_icu']
+
+    gdf = df.groupby(['date_of_extract', 'region'])[cols].agg(np.sum).reset_index()
+    gdf = gdf.sort_values(by=['date_of_extract', 'region'])
+    gdf.to_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_EMSregion.csv'), index=False)
+
+
 def plot_emresource(scale='') :
 
     ems_regions = {
@@ -49,7 +61,7 @@ def plot_emresource(scale='') :
     })
 
     channels = ['ICU conf+susp', 'ICU conf', 'vents conf', 'deaths', 'non ICU']
-    ref_df = ref_df[['date', 'region'] + channels]
+    ref_df = ref_df[['date', 'covid_region'] + channels]
 
     palette = load_color_palette('wes')
     formatter = mdates.DateFormatter("%m-%d")
@@ -69,7 +81,7 @@ def plot_emresource(scale='') :
         ax_all = fig_all.add_subplot(2,2,ri+1)
         ax = fig.add_subplot(4,6,6*ri+1)
 
-        pdf = ref_df[ref_df['region'].isin(ems_list)].groupby('date').agg(np.sum).reset_index()
+        pdf = ref_df[ref_df['covid_region'].isin(ems_list)].groupby('date').agg(np.sum).reset_index()
         for (c,name) in enumerate(channels):
             if name == 'non ICU' :
                 df = pdf[pdf['date'] >= date(2020,5,6)]
@@ -91,24 +103,25 @@ def plot_emresource(scale='') :
 
         for ei, ems in enumerate(ems_list) :
             ax = fig.add_subplot(4,6,6*ri+1+ei+1)
-            df = ref_df[ref_df['region'] == ems]
+            df = ref_df[ref_df['covid_region'] == ems]
             for (c,name) in enumerate(channels):
                 df['moving_ave'] = df[name].rolling(window=7, center=True).mean()
                 ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
                 ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
-            ax.set_title('EMS %d' % ems)
+            ax.set_title('covid region %d' % ems)
             format_plot(ax)
             if ems == 2 :
                 ax.legend(bbox_to_anchor=(1.5, 1))
 
     fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.png' % scale))
     fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.pdf' % scale), format='PDF')
-    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region_%s.png' % scale))
-    fig.savefig(os.path.join(plotdir, 'EMResource_by_EMS_region_%s.pdf' % scale), format='PDF')
+    fig.savefig(os.path.join(plotdir, 'EMResource_by_covid_region_%s.png' % scale))
+    fig.savefig(os.path.join(plotdir, 'EMResource_by_covid_region_%s.pdf' % scale), format='PDF')
 
 
 if __name__ == '__main__' :
 
     plot_emresource('nolog')
     plot_emresource('log')
-    plt.show()
+    emresource_by_ems()
+    # plt.show()

@@ -141,9 +141,9 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.185, 'high': 0.185}
-        - {'low': 0.160, 'high': 0.160}
-        - {'low': 0.200, 'high': 0.200}
+        - {'low': 0.192, 'high': 0.192}
+        - {'low': 0.162, 'high': 0.162}
+        - {'low': 0.205, 'high': 0.205}
         - {'low': 0.180, 'high': 0.180}
         - {'low': 0.165, 'high': 0.265}
         - {'low': 0.240, 'high': 0.240}
@@ -157,17 +157,17 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.250, 'high': 0.250}
-        - {'low': 0.167, 'high': 0.167}
-        - {'low': 0.340, 'high': 0.340}
+        - {'low': 0.255, 'high': 0.255}
+        - {'low': 0.172, 'high': 0.172}
+        - {'low': 0.391, 'high': 0.391}
         - {'low': 0.162, 'high': 0.162}
         - {'low': 0.165, 'high': 0.265}
         - {'low': 0.210, 'high': 0.210}
         - {'low': 0.170, 'high': 0.170}
-        - {'low': 0.120, 'high': 0.120}
-        - {'low': 0.125, 'high': 0.125}
-        - {'low': 0.154, 'high': 0.154}
-        - {'low': 0.105, 'high': 0.105}
+        - {'low': 0.143, 'high': 0.143}
+        - {'low': 0.169, 'high': 0.169}
+        - {'low': 0.183, 'high': 0.183}
+        - {'low': 0.142, 'high': 0.142}
   d_Sym:  
     IL:
       expand_by_age: True
@@ -317,11 +317,11 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.592, 'high': 0.592}
+        - {'low': 0.628, 'high': 0.628}
         - {'low': 0.654, 'high': 0.654}
         - {'low': 0.381, 'high': 0.381}
         - {'low': 0.571, 'high': 0.571}
-        - {'low': 0.501, 'high': 0.501}
+        - {'low': 0.498, 'high': 0.498}
         - {'low': 0.501, 'high': 0.501}
         - {'low': 0.716, 'high': 0.716}
         - {'low': 0.897, 'high': 0.897}
@@ -352,33 +352,33 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low':    135 , 'high':    135}
+        - {'low':    116 , 'high':    116}
         - {'low':    170 , 'high':    170}
-        - {'low':     77 , 'high':     77}
-        - {'low':     81 , 'high':     81}
-        - {'low':     60 , 'high':     60}
-        - {'low':     86 , 'high':     86}
-        - {'low':     71 , 'high':     71}
-        - {'low':    210 , 'high':    210}
-        - {'low':    134 , 'high':    134}
-        - {'low':    350 , 'high':    350}
-        - {'low':    421 , 'high':    421}     
+        - {'low':    74 , 'high':     74}
+        - {'low':    75 , 'high':     75}
+        - {'low':    66 , 'high':     66}
+        - {'low':    97 , 'high':     97}
+        - {'low':    61 , 'high':     61}
+        - {'low':    223 , 'high':    223}
+        - {'low':    138 , 'high':    138}
+        - {'low':    351 , 'high':    351}
+        - {'low':    426 , 'high':    426}     
   trigger_notused:   # medsurg_total 
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low':   948  , 'high':  948}
-        - {'low':  1695  , 'high': 1695}
-        - {'low':   920  , 'high':  920}
-        - {'low':   655  , 'high':  655}
-        - {'low':   733  , 'high':  733}
-        - {'low':  1037  , 'high': 1037}
-        - {'low':   673  , 'high':  673}
-        - {'low':  1452  , 'high': 1452}
-        - {'low':   911  , 'high':  911}
-        - {'low':  2335  , 'high': 2335}
-        - {'low':  2791  , 'high': 2791}         
+        - {'low':  893  , 'high':  893}
+        - {'low':  1656  , 'high': 1656}
+        - {'low':  944  , 'high':  944}
+        - {'low':  626  , 'high':  626}
+        - {'low':  724  , 'high':  724}
+        - {'low':  1049  , 'high': 1049}
+        - {'low':  666  , 'high':  666}
+        - {'low':  1564  , 'high': 1564}
+        - {'low':  919  , 'high':  919}
+        - {'low':  2332  , 'high': 2332}
+        - {'low':  2774  , 'high': 2774}         
 ### If using setting specific increase in symptomatic infections in future scenarios (i.e. contact tracing)
 #d_Sym_ct1:
 #    IL:
