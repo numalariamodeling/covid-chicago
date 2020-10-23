@@ -1,43 +1,85 @@
 import os
 import pandas as pd
 import sys
+from datetime import date,  datetime
+
 sys.path.append('../')
 from load_paths import load_box_paths
-
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+sim_output_path = os.path.join(wdir, "simulation_output")
 
-def trim_trajectories_Dat(exp_name, additionalVarsToKeep, keepTimes=None) :
+
+def trim_trajectories_Dat(exp_dir, VarsToKeep, keepTimes='today',lagtime_days=15, grpnames=None, channels=None, grpspecific_params=None):
     """Generate a subset of the trajectoriesDat dataframe
     The new csv file is saved under trajectoriesDat_trim.csv, no dataframe is returned
-    Parameters
-    ----------
-    exp_name : str - name of the experiment
-    additionalVarsToKeep : list - column names to keep in addition to the main channels 
-    keepTimes : int - minimum timestep to keep (all values below are discarded)
     """
 
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    
-    keepvars = ['time','startdate','scen_num','run_num','sample_num']
-    keepvars = keepvars + [x for x in df.columns.values if 'EMS-' in x]
-    keepvars = keepvars + [x for x in df.columns.values if 'All' in x]
-    keepvars = keepvars + additionalVarsToKeep
+    if VarsToKeep == None :
+        VarsToKeep = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
 
-    df = df[keepvars]
+    if grpnames == None:
+        grpnames = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10', 'EMS-11']
+        grpnames_ki = ['EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
 
-    if keepTimes is not None :
-        df = df[df['time']>=int(keepTimes)]
+    if channels == None:
+        channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'detected_cumul',
+                    'asymp_cumul', 'asymp_det_cumul',
+                    'symp_mild_cumul', 'symptomatic_mild', 'symp_mild_det_cumul',
+                    'symp_severe_cumul','symptomatic_severe', 'symp_severe_det_cumul',
+                    'hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
+                    'crit_cumul','crit_det_cumul', 'crit_det',  'critical',
+                    'death_det_cumul',  'deaths' ]
 
-    df.to_csv(os.path.join(sim_output_path, 'trajectoriesDat_trim.csv'), index=False)
+    if grpspecific_params == None:
+        grpspecific_params = ['Ki_t']  # ['Ki_t', 'triggertime','reopening_multiplier_4']
+
+    column_list = VarsToKeep
+    for channel in channels:
+        for grp in grpnames:
+            column_list.append(channel + "_" + str(grp))
+
+    for grpspecific_param in grpspecific_params:
+        for grp in grpnames_ki:
+            column_list.append(grpspecific_param + "_" + str(grp))
+
+    df = pd.read_csv(os.path.join(exp_dir, 'trajectoriesDat.csv'), usecols=column_list)
+
+    if keepTimes is not None:
+        if keepTimes !='today':
+            df = df[df['time'] >= int(keepTimes)]
+
+        if keepTimes =='today':
+            today = datetime.today()
+            datetoday = date(today.year, today.month, today.day)
+            datetoday = pd.to_datetime(datetoday)
+            df['startdate'] = pd.to_datetime(df['startdate'])
+            df['todayintime'] = datetoday - df['startdate']
+            df['todayintime'] = pd.to_numeric(df['todayintime'].dt.days, downcast='integer')
+            ## keep 15 days before today
+            df = df[df['time'] >= df['todayintime'] - lagtime_days]
+
+    df.to_csv(os.path.join(exp_dir, 'trajectoriesDat_trim.csv'), index=False)
+
 
 if __name__ == '__main__':
-    #stem = sys.argv[1]
-    stem = "20200805"
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    #exp_name = "20200805_IL_rollback_Sep30"
 
-    additionalVarsToKeep = ['reopening_multiplier_4']
+    stem = sys.argv[1]
+    keepTimes = sys.argv[2]
+    lagtime_days = sys.argv[3]  
+    
+    #stem ="20200907_IL_baseline_cfr_test"
+    #keepTimes ="today"
+    #lagtime_days ="15"
+    
+    VarsToKeep = ['startdate', 'time', 'scen_num','sample_num', 'run_num']
+    moreVarsToKeep = ['reopening_multiplier_4'] #['capacity_multiplier', 'reopening_multiplier_4','reduced_inf_of_det_cases_ct1', 'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
+    VarsToKeep = VarsToKeep + moreVarsToKeep
 
+    exp_names = [x for x in os.listdir(os.path.join(sim_output_path)) if stem in x]
     for exp_name in exp_names:
-        trim_trajectories_Dat(exp_name=exp_name, additionalVarsToKeep=additionalVarsToKeep, keepTimes=120)
+        exp_dir = os.path.join(sim_output_path, exp_name)
+        trim_trajectories_Dat(exp_dir=exp_dir, VarsToKeep=VarsToKeep, keepTimes=keepTimes, lagtime_days=lagtime_days)
+        if os.path.exists(exp_dir, 'trajectoriesDat_trim.csv') :
+            print('trajectoriesDat_trim.csv successfully generated')
+        else :
+            print('ERROR trajectoriesDat_trim.csv not generated')
