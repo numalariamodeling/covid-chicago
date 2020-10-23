@@ -13,7 +13,7 @@ from plotting.colors import load_color_palette
 mpl.rcParams['pdf.fonttype'] = 42
 
 
-LL_date = '200811'
+LL_date = '201020'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
@@ -270,6 +270,7 @@ def plot_LL_all_IL() :
     plot_data(df, ax, 'deaths', palette[3])
 
     fig.savefig(os.path.join(plot_path, 'IL_cases_deaths_LL%s.png' % LL_date))
+    fig.savefig(os.path.join(plot_path, 'IL_cases_deaths_LL%s.pdf' % LL_date), format='PDF')
 
 
 def combo_LL_emr() :

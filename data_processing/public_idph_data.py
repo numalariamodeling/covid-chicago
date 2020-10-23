@@ -83,13 +83,21 @@ def plot_IL_cases() :
 
 def load_county_cases() :
 
-    county_fname = os.path.join(datapath, 'Corona virus reports', 'IDPH Stats County public.csv')
+    county_fname = os.path.join(datapath, 'Corona virus reports', 'IDPH_public_county.csv')
 
     df = pd.read_csv(county_fname)
+    df = df.rename(columns={'test_date' : 'update_date',
+                            'county' : 'County',
+                            'confirmed_cases' : 'Positive_Cases',
+                            'deaths' : 'Deaths',
+                            'total_tested' : 'Tested'})
     df['update_date'] = pd.to_datetime(df['update_date'])
-    df = df[~df['NOFO_Region'].isin(['Illinois', 'Out Of State', 'Unassigned'])]
+    df = df[~df['County'].isin(['Illinois', 'Out Of State', 'Unassigned', 'Suburban Cook'])]
 
     df = df.groupby(['update_date', 'County'])[['Positive_Cases', 'Deaths', 'Tested']].agg(np.max).reset_index()
+    # df['Positive_Cases'] = df['Positive_Cases'].apply(lambda x : int(''.join(x.split(','))))
+    # df['Deaths'] = df['Deaths'].apply(lambda x : int(''.join(x.split(','))))
+    # df['Tested'] = df['Tested'].apply(lambda x : int(''.join(x.split(','))))
     return df
 
 
@@ -384,7 +392,7 @@ def plot_agg_by_new_region() :
     df = df.sort_values(by=['new_restore_region', 'update_date'])
 
     palette = sns.color_palette('Paired', 12)
-    tpr_limits = [0.02, 0.05, 0.08, 0.1]
+    tpr_limits = [0.02, 0.05, 0.08, 0.15]
     palette_scale = sns.cubehelix_palette(len(tpr_limits), start=.5, rot=-.75)
 
     fig = plt.figure(figsize=(15,12))
@@ -561,11 +569,20 @@ def plot_tests_by_county_map() :
         df['Tested'] = df['Tested'] - df['prev_test']
         df.loc[df['Positive_Cases'] == 0, 'Positive_Cases'] = 0.1
         df.loc[df['Tested'] == 0, 'Tested'] = 0.1
+<<<<<<< HEAD
+        df['pos per pop'] = df['Positive_Cases'] / 7 / df['population'] * 1000
+        df['tests per pop'] = df['Tested'] / 7 / df['population'] * 1000
+        df.loc[df['tests per pop'] > 20, 'tests per pop'] = 4.9
+        df['testbin'] = df['tests per pop'].apply(lambda x : min(i for b,i in enumerate(bins) if i > x))
+        ds_shp = pd.merge(left=county_shp, right=df, left_on='COUNTY_NAM', right_on='County')
+        ds_shp.plot(ax=ax, column='testbin',
+=======
         df['pos per pop'] = df['Positive_Cases'] / 7 / df['pop'] * 1000
         df['tests per pop'] = df['Tested'] / 7 / df['pop'] * 1000
         df['testbin'] = df['tests per pop'].apply(lambda x : min(i for b,i in enumerate(bins) if i > x))
         ds_shp = pd.merge(left=county_shp, right=df, left_on='COUNTY_NAM', right_on='County')
         ds_shp.plot(ax=ax[0], column='tests per pop',
+>>>>>>> f48ab40663a397a4aa1f0f4ea805c8f203116c0b
                     cmap=colormap, edgecolor='0.8',
                     linewidth=0.8, legend=False, norm=norm)
         sm = plt.cm.ScalarMappable(cmap=colormap, norm=norm)
@@ -590,10 +607,18 @@ def plot_tests_by_county_map() :
     county_shp = gpd.read_file(os.path.join(shp_path, 'covid_regions', 'counties.shp'))
 
     fig = plt.figure(figsize=(10,8))
+<<<<<<< HEAD
+    # chunks = np.linspace(0, 0.4, 20)
+    chunks = np.linspace(0.2, 5, 20)
+
+    ax = fig.gca()
+    maxdate = date(2020,9,16)
+=======
     chunks = np.linspace(0.2, 15, 20)
 
     ax = [fig.add_subplot(1,2,x+1) for x in range(2)]
     maxdate = date(2020,8,13)
+>>>>>>> f48ab40663a397a4aa1f0f4ea805c8f203116c0b
     mindate = maxdate - timedelta(days=7)
     plot_subset(adf, county_shp, maxdate, mindate, ax, chunks)
     for axi in ax :
@@ -602,17 +627,66 @@ def plot_tests_by_county_map() :
     fig.savefig(os.path.join(plot_dir, 'tests_per_1000_pop_county_%s.pdf' % str(maxdate)), format='PDF')
 
 
+<<<<<<< HEAD
+def plot_county_tpr_map() :
+
+    adf = assign_counties_restore_region()
+    adf['update_date'] = pd.to_datetime(adf['update_date'])
+    maxdate = np.max(adf['update_date'])
+    mindate = maxdate - timedelta(days=7)
+
+    pdf = adf[adf['update_date'] == maxdate]
+    sdf = adf[adf['update_date'] == mindate]
+    sdf = sdf.rename(columns={'Positive_Cases': 'prev_pos',
+                              'Tested': 'prev_test'})
+    df = pd.merge(left=pdf, right=sdf[['County', 'prev_pos', 'prev_test']], on='County')
+    df['Positive_Cases'] = df['Positive_Cases'] - df['prev_pos']
+    df['Tested'] = df['Tested'] - df['prev_test']
+    df.loc[df['Positive_Cases'] == 0, 'Positive_Cases'] = 0.1
+    df.loc[df['Tested'] == 0, 'Tested'] = 0.1
+    df['tpr'] = df['Positive_Cases']/df['Tested']
+
+    bins = [0.02, 0.05, 0.08, 0.12, 0.2, 0.5]
+    df['binned_tpr'] = df['tpr'].apply(lambda x : min([i for i in bins if i > x]))
+    rebins = np.linspace(np.min(bins), np.max(bins), len(bins))
+    df['rebin_tpr'] = df['binned_tpr'].apply(lambda x : rebins[bins.index(x)])
+
+    county_shp = gpd.read_file(os.path.join(shp_path, 'covid_regions', 'counties.shp'))
+    colormap = 'plasma'
+
+    fig = plt.figure()
+    ax = fig.gca()
+    ds_shp = pd.merge(left=county_shp, right=df, left_on='COUNTY_NAM', right_on='County')
+    ds_shp.plot(ax=ax, column='rebin_tpr',
+                cmap=colormap, edgecolor='0.8',
+                linewidth=0.8, legend=False)
+    format_ax(ax, maxdate)
+    fig.savefig(os.path.join(plot_dir, 'tpr_county_%s.pdf' % str(maxdate)), format='PDF')
+    # plt.show()
+
+
+def plot_tests_per_pop_line() :
+=======
 def plot_tests_per_pop_line() :
 
+>>>>>>> f48ab40663a397a4aa1f0f4ea805c8f203116c0b
     adf = assign_counties_restore_region()
     adf['County'] = adf['County'].apply(lambda x: x.upper())
     county_pop = pd.read_csv(os.path.join(datapath, 'EMS Population', 'covidregion_population_by_county.csv'))
     adf = pd.merge(left=adf, right=county_pop[['County', 'pop']], on='County')
+<<<<<<< HEAD
+    adf = adf[adf['County'] != 'CHAMPAIGN']
+    rr_colors = ['#397FB9', '#397FB9', '#E21E26', '#98509F', '#98509F', '#E21E26',
+                 '#4EAF49', '#4EAF49', '#4EAF49', '#4EAF49', '#4EAF49']
+    adf = adf.groupby(['update_date', 'new_restore_region']).agg(np.sum).reset_index()
+    sns.set_style('whitegrid', {'axes.linewidth' : 0.5})
+=======
 
     rr_colors = ['#397FB9', '#397FB9', '#E21E26', '#98509F', '#98509F', '#E21E26',
                  '#4EAF49', '#4EAF49', '#4EAF49', '#4EAF49', '#4EAF49']
     adf = adf.groupby(['update_date', 'new_restore_region']).agg(np.sum).reset_index()
 
+>>>>>>> f48ab40663a397a4aa1f0f4ea805c8f203116c0b
     fig = plt.figure(figsize=(11,6))
     fig.subplots_adjust(left=0.07, right=0.97, bottom=0.05, top=0.95, hspace=0.3, wspace=0.25)
     formatter = mdates.DateFormatter("%m-%d")
@@ -621,6 +695,20 @@ def plot_tests_per_pop_line() :
         cdf['daily_test'] = np.insert(np.diff(cdf['Tested']), 0, 0)
         cdf['daily_test'] = cdf['daily_test']/cdf['pop']*1000
         cdf['moving_ave'] = cdf['daily_test'].rolling(window=7, center=False).mean()
+<<<<<<< HEAD
+        cdf = cdf[cdf['update_date'] >= date(2020, 5, 11)]
+        ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=rr_colors[region-1], linewidth=1)
+        ax.fill_between(cdf['update_date'].values, [0] * len(cdf['moving_ave']), cdf['moving_ave'],
+                        linewidth=0, color=rr_colors[region-1], alpha=0.3)
+        # ax.plot([np.min(cdf['update_date']), np.max(cdf['update_date'])], [1, 1], '-', color='#969696', linewidth=0.5)
+        # ax.plot([np.min(cdf['update_date']), np.max(cdf['update_date'])], [2, 2], '-', color='#969696', linewidth=0.5)
+        # ax.plot([np.min(cdf['update_date']), np.max(cdf['update_date'])], [5, 5], '-', color='#969696', linewidth=0.5)
+        ax.set_ylim(0, 5)
+        ax.set_title('Covid Region %d' % region)
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+    fig.savefig(os.path.join(plot_dir, 'tests_per_1000_pop_covid_region_noChampaign.pdf'), format='PDF')
+=======
         cdf = cdf[cdf['update_date'] >= date(2020, 5, 9)]
         ax.plot(cdf['update_date'], cdf['moving_ave'], '-', color=rr_colors[region-1], linewidth=1)
         ax.fill_between(cdf['update_date'].values, [0] * len(cdf['moving_ave']), cdf['moving_ave'],
@@ -633,10 +721,20 @@ def plot_tests_per_pop_line() :
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
     fig.savefig(os.path.join(plot_dir, 'tests_per_1000_pop_covid_region.pdf'), format='PDF')
+>>>>>>> f48ab40663a397a4aa1f0f4ea805c8f203116c0b
 
 
 if __name__ == '__main__' :
 
+<<<<<<< HEAD
+    # plot_county_tpr_map()
+    # plot_tests_per_pop_line()
+    plot_cases_by_county_map()
+    plot_tests_by_county_map()
+    # plot_cases_by_county_line()
+    # plot_county_line_by_region('new_restore_region')
+    # plot_agg_by_new_region()
+=======
     # plot_cases_by_county_map()
     # plot_tests_by_county_map()
     plot_tests_per_pop_line()
@@ -646,5 +744,6 @@ if __name__ == '__main__' :
     # plot_agg_by_region()
     # plot_agg_by_new_region()
     # plot_county_scatter()
+>>>>>>> f48ab40663a397a4aa1f0f4ea805c8f203116c0b
     # plot_IL_cases()
     # plt.show()

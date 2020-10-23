@@ -11,7 +11,7 @@ from shapely.geometry import mapping, Point, Polygon
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-LL_date = '200811'
+LL_date = '201020'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 line_list_fname = os.path.join(idph_data_path,
@@ -184,7 +184,9 @@ def get_ems_counties_and_zips() :
                                                                  62615, 62232, 62220, 60808, 60208, 61544, 60001,
                                                                  60567, 62837, 60985, 62939, 61231, 62634, 62869,
                                                                  60115, 60821, 60167, 60122, 60717, 61021, 60978,
-                                                                 60413, 62098, 62864, 60884],
+                                                                 60413, 62098, 62864, 60884, 62035, 60833, 60926,
+                                                                 60362, 60785, 61704, 61373, 61920, 61107, 61462,
+                                                                 61820, 62817, 62301],
                                                         'ems' : [7, 7, 8, 8, 11, 2, 7,
                                                                  10, 1, 2, 3, 8, 5, 10,
                                                                  7, 3, 9, 2, 8, 2, 3,
@@ -199,7 +201,9 @@ def get_ems_counties_and_zips() :
                                                                  3, 4, 4, 7, 10, 2, 9,
                                                                  8, 5, 6, 5, 2, 3, 5,
                                                                  1, 10, 10, 8, 10, 1, 6,
-                                                                 10, 3, 5, 10]})], sort=True)
+                                                                 10, 3, 5, 10, 4, 10, 6,
+                                                                 10, 10, 2, 2, 6, 1, 2,
+                                                                 6, 5, 3]})], sort=True)
     ems_zip_df['zip'] = ems_zip_df['zip'].astype(int)
     ems_zip_df = ems_zip_df.sort_values(by='zip')
 
@@ -222,8 +226,8 @@ def apply_ems() :
                 return ems_zip_df[ems_zip_df['zip'] == z]['ems'].values[0]
             elif z-1 in ems_zip_df['zip'].values :
                 return ems_zip_df[ems_zip_df['zip'] == z-1]['ems'].values[0]
-            elif z < 60000 or z > 63000 :
-                return 11
+            # elif z < 60000 or z > 63000 :
+            #     return 11
             elif z >= 60600 and z < 60700 :
                 return 11
             else :
@@ -324,15 +328,15 @@ def generate_combo_LL_agg_csv() :
 
 if __name__ == '__main__' :
 
-    apply_ems()
+    # apply_ems()
     # exit()
 
-    assign_covid_region()
-    # df = load_cleaned_line_list()
+    # assign_covid_region()
+    df = load_cleaned_line_list()
     # df = df[df['covid_region'] < 1]
     # print(df[['patient_home_zip', 'county_at_onset', 'EMS', 'covid_region']].to_string())
 
-    df = load_cleaned_line_list()
+    # df = load_line_list()
     del df['race']
     del df['ethnicity']
     df = df.drop_duplicates()
