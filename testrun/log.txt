@@ -1,0 +1,34 @@
+CMS Framework version: 1.0.176.23 clorton (CMS/Main/framework)
+CLR Runtime Version: 4.0.30319.42000 (64-bit)
+Model:    C:\Users\HP1\Documents\covid-chicago\testrun\simplemodel.emodl
+Solver:   B
+Config:   C:\Users\HP1\Documents\covid-chicago\testrun\simplemodel.cfg
+Duration: 365
+Samples:  365
+Runs:     5
+Working Directory: .
+
+Current directory: C:\Users\HP1\Documents\covid-chicago\testrun
+Loading EMODL file 'C:\Users\HP1\Documents\covid-chicago\testrun\simplemodel.emodl'.
+Parsing model 'seir.emodl'...
+New parameter: time = 0.0
+New parameter: pi = 3.14159265
+New species: 'S'
+New species: 'E'
+New species: 'I'
+New species: 'R'
+New parameter: Ki = 0.0005
+New parameter: Kl = 0.2
+New parameter: Kr = 0.14285714285714285
+New parameter: Kw = 0.007407407407407408
+...finished parsing 'seir.emodl'.
+Finished loading file.
+Starting simulation...
+Using AESCOUNTER PRNG (0, 0).
+Using solver B-Leaping
+ 20% (1 trajectories calculated)
+ 40% (2 trajectories calculated)
+ 60% (3 trajectories calculated)
+ 80% (4 trajectories calculated)
+Running time for ensemble of 5 realizations: 00:00:01.8286687 
+...finished simulation.
