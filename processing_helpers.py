@@ -6,6 +6,21 @@ from datetime import datetime, timedelta
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+def merge_county_covidregions(df_x, key_x='region', key_y='County'):
+    """ Add covidregions (new_restore_regions from covidregion_population_by_county.csv)
+    to a file that only includes counties. Country names are changes to lowercase before the merge.
+    Keeps all rows from df_x and only those that match from df_y (left join).
+    """
+
+    df_y = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'EMS Population','covidregion_population_by_county.csv'))
+
+    df_x[key_x] = df_x[key_x] .str.lower()
+    df_y[key_y] = df_y[key_y] .str.lower()
+
+    df = pd.merge(how='left', left=df_x, left_on=key_x, right=df_y, right_on=key_y)
+
+    return df
+
 def get_latest_LLfiledate(file_path, split_string ='_jg_' , file_pattern='aggregated_covidregion.csv'):
 
     files= os.listdir(file_path)

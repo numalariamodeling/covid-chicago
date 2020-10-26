@@ -117,7 +117,10 @@ def load_ref_df(ems_nr):
     LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
     ref_df_ll = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
 
-    ref_df_cli  = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports','CLI_admissions_by_covidregion.csv'))
+    ref_df_cli = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'CLI_admissions.csv'))
+    ref_df_cli = merge_county_covidregions(df_x=ref_df_cli, key_x='region', key_y='County')
+    ref_df_cli = ref_df_cli.groupby(['date','new_restore_region'])['inpatient'].agg(np.sum).reset_index()
+    ref_df_cli = ref_df_cli.rename(columns={'new_restore_region': 'covidregion'})
 
     if ems_nr > 0:
         ref_df_ll = ref_df_ll[ref_df_ll['covid_region'] == ems_nr]
