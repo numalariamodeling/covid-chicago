@@ -72,14 +72,14 @@ if __name__ == '__main__':
     #lagtime_days ="15"
     
     VarsToKeep = ['startdate', 'time', 'scen_num','sample_num', 'run_num']
-    moreVarsToKeep = ['reopening_multiplier_4'] #['capacity_multiplier', 'reopening_multiplier_4','reduced_inf_of_det_cases_ct1', 'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
+    moreVarsToKeep = ['time_to_infectious'] #['capacity_multiplier', 'reopening_multiplier_4','reduced_inf_of_det_cases_ct1', 'change_testDelay_Sym_1', 'change_testDelay_As_1', 'd_Sym_ct1', 'd_AsP_ct1']
     VarsToKeep = VarsToKeep + moreVarsToKeep
 
     exp_names = [x for x in os.listdir(os.path.join(sim_output_path)) if stem in x]
     for exp_name in exp_names:
         exp_dir = os.path.join(sim_output_path, exp_name)
         trim_trajectories_Dat(exp_dir=exp_dir, VarsToKeep=VarsToKeep, keepTimes=keepTimes, lagtime_days=lagtime_days)
-        if os.path.exists(exp_dir, 'trajectoriesDat_trim.csv') :
+        if os.path.exists(os.path.join(exp_dir, 'trajectoriesDat_trim.csv')) :
             print('trajectoriesDat_trim.csv successfully generated')
         else :
             print('ERROR trajectoriesDat_trim.csv not generated')
