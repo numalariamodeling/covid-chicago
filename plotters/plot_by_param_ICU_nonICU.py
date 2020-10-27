@@ -15,8 +15,8 @@ mpl.rcParams['pdf.fonttype'] = 42
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
-first_plot_day = date(2020, 7, 15)
-last_plot_day = date(2020, 10, 15)
+first_plot_day = date(2020, 8, 1)
+last_plot_day = date(2020, 12, 30)
 
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajectoriesDat_trim.csv', input_sim_output_path =None) :
@@ -80,22 +80,22 @@ def compare_ems( ems,channel):
 
 def plot_covidregions(channel,subgroups, psuffix) :
 
-    fig = plt.figure(figsize=(16, 8))
+    fig = plt.figure(figsize=(14, 12))
     fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.95, bottom=0.07)
     palette = sns.color_palette('Set1', len(exp_names))
-    axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(subgroups))]
+    #axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(subgroups))]
+    axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
 
     for c, region_suffix in enumerate(subgroups) :
 
         region_label= region_suffix.replace('_EMS-', 'covid region ')
         ems = int(region_suffix.replace('_EMS-', ''))
 
-
         for d, exp_name in enumerate(exp_names) :
             sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
             df = load_sim_data(exp_name, region_suffix=region_suffix)
             exp_name_label =  int(exp_name.split('_')[0])
-            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems, panel_heading = region_label, label=exp_name_label)
+            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems, panel_heading = region_label, label="")
 
         axes[-1].legend()
         #fig.suptitle(x=0.5, y=0.999,t=channel)
@@ -104,13 +104,40 @@ def plot_covidregions(channel,subgroups, psuffix) :
     plt.savefig(os.path.join(sim_output_path, 'covidregion_'+psuffix+'_%s.png' % channel))
     plt.savefig(os.path.join(sim_output_path, 'covidregion'+psuffix+'_%s.pdf' % channel))
 
+def plot_covidregions_both(subgroups, plot_name) :
+
+    fig = plt.figure(figsize=(10, 4))
+    fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.6, bottom=0.07)
+    axes = [fig.add_subplot(1, 2, x + 1) for x in range(2)]
+
+    region_suffix =subgroups[0]
+    region_label= region_suffix.replace('_EMS-', 'covid region ')
+    ems_nr = int(region_suffix.replace('_EMS-', ''))
+
+    for d, exp_name in enumerate(exp_names) :
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        df = load_sim_data(exp_name, region_suffix=region_suffix)
+        exp_name_label =  int(exp_name.split('_')[0])
+        plot_on_fig2(df, axes, ems_nr=ems_nr,  label=exp_name_label)
+
+    #axes[-1].legend()
+    fig.suptitle(f'{region_label}\n', x=0.5, y=0.990)
+    #plt.tight_layout(rect=[0, 0, 0, .95])
+    plt.tight_layout()
+
+    plt.savefig(os.path.join(sim_output_path, plot_name))
+    plt.savefig(os.path.join(sim_output_path, plot_name))
+
 
 if __name__ == '__main__' :
 
-    exp_names = ['20200910_IL_test_v3']
+    exp_names = ['20201020_IL_mr_baseline']
 
     covidregionlist = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9', '_EMS-10', '_EMS-11']
     #covidregionlist = ['_EMS-1', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-9']
 
-    plot_covidregions(channel='crit_det', subgroups = covidregionlist, psuffix ='_AugOct')
-    plot_covidregions(channel='hosp_det', subgroups = covidregionlist,  psuffix ='_AugOct')
+    plot_covidregions(channel='crit_det', subgroups = covidregionlist, psuffix ='AugDec')
+    plot_covidregions(channel='hosp_det', subgroups = covidregionlist,  psuffix ='AugDec')
+    #plot_covidregions_both(subgroups = ['_EMS-10'],  plot_name ='covidregion_10_ICU_nonICU_AugDec')
+    #plot_covidregions_both(subgroups = ['_EMS-11'],  plot_name ='covidregion_11_ICU_nonICU_AugDec')
+    #plt.show()
