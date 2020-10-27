@@ -194,34 +194,37 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     return adf
 
 
-def load_capacity(ems, simdate='20200929') :
+def load_capacity(ems):
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
-    
-    fname = 'capacity_weekday_average_' + simdate + '.csv'
+
+    file_path = os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds')
+    files = os.listdir(file_path)
+    filedates = [item.replace('capacity_weekday_average_', '') for item in files]
+    filedates = [item.replace('.csv', '') for item in filedates]
+    latest_filedate = max([int(x) for x in filedates])
+
+    fname = 'capacity_weekday_average_' + str(latest_filedate) + '.csv'
     ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds/', fname)
     df = pd.read_csv(ems_fname)
 
-    df = df[df['overflow_threshold_percent']==1]
+    df = df[df['overflow_threshold_percent'] == 1]
     df['ems'] = df['geography_modeled']
     df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
-    df =  df[['ems','resource_type','avg_resource_available']]
+    df = df[['ems', 'resource_type', 'avg_resource_available']]
     df = df.drop_duplicates()
-   # df = df.sort_values(by=['ems'])
+
     df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available')
 
     df.index.name = 'ems'
     df.reset_index(inplace=True)
 
-    if ems =='illinois' :
-        df['grp']= 'illinois'
-        df = df.groupby('grp')[['hb_availforcovid','icu_availforcovid']].agg(np.sum).reset_index()
+    if ems == 'illinois':
+        df['ems'] = 'illinois'
+    df = df.groupby('ems')[['hb_availforcovid', 'icu_availforcovid']].agg(np.sum).reset_index()
     if ems != 'illinois':
         df = df[df['ems'] == str(ems)]
 
-    capacity = {
-            'hospitalized' :  int(df['hb_availforcovid']),
-            'critical' : int(df['icu_availforcovid'])
-    }
+    capacity = {'hospitalized': int(df['hb_availforcovid']), 'critical': int(df['icu_availforcovid'])}
     return capacity
 
 
