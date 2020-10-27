@@ -22,14 +22,13 @@ if (runInBatchMode) {
 setwd(workingDir)
 source("load_paths.R")
 
-
-NU_civis_outputs <- file.path(project_path, "NU_civis_outputs/")
-outdir <- file.path(project_path, "Plots + Graphs/Rt_plots")
-
-
 today <- Sys.Date()
 simdate <- gsub("-", "", today) # "2020-10-20"
 simdate_lastweek <- gsub("-", "", today - 7) # "20201006"
+
+
+NU_civis_outputs <- file.path(project_path, "NU_civis_outputs/")
+outdir <- file.path(project_path, "NU_cdph_outputs",simdate)
 
 
 customTheme <- theme(

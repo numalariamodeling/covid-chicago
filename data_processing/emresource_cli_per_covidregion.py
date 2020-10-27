@@ -19,9 +19,13 @@ first_plot_day = pd.to_datetime(date(2020, 7, 15))
 last_plot_day = pd.to_datetime(date(2020, 10,10))
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-plotdir = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
+#plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
+plot_path = os.path.join(projectpath, 'NU_cdph_outputs', datetoday)
 
-def plot_emresource(ems_list,scale='') :
+if not os.path.exists(plot_path):
+    os.makedirs(plot_path)
+
+def plot_emresource(ems_list, scale=''):
 
     ref_df = pd.DataFrame()
     for ems_nr in ems_list :
@@ -65,12 +69,12 @@ def plot_emresource(ems_list,scale='') :
         ax.legend(loc='upper left', shadow=False, ncol=1)
 
     regions = '-'.join(map(str, ems_list))
-    fig.savefig(os.path.join(plotdir, f'EMResource_and_CLI_covidregion_{regions}_{scale}.png'))
-    fig.savefig(os.path.join(plotdir, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
+    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.png'))
+    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
 
 if __name__ == '__main__' :
 
-    plot_emresource(ems_list=[10,11], scale='nolog')
-    plot_emresource(ems_list=[10,11],scale='log')
-    plt.show()
+    plot_emresource(ems_list=[10, 11], scale='nolog')
+    plot_emresource(ems_list=[10, 11],scale='log')
+    #plt.show()
 
