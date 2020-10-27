@@ -64,47 +64,6 @@ def load_sim_data(exp_name, ems_nr, fname, input_wdir=None,  input_sim_output_pa
 
     return df
 
-def load_ref_df(ems_nr):
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
-
-    if ems_nr > 0:
-        ref_df = ref_df[ref_df['covid_region'] == ems_nr]
-    else:
-        ref_df = ref_df.groupby('date_of_extract').agg(np.sum).reset_index()
-    ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
-    data_channel_names_emr = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu']
-    ref_df = ref_df.groupby('date_of_extract')[data_channel_names_emr].agg(np.sum).reset_index()
-    ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
-    ref_df_emr = ref_df
-
-    LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
-    ref_df_ll = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
-
-    ref_df_cli = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'CLI_admissions.csv'))
-    ref_df_cli = merge_county_covidregions(df_x=ref_df_cli, key_x='region', key_y='County')
-    ref_df_cli = ref_df_cli.groupby(['date','new_restore_region'])['inpatient'].agg(np.sum).reset_index()
-    ref_df_cli = ref_df_cli.rename(columns={'new_restore_region': 'covidregion'})
-
-    if ems_nr > 0:
-        ref_df_ll = ref_df_ll[ref_df_ll['covid_region'] == ems_nr]
-    else:
-        ref_df_ll = ref_df_ll.groupby('date').agg(np.sum).reset_index()
-    ref_df_ll['date'] = pd.to_datetime(ref_df_ll['date'])
-    ref_df_cli['date'] = pd.to_datetime(ref_df_cli['date'])
-
-    if ems_nr > 0:
-        ref_df_cli = ref_df_cli[ref_df_cli['covidregion'] == ems_nr]
-    else:
-        ref_df_cli = ref_df_cli.groupby('date').agg(np.sum).reset_index()
-
-    ref_df = pd.merge(how='outer', left=ref_df_ll, left_on='date', right=ref_df_emr, right_on='date')
-    ref_df = pd.merge(how='outer', left=ref_df, left_on='date', right=ref_df_cli, right_on='date')
-
-    ref_df = ref_df.sort_values('date')
-
-    return ref_df
-
-
 def plot_sim_and_ref(exp_names, ems_nr,
                      first_plot_day=first_plot_day,last_plot_day=last_plot_day,
                      ymax=10000, logscale=True, fname="trajectoriesDat.csv"):
