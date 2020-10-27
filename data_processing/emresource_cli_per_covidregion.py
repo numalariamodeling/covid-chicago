@@ -1,3 +1,4 @@
+import argparse
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,16 +15,21 @@ from processing_helpers import *
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 
-datetoday = (str(today.year) + str(today.month) + str(today.day))
 first_plot_day = pd.to_datetime(date(2020, 7, 15))
 last_plot_day = pd.to_datetime(date(2020, 10,10))
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-#plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
-plot_path = os.path.join(projectpath, 'NU_cdph_outputs', datetoday)
 
-if not os.path.exists(plot_path):
-    os.makedirs(plot_path)
+def parse_args():
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument(
+        "--cdph_date",
+        type=str,
+        help="i.e 20201026",
+        default=None
+    )
+    return parser.parse_args()
 
 def plot_emresource(ems_list, scale=''):
 
@@ -73,6 +79,17 @@ def plot_emresource(ems_list, scale=''):
     fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
 
 if __name__ == '__main__' :
+
+    args = parse_args()
+    datetoday = args.cdph_date
+    if datetoday == None :
+        datetoday = (str(today.year) + str(today.month) + str(today.day))
+
+    # plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
+    plot_path = os.path.join(projectpath, 'NU_cdph_outputs', datetoday)
+
+    if not os.path.exists(plot_path):
+        os.makedirs(plot_path)
 
     plot_emresource(ems_list=[10, 11], scale='nolog')
     plot_emresource(ems_list=[10, 11],scale='log')
