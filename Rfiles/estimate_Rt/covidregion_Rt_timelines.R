@@ -7,29 +7,30 @@ library(data.table)
 library(cowplot)
 
 
-runInBatchMode <- FALSE
+runInBatchMode <- TRUE
 
 if (runInBatchMode) {
   cmd_agrs <- commandArgs()
   length(cmd_agrs)
-  Location <- cmd_agrs[length(cmd_agrs) - 1]
   workingDir <- cmd_agrs[length(cmd_agrs)]
 } else {
-  Location <- "Local"
+  today <- Sys.Date()
   workingDir <- getwd() ## Location of gitrepository covid-chicago/Rfiles
 }
 
-setwd(workingDir)
-source("load_paths.R")
-
-today <- Sys.Date()
-simdate <- gsub("-", "", today) # "2020-10-20"
-simdate_lastweek <- gsub("-", "", today - 7) # "20201006"
+print(workingDir)
+source(file.path(workingDir,"load_paths.R"))
 
 
 NU_civis_outputs <- file.path(project_path, "NU_civis_outputs/")
-outdir <- file.path(project_path, "NU_cdph_outputs",simdate)
 
+today <- Sys.Date()
+NUdirs <- list.files(NU_civis_outputs)
+simdate <- NUdirs[length(NUdirs)]
+simdate_lastweek <-  NUdirs[length(NUdirs)-1]
+
+outdir <- file.path(project_path, "NU_cdph_outputs",simdate)
+if(!dir.exists(outdir))dir.create(outdir)
 
 customTheme <- theme(
   strip.text.x = element_text(size = 14, face = "bold"),
@@ -47,6 +48,9 @@ customTheme <- theme(
 
 f_generateTimeline_plot <- function(selected_region,  addLastWeek = T, plot_stop_date = today , changepoint1 = as.Date("2020-08-25"),  changepoint2 = as.Date("2020-09-17")) {
   
+  plot_title = gsub("covidregion_","Region ", selected_region)
+  if(selected_region=="covidregion_11") plot_title <- "Chicago"
+    
   dat <- fread(file.path(NU_civis_outputs, paste0(simdate, "/csv/nu_", simdate, ".csv"))) %>%
     mutate(date = as.Date(as.character(date), format = "%Y-%m-%d")) %>%
     filter(
@@ -69,7 +73,7 @@ f_generateTimeline_plot <- function(selected_region,  addLastWeek = T, plot_stop
     geom_ribbon(aes(x = date, ymin = rt_lower, ymax = rt_upper), fill = "deepskyblue4", alpha = 0.3) +
     geom_line(aes(x = date, y = rt_median), col = "deepskyblue4", size = 1) +
     labs(
-      title = "Region 10",
+      title = plot_title,
       subtitle = paste0("Estimated Rt using NU's COVID-19 transmission model \nEstimated Rt for Oct 21th: ", round(currentRt$rt_median, 3), " (95%CI: ", round(currentRt$rt_lower, 3), " - ", round(currentRt$rt_upper, 3), ")"),
       x = "", caption = paste0("Fitting point: Time in the simulation model at which the transmission rate is changed to match the observed data trends (~ 1 fitting point per month)\nModel fitted to hospital inpatient census, intensive care unit census data and reported deaths\nRt estimated based on predicted new infections using EpiEstim with an uncertain SI distribution\nLag time between infections and hospitalizations and selected fitting points affect estimated Rt for the previous weeks\nPlot truncated in March, before March 15th Rt was estimated at ", round(initialRt_worst$rt_median, 3), " (95%CI: ", round(initialRt_worst$rt_lower, 3), " - ", round(initialRt_worst$rt_upper, 3), ")\n"),
       y = expr(italic(R[t]))
@@ -82,9 +86,9 @@ f_generateTimeline_plot <- function(selected_region,  addLastWeek = T, plot_stop
 
 
   if (plot_stop_date > today) {
-    future_textpoint <- as.Date("2020-11-20")
-    p1 <- p1 + geom_rect(xmin = as.Date("2020-10-20"), xmax = Inf, ymin = -Inf, ymax = Inf, fill = "grey", alpha = 0.01) +
-      annotate("text", x = textpoint, y = 1.4, label = "future prediction\nif current trend continues", col = "grey15", size = 4, alpha = 0.5)
+    future_textpoint <- plot_stop_date -10
+    p1 <- p1 + geom_rect(xmin = as.Date(today), xmax = Inf, ymin = -Inf, ymax = Inf, fill = "grey", alpha = 0.01) +
+      annotate("text", x = future_textpoint, y = 1.4, label = "future prediction\nif current trend continues", col = "grey15", size = 4, alpha = 0.5)
   }
 
   if (addLastWeek) {
@@ -96,15 +100,15 @@ f_generateTimeline_plot <- function(selected_region,  addLastWeek = T, plot_stop
 
     p1 <- p1 + geom_line(data = dat_lastweek, aes(x = date, y = rt_median), col = "deepskyblue4", size = 1, linetype = "dashed", alpha = 0.5) +
       geom_ribbon(data = dat_lastweek, aes(x = date, ymin = rt_lower, ymax = rt_upper), fill = "deepskyblue4", alpha = 0.1) +
-      annotate("text", x = textpoint + 5, y = 0.985, label = "last week's fit", col = "deepskyblue4", size = 4, alpha = 0.5) +
-      annotate("text", x = textpoint + 5, y = 1.06, label = "this week's fit", col = "deepskyblue4", size = 4, alpha = 0.9)
+      annotate("text", x = today - 5, y = 0.985, label = "last week's fit", col = "deepskyblue4", size = 4, alpha = 0.5) +
+      annotate("text", x = today - 5, y = 1.06, label = "this week's fit", col = "deepskyblue4", size = 4, alpha = 0.9)
   }
 
 
-  ggsave(paste0(simdate, "_Rt_region10", ".png"),
+  ggsave(paste0(simdate, "_Rt_",selected_region, ".png"),
     plot = p1, path = file.path(outdir), width = 10, height = 6, device = "png"
   )
-  ggsave(paste0(simdate, "_Rt_region10", ".pdf"),
+  ggsave(paste0(simdate, "_Rt_",selected_region, ".pdf"),
     plot = p1, path = file.path(outdir), width = 10, height = 6, device = "pdf"
   )
 }
