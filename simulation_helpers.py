@@ -232,12 +232,17 @@ echo end""")
             file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/compare_simulation_iterations.R" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/5_runProcessForCivis_optional.txt" \n')
 
             copy_from_dir = os.path.join(sim_output_path, f'nu_cdph_Rt_{today.strftime("%Y%m%d")}.csv')
+            copy_from_dir_10 = os.path.join(sim_output_path, 'compare_to_data_covidregion_10.png')
+            copy_from_dir_11 = os.path.join(sim_output_path, 'compare_to_data_covidregion_11.png')
             copy_to_dir = os.path.join(wdir, 'cms_sim/NU_cdph_outputs',today.strftime("%Y%m%d"))
+
             file = open(os.path.join(temp_exp_dir, '5_runProcessFor_CDPH.bat'), 'w')
             file.write(f'\ncd {data_plotters_dir} \n python "emresource_cli_per_covidregion.py" --cdph_date "{today.strftime("%Y%m%d")}"')
             file.write(f'\ncd {plotters_dir} \n python "plot_by_param_ICU_nonICU.py" --exp_names "{exp_name}"')
             file.write(f'\ncd {rfiles_dir}/estimate_Rt \n R --vanilla -f "covidregion_Rt_timelines.R" "{rfiles_dir}"')
             file.write(f'\ncopy {copy_from_dir} {copy_to_dir}')
+            file.write(f'\ncopy {copy_from_dir_10} {copy_to_dir}')
+            file.write(f'\ncopy {copy_from_dir_11} {copy_to_dir}')
             file.write('\npause')
 
 
