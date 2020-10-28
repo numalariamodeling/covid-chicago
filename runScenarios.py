@@ -596,30 +596,42 @@ if __name__ == '__main__':
 
         if args.post_process == 'dataComparison':
             log.info("Compare to data")
-            p0 = os.path.join(sim_output_path, 'runDataComparison.bat')
+            p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
             subprocess.call([p0])
 
         if args.post_process == 'processForCivis':
 
+            log.info("Trim trajectories")
+            p0 = os.path.join(sim_output_path, '0_runTrimTrajectories.bat')
+            subprocess.call([p0])
+
             log.info("Compare to data")
-            p0 = os.path.join(sim_output_path, 'runDataComparison.bat')
+            p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
             subprocess.call([p0])
 
             log.info("Process for civis - csv file")
-            p1 = os.path.join(sim_output_path, 'runProcessForCivis_1.bat')
+            p1 = os.path.join(sim_output_path, '1_runProcessForCivis.bat')
             subprocess.call([p1])
 
             log.info("Process for civis - overflow probabilities")
-            p2 = os.path.join(sim_output_path, 'runProcessForCivis_2.bat')
+            p2 = os.path.join(sim_output_path, '2_runProcessForCivis.bat')
             subprocess.call([p2])
 
             log.info("Process for civis - Rt estimation")
-            p3 = os.path.join(sim_output_path, 'runProcessForCivis_3.bat')
+            p3 = os.path.join(sim_output_path, '3_runProcessForCivis.bat')
             subprocess.call([p3])
 
             log.info("Process for civis - file copy and changelog")
-            p4 = os.path.join(sim_output_path, 'runProcessForCivis_4.bat')
+            p4 = os.path.join(sim_output_path, '4_runProcessForCivis.bat')
             subprocess.call([p4])
+
+            log.info("Process for civis - iteration comparison figure")
+            p5 = os.path.join(sim_output_path, '5_runProcessForCivis_optional.bat')
+            subprocess.call([p5])
+
+            log.info("Process for civis - plots region 10 and 11")
+            p6 = os.path.join(sim_output_path, '5_runProcessFor_CDPH.bat')
+            subprocess.call([p6])
 
 
 
