@@ -9,6 +9,9 @@ compares the predicted number of new detected hospitalized cases, cumulative det
 - [data_comparison_spatial.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) 
 compares the predicted number of new detected hospitalized cases, cumulative detections of hospitalized cases, total number of case hospitalizations and number of critical cases to hospital data and case reports for all EMS regions (using locale emodl) 
 
+- [data_comparison_spatial2.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial2.py) 
+same as data_comparison_spatial.py, for comparing two or more experiments (runs slow)
+
 #### Comparison multiple simulation experiments 
 - [plot_split_by_param](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param.py)
 Takes two experiment simulations and compares generates a plot comparing the trajectories of both
@@ -55,19 +58,35 @@ Reads in several EMS specific simulation experiments and sums the trajectores to
 - [process_for_civis_EMSgrp.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py)
 (1) Generate aggregated csv file in specified format
 - [overflow_probabilities.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_probabilities.py)
-(2) Calculate overflow probabilities for ICU and non ICU capacity
+(2a) Calculate overflow probabilities for ICU and non-ICU COVID beds available
+- [overflow_numbers.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_numbers.py)
+(2b) Calculate total numbers above/below capacity for ICU and non-ICU COVID beds available
 - [get_Rt_forCivisOutputs.R](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/estimate_Rt/get_Rt_forCivisOutputs.R) (Rscript in Rfiles folder!)
 (3) Estimate Rt from aggregated csv file (new_cases)
 - [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py)
 (4) Generate output folder and copy required files and create changelog
 
+#### Process-for-cdph scripts
+- [emresource_cli_per_covidregion.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/emresource_cli_per_covidregion.py) (data_plotters folder)
+(1) Timeline of EMresource ICU and non-ICU as welll as IDP CLI admission for region 10 and 11 over time (no simulations)
+- [plot_by_param_ICU_nonICU.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_by_param_ICU_nonICU.py)
+(2) Past weeks + forecast timeline of EMresource ICU and non-ICU data compared to predictions for region 10 and 11 ( as well as other regions, script modified to do both)
+- [covidregion_Rt_timelines.R](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_numbers.py)
+(3) Plot Rt for region 10 and 11 (or others to specify) over time with descriptive caption and headings
+- infection_detection_rate  
+(4) Estimated fraction of infections detected, estimated from CFR and IFR
+
+
 #### Further scripts 
+- [plot_prevalence.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_prevalence.py)
+- [plot_split_by_channel.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_channel.py)
+- [plot_split_by_param_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param_trajectories.py)
+- [plot_single_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_single_trajectories.py)
 - trim_trajectoriesDat.py
 - county_estimation.py
 - generate_trajectories_for_dash.py
 - Ki_map.py and  ki_red_map.py
 - scenario_sets.py and mixed_reopening_scenarios.py
 - safegrafe_awaytime_map.py
-
-
+- ...
 

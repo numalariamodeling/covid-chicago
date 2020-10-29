@@ -12,6 +12,9 @@ def createFolder() :
         os.makedirs(os.path.join(NUcivis_dir, "csv"))
         os.makedirs(os.path.join(NUcivis_dir, "trajectories"))
 
+    if not os.path.exists(NUcdph_dir):
+        os.makedirs(NUcdph_dir)
+
 def copyFiles():
     fname1 = f'nu_{simdate}.csv'
     fname2 = f'nu_hospitaloverflow_{simdate}.csv'
@@ -33,21 +36,29 @@ def writeChangelog(A1=None,A2=None, A3=None, A4=None, A5=None, A6=None):
     Q1 = "1) How has the date range of data used changed since your last update?"
     Q2 = "2) How have data sources changed since your last update?"
     Q3 = "3) What important changes have you made in your methodology since the last update?"
-    Q4 = "4) Which of these changes do you think are most important in driving differences between previous forecasts and current forecasts?"
+    Q4 = "4) Which of these changes do you think are most important in driving differences between previous " \
+         "forecasts and current forecasts?"
     Q5 = "5) Relevant time events in the simulations"
     Q6 = "Scenarios"
 
     if A1 == None :A1 = "- another week of EMresource and LL data"
-    if A2 == None :A2 = "- same as last week"
+    if A2 == None :A2 = "- same as last week, also using CLI admissions"
     if A3 == None :A3 = "- updated fitting "
     if A4 == None :A4 = "..."
-    if A5 == None :  A5 = "- Reduction in transmission rate due to 'shelter in place policies': 2020-03-12, 2020-03-17, 2020-03-21, 2020-04-21 " \
-         "\n- Change in transmission rate during reopening period : 2020-06-21 ,2020-07-25, 2020-08-25 " \
-         "\n- Decrease in cfr : 2020-06-01 , 2020-07-01"
-    if A6 == None : A6 = "- No additional scenarios "
+    if A5 == None :  A5 = "- Reduction in transmission rate due to 'shelter in place policies': " \
+                          "2020-03-12, 2020-03-17, 2020-03-21, 2020-04-21" \
+                          "\n- Change in transmission rate during reopening period : " \
+                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10 "\
+                          "\n- Decrease in cfr : 2020-06-01 , 2020-07-01"
+    if A6 == None : A6 = "- No additional scenarios"
 
 
     file = open(os.path.join(NUcivis_dir, 'changelog.txt'), 'w')
+    file.write(f'Northwestern University COVID-19 Modelling Team \n\n Date: {simdate} \n\n '
+               f'{Q1} \n {A1} \n \n {Q2} \n {A2} \n \n {Q3} \n {A3} \n \n {Q4} \n {A4} \n \n {Q5} \n {A5}  \n \n {Q6} \n {A6}')
+    file.close()
+
+    file = open(os.path.join(NUcdph_dir, 'changelog.txt'), 'w')
     file.write(f'Northwestern University COVID-19 Modelling Team \n\n Date: {simdate} \n\n '
                f'{Q1} \n {A1} \n \n {Q2} \n {A2} \n \n {Q3} \n {A3} \n \n {Q4} \n {A4} \n \n {Q5} \n {A5}  \n \n {Q6} \n {A6}')
     file.close()
@@ -65,6 +76,7 @@ if __name__ == '__main__' :
     fname = f"nu_{simdate}.csv"
     exp_dir = os.path.join(wdir,"simulation_output", exp_name)
     NUcivis_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate)
+    NUcdph_dir = os.path.join(projectpath, 'NU_cdph_outputs', simdate)
 
     createFolder()
     copyFiles()
