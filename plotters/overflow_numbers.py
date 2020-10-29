@@ -24,10 +24,11 @@ def load_sim_data(exp_name, input_wdir=None, input_sim_output_path=None):
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, 'nu_20201027.csv'))
+    df = pd.read_csv(os.path.join(sim_output_path, f'nu_{str(exp_name[:8])}.csv'))
     return df
 
-def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds')):
+def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
+                                               'hospital_capacity_thresholds')):
     files = os.listdir(file_path)
     filedates = [item.replace('capacity_weekday_average_', '') for item in files]
     filedates = [item.replace('.csv', '') for item in filedates]
@@ -73,8 +74,10 @@ def get_plot(selected_resource_type='hb_availforcovid', errorbars=True):
         #ax.bar(mdf_1['region'], mdf_1['number_that_exceed_median'], 1, label='1')
 
         if errorbars:
-            ax.bar(mdf_2['region'], mdf_2['number_that_exceed_median'], 1, yerr=mdf_2['myerr'], label='0.75', linewidth=1)
-            ax.bar(mdf_2b['region'], mdf_2b['number_that_exceed_median'], 1, color='red', yerr=mdf_2b['myerr'], label='0.75', linewidth=1)
+            ax.bar(mdf_2['region'], mdf_2['number_that_exceed_median'], 1, yerr=mdf_2['myerr'], label='0.75',
+                   linewidth=1)
+            ax.bar(mdf_2b['region'], mdf_2b['number_that_exceed_median'], 1, color='red', yerr=mdf_2b['myerr'],
+                   label='0.75', linewidth=1)
             plotname = f'covidregion_overflow_numbers_{selected_resource_type}'
         else:
             ax.bar(mdf_2['region'], mdf_2['number_that_exceed_median'], 1, label='0.75', linewidth=1)
@@ -83,8 +86,8 @@ def get_plot(selected_resource_type='hb_availforcovid', errorbars=True):
 
     fig.tight_layout()
     exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
-    fig.savefig(os.path.join(exp_dir, f'{plotname}.png'))
-    fig.savefig(os.path.join(exp_dir, f'{plotname}.pdf'))
+    fig.savefig(os.path.join(exp_dir, '_plots',f'{plotname}.png'))
+    fig.savefig(os.path.join(exp_dir, '_plots', f'{plotname}.pdf'))
 
 def get_numbers(exp_name, load_template=False):
     trajectories = load_sim_data(exp_name)  # pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
@@ -92,9 +95,11 @@ def get_numbers(exp_name, load_template=False):
     if load_template:
         filedate = get_latest_filedate()
         civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
-                                                  'hospital_capacity_thresholds',f'capacity_weekday_average_{filedate}.csv'))
+                                                  'hospital_capacity_thresholds',
+                                                  f'capacity_weekday_average_{filedate}.csv'))
     else:
-        civis_template = pd.read_csv(os.path.join(wdir,'simulation_output', exp_name, f'nu_hospitaloverflow_{str(exp_name[:8])}.csv'))
+        civis_template = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name,
+                                                  f'nu_hospitaloverflow_{str(exp_name[:8])}.csv'))
 
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
     civis_template['number_that_exceed_median'] = ''
@@ -123,7 +128,8 @@ def get_numbers(exp_name, load_template=False):
         civis_template.loc[index, 'number_that_exceed_upper'] =  thresh- int(new[f'{metric_root}_upper'])
 
     #civis_template['scenario_name'] = trajectories['scenario_name'].unique()
-    civis_template.to_csv(os.path.join(wdir, 'simulation_output', exp_name, f'nu_hospitaloverflow_{str(exp_name[:8])}.csv'), index=False)
+    civis_template.to_csv(os.path.join(wdir, 'simulation_output', exp_name,
+                                       f'nu_hospitaloverflow_{str(exp_name[:8])}.csv'), index=False)
     return civis_template
 
 
@@ -131,12 +137,12 @@ def get_numbers(exp_name, load_template=False):
 if __name__ == '__main__':
     stem = sys.argv[1]
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    #exp_names = ['20201027_IL_mr_baseline']
+    #exp_names = ['20201028_IL_rollback_toki8']
 
     for exp_name in exp_names:
         civis_template = get_numbers(exp_name)
         get_plot(selected_resource_type='icu_availforcovid')
         get_plot(selected_resource_type='hb_availforcovid')
-        get_plot(selected_resource_type='icu_availforcovid',errorbars=False)
-        get_plot(selected_resource_type='hb_availforcovid',errorbars=False)
+        get_plot(selected_resource_type='icu_availforcovid', errorbars=False)
+        get_plot(selected_resource_type='hb_availforcovid', errorbars=False)
 
