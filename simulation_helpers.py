@@ -312,7 +312,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
     file.close()
 
-    pycommand = f'\npython {plotters_dir}overflow_probabilities.py "{exp_name}"'
+    pycommand = f'\npython {plotters_dir}overflow_probabilities.py "{exp_name}"' \
+                f'\npython {plotters_dir}overflow_numbers.py "{exp_name}"'
     file = open(os.path.join(temp_exp_dir, '2_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
     file.close()
