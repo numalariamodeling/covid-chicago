@@ -891,6 +891,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (param Ki_red7 (* Ki @ki_multiplier_7@))
 (param Ki_red8 (* Ki @ki_multiplier_8@))
 (param Ki_red9 (* Ki @ki_multiplier_9@))
+(param Ki_red10 (* Ki @ki_multiplier_10@))
 
 (param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
 (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
@@ -903,6 +904,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki Ki_red9)))
+(time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki Ki_red10)))
 """
 
     rollback_str = """

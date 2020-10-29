@@ -307,6 +307,7 @@ These batch files are automatically generated when running the spatial model usi
 ## 6. Model updates
 
 ### Updates in model structure and fitted parameters
+- 20201027 updated parameter fit 
 - 20201020 updated parameter fit 
 - 20201015 updated parameter fit and reset fitting method
 - 20201007 updated parameter fit
