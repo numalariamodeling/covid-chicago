@@ -279,8 +279,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
     plotters_dir = os.path.join(git_dir, "plotters")
     rfiles_dir = os.path.join(git_dir, "Rfiles")
-    pymodule = '\n\nml python/anaconda3.6'
-    rmodule = '\n\nml module load R/4.0.0'
+    pymodule = '\n\nml python/anaconda3.6\n'
+    rmodule = '\n\nml module load R/4.0.0\n'
 
     pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py  "{exp_name}" "120" "10"'
     file = open(os.path.join(temp_exp_dir, 'combineSimulations.sh'), 'w')
@@ -298,32 +298,33 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     if experiment_config != "spatial_EMS_experiment.yaml" :
         fname = "data_comparison.py"
     pycommand = f'\npython {plotters_dir}{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
-    file = open(os.path.join(temp_exp_dir, 'compareToData.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, '0_compareToData.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
     file.close()
 
-    rcommand =  f'cd {os.path.join(rfiles_dir, "fitting")} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
-    file = open(os.path.join(temp_exp_dir, 'runFittingProcess.sh'), 'w')
+    rcommand = f'cd {os.path.join(rfiles_dir, "fitting")} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
+    file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.sh'), 'w')
     file.write(header + jobname + err + out + rmodule + rcommand)
     file.close()
 
     pycommand = f'\npython {plotters_dir}process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
-    file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_1.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
     file.close()
 
-    pycommand = f'\npython {plotters_dir}overflow_probabilities.py "{exp_name}"'
-    file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_2.sh'), 'w')
+    pycommand = f'\npython {plotters_dir}overflow_probabilities.py "{exp_name}"' \
+                f'\npython {plotters_dir}overflow_numbers.py "{exp_name}"'
+    file = open(os.path.join(temp_exp_dir, '2_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
     file.close()
 
     rcommand =  f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "NUCLUSTER" "{rfiles_dir}" \n'
-    file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_3.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, '3_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + rmodule + rcommand)
     file.close()
 
     pycommand = f'\npython {plotters_dir}NUcivis_filecopy.py "{exp_name}"'
-    file = open(os.path.join(temp_exp_dir, 'runProcessForCivis_4.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + plotters_dir + pycommand)
     file.close()
 

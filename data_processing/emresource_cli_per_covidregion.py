@@ -16,7 +16,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 
 first_plot_day = pd.to_datetime(date(2020, 7, 15))
-last_plot_day = pd.to_datetime(date(2020, 10,10))
+last_plot_day = pd.to_datetime(today)
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
@@ -46,14 +46,15 @@ def plot_emresource(ems_list, scale=''):
         'confirmed_covid_icu' : 'ICU conf',
         'confirmed_covid_on_vents' : 'vents conf',
         'suspected_and_confirmed_covid_icu' : 'ICU conf+susp',
-        'covid_non_icu' : 'non ICU'
+        'covid_non_icu' : 'non ICU',
+        'inpatient': 'CLI admissions'
     })
 
-    channels = ['ICU conf', 'non ICU','inpatient']
+    channels = ['ICU conf', 'non ICU','CLI admissions']
     ref_df = ref_df[['date', 'covid_region'] + channels]
 
     palette = ("#913058", "#F6851F","#00A08A")  # sns.color_palette('Set1', len(channels))
-    fig = plt.figure(figsize=(7+len(ems_list), 5+len(ems_list)/2))
+    fig = plt.figure(figsize=(12, 5))
     fig.subplots_adjust(left=0.07, right=0.97, top=0.95, bottom=0.1, hspace=0.25)
 
     for ei, ems in enumerate(ems_list):

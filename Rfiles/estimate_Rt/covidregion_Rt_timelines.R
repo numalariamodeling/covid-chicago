@@ -19,7 +19,7 @@ if (runInBatchMode) {
 }
 
 print(workingDir)
-source(file.path(workingDir,"load_paths.R"))
+source(file.path(workingDir, "load_paths.R"))
 
 
 NU_civis_outputs <- file.path(project_path, "NU_civis_outputs/")
@@ -27,10 +27,10 @@ NU_civis_outputs <- file.path(project_path, "NU_civis_outputs/")
 today <- Sys.Date()
 NUdirs <- list.files(NU_civis_outputs)
 simdate <- NUdirs[length(NUdirs)]
-simdate_lastweek <-  NUdirs[length(NUdirs)-1]
+simdate_lastweek <- NUdirs[length(NUdirs) - 1]
 
-outdir <- file.path(project_path, "NU_cdph_outputs",simdate)
-if(!dir.exists(outdir))dir.create(outdir)
+outdir <- file.path(project_path, "NU_cdph_outputs", simdate)
+if (!dir.exists(outdir)) dir.create(outdir)
 
 customTheme <- theme(
   strip.text.x = element_text(size = 14, face = "bold"),
@@ -46,11 +46,12 @@ customTheme <- theme(
 )
 
 
-f_generateTimeline_plot <- function(selected_region,  addLastWeek = T, plot_stop_date = today , changepoint1 = as.Date("2020-08-25"),  changepoint2 = as.Date("2020-09-17")) {
-  
-  plot_title = gsub("covidregion_","Region ", selected_region)
-  if(selected_region=="covidregion_11") plot_title <- "Chicago"
-    
+f_generateTimeline_plot <- function(selected_region, addLastWeek = T, plot_stop_date = today,
+                                    changepoint1 = as.Date("2020-09-17"),
+                                    changepoint2 = as.Date("2020-10-10")) {
+  plot_title <- gsub("covidregion_", "Region ", selected_region)
+  if (selected_region == "covidregion_11") plot_title <- "Chicago"
+
   dat <- fread(file.path(NU_civis_outputs, paste0(simdate, "/csv/nu_", simdate, ".csv"))) %>%
     mutate(date = as.Date(as.character(date), format = "%Y-%m-%d")) %>%
     filter(
@@ -86,7 +87,7 @@ f_generateTimeline_plot <- function(selected_region,  addLastWeek = T, plot_stop
 
 
   if (plot_stop_date > today) {
-    future_textpoint <- plot_stop_date -10
+    future_textpoint <- plot_stop_date - 10
     p1 <- p1 + geom_rect(xmin = as.Date(today), xmax = Inf, ymin = -Inf, ymax = Inf, fill = "grey", alpha = 0.01) +
       annotate("text", x = future_textpoint, y = 1.4, label = "future prediction\nif current trend continues", col = "grey15", size = 4, alpha = 0.5)
   }
@@ -95,31 +96,30 @@ f_generateTimeline_plot <- function(selected_region,  addLastWeek = T, plot_stop
     dat_lastweek <- fread(file.path(NU_civis_outputs, paste0(simdate_lastweek, "/csv/nu_", simdate_lastweek, ".csv"))) %>%
       filter(geography_modeled == selected_region)
 
-    dat_lastweek$date <- as.Date(as.character(dat_lastweek$date), format = "%m/%d/%Y") # "%Y-%m-%d"  , "%m/%d/%Y"
+    dat_lastweek$date <- as.Date(as.character(dat_lastweek$date), format = "%Y-%m-%d")
     dat_lastweek <- dat_lastweek %>% filter(date <= plot_stop_date)
+
+    ythisweek <- dat$rt_median[dat$date == max(dat$date)]
+    ylastweek <- dat_lastweek$rt_median[dat_lastweek$date == max(dat_lastweek$date)]
 
     p1 <- p1 + geom_line(data = dat_lastweek, aes(x = date, y = rt_median), col = "deepskyblue4", size = 1, linetype = "dashed", alpha = 0.5) +
       geom_ribbon(data = dat_lastweek, aes(x = date, ymin = rt_lower, ymax = rt_upper), fill = "deepskyblue4", alpha = 0.1) +
-      annotate("text", x = today - 5, y = 0.985, label = "last week's fit", col = "deepskyblue4", size = 4, alpha = 0.5) +
-      annotate("text", x = today - 5, y = 1.06, label = "this week's fit", col = "deepskyblue4", size = 4, alpha = 0.9)
+      annotate("text", x = today - 15, y = ylastweek - 0.02, label = "last week's fit", col = "deepskyblue4", size = 4, alpha = 0.5) +
+      annotate("text", x = today - 15, y = ythisweek - 0.02, label = "this week's fit", col = "deepskyblue4", size = 4, alpha = 0.9)
   }
 
 
-  ggsave(paste0(simdate, "_Rt_",selected_region, ".png"),
+  ggsave(paste0(simdate, "_Rt_", selected_region, ".png"),
     plot = p1, path = file.path(outdir), width = 10, height = 6, device = "png"
   )
-  ggsave(paste0(simdate, "_Rt_",selected_region, ".pdf"),
+  ggsave(paste0(simdate, "_Rt_", selected_region, ".pdf"),
     plot = p1, path = file.path(outdir), width = 10, height = 6, device = "pdf"
   )
 }
 
 
-#### Run function 
+#### Run function
 selected_regions <- c("covidregion_10", "covidregion_11")
-for(selected_region in selected_regions){
-  f_generateTimeline_plot(selected_region=selected_region)
+for (selected_region in selected_regions) {
+  f_generateTimeline_plot(selected_region = selected_region)
 }
-
-
-
-
