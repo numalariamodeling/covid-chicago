@@ -22,11 +22,11 @@ if (runInBatchMode) {
 } else {
   exp_name <- "20200911_IL_test_v3"
   Location <- "Local"
+  workingDir <- getwd()
 }
 
-setwd(workingDir)
-
-source("load_paths.R")
+print(workingDir)
+source(file.path(workingDir,"load_paths.R"))
 source("processing_helpers.R")
 source("estimate_Rt/getRt_function.R")
 
@@ -63,7 +63,7 @@ run_Rt_estimation <- function(dat = dat, method = "uncertain_si", weekwindow = 1
   ### Combine list to dataframe
   Rt_dat <- Rt_list %>%
     bind_rows() %>%
-    mutate(time = t_end) %>%
+    dplyr::mutate(time = t_end) %>%
     dplyr::rename(geography_modeled = region) %>%
     dplyr::rename(
       rt_median = `Median(R)`,
@@ -74,13 +74,13 @@ run_Rt_estimation <- function(dat = dat, method = "uncertain_si", weekwindow = 1
   
   
   RtdatCombined <- dat %>%
-    mutate(date = as.Date(date)) %>%
+    dplyr::mutate(date = as.Date(date)) %>%
     arrange(geography_modeled, date) %>%
     dplyr::group_by(geography_modeled) %>%
     # mutate(time = c(1:n_distinct(date))) %>%
     merge(Rt_dat, by = c("geography_modeled", "date"), all.x = TRUE) %>%
-    filter(geography_modeled %in% c("illinois", paste0("covidregion_", c(1:11)))) %>%
-    select(
+    dplyr::filter(geography_modeled %in% c("illinois", paste0("covidregion_", c(1:11)))) %>%
+    dplyr::select(
       date, geography_modeled, scenario_name, cases_median, cases_lower, cases_upper, cases_new_median, cases_new_lower, cases_new_upper,
       deaths_median, deaths_lower, deaths_upper, deaths_det_median, deaths_det_lower, deaths_det_upper, hosp_bed_median, hosp_bed_lower, hosp_bed_upper,
       icu_median, icu_lower, icu_upper,
@@ -88,8 +88,18 @@ run_Rt_estimation <- function(dat = dat, method = "uncertain_si", weekwindow = 1
     )
   
   
+  ### Save combined dataframe
   if (dim(dat)[1] == dim(RtdatCombined)[1]) {
     fwrite(RtdatCombined, file = file.path(exp_dir, fname), row.names = FALSE, quote = FALSE)
+    
+    ### Export subset region 10 and 11 for cdph
+    ### Keep only Rt channels 
+    regionsubset <- c("covidregion_10","covidregion_11")
+    RtdatCombined %>% 
+      dplyr::filter(geography_modeled %in% regionsubset) %>%
+      dplyr::filter(date  <= as.Date(Sys.Date())) %>%
+      dplyr::select(date, geography_modeled, scenario_name,rt_median, rt_lower, rt_upper) %>%
+      fwrite(file = file.path(exp_dir, gsub("nu_","nu_cdph_Rt_",fname)), row.names = FALSE, quote = FALSE)
   }
   
   return(RtdatCombined)

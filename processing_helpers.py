@@ -6,6 +6,21 @@ from datetime import datetime, timedelta
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+def merge_county_covidregions(df_x, key_x='region', key_y='County'):
+    """ Add covidregions (new_restore_regions from covidregion_population_by_county.csv)
+    to a file that only includes counties. Country names are changes to lowercase before the merge.
+    Keeps all rows from df_x and only those that match from df_y (left join).
+    """
+
+    df_y = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'EMS Population','covidregion_population_by_county.csv'))
+
+    df_x[key_x] = df_x[key_x] .str.lower()
+    df_y[key_y] = df_y[key_y] .str.lower()
+
+    df = pd.merge(how='left', left=df_x, left_on=key_x, right=df_y, right_on=key_y)
+
+    return df
+
 def get_latest_LLfiledate(file_path, split_string ='_jg_' , file_pattern='aggregated_covidregion.csv'):
 
     files= os.listdir(file_path)
@@ -79,6 +94,40 @@ def CI_50(x) :
     return np.percentile(x, 50)
 
 
+def load_ref_df(ems_nr):
+    ref_df_emr = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
+    ref_df_emr['suspected_and_confirmed_covid_icu'] = ref_df_emr['suspected_covid_icu'] + ref_df_emr['confirmed_covid_icu']
+    data_channel_names_emr = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu']
+    ref_df_emr = ref_df_emr.groupby(['date_of_extract','covid_region'])[data_channel_names_emr].agg(np.sum).reset_index()
+    ref_df_emr['date'] = pd.to_datetime(ref_df_emr['date_of_extract'])
+
+    LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
+    ref_df_ll = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
+    ref_df_ll['date'] = pd.to_datetime(ref_df_ll['date'])
+
+    ref_df_cli = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'CLI_admissions.csv'))
+    ref_df_cli = merge_county_covidregions(df_x=ref_df_cli, key_x='region', key_y='County')
+    ref_df_cli = ref_df_cli.groupby(['date','new_restore_region'])['inpatient'].agg(np.sum).reset_index()
+    ref_df_cli = ref_df_cli.rename(columns={'new_restore_region': 'covid_region'})
+    ref_df_cli['date'] = pd.to_datetime(ref_df_cli['date'])
+
+    if ems_nr > 0:
+        ref_df_emr = ref_df_emr[ref_df_emr['covid_region'] == ems_nr]
+        ref_df_ll = ref_df_ll[ref_df_ll['covid_region'] == ems_nr]
+        ref_df_cli = ref_df_cli[ref_df_cli['covid_region'] == ems_nr]
+    else:
+        ref_df_emr = ref_df_emr.groupby('date_of_extract').agg(np.sum).reset_index()
+        ref_df_ll = ref_df_ll.groupby('date').agg(np.sum).reset_index()
+        ref_df_cli = ref_df_cli.groupby('date').agg(np.sum).reset_index()
+
+    merge_keys = ['date', 'covid_region']
+    ref_df = pd.merge(how='outer', left=ref_df_ll,  right=ref_df_emr, on=merge_keys)
+    ref_df = pd.merge(how='outer', left=ref_df, right=ref_df_cli, on=merge_keys)
+
+    ref_df = ref_df.sort_values('date')
+
+    return ref_df
+
 
 def calculate_incidence(adf, output_filename=None) :
 
@@ -145,34 +194,37 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
     return adf
 
 
-def load_capacity(ems, simdate='20200929') :
+def load_capacity(ems):
     ### note, names need to match, simulations and capacity data already include outputs for all illinois
-    
-    fname = 'capacity_weekday_average_' + simdate + '.csv'
+
+    file_path = os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds')
+    files = os.listdir(file_path)
+    filedates = [item.replace('capacity_weekday_average_', '') for item in files]
+    filedates = [item.replace('.csv', '') for item in filedates]
+    latest_filedate = max([int(x) for x in filedates])
+
+    fname = 'capacity_weekday_average_' + str(latest_filedate) + '.csv'
     ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds/', fname)
     df = pd.read_csv(ems_fname)
 
-    df = df[df['overflow_threshold_percent']==1]
+    df = df[df['overflow_threshold_percent'] == 1]
     df['ems'] = df['geography_modeled']
     df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
-    df =  df[['ems','resource_type','avg_resource_available']]
+    df = df[['ems', 'resource_type', 'avg_resource_available']]
     df = df.drop_duplicates()
-   # df = df.sort_values(by=['ems'])
+
     df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available')
 
     df.index.name = 'ems'
     df.reset_index(inplace=True)
 
-    if ems =='illinois' :
-        df['grp']= 'illinois'
-        df = df.groupby('grp')[['hb_availforcovid','icu_availforcovid']].agg(np.sum).reset_index()
+    if ems == 'illinois':
+        df['ems'] = 'illinois'
+    df = df.groupby('ems')[['hb_availforcovid', 'icu_availforcovid']].agg(np.sum).reset_index()
     if ems != 'illinois':
         df = df[df['ems'] == str(ems)]
 
-    capacity = {
-            'hospitalized' :  int(df['hb_availforcovid']),
-            'critical' : int(df['icu_availforcovid'])
-    }
+    capacity = {'hospitalized': int(df['hb_availforcovid']), 'critical': int(df['icu_availforcovid'])}
     return capacity
 
 

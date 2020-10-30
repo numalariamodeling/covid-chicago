@@ -612,6 +612,7 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 (param Ki_red7 (* Ki @ki_multiplier_7@))
 (param Ki_red8 (* Ki @ki_multiplier_8@))
 (param Ki_red9 (* Ki @ki_multiplier_9@))
+(param Ki_red10 (* Ki @ki_multiplier_10@))
 
 (time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki Ki_red3a)))
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki Ki_red3b)))
@@ -621,6 +622,7 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 (time-event ki_multiplier_change7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
 (time-event ki_multiplier_change8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
 (time-event ki_multiplier_change9 @ki_multiplier_time_9@ ((Ki Ki_red9)))
+(time-event ki_multiplier_change10 @ki_multiplier_time_10@ ((Ki Ki_red10)))
             """
     rollback_str ="""
 (time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red4)))
