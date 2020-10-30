@@ -261,6 +261,9 @@ time_parameters:
   'ki_multiplier_time_9':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-09-17}
+  'ki_multiplier_time_10':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-10}
   'socialDistance_rollback_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-30}
