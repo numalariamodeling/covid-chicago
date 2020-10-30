@@ -64,3 +64,4 @@ emodl/extendedmodel_reopen_rollback.emodl
 emodl/extendedmodel_rollback.emodl
 emodl/model_versions/extendedmodel_cobey.emodl
 *.png
+.Rproj.user
