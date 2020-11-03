@@ -1547,8 +1547,6 @@
 (param C8_3 (/ C83 norm_factor))
 (param C8_2 (/ C82 norm_factor))
 (param C8_1 (/ C81 norm_factor))
-
-
 (param C88_2ndWave (* C88 @multiplier_elderly@))
 (param C87_2ndWave (* C87 @multiplier_elderly@))
 (param C86_2ndWave (* C86 @multiplier_elderly@))
@@ -1581,11 +1579,8 @@
 (param C57_2ndWave (* C57 @multiplier_elderly@))
 (param C67_2ndWave (* C67 @multiplier_elderly@))
 
-
-; renormalize contact matrix
 (param sum7_2ndWave (+ C71_2ndWave C72_2ndWave C73_2ndWave C74_2ndWave C75_2ndWave C76_2ndWave C77_2ndWave C78_2ndWave))
 (param sum8_2ndWave (+ C81_2ndWave C82_2ndWave C83_2ndWave C84_2ndWave C85_2ndWave C86_2ndWave C87_2ndWave C88_2ndWave))
-
 (param norm_factor_2ndWave (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4) (* sum5  p5) (* sum6  p6) (* sum7_2ndWave  p7) (* sum8_2ndWave  p8)))
 
 (param C1_8_2ndWave (/ C18 norm_factor_2ndWave))
@@ -1652,7 +1647,6 @@
 (param C8_3_2ndWave (/ C83_2ndWave norm_factor_2ndWave))
 (param C8_2_2ndWave (/ C82_2ndWave norm_factor_2ndWave))
 (param C8_1_2ndWave (/ C81_2ndWave norm_factor_2ndWave))
-
 
 (time-event secondWaveTransmission @start_time_2ndWave@ ((C1_8 C1_8_2ndWave)))
 (time-event secondWaveTransmission @start_time_2ndWave@ ((C1_7 C1_7_2ndWave)))
@@ -1735,6 +1729,8 @@
 (param Ki_red6 (* Ki @ki_multiplier_6@))
 (param Ki_red7 (* Ki @ki_multiplier_7@))
 (param Ki_red8 (* Ki @ki_multiplier_8@))
+(param Ki_red9 (* Ki @ki_multiplier_9@))
+(param Ki_red10 (* Ki @ki_multiplier_10@))
 
 (param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
 (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
@@ -1746,6 +1742,8 @@
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki Ki_red6)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
+(time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki Ki_red9)))
+(time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki Ki_red10)))
 
 (time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@)))
 (time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@)))
@@ -2197,6 +2195,6 @@
 (reaction recovery_C2_age70to100  (C2_age70to100)  (RC2_age70to100)  (* Kr_c C2_age70to100))
 (reaction recovery_H1_det3_age70to100  (H1_det3_age70to100)  (RH1_det3_age70to100)  (* Kr_hage70to100 H1_det3_age70to100))
 (reaction recovery_C2_det3_age70to100  (C2_det3_age70to100)  (RC2_det3_age70to100)  (* Kr_c C2_det3_age70to100))
-
+  
 
 (end-model)

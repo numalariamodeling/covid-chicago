@@ -257,8 +257,9 @@ def write_functions(grp, expandModel=None):
         functions_str = expand_testDelay_AsSymSys_str + functions_str
 
     return (functions_str)
-def sub(x):
-    xout = re.sub('_','', str(x), count=1)
+
+def sub(x, sub_str='_', sub_new=''):
+    xout = re.sub(sub_str,sub_new, str(x), count=1)
     return(xout)
 
 def write_contact_matrix(nageGroups, scale=True):
@@ -300,6 +301,70 @@ def write_contact_matrix(nageGroups, scale=True):
     ki_mix_param = ki_mix_param1 +  "\n" +  ki_mix_param2 +  "\n" +  norm_factor +  "\n" +  ki_mix_param3
 
     return ki_mix_param
+
+
+def write_ageShift_2ndWave(nageGroups, scale=True):
+    grp_x = range(1, nageGroups + 1)
+    grp_y = reversed(grp_x)
+
+    if nageGroups ==8:
+        ki_mix_param2 = "\n(param C88_2ndWave (* C88 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C87_2ndWave (* C87 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C86_2ndWave (* C86 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C85_2ndWave (* C85 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C84_2ndWave (* C84 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C83_2ndWave (* C83 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C82_2ndWave (* C82 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C81_2ndWave (* C81 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C78_2ndWave (* C78 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C77_2ndWave (* C77 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C76_2ndWave (* C76 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C75_2ndWave (* C75 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C74_2ndWave (* C74 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C73_2ndWave (* C73 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C72_2ndWave (* C72 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C71_2ndWave (* C71 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C18_2ndWave (* C18 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C28_2ndWave (* C28 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C38_2ndWave (* C38 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C48_2ndWave (* C48 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C58_2ndWave (* C58 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C68_2ndWave (* C68 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C17_2ndWave (* C17 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C27_2ndWave (* C27 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C37_2ndWave (* C37 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C47_2ndWave (* C47 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C57_2ndWave (* C57 @multiplier_elderly@))"
+        ki_mix_param2 = ki_mix_param2 + "\n(param C67_2ndWave (* C67 @multiplier_elderly@))"
+        norm_factor1 = "\n(param sum7_2ndWave (+ C71_2ndWave C72_2ndWave C73_2ndWave C74_2ndWave C75_2ndWave C76_2ndWave C77_2ndWave C78_2ndWave))"
+        norm_factor2 = "\n(param sum8_2ndWave (+ C81_2ndWave C82_2ndWave C83_2ndWave C84_2ndWave C85_2ndWave C86_2ndWave C87_2ndWave C88_2ndWave))"
+        norm_factor3 = "\n(param norm_factor_2ndWave (+ (* sum1 p1) (* sum2  p2) (* sum3 p3) (* sum4  p4) (* sum5  p5) (* sum6  p6) (* sum7_2ndWave  p7) (* sum8_2ndWave  p8)))"
+        norm_factor =  norm_factor1 + norm_factor2 + norm_factor3
+
+        ki_dic = {}
+        for i, xy in enumerate(itertools.product(grp_x, grp_y)):
+            if int(xy[0]) <7 :
+                ki_dic[i] = ["C" + str(xy[0]) + '_' + str(xy[1])]
+            if int(xy[0]) >=7 :
+                ki_dic[i] = ["C" + str(xy[0]) + '_' + str(xy[1]) + '_2ndWave']
+
+        ki_mix_param3 = ""
+        ki_mix_timeEvent = ""
+        for i in range(len(ki_dic.keys())):
+            term1 = ki_dic[i][0] + "_2ndWave"
+            term1 = sub(term1, sub_str="_2ndWave_2ndWave", sub_new = "_2ndWave")
+            string_i = "\n(param " + term1 + " (/ " + sub(ki_dic[i][0]) + " norm_factor_2ndWave))"
+            ki_mix_param3 = ki_mix_param3 + string_i
+
+            string_t = "\n(time-event secondWaveTransmission @start_time_2ndWave@ ((" + sub(ki_dic[i][0],sub_str="_2ndWave") + " " + sub(ki_dic[i][0],sub_str="_2ndWave") + "_2ndWave)))"
+            ki_mix_timeEvent = ki_mix_timeEvent + string_t
+
+        ki_ageShift_2ndWave_param =  ki_mix_param2 + "\n" + norm_factor + "\n" + ki_mix_param3  +  "\n" +  ki_mix_timeEvent
+
+    return ki_ageShift_2ndWave_param
 
 
 # If Ki mix is defined, Ki here can be set to 0 in script that generates the simulation
@@ -1123,7 +1188,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 
 
 ###stringing all of the functions together to make the file:
-def generate_emodl(grpList, file_output, expandModel, add_interventions , observeLevel ='secondary', homogeneous=False, change_testDelay =None,  trigger_channel=None,):
+def generate_emodl(grpList, file_output, expandModel, add_interventions , observeLevel ='secondary', homogeneous=False, change_testDelay =None,  trigger_channel=None,add_ageShift_2ndWave=False):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 
@@ -1167,6 +1232,8 @@ def generate_emodl(grpList, file_output, expandModel, add_interventions , observ
         reaction_string_combined = reaction_string_combined + '\n' + reaction_string
 
     params = write_params(expandModel) + age_specific_param_string + write_N_population(grpList) + write_observed_param(grpList) + write_contact_matrix(len(grpList))
+    if add_ageShift_2ndWave:
+        params = params + write_ageShift_2ndWave(len(grpList))
     functions_string = functions_string + write_All(grpList, observeLevel=observeLevel)
     intervention_string = ";[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
 
@@ -1194,6 +1261,8 @@ if __name__ == '__main__':
     generateBaselineReopeningEmodls = True
     if generateBaselineReopeningEmodls:
         generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8.emodl'))
+        generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_ageShift_2ndWave=True, file_output=os.path.join(emodl_dir, 'extendedmodel_age8_2ndWave_contactMatrix.emodl'))
+
         generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='rollback',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8_rollback.emodl'))
         generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='reopen_rollback',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8_reopen_rollback.emodl'))
         generate_emodl(grpList=age_grp8, expandModel="testDelay_AsSymSys", add_interventions='interventionSTOP_adj',  file_output=os.path.join(emodl_dir, 'extendedmodel_age8_interventionSTOPadj.emodl'))
