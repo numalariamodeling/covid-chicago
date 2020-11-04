@@ -157,31 +157,6 @@ def plot_covidregions(channel,subgroups, psuffix, plot_path) :
     plt.savefig(os.path.join(plot_path, 'covidregion_'+psuffix+'_%s.png' % channel))
     plt.savefig(os.path.join(plot_path,'pdf', 'covidregion'+psuffix+'_%s.pdf' % channel))
 
-def plot_covidregions_both(subgroups, plot_name, plot_path=None) :
-
-    fig = plt.figure(figsize=(10, 4))
-    fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.6, bottom=0.07)
-    axes = [fig.add_subplot(1, 2, x + 1) for x in range(2)]
-
-    region_suffix =subgroups[0]
-    region_label= region_suffix.replace('_EMS-', 'covid region ')
-    ems_nr = int(region_suffix.replace('_EMS-', ''))
-
-    for d, exp_name in enumerate(exp_names) :
-        df = load_sim_data(exp_name, region_suffix=region_suffix)
-        exp_name_label =  int(exp_name.split('_')[0])
-        plot_on_fig2(df, axes, ems_nr=ems_nr,  label=exp_name_label)
-
-    #axes[-1].legend()
-    fig.suptitle(f'{region_label}\n', x=0.5, y=0.990)
-    #plt.tight_layout(rect=[0, 0, 0, .95])
-    plt.tight_layout()
-
-    if plot_path ==None :
-        plot_path = sim_output_path
-    plt.savefig(os.path.join(plot_path, plot_name))
-
-
 if __name__ == '__main__' :
 
     args = parse_args()
@@ -194,16 +169,3 @@ if __name__ == '__main__' :
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
     plot_covidregions(channel='crit_det', subgroups=covidregionlist, psuffix='AugNov', plot_path=plot_path)
     plot_covidregions(channel='hosp_det', subgroups=covidregionlist,  psuffix='AugNov', plot_path=plot_path)
-    plot_covidregions_both(subgroups=['_EMS-11'], plot_name='covidregion_11_ICU_nonICU_AugNov', plot_path=plot_path)
-
-    """Generate sub plots for region 10 and 11 (or any other to specify) and save in NU_cdph_outputs """
-    subgroup_plots = True
-    if subgroup_plots:
-        # datetime.today() #date(2020, 10,1)
-        # datetoday = (str(today.year) + str(today.month) + str(today.day))
-        exp_name = exp_names[len(exp_names) - 1]
-        datetoday = exp_name.split('_')[0]
-        plot_path = os.path.join(projectpath, 'NU_cdph_outputs', datetoday)
-        plot_covidregions_both(subgroups=['_EMS-10'], plot_name='covidregion_10_ICU_nonICU_AugNov', plot_path=plot_path)
-        plot_covidregions_both(subgroups=['_EMS-11'], plot_name='covidregion_11_ICU_nonICU_AugNov', plot_path=plot_path)
-        #plt.show()
