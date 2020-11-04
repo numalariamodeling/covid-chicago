@@ -266,7 +266,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
              '#SBATCH -A p30781\n' \
              '#SBATCH -p short\n' \
              '#SBATCH -t 00:45:00\n' \
-             '#SBATCH -N 5\n' \
+             '#SBATCH -N 1\n' \
              '#SBATCH --ntasks-per-node=1\n' \
              '#SBATCH --mem=18G'
     jobname = f'\n#SBATCH	--job-name="{exp_name_short}"'
