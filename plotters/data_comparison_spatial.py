@@ -97,8 +97,8 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
     plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
     if logscale == False :
         plot_name = plot_name + "_nolog"
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.png'))
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.pdf'), format='PDF')
+    plt.savefig(os.path.join(plot_path, plot_name + '.png'))
+    plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
     # return a
 
 def compare_ems(exp_name,fname, ems_nr=0):
@@ -129,9 +129,11 @@ def compare_ems(exp_name,fname, ems_nr=0):
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
-    plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
-                      first_day=first_day)
+
+    plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                     ymax=10000,first_day=first_day, logscale=True)
+    plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                     ymax=10000,first_day=first_day, logscale=False)
 
     # return ref_df_emr, ref_df_ll
 
@@ -140,13 +142,14 @@ if __name__ == '__main__':
 
     args = parse_args()  
     trajectoriesName = args.trajectoriesName
-    #Location = 'Local'
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location = args.Location)
+    Location = args.Location
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location = Location)
 
     stem = args.stem
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:
+        plot_path = os.path.join(wdir, 'simulation_output',exp_name, '_plots')
         for ems_nr in range(1,12):
             print("Start processing region " + str(ems_nr))
             compare_ems(exp_name,fname=trajectoriesName, ems_nr=int(ems_nr))

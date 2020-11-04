@@ -17,7 +17,6 @@ mpl.rcParams['pdf.fonttype'] = 42
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 
-
 def load_sim_data(exp_name, scenario_param, input_wdir=None, input_sim_output_path =None) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
@@ -91,6 +90,8 @@ if __name__ == '__main__' :
 
     exp_name = '20200604_IL_EMS_scen3_changeTD12'
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
+
     scenario_param = ['time_to_detection_1']
     df = load_sim_data(exp_name, scenario_param)
 
@@ -111,6 +112,6 @@ if __name__ == '__main__' :
         plot_on_fig(adf, channels, axes, color=palette[d], label=label)
     axes[-1].legend()
 
-    plt.savefig(os.path.join(sim_output_path,'scenario_comparison.png'))
-    #plt.savefig(os.path.join(sim_output_path,  'scenario_comparison.pdf'), format='PDF')
+    plt.savefig(os.path.join(plot_path,'scenario_comparison.png'))
+    #plt.savefig(os.path.join(plot_path,'pdf',  'scenario_comparison.pdf'), format='PDF')
     plt.show()

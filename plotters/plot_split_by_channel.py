@@ -48,6 +48,7 @@ if __name__ == '__main__' :
 
     exp_name = '20200909_IL_mr_test_observeLevel_v3'
     channelGrp =  "symp" # "symp" "infect"  "hospCrit"
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
 
     fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
@@ -85,7 +86,7 @@ if __name__ == '__main__' :
     axes[-1].legend()
 
     fname = 'channel_'+ channelGrp +'_comparison'
-    plt.savefig(os.path.join(sim_output_path, fname + '.png'))
-    #plt.savefig(os.path.join(sim_output_path, fname + '.pdf'), format='PDF')
+    plt.savefig(os.path.join(plot_path, fname + '.png'))
+    #plt.savefig(os.path.join(plot_path,'pdf', fname + '.pdf'), format='PDF')
     plt.show()
 

@@ -144,8 +144,8 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
         plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
         if logscale == False :
             plot_name = plot_name + "_nolog"
-        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.png'))
-        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,  plot_name + '.pdf'), format='PDF')
+        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, '_plots', plot_name + '.png'))
+        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,'_plots','pdf',  plot_name + '.pdf'), format='PDF')
     # return a
 
 def compare_county(exp_name, county_name) :

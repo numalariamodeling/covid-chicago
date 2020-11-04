@@ -358,6 +358,8 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
         os.makedirs(trajectories_dir)
         os.makedirs(os.path.join(temp_exp_dir, 'log'))
         os.makedirs(os.path.join(trajectories_dir, 'log'))  # location of log file on quest
+        os.makedirs(os.path.join(temp_exp_dir, '_plots'))
+        os.makedirs(os.path.join(temp_exp_dir, '_plots','pdf'))
 
     ## Copy emodl and cfg file  to experiment folder
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
@@ -392,13 +394,13 @@ def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list_name = "mas
 
 
 def sampleplot(adf, allchannels, start_date, plot_fname=None):
-    fig = plt.figure(figsize=(14, 8))
+    fig = plt.figure(figsize=(18, 8))
     palette = sns.color_palette('Set1', 10)
 
     axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+        mdf = adf.groupby('time')[channel].agg([np.min, CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75, np.max]).reset_index()
         ax = axes[c]
         dates = [start_date + timedelta(days=int(x)) for x in mdf['time']]
         ax.plot(dates, mdf['CI_50'], label=channel, color=palette[c])
@@ -406,6 +408,8 @@ def sampleplot(adf, allchannels, start_date, plot_fname=None):
                         color=palette[c], linewidth=0, alpha=0.2)
         ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
                         color=palette[c], linewidth=0, alpha=0.4)
+        ax.fill_between(dates, mdf['amin'], mdf['amax'],
+                        color=palette[c], linewidth=0, alpha=0.1)
 
         ax.set_title(channel, y=0.8)
 

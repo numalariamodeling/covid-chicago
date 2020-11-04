@@ -15,7 +15,7 @@ from processing_helpers import *
 mpl.rcParams['pdf.fonttype'] = 42
 
 first_plot_day = pd.to_datetime( date(2020, 8, 1))
-last_plot_day = pd.to_datetime(date(2020, 11,1))
+last_plot_day = pd.to_datetime(date(2020, 12,30))
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -96,8 +96,8 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
     plot_name_full = plot_name + str(ems_nr)
     if logscale == False:
         plot_name_full = plot_name_full + "_nolog"
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, plot_name_full + '.png'))
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, plot_name_full + '.pdf'), format='PDF')
+    plt.savefig(os.path.join(plot_path, plot_name_full + '.png'))
+    plt.savefig(os.path.join(plot_path, 'pdf', plot_name_full + '.pdf'), format='PDF')
 
 
 def load_ref_df(ems_nr):
@@ -159,21 +159,22 @@ def compare_ems(exp_name, fname, plot_name, ems_nr=0):
 
 if __name__ == '__main__':
 
-    #args = parse_args()
-    #stem = args.stem
-    #trajectoriesName = args.trajectoriesName
-    #Location = args.Location
+    args = parse_args()
+    stem = args.stem
+    trajectoriesName = args.trajectoriesName
+    Location = args.Location
 
     ## When running for testing/ in editor
-    trajectoriesName = "trajectoriesDat_trim.csv"
-    Location = 'Local'
+    #stem = "20201104_IL_mr_ae_baselinefit-v4"
+    #trajectoriesName = "trajectoriesDat_trim.csv"
+    #Location = 'Local'
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    stem = "20200929_IL_resim_sm7_refit"
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:
+        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
         for ems_nr in range(1,12):
             print("Start processing region " + str(ems_nr))
             compare_ems(exp_name, fname=trajectoriesName, ems_nr=int(ems_nr), plot_name='forward_projection')
