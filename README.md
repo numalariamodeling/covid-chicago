@@ -369,9 +369,9 @@ The postprocessing steps include 1) aggregation of the model predictions 2) prob
 - Positive case line list data: Of each individual tested positive for COVID-19: age, sex, race, ethnicity, date of specimen collection, date of hospital admission (if admitted), date of death (if died)
 - Covid like illness (CLI) admissions is obtained from IDPH and  included in weekly model calibration. 
 
-## 5. Model updates
+# 5. Model updates
 
-### Updates in model structure and fitted parameters
+## Updates in model structure and fitted parameters
 
 The model is updated every week to fit to latest hospitalisation and deaths reports. 
 <details><summary>Show history of updates</summary>
