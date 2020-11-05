@@ -323,14 +323,14 @@ Additional batch files or postprocesses can be linked to runScenarios of needed,
 
 ## Sample plot and additional plots 
 Per default a `master_sample_plot.png` is generated for every simulation regardless of type (base, age, spatial) for all Illinois. 
-- `locale_age_postprocessing.bat` - generates trajectories for pre-specified outcome channels per age group.
+- `locale_age_postprocessing.bat` - generates trajectories for pre-specified outcome channels per age group using [locale_age_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/locale_age_postprocessing.py).
 
 ## Data comparison 
 - `0_runDataComparison.bat` comparing model predictions to data per region over time
 
 ## Fitting
 - runFittingProcess.bat
-In the experiment folder is per default a `0_runFittingProcess.bat` file created, which run the fitting script.
+In the experiment folder is per default a `0_runFittingProcess.bat` file created, which run the [fitting script](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/fitting/fit_to_data_spatial.R).
 Note, currently hardcoded for the spatial model.
 The fitting script estimates the effect size multiplier and effect size change time event as parameters to estimate and write out in csv files. 
 Per default the social multiplier and time event number from the exoeriment name suffix is taken, which needs to be in the form of `fitki9` (fitki is removed and 9 is used in the parameter name).
@@ -345,15 +345,15 @@ The postprocessing steps include 1) aggregation of the model predictions 2) prob
 <details><summary>Show batch file description</summary>
 <p> 
 
-- `0_runTrimTrajectories.bat` (Python) trims the trajectories and per default keeps only dates after 2020-06-12 (timesteps >120) and selected outcome measures. 
-- `0_createAdditionalPlots.bat` (Python) requires to run 0_runTrimTrajectories.bat before (or change name of trajectories.csv). It generates additional plots, such as recent + nearest predictions on hospitalizations, ICU and deaths per region.
-- `0_runDataComparison.bat` (Python) comparing model predictions to data per region over time
-- `1_runProcessForCivis.bat` (Python) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
-- `2_runProcessForCivis.bat` (Python) calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv)
-- `3_runProcessForCivis.bat` (Rscript)  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
-- `4_runProcessForCivis.bat` (Python) generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
-- `5_runProcessFor_CDPH.bat` (Rscript) generates region Rt timelines for current and previous week and copies selected plots from `0_createAdditionalPlots.bat` to the cdph folder
-- `5_runProcessForCivis_optional.bat` (Rscript) generates the iteration comparison plot (last 3 weeks)
+- `0_runTrimTrajectories.bat` calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trim_trajectoriesDat.py) trims the trajectories and per default keeps only dates after 2020-06-12 (timesteps >120) and selected outcome measures. 
+- `0_createAdditionalPlots.bat` calls two Python scripts [I](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_by_param_ICU_nonICU.py) and [II](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/hosp_icu_deaths_forecast_plotter.py), requires to run 0_runTrimTrajectories.bat before (or change name of trajectories.csv). It generates additional plots, such as recent + nearest predictions on hospitalizations, ICU and deaths per region. Could be extended to include for example the [prevalence plotter](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_prevalence.py) or other plots.
+- `0_runDataComparison.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) comparing model predictions to data per region over time
+- `1_runProcessForCivis.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
+- `2_runProcessForCivis.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_probabilities.py) calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv), also adds total number of beds [additional script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_numbers.py)
+- `3_runProcessForCivis.bat`  calls a [Rscript](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/estimate_Rt/get_Rt_forCivisOutputs.R)  that  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
+- `4_runProcessForCivis.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
+- `5_runProcessFor_CDPH.bat`  calls a [Rscript](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/estimate_Rt/covidregion_Rt_timelines.R) that generates region Rt timelines for current and previous week and copies selected plots from `0_createAdditionalPlots.bat` to the cdph folder
+- `5_runProcessForCivis_optional.bat` calls a [Rscript](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/simulation_plotter/compare_simulation_iterations.R) that  generates the iteration comparison plot (last 3 weeks)
 </p>
 </details>
 
