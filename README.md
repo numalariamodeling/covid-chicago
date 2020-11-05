@@ -1,5 +1,11 @@
 ﻿# Modelling the COVID-19 pandemic in Illinois
 
+[1. Model overview](https://github.com/numalariamodeling/covid-chicago#1-model-overview)
+[2. Software used](https://github.com/numalariamodeling/covid-chicago#2-software-used)
+[3. Postprocess and analyse simulation outputs](https://github.com/numalariamodeling/covid-chicago#3-postprocess-and-analyse-simulation-outputs)
+[4. Data sources](https://github.com/numalariamodeling/covid-chicago#4-data-sources)
+[5. Model updates](https://github.com/numalariamodeling/covid-chicago#5-model-updates)
+[6. Resources](https://github.com/numalariamodeling/covid-chicago#6-resources)
 
 # 1. Model overview
 
@@ -156,7 +162,6 @@ a default configuration file [extendedcobey.yaml](https://github.com/numalariamo
 and substitutes parameters with the values/functions in the
 user-provided configuration file using the `@param@` placeholder. Multiple trajectories.csv that are produced per single simulation are combined into a trajectoriesDat.csv, used for postprocessing and plotting.
 
-
 ## 2.2 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
 The configuration file is in [YAML](https://yaml.org/) format and is divided into 5
 blocks: `experiment_setup_parameters`,
@@ -184,7 +189,15 @@ Note that the user-supplied configuration file is used to provide
 - cfg template (optional): The default cfg file uses the [Tau leaping](https://idmod.org/docs/cms/tau-leaping.html) solver (recommended B solver).
 - Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
   parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
-  
+
+### Region specific sample parameters (i.e. using estimates parameters per regions)
+- [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
+
+###  Age extension and age specific parameters 
+- `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
+Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
+
+
 ## 2.4 Usage examples:
 - Using the default emodl template: `python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml`
@@ -196,6 +209,8 @@ Note that the user-supplied configuration file is used to provide
   --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
 - Specifiying master configuration file and using short form of arguments:`python runScenarios.py 
   -mc config_param_delay7.yaml -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_criticaldet_triggeredrollbackdelay.emodl -cfg model_B.cfg
+
+The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
 ## 2.5 Sampled parameters 
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
@@ -220,29 +235,21 @@ When running simulations with an pre-existing csv file, specify
 
 Note: except the loaded "sampled_parameters.csv" and "sampled_parameters_1000.csv", csv files should not be added to version control on git. 
 
-## 3.5 Define age or region specific inputs 
-The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
-### Region specific sample parameters (i.e. using estimates parameters per EMS regions)
-- [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
-
-###  Age extension and age specific parameters 
-- `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
-Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
-
-## 3.6. Local environment setup
+## 2.6. Setup 
+### Local environment setup
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
 Copy the `sample.env` file to `.env` and edit so that paths point as needed for your system.
 
-## 3.7. Running on OS X or Linux
+### Running on OS X or Linux
 The CMS software is provided as a compiled Windows executable, but can be run on Unix-like systems via [`wine`](https://www.winehq.org/).
 If you do not have `wine` installed on your system, you can use the provided [Dockerfile](Dockerfile), which has `wine` baked in.
 To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in your environment or your `.env` file to use it.
 
-## 3.8 Running on Quest (NUCLUSTER) 
+### Running on Quest (NUCLUSTER) 
 A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
 
-### Requirements on quest 
+#### Requirements on quest 
 All the modules need to be installed on the personal quest environment 
 - use pip install ... in your terminal 
 - install `dotenv` and `yamlordereddictloader`
@@ -252,7 +259,7 @@ All the modules need to be installed on the personal quest environment
 
 The `source activate dotenv-py37` needs to be run before runnung the `runScenarios.py`
 
-### Submit job 
+##### Submit job 
 `cd /projects/p30781/covidproject/covid-chicago/`
 `python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel.emodl --name_suffix "quest_run_<your initial>"`
 
@@ -261,9 +268,9 @@ The experiments will go to the _temp folder on the quest gitrepository. To avoid
 Next step copy the content of the submit_runSimulations.sh (should be a simple txt file) to the terminal to run:
 - `cd /projects/p30781/covidproject/covid-chicago/_temp/<exp_name>/trajectories/`
 - `dos2unix runSimulations.sh`  # converts windows format to linux format
-- `sbatch runSimulations.sh`  # submits the simulations as an array job , note maximum array <5000 scenarios. 
+- `sbatch runSimulations.sh`  # submits the simulations as an array job, note maximum array <5000 scenarios. 
 
-# 4 Postprocess and analyse simulation outputs
+# 3 Postprocess and analyse simulation outputs
 Via the `--post_process` argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
 A sample plot is produced automatically, can be disabled via --noSamplePlot.
 Even if no postprocess is specified, default batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl).
@@ -282,7 +289,7 @@ In the experiment folder is per default a `runFittingProcess.bat` file created, 
 Note, currently hardcoded for the spatial model.
 The fitting script estimates the effect size multiplier and effect size change time event as parameters to estimate and write out in csv files. 
 Per default the social multiplier and time event number from the exoeriment name suffix is taken, which needs to be in the form of `fitki9` (fitki is removed and 9 is used in the parameter name).
-Example experiment name:  `20201006_IL_mr_local_fitki9` , example submission command:
+Example experiment name: `20201006_IL_mr_local_fitki9` , example submission command:
 `python runScenarios.py -rl Local -r IL -mc masterconfig_forFitting.yaml -c spatial_EMS_forFitting.yaml -e extendedmodel_EMS_forFitting.emodl -n "mr_local_fitki9"`
 
 
@@ -294,7 +301,7 @@ Example experiment name:  `20201006_IL_mr_local_fitki9` , example submission com
 - `runProcessForCivis_4.bat` generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
 These batch files are automatically generated when running the spatial model using the `spatial_EMS_experiment.yaml` in the runScenario submission command. 
 
-# 5 Data sources
+# 4 Data sources
 - Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
 - Region boundaries and operational units
   - Emergency Medical Service Areas (EMS) regions (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
@@ -304,7 +311,7 @@ These batch files are automatically generated when running the spatial model usi
 - Positive case line list data: Of each individual tested positive for COVID-19: age, sex, race, ethnicity, date of specimen collection, date of hospital admission (if admitted), date of death (if died)
 
 
-## 6. Model updates
+## 5. Model updates
 
 ### Updates in model structure and fitted parameters
 - 20201104 updated parameter fit 
@@ -343,7 +350,7 @@ These batch files are automatically generated when running the spatial model usi
 - 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
 
 
-# 7. Resources 
+# 6. Resources 
 - CMS software [publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [online documentation](https://idmod.org/docs/cms/index.html)
 - [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 - [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
