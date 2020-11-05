@@ -1,11 +1,12 @@
 ﻿# Modelling the COVID-19 pandemic in Illinois
 
-[1. Model overview](https://github.com/numalariamodeling/covid-chicago#1-model-overview)\  
-[2. Software used](https://github.com/numalariamodeling/covid-chicago#2-software-used)\  
-[3. Postprocess and analyse simulation outputs](https://github.com/numalariamodeling/covid-chicago#3-postprocess-and-analyse-simulation-outputs)\
-[4. Data sources](https://github.com/numalariamodeling/covid-chicago#4-data-sources)\  
-[5. Model updates](https://github.com/numalariamodeling/covid-chicago#5-model-updates)\  
-[6. Resources](https://github.com/numalariamodeling/covid-chicago#6-resources)\  
+This repository includes simulation model and analysis scripts for modelling the COVID-19 pandemic in Illinois per covidregion. 
+[1. Model overview](https://github.com/numalariamodeling/covid-chicago#1-model-overview)  
+[2. Software used](https://github.com/numalariamodeling/covid-chicago#2-software-used)  
+[3. Postprocess and analyse simulation outputs](https://github.com/numalariamodeling/covid-chicago#3-postprocess-and-analyse-simulation-outputs)  
+[4. Data sources](https://github.com/numalariamodeling/covid-chicago#4-data-sources)  
+[5. Model updates](https://github.com/numalariamodeling/covid-chicago#5-model-updates)  
+[6. Resources](https://github.com/numalariamodeling/covid-chicago#6-resources)  
 
 # 1. Model overview
 
@@ -17,6 +18,9 @@ Simulations run per [Emergency Medical Service Area (EMS)](https://www.dph.illin
 ## 1.2. Model parameters
 Most of the parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. [UChicago](https://github.com/cobeylab/covid_IL/tree/master/Parameters)).
 The starting date, intervention effect size, and the transmission parameter "Ki"are fitted to death data.
+
+<details><summary>Show parameter tables</summary>
+<p>
 
 ### 1.2.1 'reaction paramaters'
 All the parameters are sampled from a uniform distribution as specified in the [experiment config (yaml) file ](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L43)
@@ -42,22 +46,34 @@ All the parameters are sampled from a uniform distribution as specified in the [
 | Km        | Deaths                                                                       |   
 
 
-### 1.2.2  Time parameters (in days)
+### 1.2.2  Transmission and disease parameters 
 
-| parameter | name                                                                         | 
-|---------------------------|--------------------------------------------------------------|
-| time_to_infectious    	| Time from being exposed to become infectious                 |   
-| time_to_symptomatic    	| Time from becoming infectious to onset of symptoms           |  
-| time_D    				| Time from onset of symptoms to be detected (if detected)     |   
-| time_to_hospitalization   | Time from possible detection to hospitalization              |  
-| recovery_time_asymp       | Time until an asymptomatic infection is cleared              | 
-| recovery_time_mild        | Time until mildly symptomatic case recovers                  | 
-| recovery_time_hosp        | Time until hospitalized cases (severe symptomatic) recover   | 
-| recovery_time_crit        | Time until critical cases (severe symptomatic) recover       | 
-| time_to_critical        	| Time between hospitalization and critical illness            | 
-| time_to_death        		| Time between critical illness and deaths                     | 
+| Parameter                                                               | Description                                                                                                                                                                                   | Value             | Unit                                                                           | Source                                                                      |
+|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|--------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| Initial   infectious population                                         | Number of infectious population   that initiates the local transmission                                                                                                                       | 10                | N                                                                              | Assumed                                                                       |
+| Ki   (transmission rate)                                                | Rate at which susceptible become   infectious (contact rate * probability of infection).                                                                                                      |                   | rate                                                                           | Fit   to data from pre March 21 (EMResource and line list)                    |
+| Ki   multiplier (transmission rate multiplier)                          | This parameter adjusts the   initial transmission rate over time to reflect changes in mitigation policies, lockdowns and mask wearing as well as other factors that affect   transmission. |                   |                                                                                | Fit to data every week with   monthly time events for changing transmission.  |
+| Date of   imported infection                                            | Date when local transmission   started                                                                                                                                                        | Feb   13 - Feb 27 | date                                                                           | Fit   to data from pre March 21 (EMResource and line list)                    |
+| time_to_infectious                                                      | Time   from being exposed to become infectious                                                                                                                                                | (2.4 , 3.5)       | days                                                                           |  [Li et al 2020](https://science.sciencemag.org/content/368/6490/489)                                                                             |
+| time_to_symptomatic                                                     | Time from   becoming infectious to onset of symptoms                                                                                                                                          | (3.0, 4.5)        | days                                                                           |  [Li et al 2020](https://science.sciencemag.org/content/368/6490/489) and [Jing et al 2020](https://www.medrxiv.org/content/10.1101/2020.03.06.20032417v1)                                                                            |
+| time_to_hospitalization                                                 | Time from   possible detection to hospitalization                                                                                                                                             | (3, 6)            | days                                                                           | [Huang et al 2020](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(20)30183-5/fulltext)        |
+| Time to   critical                                                      | Time between hospitalization and   critical illness                                                                                                                                           | (4,   6)          | days                                                                           | NMH,  [Huang et al 2020](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(20)30183-5/fulltext)                                                                      |
+| Time to   death                                                         | Time between critical illness   and deaths                                                                                                                                                    | (4,   6)          | days                                                                           |  [Yang et al 2020](https://pubmed.ncbi.nlm.nih.gov/32105632/)                                                                             |
+| Recovery time asymptomatic                                              | Time   until an asymptomatic infection is cleared                                                                                                                                             | (7, 10)           | days                                                                           | Assumed   to be same as symptomatic                                           |
+| Recovery   time mild symptomatic                                        | Time until mildly symptomatic   case recovers                                                                                                                                                 | (7,   10)         | days                                                                           | [Wölfel et al 2020](https://pubmed.ncbi.nlm.nih.gov/32235945/)                                                                           |
+| Recovery time hospitalized                                              | Time   until hospitalized cases (severe symptomatic) recover                                                                                                                                  | (4, 6)            | days                                                                           | NMH, [Lewnard et al 2020](https://pubmed.ncbi.nlm.nih.gov/32444358/) and  [Wang et al 2020](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7042881/)                                                   |
+| Recovery   time critical                                                | Time until   critical cases (severe symptomatic) recover                                                                                                                                      | (8,10)            |                                                                                | [Bi et al 2020](https://www.thelancet.com/journals/laninf/article/PIIS1473-3099(20)30287-5/fulltext)                                                                             |
+| Fraction   symptomatic                                                  | Fraction of infections that   develop either mild or severe symptoms                                                                                                                          | (0.5,   0.7)      |                                                                                | [Oran and Topol et al 2020](https://www.scripps.edu/science-and-medicine/translational-institute/about/news/sarc-cov-2-infection/)                                                                              |
+| Fraction   severe symptomatic                                           | Fraction of symptomatic that   develop severe symptoms                                                                                                                                        | (0.02,   0.1)     |                                                                                | [Salje et al 2020](https://www.medrxiv.org/content/10.1101/2020.04.20.20072413v2)                                                                             |
+| Fraction critical                                                       | Fraction   of severe symptomatic infections that require intensive care                                                                                                                       | (0.2, 0.35)       |                                                                                | [Lewnard et al 2020](https://pubmed.ncbi.nlm.nih.gov/32444358/)                                                                             |
+| CFR                                                                     | Case fatality rate                                                                                                                                                                            | (0.01, 0.04)      |                                                                                | [Wang et al 2020](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7042881/)                                                                              |
+| Reduced   infectiousness of detected cases                              | Fraction of detected cases that   isolate and are removed from the infectious population                                                                                                      | (0,   0.3)        |                                                                                | Assumed                                                                       |
+| Detection   probability of asymptomatic case                            | Used for contact tracing   simulations, per default asymtomatic cases are not detected                                                                                                        | (0,   0)          |                                                                                | Assumed                                                                       |
+| Detection   probability of mild symptomatic case                        | Initial value of the detection   rate, which is increasing over time                                                                                                                          | (0.05,   0.2)     |                                                                                | Assumed   initial value, increase informed from Illinois specific data        |
+| Detection   probability of severe symptomatic case                      | Initial value of the detection   rate, which is increasing over time                                                                                                                          | (0.2,   0.5)      |                                                                                | Calculated from IL data                                        |
+| Impact of transmission mitigation policies, lockdown and   mask-wearing | reflected in transmission rate parameter                                                                                                                                                      |                   | Fit to data and updated every week using monthly 'transmission changepoints' |                                                                               |
 
-Note: Updated list on [Box](https://northwestern.app.box.com/file/656414061983)!
+Note: List also on [Box](https://northwestern.app.box.com/file/656414061983)!
 
 ### 1.2.3  time-varying parameters (intervention scenarios)
 The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-event) option in cms allows to change a paramter at a given time point (days) (which will stay constant afterwards if not resetted using a stop time-event).
@@ -74,12 +90,17 @@ Current scenarios include:
 
 For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
+</p>
+</details>
+
 ## 1.3. Model outcomes
 
-Currently the model includes 28 compartments of wich 43 outcome variables are generated.
+Currently the model includes 28 compartments of which 43 outcome variables are generated.
 The outcome variables or channels, as referred to in the py plotters, are different aggregates of the main compartments by type (i.e. all detected, all severe symptomatic) and includes cumulative counts for the calculation of incidences during postprocessing. 
 A ranking 'observeLevel' was introduced to select subsets of the outcomes. The primary outcomes are those required for the weekly deliverables, the secondary are the related outcomes that are not required for the standard outputs and tertiary are those that can easily be calculated outside the model, such as prevalence, or outcomes rarely used such as infectiousness by symptomatic type and detection level. 
 
+<details><summary>Show table</summary>
+<p>
 
 | alphabet.   No | name                   | description                                                                            | observeLevel | compartments  included                                                                                                   |
 |----------------|------------------------|----------------------------------------------------------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------|
@@ -124,6 +145,9 @@ A ranking 'observeLevel' was introduced to select subsets of the outcomes. The p
 | 41             | symptomatic_mild_det   | Number of detected mild infections in the population                                   | secondary    | symptomatic_mild_det                                                                                                   |
 | 42             | symptomatic_severe     | Number of severe symptomatic infections                                                | secondary    | Sys, Sys_det3; Sys, Sys_preD, Sys_det3 ; Sys, Sys_preD, Sys_det3a,   Sys_det3b                                         |
 | 43             | symptomatic_severe_det | Number of detected severe symptomatic infections                                       | secondary    | symptomatic_severe_det                                                                                                 |
+ 
+</p>
+</details>
 
 ## 1.4. Age and spatial model structures
 
@@ -142,8 +166,6 @@ The "spatial_model" uses a special syntax as described [here](https://idmod.org/
 To generate or modify the emodl files use the [locale specific emmodl generator](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/locale_emodl_generator_extendedModel.py )
 - View the [EMS specific emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_EMS.emodl)
 
-#### Movement between areas
-[...]
 
 ### 1.4.3. Spatial age-structured model
 A test verion is available under [emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_agelocale_scen3.emodl).
@@ -197,8 +219,11 @@ Note that the user-supplied configuration file is used to provide
 - `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
 Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
 
+The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
-## 2.4 Usage examples:
+<details><summary>Show examples</summary>
+<p>
+####  Usage examples:
 - Using the default emodl template: `python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
@@ -209,10 +234,10 @@ Note: this extension works for any sub-group as it duplicates the parameter name
   --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
 - Specifiying master configuration file and using short form of arguments:`python runScenarios.py 
   -mc config_param_delay7.yaml -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_criticaldet_triggeredrollbackdelay.emodl -cfg model_B.cfg
+</p>
+</details>
 
-The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
-
-## 2.5 Sampled parameters 
+## 2.4 Sampled parameters 
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
 The [sample_parameters.py](sample_parameters.py) script handles only the sampled_parameters.csv, it allows to: 
 (1) generate csv file from configuration files without running simulations
@@ -220,6 +245,8 @@ The [sample_parameters.py](sample_parameters.py) script handles only the sampled
 (3) replace single values for one or more parameter use python dictionary  `--param_dic  {\"capacity_multiplier\":\"0.5\"}`
 (4) combine with multiple values for one or more parameters define additional csv file   `--csv_name_combo startdate_Ki_sets.csv`
 
+<details><summary>Show examples</summary>
+<p>
 Running examples: 
 - nsamples: optional, if specified if overwrites the nsamples in the base configuration, if loading an existing csv the first n samples will be selected (i.e. when selecting samples from an excisting csv file, could be modified to be random if needed)
 - emodl_template: the emodl template is required to test whether the parameter csv table includes all required parameters defined in the desired emodl file to run
@@ -234,9 +261,16 @@ When running simulations with an pre-existing csv file, specify
 - `--sample_csv` (name of csv file in `experiment_configs\input_csv` ).
 
 Note: except the loaded "sampled_parameters.csv" and "sampled_parameters_1000.csv", csv files should not be added to version control on git. 
-
+</p>
+</details>
 
 ## 2.6. Setup 
+Running simulation requires the CMS software and python. Additional software includes R and Rstudio for some of the postprocessing steps. 
+The model runs on Windows and Linux as well as the Northwestern high performance computing cluster (Quest). 
+The detailes are described below. 
+
+<details><summary>Show setup description</summary>
+<p>
 ### Local environment setup
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
 Copy the `sample.env` file to `.env` and edit so that paths point as needed for your system.
@@ -257,7 +291,7 @@ All the modules need to be installed on the personal quest environment
 `source activate dotenv-py37`
 `conda install -c conda-forge yamlordereddictloader`
 
-The `source activate dotenv-py37` needs to be run before runnung the `runScenarios.py`
+<!--- (The `source activate dotenv-py37` needs to be run before runnung the `runScenarios.py`)(not always?) -->
 
 ##### Submit job 
 `cd /projects/p30781/covidproject/covid-chicago/`
@@ -270,36 +304,46 @@ Next step copy the content of the submit_runSimulations.sh (should be a simple t
 - `dos2unix runSimulations.sh`  # converts windows format to linux format
 - `sbatch runSimulations.sh`  # submits the simulations as an array job, note maximum array <5000 scenarios. 
 
+### Software requirements and packages
+The [`requirements.txt`](https://github.com/numalariamodeling/covid-chicago/blob/master/requirements.txt) includes name and version of required python and R modules.
+
+</p>
+</details>
+
 # 3 Postprocess and analyse simulation outputs
 Via the `--post_process` argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
 A sample plot is produced automatically, can be disabled via --noSamplePlot.
 Even if no postprocess is specified, default batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl).
 Additional batch files or postprocesses can be linked to runScenarios of needed, otherwise the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) provides a range of python files that do different visualizations (see readme in folder for details).
 
-## Sample plot
+## Sample plot and additional plots 
 Per default a `master_sample_plot.png` is generated for every simulation regardless of type (base, age, spatial) for all Illinois. 
 - `locale_age_postprocessing.bat` - generates trajectories for pre-specified outcome channels per age group.
 
 ## Data comparison 
-- `runDataComparison.bat`
+- `0_runDataComparison.bat` comparing model predictions to data per region over time
 
 ## Fitting
 - runFittingProcess.bat
-In the experiment folder is per default a `runFittingProcess.bat` file created, which run the fitting script.
+In the experiment folder is per default a `0_runFittingProcess.bat` file created, which run the fitting script.
 Note, currently hardcoded for the spatial model.
 The fitting script estimates the effect size multiplier and effect size change time event as parameters to estimate and write out in csv files. 
 Per default the social multiplier and time event number from the exoeriment name suffix is taken, which needs to be in the form of `fitki9` (fitki is removed and 9 is used in the parameter name).
 Example experiment name: `20201006_IL_mr_local_fitki9` , example submission command:
 `python runScenarios.py -rl Local -r IL -mc masterconfig_forFitting.yaml -c spatial_EMS_forFitting.yaml -e extendedmodel_EMS_forFitting.emodl -n "mr_local_fitki9"`
 
-
-## Process for civis
-- (`runDataComparison.bat`)
-- `runProcessForCivis_1.bat` generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
-- `runProcessForCivis_2.bat` calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv)
-- `runProcessForCivis_3.bat` runs the Rt estimation (r script), the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
-- `runProcessForCivis_4.bat` generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
+## Postprocessing scripts for weekly deliverables
+- `0_runTrimTrajectories.bat` (Python) trims the trajectories and per default keeps only dates after 2020-06-12 (timesteps >120) and selected outcome measures. 
+- `0_createAdditionalPlots.bat` (Python) requires to run 0_runTrimTrajectories.bat before (or change name of trajectories.csv). It generates additional plots, such as recent + nearest predictions on hospitalizations, ICU and deaths per region.
+- `0_runDataComparison.bat` (Python) comparing model predictions to data per region over time
+- `1_runProcessForCivis.bat` (Python) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
+- `2_runProcessForCivis.bat` (Python) calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv)
+- `3_runProcessForCivis.bat` (Rscript)  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
+- `4_runProcessForCivis.bat` (Python) generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
+- `5_runProcessFor_CDPH.bat` (Rscript) generates region Rt timelines for current and previous week and copies selected plots from `0_createAdditionalPlots.bat` to the cdph folder
+- `5_runProcessForCivis_optional.bat` (Rscript) generates the iteration comparison plot (last 3 weeks)
 These batch files are automatically generated when running the spatial model using the `spatial_EMS_experiment.yaml` in the runScenario submission command. 
+Also, when adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the files are automatically executed. 
 
 # 4 Data sources
 - Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
@@ -307,13 +351,18 @@ These batch files are automatically generated when running the spatial model usi
   - Emergency Medical Service Areas (EMS) regions (not used anymore): https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf  
   - Covid regions: http://dph.illinois.gov/regionmetrics?regionID=1 
   - Restore regions: https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard 
-- Hospital census data: daily occupancy of ICU and non_ICU beds 
+- Hospital census data: daily occupancy of intensive care unit (ICU) and non_ICU beds (EMResource)
+- Hospital capacity limits for hospital and intensive care unit beds (from IDPH)
 - Positive case line list data: Of each individual tested positive for COVID-19: age, sex, race, ethnicity, date of specimen collection, date of hospital admission (if admitted), date of death (if died)
-
+- Covid like illness (CLI) admissions is obtained from IDPH and  included in weekly model calibration. 
 
 ## 5. Model updates
 
 ### Updates in model structure and fitted parameters
+
+The model is updated every week to fit to latest hospitalisation and deaths reports. 
+<details><summary>Show history of updates</summary>
+<p>
 - 20201104 updated parameter fit 
 - 20201027 updated parameter fit, added transmission multiplier 10 (previously called social multiplier)
 - 20201020 updated parameter fit 
@@ -348,11 +397,13 @@ These batch files are automatically generated when running the spatial model usi
 - 20200407 add more detected observables
 - 20200402 [cobey](https://github.com/cobeylab/covid_IL) model alignment (including presymptomatic)
 - 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
-
+</p>
+</details>
 
 # 6. Resources 
 - CMS software [publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [online documentation](https://idmod.org/docs/cms/index.html)
 - [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 - [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
 - [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
+- [Use of the model for demonstrating statistical data assimilation](https://arxiv.org/abs/2005.12441) by Dr Armstrong et al. 
 
