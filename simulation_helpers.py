@@ -246,8 +246,8 @@ echo end""")
             file.write(f'\ncd {data_plotters_dir} \n python "emresource_cli_per_covidregion.py" --cdph_date "{today.strftime("%Y%m%d")}"')
             file.write(f'\ncd {rfiles_dir}/estimate_Rt \n R --vanilla -f "covidregion_Rt_timelines.R" "{rfiles_dir}"')
             file.write(f'\ncopy {copy_from_dir_csv} {copy_to_dir}')
-            for file in filestocopy :
-                copy_from_dir_plots_i = os.path.join(copy_from_dir_plots, file)
+            for filetocopy in filestocopy :
+                copy_from_dir_plots_i = os.path.join(copy_from_dir_plots, filetocopy)
                 file.write(f'\ncopy {copy_from_dir_plots_i} {copy_to_dir}')
             file.write('\npause')
 
