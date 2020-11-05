@@ -211,6 +211,10 @@ echo end""")
             file = open(os.path.join(temp_exp_dir, '0_runTrimTrajectories.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python trim_trajectoriesDat.py "{exp_name}" "{120}" "{15}" \n')
 
+            file = open(os.path.join(temp_exp_dir, '0_createAdditionalPlots.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python hosp_icu_deaths_forecast_plotter.py --stem "{exp_name}"  \n')
+            file.write(f'cd {plotters_dir} \n python plot_by_param_ICU_nonICU.py --exp_names "{exp_name}"  \n')
+
             file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.bat'), 'w')
             file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fitting/fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
 
@@ -231,18 +235,20 @@ echo end""")
             file = open(os.path.join(temp_exp_dir, '5_runProcessForCivis_optional.bat'), 'w')
             file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/compare_simulation_iterations.R" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/5_runProcessForCivis_optional.txt" \n')
 
-            copy_from_dir = os.path.join(sim_output_path, f'nu_cdph_Rt_{today.strftime("%Y%m%d")}.csv')
-            copy_from_dir_10 = os.path.join(sim_output_path, 'compare_to_data_covidregion_10.png')
-            copy_from_dir_11 = os.path.join(sim_output_path, 'compare_to_data_covidregion_11.png')
-            copy_to_dir = os.path.join(wdir, 'cms_sim/NU_cdph_outputs',today.strftime("%Y%m%d"))
+            copy_from_dir_csv = os.path.join(sim_output_path, f'nu_cdph_Rt_{today.strftime("%Y%m%d")}.csv')
+            copy_from_dir_plots = os.path.join(sim_output_path, '_plots')
+            filestocopy = ['compare_to_data_covidregion_10.png','compare_to_data_covidregion_11.png',
+                           'forward_projection_covidregion_10_nolog.png',  'forward_projection_covidregion_11_nolog.png']
+            copy_to_dir = os.path.join(wdir, 'NU_cdph_outputs', today.strftime("%Y%m%d"))
+
 
             file = open(os.path.join(temp_exp_dir, '5_runProcessFor_CDPH.bat'), 'w')
             file.write(f'\ncd {data_plotters_dir} \n python "emresource_cli_per_covidregion.py" --cdph_date "{today.strftime("%Y%m%d")}"')
-            file.write(f'\ncd {plotters_dir} \n python "plot_by_param_ICU_nonICU.py" --exp_names "{exp_name}"')
             file.write(f'\ncd {rfiles_dir}/estimate_Rt \n R --vanilla -f "covidregion_Rt_timelines.R" "{rfiles_dir}"')
-            file.write(f'\ncopy {copy_from_dir} {copy_to_dir}')
-            file.write(f'\ncopy {copy_from_dir_10} {copy_to_dir}')
-            file.write(f'\ncopy {copy_from_dir_11} {copy_to_dir}')
+            file.write(f'\ncopy {copy_from_dir_csv} {copy_to_dir}')
+            for filetocopy in filestocopy :
+                copy_from_dir_plots_i = os.path.join(copy_from_dir_plots, filetocopy)
+                file.write(f'\ncopy {copy_from_dir_plots_i} {copy_to_dir}')
             file.write('\npause')
 
 
@@ -260,7 +266,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
              '#SBATCH -A p30781\n' \
              '#SBATCH -p short\n' \
              '#SBATCH -t 00:45:00\n' \
-             '#SBATCH -N 5\n' \
+             '#SBATCH -N 1\n' \
              '#SBATCH --ntasks-per-node=1\n' \
              '#SBATCH --mem=18G'
     jobname = f'\n#SBATCH	--job-name="{exp_name_short}"'
@@ -358,6 +364,8 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
         os.makedirs(trajectories_dir)
         os.makedirs(os.path.join(temp_exp_dir, 'log'))
         os.makedirs(os.path.join(trajectories_dir, 'log'))  # location of log file on quest
+        os.makedirs(os.path.join(temp_exp_dir, '_plots'))
+        os.makedirs(os.path.join(temp_exp_dir, '_plots','pdf'))
 
     ## Copy emodl and cfg file  to experiment folder
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
@@ -392,13 +400,13 @@ def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list_name = "mas
 
 
 def sampleplot(adf, allchannels, start_date, plot_fname=None):
-    fig = plt.figure(figsize=(14, 8))
+    fig = plt.figure(figsize=(18, 8))
     palette = sns.color_palette('Set1', 10)
 
     axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
     fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
     for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+        mdf = adf.groupby('time')[channel].agg([np.min, CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75, np.max]).reset_index()
         ax = axes[c]
         dates = [start_date + timedelta(days=int(x)) for x in mdf['time']]
         ax.plot(dates, mdf['CI_50'], label=channel, color=palette[c])
@@ -406,6 +414,8 @@ def sampleplot(adf, allchannels, start_date, plot_fname=None):
                         color=palette[c], linewidth=0, alpha=0.2)
         ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
                         color=palette[c], linewidth=0, alpha=0.4)
+        ax.fill_between(dates, mdf['amin'], mdf['amax'],
+                        color=palette[c], linewidth=0, alpha=0.1)
 
         ax.set_title(channel, y=0.8)
 
