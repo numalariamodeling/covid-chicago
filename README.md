@@ -1,6 +1,7 @@
 ﻿# Modelling the COVID-19 pandemic in Illinois
 
-This repository includes simulation model and analysis scripts for modelling the COVID-19 pandemic in Illinois per covidregion. 
+This repository includes simulation model and analysis scripts for modelling the COVID-19 pandemic in Illinois per covidregion.  
+
 [1. Model overview](https://github.com/numalariamodeling/covid-chicago#1-model-overview)  
 [2. Software used](https://github.com/numalariamodeling/covid-chicago#2-software-used)  
 [3. Postprocess and analyse simulation outputs](https://github.com/numalariamodeling/covid-chicago#3-postprocess-and-analyse-simulation-outputs)  
@@ -222,8 +223,10 @@ Note: this extension works for any sub-group as it duplicates the parameter name
 The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
 <details><summary>Show examples</summary>
-<p>
-####  Usage examples:
+<p>  
+
+
+####  Usage examples:  
 - Using the default emodl template: `python runScenarios.py
   --running_location Local --region IL  --experiment_config sample_experiment.yaml`
 - Using a different emodl template: `python runScenarios.py
@@ -246,8 +249,9 @@ The [sample_parameters.py](sample_parameters.py) script handles only the sampled
 (4) combine with multiple values for one or more parameters define additional csv file   `--csv_name_combo startdate_Ki_sets.csv`
 
 <details><summary>Show examples</summary>
-<p>
-Running examples: 
+<p>  
+
+Running examples:  
 - nsamples: optional, if specified if overwrites the nsamples in the base configuration, if loading an existing csv the first n samples will be selected (i.e. when selecting samples from an excisting csv file, could be modified to be random if needed)
 - emodl_template: the emodl template is required to test whether the parameter csv table includes all required parameters defined in the desired emodl file to run
 - example 1: `python sample_parameters.py -rl Local -r IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl  -save sampled_parameters2.csv`
@@ -270,8 +274,9 @@ The model runs on Windows and Linux as well as the Northwestern high performance
 The detailes are described below. 
 
 <details><summary>Show setup description</summary>
-<p>
-### Local environment setup
+<p> 
+  
+### Local environment setup  
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
 Copy the `sample.env` file to `.env` and edit so that paths point as needed for your system.
 
@@ -333,6 +338,13 @@ Example experiment name: `20201006_IL_mr_local_fitki9` , example submission comm
 `python runScenarios.py -rl Local -r IL -mc masterconfig_forFitting.yaml -c spatial_EMS_forFitting.yaml -e extendedmodel_EMS_forFitting.emodl -n "mr_local_fitki9"`
 
 ## Postprocessing scripts for weekly deliverables
+Several batch files are automatically generated when running the spatial model using the `spatial_EMS_experiment.yaml` in the runScenario submission command. 
+When adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the files are automatically executed. 
+The postprocessing steps include 1) aggregation of the model predictions 2) probability of exceeding capacities, 3) estimate time varying reproductive number, and additional desciptove plots.
+
+<details><summary>Show batch file description</summary>
+<p> 
+
 - `0_runTrimTrajectories.bat` (Python) trims the trajectories and per default keeps only dates after 2020-06-12 (timesteps >120) and selected outcome measures. 
 - `0_createAdditionalPlots.bat` (Python) requires to run 0_runTrimTrajectories.bat before (or change name of trajectories.csv). It generates additional plots, such as recent + nearest predictions on hospitalizations, ICU and deaths per region.
 - `0_runDataComparison.bat` (Python) comparing model predictions to data per region over time
@@ -342,8 +354,9 @@ Example experiment name: `20201006_IL_mr_local_fitki9` , example submission comm
 - `4_runProcessForCivis.bat` (Python) generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
 - `5_runProcessFor_CDPH.bat` (Rscript) generates region Rt timelines for current and previous week and copies selected plots from `0_createAdditionalPlots.bat` to the cdph folder
 - `5_runProcessForCivis_optional.bat` (Rscript) generates the iteration comparison plot (last 3 weeks)
-These batch files are automatically generated when running the spatial model using the `spatial_EMS_experiment.yaml` in the runScenario submission command. 
-Also, when adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the files are automatically executed. 
+</p>
+</details>
+
 
 # 4 Data sources
 - Populaton estimates per county (2018): [datahub.cmap.illinois.gov](https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/d23fc5b1-0bb5-4bcc-bf70-688201534833/download/CDSFieldDescriptions201906.pdf)
@@ -362,7 +375,8 @@ Also, when adding the flag `--post_process "processForCivis"` in the `runScenari
 
 The model is updated every week to fit to latest hospitalisation and deaths reports. 
 <details><summary>Show history of updates</summary>
-<p>
+<p>  
+
 - 20201104 updated parameter fit 
 - 20201027 updated parameter fit, added transmission multiplier 10 (previously called social multiplier)
 - 20201020 updated parameter fit 
@@ -397,6 +411,8 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 - 20200407 add more detected observables
 - 20200402 [cobey](https://github.com/cobeylab/covid_IL) model alignment (including presymptomatic)
 - 20200321 initial model development including (S,E, Sym, Sys, As, H, C, D, R)
+
+
 </p>
 </details>
 
