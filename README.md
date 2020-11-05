@@ -1,11 +1,11 @@
 ﻿# Modelling the COVID-19 pandemic in Illinois
 
-[1. Model overview](https://github.com/numalariamodeling/covid-chicago#1-model-overview)
-[2. Software used](https://github.com/numalariamodeling/covid-chicago#2-software-used)
-[3. Postprocess and analyse simulation outputs](https://github.com/numalariamodeling/covid-chicago#3-postprocess-and-analyse-simulation-outputs)
-[4. Data sources](https://github.com/numalariamodeling/covid-chicago#4-data-sources)
-[5. Model updates](https://github.com/numalariamodeling/covid-chicago#5-model-updates)
-[6. Resources](https://github.com/numalariamodeling/covid-chicago#6-resources)
+[1. Model overview](https://github.com/numalariamodeling/covid-chicago#1-model-overview)\  
+[2. Software used](https://github.com/numalariamodeling/covid-chicago#2-software-used)\  
+[3. Postprocess and analyse simulation outputs](https://github.com/numalariamodeling/covid-chicago#3-postprocess-and-analyse-simulation-outputs)\
+[4. Data sources](https://github.com/numalariamodeling/covid-chicago#4-data-sources)\  
+[5. Model updates](https://github.com/numalariamodeling/covid-chicago#5-model-updates)\  
+[6. Resources](https://github.com/numalariamodeling/covid-chicago#6-resources)\  
 
 # 1. Model overview
 
