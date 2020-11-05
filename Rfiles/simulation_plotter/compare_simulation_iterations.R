@@ -46,6 +46,7 @@ dat1 <- dat1 %>%  dplyr::select(colnames(dat2))
 dat <- dat1 %>%
   rbind( dat2) %>%
   rbind( dat3) %>%
+  filter(scenario_name=="baseline") %>%
   dplyr::mutate(date = as.Date(date)) %>%
   filter(
     date <= "2021-03-01",

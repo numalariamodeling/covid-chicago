@@ -54,7 +54,7 @@ f_generateTimeline_plot <- function(selected_region, addLastWeek = T, plot_stop_
 
   dat <- fread(file.path(NU_civis_outputs, paste0(simdate, "/csv/nu_", simdate, ".csv"))) %>%
     mutate(date = as.Date(as.character(date), format = "%Y-%m-%d")) %>%
-    filter(
+    filter(scenario_name=="baseline",
       geography_modeled == selected_region,
       date <= as.Date(plot_stop_date)
     )
@@ -94,7 +94,8 @@ f_generateTimeline_plot <- function(selected_region, addLastWeek = T, plot_stop_
 
   if (addLastWeek) {
     dat_lastweek <- fread(file.path(NU_civis_outputs, paste0(simdate_lastweek, "/csv/nu_", simdate_lastweek, ".csv"))) %>%
-      filter(geography_modeled == selected_region)
+      filter(scenario_name=="baseline", 
+             geography_modeled == selected_region)
 
     dat_lastweek$date <- as.Date(as.character(dat_lastweek$date), format = "%Y-%m-%d")
     dat_lastweek <- dat_lastweek %>% filter(date <= plot_stop_date)
