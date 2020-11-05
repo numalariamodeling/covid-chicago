@@ -18,7 +18,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 datetoday = date(today.year, today.month, today.day) #date(2020, 10,1)
 
-first_plot_day = pd.to_datetime(date(2020, 3, 1))
+first_plot_day = pd.to_datetime(date(2020, 7, 1)) # pd.to_datetime(date(2020, 3, 1))
 last_plot_day = pd.to_datetime(datetoday)
 
 def parse_args():
@@ -80,7 +80,7 @@ def plot_sim_and_ref(exp_names, ems_nr,
 
     fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.95, bottom=0.07)
-    palette = sns.color_palette('Set2', len(exp_names))
+    palette = sns.color_palette('tab10', len(exp_names))
     axes = [fig.add_subplot(2, 3, x + 1) for x in range(len(channels))]
 
     for c, channel in enumerate(channels):
@@ -130,8 +130,12 @@ def plot_sim_and_ref(exp_names, ems_nr,
     plt.suptitle(f'Covidregion {ems_nr}', y=1, fontsize=14)
     plt.tight_layout()
     plt.subplots_adjust(top=0.88)
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], 'compare_to_data_%s.png' % ems_nr))
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], 'compare_to_data_%s.pdf' % ems_nr))
+
+    plot_name = f'compare_to_data_{ems_nr}'
+    if logscale == False :
+        plot_name = plot_name + "_nolog"
+    plt.savefig(os.path.join(plot_path, plot_name + '.png'))
+    plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'))
 
     #return plt
 
@@ -139,12 +143,16 @@ def plot_sim_and_ref(exp_names, ems_nr,
 if __name__ == '__main__':
 
    # args = parse_args()
-    exp_names =["20200929_IL_mr_baseline","20201003_IL_mr_resimsm4"]
-    Location =  'Local'
+    exp_names =["20201103_IL_mr_ae_baselinefit-v1","20201104_IL_mr_ae_baselinefit-v4"]
+    Location = 'Local'
     trajectoriesName ="trajectoriesDat.csv"
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
+    plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
 
-    for ems_nr in range(1,12):
+    for ems_nr in range(1,11):
         print("Start processing region " + str(ems_nr))
-        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_plot_day=first_plot_day, last_plot_day=last_plot_day,  fname=trajectoriesName)
+        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_plot_day=first_plot_day, last_plot_day=last_plot_day,
+                         fname=trajectoriesName, logscale=True)
+        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_plot_day=first_plot_day, last_plot_day=last_plot_day,
+                         fname=trajectoriesName, logscale=False)
