@@ -71,10 +71,10 @@ sampled_parameters:
     function_kwargs: {'low': 0.2, 'high':0.5}
   'test_sensitivity':
     np.random: uniform
-    function_kwargs: {'low': 0.95, 'high':0.99}
+    function_kwargs: {'low': 0.85, 'high':0.95}
   'turnaround_time':
     np.random: uniform
-    function_kwargs: {'low': 1.25, 'high':2.25}
+    function_kwargs: {'low': 1.75, 'high':3.25}
   'time_to_isolate':
     np.random: uniform
     function_kwargs: {'low': 0, 'high':0}
@@ -83,7 +83,7 @@ sampled_parameters:
     function_kwargs: {'low': 10.0, 'high':10.0}
   'reduced_detection_time_Sym':
     np.random: uniform
-    function_kwargs: {'low': 0.85, 'high':1.00}
+    function_kwargs: {'low': 0.75, 'high':1.00}
   'detection_time_As_unofficial':
     np.random: uniform
     function_kwargs: {'low': 7.0, 'high':7.0}
@@ -95,7 +95,7 @@ sampled_parameters:
     function_kwargs: {'low': 0.05, 'high':0.05}
   'nonNU_prevalence':
     np.random: uniform
-    function_kwargs: {'low': 0.006, 'high':0.012}
+    function_kwargs: {'low': 0.015, 'high':0.030}
   'prob_of_isolation_campus':
     np.random: uniform
     function_kwargs: {'low': 0.9, 'high':1.0}
@@ -107,7 +107,7 @@ sampled_parameters:
     function_kwargs: {'low': 0.4, 'high':0.6}
   'no_of_contacts_id':
     np.random: uniform
-    function_kwargs: {'low': 3, 'high':4}
+    function_kwargs: {'low': 4, 'high':5}
   'quar_period':
     np.random: uniform
     function_kwargs: {'low': 14, 'high':14}
@@ -124,9 +124,12 @@ intervention_parameters:
   'Ki_NU':
     np: linspace
     function_kwargs: {'start': 0.1, 'stop': 0.2, 'num':3}
-  'testing_period':
+  'testing_period_campus':
     np: linspace
-    function_kwargs: {'start': 3.5, 'stop': 7.0, 'num':2}
+    function_kwargs: {'start': 5.25, 'stop': 7.0, 'num':2}
+  'testing_period_evanston':
+    np: linspace
+    function_kwargs: {'start': 7.0, 'stop': 7.0, 'num':1}
 time_parameters:
 fitted_parameters:
   Kis: # Used only to retain current framework.
