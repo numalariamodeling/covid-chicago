@@ -609,6 +609,10 @@ if __name__ == '__main__':
             p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
             subprocess.call([p0])
 
+            log.info("Additional plots")
+            p0 = os.path.join(sim_output_path, '0_createAdditionalPlots.bat')
+            subprocess.call([p0])
+
             log.info("Process for civis - csv file")
             p1 = os.path.join(sim_output_path, '1_runProcessForCivis.bat')
             subprocess.call([p1])
