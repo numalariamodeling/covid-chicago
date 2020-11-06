@@ -65,3 +65,5 @@ emodl/extendedmodel_rollback.emodl
 emodl/model_versions/extendedmodel_cobey.emodl
 *.png
 .Rproj.user
+testrun/log.txt
+testrun/trajectories.csv

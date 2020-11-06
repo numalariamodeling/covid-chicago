@@ -43,13 +43,13 @@ column_list = ['scen_num', 'run_num', 'campus_quarantine_pop', 'campus_isolation
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
     #filedate = get_latest_filedate()
-    qi_path=os.path.join(datapath, 'covid_modeling_northwestern', '201014_QI_tracking.csv')
+    qi_path=os.path.join(datapath, 'covid_modeling_northwestern', '201104_QI_tracking.csv')
     qi = pd.read_csv(qi_path)
     tests = pd.read_csv(os.path.join(datapath, 'covid_modeling_northwestern', 'Depersonalized_Test_Result.csv'))
 
     idx1 = pd.date_range(first_date, pd.to_datetime(np.max(tests['ORDER_DATE'])))
-
-    tests_campus_pos = tests[(tests['LAB_VENDOR'] == 'Tempus') & (tests['UNDERGRAD_FLAG'] == 'Undergrad') & (tests['RESULT'] == 'DETECTED')]
+    tests['result'] = [str(d).lower() for d in tests['RESULT'].values]
+    tests_campus_pos = tests[(tests['UNDERGRAD_FLAG'] == 'Undergrad') & (tests['result'] == 'detected')]
     positive_daily = tests_campus_pos.groupby('ORDER_DATE').agg({'ORDER_ID': pd.Series.nunique})
     positive_daily['specimen_date'] = pd.to_datetime(positive_daily.index)
     positive_daily = positive_daily.set_index(['specimen_date']).reindex(idx1).fillna(0).reset_index()

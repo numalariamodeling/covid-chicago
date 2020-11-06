@@ -87,7 +87,7 @@ def get_plot(selected_resource_type='hb_availforcovid', errorbars=True):
     fig.tight_layout()
     exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
     fig.savefig(os.path.join(exp_dir, '_plots',f'{plotname}.png'))
-    fig.savefig(os.path.join(exp_dir, '_plots', f'{plotname}.pdf'))
+    fig.savefig(os.path.join(exp_dir, '_plots', 'pdf', f'{plotname}.pdf'))
 
 def get_numbers(exp_name, load_template=False):
     trajectories = load_sim_data(exp_name)  # pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
