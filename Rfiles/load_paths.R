@@ -88,6 +88,17 @@ if(tolower(Location)=="local"){
     wdir = file.path(project_path, 'cms_sim')
     exe_dir = file.path(home_path, 'binaries', 'compartments')
   }
+  
+  
+  if('aec7248' %in% user_path){
+    user_path = 'C:/Users/aec7248'
+    home_path = file.path(user_path, 'Box', 'NU-malaria-team','projects')
+    data_path = file.path(user_path, 'Box', 'NU-malaria-team', 'data')
+    git_dir = file.path(user_path, 'Documents', 'covid-chicago/')
+    project_path = file.path(home_path, 'covid_chicago')
+    wdir = file.path(project_path, 'cms_sim')
+    exe_dir = file.path(home_path, 'binaries', 'compartments')
+  }
 }
 
 simulation_output <- file.path(wdir, "simulation_output")

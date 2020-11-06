@@ -78,6 +78,11 @@ def load_box_paths(user_path=None, Location='Local'):
                 home_path = os.path.join(user_path, 'Box')
                 data_path = os.path.join(user_path, 'Box')
                 # project_path = os.path.join(home_path, 'Box', 'covid_chicago')
+            if 'aec7248' in user_path:
+                user_path = user_path
+                home_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'projects')
+                data_path = os.path.join(user_path, 'Box', 'NU-malaria-team', 'data')
+                git_dir = os.path.join(user_path, 'Documents', 'covid-chicago/')
 
             project_path = os.path.join(home_path, 'covid_chicago')
             wdir = os.path.join(project_path, 'cms_sim')
