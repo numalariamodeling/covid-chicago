@@ -378,6 +378,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <p>  
 
 - 20201104 updated parameter fit 
+- 20201104 updated parameter fit 
 - 20201027 updated parameter fit, added transmission multiplier 10 (previously called social multiplier)
 - 20201020 updated parameter fit 
 - 20201015 updated parameter fit, reset fitting method
