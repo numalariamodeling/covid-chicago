@@ -80,8 +80,7 @@ def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=Non
 
 if __name__ == '__main__' :
 
-    #exp_name = sys.argv[1]
-    exp_name ='20201112_IL_mr_testrun2'
+    exp_name = sys.argv[1]
     datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
     expsplit = exp_name.split('_')
     simdate = expsplit[0]

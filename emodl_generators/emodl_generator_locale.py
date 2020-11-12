@@ -896,7 +896,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
     rollback_str = ""
     for grp in grpList:
         temp_str = """
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_{grp} Ki_red7_{grp})))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_{grp} Ki_red4_{grp})))
                 """.format(grp=grp)
         rollback_str = rollback_str + temp_str
 
