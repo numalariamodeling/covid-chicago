@@ -199,6 +199,7 @@ def load_capacity(ems):
 
     file_path = os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds')
     files = os.listdir(file_path)
+    files = [name for name in files if not 'extra_thresholds' in name]
     filedates = [item.replace('capacity_weekday_average_', '') for item in files]
     filedates = [item.replace('.csv', '') for item in filedates]
     latest_filedate = max([int(x) for x in filedates])

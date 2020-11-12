@@ -27,14 +27,23 @@ def load_sim_data(exp_name, input_wdir=None, input_sim_output_path=None):
     df = pd.read_csv(os.path.join(sim_output_path, f'nu_{str(exp_name[:8])}.csv'))
     return df
 
+
 def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
-                                               'hospital_capacity_thresholds')):
+                                               'hospital_capacity_thresholds'), extraThresholds=False):
     files = os.listdir(file_path)
+    files = sorted(files, key=len)
+    if extraThresholds == False:
+        files = [name for name in files if not 'extra_thresholds' in name]
+    if extraThresholds == True:
+        files = [name for name in files if 'extra_thresholds' in name]
+
     filedates = [item.replace('capacity_weekday_average_', '') for item in files]
     filedates = [item.replace('.csv', '') for item in filedates]
-    latest_filedate = max( [int(x) for x in filedates])
-
-    return latest_filedate
+    latest_filedate = max([int(x) for x in filedates])
+    fname = f'capacity_weekday_average_{latest_filedate}.csv'
+    if extraThresholds == True:
+        fname = f'capacity_weekday_average_{latest_filedate}__extra_thresholds.csv'
+    return fname
 
 def get_plot(selected_resource_type='hb_availforcovid', errorbars=True):
     #from plotnine import ggplot, geom_point, aes, stat_smooth, facet_wrap
@@ -93,10 +102,11 @@ def get_numbers(exp_name, load_template=False):
     trajectories = load_sim_data(exp_name)  # pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
 
     if load_template:
-        filedate = get_latest_filedate()
-        civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
-                                                  'hospital_capacity_thresholds',
-                                                  f'capacity_weekday_average_{filedate}.csv'))
+        fname = get_latest_filedate()
+        civis_template = pd.read_csv(
+            os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname))
+        civis_template = civis_template.drop_duplicates()
+
     else:
         civis_template = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name,
                                                   f'nu_hospitaloverflow_{str(exp_name[:8])}.csv'))
