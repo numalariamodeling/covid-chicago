@@ -1,3 +1,7 @@
+"""
+Compare COVID-19 simulation outputs to data.
+Comparison for single regions, base or age model.
+"""
 import argparse
 import os
 import pandas as pd
