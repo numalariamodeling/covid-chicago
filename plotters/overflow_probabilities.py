@@ -49,19 +49,30 @@ for ems_region in range(1,12):
     column_list.append('crit_det_EMS-' + str(ems_region))
     #column_list.append('death_det_cumul_EMS-' + str(ems_region))
 
-def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds')):
-   files =  os.listdir(file_path)
-   filedates = [item.replace('capacity_weekday_average_', '') for item in files]
-   filedates = [item.replace('.csv', '') for item in filedates]
-   latest_filedate = max( [int(x) for x in filedates])
+def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
+                                               'hospital_capacity_thresholds'), extraThresholds=False):
+    files = os.listdir(file_path)
+    files = sorted(files, key=len)
+    if extraThresholds == False:
+        files = [name for name in files if not 'extra_thresholds' in name]
+    if extraThresholds ==True:
+        files = [name for name in files if 'extra_thresholds' in name]
 
-   return latest_filedate
+    filedates = [item.replace('capacity_weekday_average_', '') for item in files]
+    filedates = [item.replace('.csv', '') for item in filedates]
+    latest_filedate = max( [int(x) for x in filedates])
+    fname = f'capacity_weekday_average_{latest_filedate}.csv'
+    if extraThresholds == True :
+        fname = f'capacity_weekday_average_{latest_filedate}__extra_thresholds.csv'
+    return fname
 
 
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
-    filedate = get_latest_filedate()
-    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', f'capacity_weekday_average_{filedate}.csv'))
+    fname = get_latest_filedate()
+    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname))
+    civis_template = civis_template.drop_duplicates()
+
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
     
     for ems_region in range(1,12):

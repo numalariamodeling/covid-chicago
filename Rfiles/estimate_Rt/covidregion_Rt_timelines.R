@@ -113,9 +113,9 @@ f_generateTimeline_plot <- function(selected_region, addLastWeek = T, plot_stop_
   ggsave(paste0(simdate, "_Rt_", selected_region, ".png"),
     plot = p1, path = file.path(outdir), width = 10, height = 6, device = "png"
   )
-  ggsave(paste0(simdate, "_Rt_", selected_region, ".pdf"),
-    plot = p1, path = file.path(outdir), width = 10, height = 6, device = "pdf"
-  )
+  #ggsave(paste0(simdate, "_Rt_", selected_region, ".pdf"),
+  #  plot = p1, path = file.path(outdir), width = 10, height = 6, device = "pdf"
+  #)
 }
 
 

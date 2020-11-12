@@ -1,3 +1,7 @@
+"""
+Compare COVID-19 simulation outputs to data.
+Used for spatial - covidregion - model
+"""
 import argparse
 import os
 import pandas as pd

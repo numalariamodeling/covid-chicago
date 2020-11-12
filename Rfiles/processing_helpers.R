@@ -205,6 +205,7 @@ load_new_capacity <- function(selected_ems = NULL, filedate = NULL) {
 
   if (is.null(filedate)) {
     files <- list.files(capacity_dir)[grep("capacity_weekday_average", list.files(capacity_dir))]
+    files <- files[(nchar(files)==37)]
     dates <- as.numeric(gsub(".csv", "", gsub("capacity_weekday_average_", "", files)))
     filedate <- max(dates)
   }

@@ -77,7 +77,7 @@ def plot_emresource(ems_list, scale=''):
 
     regions = '-'.join(map(str, ems_list))
     fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.png'))
-    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
+    #fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
 
 if __name__ == '__main__' :
 

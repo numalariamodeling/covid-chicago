@@ -1,3 +1,8 @@
+"""
+Compare COVID-19 simulation outputs to data.
+Used for spatial - covidregion - model
+Allow comparison of multiple simulation experiments
+"""
 import argparse
 import os
 import pandas as pd
@@ -59,8 +64,15 @@ def load_sim_data(exp_name, ems_nr, fname, input_wdir=None,  input_sim_output_pa
 
     # df.columns = df.columns.str.replace('_All', '')
     df.columns = df.columns.str.replace('_EMS-' + str(ems_nr), '')
-    df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
-    df = calculate_incidence(df)
+    #df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
+    #df = calculate_incidence(df)
+
+    df['new_detected_hospitalized'] = count_new(df, 'hosp_det_cumul')
+    df['new_hospitalized'] = count_new(df, 'hosp_cumul')
+    df['new_critical'] = count_new(df, 'crit_cumul')
+    df['new_detected_critical'] = count_new(df, 'crit_det_cumul')
+    df['new_detected_deaths'] = count_new(df, 'death_det_cumul')
+    df['new_deaths'] = count_new(df, 'deaths')
 
     return df
 
@@ -134,6 +146,11 @@ def plot_sim_and_ref(exp_names, ems_nr,
     plot_name = f'compare_to_data_{ems_nr}'
     if logscale == False :
         plot_name = plot_name + "_nolog"
+
+    if not os.path.exists(plot_path):
+        os.makedirs(plot_path)
+    if not os.path.exists(os.path.join(plot_path, 'pdf')):
+        os.makedirs(os.path.join(plot_path, 'pdf'))
     plt.savefig(os.path.join(plot_path, plot_name + '.png'))
     plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'))
 
