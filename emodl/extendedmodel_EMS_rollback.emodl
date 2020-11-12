@@ -2051,27 +2051,27 @@
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_11 @d_Sym_change4_EMS_11@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_11 @d_Sym_change5_EMS_11@)))
             
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_1 Ki_red7_EMS_1)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_1 Ki_red4_EMS_1)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_2 Ki_red7_EMS_2)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_2 Ki_red4_EMS_2)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_3 Ki_red7_EMS_3)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_3 Ki_red4_EMS_3)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_4 Ki_red7_EMS_4)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_4 Ki_red4_EMS_4)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_5 Ki_red7_EMS_5)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_5 Ki_red4_EMS_5)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_6 Ki_red7_EMS_6)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_6 Ki_red4_EMS_6)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_7 Ki_red7_EMS_7)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_7 Ki_red4_EMS_7)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_8 Ki_red7_EMS_8)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_8 Ki_red4_EMS_8)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_9 Ki_red7_EMS_9)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_9 Ki_red4_EMS_9)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_10 Ki_red7_EMS_10)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_10 Ki_red4_EMS_10)))
                 
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_11 Ki_red7_EMS_11)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_EMS_11 Ki_red4_EMS_11)))
                 
 ;[ADDITIONAL_TIMEEVENTS]
 
