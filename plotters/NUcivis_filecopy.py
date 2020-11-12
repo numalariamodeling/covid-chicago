@@ -3,36 +3,57 @@ import sys
 sys.path.append('../')
 from load_paths import load_box_paths
 import shutil
+import pandas as pd
 
-def createFolder() :
+def createFolder(output_dir) :
 
-    if not os.path.exists(NUcivis_dir):
-        os.makedirs(NUcivis_dir)
-        os.makedirs(os.path.join(NUcivis_dir, "plots"))
-        os.makedirs(os.path.join(NUcivis_dir, "csv"))
-        os.makedirs(os.path.join(NUcivis_dir, "trajectories"))
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    if not os.path.exists(os.path.join(output_dir, "plots")):
+        os.makedirs(os.path.join(output_dir, "plots"))
+    if not os.path.exists(os.path.join(output_dir, "csv")):
+        os.makedirs(os.path.join(output_dir, "csv"))
+    if not os.path.exists(os.path.join(output_dir, "trajectories")):
+        os.makedirs(os.path.join(output_dir, "trajectories"))
 
-    if not os.path.exists(NUcdph_dir):
-        os.makedirs(NUcdph_dir)
-
-def copyFiles():
+def copyFiles(output_dir):
     fname1 = f'nu_{simdate}.csv'
     fname2 = f'nu_hospitaloverflow_{simdate}.csv'
     fname3 = f'trajectoriesDat_{exp_scenario}.csv'
-    shutil.copyfile(os.path.join(exp_dir, fname1), os.path.join(NUcivis_dir,'csv', fname1))
-    shutil.copyfile(os.path.join(exp_dir, fname2), os.path.join(NUcivis_dir,'csv', fname2))
-    shutil.copyfile(os.path.join(exp_dir, 'trajectoriesDat.csv'), os.path.join(NUcivis_dir,'trajectories', fname3))
-
-    filelist= [file for file in os.listdir(exp_dir) if file.endswith('.png')]
-    for file in filelist :
-        shutil.copyfile(os.path.join(exp_dir, file), os.path.join(NUcivis_dir,'plots', file))
-    del filelist
+    shutil.copyfile(os.path.join(exp_dir, fname1), os.path.join(output_dir,'csv', fname1))
+    shutil.copyfile(os.path.join(exp_dir, fname2), os.path.join(output_dir,'csv', fname2))
+    shutil.copyfile(os.path.join(exp_dir, 'trajectoriesDat.csv'), os.path.join(output_dir,'trajectories', fname3))
 
     filelist= [file for file in os.listdir(os.path.join(exp_dir, '_plots')) if file.endswith('.png')]
     for file in filelist :
-        shutil.copyfile(os.path.join(os.path.join(exp_dir, '_plots'), file), os.path.join(NUcivis_dir,'plots', file))
+        shutil.copyfile(os.path.join(os.path.join(exp_dir, '_plots'), file), os.path.join(output_dir,'plots', file))
 
-def writeChangelog(A1=None,A2=None, A3=None, A4=None, A5=None, A6=None):
+def subset_df(fname, regions_to_keep, output_dir,save_dir=None):
+    df = pd.read_csv(os.path.join(exp_dir, fname))
+    df = df[df.geography_modeled.isin(regions_to_keep)]
+    if save_dir==None :
+        save_dir = os.path.join(output_dir,'csv')
+    df.to_csv(os.path.join(save_dir, fname))
+
+def copyFiles_subset(output_dir):
+    fname1 = f'nu_{simdate}.csv'
+    fname2 = f'nu_hospitaloverflow_{simdate}.csv'
+    regions_to_keep = ['covidregion_10', 'covidregion_11']
+    subset_df(fname=fname1, output_dir=output_dir, regions_to_keep=regions_to_keep)
+    subset_df(fname=fname2, output_dir=output_dir,regions_to_keep=regions_to_keep)
+
+    if os.path.exists(os.path.join(output_dir,'trajectories')):
+        shutil.rmtree(os.path.join(output_dir,'trajectories'))
+    if os.path.exists(os.path.join(output_dir,'plots')):
+        shutil.rmtree(os.path.join(output_dir,'plots'))
+
+    filelist= [file for file in os.listdir(os.path.join(exp_dir,'_plots')) if
+               file.endswith(('10.png','10_nolog.png','11.png','11_nolog.png'))]
+    for file in filelist:
+        shutil.copyfile(os.path.join(exp_dir,'_plots', file), os.path.join(output_dir, file))
+
+
+def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=None):
     Q1 = "1) How has the date range of data used changed since your last update?"
     Q2 = "2) How have data sources changed since your last update?"
     Q3 = "3) What important changes have you made in your methodology since the last update?"
@@ -52,23 +73,16 @@ def writeChangelog(A1=None,A2=None, A3=None, A4=None, A5=None, A6=None):
                           "\n- Decrease in cfr : 2020-06-01 , 2020-07-01"
     if A6 == None : A6 = "- No additional scenarios"
 
-
-    file = open(os.path.join(NUcivis_dir, 'changelog.txt'), 'w')
-    file.write(f'Northwestern University COVID-19 Modelling Team \n\n Date: {simdate} \n\n '
-               f'{Q1} \n {A1} \n \n {Q2} \n {A2} \n \n {Q3} \n {A3} \n \n {Q4} \n {A4} \n \n {Q5} \n {A5}  \n \n {Q6} \n {A6}')
-    file.close()
-
-    file = open(os.path.join(NUcdph_dir, 'changelog.txt'), 'w')
+    file = open(os.path.join(output_dir, 'changelog.txt'), 'w')
     file.write(f'Northwestern University COVID-19 Modelling Team \n\n Date: {simdate} \n\n '
                f'{Q1} \n {A1} \n \n {Q2} \n {A2} \n \n {Q3} \n {A3} \n \n {Q4} \n {A4} \n \n {Q5} \n {A5}  \n \n {Q6} \n {A6}')
     file.close()
 
 if __name__ == '__main__' :
 
-    exp_name = sys.argv[1]
-
+    #exp_name = sys.argv[1]
+    exp_name ='20201112_IL_mr_testrun2'
     datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
     expsplit = exp_name.split('_')
     simdate = expsplit[0]
     exp_scenario = expsplit[len(expsplit)-1]
@@ -78,6 +92,12 @@ if __name__ == '__main__' :
     NUcivis_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate)
     NUcdph_dir = os.path.join(projectpath, 'NU_cdph_outputs', simdate)
 
-    createFolder()
-    copyFiles()
-    writeChangelog()
+    """ Deliverables for CIVIS"""
+    createFolder(output_dir=NUcivis_dir)
+    copyFiles(output_dir=NUcivis_dir)
+    writeChangelog(output_dir=NUcivis_dir)
+
+    """ Deliverables for CDPH"""
+    createFolder(output_dir=NUcdph_dir)
+    copyFiles_subset(output_dir=NUcdph_dir)
+    writeChangelog(output_dir=NUcdph_dir)
