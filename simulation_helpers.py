@@ -235,22 +235,10 @@ echo end""")
             file = open(os.path.join(temp_exp_dir, '5_runProcessForCivis_optional.bat'), 'w')
             file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/compare_simulation_iterations.R" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/5_runProcessForCivis_optional.txt" \n')
 
-            copy_from_dir_csv = os.path.join(sim_output_path, f'nu_cdph_Rt_{today.strftime("%Y%m%d")}.csv')
-            copy_from_dir_plots = os.path.join(sim_output_path, '_plots')
-            filestocopy = ['compare_to_data_covidregion_10.png','compare_to_data_covidregion_11.png',
-                           'forward_projection_covidregion_10_nolog.png',  'forward_projection_covidregion_11_nolog.png']
-            copy_to_dir = os.path.join(wdir, 'NU_cdph_outputs', today.strftime("%Y%m%d"))
-
-
             file = open(os.path.join(temp_exp_dir, '5_runProcessFor_CDPH.bat'), 'w')
             file.write(f'\ncd {data_plotters_dir} \n python "emresource_cli_per_covidregion.py" --cdph_date "{today.strftime("%Y%m%d")}"')
             file.write(f'\ncd {rfiles_dir}/estimate_Rt \n R --vanilla -f "covidregion_Rt_timelines.R" "{rfiles_dir}"')
-            file.write(f'\ncopy {copy_from_dir_csv} {copy_to_dir}')
-            for filetocopy in filestocopy :
-                copy_from_dir_plots_i = os.path.join(copy_from_dir_plots, filetocopy)
-                file.write(f'\ncopy {copy_from_dir_plots_i} {copy_to_dir}')
             file.write('\npause')
-
 
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
