@@ -121,7 +121,8 @@ def load_and_plot_data(ems_region, fname , savePlot=True) :
     df['ventilators'] = get_vents(df['crit_det'].values)
     df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
 
-    channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
+    channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
+    plotchannels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
 
     adf = pd.DataFrame()
     for c, channel in enumerate(channels):
@@ -138,7 +139,7 @@ def load_and_plot_data(ems_region, fname , savePlot=True) :
             adf = pd.merge(left=adf, right=mdf, on=['date', 'ems'])
 
     if savePlot :
-        plot_sim(adf, ems_region, channels)
+        plot_sim(adf, ems_region, channels=plotchannels)
 
     return adf
 
@@ -157,8 +158,9 @@ def process_and_save(adf,ems_region, SAVE = True) :
         ['date', 'geography_modeled', 'scenario_name', 'cases_median', 'cases_lower', 'cases_upper', 'cases_new_median',
          'cases_new_lower', 'cases_new_upper',
          'deaths_median', 'deaths_lower', 'deaths_upper', 'deaths_det_median', 'deaths_det_lower', 'deaths_det_upper',
-         'hosp_bed_median', 'hosp_bed_lower', 'hosp_bed_upper',
-         'icu_median', 'icu_lower', 'icu_upper', 'vent_median', 'vent_lower', 'vent_upper', 'recovered_median',
+         'hosp_bed_median', 'hosp_bed_lower', 'hosp_bed_upper','hosp_det_bed_median', 'hosp_det_bed_lower', 'hosp_det_bed_upper',
+         'icu_median', 'icu_lower', 'icu_upper', 'icu_det_median', 'icu_det_lower', 'icu_det_upper',
+         'vent_median', 'vent_lower', 'vent_upper', 'recovered_median',
          'recovered_lower', 'recovered_upper']]
 
     if SAVE :
