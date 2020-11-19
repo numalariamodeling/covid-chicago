@@ -105,10 +105,46 @@ def get_probs(exp_name):
     file_str = 'nu_hospitaloverflow_' + str(exp_name[:8]) + '.csv'
     civis_template.to_csv(os.path.join(wdir, 'simulation_output', exp_name, file_str), index=False)
 
-    
+def plot_probs(exp_name, show_75=True) :
+    simdate = str(exp_name[:8])
+    file_str = 'nu_hospitaloverflow_' + simdate + '.csv'
+    df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, file_str))
+    df['date'] = pd.to_datetime(df['date_window_upper_bound'])
+    df['date_md'] = df['date'].dt.strftime('%m-%d')
+
+    covidregionlist = list(df.geography_modeled.unique())
+
+    fig = plt.figure(figsize=(14, 12))
+    fig.subplots_adjust(right=0.98, wspace=0.4, left=0.1, hspace=0.4, top=0.88, bottom=0.07)
+    palette = sns.color_palette('Set1', len(df.resource_type.unique()))
+    axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(covidregionlist))]
+
+    for c, region_suffix in enumerate(covidregionlist) :
+        region_label = region_suffix.replace('_', ' ')
+        mdf = df[df['geography_modeled'] == region_suffix]
+        ax = axes[c]
+        ax.set_ylim(0, 1)
+        ax.set_title(region_label)
+        ax.set_ylabel(f'Probability of overflow')
+
+        for e, t in enumerate(list(df.resource_type.unique())) :
+            adf = mdf[mdf['resource_type'] == t]
+            adf1 = adf[adf['overflow_threshold_percent']== 1]
+            adf2 = adf[adf['overflow_threshold_percent']!= 1]
+            ax.plot(adf1['date_md'], adf1['percent_of_simulations_that_exceed'], linestyle='-', color=palette[e], label=t)
+            if show_75 :
+                ax.plot(adf2['date_md'], adf2['percent_of_simulations_that_exceed'], linestyle='--', color=palette[e], label='', alpha=0.5)
+
+    axes[-1].legend()
+
+    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, '_plots','overflow_probabilities.png'))
+    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, '_plots', 'pdf', 'overflow_probabilities.pdf'))
+
+
 if __name__ == '__main__':
     stem = sys.argv[1]
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:
         get_probs(exp_name)
+        plot_probs(exp_name)
