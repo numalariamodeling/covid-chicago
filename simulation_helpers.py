@@ -214,6 +214,7 @@ echo end""")
             file = open(os.path.join(temp_exp_dir, '0_createAdditionalPlots.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python hosp_icu_deaths_forecast_plotter.py --stem "{exp_name}"  \n')
             file.write(f'cd {plotters_dir} \n python plot_by_param_ICU_nonICU.py --exp_names "{exp_name}"  \n')
+            file.write(f'cd {plotters_dir} \n python plot_prevalence.py --exp_names "{exp_name}"  \n')
 
             file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.bat'), 'w')
             file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fitting/fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
