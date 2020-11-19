@@ -15,7 +15,7 @@ from processing_helpers import *
 mpl.rcParams['pdf.fonttype'] = 42
 
 first_plot_day = pd.to_datetime( date(2020, 8, 1))
-last_plot_day = pd.to_datetime(date(2020, 12,30))
+last_plot_day = pd.to_datetime(date(2020, 12,31))
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"

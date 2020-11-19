@@ -18,7 +18,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
 first_plot_day = date(2020, 7, 1)
-last_plot_day = date(2020, 12,30)
+last_plot_day = date(2020, 12,31)
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
