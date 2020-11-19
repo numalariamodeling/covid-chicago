@@ -97,9 +97,9 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
         if channel == "hosp_det" or channel == "crit_det":
             capacity = load_capacity(ems_nr)
             if channel == "hosp_det":
-                capacitychannel = 'hospitalized'
+                capacitychannel = 'hosp_det'
             if channel == "crit_det":
-                capacitychannel = 'critical'
+                capacitychannel = 'crit_det'
 
             ax.plot([first_plot_day,last_plot_day ], [capacity[capacitychannel], capacity[capacitychannel]], '--', linewidth=1, color='black')
             ax.plot([first_plot_day,last_plot_day ], [capacity[capacitychannel] * 0.75, capacity[capacitychannel] * 0.75], '--', linewidth=0.8, color='grey')
