@@ -86,13 +86,17 @@ def get_probs(exp_name):
         upper_limit = (row['date_window_upper_bound'] - dt.datetime(month=2, day=13, year=2020)).days
         if row['resource_type'] == 'hb_availforcovid':
             metric_root = 'total_hosp_census_EMS-'
-        elif row['resource_type'] == 'icu_availforcovid':
+        if row['resource_type'] == 'icu_availforcovid':
             metric_root = 'crit_det_EMS-'
+        elif row['resource_type'] == 'vent_availforcovid':
+            metric_root = 'vent_EMS-'
         thresh = row['avg_resource_available']
         region = int(re.sub('[^0-9]','', row['geography_modeled']))
         prob = 0
         for scen in unique_scen:
             new = trajectories[(trajectories['scen_num'] == scen)].reset_index()
+            if row['resource_type'] == 'vent_availforcovid':
+                new[metric_root + str(region)] = get_vents(new['crit_det_EMS-' + str(region)])
             if exceeds(new, metric_root + str(region), lower_limit, upper_limit, thresh):
                 prob += 1/len(unique_scen)
         civis_template.loc[index, 'percent_of_simulations_that_exceed'] = prob

@@ -221,11 +221,12 @@ def load_capacity(ems):
 
     if ems == 'illinois':
         df['ems'] = 'illinois'
-    df = df.groupby('ems')[['hb_availforcovid', 'icu_availforcovid']].agg(np.sum).reset_index()
+    df = df.groupby('ems')[['hb_availforcovid', 'icu_availforcovid', 'vent_availforcovid']].agg(np.sum).reset_index()
     if ems != 'illinois':
         df = df[df['ems'] == str(ems)]
 
-    capacity = {'hospitalized': int(df['hb_availforcovid']), 'critical': int(df['icu_availforcovid'])}
+    #capacity = {'hospitalized': int(df['hb_availforcovid']), 'critical': int(df['icu_availforcovid']),'ventilators': int(df['vent_availforcovid'])}
+    capacity = {'hosp_det': int(df['hb_availforcovid']), 'crit_det': int(df['icu_availforcovid']), 'ventilators': int(df['vent_availforcovid'])}
     return capacity
 
 
