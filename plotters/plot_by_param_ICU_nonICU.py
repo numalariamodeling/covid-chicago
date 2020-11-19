@@ -17,7 +17,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 first_day = date(2020, 2, 13) # IL
 first_plot_day = date(2020, 10, 1)
-last_plot_day = date(2020, 12,30)
+last_plot_day = date(2020, 12,31)
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -40,7 +40,10 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajec
         column_list.append('crit_det_EMS-' + str(ems_region))
         column_list.append('hosp_det_EMS-' + str(ems_region))
 
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
+    if not os.path.isfile(os.path.join(sim_output_path, fname)):
+        df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), usecols=column_list)
+    else :
+        df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
     df.columns = df.columns.str.replace(region_suffix, '')
 
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
@@ -69,10 +72,10 @@ def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgr
 
     if channel=="hosp_det":
         datachannel = 'covid_non_icu'
-        capacitychannel = 'hospitalized'
+        capacitychannel = 'hosp_det'
     if channel=="crit_det":
         datachannel = 'confirmed_covid_icu'
-        capacitychannel = 'critical'
+        capacitychannel = 'crit_det'
 
     ax.plot(ref_df['date'], ref_df[datachannel], 'o', color='#303030', linewidth=0, ms=3)
     ax.plot(ref_df['date'], ref_df[datachannel].rolling(window=7, center=True).mean(), c='k', alpha=1.0)
@@ -98,11 +101,11 @@ def plot_on_fig2(df, axes,  ems_nr, label=None, addgrid=True) :
 
         if channel=="hosp_det":
             datachannel = 'covid_non_icu'
-            capacitychannel = 'hospitalized'
+            capacitychannel = 'hosp_det'
             channel_label = 'hospital census'
         if channel=="crit_det":
             datachannel = 'confirmed_covid_icu'
-            capacitychannel = 'critical'
+            capacitychannel = 'crit_det'
             channel_label = 'intensive case unit census'
 
         ax.plot(ref_df['date'], ref_df[datachannel], 'o', color='#303030', linewidth=0, ms=3)
@@ -167,5 +170,5 @@ if __name__ == '__main__' :
                        '_EMS-10', '_EMS-11']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
-    plot_covidregions(channel='crit_det', subgroups=covidregionlist, psuffix='AugNov', plot_path=plot_path)
-    plot_covidregions(channel='hosp_det', subgroups=covidregionlist,  psuffix='AugNov', plot_path=plot_path)
+    plot_covidregions(channel='crit_det', subgroups=covidregionlist, psuffix='OctDec', plot_path=plot_path)
+    plot_covidregions(channel='hosp_det', subgroups=covidregionlist,  psuffix='OctDec', plot_path=plot_path)
