@@ -122,7 +122,7 @@ def load_and_plot_data(ems_region, fname , savePlot=True) :
     df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
 
     channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
-    plotchannels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'ventilators', 'recovered']
+    plotchannels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
 
     adf = pd.DataFrame()
     for c, channel in enumerate(channels):
