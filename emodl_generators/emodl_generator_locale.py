@@ -879,6 +879,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (param Ki_red8_{grp} (* Ki_{grp} @ki_multiplier_8_{grp}@))
 (param Ki_red9_{grp} (* Ki_{grp} @ki_multiplier_9_{grp}@))
 (param Ki_red10_{grp} (* Ki_{grp} @ki_multiplier_10_{grp}@))
+(param Ki_red11_{grp} (* Ki_{grp} @ki_multiplier_11_{grp}@))
 
 (time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki_{grp} Ki_red3a_{grp})))
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_{grp} Ki_red3b_{grp})))
@@ -890,6 +891,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_{grp} Ki_red8_{grp})))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_{grp} Ki_red9_{grp})))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_{grp} Ki_red10_{grp})))
+(time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_{grp} Ki_red11_{grp})))
             """.format(grp=grp)
         ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 

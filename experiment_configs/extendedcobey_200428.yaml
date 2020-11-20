@@ -2,7 +2,7 @@ experiment_setup_parameters:
   'number_of_samples': 600
   'number_of_runs': 1
   'duration': 400
-  'monitoring_samples': 400 # needs to be smaller than duration
+  'monitoring_samples': 400 # needs to be less than or equal to duration
   'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -264,6 +264,9 @@ time_parameters:
   'ki_multiplier_time_10':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-10-07}
+  'ki_multiplier_time_11':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-11-07}
   'socialDistance_rollback_time':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-11-14}
