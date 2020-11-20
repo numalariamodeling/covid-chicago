@@ -2,7 +2,7 @@ experiment_setup_parameters:
   'number_of_samples': 600
   'number_of_runs': 1
   'duration': 400
-  'monitoring_samples': 400 # needs to be smaller than duration
+  'monitoring_samples': 400 # needs to be less than or equal to duration
   'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
