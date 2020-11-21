@@ -151,6 +151,7 @@ def load_ref_df(ems_nr):
     if isinstance(ems_nr, list):
         ref_df[ref_df['covid_region'].isin(ems_nr)]
 
+    ref_df = ref_df.sort_values(['covid_region', 'date'])
     return ref_df
 
 
