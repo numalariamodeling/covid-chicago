@@ -385,7 +385,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 - 20201015 updated parameter fit, reset fitting method
 - 20201007 updated parameter fit
 - 20200929 updated parameter fit, changed fitting method
-- 20200922 updated parameter fit
+- 20200922 updated parameter fit, changed d_Sym parameters (generic)
 - 20200915 updated parameter fit, added social multiplier 7 (time event Aug 25)
 - 20200909 updated parameter fit, updated evolution of CFR
 - 20200825 updated parameter fit
