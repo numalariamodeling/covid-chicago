@@ -15,9 +15,6 @@ from processing_helpers import *
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
 
-first_plot_day = pd.to_datetime(date(2020, 7, 15))
-last_plot_day = pd.to_datetime(today)
-
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 def parse_args():
@@ -31,14 +28,15 @@ def parse_args():
     )
     return parser.parse_args()
 
-def plot_emresource(ems_list, scale=''):
+def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_grid = True):
 
-    ref_df = pd.DataFrame()
-    for ems_nr in ems_list :
-        ref_df_t = load_ref_df(ems_nr=int(ems_nr))
-        ref_df = ref_df.append(ref_df_t)
+    if channels == None:
+        channels = ['ICU conf', 'non ICU', 'CLI admissions']
+    if palette == None:
+        palette = ('#913058', "#F6851F", "#00A08A", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
 
-    ref_df = ref_df.sort_values('date')
+    ref_df = load_ref_df(ems_nr=list(ems_list))
+    ref_df = ref_df.sort_values(['covid_region', 'date'])
     ref_df = ref_df[(ref_df['date'] >= first_plot_day) & (ref_df['date'] <= last_plot_day)]
 
     ref_df = ref_df.rename(columns={
@@ -47,27 +45,34 @@ def plot_emresource(ems_list, scale=''):
         'confirmed_covid_on_vents' : 'vents conf',
         'suspected_and_confirmed_covid_icu' : 'ICU conf+susp',
         'covid_non_icu' : 'non ICU',
-        'inpatient': 'CLI admissions'
+        'inpatient': 'CLI admissions',
+        'new_confirmed_cases': 'Confirmed cases (public)'
     })
 
-    channels = ['ICU conf', 'non ICU','CLI admissions']
     ref_df = ref_df[['date', 'covid_region'] + channels]
 
-    palette = ("#913058", "#F6851F","#00A08A")  # sns.color_palette('Set1', len(channels))
-    fig = plt.figure(figsize=(12, 5))
-    fig.subplots_adjust(left=0.07, right=0.97, top=0.95, bottom=0.1, hspace=0.25)
+    if len(ems_list) == 2:
+        fig = plt.figure(figsize=(12, 5))
+        fig.subplots_adjust(right=0.97, left=0.07, hspace=0.25, top=0.95, bottom=0.01)
+        axes = [fig.add_subplot(1, 2, x + 1) for x in range(len(ems_list))]
+    else:
+        fig = plt.figure(figsize=(14, 12))
+        fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.95, bottom=0.07)
+        axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(ems_list))]
 
     for ei, ems in enumerate(ems_list):
-        ax = fig.add_subplot(len(ems_list)/2, 4-len(ems_list), ei + 1)
-        ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
-        df = ref_df[ref_df['covid_region'] == ems]
+        ax = axes[ei]
+        if add_grid:
+            ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
 
+        df = ref_df[ref_df['covid_region'] == ems]
         for (c, name) in enumerate(channels):
             df['moving_ave'] = df[name].rolling(window=7, center=True).mean()
             ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
             ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.7, label='')
         ax.set_title('covid region %d' % ems)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        #ax.set_ylim(0, df[name].max())
 
         if scale == 'log':
             ax.set_yscale('log')
@@ -81,18 +86,21 @@ def plot_emresource(ems_list, scale=''):
 
 if __name__ == '__main__' :
 
-    args = parse_args()
-    datetoday = args.cdph_date
-    if datetoday == None :
-        datetoday = (str(today.year) + str(today.month) + str(today.day))
+    runInBatchMode = True
+    first_plot_day = pd.to_datetime(date(2020, 10, 15))
+    last_plot_day = pd.to_datetime(today)
 
-    # plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
-    plot_path = os.path.join(projectpath, 'NU_cdph_outputs', datetoday)
-
-    if not os.path.exists(plot_path):
-        os.makedirs(plot_path)
-
-    plot_emresource(ems_list=[10, 11], scale='nolog')
-    plot_emresource(ems_list=[10, 11],scale='log')
-    #plt.show()
-
+    if runInBatchMode:
+        args = parse_args()
+        datetoday = args.cdph_date
+        if datetoday == None:
+            datetoday = (str(today.year) + str(today.month) + str(today.day))
+        plot_path = os.path.join(projectpath, 'NU_cdph_outputs', datetoday)
+        if not os.path.exists(plot_path):
+            os.makedirs(plot_path)
+        plot_emresource(ems_list=[10, 11], scale='nolog')
+        plot_emresource(ems_list=[10, 11], scale='log')
+    else:
+        plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
+        plot_emresource(ems_list=range(1, 12), scale='nolog')
+        plot_emresource(ems_list=range(1, 12), scale='nolog', channels=['Confirmed cases (public)'], palette=["#D61B5A"])
