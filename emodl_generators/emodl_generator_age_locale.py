@@ -945,6 +945,7 @@ def write_interventions(regionList, ageList,total_string, scenarioName, expandMo
 (param Ki_red8_{region} (* Ki_{region} @ki_multiplier_8_{region}@))
 (param Ki_red9_{region} (* Ki_{region} @ki_multiplier_9_{region}@))
 (param Ki_red10_{region} (* Ki_{region} @ki_multiplier_10_{region}@))
+(param Ki_red11_{region} (* Ki_{region} @ki_multiplier_11_{region}@))
 
 (param backtonormal_multiplier_1_{region}  (/ (- Ki_red6_{region}  Ki_red4_{region} ) (- Ki_{region} Ki_red4_{region} ) ) )  
 (observe backtonormal_multiplier_1_{region} backtonormal_multiplier_1_{region})
@@ -958,6 +959,7 @@ def write_interventions(regionList, ageList,total_string, scenarioName, expandMo
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_{region} Ki_red8_{region})))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_{region} Ki_red9_{region})))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_{region} Ki_red10_{region})))
+(time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_{region} Ki_red11_{region})))
             """.format(region=region)
         ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
