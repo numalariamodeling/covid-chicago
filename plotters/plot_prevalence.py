@@ -102,7 +102,10 @@ def plot_prevalences(exp_name, channels = ['prevalence'], fname='trajectoriesDat
                             color=palette[k], linewidth=0, alpha=0.4)
         if ems_num == 'EMS-1' :
             ax.legend()
-        ax.set_title(ems_num)
+        plotsubtitle = ems_num.replace('EMS-', 'COVID-19 region ')
+        if ems_num == 'All' :
+            plotsubtitle = ems_num.replace('All', 'Illinois')
+        ax.set_title(plotsubtitle)
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
 
