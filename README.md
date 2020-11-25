@@ -377,6 +377,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
+- 20201124 updated parameter fit
 - 20201119 updated parameter fit, added transmission multiplier 11
 - 20201110 updated parameter fit
 - 20201104 updated parameter fit 
