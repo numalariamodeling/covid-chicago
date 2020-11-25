@@ -229,6 +229,9 @@ intervention_parameters:
   'multiplier_elderly':
     np.random: uniform
     function_kwargs: {'low': 0.6, 'high':0.6}
+  'ki_multiplier_11_EMS_5':
+    np.random: uniform
+    function_kwargs: {'low': 0.450, 'high': 0.450}
 time_parameters:
   ### TIME-VARYING PARAMETER  - DATES
   ### Reduce Ki due to stay-at-home policy 

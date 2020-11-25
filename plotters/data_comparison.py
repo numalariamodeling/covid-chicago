@@ -208,7 +208,9 @@ def compare_ems(exp_name, ems=0) :
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
     plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
-                     plot_path=plot_path, first_day=first_day)
+                     plot_path=plot_path, first_day=first_day, logscale=True)
+    plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                     ymax=10000, plot_path=plot_path, first_day=first_day, logscale=False)
 
 
 if __name__ == '__main__' :
