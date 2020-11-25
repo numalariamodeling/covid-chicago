@@ -1,5 +1,39 @@
 fixed_parameters_global:
 sampled_parameters:
+  'd_Sym':
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low':0.0, 'high': 0.02}
   'ki_multiplier_3a':
     EMS_1:
       np.random: uniform
@@ -219,7 +253,7 @@ sampled_parameters:
       function_kwargs: {'low': 0.120, 'high': 0.120}
     EMS_5:
       np.random: uniform
-      function_kwargs: {'low': 0.155, 'high': 0.155}
+      function_kwargs: {'low':0.180, 'high': 0.180}
     EMS_6:
       np.random: uniform
       function_kwargs: {'low': 0.240, 'high': 0.240}
@@ -253,7 +287,7 @@ sampled_parameters:
       function_kwargs: {'low': 0.250, 'high': 0.250}
     EMS_5:
       np.random: uniform
-      function_kwargs: {'low':0.175, 'high': 0.175}
+      function_kwargs: {'low':0.215, 'high': 0.215}
     EMS_6:
       np.random: uniform
       function_kwargs: {'low': 0.210, 'high': 0.210}
@@ -321,7 +355,7 @@ sampled_parameters:
       function_kwargs: {'low': 0.375, 'high': 0.375}
     EMS_5:
       np.random: uniform
-      function_kwargs: {'low': 0.450, 'high': 0.450}
+      function_kwargs: {'low': 0.250, 'high': 0.250}
     EMS_6:
       np.random: uniform
       function_kwargs: {'low': 0.330, 'high': 0.330}
@@ -543,6 +577,6 @@ sampled_parameters:
       function_kwargs: {'low':0.10, 'high': 0.40}
     EMS_11:
       np.random: uniform
-      function_kwargs: {'low':0.10, 'high': 0.40}       
+      function_kwargs: {'low':0.10, 'high': 0.40}          
       
       

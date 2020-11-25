@@ -67,3 +67,9 @@ emodl/model_versions/extendedmodel_cobey.emodl
 .Rproj.user
 testrun/log.txt
 testrun/trajectories.csv
+*.pdf
+testrun/load path instructions.txt
+testrun/Package_install_progress.txt
+.Rhistory
+python
+Rfiles/.RData
