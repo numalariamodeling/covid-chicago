@@ -179,7 +179,7 @@ def rename_geography_and_save(df,filename) :
     if "geography_modeled" in dfout.columns:
         dfout['geography_modeled'] = dfout['geography_modeled'].str.replace('ems', 'covidregion_')
 
-    dfout.to_csv(os.path.join(sim_output_path, filename), index=False)
+    dfout.to_csv(os.path.join(sim_output_path, filename), index=False, date_format='%Y-%m-%d')
 
 
 if __name__ == '__main__' :
