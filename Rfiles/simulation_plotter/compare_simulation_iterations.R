@@ -34,6 +34,19 @@ dat2 <- read_csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[2]
 dat3 <- read_csv(file.path(project_path, paste0("NU_civis_outputs/", simdates[3], "/csv/nu_",  simdates[3], ".csv")))
 
 
+### some dates are format  '%m/%d/%Y' instead of '%Y-%m-%d'
+if(as.Date(dat1$date)[1] <= as.Date("2020-01-01")){
+  dat1$date <- as.Date(dat1$date, format='%m/%d/%Y')
+} else{dat1$date <- as.Date(dat1$date)}
+
+if(as.Date(dat2$date)[1] <= as.Date("2020-01-01")){
+  dat2$date <- as.Date(dat2$date, format='%m/%d/%Y')
+} else{dat2$date <- as.Date(dat2$date)}
+
+if(as.Date(dat3$date)[1] <= as.Date("2020-01-01")){
+  dat3$date <- as.Date(dat3$date, format='%m/%d/%Y')
+}else{dat3$date <- as.Date(dat3$date)}
+
 
 dat1$simdate <- simdates[1]
 dat2$simdate <- simdates[2]
