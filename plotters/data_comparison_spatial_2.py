@@ -116,9 +116,9 @@ def plot_sim_and_ref(exp_names, ems_nr,
             exp_name_label =  str(exp_name.split('_')[-1])
 
             # for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
-            mdf = df.groupby('time')[channel].agg([np.mean, CI_5, CI_95, CI_25, CI_75]).reset_index()
+            mdf = df.groupby('time')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
             dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-            ax.plot(dates, mdf['mean'], color=palette[d], label=exp_name_label)
+            ax.plot(dates, mdf['CI_50'], color=palette[d], label=exp_name_label)
             ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
                         color=palette[d], linewidth=0, alpha=0.1)
             ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
