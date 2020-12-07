@@ -97,7 +97,7 @@ def CI_50(x) :
 def load_ref_df(ems_nr):
     ref_df_emr = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
     ref_df_emr['suspected_and_confirmed_covid_icu'] = ref_df_emr['suspected_covid_icu'] + ref_df_emr['confirmed_covid_icu']
-    data_channel_names_emr = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu']
+    data_channel_names_emr = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu','suspected_covid_icu','suspected_and_confirmed_covid_icu']
     ref_df_emr = ref_df_emr.groupby(['date_of_extract','covid_region'])[data_channel_names_emr].agg(np.sum).reset_index()
     ref_df_emr['date'] = pd.to_datetime(ref_df_emr['date_of_extract'])
 
@@ -125,7 +125,7 @@ def load_ref_df(ems_nr):
             ref_df_cli = ref_df_cli[ref_df_cli['covid_region'] == ems_nr]
             ref_df_public = ref_df_public[ref_df_public['covid_region'] == ems_nr]
         else:
-            ref_df_emr = ref_df_emr.groupby('date_of_extract').agg(np.sum).reset_index()
+            ref_df_emr = ref_df_emr.groupby('date').agg(np.sum).reset_index()
             ref_df_ll = ref_df_ll.groupby('date').agg(np.sum).reset_index()
             ref_df_cli = ref_df_cli.groupby('date').agg(np.sum).reset_index()
             ref_df_public = ref_df_public.groupby('date').agg(np.sum).reset_index()

@@ -119,17 +119,14 @@ def plot_on_fig2(df, axes,  ems_nr, label=None, addgrid=True) :
         ax.set_xlim(first_plot_day, last_plot_day)
 
 def compare_ems( ems,channel):
-    ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
-    ref_df = ref_df[ref_df['covid_region'] == ems]
-    ref_df['suspected_and_confirmed_covid_icu'] = ref_df['suspected_covid_icu'] + ref_df['confirmed_covid_icu']
+    ref_df = load_ref_df(ems_nr=ems)
 
     if channel == "hosp_det":
         data_channel_names = ['covid_non_icu']
     if channel == "crit_det":
         data_channel_names = ['confirmed_covid_icu']
 
-    ref_df = ref_df.groupby('date_of_extract')[data_channel_names].agg(np.sum).reset_index()
-    ref_df['date'] = pd.to_datetime(ref_df['date_of_extract'])
+    ref_df = ref_df.groupby('date')[data_channel_names].agg(np.sum).reset_index()
     ref_df = ref_df[(ref_df['date'] >= pd.to_datetime(first_plot_day)) &
                     (ref_df['date'] <= pd.to_datetime(last_plot_day))]
 
