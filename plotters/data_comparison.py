@@ -46,9 +46,10 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajec
     sim_output_path = input_sim_output_path or sim_output_path_base
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
-    #if 'Ki' not in df.columns.values :
-    #    scen_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
-    #    df = pd.merge(left=df, right=scen_df[['scen_num', 'Ki']], on='scen_num', how='left')
+    df = df.dropna()
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    df['date'] = pd.to_datetime(df['date']).dt.date
 
     df.columns = df.columns.str.replace(region_suffix, '')
     df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']

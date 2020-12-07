@@ -10,22 +10,17 @@ from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 from data_comparison import load_sim_data
-from copy import copy
+
 
 mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-first_day = date(2020, 2, 13) # IL
-first_plot_day = date(2020, 3, 1)
-last_plot_day = date(2020, 9, 1)
 
-def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
+def plot_on_fig(mdf, channels, axes, color, label, addgrid=True) :
 
     for c, channel in enumerate(channels) :
         ax = axes[c]
-        mdf= df #df.groupby(['time','scen_num'])[channel].agg(CI_50).reset_index()
-        mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
         mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
 
         for scen in  mdf['scen_num'].unique():
@@ -42,12 +37,8 @@ def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
         #ax.set_ylim(0, max(mdf[channel])+10)
 
 
-def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True, ymax=50) :
+def plot_on_fig2(mdf, c, axes,channel, color,panel_heading, label, addgrid=True, ymax=50) :
     ax = axes[c]
-    mdf = df #df.groupby(['time', 'scen_num'])[channel].agg(CI_50).reset_index()
-    mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
-
     for scen in mdf['scen_num'].unique():
         pdf = mdf[mdf['scen_num'] == scen]
         ax.plot(pdf['date'], pdf[channel], color=color, label=label)
@@ -77,15 +68,15 @@ def plot_main(nscen=None, showLegend =True) :
 
         df['symptomatic_census'] = df['symptomatic_mild'] + df['symptomatic_severe']
         df['ventilators'] = get_vents(df['crit_det'].values)
+        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
 
         plot_on_fig(df, channels, axes, color=palette[d], label=exp_name)
 
     if showLegend:
         axes[-1].legend()
 
-    plt.savefig(os.path.join(sim_output_path, 'trajectories_IL.png'))
-    #plt.savefig(os.path.join(sim_output_path, 'trajectories_IL.pdf'), format='PDF')
-    #plt.show()
+    plt.savefig(os.path.join(plot_path, 'trajectories_IL.png'))
+    #plt.savefig(os.path.join(plot_path,'pdf', 'trajectories_IL.pdf'), format='PDF')
 
 def plot_covidregions(nscen=None, showLegend=True) :
 
@@ -120,9 +111,8 @@ def plot_covidregions(nscen=None, showLegend=True) :
             axes[-1].legend()
 
         fig.suptitle(region_label)
-        plt.savefig(os.path.join(sim_output_path, 'trajectories_%s.png' % region_label2))
-        #plt.savefig(os.path.join(sim_output_path, 'trajectories_%s.pdf' % region_label2))
-        #plt.show()
+        plt.savefig(os.path.join(plot_path, 'trajectories_%s.png' % region_label2))
+        #plt.savefig(os.path.join(plot_path, 'pdf', 'trajectories_%s.pdf' % region_label2))
 
 
 def plot_covidregions_inone(channel='hospitalized',nscen=None,showLegend = True, ymax=50) :
@@ -153,19 +143,22 @@ def plot_covidregions_inone(channel='hospitalized',nscen=None,showLegend = True,
 
         fig.suptitle(x=0.5, y=0.999,t=channel)
         plt.tight_layout()
-    plt.savefig(os.path.join(sim_output_path, 'trajectories_covidregion_%s.png' % channel))
-    #plt.savefig(os.path.join(sim_output_path, 'trajectories_covidregion_%s.pdf' % channel))
-        #plt.show()
+    plt.savefig(os.path.join(plot_path, 'trajectories_covidregion_%s.png' % channel))
+    #plt.savefig(os.path.join(plot_path,'pdf', 'trajectories_covidregion_%s.pdf' % channel))
 
 
 if __name__ == '__main__' :
 
-    exp_names = [ '20200816_IL_testbaseline']
+    exp_names = ['20201207_IL_mr_test2_dSys']
+    first_plot_day = date(2020, 9, 1)
+    last_plot_day = date(2020, 12, 31)
+
     showLegend = False
-    if len(exp_names) >1 :
+    if len(exp_names) >1:
         showLegend = True
 
-    plot_main(nscen=None, showLegend =showLegend)
-    plot_covidregions(nscen=None, showLegend =showLegend)
-    plot_covidregions_inone(channel='Ki_t',nscen=None, showLegend =showLegend,ymax=1.5)
-    plot_covidregions_inone(channel='d_Sym_t',nscen=None, showLegend =showLegend,ymax=1)
+    plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
+    plot_main(nscen=None, showLegend=showLegend)
+    plot_covidregions(nscen=None, showLegend=showLegend)
+    plot_covidregions_inone(channel='Ki_t', nscen=None, showLegend=showLegend, ymax=1.5)
+    plot_covidregions_inone(channel='d_Sym_t', nscen=None, showLegend=showLegend, ymax=1)

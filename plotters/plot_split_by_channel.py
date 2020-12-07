@@ -10,17 +10,11 @@ from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 from data_comparison import load_sim_data
-from copy import copy
 import re
 
 mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
-# first_day = date(2020, 2, 13) # IL
-# first_day = date(2020, 2, 18) # Chicago
-first_day = date(2020, 2, 13) # NMH
-
 
 def plot_on_fig(df, channels, axes, color, label) :
 
@@ -29,10 +23,7 @@ def plot_on_fig(df, channels, axes, color, label) :
         channeltitle = re.sub('_det','', str(channeltitle), count=1)
 
         ax = axes[c]
-        mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-
-        mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        mdf = mdf[(mdf['date'] >= date(2020, 5, 1)) & (mdf['date'] <= date(2020, 10, 1))]
+        mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
         ax.plot(mdf['date'], mdf['CI_50'], color=color, label=label)
         # ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
         #                 color=color, linewidth=0, alpha=0.2)
@@ -46,9 +37,12 @@ def plot_on_fig(df, channels, axes, color, label) :
 
 if __name__ == '__main__' :
 
-    exp_name = '20200909_IL_mr_test_observeLevel_v3'
-    channelGrp =  "symp" # "symp" "infect"  "hospCrit"
+    exp_name = '20201207_IL_mr_test2_dSys'
+    channelGrp = "symp" # "symp" "infect"  "hospCrit"
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
+
+    first_plot_day = date(2020, 10, 1)
+    last_plot_day = date(2020, 12, 31)
 
     fig = plt.figure(figsize=(12, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
@@ -75,6 +69,7 @@ if __name__ == '__main__' :
     for d, key in enumerate(nchannels.keys()) :
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         df = load_sim_data(exp_name)
+        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
 
         channels = nchannels[key]
         if d == 0:

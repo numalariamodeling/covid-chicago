@@ -16,10 +16,6 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
-first_day = date(2020, 2, 13) # IL
-first_plot_day = date(2020, 7, 1)
-last_plot_day = date(2020, 12,31)
-
 def parse_args():
     description = "Simulation run for modeling Covid-19"
     parser = argparse.ArgumentParser(description=description)
@@ -69,8 +65,6 @@ def plot_prevalences(exp_name, channels = ['prevalence'], fname='trajectoriesDat
         column_list.append('susceptible_' + str(ems_num))
 
     df = pd.read_csv(os.path.join(simpath, fname), usecols=column_list)
-    #first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
 
     fig = plt.figure(figsize=(16,8))
@@ -125,6 +119,10 @@ if __name__ == '__main__' :
     args = parse_args()
     trajectoriesName = args.trajectoriesName
     Location = args.Location
+    
+    first_plot_day = date(2020, 7, 1)
+    last_plot_day = date(2020, 12,31)
+
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     stem = args.stem

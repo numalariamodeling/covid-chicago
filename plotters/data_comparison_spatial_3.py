@@ -131,12 +131,8 @@ def compare_ems(exp_name, fname, param, ems_nr=0):
         column_list.append(channel + "_EMS-" + str(ems_nr))
 
     df = load_sim_data(exp_name, ems_nr, fname=fname, column_list=column_list)
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-
-    df['critical_with_suspected'] = df['critical']
-
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df = df[df['date'] <= datetime.today()]
+    df['critical_with_suspected'] = df['critical']
 
     sampled_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, "sampled_parameters.csv"), usecols=['scen_num', param])
     df = pd.merge(how='left', left=df, left_on='scen_num', right=sampled_df, right_on='scen_num')

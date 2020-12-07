@@ -40,9 +40,7 @@ def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
 
 def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True) :
     ax = axes[c]
-    mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-
-    mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
     mdf = mdf[(mdf['date'] >= first_plot_day) & (mdf['date'] <= last_plot_day)]
     if addgrid:
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
@@ -91,7 +89,6 @@ def plot_covidregions() :
         palette = sns.color_palette('Set1', len(exp_names))
         channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
         axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
-
 
         for d, exp_name in enumerate(exp_names) :
             sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
@@ -196,7 +193,6 @@ def plot_restoreregions_inone(channel='hospitalized') :
 
 if __name__ == '__main__' :
 
-    first_day = date(2020, 2, 13)  # IL
     first_plot_day = date(2020, 7, 1)
     last_plot_day = date(2020, 12, 1)
 
