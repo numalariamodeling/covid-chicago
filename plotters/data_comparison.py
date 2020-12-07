@@ -52,8 +52,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None,fname='trajec
     df['date'] = pd.to_datetime(df['date']).dt.date
 
     df.columns = df.columns.str.replace(region_suffix, '')
-    df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
-    df = calculate_incidence(df)
+    if 'infected' in df.columns:
+        df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
+        df = calculate_incidence(df)
 
     return df
 
