@@ -81,38 +81,48 @@ def compare_NMH(exp_name) :
     #                 plot_path=plot_path, first_day=first_day)
 
 
-def plot_sim_and_ref_Ki(df, ref_df, channels, data_channel_names, first_day=date(2020, 2, 22),
-                     ymax=40, plot_path=None) :
+def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day=date(2020, 2, 22),
+                     ymax=40, plot_path=None, logscale=True, param="Ki"):
 
-    fig = plt.figure()
-    palette = sns.color_palette('husl', len(df['Ki'].unique()))
+    fig = plt.figure(figsize=(10, 6))
+    palette = sns.color_palette('husl', 8)
     k = 0
-    for c, channel in enumerate(channels) :
-        ax = fig.add_subplot(2,2,c+1)
+    for c, channel in enumerate(channels):
+        ax = fig.add_subplot(2, 3, c + 1)
 
-        for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
-            mdf = kdf.groupby('time')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
+        for i, par in enumerate(df[param].unique()):
+            df_sub = df[df[param] == par]
+            mdf = df_sub.groupby('time')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
             dates = [first_day + timedelta(days=int(x)) for x in mdf['time']]
-            ax.plot(dates, mdf['CI_50'], color=palette[k], label=ki)
+            ax.plot(dates, mdf['CI_50'], color=palette[i], label=round(par,3))
             ax.fill_between(dates, mdf['CI_5'], mdf['CI_95'],
-                        color=palette[k], linewidth=0, alpha=0.2)
+                            color=palette[i], linewidth=0, alpha=0.2)
             ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
-                        color=palette[k], linewidth=0, alpha=0.4)
+                            color=palette[i], linewidth=0, alpha=0.4)
 
-            ax.set_title(channel, y=0.8)
-        ax.legend()
-
+        ax.set_title(titles[c], y=0.8, fontsize=12)
         formatter = mdates.DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.set_xlim(first_day, datetoday)
-        ax.set_ylim(1,ymax)
-        ax.set_yscale('log')
+        ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
+        if c==len(channels)-1:
+            ax.legend()
+        if logscale :
+            ax.set_ylim(0.1, ymax)
+            ax.set_yscale('log')
 
-        ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0)
-    if plot_path :
-        plt.savefig('%s_Kisep.png' % plot_path)
-        plt.savefig('%s_Kisep.pdf' % plot_path, format='PDF')
+        ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0, ms=1)
+        ax.plot(ref_df['date'], ref_df[data_channel_names[c]].rolling(window = 7, center=True).mean(), c='k', alpha=1.0)
+
+    fig.tight_layout()
+    if plot_path:
+        plot_name = f'compare_to_data_covidregion_{str(ems_nr)}_{param}'
+        if logscale == False :
+            plot_name = plot_name + "_nolog"
+        plt.savefig(os.path.join(plot_path, plot_name + '.png'))
+        plt.savefig(os.path.join(plot_path,'pdf',  plot_name + '.pdf'), format='PDF')
+
 
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day=date(2020, 2, 22),
                      ymax=40, plot_path=None, logscale=True):
@@ -150,8 +160,8 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, f
         plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
         if logscale == False :
             plot_name = plot_name + "_nolog"
-        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, '_plots', plot_name + '.png'))
-        plt.savefig(os.path.join(wdir, 'simulation_output', exp_name,'_plots','pdf',  plot_name + '.pdf'), format='PDF')
+        plt.savefig(os.path.join(plot_path, plot_name + '.png'))
+        plt.savefig(os.path.join(plot_path,'pdf',  plot_name + '.pdf'), format='PDF')
     # return a
 
 def compare_county(exp_name, county_name) :
@@ -188,7 +198,7 @@ def compare_county(exp_name, county_name) :
                      plot_path=plot_path, first_day=first_day)
     plt.show()
 
-def compare_ems(exp_name, ems=0) :
+def compare_ems(exp_name, ems=0, param=None) :
 
     ref_df = load_ref_df(ems_nr=ems)
 
@@ -208,20 +218,26 @@ def compare_ems(exp_name, ems=0) :
     titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
 
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_combo')
-    plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
-                     plot_path=plot_path, first_day=first_day, logscale=True)
-    plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     ymax=10000, plot_path=plot_path, first_day=first_day, logscale=False)
+    plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
+    if param == None :
+        plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
+                         plot_path=plot_path, first_day=first_day, logscale=True)
+        plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                         ymax=10000, plot_path=plot_path, first_day=first_day, logscale=False)
+    else :
+        plot_sim_and_ref_by_param(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
+                         plot_path=plot_path, first_day=first_day, logscale=True,param=param)
+        plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                         ymax=10000, plot_path=plot_path, first_day=first_day, logscale=False,param=param)
 
 
 if __name__ == '__main__' :
 
-    args = parse_args()  
+    args = parse_args()
     #Location = 'Local'
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location = args.Location)
 
-    stem = args.stem   
+    stem = args.stem
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names :
@@ -238,6 +254,7 @@ if __name__ == '__main__' :
             compare_county(exp_name,  county_name='Cook')
         elif region == 'EMS':
             compare_ems(exp_name,  ems=int(ems_nr))
+            #compare_ems(exp_name,  ems=int(ems_nr), param='Ki')
             print(exp_name)
         elif region == 'IL':
             compare_ems(exp_name, source='line_list')
