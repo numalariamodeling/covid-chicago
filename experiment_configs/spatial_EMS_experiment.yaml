@@ -164,8 +164,8 @@ sampled_parameters:
         - {'low': 0.215, 'high': 0.215}
         - {'low': 0.239, 'high': 0.239}
         - {'low': 0.170, 'high': 0.170}
-        - {'low': 0.152, 'high': 0.152}
-        - {'low': 0.169, 'high': 0.169}
+        - {'low': 0.175, 'high': 0.175}
+        - {'low': 0.175, 'high': 0.175}
         - {'low': 0.186, 'high': 0.186}
         - {'low': 0.146, 'high': 0.146}
   ki_multiplier_10:
@@ -175,13 +175,13 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.230, 'high': 0.230}
         - {'low': 0.255, 'high': 0.255}
-        - {'low': 0.435, 'high': 0.435}
+        - {'low': 0.440, 'high': 0.440}
         - {'low': 0.287, 'high': 0.287}
         - {'low': 0.358, 'high': 0.358}
         - {'low': 0.324, 'high': 0.324}
         - {'low': 0.258, 'high': 0.258}
-        - {'low': 0.209, 'high': 0.209}
-        - {'low': 0.238, 'high': 0.238}
+        - {'low': 0.190, 'high': 0.190}
+        - {'low': 0.245, 'high': 0.245}
         - {'low': 0.259, 'high': 0.259}
         - {'low': 0.179, 'high': 0.179}
   ki_multiplier_11:
@@ -191,14 +191,14 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.161, 'high': 0.161}
         - {'low': 0.145, 'high': 0.145}
-        - {'low': 0.130, 'high': 0.130}
+        - {'low': 0.200, 'high': 0.200}
         - {'low': 0.195, 'high': 0.195}
         - {'low': 0.210, 'high': 0.210}
         - {'low': 0.199, 'high': 0.199}
         - {'low': 0.121, 'high': 0.121}
-        - {'low': 0.109, 'high': 0.109}
-        - {'low': 0.130, 'high': 0.130}
-        - {'low': 0.158, 'high': 0.158}
+        - {'low': 0.113, 'high': 0.113}
+        - {'low': 0.110, 'high': 0.110}
+        - {'low': 0.145, 'high': 0.145}
         - {'low': 0.119, 'high': 0.119}
   ki_multiplier_12:
     IL:
