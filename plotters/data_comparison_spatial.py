@@ -18,7 +18,7 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
-datetoday = date(today.year, today.month, today.day)
+datetoday = date(2020, 12, 20)
 
 def parse_args():
 
@@ -123,7 +123,6 @@ def compare_ems(exp_name,fname, ems_nr=0):
 
 
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df = df[df['date']  <=  datetime.today()]
 
     ref_df = load_ref_df(ems_nr)
 
