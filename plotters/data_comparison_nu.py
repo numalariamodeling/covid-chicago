@@ -43,7 +43,7 @@ column_list = ['scen_num', 'run_num', 'campus_quarantine_pop', 'campus_isolation
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
     #filedate = get_latest_filedate()
-    qi_path=os.path.join(datapath, 'covid_modeling_northwestern', '201104_QI_tracking.csv')
+    qi_path=os.path.join(datapath, 'covid_modeling_northwestern', '201118_QI_tracking.csv')
     qi = pd.read_csv(qi_path)
     tests = pd.read_csv(os.path.join(datapath, 'covid_modeling_northwestern', 'Depersonalized_Test_Result.csv'))
 
@@ -91,7 +91,7 @@ def get_probs(exp_name):
     ax.xaxis.set_major_formatter(formatter)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
-    plt.ylabel('Daily Positive Tests',fontsize=14)
+    plt.ylabel('Daily Undergrad Positive Tests',fontsize=14)
 
     traj = []
     channel = 'campus_isolation_pop'
