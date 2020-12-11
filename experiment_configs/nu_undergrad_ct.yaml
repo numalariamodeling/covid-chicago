@@ -26,7 +26,7 @@ sampled_parameters:
     function_kwargs: {'low': 0.002, 'high':0.006}
   'expected_seroprevalence':
     np.random: uniform
-    function_kwargs: {'low': 0.05, 'high':0.15}
+    function_kwargs: {'low': 0.10, 'high':0.20}
   'time_to_infectious':
     np.random: uniform
     function_kwargs: {'low': 3.4, 'high':4.5}
@@ -95,7 +95,7 @@ sampled_parameters:
     function_kwargs: {'low': 0.05, 'high':0.05}
   'nonNU_prevalence':
     np.random: uniform
-    function_kwargs: {'low': 0.015, 'high':0.030}
+    function_kwargs: {'low': 0.030, 'high':0.045}
   'prob_of_isolation_campus':
     np.random: uniform
     function_kwargs: {'low': 0.9, 'high':1.0}
@@ -123,10 +123,10 @@ sampled_parameters:
 intervention_parameters:
   'Ki_NU':
     np: linspace
-    function_kwargs: {'start': 0.1, 'stop': 0.2, 'num':3}
+    function_kwargs: {'start': 0.1, 'stop': 0.2, 'num':2}
   'testing_period_campus':
     np: linspace
-    function_kwargs: {'start': 5.25, 'stop': 7.0, 'num':2}
+    function_kwargs: {'start': 3.5, 'stop': 7.0, 'num':2}
   'testing_period_evanston':
     np: linspace
     function_kwargs: {'start': 7.0, 'stop': 7.0, 'num':1}
