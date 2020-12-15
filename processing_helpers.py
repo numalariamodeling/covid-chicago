@@ -6,6 +6,48 @@ from datetime import datetime, timedelta
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
+
+def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='trajectoriesDat.csv',
+                  input_sim_output_path =None, column_list=None, add_incidence=True) :
+    input_wdir = input_wdir or wdir
+    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
+    sim_output_path = input_sim_output_path or sim_output_path_base
+
+    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
+    df = df.dropna()
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    df['date'] = pd.to_datetime(df['date']).dt.date
+
+    if region_suffix !=None :
+        df.columns = df.columns.str.replace(region_suffix, '')
+
+    if add_incidence:
+        if 'recovered' in df.columns:
+            df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
+            df = calculate_incidence(df)
+        else:
+            df = calculate_incidence(df, trimmed =True)
+    return df
+
+def load_sim_data_age(exp_name,channel, age_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
+    input_wdir = input_wdir or wdir
+    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
+    sim_output_path = input_sim_output_path or sim_output_path_base
+
+    column_list = ['scen_num',  'time', 'startdate']
+    for grp in ageGroup_list:
+        column_list.append(channel + str(grp))
+
+    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
+    df = df.dropna()
+    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    df['date'] = pd.to_datetime(df['date']).dt.date
+    df.columns = df.columns.str.replace(age_suffix, '')
+
+    return df
+
 def merge_county_covidregions(df_x, key_x='region', key_y='County'):
     """ Add covidregions (new_restore_regions from covidregion_population_by_county.csv)
     to a file that only includes counties. Country names are changes to lowercase before the merge.
@@ -48,7 +90,7 @@ def loadEMSregions(regionname) :
                'northeast' : ['EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11'],
                'central' : ['EMS_3', 'EMS_6'],
                'southern': ['EMS_4', 'EMS_5']
-    }
+               }
 
     if regionname != "all" :
         out = regions[regionname]
@@ -97,7 +139,7 @@ def CI_50(x) :
 def load_ref_df(ems_nr):
     ref_df_emr = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
     ref_df_emr['suspected_and_confirmed_covid_icu'] = ref_df_emr['suspected_covid_icu'] + ref_df_emr['confirmed_covid_icu']
-    data_channel_names_emr = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu']
+    data_channel_names_emr = ['confirmed_covid_deaths_prev_24h', 'confirmed_covid_icu', 'covid_non_icu','suspected_covid_icu','suspected_and_confirmed_covid_icu']
     ref_df_emr = ref_df_emr.groupby(['date_of_extract','covid_region'])[data_channel_names_emr].agg(np.sum).reset_index()
     ref_df_emr['date'] = pd.to_datetime(ref_df_emr['date_of_extract'])
 
@@ -125,7 +167,7 @@ def load_ref_df(ems_nr):
             ref_df_cli = ref_df_cli[ref_df_cli['covid_region'] == ems_nr]
             ref_df_public = ref_df_public[ref_df_public['covid_region'] == ems_nr]
         else:
-            ref_df_emr = ref_df_emr.groupby('date_of_extract').agg(np.sum).reset_index()
+            ref_df_emr = ref_df_emr.groupby('date').agg(np.sum).reset_index()
             ref_df_ll = ref_df_ll.groupby('date').agg(np.sum).reset_index()
             ref_df_cli = ref_df_cli.groupby('date').agg(np.sum).reset_index()
             ref_df_public = ref_df_public.groupby('date').agg(np.sum).reset_index()
@@ -152,32 +194,44 @@ def load_ref_df(ems_nr):
         ref_df[ref_df['covid_region'].isin(ems_nr)]
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
+    ref_df['date'] = pd.to_datetime(ref_df['date']).dt.date
     return ref_df
 
 
-def calculate_incidence(adf, output_filename=None) :
+def calculate_incidence(adf, output_filename=None, trimmed=False) :
 
     inc_df = pd.DataFrame()
     for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
 
-        sdf = pd.DataFrame( { 'time' : df['time'],
-                              'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
-                              'new_infected': count_new(df, 'infected_cumul'),
-                            #'new_infected_detected': count_new(df, 'infected_det_cumul'),
-                              'new_asymptomatic' : count_new(df, 'asymp_cumul'),
-                              'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
-                              'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
-                              'new_symptomatic_severe': count_new(df, 'symp_severe_cumul'),
-                              'new_detected_symptomatic_mild': count_new(df, 'symp_mild_det_cumul'),
-                              'new_detected_symptomatic_severe': count_new(df, 'symp_severe_det_cumul'),
-                              'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
-                              'new_hospitalized' : count_new(df, 'hosp_cumul'),
-                              'new_detected' : count_new(df, 'detected_cumul'),
-                              'new_critical' : count_new(df, 'crit_cumul'),
-                              'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                              'new_detected_deaths' : count_new(df, 'death_det_cumul'),
-                              'new_deaths' : count_new(df, 'deaths')
-                              })
+        if trimmed == False:
+            sdf = pd.DataFrame({'time' : df['time'],
+                                'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
+                                'new_infected': count_new(df, 'infected_cumul'),
+                                #'new_infected_detected': count_new(df, 'infected_det_cumul'),
+                                'new_asymptomatic' : count_new(df, 'asymp_cumul'),
+                                'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
+                                'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
+                                'new_symptomatic_severe': count_new(df, 'symp_severe_cumul'),
+                                'new_detected_symptomatic_mild': count_new(df, 'symp_mild_det_cumul'),
+                                'new_detected_symptomatic_severe': count_new(df, 'symp_severe_det_cumul'),
+                                'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
+                                'new_hospitalized' : count_new(df, 'hosp_cumul'),
+                                'new_detected' : count_new(df, 'detected_cumul'),
+                                'new_critical' : count_new(df, 'crit_cumul'),
+                                'new_detected_critical' : count_new(df, 'crit_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_deaths' : count_new(df, 'deaths')
+                                })
+        if trimmed == True:
+            sdf = pd.DataFrame({'time': df['time'],
+                                'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
+                                'new_hospitalized' : count_new(df, 'hosp_cumul'),
+                                'new_critical' : count_new(df, 'crit_cumul'),
+                                'new_detected_critical' : count_new(df, 'crit_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_deaths' : count_new(df, 'deaths')
+                                })
+
         sdf['run_num'] = run
         sdf['sample_num'] = samp
         sdf['scen_num'] = scen
@@ -258,39 +312,39 @@ def load_capacity(ems):
 
 def civis_colnames(reverse=False) :
     colnames = { "ems": "geography_modeled",
-     "infected_median": "cases_median",
-     "infected_95CI_lower": "cases_lower",
-     "infected_95CI_upper": "cases_upper",
-     "new_infected_median": "cases_new_median",
-     "new_infected_95CI_lower": "cases_new_lower",
-     "new_infected_95CI_upper": "cases_new_upper",
-     "new_symptomatic_median": "symptomatic_new_median",
-     "new_symptomatic_95CI_lower": "symptomatic_new_lower",
-     "new_symptomatic_95CI_upper": "symptomatic_new_upper",
-     "new_deaths_median": "deaths_median",
-     "new_deaths_95CI_lower": "deaths_lower",
-     "new_deaths_95CI_upper": "deaths_upper",
-     "new_detected_deaths_median": "deaths_det_median",
-     "new_detected_deaths_95CI_lower": "deaths_det_lower",
-     "new_detected_deaths_95CI_upper": "deaths_det_upper",
-     "hospitalized_median": "hosp_bed_median",
-     "hospitalized_95CI_lower": "hosp_bed_lower",
-     "hospitalized_95CI_upper": "hosp_bed_upper",
-     "hosp_det_median": "hosp_det_bed_median",
-     "hosp_det_95CI_lower": "hosp_det_bed_lower",
-     "hosp_det_95CI_upper": "hosp_det_bed_upper",
-     "critical_median": "icu_median",
-     "critical_95CI_lower": "icu_lower",
-     "critical_95CI_upper": "icu_upper",
-     "crit_det_median": "icu_det_median",
-     "crit_det_95CI_lower": "icu_det_lower",
-     "crit_det_95CI_upper": "icu_det_upper",
-     "ventilators_median": "vent_median",
-     "ventilators_95CI_lower": "vent_lower",
-     "ventilators_95CI_upper": "vent_upper",
-     "recovered_median": "recovered_median",
-     "recovered_95CI_lower": "recovered_lower",
-     "recovered_95CI_upper": "recovered_upper"}
+                 "infected_median": "cases_median",
+                 "infected_95CI_lower": "cases_lower",
+                 "infected_95CI_upper": "cases_upper",
+                 "new_infected_median": "cases_new_median",
+                 "new_infected_95CI_lower": "cases_new_lower",
+                 "new_infected_95CI_upper": "cases_new_upper",
+                 "new_symptomatic_median": "symptomatic_new_median",
+                 "new_symptomatic_95CI_lower": "symptomatic_new_lower",
+                 "new_symptomatic_95CI_upper": "symptomatic_new_upper",
+                 "new_deaths_median": "deaths_median",
+                 "new_deaths_95CI_lower": "deaths_lower",
+                 "new_deaths_95CI_upper": "deaths_upper",
+                 "new_detected_deaths_median": "deaths_det_median",
+                 "new_detected_deaths_95CI_lower": "deaths_det_lower",
+                 "new_detected_deaths_95CI_upper": "deaths_det_upper",
+                 "hospitalized_median": "hosp_bed_median",
+                 "hospitalized_95CI_lower": "hosp_bed_lower",
+                 "hospitalized_95CI_upper": "hosp_bed_upper",
+                 "hosp_det_median": "hosp_det_bed_median",
+                 "hosp_det_95CI_lower": "hosp_det_bed_lower",
+                 "hosp_det_95CI_upper": "hosp_det_bed_upper",
+                 "critical_median": "icu_median",
+                 "critical_95CI_lower": "icu_lower",
+                 "critical_95CI_upper": "icu_upper",
+                 "crit_det_median": "icu_det_median",
+                 "crit_det_95CI_lower": "icu_det_lower",
+                 "crit_det_95CI_upper": "icu_det_upper",
+                 "ventilators_median": "vent_median",
+                 "ventilators_95CI_lower": "vent_lower",
+                 "ventilators_95CI_upper": "vent_upper",
+                 "recovered_median": "recovered_median",
+                 "recovered_95CI_lower": "recovered_lower",
+                 "recovered_95CI_upper": "recovered_upper"}
 
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)

@@ -10,7 +10,6 @@ from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 from scenario_sets import *
-from data_comparison import load_sim_data
 
 mpl.rcParams['pdf.fonttype'] = 42
 
