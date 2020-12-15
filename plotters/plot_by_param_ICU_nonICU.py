@@ -50,10 +50,8 @@ def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgr
     ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],color=color, linewidth=0, alpha=0.4)
     ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],color=color, linewidth=0, alpha=0.3)
     ax.fill_between(mdf['date'].values, mdf['amin'], mdf['amax'],color=color, linewidth=0, alpha=0.1)
-    ax.set_title(panel_heading, y=0.85)
-    #formatter = mdates.DateFormatter("%d\n%b")
+    ax.set_title(panel_heading)
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
-    #ax.xaxis.set_major_locator(mdates.WeekdayLocator())
 
     ref_df = compare_ems(ems=ems, channel=channel)
 
@@ -124,7 +122,7 @@ def plot_covidregions(channel,subgroups, psuffix, plot_path,first_day, last_day)
     fig = plt.figure(figsize=(16,8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('Set1', len(exp_names))
-    axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
+    axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(subgroups))]
 
     for c, region_suffix in enumerate(subgroups) :
 

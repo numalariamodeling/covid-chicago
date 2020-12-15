@@ -85,9 +85,7 @@ def plot_sim(dat,suffix,channels) :
                       [capacity[channel], capacity[channel]], '--', linewidth=2, color=palette[c])
 
             ax.set_title(channel, y=0.85)
-            formatter = mdates.DateFormatter("%m-%d")
-            ax.xaxis.set_major_formatter(formatter)
-            ax.xaxis.set_major_locator(mdates.MonthLocator())
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
 
         plotname = f'{scenarioName}_{suffix}'
         plotname = plotname.replace('EMS-','covidregion_')
