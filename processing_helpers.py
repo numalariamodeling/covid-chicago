@@ -194,6 +194,7 @@ def load_ref_df(ems_nr):
         ref_df[ref_df['covid_region'].isin(ems_nr)]
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
+    ref_df['date'] = pd.to_datetime(ref_df['date']).dt.date
     return ref_df
 
 
@@ -225,7 +226,6 @@ def calculate_incidence(adf, output_filename=None, trimmed=False) :
             sdf = pd.DataFrame({'time': df['time'],
                                 'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
                                 'new_hospitalized' : count_new(df, 'hosp_cumul'),
-                                'new_detected' : count_new(df, 'detected_cumul'),
                                 'new_critical' : count_new(df, 'crit_cumul'),
                                 'new_detected_critical' : count_new(df, 'crit_det_cumul'),
                                 'new_detected_deaths' : count_new(df, 'death_det_cumul'),

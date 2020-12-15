@@ -109,7 +109,7 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
 
     plt.savefig(os.path.join(plot_path, f'{fig_name}_by_covidregion.png'))
     plt.savefig(os.path.join(plot_path,'pdf', f'{fig_name}_by_covidregion.pdf'), format='PDF')
-    plt.show()
+
 
 if __name__ == '__main__' :
 
