@@ -18,7 +18,7 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 today = datetime.today()
-datetoday = date(2020, 12, 20)
+datetoday = date(today.year, today.month, today.day)
 
 def parse_args():
 
