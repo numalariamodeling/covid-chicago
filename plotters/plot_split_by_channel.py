@@ -1,3 +1,4 @@
+import argparse
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,18 +10,34 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
-from data_comparison import load_sim_data
-from copy import copy
 import re
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+def parse_args():
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
 
-# first_day = date(2020, 2, 13) # IL
-# first_day = date(2020, 2, 18) # Chicago
-first_day = date(2020, 2, 13) # NMH
-
+    parser.add_argument(
+        "-stem",
+        "--stem",
+        type=str,
+        help="Name of simulation experiment"
+    )
+    parser.add_argument(
+        "-loc",
+        "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default="Local"
+    )
+    parser.add_argument(
+        "-t", "--trajectoriesName",
+        type=str,
+        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
+        default='trajectoriesDat.csv',
+    )
+    return parser.parse_args()
 
 def plot_on_fig(df, channels, axes, color, label) :
 
@@ -29,64 +46,79 @@ def plot_on_fig(df, channels, axes, color, label) :
         channeltitle = re.sub('_det','', str(channeltitle), count=1)
 
         ax = axes[c]
-        mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-
-        mdf['date'] = mdf['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        mdf = mdf[(mdf['date'] >= date(2020, 5, 1)) & (mdf['date'] <= date(2020, 10, 1))]
+        mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
         ax.plot(mdf['date'], mdf['CI_50'], color=color, label=label)
         # ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
         #                 color=color, linewidth=0, alpha=0.2)
         ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                         color=color, linewidth=0, alpha=0.4)
         ax.set_title(' '.join(channeltitle.split('_')), y=0.85)
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
 
-
-if __name__ == '__main__' :
-
-    exp_name = '20200909_IL_mr_test_observeLevel_v3'
-    channelGrp =  "symp" # "symp" "infect"  "hospCrit"
-    plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
-
-    fig = plt.figure(figsize=(12, 8))
-    fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
-
+def compare_channels(channelGrp):
     nchannels_symp = {'channels1': ['symp_severe_cumul', 'symp_mild_cumul', 'symptomatic_severe', 'symptomatic_mild'],
-                 'channels2': ['symp_severe_det_cumul',  'symp_mild_det_cumul', 'symptomatic_severe_det', 'symptomatic_mild_det'] }
+                      'channels2': ['symp_severe_det_cumul', 'symp_mild_det_cumul', 'symptomatic_severe_det',
+                                    'symptomatic_mild_det']}
 
     nchannels_infect = {'channels1': ['infected', 'presymptomatic', 'infectious_undet', 'asymptomatic', 'asymp_cumul'],
-                 'channels2': ['infected_det',  'presymptomatic_det', 'infectious_det', 'asymptomatic_det', 'asymp_det_cumul'] }
+                        'channels2': ['infected_det', 'presymptomatic_det', 'infectious_det', 'asymptomatic_det',
+                                      'asymp_det_cumul']}
 
-    nchannels_hospCrit = {'channels1': ['hospitalized', 'new_hospitalized', 'hosp_cumul', 'critical', 'new_critical', 'crit_cumul'],
-                 'channels2': ['hosp_det',  'new_detected_hospitalized', 'hosp_det_cumul','crit_det',  'new_detected_critical', 'crit_det_cumul'] }
+    nchannels_hospCrit = {
+        'channels1': ['hospitalized', 'new_hospitalized', 'hosp_cumul', 'critical', 'new_critical', 'crit_cumul'],
+        'channels2': ['hosp_det', 'new_detected_hospitalized', 'hosp_det_cumul', 'crit_det', 'new_detected_critical',
+                      'crit_det_cumul']}
 
     if channelGrp == "symp":
         nchannels = nchannels_symp
-    if channelGrp == "infect" :
+    if channelGrp == "infect":
         nchannels = nchannels_infect
-    if channelGrp == "hospCrit" :
+    if channelGrp == "hospCrit":
         nchannels = nchannels_hospCrit
 
     palette = sns.color_palette('Set1', len(nchannels))
+
+    fig = plt.figure(figsize=(16, 8))
+    fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
+
     axes = [fig.add_subplot(2, 3, x + 1) for x in range(len(nchannels['channels1']))]
 
-    for d, key in enumerate(nchannels.keys()) :
+    for d, key in enumerate(nchannels.keys()):
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         df = load_sim_data(exp_name)
+        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
 
         channels = nchannels[key]
         if d == 0:
-            label="all"
+            label = "all"
         if d == 1:
             label = "detected"
 
         plot_on_fig(df, channels, axes, color=palette[d], label=label)
     axes[-1].legend()
 
-    fname = 'channel_'+ channelGrp +'_comparison'
+    fname = 'channel_' + channelGrp + '_comparison'
     plt.savefig(os.path.join(plot_path, fname + '.png'))
-    #plt.savefig(os.path.join(plot_path,'pdf', fname + '.pdf'), format='PDF')
+    # plt.savefig(os.path.join(plot_path,'pdf', fname + '.pdf'), format='PDF')
     plt.show()
+
+if __name__ == '__main__' :
+
+    args = parse_args()
+    stem = args.stem
+    trajectoriesName = args.trajectoriesName
+    Location = args.Location
+
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+
+    first_plot_day = date(2020, 10, 1)
+    last_plot_day = date(2020, 12, 31)
+
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    for exp_name in exp_names:
+        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
+        #compare_channels(channelGrp= "symp")
+        #compare_channels(channelGrp= "infect")
+        compare_channels(channelGrp= "hospCrit")
+
 

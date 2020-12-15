@@ -9,15 +9,11 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import sys
 sys.path.append('../')
-from data_comparison import load_sim_data
 from processing_helpers import *
 from load_paths import load_box_paths
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 mpl.rcParams['pdf.fonttype'] = 42
-
-plot_first_day = pd.to_datetime('2020/3/1')
-plot_last_day = pd.to_datetime('2021/4/1')
 
 def parse_args():
     description = "Process simulation outputs to send to Civis"
@@ -89,9 +85,7 @@ def plot_sim(dat,suffix,channels) :
                       [capacity[channel], capacity[channel]], '--', linewidth=2, color=palette[c])
 
             ax.set_title(channel, y=0.85)
-            formatter = mdates.DateFormatter("%m-%d")
-            ax.xaxis.set_major_formatter(formatter)
-            ax.xaxis.set_major_locator(mdates.MonthLocator())
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
 
         plotname = f'{scenarioName}_{suffix}'
         plotname = plotname.replace('EMS-','covidregion_')
@@ -101,21 +95,17 @@ def plot_sim(dat,suffix,channels) :
         # plt.show()
 
 def load_and_plot_data(ems_region, fname , savePlot=True) :
-
+    region_suffix = f'_{str(ems_region)}'
     column_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
-
     outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
         'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'death_det_cumul',
         'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
 
     for channel in outcome_channels:
-        column_list.append(channel + "_" + str(ems_region))
+        column_list.append(channel + region_suffix)
 
-    df = load_sim_data(exp_name,region_suffix = '_'+ems_region,fname=fname, column_list=column_list)
-
+    df = load_sim_data(exp_name,region_suffix = region_suffix,fname=fname, column_list=column_list)
     df['ems'] = ems_region
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
 
     df['ventilators'] = get_vents(df['crit_det'].values)
@@ -193,8 +183,10 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
 
-    regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
+    plot_first_day = date(2020,3,1)
+    plot_last_day = date(2021,4,1)
 
+    regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
     exp_suffix = exp_name.split("_")[-1]
     scenarioName = get_scenarioName(exp_suffix)
 
@@ -217,7 +209,7 @@ if __name__ == '__main__' :
     ### Optional
     if processStep == 'combine_outputs' :
 
-        for reg in ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11'] :
+        for reg in regions :
             print("Start processing" + reg)
             filename = "nu_" + simdate + "_" + reg + ".csv"
             adf = pd.read_csv(os.path.join(sim_output_path, filename))

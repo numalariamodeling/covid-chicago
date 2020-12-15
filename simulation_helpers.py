@@ -244,7 +244,7 @@ echo end""")
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
             file = open(os.path.join(temp_exp_dir, '0_locale_age_postprocessing.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py "{exp_name}" >> "{sim_output_path}/log/0_locale_age_postprocessing.txt" \n')
+            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py --stem "{exp_name}" >> "{sim_output_path}/log/0_locale_age_postprocessing.txt" \n')
 
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,sim_output_path) :
