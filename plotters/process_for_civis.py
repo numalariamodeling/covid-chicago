@@ -45,7 +45,7 @@ if __name__ == '__main__' :
         #exp_name = '20200417_EMS_11_scenario2_test'
 
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-        df = load_sim_data(exp_name, wdir)
+        df = load_sim_data(exp_name, input_wdir=wdir)
         first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
         channels = ['infected','new_symptomatic', 'new_deaths', 'hospitalized', 'critical', 'ventilators']

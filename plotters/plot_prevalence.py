@@ -14,8 +14,6 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
 def parse_args():
     description = "Simulation run for modeling Covid-19"
     parser = argparse.ArgumentParser(description=description)
@@ -53,24 +51,23 @@ def trim_trajectories(simpath, scenario, colnames, ems) :
     df.to_csv(os.path.join(simpath, 'trimmed_trajectoriesDat_%s.csv' % scenario), index=False)
 
 
-def plot_prevalences(exp_name, channels = ['prevalence'], fname='trajectoriesDat.csv'):
+def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fname='trajectoriesDat.csv'):
 
     simpath = os.path.join(wdir, 'simulation_output', exp_name)
     ems = ['EMS-%d' % x for x in range(1, 12)] + ['All']
-    column_list = ['time', 'startdate', 'scen_num', 'infected_All', 'susceptible_All', 'exposed_All', 'recovered_All']
+    column_list = ['time', 'startdate', 'scen_num','run_num','sample_num', 'infected_All', 'susceptible_All', 'exposed_All', 'recovered_All']
     for ems_num in ems:
         column_list.append('infected_' + str(ems_num))
         column_list.append('exposed_' + str(ems_num))
         column_list.append('recovered_' + str(ems_num))
         column_list.append('susceptible_' + str(ems_num))
 
-    df = pd.read_csv(os.path.join(simpath, fname), usecols=column_list)
-    df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+    df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False)
+    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
 
     fig = plt.figure(figsize=(16,8))
-    fig.subplots_adjust(left=0.05, right=0.97, top=0.95, bottom=0.05)
+    fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('husl', 8)
-    formatter = mdates.DateFormatter("%m")
 
     for e, ems_num in enumerate(ems) :
 
@@ -100,8 +97,8 @@ def plot_prevalences(exp_name, channels = ['prevalence'], fname='trajectoriesDat
         if ems_num == 'All' :
             plotsubtitle = ems_num.replace('All', 'Illinois')
         ax.set_title(plotsubtitle)
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.set_xlim(first_day, last_day)
 
     if len(channels)==1:
         fig.suptitle(x=0.5, y=0.999, t=channel_label)
@@ -117,20 +114,19 @@ def plot_prevalences(exp_name, channels = ['prevalence'], fname='trajectoriesDat
 if __name__ == '__main__' :
 
     args = parse_args()
+    stem = args.stem
     trajectoriesName = args.trajectoriesName
     Location = args.Location
-    
-    first_plot_day = date(2020, 7, 1)
-    last_plot_day = date(2020, 12,31)
+
+    first_plot_day = date(2020, 10, 1)
+    last_plot_day = date(2020, 12, 31)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    stem = args.stem
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-
     for exp_name in exp_names:
-        plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
+        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
 
-        plot_prevalences(exp_name, channels = ['prevalence'], fname=trajectoriesName)
-        plot_prevalences(exp_name, channels = ['seroprevalence'], fname=trajectoriesName)
-        #plot_prevalences(exp_name, channels = ['prevalence', 'seroprevalence'], fname=trajectoriesName)
+        plot_prevalences(exp_name, channels = ['prevalence'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
+        plot_prevalences(exp_name, channels = ['seroprevalence'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
+        #plot_prevalences(exp_name, channels = ['prevalence', 'seroprevalence'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
