@@ -21,7 +21,6 @@ today = datetime.today()
 datetoday = date(today.year, today.month, today.day)
 
 def parse_args():
-
     description = "Simulation run for modeling Covid-19"
     parser = argparse.ArgumentParser(description=description)
 
@@ -36,7 +35,13 @@ def parse_args():
         "--Location",
         type=str,
         help="Local or NUCLUSTER",
-        default = "Local"
+        default="Local"
+    )
+    parser.add_argument(
+        "-t", "--trajectoriesName",
+        type=str,
+        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
+        default='trajectoriesDat.csv',
     )
     return parser.parse_args()
 
@@ -52,7 +57,7 @@ def compare_NMH(exp_name) :
     data_channel_names = ['covid pos admissions', 'cumulative admissions', 'inpatient census', 'ICU census']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v1')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1000,
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names,
                      plot_path=plot_path, first_day=first_day)
 
     #data_channel_names = ['new admits v2', 'cumulative admits positive results v2', 'non ICU v2', 'ICU census v2']
@@ -63,9 +68,9 @@ def compare_NMH(exp_name) :
 
 
 def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day, last_day,
-                     ymax=40, plot_path=None, logscale=True, param="Ki"):
+                     ymax=1000, plot_path=None, logscale=True, param="Ki"):
 
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
     k = 0
     for c, channel in enumerate(channels):
@@ -102,9 +107,9 @@ def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, 
         plt.savefig(os.path.join(plot_path,'pdf',  plot_name + '.pdf'), format='PDF')
 
 
-def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles,first_day, last_day,
-                     ymax=40, plot_path=None, logscale=True):
-    fig = plt.figure(figsize=(10, 6))
+def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day, last_day,
+                     ymax=1000, plot_path=None, logscale=True):
+    fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
     k = 0
     for c, channel in enumerate(channels):
@@ -153,7 +158,7 @@ def compare_county(exp_name, county_name, first_day, last_day) :
     data_channel_names = ['new_case', 'new_hospitalizations', 'total_case', 'total_hospitalizations']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data')
-    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
+    plot_sim_and_ref(df, ref_df, channels=channels, data_channel_names=data_channel_names,
                      plot_path=plot_path, first_day=first_day, last_day=last_day)
 
     fname = 'emresource_20200325_20200403.csv'
@@ -169,8 +174,8 @@ def compare_county(exp_name, county_name, first_day, last_day) :
 
     channels = ['critical_with_suspected', 'deaths', 'critical', 'ventilators']
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_emr')
-    plot_sim_and_ref_Ki(df, ref_df, channels=channels, data_channel_names=data_channel_names, ymax=1100,
-                     plot_path=plot_path, first_day=first_day)
+    plot_sim_and_ref_Ki(df, ref_df, channels=channels, data_channel_names=data_channel_names,
+                     plot_path=plot_path, first_day=first_day, last_day=last_day)
     plt.show()
 
 def compare_ems(exp_name, ems, first_day, last_day,param=None) :
@@ -189,20 +194,21 @@ def compare_ems(exp_name, ems, first_day, last_day,param=None) :
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
     if param == None :
-        plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
-                         plot_path=plot_path, first_day=first_day, logscale=True)
+        plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=True)
         plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         ymax=10000, plot_path=plot_path, first_day=first_day, logscale=False)
+                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=False)
     else :
-        plot_sim_and_ref_by_param(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles, ymax=10000,
+        plot_sim_and_ref_by_param(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
                          plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=True,param=param)
         plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         ymax=10000, plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=False,param=param)
+                         plot_path=plot_path,first_day=first_day, last_day=last_day, logscale=False,param=param)
 
 
 if __name__ == '__main__' :
 
     args = parse_args()
+    stem = args.stem
     trajectoriesName = args.trajectoriesName
     Location = args.Location
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
@@ -211,9 +217,7 @@ if __name__ == '__main__' :
     today = datetime.today()
     last_plot_day = date(today.year, today.month, today.day) #date(2020, 12, 31)
 
-    stem = args.stem
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-
     for exp_name in exp_names :
 
         region = exp_name.split('_')[1]
