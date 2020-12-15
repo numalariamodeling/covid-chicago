@@ -9,7 +9,6 @@ import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
 import sys
 sys.path.append('../')
-from data_comparison import load_sim_data
 from processing_helpers import *
 from load_paths import load_box_paths
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()

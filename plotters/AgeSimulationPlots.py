@@ -12,26 +12,6 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
-
-
-def load_sim_data(exp_name,channel, age_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
-
-    column_list = ['scen_num',  'time', 'startdate']
-    for grp in ageGroup_list:
-        column_list.append(channel + str(grp))
-
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
-    df = df.dropna()
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    df.columns = df.columns.str.replace(age_suffix, '')
-
-    return df
 
 def plot_on_fig(df, c, axes,channel, color,panel_heading, label=None, addgrid=True) :
     ax = axes[c]
@@ -79,7 +59,7 @@ def plot_covidregions(exp_names,channel,subgroups, psuffix) :
 
         for d, exp_name in enumerate(exp_names) :
             sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-            df = load_sim_data(exp_name, channel=channel, age_suffix=age_suffix)
+            df = load_sim_data_age(exp_name, channel=channel, age_suffix=age_suffix)
             df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
             
             version = exp_name.split("_")[-1]
@@ -100,6 +80,8 @@ def plot_covidregions(exp_names,channel,subgroups, psuffix) :
 
 
 if __name__ == '__main__' :
+
+    datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
     exp_names = ['20200923_EMS_11_ms_age_testhosp_v1','20200925_EMS_11_ms_age_testhosp_v6']
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
