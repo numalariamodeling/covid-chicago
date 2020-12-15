@@ -14,9 +14,6 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-first_plot_day = pd.to_datetime( date(2020, 8, 1))
-last_plot_day = pd.to_datetime(date(2020, 12,31))
-
 def parse_args():
     description = "Simulation run for modeling Covid-19"
     parser = argparse.ArgumentParser(description=description)
@@ -43,23 +40,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_sim_data(exp_name, ems_nr, input_wdir=None, fname='trajectoriesDat.csv', input_sim_output_path=None,
-                  column_list=None):
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
-
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
-
-    # df.columns = df.columns.str.replace('_All', '')
-    df.columns = df.columns.str.replace('_EMS-' + str(ems_nr), '')
-    df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
-    df = calculate_incidence(df)
-
-    return df
-
-
-def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, plot_name, first_day,
+def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, plot_name, first_day, last_day,
                      ymax=1000,  logscale=False):
 
     fig = plt.figure(figsize=(13, 4))
@@ -70,17 +51,15 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
 
     for c, channel in enumerate(channels):
         ax = axes[c]
-        # for k, (ki, kdf) in enumerate(df.groupby('Ki')) :
         df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
         mdf = df.groupby('date')[channel].agg([np.min, CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75, np.max]).reset_index()
 
-        ax.plot(mdf['date'].values, mdf['CI_50'], color=palette[k])
-        ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
+        ax.plot(mdf['date'], mdf['CI_50'], color=palette[k])
+        ax.fill_between(mdf['date'], mdf['CI_2pt5'], mdf['CI_97pt5'],
                         color=palette[k], linewidth=0, alpha=0.2)
-        ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
+        ax.fill_between(mdf['date'], mdf['CI_25'], mdf['CI_75'],
                         color=palette[k], linewidth=0, alpha=0.4)
-        ax.fill_between(mdf['date'].values, mdf['amin'], mdf['amax'],
+        ax.fill_between(mdf['date'], mdf['amin'], mdf['amax'],
                         color=palette[k], linewidth=0, alpha=0.1)
 
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
@@ -104,12 +83,10 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
             ax.plot([first_plot_day,last_plot_day ], [capacity[capacitychannel], capacity[capacitychannel]], '--', linewidth=1, color='black')
             ax.plot([first_plot_day,last_plot_day ], [capacity[capacitychannel] * 0.75, capacity[capacitychannel] * 0.75], '--', linewidth=0.8, color='grey')
 
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(first_plot_day, last_plot_day)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.set_xlim(first_day, last_day)
 
-    fig.suptitle(f'Covidregion {ems_nr}        \n',  y=1.0, fontsize=14)
+    fig.suptitle(f'COVID-19 region {ems_nr}        \n',  y=1.0, fontsize=14)
     fig.tight_layout()
     plot_name_full = plot_name + '_covidregion_' + str(ems_nr)
     fig.subplots_adjust(top=0.8)
@@ -120,23 +97,20 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
     plt.savefig(os.path.join(plot_path, plot_name_full + '.png'))
     plt.savefig(os.path.join(plot_path, 'pdf', plot_name_full + '.pdf'), format='PDF')
 
-def compare_ems(exp_name, fname, plot_name, ems_nr=0):
-
+def compare_ems(exp_name, fname, plot_name, ems_nr, first_day , last_day):
+    region_suffix = "_EMS-" + str(ems_nr)
     column_list = ['time', 'startdate', 'scen_num', 'sample_num', 'run_num']
 
-    outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul',
-                        'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
-                        'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul',
-                        'crit_det_cumul', 'death_det_cumul',
-                        'deaths', 'crit_det', 'critical', 'hosp_det', 'hospitalized']
+    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
+                        'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
+                        'death_det_cumul', 'deaths']
+
 
     for channel in outcome_channels:
-        column_list.append(channel + "_EMS-" + str(ems_nr))
+        column_list.append(channel + region_suffix)
 
-    df = load_sim_data(exp_name, ems_nr, fname=fname, column_list=column_list)
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d' ) #'%m/%d/%Y'
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+    df = load_sim_data(exp_name, region_suffix=region_suffix, fname=fname, column_list=column_list)
+    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
 
     ref_df = load_ref_df(ems_nr)
     ref_df = ref_df[(ref_df['date'] >= first_plot_day) & (ref_df['date'] <= last_plot_day)]
@@ -145,9 +119,9 @@ def compare_ems(exp_name, fname, plot_name, ems_nr=0):
     titles = ['ICU census\n(EMR)', 'non-ICU inpatient census\n(EMR)','daily deaths\n(LL)']
 
     #plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,plot_name=plot_name,
-    #                ymax=10000,first_day=first_day, logscale=True)
+    #                first_day=first_day, last_day=last_day, logscale=True)
     plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,plot_name=plot_name,
-                     ymax=10000,first_day=first_day, logscale=False)
+                     first_day=first_day, last_day=last_day, logscale=False)
 
     # return ref_df_emr, ref_df_ll
 
@@ -159,17 +133,15 @@ if __name__ == '__main__':
     trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    ## When running for testing/ in editor
-    #stem = "20201104_IL_mr_ae_baselinefit-v4"
-    #trajectoriesName = "trajectoriesDat.csv"
-    #Location = 'Local'
+    first_plot_day = date(2020, 10, 1)
+    last_plot_day = date(2020, 12, 31)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-
     for exp_name in exp_names:
         plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
         for ems_nr in range(1,12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name, fname=trajectoriesName, ems_nr=int(ems_nr), plot_name='forward_projection')
+            compare_ems(exp_name, fname=trajectoriesName, ems_nr=int(ems_nr), plot_name='forward_projection',
+                        first_day=first_plot_day, last_day=last_plot_day)
