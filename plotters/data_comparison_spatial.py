@@ -120,8 +120,8 @@ if __name__ == '__main__':
     Location = args.Location
 
     first_plot_day = date(2020, 2, 13)
-    today = datetime.today()
-    last_plot_day = date(today.year, today.month, today.day) #date(2020, 12, 31)
+    today = datetime.today() + timedelta(15)
+    last_plot_day = date(today.year, today.month, today.day)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

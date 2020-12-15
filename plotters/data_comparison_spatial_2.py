@@ -128,8 +128,8 @@ if __name__ == '__main__':
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     first_plot_day = date(2020, 2, 13)
-    today = datetime.today()
-    last_plot_day = date(today.year, today.month, today.day) #date(2020, 12, 31)
+    today = datetime.today() + timedelta(15)
+    last_plot_day = date(today.year, today.month, today.day)
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
 
