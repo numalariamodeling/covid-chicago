@@ -90,7 +90,7 @@ def loadEMSregions(regionname) :
                'northeast' : ['EMS_7', 'EMS_8', 'EMS_9', 'EMS_10', 'EMS_11'],
                'central' : ['EMS_3', 'EMS_6'],
                'southern': ['EMS_4', 'EMS_5']
-    }
+               }
 
     if regionname != "all" :
         out = regions[regionname]
@@ -197,29 +197,41 @@ def load_ref_df(ems_nr):
     return ref_df
 
 
-def calculate_incidence(adf, output_filename=None) :
+def calculate_incidence(adf, output_filename=None, trimmed=False) :
 
     inc_df = pd.DataFrame()
     for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
 
-        sdf = pd.DataFrame( { 'time' : df['time'],
-                              'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
-                              'new_infected': count_new(df, 'infected_cumul'),
-                            #'new_infected_detected': count_new(df, 'infected_det_cumul'),
-                              'new_asymptomatic' : count_new(df, 'asymp_cumul'),
-                              'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
-                              'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
-                              'new_symptomatic_severe': count_new(df, 'symp_severe_cumul'),
-                              'new_detected_symptomatic_mild': count_new(df, 'symp_mild_det_cumul'),
-                              'new_detected_symptomatic_severe': count_new(df, 'symp_severe_det_cumul'),
-                              'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
-                              'new_hospitalized' : count_new(df, 'hosp_cumul'),
-                              'new_detected' : count_new(df, 'detected_cumul'),
-                              'new_critical' : count_new(df, 'crit_cumul'),
-                              'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                              'new_detected_deaths' : count_new(df, 'death_det_cumul'),
-                              'new_deaths' : count_new(df, 'deaths')
-                              })
+        if trimmed == False:
+            sdf = pd.DataFrame({'time' : df['time'],
+                                'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
+                                'new_infected': count_new(df, 'infected_cumul'),
+                                #'new_infected_detected': count_new(df, 'infected_det_cumul'),
+                                'new_asymptomatic' : count_new(df, 'asymp_cumul'),
+                                'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
+                                'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
+                                'new_symptomatic_severe': count_new(df, 'symp_severe_cumul'),
+                                'new_detected_symptomatic_mild': count_new(df, 'symp_mild_det_cumul'),
+                                'new_detected_symptomatic_severe': count_new(df, 'symp_severe_det_cumul'),
+                                'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
+                                'new_hospitalized' : count_new(df, 'hosp_cumul'),
+                                'new_detected' : count_new(df, 'detected_cumul'),
+                                'new_critical' : count_new(df, 'crit_cumul'),
+                                'new_detected_critical' : count_new(df, 'crit_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_deaths' : count_new(df, 'deaths')
+                                })
+        if trimmed == True:
+            sdf = pd.DataFrame({'time': df['time'],
+                                'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
+                                'new_hospitalized' : count_new(df, 'hosp_cumul'),
+                                'new_detected' : count_new(df, 'detected_cumul'),
+                                'new_critical' : count_new(df, 'crit_cumul'),
+                                'new_detected_critical' : count_new(df, 'crit_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_deaths' : count_new(df, 'deaths')
+                                })
+
         sdf['run_num'] = run
         sdf['sample_num'] = samp
         sdf['scen_num'] = scen
@@ -300,39 +312,39 @@ def load_capacity(ems):
 
 def civis_colnames(reverse=False) :
     colnames = { "ems": "geography_modeled",
-     "infected_median": "cases_median",
-     "infected_95CI_lower": "cases_lower",
-     "infected_95CI_upper": "cases_upper",
-     "new_infected_median": "cases_new_median",
-     "new_infected_95CI_lower": "cases_new_lower",
-     "new_infected_95CI_upper": "cases_new_upper",
-     "new_symptomatic_median": "symptomatic_new_median",
-     "new_symptomatic_95CI_lower": "symptomatic_new_lower",
-     "new_symptomatic_95CI_upper": "symptomatic_new_upper",
-     "new_deaths_median": "deaths_median",
-     "new_deaths_95CI_lower": "deaths_lower",
-     "new_deaths_95CI_upper": "deaths_upper",
-     "new_detected_deaths_median": "deaths_det_median",
-     "new_detected_deaths_95CI_lower": "deaths_det_lower",
-     "new_detected_deaths_95CI_upper": "deaths_det_upper",
-     "hospitalized_median": "hosp_bed_median",
-     "hospitalized_95CI_lower": "hosp_bed_lower",
-     "hospitalized_95CI_upper": "hosp_bed_upper",
-     "hosp_det_median": "hosp_det_bed_median",
-     "hosp_det_95CI_lower": "hosp_det_bed_lower",
-     "hosp_det_95CI_upper": "hosp_det_bed_upper",
-     "critical_median": "icu_median",
-     "critical_95CI_lower": "icu_lower",
-     "critical_95CI_upper": "icu_upper",
-     "crit_det_median": "icu_det_median",
-     "crit_det_95CI_lower": "icu_det_lower",
-     "crit_det_95CI_upper": "icu_det_upper",
-     "ventilators_median": "vent_median",
-     "ventilators_95CI_lower": "vent_lower",
-     "ventilators_95CI_upper": "vent_upper",
-     "recovered_median": "recovered_median",
-     "recovered_95CI_lower": "recovered_lower",
-     "recovered_95CI_upper": "recovered_upper"}
+                 "infected_median": "cases_median",
+                 "infected_95CI_lower": "cases_lower",
+                 "infected_95CI_upper": "cases_upper",
+                 "new_infected_median": "cases_new_median",
+                 "new_infected_95CI_lower": "cases_new_lower",
+                 "new_infected_95CI_upper": "cases_new_upper",
+                 "new_symptomatic_median": "symptomatic_new_median",
+                 "new_symptomatic_95CI_lower": "symptomatic_new_lower",
+                 "new_symptomatic_95CI_upper": "symptomatic_new_upper",
+                 "new_deaths_median": "deaths_median",
+                 "new_deaths_95CI_lower": "deaths_lower",
+                 "new_deaths_95CI_upper": "deaths_upper",
+                 "new_detected_deaths_median": "deaths_det_median",
+                 "new_detected_deaths_95CI_lower": "deaths_det_lower",
+                 "new_detected_deaths_95CI_upper": "deaths_det_upper",
+                 "hospitalized_median": "hosp_bed_median",
+                 "hospitalized_95CI_lower": "hosp_bed_lower",
+                 "hospitalized_95CI_upper": "hosp_bed_upper",
+                 "hosp_det_median": "hosp_det_bed_median",
+                 "hosp_det_95CI_lower": "hosp_det_bed_lower",
+                 "hosp_det_95CI_upper": "hosp_det_bed_upper",
+                 "critical_median": "icu_median",
+                 "critical_95CI_lower": "icu_lower",
+                 "critical_95CI_upper": "icu_upper",
+                 "crit_det_median": "icu_det_median",
+                 "crit_det_95CI_lower": "icu_det_lower",
+                 "crit_det_95CI_upper": "icu_det_upper",
+                 "ventilators_median": "vent_median",
+                 "ventilators_95CI_lower": "vent_lower",
+                 "ventilators_95CI_upper": "vent_upper",
+                 "recovered_median": "recovered_median",
+                 "recovered_95CI_lower": "recovered_lower",
+                 "recovered_95CI_upper": "recovered_upper"}
 
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)
