@@ -102,7 +102,7 @@ def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, 
         plt.savefig(os.path.join(plot_path,'pdf',  plot_name + '.pdf'), format='PDF')
 
 
-def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, , first_day, last_day,
+def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles,first_day, last_day,
                      ymax=40, plot_path=None, logscale=True):
     fig = plt.figure(figsize=(10, 6))
     palette = sns.color_palette('husl', 8)
