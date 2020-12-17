@@ -1,6 +1,8 @@
 
 library(tidyverse)
 library(data.table)
+library(cowplot)
+library(lubridate)
 
 theme_set(theme_minimal())
 
@@ -20,10 +22,10 @@ if (runInBatchMode) {
 }
 
 print(workingDir)
-source(file.path(workingDir,"load_paths.R"))
+source(file.path(workingDir, "load_paths.R"))
 
 ### Set custom theme for plotting
-fontscl=3
+fontscl <- 3
 customTheme <- theme(
   strip.text.x = element_text(size = 12 + fontscl, face = "bold"),
   strip.text.y = element_text(size = 12 + fontscl, face = "bold"),
@@ -41,66 +43,95 @@ customTheme <- theme(
 
 
 #### Load prevalence dat generated from plot_prevalence.py
-plot_dir <- file.path(simulation_output,exp_name,"_plots")
-dat <- fread(file.path(simulation_output,exp_name,"prevalenceDat.csv")) 
+plot_dir <- file.path(simulation_output, exp_name, "_plots")
+dat <- fread(file.path(simulation_output, exp_name, "prevalenceDat.csv"))
 
 
-### Transform dataformat 
-modelCols <- c("date","scen_num","run_num", "sample_num")
-prevCols <- colnames(dat)[grep("prev",colnames(dat))]
+### Transform dataformat
+modelCols <- c("date", "scen_num", "run_num", "sample_num")
+prevCols <- colnames(dat)[grep("prev", colnames(dat))]
 keepCols <- c(modelCols, prevCols)
-dat <- dat %>% filter(date==Sys.Date()) %>% 
-      select_at(keepCols) %>%
-      rename_with( ~ gsub("_All", "_EMS-0", .x)) %>%
-      pivot_longer(cols=-c(modelCols)) %>%
-      separate(name, into=c("channel", "region"), sep="_EMS-") %>%
-      mutate(value=value*100) %>%
-      group_by(region, channel) %>%
-      summarize(            min.value = min(value, na.rm = TRUE),
-                            max.value = max(value, na.rm = TRUE),
-                            median.value = median(value, na.rm = TRUE),
-                            q25.value = quantile(value, probs = 0.25, na.rm = TRUE),
-                            q75.value = quantile(value, probs = 0.75, na.rm = TRUE),
-                            q2.5.value = quantile(value, probs = 0.025, na.rm = TRUE),
-                            q97.5.value = quantile(value, probs = 0.975, na.rm = TRUE)) %>%
-      filter(channel=="seroprevalence") %>%
-      mutate(region=as.numeric(region)) %>%
-      arrange(region)
+dat <- dat %>%
+  select_at(keepCols) %>%
+  mutate(date = as.Date(date)) %>%
+  rename_with(~ gsub("_All", "_EMS-0", .x)) %>%
+  pivot_longer(cols = -c(modelCols)) %>%
+  separate(name, into = c("channel", "region"), sep = "_EMS-") %>%
+  mutate(value = value * 100) %>%
+  group_by(date, region, channel) %>%
+  summarize(
+    min.value = min(value, na.rm = TRUE),
+    max.value = max(value, na.rm = TRUE),
+    median.value = median(value, na.rm = TRUE),
+    q25.value = quantile(value, probs = 0.25, na.rm = TRUE),
+    q75.value = quantile(value, probs = 0.75, na.rm = TRUE),
+    q2.5.value = quantile(value, probs = 0.025, na.rm = TRUE),
+    q97.5.value = quantile(value, probs = 0.975, na.rm = TRUE)
+  ) %>%
+  filter(channel == "seroprevalence") %>%
+  mutate(region = as.numeric(region)) %>%
+  arrange(region)
 
 
-dat$region <- factor(dat$region, levels=c(0:11), 
-                         labels=c("IL", c(1:11)))
+dat$region <- factor(dat$region,
+  levels = c(0:11),
+  labels = c("IL", c(1:11))
+)
 
 #### Generate plot
-pplot <- ggplot(data=subset(dat, region!="IL"))+
-  geom_rect(data=subset(dat, region=="IL"), aes(xmin=-Inf, xmax=Inf, ymin=q25.value,ymax=q75.value), fill="grey", alpha=0.3)+
-  geom_rect(data=subset(dat, region=="IL"), aes(xmin=-Inf, xmax=Inf, ymin=q2.5.value,ymax=q97.5.value), fill="grey", alpha=0.3)+
-  geom_hline(data=subset(dat, region=="IL"), aes(yintercept=median.value), linetype="longdash")+
-  geom_pointrange(aes(x=region,y=median.value,  ymin= q2.5.value, ymax=q97.5.value ),color="#f77189") +
-  geom_text(data=subset(dat, region=="IL"), aes(x=1.2, y=median.value+1, label="Illinois overall"),size=5)+
-  labs(y="Fraction ever infected (%)", x="COVID-19 region")+
-  geom_hline(yintercept=c(Inf, -Inf)) + 
-  geom_vline(xintercept=c(Inf, -Inf))+
-  theme(legend.position="none",
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank())+
+pplot_top <- ggplot(data = subset(dat, region == "IL")) +
+  geom_ribbon(aes(x = date, ymin = q2.5.value, ymax = q97.5.value), alpha = 0.3, fill = "#f77189") +
+  geom_ribbon(aes(x = date, ymin = q25.value, ymax = q75.value), alpha = 0.4, fill = "#f77189") +
+  geom_line(aes(x = date, y = median.value), color = "#f77189", size = 1) +
+  scale_x_date(date_breaks = "30 days", date_labels = "%b", expand = c(0, 0)) +
+  labs(
+    title = "Model predictions for Illinois over time\n",
+    x = "",
+    y = "Fraction ever infected (%)\n"
+  ) +
+  geom_vline(xintercept = Sys.Date(), linetype = "dashed") +
+  geom_hline(yintercept = c(Inf, -Inf)) +
+  geom_vline(xintercept = c(Inf, -Inf)) +
+  theme(
+    legend.position = "none",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  ) +
   customTheme
 
-pplot
+dat_today <- dat %>% filter(date == Sys.Date())
 
-plotname=paste0("seroprevalence_by_region_",gsub("-","",Sys.Date()))
-ggsave(paste0(plotname, ".png"), plot = pplot, path = plot_dir, width = 9, height = 5, device = "png")
-ggsave(paste0(plotname, ".pdf"), plot = pplot, path = file.path(plot_dir, "pdf"), width = 9, height = 5, device = "pdf")
+pplot_bottom <- ggplot(data = subset(dat_today, region == "IL")) +
+  geom_rect(aes(xmin = -Inf, xmax = Inf, ymin = q2.5.value, ymax = q97.5.value), fill = "grey", alpha = 0.3) +
+  geom_rect(aes(xmin = -Inf, xmax = Inf, ymin = q25.value, ymax = q75.value), fill = "grey", alpha = 0.4) +
+  geom_hline(aes(yintercept = median.value), linetype = "longdash") +
+  geom_pointrange(
+    data = subset(dat_today, region != "IL"),
+    aes(x = region, y = median.value, ymin = q2.5.value, ymax = q97.5.value), color = "#f77189"
+  ) +
+  geom_text(aes(x = 1.2, y = median.value + 1, label = "Illinois overall"), size = 5) +
+  labs(
+    title = paste0("Model predictions per COVID-19 regions for ", format(Sys.Date(), "%B")," ", day(Sys.Date()), "\n"),
+    y = "Fraction ever infected (%)\n", x = "COVID-19 region"
+  ) +
+  geom_hline(yintercept = c(Inf, -Inf)) +
+  geom_vline(xintercept = c(Inf, -Inf)) +
+  theme(
+    legend.position = "none",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  ) +
+  customTheme
+
+pplot <- plot_grid(pplot_top, pplot_bottom, ncol = 1)
+
+plotname <- paste0("seroprevalence_IL_and_by_region_", gsub("-", "", Sys.Date()))
+ggsave(paste0(plotname, ".png"), plot = pplot, path = plot_dir, width = 8, height = 10, device = "png")
+ggsave(paste0(plotname, ".pdf"), plot = pplot, path = file.path(plot_dir, "pdf"), width = 8, height = 10, device = "pdf")
 
 
 ### For text
 sink(file.path(simulation_output, exp_name, "seroprevalence_today.txt"))
 print(Sys.Date())
-print(dat)
+print(dat_today)
 sink()
-
-
-
-
-
-
