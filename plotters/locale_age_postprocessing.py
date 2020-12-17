@@ -41,7 +41,7 @@ def parse_args():
 
 def calculate_mean_and_CI(adf, channel, output_filename=None) :
 
-    mdf = adf.groupby('time')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
+    mdf = adf.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
     if output_filename :
         mdf.to_csv(os.path.join(sim_output_path, output_filename), index=False)
 
@@ -57,11 +57,11 @@ def plot(adf, channels, grp, filename=None) :
     palette = sns.color_palette('coolwarm', 9)
     for c, channel in enumerate(plotchannels) :
 
-        mdf = adf.groupby('date')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
+        mdf = adf.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
         ax = axes[c]
         ax.plot(mdf['date'], mdf['CI_50'], label=channel, color=palette[c])
-        ax.fill_between(mdf['date'].values, mdf['CI_5'], mdf['CI_95'],
+        ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
                         color=palette[c], linewidth=0, alpha=0.2)
         ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                         color=palette[c], linewidth=0, alpha=0.4)
