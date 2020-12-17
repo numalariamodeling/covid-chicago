@@ -55,13 +55,13 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
     for c, channel in enumerate(channels):
         ax = fig.add_subplot(2, 3, c + 1)
 
-        mdf = df.groupby(['date',param])[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
+        mdf = df.groupby(['date',param])[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
         for i, rtc in enumerate(mdf[param].unique()):
             mdf_sub = mdf[mdf[param] == rtc]
             ax.plot(mdf_sub['date'], mdf_sub['CI_50'], color=palette[i], label=rtc)
 
-        ax.fill_between(mdf_sub['date'], mdf_sub['CI_5'], mdf_sub['CI_95'], color=palette[i], linewidth=0, alpha=0.2)
+        ax.fill_between(mdf_sub['date'], mdf_sub['CI_2pt5'], mdf_sub['CI_97pt5'], color=palette[i], linewidth=0, alpha=0.2)
 
         ax.set_title(titles[c], y=0.8, fontsize=12)
         ax.legend()

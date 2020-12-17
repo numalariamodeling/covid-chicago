@@ -83,9 +83,9 @@ def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=T
             df['critical_with_suspected'] = df['critical']
             exp_name_label = str(exp_name.split('_')[-1])
 
-            mdf = df.groupby('date')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
+            mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
             ax.plot(mdf['date'], mdf['CI_50'], color=palette[d], label=exp_name_label)
-            ax.fill_between(mdf['date'], mdf['CI_5'], mdf['CI_95'],
+            ax.fill_between(mdf['date'], mdf['CI_2pt5'], mdf['CI_97pt5'],
                         color=palette[d], linewidth=0, alpha=0.1)
             ax.fill_between(mdf['date'], mdf['CI_25'], mdf['CI_75'],
                         color=palette[d], linewidth=0, alpha=0.3)

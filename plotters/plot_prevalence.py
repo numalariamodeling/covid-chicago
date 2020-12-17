@@ -85,9 +85,9 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
                 plot_label = channel.split('_')[0]
             channel_label = channel
             channel = f'{channel}_{ems_num}'
-            mdf = df.groupby('date')[channel].agg([CI_50, CI_5, CI_95, CI_25, CI_75]).reset_index()
+            mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
             ax.plot(mdf['date'], mdf['CI_50'], color=palette[k], label=plot_label)
-            ax.fill_between(mdf['date'].values, mdf['CI_5'], mdf['CI_95'],
+            ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
                             color=palette[k], linewidth=0, alpha=0.2)
             ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                             color=palette[k], linewidth=0, alpha=0.4)
