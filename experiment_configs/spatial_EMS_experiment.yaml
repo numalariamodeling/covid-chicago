@@ -145,8 +145,8 @@ sampled_parameters:
         - {'low': 0.162, 'high': 0.162}
         - {'low': 0.205, 'high': 0.205}
         - {'low': 0.180, 'high': 0.180}
-        - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.240, 'high': 0.240}
+        - {'low': 0.180, 'high': 0.180}
+        - {'low': 0.260, 'high': 0.260}
         - {'low': 0.170, 'high': 0.170}
         - {'low': 0.120, 'high': 0.120}
         - {'low': 0.110, 'high': 0.110}
@@ -157,17 +157,17 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.270, 'high': 0.270}
+        - {'low': 0.275, 'high': 0.275}
         - {'low': 0.172, 'high': 0.172}
         - {'low': 0.393, 'high': 0.393}
         - {'low': 0.162, 'high': 0.162}
-        - {'low': 0.215, 'high': 0.215}
-        - {'low': 0.239, 'high': 0.239}
+        - {'low': 0.210, 'high': 0.210}
+        - {'low': 0.280, 'high': 0.280}
         - {'low': 0.170, 'high': 0.170}
         - {'low': 0.175, 'high': 0.175}
         - {'low': 0.175, 'high': 0.175}
         - {'low': 0.186, 'high': 0.186}
-        - {'low': 0.146, 'high': 0.146}
+        - {'low': 0.144, 'high': 0.144}
   ki_multiplier_10:
     IL:
       expand_by_age: True
@@ -175,31 +175,31 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.230, 'high': 0.230}
         - {'low': 0.255, 'high': 0.255}
-        - {'low': 0.440, 'high': 0.440}
-        - {'low': 0.287, 'high': 0.287}
-        - {'low': 0.358, 'high': 0.358}
-        - {'low': 0.324, 'high': 0.324}
-        - {'low': 0.258, 'high': 0.258}
-        - {'low': 0.190, 'high': 0.190}
-        - {'low': 0.245, 'high': 0.245}
-        - {'low': 0.259, 'high': 0.259}
-        - {'low': 0.179, 'high': 0.179}
+        - {'low': 0.450, 'high': 0.450}
+        - {'low': 0.283, 'high': 0.283}
+        - {'low': 0.350, 'high': 0.350}
+        - {'low': 0.292, 'high': 0.292}
+        - {'low': 0.260, 'high': 0.260}
+        - {'low': 0.196, 'high': 0.196}
+        - {'low': 0.250, 'high': 0.250}
+        - {'low': 0.255, 'high': 0.255}
+        - {'low': 0.180, 'high': 0.180}
   ki_multiplier_11:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.161, 'high': 0.161}
-        - {'low': 0.145, 'high': 0.145}
+        - {'low': 0.150, 'high': 0.150}
+        - {'low': 0.155, 'high': 0.155}
+        - {'low': 0.230, 'high': 0.230}
         - {'low': 0.200, 'high': 0.200}
-        - {'low': 0.195, 'high': 0.195}
-        - {'low': 0.210, 'high': 0.210}
-        - {'low': 0.199, 'high': 0.199}
-        - {'low': 0.121, 'high': 0.121}
-        - {'low': 0.113, 'high': 0.113}
-        - {'low': 0.110, 'high': 0.110}
-        - {'low': 0.145, 'high': 0.145}
-        - {'low': 0.119, 'high': 0.119}
+        - {'low': 0.200, 'high': 0.200}
+        - {'low': 0.185, 'high': 0.185}
+        - {'low': 0.130, 'high': 0.130}
+        - {'low': 0.115, 'high': 0.115}
+        - {'low': 0.120, 'high': 0.120}
+        - {'low': 0.158, 'high': 0.158}
+        - {'low': 0.120, 'high': 0.120}
   ki_multiplier_12:
     IL:
       expand_by_age: True
