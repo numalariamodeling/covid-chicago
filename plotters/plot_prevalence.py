@@ -51,9 +51,8 @@ def trim_trajectories(simpath, scenario, colnames, ems) :
     df.to_csv(os.path.join(simpath, 'trimmed_trajectoriesDat_%s.csv' % scenario), index=False)
 
 
-def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fname='trajectoriesDat.csv'):
+def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fname='trajectoriesDat.csv',save_fname="prevalenceDat.csv"):
 
-    simpath = os.path.join(wdir, 'simulation_output', exp_name)
     ems = ['EMS-%d' % x for x in range(1, 12)] + ['All']
     column_list = ['time', 'startdate', 'scen_num','run_num','sample_num', 'infected_All', 'susceptible_All', 'exposed_All', 'recovered_All']
     for ems_num in ems:
@@ -76,6 +75,10 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
         df['prevalence_%s' % ems_num] = df['infected_%s' % ems_num] / df['N_%s' % ems_num]
         df['seroprevalence_%s' % ems_num] = (df['infected_%s' % ems_num] + df['recovered_%s' % ems_num]) / df[
             'N_%s' % ems_num]
+
+        if save_fname != None:
+            simpath = os.path.join(wdir, 'simulation_output', exp_name)
+            df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
 
         ax = fig.add_subplot(3,4,e+1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
