@@ -120,8 +120,9 @@ if __name__ == '__main__' :
     param = args.param
     channel = args.channel
 
-    first_plot_day = date(2020, 10, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = date.today() - timedelta(60)
+    last_plot_day = date.today() + timedelta(15)
+
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
