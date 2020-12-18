@@ -95,7 +95,7 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
                             color=palette[k], linewidth=0, alpha=0.4)
         if ems_num == 'EMS-1' :
             ax.legend()
-        plotsubtitle = ems_num.replace('EMS-', 'COVID-19 region ')
+        plotsubtitle = ems_num.replace('EMS-', 'COVID-19 Region ')
         if ems_num == 'All' :
             plotsubtitle = ems_num.replace('All', 'Illinois')
         ax.set_title(plotsubtitle)
