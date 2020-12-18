@@ -143,8 +143,8 @@ def plot_covidregions(channel,subgroups, psuffix, plot_path,first_day, last_day)
         #fig.suptitle(x=0.5, y=0.999,t=channel)
         plt.tight_layout()
 
-    plt.savefig(os.path.join(plot_path, 'covidregion_'+psuffix+'_%s.png' % channel))
-    plt.savefig(os.path.join(plot_path,'pdf', 'covidregion'+psuffix+'_%s.pdf' % channel))
+    plt.savefig(os.path.join(plot_path, f'covidregion_{channel}.png'))
+    plt.savefig(os.path.join(plot_path,'pdf', f'covidregion_{channel}.pdf'))
 
 if __name__ == '__main__' :
 
@@ -155,13 +155,13 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date(2020, 10, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = date.today() - timedelta(60)
+    last_plot_day = date.today() + timedelta(15)
 
     covidregionlist = range(0, 12)
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
-    plot_covidregions(channel='crit_det', subgroups=covidregionlist, psuffix='OctDec',
+    plot_covidregions(channel='crit_det', subgroups=covidregionlist,
                       plot_path=plot_path, first_day= first_plot_day, last_day=last_plot_day)
-    plot_covidregions(channel='hosp_det', subgroups=covidregionlist, psuffix='OctDec',
+    plot_covidregions(channel='hosp_det', subgroups=covidregionlist,
                       plot_path=plot_path, first_day= first_plot_day, last_day=last_plot_day)

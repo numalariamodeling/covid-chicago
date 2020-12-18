@@ -138,8 +138,8 @@ if __name__ == '__main__':
     trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    first_plot_day = date(2020, 10, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = date.today() - timedelta(60)
+    last_plot_day = date.today() + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
