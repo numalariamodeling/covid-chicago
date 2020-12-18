@@ -53,7 +53,7 @@ def trim_trajectories(simpath, scenario, colnames, ems) :
 
 def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fname='trajectoriesDat.csv',save_fname="prevalenceDat.csv"):
 
-    ems = ['EMS-%d' % x for x in range(1, 12)] + ['All']
+    ems = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
     column_list = ['time', 'startdate', 'scen_num','run_num','sample_num', 'infected_All', 'susceptible_All', 'exposed_All', 'recovered_All']
     for ems_num in ems:
         column_list.append('infected_' + str(ems_num))
@@ -62,24 +62,23 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
         column_list.append('susceptible_' + str(ems_num))
 
     df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
 
     fig = plt.figure(figsize=(16,8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('husl', 8)
 
-    for e, ems_num in enumerate(ems) :
+    for ems_num in ems :
+        df[f'N_{ems_num}'] = df[f'susceptible_{ems_num}'] + df[f'exposed_{ems_num}'] + \
+                             df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']
+        df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
+        df[f'seroprevalence_{ems_num}'] = (df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']) / df[f'N_{ems_num}']
 
-        df['N_%s' % ems_num] = df['susceptible_%s' % ems_num] + df['exposed_%s' % ems_num] + df[
-            'infected_%s' % ems_num] + df['recovered_%s' % ems_num]
-        df['prevalence_%s' % ems_num] = df['infected_%s' % ems_num] / df['N_%s' % ems_num]
-        df['seroprevalence_%s' % ems_num] = (df['infected_%s' % ems_num] + df['recovered_%s' % ems_num]) / df[
-            'N_%s' % ems_num]
+    if save_fname != None & not os.path.exists(os.path.join(simpath, "prevalenceDat.csv")):
+        simpath = os.path.join(wdir, 'simulation_output', exp_name)
+        df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
 
-        if save_fname != None:
-            simpath = os.path.join(wdir, 'simulation_output', exp_name)
-            df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
-
+    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    for e, ems_num in enumerate(ems):
         ax = fig.add_subplot(3,4,e+1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         for k, channel in enumerate(channels) :
@@ -96,12 +95,13 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
                             color=palette[k], linewidth=0, alpha=0.4)
         if ems_num == 'EMS-1' :
             ax.legend()
-        plotsubtitle = ems_num.replace('EMS-', 'COVID-19 region ')
+        plotsubtitle = ems_num.replace('EMS-', 'COVID-19 Region ')
         if ems_num == 'All' :
             plotsubtitle = ems_num.replace('All', 'Illinois')
         ax.set_title(plotsubtitle)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         ax.set_xlim(first_day, last_day)
+        ax.axvline(x=date.today(), color='#666666', linestyle='--')
 
     if len(channels)==1:
         fig.suptitle(x=0.5, y=0.999, t=channel_label)
@@ -121,8 +121,8 @@ if __name__ == '__main__' :
     trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    first_plot_day = date(2020, 10, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = date.today() - timedelta(60)
+    last_plot_day = date.today() + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

@@ -40,7 +40,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, plot_name, first_day, last_day,
+def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, plot_name, region_label, first_day, last_day,
                      ymax=1000,  logscale=False):
 
     fig = plt.figure(figsize=(13, 4))
@@ -84,7 +84,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         ax.set_xlim(first_day, last_day)
 
-    fig.suptitle(f'COVID-19 region {ems_nr}        \n',  y=1.0, fontsize=14)
+    fig.suptitle(region_label,  y=1.0, fontsize=14)
     fig.tight_layout()
     plot_name_full = plot_name + '_covidregion_' + str(ems_nr)
     fig.subplots_adjust(top=0.8)
@@ -96,7 +96,14 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
     plt.savefig(os.path.join(plot_path, 'pdf', plot_name_full + '.pdf'), format='PDF')
 
 def compare_ems(exp_name, fname, plot_name, ems_nr, first_day , last_day):
-    region_suffix = "_EMS-" + str(ems_nr)
+
+    if ems_nr == 0:
+        region_suffix = "_All"
+        region_label = 'Illinois'
+    else:
+        region_suffix = "_EMS-" + str(ems_nr)
+        region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
+
     column_list = ['time', 'startdate', 'scen_num', 'sample_num', 'run_num']
 
     outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
@@ -119,7 +126,7 @@ def compare_ems(exp_name, fname, plot_name, ems_nr, first_day , last_day):
     #plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,plot_name=plot_name,
     #                first_day=first_day, last_day=last_day, logscale=True)
     plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,plot_name=plot_name,
-                     first_day=first_day, last_day=last_day, logscale=False)
+                     region_label=region_label, first_day=first_day, last_day=last_day, logscale=False)
 
     # return ref_df_emr, ref_df_ll
 
@@ -131,15 +138,15 @@ if __name__ == '__main__':
     trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    first_plot_day = date(2020, 10, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = date.today() - timedelta(60)
+    last_plot_day = date.today() + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
         plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
-        for ems_nr in range(1,12):
+        for ems_nr in range(0, 12):
             print("Start processing region " + str(ems_nr))
             compare_ems(exp_name, fname=trajectoriesName, ems_nr=int(ems_nr), plot_name='forward_projection',
                         first_day=first_plot_day, last_day=last_plot_day)
