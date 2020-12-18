@@ -53,7 +53,7 @@ def trim_trajectories(simpath, scenario, colnames, ems) :
 
 def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fname='trajectoriesDat.csv',save_fname="prevalenceDat.csv"):
 
-    ems = ['EMS-%d' % x for x in range(1, 12)] + ['All']
+    ems = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
     column_list = ['time', 'startdate', 'scen_num','run_num','sample_num', 'infected_All', 'susceptible_All', 'exposed_All', 'recovered_All']
     for ems_num in ems:
         column_list.append('infected_' + str(ems_num))
