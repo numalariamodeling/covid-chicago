@@ -90,7 +90,7 @@ pplot_top <- ggplot(data = subset(dat, region == "IL")) +
   scale_x_date(date_breaks = "30 days", date_labels = "%b", expand = c(0, 0)) +
   labs(
     title = "Model predictions for Illinois over time\n",
-    x = "",
+    x = paste0("\n Months in 2020 to 2021"),
     y = "Fraction ever infected (%)\n"
   ) +
   geom_vline(xintercept = Sys.Date(), linetype = "dashed", color='#666666') +
