@@ -73,9 +73,10 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
         df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
         df[f'seroprevalence_{ems_num}'] = (df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']) / df[f'N_{ems_num}']
 
-    if save_fname != None & not os.path.exists(os.path.join(simpath, "prevalenceDat.csv")):
+    if save_fname != None:
         simpath = os.path.join(wdir, 'simulation_output', exp_name)
-        df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
+        if os.path.exists(os.path.join(simpath, "prevalenceDat.csv"))==False:
+            df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
 
     df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
     for e, ems_num in enumerate(ems):
