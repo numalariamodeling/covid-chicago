@@ -51,7 +51,13 @@ def parse_args():
 
 def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=True, fname="trajectoriesDat.csv"):
 
-    region_suffix = "_EMS-" + str(ems_nr)
+    if ems_nr == 0:
+        region_suffix = "_All"
+        region_label = 'Illinois'
+    else:
+        region_suffix = "_EMS-" + str(ems_nr)
+        region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
+
     channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
     data_channel_names = ['confirmed_covid_deaths_prev_24h',
@@ -103,7 +109,7 @@ def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=T
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0, ms=1)
         ax.plot(ref_df['date'], ref_df[data_channel_names[c]].rolling(window=7, center=True).mean(), c='k', alpha=1.0)
 
-    plt.suptitle(f'Covidregion {ems_nr}', y=1, fontsize=14)
+    plt.suptitle(region_label, y=1, fontsize=14)
     plt.tight_layout()
     plt.subplots_adjust(top=0.88)
 
@@ -128,12 +134,11 @@ if __name__ == '__main__':
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     first_plot_day = date(2020, 2, 13)
-    today = datetime.today() + timedelta(15)
-    last_plot_day = date(today.year, today.month, today.day)
+    last_plot_day = date.today() + timedelta(15)
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
 
-    for ems_nr in range(1, 12):
+    for ems_nr in range(0, 12):
         print("Start processing region " + str(ems_nr))
         plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
                          last_day=last_plot_day, fname=trajectoriesName, logscale=True)
