@@ -57,13 +57,18 @@ def plot_main(param, channel, first_day, last_day,time_param=False) :
 
     fig = plt.figure(figsize=(16,8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
-    axes = [fig.add_subplot(3, 4, x + 1) for x in range(11)]
+    axes = [fig.add_subplot(3, 4, x + 1) for x in range(12)]
 
     capacitychannel = channel
 
-    for c, ems in enumerate(range(1,12)):
-        region_suffix = f'_EMS-{str(ems)}'
-        region_label = f'COVID-19 region {str(ems)}'
+    for c, ems_nr in enumerate(range(0,12)):
+
+        if ems_nr == 0:
+            region_suffix = "_All"
+            region_label = 'Illinois'
+        else:
+            region_suffix = "_EMS-" + str(ems_nr)
+            region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
         column_list = ['scen_num', 'sample_num','run_num', 'time', 'startdate', f'{channel}{region_suffix}']
         df = load_sim_data(exp_name, region_suffix=region_suffix,  column_list=column_list, add_incidence=False)
@@ -76,7 +81,7 @@ def plot_main(param, channel, first_day, last_day,time_param=False) :
         ax.set_title(region_label)
         palette = sns.color_palette('Set1', len(df[param].unique()))
 
-        capacity = load_capacity(ems)
+        capacity = load_capacity(ems_nr)
         ax.plot([np.min(mdf['date']), np.max(mdf['date'])], [capacity[capacitychannel], capacity[capacitychannel]],
                 '--', linewidth=1, color='black')
         ax.plot([np.min(mdf['date']), np.max(mdf['date'])],

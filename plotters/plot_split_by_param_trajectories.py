@@ -101,7 +101,7 @@ def plot_covidregions(subgroups =None,nscen=None, showLegend=True) :
 
     for region_suffix in subgroups :
 
-        region_label= region_suffix.replace('_EMS-', 'COVID-19 region ')
+        region_label= region_suffix.replace('_EMS-', 'COVID-19 Region ')
         region_label2 = region_label.replace(' ', '_')
 
         fig = plt.figure(figsize=(12, 8))
@@ -142,7 +142,7 @@ def plot_covidregions_inone(subgroups=None,channel='hospitalized',nscen=None,sho
 
     for c, region_suffix in enumerate(subgroups) :
 
-        region_label= region_suffix.replace('_EMS-', 'COVID-19 region ')
+        region_label= region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
         for d, exp_name in enumerate(exp_names) :
             df = load_sim_data(exp_name, region_suffix=region_suffix)

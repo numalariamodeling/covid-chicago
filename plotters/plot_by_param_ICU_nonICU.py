@@ -121,19 +121,23 @@ def plot_covidregions(channel,subgroups, psuffix, plot_path,first_day, last_day)
 
     fig = plt.figure(figsize=(16,8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
-    palette = sns.color_palette('Set1', len(exp_names))
+    palette = sns.color_palette('husl', len(exp_names))
     axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(subgroups))]
 
-    for c, region_suffix in enumerate(subgroups) :
+    for c, ems_nr in enumerate(subgroups) :
 
-        region_label= region_suffix.replace('_EMS-', 'COVID-19 region ')
-        ems = int(region_suffix.replace('_EMS-', ''))
+        if ems_nr == 0:
+            region_suffix = "_All"
+            region_label = 'Illinois'
+        else:
+            region_suffix = "_EMS-" + str(ems_nr)
+            region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
         for d, exp_name in enumerate(exp_names) :
             df = load_sim_data(exp_name, region_suffix=region_suffix)
             df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
             exp_name_label = int(exp_name.split('_')[0])
-            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems, panel_heading = region_label, label="")
+            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems_nr, panel_heading = region_label, label="")
 
         axes[-1].legend()
         #fig.suptitle(x=0.5, y=0.999,t=channel)
@@ -154,8 +158,7 @@ if __name__ == '__main__' :
     first_plot_day = date(2020, 10, 1)
     last_plot_day = date(2020, 12, 31)
 
-    covidregionlist = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9',
-                       '_EMS-10', '_EMS-11']
+    covidregionlist = range(0, 12)
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
     plot_covidregions(channel='crit_det', subgroups=covidregionlist, psuffix='OctDec',
