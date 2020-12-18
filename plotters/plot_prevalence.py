@@ -62,7 +62,6 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
         column_list.append('susceptible_' + str(ems_num))
 
     df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
 
     fig = plt.figure(figsize=(16,8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
@@ -80,6 +79,7 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
             simpath = os.path.join(wdir, 'simulation_output', exp_name)
             df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
 
+        df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
         ax = fig.add_subplot(3,4,e+1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         for k, channel in enumerate(channels) :
@@ -102,6 +102,7 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
         ax.set_title(plotsubtitle)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         ax.set_xlim(first_day, last_day)
+        ax.axvline(x=date.today(), color='#666666', linestyle='--')
 
     if len(channels)==1:
         fig.suptitle(x=0.5, y=0.999, t=channel_label)
