@@ -67,19 +67,18 @@ def plot_prevalences(exp_name,first_day,last_day, channels = ['prevalence'], fna
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('husl', 8)
 
-    for e, ems_num in enumerate(ems) :
+    for ems_num in ems :
+        df[f'N_{ems_num}'] = df[f'susceptible_{ems_num}'] + df[f'exposed_{ems_num}'] + \
+                             df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']
+        df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
+        df[f'seroprevalence_{ems_num}'] = (df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']) / df[f'N_{ems_num}']
 
-        df['N_%s' % ems_num] = df['susceptible_%s' % ems_num] + df['exposed_%s' % ems_num] + df[
-            'infected_%s' % ems_num] + df['recovered_%s' % ems_num]
-        df['prevalence_%s' % ems_num] = df['infected_%s' % ems_num] / df['N_%s' % ems_num]
-        df['seroprevalence_%s' % ems_num] = (df['infected_%s' % ems_num] + df['recovered_%s' % ems_num]) / df[
-            'N_%s' % ems_num]
+    if save_fname != None & not os.path.exists(os.path.join(simpath, "prevalenceDat.csv")):
+        simpath = os.path.join(wdir, 'simulation_output', exp_name)
+        df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
 
-        if save_fname != None:
-            simpath = os.path.join(wdir, 'simulation_output', exp_name)
-            df.to_csv(os.path.join(simpath, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
-
-        df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    for e, ems_num in enumerate(ems):
         ax = fig.add_subplot(3,4,e+1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         for k, channel in enumerate(channels) :
