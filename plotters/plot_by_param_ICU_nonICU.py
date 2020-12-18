@@ -117,7 +117,7 @@ def compare_ems( ems,channel):
 
     return ref_df
 
-def plot_covidregions(channel,subgroups, psuffix, plot_path,first_day, last_day) :
+def plot_covidregions(channel,subgroups, plot_path,first_day, last_day) :
 
     fig = plt.figure(figsize=(16,8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
