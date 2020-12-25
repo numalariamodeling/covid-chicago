@@ -231,11 +231,7 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python estimate_Rt_forCivisOutputs.py --exp_name "{exp_name}" >> "{sim_output_path}/log/3_runProcessForCivis.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" >> "{sim_output_path}/log/4_runProcessForCivis.txt" \n')
-
-            # R Iteration comparison plot 
-            file = open(os.path.join(temp_exp_dir, '5_runProcessForCivis_optional.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/compare_simulation_iterations.R" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/5_runProcessForCivis_optional.txt" \n')
+            file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n python "iteration_comparison.py" "{exp_name}" >> "{sim_output_path}/log/4_runProcessForCivis.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, '5_runProcessFor_CDPH.bat'), 'w')
             file.write(f'\ncd {data_plotters_dir} \n python "emresource_cli_per_covidregion.py" --cdph_date "{today.strftime("%Y%m%d")}"')
@@ -319,7 +315,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/NUcivis_filecopy.py "{exp_name}"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/NUcivis_filecopy.py "{exp_name}" \n python "iteration_comparison.py" "{exp_name}"'
     file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
