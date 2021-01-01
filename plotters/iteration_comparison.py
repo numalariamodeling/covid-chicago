@@ -26,12 +26,13 @@ def comparison_plot(reg_nr=0, channels=None, n_iter=3):
         region_label = f'COVID-19 Region {reg_nr}'
 
     if channels == None:
-        channels = ['cases', 'deaths_det', 'recovered','hosp_bed', 'icu', 'vent']  # 'hosp_det_bed',  'icu_det'
+        #channels = ['cases', 'deaths_det', 'recovered', 'hosp_bed', 'icu', 'vent']
+        channels = ['cases', 'deaths_det', 'recovered','hosp_det_bed', 'icu_det', 'vent']
         channel_labels = ['Cases', 'Daily deaths', 'Recovered','Med/surg beds', 'ICU beds', 'Ventilators']
 
     capacity = load_capacity(ems=reg_nr)
-    #new_keys = ['hosp_det_bed', 'icu_det', 'vent']
-    new_keys = ['hosp_bed', 'icu', 'vent']
+    new_keys = ['hosp_det_bed', 'icu_det', 'vent']
+    #new_keys = ['hosp_bed', 'icu', 'vent']
     for key, n_key in zip(capacity.keys(), new_keys):
         capacity[n_key] = capacity.pop(key)
 
