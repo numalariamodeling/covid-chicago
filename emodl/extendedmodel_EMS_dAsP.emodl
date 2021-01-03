@@ -1610,6 +1610,10 @@
 (param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
 
+(param time_to_loose_immunity @time_to_loose_immunity@)
+(param fraction_lost_immunity @fraction_lost_immunity@)
+(param Kg (/ fraction_lost_immunity time_to_loose_immunity))
+ 
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
 (param Kh3 (/ fraction_dead time_to_hospitalization))
@@ -2159,6 +2163,18 @@
 (reaction recovery_H1_det3_EMS_1  (H1_det3::EMS_1)  (RH1_det3::EMS_1)  (* Kr_h H1_det3::EMS_1))
 (reaction recovery_C2_det3_EMS_1  (C2_det3::EMS_1)  (RC2_det3::EMS_1)  (* Kr_c C2_det3::EMS_1))
   
+(reaction immunityloss_As_EMS_1 (RAs::EMS_1) (S::EMS_1) (* Kg As::EMS_1))
+(reaction immunityloss_As_det_EMS_1 (RAs_det1::EMS_1) (S::EMS_1) (* Kg As_det1::EMS_1))
+
+(reaction immunityloss_Sym_EMS_1 (RSym::EMS_1) (S::EMS_1) (* Kg Sym::EMS_1))
+(reaction immunityloss_Sym_det2a_EMS_1 (RSym_det2::EMS_1) (S::EMS_1) (* Kg Sym_det2a::EMS_1))
+(reaction immunityloss_Sym_det2b_EMS_1 (RSym_det2::EMS_1) (S::EMS_1) (* Kg Sym_det2b::EMS_1))
+
+(reaction immunityloss_H1_EMS_1 (RH1::EMS_1) (S::EMS_1) (* Kg H1::EMS_1))
+(reaction immunityloss_C2_EMS_1 (RC2::EMS_1) (S::EMS_1) (* Kg C2::EMS_1))
+(reaction immunityloss_H1_det3_EMS_1 (RH1_det3::EMS_1) (S::EMS_1) (* Kg H1_det3::EMS_1))
+(reaction immunityloss_C2_det3_EMS_1 (RC2_det3::EMS_1) (S::EMS_1) (* Kg C2_det3::EMS_1))
+ 
 (reaction exposure_EMS_2  (S::EMS_2) (E::EMS_2) (* Ki_EMS_2 S::EMS_2 (/ (+ infectious_undet_EMS_2 (* infectious_det_symp_EMS_2 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_2 reduced_inf_of_det_cases_ct)) N_EMS_2 )))
 
 (reaction infection_asymp_det_EMS_2 (E::EMS_2)  (As_preD::EMS_2)  (* Kl E::EMS_2))
@@ -2215,6 +2231,18 @@
 (reaction recovery_H1_det3_EMS_2  (H1_det3::EMS_2)  (RH1_det3::EMS_2)  (* Kr_h H1_det3::EMS_2))
 (reaction recovery_C2_det3_EMS_2  (C2_det3::EMS_2)  (RC2_det3::EMS_2)  (* Kr_c C2_det3::EMS_2))
   
+(reaction immunityloss_As_EMS_2 (RAs::EMS_2) (S::EMS_2) (* Kg As::EMS_2))
+(reaction immunityloss_As_det_EMS_2 (RAs_det1::EMS_2) (S::EMS_2) (* Kg As_det1::EMS_2))
+
+(reaction immunityloss_Sym_EMS_2 (RSym::EMS_2) (S::EMS_2) (* Kg Sym::EMS_2))
+(reaction immunityloss_Sym_det2a_EMS_2 (RSym_det2::EMS_2) (S::EMS_2) (* Kg Sym_det2a::EMS_2))
+(reaction immunityloss_Sym_det2b_EMS_2 (RSym_det2::EMS_2) (S::EMS_2) (* Kg Sym_det2b::EMS_2))
+
+(reaction immunityloss_H1_EMS_2 (RH1::EMS_2) (S::EMS_2) (* Kg H1::EMS_2))
+(reaction immunityloss_C2_EMS_2 (RC2::EMS_2) (S::EMS_2) (* Kg C2::EMS_2))
+(reaction immunityloss_H1_det3_EMS_2 (RH1_det3::EMS_2) (S::EMS_2) (* Kg H1_det3::EMS_2))
+(reaction immunityloss_C2_det3_EMS_2 (RC2_det3::EMS_2) (S::EMS_2) (* Kg C2_det3::EMS_2))
+ 
 (reaction exposure_EMS_3  (S::EMS_3) (E::EMS_3) (* Ki_EMS_3 S::EMS_3 (/ (+ infectious_undet_EMS_3 (* infectious_det_symp_EMS_3 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_3 reduced_inf_of_det_cases_ct)) N_EMS_3 )))
 
 (reaction infection_asymp_det_EMS_3 (E::EMS_3)  (As_preD::EMS_3)  (* Kl E::EMS_3))
@@ -2271,6 +2299,18 @@
 (reaction recovery_H1_det3_EMS_3  (H1_det3::EMS_3)  (RH1_det3::EMS_3)  (* Kr_h H1_det3::EMS_3))
 (reaction recovery_C2_det3_EMS_3  (C2_det3::EMS_3)  (RC2_det3::EMS_3)  (* Kr_c C2_det3::EMS_3))
   
+(reaction immunityloss_As_EMS_3 (RAs::EMS_3) (S::EMS_3) (* Kg As::EMS_3))
+(reaction immunityloss_As_det_EMS_3 (RAs_det1::EMS_3) (S::EMS_3) (* Kg As_det1::EMS_3))
+
+(reaction immunityloss_Sym_EMS_3 (RSym::EMS_3) (S::EMS_3) (* Kg Sym::EMS_3))
+(reaction immunityloss_Sym_det2a_EMS_3 (RSym_det2::EMS_3) (S::EMS_3) (* Kg Sym_det2a::EMS_3))
+(reaction immunityloss_Sym_det2b_EMS_3 (RSym_det2::EMS_3) (S::EMS_3) (* Kg Sym_det2b::EMS_3))
+
+(reaction immunityloss_H1_EMS_3 (RH1::EMS_3) (S::EMS_3) (* Kg H1::EMS_3))
+(reaction immunityloss_C2_EMS_3 (RC2::EMS_3) (S::EMS_3) (* Kg C2::EMS_3))
+(reaction immunityloss_H1_det3_EMS_3 (RH1_det3::EMS_3) (S::EMS_3) (* Kg H1_det3::EMS_3))
+(reaction immunityloss_C2_det3_EMS_3 (RC2_det3::EMS_3) (S::EMS_3) (* Kg C2_det3::EMS_3))
+ 
 (reaction exposure_EMS_4  (S::EMS_4) (E::EMS_4) (* Ki_EMS_4 S::EMS_4 (/ (+ infectious_undet_EMS_4 (* infectious_det_symp_EMS_4 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_4 reduced_inf_of_det_cases_ct)) N_EMS_4 )))
 
 (reaction infection_asymp_det_EMS_4 (E::EMS_4)  (As_preD::EMS_4)  (* Kl E::EMS_4))
@@ -2327,6 +2367,18 @@
 (reaction recovery_H1_det3_EMS_4  (H1_det3::EMS_4)  (RH1_det3::EMS_4)  (* Kr_h H1_det3::EMS_4))
 (reaction recovery_C2_det3_EMS_4  (C2_det3::EMS_4)  (RC2_det3::EMS_4)  (* Kr_c C2_det3::EMS_4))
   
+(reaction immunityloss_As_EMS_4 (RAs::EMS_4) (S::EMS_4) (* Kg As::EMS_4))
+(reaction immunityloss_As_det_EMS_4 (RAs_det1::EMS_4) (S::EMS_4) (* Kg As_det1::EMS_4))
+
+(reaction immunityloss_Sym_EMS_4 (RSym::EMS_4) (S::EMS_4) (* Kg Sym::EMS_4))
+(reaction immunityloss_Sym_det2a_EMS_4 (RSym_det2::EMS_4) (S::EMS_4) (* Kg Sym_det2a::EMS_4))
+(reaction immunityloss_Sym_det2b_EMS_4 (RSym_det2::EMS_4) (S::EMS_4) (* Kg Sym_det2b::EMS_4))
+
+(reaction immunityloss_H1_EMS_4 (RH1::EMS_4) (S::EMS_4) (* Kg H1::EMS_4))
+(reaction immunityloss_C2_EMS_4 (RC2::EMS_4) (S::EMS_4) (* Kg C2::EMS_4))
+(reaction immunityloss_H1_det3_EMS_4 (RH1_det3::EMS_4) (S::EMS_4) (* Kg H1_det3::EMS_4))
+(reaction immunityloss_C2_det3_EMS_4 (RC2_det3::EMS_4) (S::EMS_4) (* Kg C2_det3::EMS_4))
+ 
 (reaction exposure_EMS_5  (S::EMS_5) (E::EMS_5) (* Ki_EMS_5 S::EMS_5 (/ (+ infectious_undet_EMS_5 (* infectious_det_symp_EMS_5 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_5 reduced_inf_of_det_cases_ct)) N_EMS_5 )))
 
 (reaction infection_asymp_det_EMS_5 (E::EMS_5)  (As_preD::EMS_5)  (* Kl E::EMS_5))
@@ -2383,6 +2435,18 @@
 (reaction recovery_H1_det3_EMS_5  (H1_det3::EMS_5)  (RH1_det3::EMS_5)  (* Kr_h H1_det3::EMS_5))
 (reaction recovery_C2_det3_EMS_5  (C2_det3::EMS_5)  (RC2_det3::EMS_5)  (* Kr_c C2_det3::EMS_5))
   
+(reaction immunityloss_As_EMS_5 (RAs::EMS_5) (S::EMS_5) (* Kg As::EMS_5))
+(reaction immunityloss_As_det_EMS_5 (RAs_det1::EMS_5) (S::EMS_5) (* Kg As_det1::EMS_5))
+
+(reaction immunityloss_Sym_EMS_5 (RSym::EMS_5) (S::EMS_5) (* Kg Sym::EMS_5))
+(reaction immunityloss_Sym_det2a_EMS_5 (RSym_det2::EMS_5) (S::EMS_5) (* Kg Sym_det2a::EMS_5))
+(reaction immunityloss_Sym_det2b_EMS_5 (RSym_det2::EMS_5) (S::EMS_5) (* Kg Sym_det2b::EMS_5))
+
+(reaction immunityloss_H1_EMS_5 (RH1::EMS_5) (S::EMS_5) (* Kg H1::EMS_5))
+(reaction immunityloss_C2_EMS_5 (RC2::EMS_5) (S::EMS_5) (* Kg C2::EMS_5))
+(reaction immunityloss_H1_det3_EMS_5 (RH1_det3::EMS_5) (S::EMS_5) (* Kg H1_det3::EMS_5))
+(reaction immunityloss_C2_det3_EMS_5 (RC2_det3::EMS_5) (S::EMS_5) (* Kg C2_det3::EMS_5))
+ 
 (reaction exposure_EMS_6  (S::EMS_6) (E::EMS_6) (* Ki_EMS_6 S::EMS_6 (/ (+ infectious_undet_EMS_6 (* infectious_det_symp_EMS_6 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_6 reduced_inf_of_det_cases_ct)) N_EMS_6 )))
 
 (reaction infection_asymp_det_EMS_6 (E::EMS_6)  (As_preD::EMS_6)  (* Kl E::EMS_6))
@@ -2439,6 +2503,18 @@
 (reaction recovery_H1_det3_EMS_6  (H1_det3::EMS_6)  (RH1_det3::EMS_6)  (* Kr_h H1_det3::EMS_6))
 (reaction recovery_C2_det3_EMS_6  (C2_det3::EMS_6)  (RC2_det3::EMS_6)  (* Kr_c C2_det3::EMS_6))
   
+(reaction immunityloss_As_EMS_6 (RAs::EMS_6) (S::EMS_6) (* Kg As::EMS_6))
+(reaction immunityloss_As_det_EMS_6 (RAs_det1::EMS_6) (S::EMS_6) (* Kg As_det1::EMS_6))
+
+(reaction immunityloss_Sym_EMS_6 (RSym::EMS_6) (S::EMS_6) (* Kg Sym::EMS_6))
+(reaction immunityloss_Sym_det2a_EMS_6 (RSym_det2::EMS_6) (S::EMS_6) (* Kg Sym_det2a::EMS_6))
+(reaction immunityloss_Sym_det2b_EMS_6 (RSym_det2::EMS_6) (S::EMS_6) (* Kg Sym_det2b::EMS_6))
+
+(reaction immunityloss_H1_EMS_6 (RH1::EMS_6) (S::EMS_6) (* Kg H1::EMS_6))
+(reaction immunityloss_C2_EMS_6 (RC2::EMS_6) (S::EMS_6) (* Kg C2::EMS_6))
+(reaction immunityloss_H1_det3_EMS_6 (RH1_det3::EMS_6) (S::EMS_6) (* Kg H1_det3::EMS_6))
+(reaction immunityloss_C2_det3_EMS_6 (RC2_det3::EMS_6) (S::EMS_6) (* Kg C2_det3::EMS_6))
+ 
 (reaction exposure_EMS_7  (S::EMS_7) (E::EMS_7) (* Ki_EMS_7 S::EMS_7 (/ (+ infectious_undet_EMS_7 (* infectious_det_symp_EMS_7 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_7 reduced_inf_of_det_cases_ct)) N_EMS_7 )))
 
 (reaction infection_asymp_det_EMS_7 (E::EMS_7)  (As_preD::EMS_7)  (* Kl E::EMS_7))
@@ -2495,6 +2571,18 @@
 (reaction recovery_H1_det3_EMS_7  (H1_det3::EMS_7)  (RH1_det3::EMS_7)  (* Kr_h H1_det3::EMS_7))
 (reaction recovery_C2_det3_EMS_7  (C2_det3::EMS_7)  (RC2_det3::EMS_7)  (* Kr_c C2_det3::EMS_7))
   
+(reaction immunityloss_As_EMS_7 (RAs::EMS_7) (S::EMS_7) (* Kg As::EMS_7))
+(reaction immunityloss_As_det_EMS_7 (RAs_det1::EMS_7) (S::EMS_7) (* Kg As_det1::EMS_7))
+
+(reaction immunityloss_Sym_EMS_7 (RSym::EMS_7) (S::EMS_7) (* Kg Sym::EMS_7))
+(reaction immunityloss_Sym_det2a_EMS_7 (RSym_det2::EMS_7) (S::EMS_7) (* Kg Sym_det2a::EMS_7))
+(reaction immunityloss_Sym_det2b_EMS_7 (RSym_det2::EMS_7) (S::EMS_7) (* Kg Sym_det2b::EMS_7))
+
+(reaction immunityloss_H1_EMS_7 (RH1::EMS_7) (S::EMS_7) (* Kg H1::EMS_7))
+(reaction immunityloss_C2_EMS_7 (RC2::EMS_7) (S::EMS_7) (* Kg C2::EMS_7))
+(reaction immunityloss_H1_det3_EMS_7 (RH1_det3::EMS_7) (S::EMS_7) (* Kg H1_det3::EMS_7))
+(reaction immunityloss_C2_det3_EMS_7 (RC2_det3::EMS_7) (S::EMS_7) (* Kg C2_det3::EMS_7))
+ 
 (reaction exposure_EMS_8  (S::EMS_8) (E::EMS_8) (* Ki_EMS_8 S::EMS_8 (/ (+ infectious_undet_EMS_8 (* infectious_det_symp_EMS_8 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_8 reduced_inf_of_det_cases_ct)) N_EMS_8 )))
 
 (reaction infection_asymp_det_EMS_8 (E::EMS_8)  (As_preD::EMS_8)  (* Kl E::EMS_8))
@@ -2551,6 +2639,18 @@
 (reaction recovery_H1_det3_EMS_8  (H1_det3::EMS_8)  (RH1_det3::EMS_8)  (* Kr_h H1_det3::EMS_8))
 (reaction recovery_C2_det3_EMS_8  (C2_det3::EMS_8)  (RC2_det3::EMS_8)  (* Kr_c C2_det3::EMS_8))
   
+(reaction immunityloss_As_EMS_8 (RAs::EMS_8) (S::EMS_8) (* Kg As::EMS_8))
+(reaction immunityloss_As_det_EMS_8 (RAs_det1::EMS_8) (S::EMS_8) (* Kg As_det1::EMS_8))
+
+(reaction immunityloss_Sym_EMS_8 (RSym::EMS_8) (S::EMS_8) (* Kg Sym::EMS_8))
+(reaction immunityloss_Sym_det2a_EMS_8 (RSym_det2::EMS_8) (S::EMS_8) (* Kg Sym_det2a::EMS_8))
+(reaction immunityloss_Sym_det2b_EMS_8 (RSym_det2::EMS_8) (S::EMS_8) (* Kg Sym_det2b::EMS_8))
+
+(reaction immunityloss_H1_EMS_8 (RH1::EMS_8) (S::EMS_8) (* Kg H1::EMS_8))
+(reaction immunityloss_C2_EMS_8 (RC2::EMS_8) (S::EMS_8) (* Kg C2::EMS_8))
+(reaction immunityloss_H1_det3_EMS_8 (RH1_det3::EMS_8) (S::EMS_8) (* Kg H1_det3::EMS_8))
+(reaction immunityloss_C2_det3_EMS_8 (RC2_det3::EMS_8) (S::EMS_8) (* Kg C2_det3::EMS_8))
+ 
 (reaction exposure_EMS_9  (S::EMS_9) (E::EMS_9) (* Ki_EMS_9 S::EMS_9 (/ (+ infectious_undet_EMS_9 (* infectious_det_symp_EMS_9 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_9 reduced_inf_of_det_cases_ct)) N_EMS_9 )))
 
 (reaction infection_asymp_det_EMS_9 (E::EMS_9)  (As_preD::EMS_9)  (* Kl E::EMS_9))
@@ -2607,6 +2707,18 @@
 (reaction recovery_H1_det3_EMS_9  (H1_det3::EMS_9)  (RH1_det3::EMS_9)  (* Kr_h H1_det3::EMS_9))
 (reaction recovery_C2_det3_EMS_9  (C2_det3::EMS_9)  (RC2_det3::EMS_9)  (* Kr_c C2_det3::EMS_9))
   
+(reaction immunityloss_As_EMS_9 (RAs::EMS_9) (S::EMS_9) (* Kg As::EMS_9))
+(reaction immunityloss_As_det_EMS_9 (RAs_det1::EMS_9) (S::EMS_9) (* Kg As_det1::EMS_9))
+
+(reaction immunityloss_Sym_EMS_9 (RSym::EMS_9) (S::EMS_9) (* Kg Sym::EMS_9))
+(reaction immunityloss_Sym_det2a_EMS_9 (RSym_det2::EMS_9) (S::EMS_9) (* Kg Sym_det2a::EMS_9))
+(reaction immunityloss_Sym_det2b_EMS_9 (RSym_det2::EMS_9) (S::EMS_9) (* Kg Sym_det2b::EMS_9))
+
+(reaction immunityloss_H1_EMS_9 (RH1::EMS_9) (S::EMS_9) (* Kg H1::EMS_9))
+(reaction immunityloss_C2_EMS_9 (RC2::EMS_9) (S::EMS_9) (* Kg C2::EMS_9))
+(reaction immunityloss_H1_det3_EMS_9 (RH1_det3::EMS_9) (S::EMS_9) (* Kg H1_det3::EMS_9))
+(reaction immunityloss_C2_det3_EMS_9 (RC2_det3::EMS_9) (S::EMS_9) (* Kg C2_det3::EMS_9))
+ 
 (reaction exposure_EMS_10  (S::EMS_10) (E::EMS_10) (* Ki_EMS_10 S::EMS_10 (/ (+ infectious_undet_EMS_10 (* infectious_det_symp_EMS_10 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_10 reduced_inf_of_det_cases_ct)) N_EMS_10 )))
 
 (reaction infection_asymp_det_EMS_10 (E::EMS_10)  (As_preD::EMS_10)  (* Kl E::EMS_10))
@@ -2663,6 +2775,18 @@
 (reaction recovery_H1_det3_EMS_10  (H1_det3::EMS_10)  (RH1_det3::EMS_10)  (* Kr_h H1_det3::EMS_10))
 (reaction recovery_C2_det3_EMS_10  (C2_det3::EMS_10)  (RC2_det3::EMS_10)  (* Kr_c C2_det3::EMS_10))
   
+(reaction immunityloss_As_EMS_10 (RAs::EMS_10) (S::EMS_10) (* Kg As::EMS_10))
+(reaction immunityloss_As_det_EMS_10 (RAs_det1::EMS_10) (S::EMS_10) (* Kg As_det1::EMS_10))
+
+(reaction immunityloss_Sym_EMS_10 (RSym::EMS_10) (S::EMS_10) (* Kg Sym::EMS_10))
+(reaction immunityloss_Sym_det2a_EMS_10 (RSym_det2::EMS_10) (S::EMS_10) (* Kg Sym_det2a::EMS_10))
+(reaction immunityloss_Sym_det2b_EMS_10 (RSym_det2::EMS_10) (S::EMS_10) (* Kg Sym_det2b::EMS_10))
+
+(reaction immunityloss_H1_EMS_10 (RH1::EMS_10) (S::EMS_10) (* Kg H1::EMS_10))
+(reaction immunityloss_C2_EMS_10 (RC2::EMS_10) (S::EMS_10) (* Kg C2::EMS_10))
+(reaction immunityloss_H1_det3_EMS_10 (RH1_det3::EMS_10) (S::EMS_10) (* Kg H1_det3::EMS_10))
+(reaction immunityloss_C2_det3_EMS_10 (RC2_det3::EMS_10) (S::EMS_10) (* Kg C2_det3::EMS_10))
+ 
 (reaction exposure_EMS_11  (S::EMS_11) (E::EMS_11) (* Ki_EMS_11 S::EMS_11 (/ (+ infectious_undet_EMS_11 (* infectious_det_symp_EMS_11 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_11 reduced_inf_of_det_cases_ct)) N_EMS_11 )))
 
 (reaction infection_asymp_det_EMS_11 (E::EMS_11)  (As_preD::EMS_11)  (* Kl E::EMS_11))
@@ -2719,5 +2843,17 @@
 (reaction recovery_H1_det3_EMS_11  (H1_det3::EMS_11)  (RH1_det3::EMS_11)  (* Kr_h H1_det3::EMS_11))
 (reaction recovery_C2_det3_EMS_11  (C2_det3::EMS_11)  (RC2_det3::EMS_11)  (* Kr_c C2_det3::EMS_11))
   
+(reaction immunityloss_As_EMS_11 (RAs::EMS_11) (S::EMS_11) (* Kg As::EMS_11))
+(reaction immunityloss_As_det_EMS_11 (RAs_det1::EMS_11) (S::EMS_11) (* Kg As_det1::EMS_11))
+
+(reaction immunityloss_Sym_EMS_11 (RSym::EMS_11) (S::EMS_11) (* Kg Sym::EMS_11))
+(reaction immunityloss_Sym_det2a_EMS_11 (RSym_det2::EMS_11) (S::EMS_11) (* Kg Sym_det2a::EMS_11))
+(reaction immunityloss_Sym_det2b_EMS_11 (RSym_det2::EMS_11) (S::EMS_11) (* Kg Sym_det2b::EMS_11))
+
+(reaction immunityloss_H1_EMS_11 (RH1::EMS_11) (S::EMS_11) (* Kg H1::EMS_11))
+(reaction immunityloss_C2_EMS_11 (RC2::EMS_11) (S::EMS_11) (* Kg C2::EMS_11))
+(reaction immunityloss_H1_det3_EMS_11 (RH1_det3::EMS_11) (S::EMS_11) (* Kg H1_det3::EMS_11))
+(reaction immunityloss_C2_det3_EMS_11 (RC2_det3::EMS_11) (S::EMS_11) (* Kg C2_det3::EMS_11))
+ 
 
 (end-model)
