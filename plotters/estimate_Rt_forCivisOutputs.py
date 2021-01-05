@@ -99,9 +99,11 @@ def rt_plot(df, first_day=None, last_day=None):
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def run_Rt_estimation():
+def run_Rt_estimation(smoothing_window=28,r_window_size=3):
     """Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
+    smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
+    r_window_size default is 3 if not specified, increasing r_window_size narrows the uncertainity bounds
     """
     simdate = exp_name.split("_")[0]
     df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), parse_dates=['date'])
@@ -121,18 +123,24 @@ def run_Rt_estimation():
         mdf = mdf.set_index('date')['cases_new_median']
 
         """Use default distributions (for covid-19)"""
-        get_distributions()
+        si_distrb, delay_distrb = get_distributions(show_plot=False)
+        df_rt = covid19.r_covid(mdf[:-1], smoothing_window=smoothing_window, r_window_size=r_window_size)
 
-        df_rt = covid19.r_covid(mdf[:-1])
         df_rt['geography_modeled'] = region_suffix
         df_rt.reset_index(inplace=True)
         df_rt = df_rt.rename(columns={'index': 'date',
-                                      'R_mean': 'rt_mean',
                                       'Q0.5': 'rt_median',
                                       'Q0.025': 'rt_lower',
                                       'Q0.975': 'rt_upper'})
-        df_rt = df_rt[['date', 'geography_modeled', 'rt_mean', 'rt_median', 'rt_lower', 'rt_upper']]
+        df_rt['model_date'] = datetime.strptime(simdate, '%Y%m%d').date()
+        df_rt = df_rt[['model_date', 'date', 'geography_modeled', 'rt_median', 'rt_lower', 'rt_upper']]
+        #df_rt['smoothing_window'] =smoothing_window
+        #df_rt['r_window_size'] = r_window_size
         df_rt_all = df_rt_all.append(df_rt)
+
+    df_rt_all.to_csv(os.path.join(exp_dir, 'rtNU.csv'), index=False)
+    rt_plot(df=df_rt_all, first_day=None, last_day=None )
+    rt_plot(df=df_rt_all, first_day=first_plot_day, last_day=last_plot_day)
 
     if not 'rt_median' in df.columns:
         df_with_rt = pd.merge(left=df, right=df_rt_all,
@@ -141,14 +149,11 @@ def run_Rt_estimation():
         df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
     else:
         print("Warning: Overwriting already present Rt estimates")
-        df = df.drop(['rt_mean', 'rt_median', 'rt_lower', 'rt_upper'], axis=1)
+        df = df.drop(['rt_median', 'rt_lower', 'rt_upper'], axis=1)
         df_with_rt = pd.merge(left=df, right=df_rt_all,
                               left_on=['date', 'geography_modeled'],
                               right_on=['date', 'geography_modeled'])
         df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
-
-    rt_plot(df=df_rt_all)
-    rt_plot(df=df_rt_all, first_day=first_plot_day, last_day=last_plot_day)
 
     return df_rt
 
@@ -157,7 +162,7 @@ if __name__ == '__main__':
 
     test_mode = False
     if test_mode:
-        exp_name = '20201215_IL_mr_test_run'
+        exp_name = '20201229_IL_mr_quest_base'
         Location = 'Local'
     else:
         args = parse_args()
@@ -165,7 +170,7 @@ if __name__ == '__main__':
         Location = args.Location
 
     first_plot_day = date.today() - timedelta(30)
-    last_plot_day = date.today() + timedelta(30)
+    last_plot_day = date.today() + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
