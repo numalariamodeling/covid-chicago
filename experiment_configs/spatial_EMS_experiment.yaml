@@ -319,15 +319,15 @@ sampled_parameters:
       function_kwargs:
         - {'low': 8, 'high': 10}
         - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
-        - {'low': 8, 'high': 10}
+        - {'low': 8, 'high': 8}
+        - {'low': 4, 'high': 8}
+        - {'low': 4, 'high': 8}
+        - {'low': 3, 'high': 6}
+        - {'low': 4, 'high': 6}
+        - {'low': 4, 'high': 6}
+        - {'low': 4, 'high': 6}
+        - {'low': 6, 'high': 8}
+        - {'low': 10, 'high': 12}
   recovery_time_crit_change_time_1:
     IL:
       expand_by_age: True
@@ -337,7 +337,7 @@ sampled_parameters:
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
+        - {'low': 292, 'high': 292}
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
