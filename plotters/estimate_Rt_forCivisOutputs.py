@@ -57,7 +57,7 @@ def get_distributions(show_plot=False):
 
 def rt_plot(df, first_day=None, last_day=None):
     fig = plt.figure(figsize=(16, 8))
-    fig.suptitle(x=0.5, y=0.989, t='Estimated time varying reproductive number (Rt)')
+    fig.suptitle(x=0.5, y=0.989, t='Estimated time-varying reproductive number (Rt)')
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
     palette = sns.color_palette('husl', 8)
 
@@ -106,7 +106,9 @@ def run_Rt_estimation(smoothing_window,r_window_size):
     r_window_size default is 3 if not specified, increasing r_window_size narrows the uncertainity bounds
     """
     simdate = exp_name.split("_")[0]
-    df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), parse_dates=['date'])
+    df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'))
+    df['date'] = pd.to_datetime(df['date']).dt.date
+    df = df[(df['date'] > date(2020, 3, 1))]
 
     df_rt_all = pd.DataFrame()
     for ems_nr in range(0, 12):
@@ -118,8 +120,7 @@ def run_Rt_estimation(smoothing_window,r_window_size):
 
         if region_suffix not in df["geography_modeled"].unique():
             continue
-        mdf = df.loc[df['geography_modeled'] == region_suffix]
-        mdf.cases_new_median = mdf.cases_new_median.astype(int)
+        mdf = df[df['geography_modeled'] == region_suffix]
         mdf = mdf.set_index('date')['cases_new_median']
 
         """Use default distributions (for covid-19)"""
@@ -143,14 +144,14 @@ def run_Rt_estimation(smoothing_window,r_window_size):
     rt_plot(df=df_rt_all, first_day=first_plot_day, last_day=last_plot_day)
 
     if not 'rt_median' in df.columns:
-        df_with_rt = pd.merge(left=df, right=df_rt_all,
+        df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
                               left_on=['date', 'geography_modeled'],
                               right_on=['date', 'geography_modeled'])
         df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
     else:
         print("Warning: Overwriting already present Rt estimates")
         df = df.drop(['rt_median', 'rt_lower', 'rt_upper'], axis=1)
-        df_with_rt = pd.merge(left=df, right=df_rt_all,
+        df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
                               left_on=['date', 'geography_modeled'],
                               right_on=['date', 'geography_modeled'])
         df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
@@ -162,7 +163,7 @@ if __name__ == '__main__':
 
     test_mode = False
     if test_mode:
-        exp_name = '20201229_IL_mr_quest_base'
+        exp_name = '20210105_IL_mr_testrun'
         Location = 'Local'
     else:
         args = parse_args()
