@@ -294,7 +294,6 @@ def write_params(expandModel=None):
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
 (param Kr_h (/ 1 recovery_time_hosp))
-(param Kr_c (/ 1 recovery_time_crit))
 (param Kl (/ (- 1 fraction_symptomatic ) time_to_infectious))
 (param Ks (/ fraction_symptomatic  time_to_infectious))
 (param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
@@ -605,9 +604,9 @@ def write_reactions(grp, expandModel=None):
 
     reaction_str_III = """
 (reaction recovery_H1_{grp}   (H1::{grp})   (RH1::{grp})   (* Kr_h H1::{grp}))
-(reaction recovery_C2_{grp}   (C2::{grp})   (RC2::{grp})   (* Kr_c C2::{grp}))
+(reaction recovery_C2_{grp}   (C2::{grp})   (RC2::{grp})   (* Kr_c_{grp} C2::{grp}))
 (reaction recovery_H1_det3_{grp}   (H1_det3::{grp})   (RH1_det3::{grp})   (* Kr_h H1_det3::{grp}))
-(reaction recovery_C2_det3_{grp}   (C2_det3::{grp})   (RC2_det3::{grp})   (* Kr_c C2_det3::{grp}))
+(reaction recovery_C2_det3_{grp}   (C2_det3::{grp})   (RC2_det3::{grp})   (* Kr_c_{grp} C2_det3::{grp}))
     """.format(grp=grp)
 
     expand_base_str = """
@@ -936,6 +935,13 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_{grp} @d_Sym_change3_{grp}@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_{grp} @d_Sym_change4_{grp}@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_{grp} @d_Sym_change5_{grp}@)))
+
+(param recovery_time_crit_{grp} recovery_time_crit)
+(param Kr_c_{grp} (/ 1 recovery_time_crit_{grp}))
+(observe recovery_time_crit_t_{grpout} recovery_time_crit_{grp})
+(time-event LOS_ICU_change_1 @recovery_time_crit_change_time_1_{grp}@ ((recovery_time_crit_{grp} @recovery_time_crit_change1_{grp}@) (Kr_c_{grp} (/ 1 @recovery_time_crit_change1_{grp}@))))
+
+
             """.format(grpout=grpout,grp=grp)
         d_Sym_change_str = d_Sym_change_str + temp_str
         
