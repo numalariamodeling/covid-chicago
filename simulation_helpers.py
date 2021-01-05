@@ -215,10 +215,10 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python hosp_icu_deaths_forecast_plotter.py --stem "{exp_name}"  \n')
             file.write(f'cd {plotters_dir} \n python plot_by_param_ICU_nonICU.py --exp_names "{exp_name}"  \n')
             file.write(f'cd {plotters_dir} \n python plot_prevalence.py --stem "{exp_name}"  \n')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/seroprevalence_plot.R" "{exp_name}" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_createAdditionalPlots.txt" \n')
+            #file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/seroprevalence_plot.R" "{exp_name}" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_createAdditionalPlots.txt" \n')
 
-            file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fitting/fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
+            #file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.bat'), 'w')
+            #file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
 
             ## runProcessForCivis
             file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.bat'), 'w')
@@ -294,10 +294,10 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    rcommand = f'cd {os.path.join(rfiles_dir, "fitting")} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
-    file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.sh'), 'w')
-    file.write(header + jobname + err + out + rmodule + rcommand)
-    file.close()
+    #rcommand = f'cd {rfiles_dir} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
+    #file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.sh'), 'w')
+    #file.write(header + jobname + err + out + rmodule + rcommand)
+    #file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.sh'), 'w')
