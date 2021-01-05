@@ -94,12 +94,12 @@ def rt_plot(df, first_day=None, last_day=None):
 
     plotname = 'estimated_rt_by_covidregion_full'
     if not first_day == None:
-        plotname = 'estimated_rt_by_covidregion_truncated'
+        plotname = 'rt_by_covidregion_truncated'
     plt.savefig(os.path.join(plot_path, f'{plotname}.png'))
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def run_Rt_estimation(smoothing_window=28,r_window_size=3):
+def run_Rt_estimation(smoothing_window,r_window_size):
     """Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
     smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
@@ -176,4 +176,5 @@ if __name__ == '__main__':
 
     exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = os.path.join(exp_dir, '_plots')
-    run_Rt_estimation()
+    #run_Rt_estimation(smoothing_window=14,r_window_size=7)
+    run_Rt_estimation(smoothing_window=28,r_window_size=3)
