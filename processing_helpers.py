@@ -15,7 +15,10 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='traje
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
     df = df.dropna()
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    try:
+        first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    except:
+        first_day = datetime.strptime(df['startdate'].unique()[0], '%m/%d/%Y')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df['date'] = pd.to_datetime(df['date']).dt.date
 
