@@ -15,7 +15,10 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='traje
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
     df = df.dropna()
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    try:
+        first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+    except:
+        first_day = datetime.strptime(df['startdate'].unique()[0], '%m/%d/%Y')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df['date'] = pd.to_datetime(df['date']).dt.date
 
@@ -356,3 +359,70 @@ def civis_colnames(reverse=False) :
 
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)
+
+def get_parameter_names(include_new=True):
+
+    sample_params_core = ['time_to_infectious',
+                          'time_to_symptoms',
+                          'time_to_hospitalization',
+                          'time_to_critical',
+                          'time_to_death',
+                          'time_to_detection',
+                          'time_to_detection_As',
+                          'time_to_detection_Sym',
+                          'time_to_detection_Sys',
+                          'recovery_time_asymp',
+                          'recovery_time_mild',
+                          'recovery_time_hosp',
+                          'recovery_time_crit',
+                          'fraction_symptomatic',
+                          'fraction_severe',
+                          'fraction_critical',
+                          'cfr',
+                          'reduced_inf_of_det_cases',
+                          'd_Sys',
+                          'd_As',
+                          'd_P']
+
+    IL_specific_param = ['d_Sys_incr1',
+                         'd_Sys_incr2',
+                         'd_Sys_incr3',
+                         'd_Sys_incr4',
+                         'd_Sys_incr5',
+                         'd_Sys_incr6',
+                         'd_Sys_incr7',
+                         'fraction_critical_incr1',
+                         'fraction_critical_incr2',
+                         'fraction_critical_incr3',
+                         'detection_time_1',
+                         'detection_time_2',
+                         'detection_time_3',
+                         'detection_time_4',
+                         'detection_time_5',
+                         'detection_time_6',
+                         'detection_time_7',
+                         'crit_time_1',
+                         'crit_time_2',
+                         'crit_time_3',
+                         'd_Sym_change_time_1',
+                         'd_Sym_change_time_2',
+                         'd_Sym_change_time_3',
+                         'd_Sym_change_time_4',
+                         'd_Sym_change_time_5',
+                         'cfr_time_1',
+                         'cfr_time_2']
+
+    IL_locale_param_stem = ['ki_multiplier_3a','ki_multiplier_3b','ki_multiplier_3c',
+                            'ki_multiplier_4','ki_multiplier_5','ki_multiplier_6',
+                            'ki_multiplier_7','ki_multiplier_8','ki_multiplier_9',
+                            'ki_multiplier_10','ki_multiplier_11','ki_multiplier_12',
+                            'd_Sym','d_Sym_change1','d_Sym_change2','d_Sym_change3',
+                            'd_Sym_change4','d_Sym_change5','Ki','time_infection_import']
+
+    sample_params = sample_params_core + IL_specific_param
+
+    if include_new:
+        sample_params_new = ['reduced_infectious_As', 'time_to_loose_immunity', 'fraction_lost_immunity']
+        sample_params = sample_params.append(sample_params_new)
+
+    return sample_params, sample_params_core, IL_specific_param, IL_locale_param_stem
