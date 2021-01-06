@@ -71,8 +71,6 @@ def plot_prevalences(exp_name, first_day, last_day, channels=['prevalence'], fna
                    df['N_EMS_7'] + df['N_EMS_8'] + df['N_EMS_9'] + df['N_EMS_10'] + df['N_EMS_11']
 
     for ems_num in ems:
-        df[f'recovered_shift14_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'recovered_{ems_num}'].transform(
-            'shift', 14)
 
         df[f'N_{ems_num}'] = df[f'N_{ems_num.replace("EMS-", "EMS_")}'] # Static N
         df[f'N_t_{ems_num}'] = df[f'susceptible_{ems_num}'] + df[f'exposed_{ems_num}'] + \
@@ -81,7 +79,9 @@ def plot_prevalences(exp_name, first_day, last_day, channels=['prevalence'], fna
         # df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_t_{ems_num}']
         # df[f'seroprevalence_{ems_num}'] = (df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']) / df[f'N_t_{ems_num}']
         df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
-        df[f'seroprevalence_{ems_num}'] = (df[f'recovered_shift14_{ems_num}']) / df[f'N_{ems_num}']
+        df[f'seroprevalence_current_{ems_num}'] = (df[f'recovered_{ems_num}']) / df[f'N_{ems_num}']
+
+        df[f'seroprevalence_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_{ems_num}'].transform('shift', 14)
 
     df.to_csv(os.path.join(wdir, 'simulation_output', exp_name, "prevalenceDat.csv"), index=False,
               date_format='%Y-%m-%d')
