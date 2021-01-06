@@ -55,12 +55,6 @@ def trim_trajectories(simpath, scenario, colnames, ems):
     df.to_csv(os.path.join(simpath, 'trimmed_trajectoriesDat_%s.csv' % scenario), index=False)
 
 
-def count_2weeks_before(df, curr_ch):
-    ch_list = list(df[curr_ch].values)
-    diff = [ch_list[x - 14] for x in range(1, len(df))]
-    return diff
-
-
 def plot_prevalences(exp_name, first_day, last_day, channels=['prevalence'], fname='trajectoriesDat.csv'):
     ems = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
     column_list = ['time', 'startdate', 'scen_num', 'run_num', 'sample_num']
