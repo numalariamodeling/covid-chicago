@@ -31,6 +31,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='traje
             df = calculate_incidence(df)
         else:
             df = calculate_incidence(df, trimmed =True)
+
     return df
 
 def load_sim_data_age(exp_name,channel, age_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
@@ -208,6 +209,25 @@ def load_ref_df(ems_nr):
 
     return ref_df
 
+
+def calculate_prevalence(df, ems=None):
+    if ems is None:
+        ems = ['EMS-%d' % x for x in range(1, 12)]
+
+    for ems_num in ems:
+            df[f'N_{ems_num}'] = df[f'N_{str(ems_num.replace("-","_"))}'] - df[f'deaths_{ems_num}']
+            df[f'IFR_{ems_num}'] = df[f'deaths_{ems_num}'] / (df[f'recovered_{ems_num}'] + df[f'deaths_{ems_num}'])
+            df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
+            df[f'seroprevalence_current_{ems_num}'] = df[f'recovered_{ems_num}'] / df[f'N_{ems_num}']
+            df[f'seroprevalence_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_{ems_num}'].transform('shift', 14)
+
+            if f'infected_det_{ems_num}' in df.columns:
+                df[f'N_det_{ems_num}'] = df[f'N_{str(ems_num.replace("-", "_"))}'] - df[f'deaths_det_{ems_num}']
+                df[f'IFR_det_{ems_num}'] = df[f'deaths_det_{ems_num}'] / (df[f'recovered_det_{ems_num}'] + df[f'deaths_det_{ems_num}'])
+                df[f'prevalence_det_{ems_num}'] = df[f'infected_det_{ems_num}'] / df[f'N_det_{ems_num}']
+                df[f'seroprevalence_current_det_{ems_num}'] = df[f'recovered_det_{ems_num}'] / df[f'N_det_{ems_num}']
+                df[f'seroprevalence_det_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_det_{ems_num}'].transform('shift', 14)
+    return df
 
 def calculate_incidence(adf, output_filename=None, trimmed=False) :
 
