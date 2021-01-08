@@ -2904,11 +2904,11 @@
 (func infected_det_age0to9_EMS_1 (+ infectious_det_age0to9_EMS_1 H1_det3_age0to9::EMS_1 H2_det3_age0to9::EMS_1 H3_det3_age0to9::EMS_1 C2_det3_age0to9::EMS_1 C3_det3_age0to9::EMS_1))
 (func infected_cumul_age0to9_EMS_1 (+ infected_age0to9_EMS_1 recovered_age0to9_EMS_1 deaths_age0to9_EMS_1))    
 
-(func prevalence_age0to9_EMS_1 (/ infected_age0to9_EMS_1 N_age0to9_EMS_1))    
-(func seroprevalence_age0to9_EMS_1 (/ (+ infected_age0to9_EMS_1 recovered_age0to9_EMS_1) N_age0to9_EMS_1))    
+(func prevalence_age0to9_EMS_1 (/ infected_age0to9_EMS_1 (- N_age0to9_EMS_1 deaths_age0to9_EMS_1)))    
+(func seroprevalence_age0to9_EMS_1 (/ (+ infected_age0to9_EMS_1 recovered_age0to9_EMS_1) (- N_age0to9_EMS_1 deaths_age0to9_EMS_1)))    
 
-(func prevalence_det_age0to9_EMS_1 (/ infected_det_age0to9_EMS_1 N_age0to9_EMS_1))    
-(func seroprevalence_det_age0to9_EMS_1 (/ (+ infected_det_age0to9_EMS_1 recovered_det_age0to9_EMS_1) N_age0to9_EMS_1))    
+(func prevalence_det_age0to9_EMS_1 (/ infected_det_age0to9_EMS_1 (- N_age0to9_EMS_1 deaths_age0to9_EMS_1)))    
+(func seroprevalence_det_age0to9_EMS_1 (/ (+ infected_det_age0to9_EMS_1 recovered_det_age0to9_EMS_1) (- N_age0to9_EMS_1 deaths_age0to9_EMS_1)))    
 
 
 (func asymptomatic_age0to9_EMS_2  (+ As_age0to9::EMS_2 As_det1_age0to9::EMS_2))
@@ -2957,11 +2957,11 @@
 (func infected_det_age0to9_EMS_2 (+ infectious_det_age0to9_EMS_2 H1_det3_age0to9::EMS_2 H2_det3_age0to9::EMS_2 H3_det3_age0to9::EMS_2 C2_det3_age0to9::EMS_2 C3_det3_age0to9::EMS_2))
 (func infected_cumul_age0to9_EMS_2 (+ infected_age0to9_EMS_2 recovered_age0to9_EMS_2 deaths_age0to9_EMS_2))    
 
-(func prevalence_age0to9_EMS_2 (/ infected_age0to9_EMS_2 N_age0to9_EMS_2))    
-(func seroprevalence_age0to9_EMS_2 (/ (+ infected_age0to9_EMS_2 recovered_age0to9_EMS_2) N_age0to9_EMS_2))    
+(func prevalence_age0to9_EMS_2 (/ infected_age0to9_EMS_2 (- N_age0to9_EMS_2 deaths_age0to9_EMS_2)))    
+(func seroprevalence_age0to9_EMS_2 (/ (+ infected_age0to9_EMS_2 recovered_age0to9_EMS_2) (- N_age0to9_EMS_2 deaths_age0to9_EMS_2)))    
 
-(func prevalence_det_age0to9_EMS_2 (/ infected_det_age0to9_EMS_2 N_age0to9_EMS_2))    
-(func seroprevalence_det_age0to9_EMS_2 (/ (+ infected_det_age0to9_EMS_2 recovered_det_age0to9_EMS_2) N_age0to9_EMS_2))    
+(func prevalence_det_age0to9_EMS_2 (/ infected_det_age0to9_EMS_2 (- N_age0to9_EMS_2 deaths_age0to9_EMS_2)))    
+(func seroprevalence_det_age0to9_EMS_2 (/ (+ infected_det_age0to9_EMS_2 recovered_det_age0to9_EMS_2) (- N_age0to9_EMS_2 deaths_age0to9_EMS_2)))    
 
 
 (func asymptomatic_age0to9_EMS_3  (+ As_age0to9::EMS_3 As_det1_age0to9::EMS_3))
@@ -3010,11 +3010,11 @@
 (func infected_det_age0to9_EMS_3 (+ infectious_det_age0to9_EMS_3 H1_det3_age0to9::EMS_3 H2_det3_age0to9::EMS_3 H3_det3_age0to9::EMS_3 C2_det3_age0to9::EMS_3 C3_det3_age0to9::EMS_3))
 (func infected_cumul_age0to9_EMS_3 (+ infected_age0to9_EMS_3 recovered_age0to9_EMS_3 deaths_age0to9_EMS_3))    
 
-(func prevalence_age0to9_EMS_3 (/ infected_age0to9_EMS_3 N_age0to9_EMS_3))    
-(func seroprevalence_age0to9_EMS_3 (/ (+ infected_age0to9_EMS_3 recovered_age0to9_EMS_3) N_age0to9_EMS_3))    
+(func prevalence_age0to9_EMS_3 (/ infected_age0to9_EMS_3 (- N_age0to9_EMS_3 deaths_age0to9_EMS_3)))    
+(func seroprevalence_age0to9_EMS_3 (/ (+ infected_age0to9_EMS_3 recovered_age0to9_EMS_3) (- N_age0to9_EMS_3 deaths_age0to9_EMS_3)))    
 
-(func prevalence_det_age0to9_EMS_3 (/ infected_det_age0to9_EMS_3 N_age0to9_EMS_3))    
-(func seroprevalence_det_age0to9_EMS_3 (/ (+ infected_det_age0to9_EMS_3 recovered_det_age0to9_EMS_3) N_age0to9_EMS_3))    
+(func prevalence_det_age0to9_EMS_3 (/ infected_det_age0to9_EMS_3 (- N_age0to9_EMS_3 deaths_age0to9_EMS_3)))    
+(func seroprevalence_det_age0to9_EMS_3 (/ (+ infected_det_age0to9_EMS_3 recovered_det_age0to9_EMS_3) (- N_age0to9_EMS_3 deaths_age0to9_EMS_3)))    
 
 
 (func asymptomatic_age0to9_EMS_4  (+ As_age0to9::EMS_4 As_det1_age0to9::EMS_4))
@@ -3063,11 +3063,11 @@
 (func infected_det_age0to9_EMS_4 (+ infectious_det_age0to9_EMS_4 H1_det3_age0to9::EMS_4 H2_det3_age0to9::EMS_4 H3_det3_age0to9::EMS_4 C2_det3_age0to9::EMS_4 C3_det3_age0to9::EMS_4))
 (func infected_cumul_age0to9_EMS_4 (+ infected_age0to9_EMS_4 recovered_age0to9_EMS_4 deaths_age0to9_EMS_4))    
 
-(func prevalence_age0to9_EMS_4 (/ infected_age0to9_EMS_4 N_age0to9_EMS_4))    
-(func seroprevalence_age0to9_EMS_4 (/ (+ infected_age0to9_EMS_4 recovered_age0to9_EMS_4) N_age0to9_EMS_4))    
+(func prevalence_age0to9_EMS_4 (/ infected_age0to9_EMS_4 (- N_age0to9_EMS_4 deaths_age0to9_EMS_4)))    
+(func seroprevalence_age0to9_EMS_4 (/ (+ infected_age0to9_EMS_4 recovered_age0to9_EMS_4) (- N_age0to9_EMS_4 deaths_age0to9_EMS_4)))    
 
-(func prevalence_det_age0to9_EMS_4 (/ infected_det_age0to9_EMS_4 N_age0to9_EMS_4))    
-(func seroprevalence_det_age0to9_EMS_4 (/ (+ infected_det_age0to9_EMS_4 recovered_det_age0to9_EMS_4) N_age0to9_EMS_4))    
+(func prevalence_det_age0to9_EMS_4 (/ infected_det_age0to9_EMS_4 (- N_age0to9_EMS_4 deaths_age0to9_EMS_4)))    
+(func seroprevalence_det_age0to9_EMS_4 (/ (+ infected_det_age0to9_EMS_4 recovered_det_age0to9_EMS_4) (- N_age0to9_EMS_4 deaths_age0to9_EMS_4)))    
 
 
 (func asymptomatic_age0to9_EMS_5  (+ As_age0to9::EMS_5 As_det1_age0to9::EMS_5))
@@ -3116,11 +3116,11 @@
 (func infected_det_age0to9_EMS_5 (+ infectious_det_age0to9_EMS_5 H1_det3_age0to9::EMS_5 H2_det3_age0to9::EMS_5 H3_det3_age0to9::EMS_5 C2_det3_age0to9::EMS_5 C3_det3_age0to9::EMS_5))
 (func infected_cumul_age0to9_EMS_5 (+ infected_age0to9_EMS_5 recovered_age0to9_EMS_5 deaths_age0to9_EMS_5))    
 
-(func prevalence_age0to9_EMS_5 (/ infected_age0to9_EMS_5 N_age0to9_EMS_5))    
-(func seroprevalence_age0to9_EMS_5 (/ (+ infected_age0to9_EMS_5 recovered_age0to9_EMS_5) N_age0to9_EMS_5))    
+(func prevalence_age0to9_EMS_5 (/ infected_age0to9_EMS_5 (- N_age0to9_EMS_5 deaths_age0to9_EMS_5)))    
+(func seroprevalence_age0to9_EMS_5 (/ (+ infected_age0to9_EMS_5 recovered_age0to9_EMS_5) (- N_age0to9_EMS_5 deaths_age0to9_EMS_5)))    
 
-(func prevalence_det_age0to9_EMS_5 (/ infected_det_age0to9_EMS_5 N_age0to9_EMS_5))    
-(func seroprevalence_det_age0to9_EMS_5 (/ (+ infected_det_age0to9_EMS_5 recovered_det_age0to9_EMS_5) N_age0to9_EMS_5))    
+(func prevalence_det_age0to9_EMS_5 (/ infected_det_age0to9_EMS_5 (- N_age0to9_EMS_5 deaths_age0to9_EMS_5)))    
+(func seroprevalence_det_age0to9_EMS_5 (/ (+ infected_det_age0to9_EMS_5 recovered_det_age0to9_EMS_5) (- N_age0to9_EMS_5 deaths_age0to9_EMS_5)))    
 
 
 (func asymptomatic_age0to9_EMS_6  (+ As_age0to9::EMS_6 As_det1_age0to9::EMS_6))
@@ -3169,11 +3169,11 @@
 (func infected_det_age0to9_EMS_6 (+ infectious_det_age0to9_EMS_6 H1_det3_age0to9::EMS_6 H2_det3_age0to9::EMS_6 H3_det3_age0to9::EMS_6 C2_det3_age0to9::EMS_6 C3_det3_age0to9::EMS_6))
 (func infected_cumul_age0to9_EMS_6 (+ infected_age0to9_EMS_6 recovered_age0to9_EMS_6 deaths_age0to9_EMS_6))    
 
-(func prevalence_age0to9_EMS_6 (/ infected_age0to9_EMS_6 N_age0to9_EMS_6))    
-(func seroprevalence_age0to9_EMS_6 (/ (+ infected_age0to9_EMS_6 recovered_age0to9_EMS_6) N_age0to9_EMS_6))    
+(func prevalence_age0to9_EMS_6 (/ infected_age0to9_EMS_6 (- N_age0to9_EMS_6 deaths_age0to9_EMS_6)))    
+(func seroprevalence_age0to9_EMS_6 (/ (+ infected_age0to9_EMS_6 recovered_age0to9_EMS_6) (- N_age0to9_EMS_6 deaths_age0to9_EMS_6)))    
 
-(func prevalence_det_age0to9_EMS_6 (/ infected_det_age0to9_EMS_6 N_age0to9_EMS_6))    
-(func seroprevalence_det_age0to9_EMS_6 (/ (+ infected_det_age0to9_EMS_6 recovered_det_age0to9_EMS_6) N_age0to9_EMS_6))    
+(func prevalence_det_age0to9_EMS_6 (/ infected_det_age0to9_EMS_6 (- N_age0to9_EMS_6 deaths_age0to9_EMS_6)))    
+(func seroprevalence_det_age0to9_EMS_6 (/ (+ infected_det_age0to9_EMS_6 recovered_det_age0to9_EMS_6) (- N_age0to9_EMS_6 deaths_age0to9_EMS_6)))    
 
 
 (func asymptomatic_age0to9_EMS_7  (+ As_age0to9::EMS_7 As_det1_age0to9::EMS_7))
@@ -3222,11 +3222,11 @@
 (func infected_det_age0to9_EMS_7 (+ infectious_det_age0to9_EMS_7 H1_det3_age0to9::EMS_7 H2_det3_age0to9::EMS_7 H3_det3_age0to9::EMS_7 C2_det3_age0to9::EMS_7 C3_det3_age0to9::EMS_7))
 (func infected_cumul_age0to9_EMS_7 (+ infected_age0to9_EMS_7 recovered_age0to9_EMS_7 deaths_age0to9_EMS_7))    
 
-(func prevalence_age0to9_EMS_7 (/ infected_age0to9_EMS_7 N_age0to9_EMS_7))    
-(func seroprevalence_age0to9_EMS_7 (/ (+ infected_age0to9_EMS_7 recovered_age0to9_EMS_7) N_age0to9_EMS_7))    
+(func prevalence_age0to9_EMS_7 (/ infected_age0to9_EMS_7 (- N_age0to9_EMS_7 deaths_age0to9_EMS_7)))    
+(func seroprevalence_age0to9_EMS_7 (/ (+ infected_age0to9_EMS_7 recovered_age0to9_EMS_7) (- N_age0to9_EMS_7 deaths_age0to9_EMS_7)))    
 
-(func prevalence_det_age0to9_EMS_7 (/ infected_det_age0to9_EMS_7 N_age0to9_EMS_7))    
-(func seroprevalence_det_age0to9_EMS_7 (/ (+ infected_det_age0to9_EMS_7 recovered_det_age0to9_EMS_7) N_age0to9_EMS_7))    
+(func prevalence_det_age0to9_EMS_7 (/ infected_det_age0to9_EMS_7 (- N_age0to9_EMS_7 deaths_age0to9_EMS_7)))    
+(func seroprevalence_det_age0to9_EMS_7 (/ (+ infected_det_age0to9_EMS_7 recovered_det_age0to9_EMS_7) (- N_age0to9_EMS_7 deaths_age0to9_EMS_7)))    
 
 
 (func asymptomatic_age0to9_EMS_8  (+ As_age0to9::EMS_8 As_det1_age0to9::EMS_8))
@@ -3275,11 +3275,11 @@
 (func infected_det_age0to9_EMS_8 (+ infectious_det_age0to9_EMS_8 H1_det3_age0to9::EMS_8 H2_det3_age0to9::EMS_8 H3_det3_age0to9::EMS_8 C2_det3_age0to9::EMS_8 C3_det3_age0to9::EMS_8))
 (func infected_cumul_age0to9_EMS_8 (+ infected_age0to9_EMS_8 recovered_age0to9_EMS_8 deaths_age0to9_EMS_8))    
 
-(func prevalence_age0to9_EMS_8 (/ infected_age0to9_EMS_8 N_age0to9_EMS_8))    
-(func seroprevalence_age0to9_EMS_8 (/ (+ infected_age0to9_EMS_8 recovered_age0to9_EMS_8) N_age0to9_EMS_8))    
+(func prevalence_age0to9_EMS_8 (/ infected_age0to9_EMS_8 (- N_age0to9_EMS_8 deaths_age0to9_EMS_8)))    
+(func seroprevalence_age0to9_EMS_8 (/ (+ infected_age0to9_EMS_8 recovered_age0to9_EMS_8) (- N_age0to9_EMS_8 deaths_age0to9_EMS_8)))    
 
-(func prevalence_det_age0to9_EMS_8 (/ infected_det_age0to9_EMS_8 N_age0to9_EMS_8))    
-(func seroprevalence_det_age0to9_EMS_8 (/ (+ infected_det_age0to9_EMS_8 recovered_det_age0to9_EMS_8) N_age0to9_EMS_8))    
+(func prevalence_det_age0to9_EMS_8 (/ infected_det_age0to9_EMS_8 (- N_age0to9_EMS_8 deaths_age0to9_EMS_8)))    
+(func seroprevalence_det_age0to9_EMS_8 (/ (+ infected_det_age0to9_EMS_8 recovered_det_age0to9_EMS_8) (- N_age0to9_EMS_8 deaths_age0to9_EMS_8)))    
 
 
 (func asymptomatic_age0to9_EMS_9  (+ As_age0to9::EMS_9 As_det1_age0to9::EMS_9))
@@ -3328,11 +3328,11 @@
 (func infected_det_age0to9_EMS_9 (+ infectious_det_age0to9_EMS_9 H1_det3_age0to9::EMS_9 H2_det3_age0to9::EMS_9 H3_det3_age0to9::EMS_9 C2_det3_age0to9::EMS_9 C3_det3_age0to9::EMS_9))
 (func infected_cumul_age0to9_EMS_9 (+ infected_age0to9_EMS_9 recovered_age0to9_EMS_9 deaths_age0to9_EMS_9))    
 
-(func prevalence_age0to9_EMS_9 (/ infected_age0to9_EMS_9 N_age0to9_EMS_9))    
-(func seroprevalence_age0to9_EMS_9 (/ (+ infected_age0to9_EMS_9 recovered_age0to9_EMS_9) N_age0to9_EMS_9))    
+(func prevalence_age0to9_EMS_9 (/ infected_age0to9_EMS_9 (- N_age0to9_EMS_9 deaths_age0to9_EMS_9)))    
+(func seroprevalence_age0to9_EMS_9 (/ (+ infected_age0to9_EMS_9 recovered_age0to9_EMS_9) (- N_age0to9_EMS_9 deaths_age0to9_EMS_9)))    
 
-(func prevalence_det_age0to9_EMS_9 (/ infected_det_age0to9_EMS_9 N_age0to9_EMS_9))    
-(func seroprevalence_det_age0to9_EMS_9 (/ (+ infected_det_age0to9_EMS_9 recovered_det_age0to9_EMS_9) N_age0to9_EMS_9))    
+(func prevalence_det_age0to9_EMS_9 (/ infected_det_age0to9_EMS_9 (- N_age0to9_EMS_9 deaths_age0to9_EMS_9)))    
+(func seroprevalence_det_age0to9_EMS_9 (/ (+ infected_det_age0to9_EMS_9 recovered_det_age0to9_EMS_9) (- N_age0to9_EMS_9 deaths_age0to9_EMS_9)))    
 
 
 (func asymptomatic_age0to9_EMS_10  (+ As_age0to9::EMS_10 As_det1_age0to9::EMS_10))
@@ -3381,11 +3381,11 @@
 (func infected_det_age0to9_EMS_10 (+ infectious_det_age0to9_EMS_10 H1_det3_age0to9::EMS_10 H2_det3_age0to9::EMS_10 H3_det3_age0to9::EMS_10 C2_det3_age0to9::EMS_10 C3_det3_age0to9::EMS_10))
 (func infected_cumul_age0to9_EMS_10 (+ infected_age0to9_EMS_10 recovered_age0to9_EMS_10 deaths_age0to9_EMS_10))    
 
-(func prevalence_age0to9_EMS_10 (/ infected_age0to9_EMS_10 N_age0to9_EMS_10))    
-(func seroprevalence_age0to9_EMS_10 (/ (+ infected_age0to9_EMS_10 recovered_age0to9_EMS_10) N_age0to9_EMS_10))    
+(func prevalence_age0to9_EMS_10 (/ infected_age0to9_EMS_10 (- N_age0to9_EMS_10 deaths_age0to9_EMS_10)))    
+(func seroprevalence_age0to9_EMS_10 (/ (+ infected_age0to9_EMS_10 recovered_age0to9_EMS_10) (- N_age0to9_EMS_10 deaths_age0to9_EMS_10)))    
 
-(func prevalence_det_age0to9_EMS_10 (/ infected_det_age0to9_EMS_10 N_age0to9_EMS_10))    
-(func seroprevalence_det_age0to9_EMS_10 (/ (+ infected_det_age0to9_EMS_10 recovered_det_age0to9_EMS_10) N_age0to9_EMS_10))    
+(func prevalence_det_age0to9_EMS_10 (/ infected_det_age0to9_EMS_10 (- N_age0to9_EMS_10 deaths_age0to9_EMS_10)))    
+(func seroprevalence_det_age0to9_EMS_10 (/ (+ infected_det_age0to9_EMS_10 recovered_det_age0to9_EMS_10) (- N_age0to9_EMS_10 deaths_age0to9_EMS_10)))    
 
 
 (func asymptomatic_age0to9_EMS_11  (+ As_age0to9::EMS_11 As_det1_age0to9::EMS_11))
@@ -3434,11 +3434,11 @@
 (func infected_det_age0to9_EMS_11 (+ infectious_det_age0to9_EMS_11 H1_det3_age0to9::EMS_11 H2_det3_age0to9::EMS_11 H3_det3_age0to9::EMS_11 C2_det3_age0to9::EMS_11 C3_det3_age0to9::EMS_11))
 (func infected_cumul_age0to9_EMS_11 (+ infected_age0to9_EMS_11 recovered_age0to9_EMS_11 deaths_age0to9_EMS_11))    
 
-(func prevalence_age0to9_EMS_11 (/ infected_age0to9_EMS_11 N_age0to9_EMS_11))    
-(func seroprevalence_age0to9_EMS_11 (/ (+ infected_age0to9_EMS_11 recovered_age0to9_EMS_11) N_age0to9_EMS_11))    
+(func prevalence_age0to9_EMS_11 (/ infected_age0to9_EMS_11 (- N_age0to9_EMS_11 deaths_age0to9_EMS_11)))    
+(func seroprevalence_age0to9_EMS_11 (/ (+ infected_age0to9_EMS_11 recovered_age0to9_EMS_11) (- N_age0to9_EMS_11 deaths_age0to9_EMS_11)))    
 
-(func prevalence_det_age0to9_EMS_11 (/ infected_det_age0to9_EMS_11 N_age0to9_EMS_11))    
-(func seroprevalence_det_age0to9_EMS_11 (/ (+ infected_det_age0to9_EMS_11 recovered_det_age0to9_EMS_11) N_age0to9_EMS_11))    
+(func prevalence_det_age0to9_EMS_11 (/ infected_det_age0to9_EMS_11 (- N_age0to9_EMS_11 deaths_age0to9_EMS_11)))    
+(func seroprevalence_det_age0to9_EMS_11 (/ (+ infected_det_age0to9_EMS_11 recovered_det_age0to9_EMS_11) (- N_age0to9_EMS_11 deaths_age0to9_EMS_11)))    
 
 
 (func asymptomatic_age10to19_EMS_1  (+ As_age10to19::EMS_1 As_det1_age10to19::EMS_1))
@@ -3487,11 +3487,11 @@
 (func infected_det_age10to19_EMS_1 (+ infectious_det_age10to19_EMS_1 H1_det3_age10to19::EMS_1 H2_det3_age10to19::EMS_1 H3_det3_age10to19::EMS_1 C2_det3_age10to19::EMS_1 C3_det3_age10to19::EMS_1))
 (func infected_cumul_age10to19_EMS_1 (+ infected_age10to19_EMS_1 recovered_age10to19_EMS_1 deaths_age10to19_EMS_1))    
 
-(func prevalence_age10to19_EMS_1 (/ infected_age10to19_EMS_1 N_age10to19_EMS_1))    
-(func seroprevalence_age10to19_EMS_1 (/ (+ infected_age10to19_EMS_1 recovered_age10to19_EMS_1) N_age10to19_EMS_1))    
+(func prevalence_age10to19_EMS_1 (/ infected_age10to19_EMS_1 (- N_age10to19_EMS_1 deaths_age10to19_EMS_1)))    
+(func seroprevalence_age10to19_EMS_1 (/ (+ infected_age10to19_EMS_1 recovered_age10to19_EMS_1) (- N_age10to19_EMS_1 deaths_age10to19_EMS_1)))    
 
-(func prevalence_det_age10to19_EMS_1 (/ infected_det_age10to19_EMS_1 N_age10to19_EMS_1))    
-(func seroprevalence_det_age10to19_EMS_1 (/ (+ infected_det_age10to19_EMS_1 recovered_det_age10to19_EMS_1) N_age10to19_EMS_1))    
+(func prevalence_det_age10to19_EMS_1 (/ infected_det_age10to19_EMS_1 (- N_age10to19_EMS_1 deaths_age10to19_EMS_1)))    
+(func seroprevalence_det_age10to19_EMS_1 (/ (+ infected_det_age10to19_EMS_1 recovered_det_age10to19_EMS_1) (- N_age10to19_EMS_1 deaths_age10to19_EMS_1)))    
 
 
 (func asymptomatic_age10to19_EMS_2  (+ As_age10to19::EMS_2 As_det1_age10to19::EMS_2))
@@ -3540,11 +3540,11 @@
 (func infected_det_age10to19_EMS_2 (+ infectious_det_age10to19_EMS_2 H1_det3_age10to19::EMS_2 H2_det3_age10to19::EMS_2 H3_det3_age10to19::EMS_2 C2_det3_age10to19::EMS_2 C3_det3_age10to19::EMS_2))
 (func infected_cumul_age10to19_EMS_2 (+ infected_age10to19_EMS_2 recovered_age10to19_EMS_2 deaths_age10to19_EMS_2))    
 
-(func prevalence_age10to19_EMS_2 (/ infected_age10to19_EMS_2 N_age10to19_EMS_2))    
-(func seroprevalence_age10to19_EMS_2 (/ (+ infected_age10to19_EMS_2 recovered_age10to19_EMS_2) N_age10to19_EMS_2))    
+(func prevalence_age10to19_EMS_2 (/ infected_age10to19_EMS_2 (- N_age10to19_EMS_2 deaths_age10to19_EMS_2)))    
+(func seroprevalence_age10to19_EMS_2 (/ (+ infected_age10to19_EMS_2 recovered_age10to19_EMS_2) (- N_age10to19_EMS_2 deaths_age10to19_EMS_2)))    
 
-(func prevalence_det_age10to19_EMS_2 (/ infected_det_age10to19_EMS_2 N_age10to19_EMS_2))    
-(func seroprevalence_det_age10to19_EMS_2 (/ (+ infected_det_age10to19_EMS_2 recovered_det_age10to19_EMS_2) N_age10to19_EMS_2))    
+(func prevalence_det_age10to19_EMS_2 (/ infected_det_age10to19_EMS_2 (- N_age10to19_EMS_2 deaths_age10to19_EMS_2)))    
+(func seroprevalence_det_age10to19_EMS_2 (/ (+ infected_det_age10to19_EMS_2 recovered_det_age10to19_EMS_2) (- N_age10to19_EMS_2 deaths_age10to19_EMS_2)))    
 
 
 (func asymptomatic_age10to19_EMS_3  (+ As_age10to19::EMS_3 As_det1_age10to19::EMS_3))
@@ -3593,11 +3593,11 @@
 (func infected_det_age10to19_EMS_3 (+ infectious_det_age10to19_EMS_3 H1_det3_age10to19::EMS_3 H2_det3_age10to19::EMS_3 H3_det3_age10to19::EMS_3 C2_det3_age10to19::EMS_3 C3_det3_age10to19::EMS_3))
 (func infected_cumul_age10to19_EMS_3 (+ infected_age10to19_EMS_3 recovered_age10to19_EMS_3 deaths_age10to19_EMS_3))    
 
-(func prevalence_age10to19_EMS_3 (/ infected_age10to19_EMS_3 N_age10to19_EMS_3))    
-(func seroprevalence_age10to19_EMS_3 (/ (+ infected_age10to19_EMS_3 recovered_age10to19_EMS_3) N_age10to19_EMS_3))    
+(func prevalence_age10to19_EMS_3 (/ infected_age10to19_EMS_3 (- N_age10to19_EMS_3 deaths_age10to19_EMS_3)))    
+(func seroprevalence_age10to19_EMS_3 (/ (+ infected_age10to19_EMS_3 recovered_age10to19_EMS_3) (- N_age10to19_EMS_3 deaths_age10to19_EMS_3)))    
 
-(func prevalence_det_age10to19_EMS_3 (/ infected_det_age10to19_EMS_3 N_age10to19_EMS_3))    
-(func seroprevalence_det_age10to19_EMS_3 (/ (+ infected_det_age10to19_EMS_3 recovered_det_age10to19_EMS_3) N_age10to19_EMS_3))    
+(func prevalence_det_age10to19_EMS_3 (/ infected_det_age10to19_EMS_3 (- N_age10to19_EMS_3 deaths_age10to19_EMS_3)))    
+(func seroprevalence_det_age10to19_EMS_3 (/ (+ infected_det_age10to19_EMS_3 recovered_det_age10to19_EMS_3) (- N_age10to19_EMS_3 deaths_age10to19_EMS_3)))    
 
 
 (func asymptomatic_age10to19_EMS_4  (+ As_age10to19::EMS_4 As_det1_age10to19::EMS_4))
@@ -3646,11 +3646,11 @@
 (func infected_det_age10to19_EMS_4 (+ infectious_det_age10to19_EMS_4 H1_det3_age10to19::EMS_4 H2_det3_age10to19::EMS_4 H3_det3_age10to19::EMS_4 C2_det3_age10to19::EMS_4 C3_det3_age10to19::EMS_4))
 (func infected_cumul_age10to19_EMS_4 (+ infected_age10to19_EMS_4 recovered_age10to19_EMS_4 deaths_age10to19_EMS_4))    
 
-(func prevalence_age10to19_EMS_4 (/ infected_age10to19_EMS_4 N_age10to19_EMS_4))    
-(func seroprevalence_age10to19_EMS_4 (/ (+ infected_age10to19_EMS_4 recovered_age10to19_EMS_4) N_age10to19_EMS_4))    
+(func prevalence_age10to19_EMS_4 (/ infected_age10to19_EMS_4 (- N_age10to19_EMS_4 deaths_age10to19_EMS_4)))    
+(func seroprevalence_age10to19_EMS_4 (/ (+ infected_age10to19_EMS_4 recovered_age10to19_EMS_4) (- N_age10to19_EMS_4 deaths_age10to19_EMS_4)))    
 
-(func prevalence_det_age10to19_EMS_4 (/ infected_det_age10to19_EMS_4 N_age10to19_EMS_4))    
-(func seroprevalence_det_age10to19_EMS_4 (/ (+ infected_det_age10to19_EMS_4 recovered_det_age10to19_EMS_4) N_age10to19_EMS_4))    
+(func prevalence_det_age10to19_EMS_4 (/ infected_det_age10to19_EMS_4 (- N_age10to19_EMS_4 deaths_age10to19_EMS_4)))    
+(func seroprevalence_det_age10to19_EMS_4 (/ (+ infected_det_age10to19_EMS_4 recovered_det_age10to19_EMS_4) (- N_age10to19_EMS_4 deaths_age10to19_EMS_4)))    
 
 
 (func asymptomatic_age10to19_EMS_5  (+ As_age10to19::EMS_5 As_det1_age10to19::EMS_5))
@@ -3699,11 +3699,11 @@
 (func infected_det_age10to19_EMS_5 (+ infectious_det_age10to19_EMS_5 H1_det3_age10to19::EMS_5 H2_det3_age10to19::EMS_5 H3_det3_age10to19::EMS_5 C2_det3_age10to19::EMS_5 C3_det3_age10to19::EMS_5))
 (func infected_cumul_age10to19_EMS_5 (+ infected_age10to19_EMS_5 recovered_age10to19_EMS_5 deaths_age10to19_EMS_5))    
 
-(func prevalence_age10to19_EMS_5 (/ infected_age10to19_EMS_5 N_age10to19_EMS_5))    
-(func seroprevalence_age10to19_EMS_5 (/ (+ infected_age10to19_EMS_5 recovered_age10to19_EMS_5) N_age10to19_EMS_5))    
+(func prevalence_age10to19_EMS_5 (/ infected_age10to19_EMS_5 (- N_age10to19_EMS_5 deaths_age10to19_EMS_5)))    
+(func seroprevalence_age10to19_EMS_5 (/ (+ infected_age10to19_EMS_5 recovered_age10to19_EMS_5) (- N_age10to19_EMS_5 deaths_age10to19_EMS_5)))    
 
-(func prevalence_det_age10to19_EMS_5 (/ infected_det_age10to19_EMS_5 N_age10to19_EMS_5))    
-(func seroprevalence_det_age10to19_EMS_5 (/ (+ infected_det_age10to19_EMS_5 recovered_det_age10to19_EMS_5) N_age10to19_EMS_5))    
+(func prevalence_det_age10to19_EMS_5 (/ infected_det_age10to19_EMS_5 (- N_age10to19_EMS_5 deaths_age10to19_EMS_5)))    
+(func seroprevalence_det_age10to19_EMS_5 (/ (+ infected_det_age10to19_EMS_5 recovered_det_age10to19_EMS_5) (- N_age10to19_EMS_5 deaths_age10to19_EMS_5)))    
 
 
 (func asymptomatic_age10to19_EMS_6  (+ As_age10to19::EMS_6 As_det1_age10to19::EMS_6))
@@ -3752,11 +3752,11 @@
 (func infected_det_age10to19_EMS_6 (+ infectious_det_age10to19_EMS_6 H1_det3_age10to19::EMS_6 H2_det3_age10to19::EMS_6 H3_det3_age10to19::EMS_6 C2_det3_age10to19::EMS_6 C3_det3_age10to19::EMS_6))
 (func infected_cumul_age10to19_EMS_6 (+ infected_age10to19_EMS_6 recovered_age10to19_EMS_6 deaths_age10to19_EMS_6))    
 
-(func prevalence_age10to19_EMS_6 (/ infected_age10to19_EMS_6 N_age10to19_EMS_6))    
-(func seroprevalence_age10to19_EMS_6 (/ (+ infected_age10to19_EMS_6 recovered_age10to19_EMS_6) N_age10to19_EMS_6))    
+(func prevalence_age10to19_EMS_6 (/ infected_age10to19_EMS_6 (- N_age10to19_EMS_6 deaths_age10to19_EMS_6)))    
+(func seroprevalence_age10to19_EMS_6 (/ (+ infected_age10to19_EMS_6 recovered_age10to19_EMS_6) (- N_age10to19_EMS_6 deaths_age10to19_EMS_6)))    
 
-(func prevalence_det_age10to19_EMS_6 (/ infected_det_age10to19_EMS_6 N_age10to19_EMS_6))    
-(func seroprevalence_det_age10to19_EMS_6 (/ (+ infected_det_age10to19_EMS_6 recovered_det_age10to19_EMS_6) N_age10to19_EMS_6))    
+(func prevalence_det_age10to19_EMS_6 (/ infected_det_age10to19_EMS_6 (- N_age10to19_EMS_6 deaths_age10to19_EMS_6)))    
+(func seroprevalence_det_age10to19_EMS_6 (/ (+ infected_det_age10to19_EMS_6 recovered_det_age10to19_EMS_6) (- N_age10to19_EMS_6 deaths_age10to19_EMS_6)))    
 
 
 (func asymptomatic_age10to19_EMS_7  (+ As_age10to19::EMS_7 As_det1_age10to19::EMS_7))
@@ -3805,11 +3805,11 @@
 (func infected_det_age10to19_EMS_7 (+ infectious_det_age10to19_EMS_7 H1_det3_age10to19::EMS_7 H2_det3_age10to19::EMS_7 H3_det3_age10to19::EMS_7 C2_det3_age10to19::EMS_7 C3_det3_age10to19::EMS_7))
 (func infected_cumul_age10to19_EMS_7 (+ infected_age10to19_EMS_7 recovered_age10to19_EMS_7 deaths_age10to19_EMS_7))    
 
-(func prevalence_age10to19_EMS_7 (/ infected_age10to19_EMS_7 N_age10to19_EMS_7))    
-(func seroprevalence_age10to19_EMS_7 (/ (+ infected_age10to19_EMS_7 recovered_age10to19_EMS_7) N_age10to19_EMS_7))    
+(func prevalence_age10to19_EMS_7 (/ infected_age10to19_EMS_7 (- N_age10to19_EMS_7 deaths_age10to19_EMS_7)))    
+(func seroprevalence_age10to19_EMS_7 (/ (+ infected_age10to19_EMS_7 recovered_age10to19_EMS_7) (- N_age10to19_EMS_7 deaths_age10to19_EMS_7)))    
 
-(func prevalence_det_age10to19_EMS_7 (/ infected_det_age10to19_EMS_7 N_age10to19_EMS_7))    
-(func seroprevalence_det_age10to19_EMS_7 (/ (+ infected_det_age10to19_EMS_7 recovered_det_age10to19_EMS_7) N_age10to19_EMS_7))    
+(func prevalence_det_age10to19_EMS_7 (/ infected_det_age10to19_EMS_7 (- N_age10to19_EMS_7 deaths_age10to19_EMS_7)))    
+(func seroprevalence_det_age10to19_EMS_7 (/ (+ infected_det_age10to19_EMS_7 recovered_det_age10to19_EMS_7) (- N_age10to19_EMS_7 deaths_age10to19_EMS_7)))    
 
 
 (func asymptomatic_age10to19_EMS_8  (+ As_age10to19::EMS_8 As_det1_age10to19::EMS_8))
@@ -3858,11 +3858,11 @@
 (func infected_det_age10to19_EMS_8 (+ infectious_det_age10to19_EMS_8 H1_det3_age10to19::EMS_8 H2_det3_age10to19::EMS_8 H3_det3_age10to19::EMS_8 C2_det3_age10to19::EMS_8 C3_det3_age10to19::EMS_8))
 (func infected_cumul_age10to19_EMS_8 (+ infected_age10to19_EMS_8 recovered_age10to19_EMS_8 deaths_age10to19_EMS_8))    
 
-(func prevalence_age10to19_EMS_8 (/ infected_age10to19_EMS_8 N_age10to19_EMS_8))    
-(func seroprevalence_age10to19_EMS_8 (/ (+ infected_age10to19_EMS_8 recovered_age10to19_EMS_8) N_age10to19_EMS_8))    
+(func prevalence_age10to19_EMS_8 (/ infected_age10to19_EMS_8 (- N_age10to19_EMS_8 deaths_age10to19_EMS_8)))    
+(func seroprevalence_age10to19_EMS_8 (/ (+ infected_age10to19_EMS_8 recovered_age10to19_EMS_8) (- N_age10to19_EMS_8 deaths_age10to19_EMS_8)))    
 
-(func prevalence_det_age10to19_EMS_8 (/ infected_det_age10to19_EMS_8 N_age10to19_EMS_8))    
-(func seroprevalence_det_age10to19_EMS_8 (/ (+ infected_det_age10to19_EMS_8 recovered_det_age10to19_EMS_8) N_age10to19_EMS_8))    
+(func prevalence_det_age10to19_EMS_8 (/ infected_det_age10to19_EMS_8 (- N_age10to19_EMS_8 deaths_age10to19_EMS_8)))    
+(func seroprevalence_det_age10to19_EMS_8 (/ (+ infected_det_age10to19_EMS_8 recovered_det_age10to19_EMS_8) (- N_age10to19_EMS_8 deaths_age10to19_EMS_8)))    
 
 
 (func asymptomatic_age10to19_EMS_9  (+ As_age10to19::EMS_9 As_det1_age10to19::EMS_9))
@@ -3911,11 +3911,11 @@
 (func infected_det_age10to19_EMS_9 (+ infectious_det_age10to19_EMS_9 H1_det3_age10to19::EMS_9 H2_det3_age10to19::EMS_9 H3_det3_age10to19::EMS_9 C2_det3_age10to19::EMS_9 C3_det3_age10to19::EMS_9))
 (func infected_cumul_age10to19_EMS_9 (+ infected_age10to19_EMS_9 recovered_age10to19_EMS_9 deaths_age10to19_EMS_9))    
 
-(func prevalence_age10to19_EMS_9 (/ infected_age10to19_EMS_9 N_age10to19_EMS_9))    
-(func seroprevalence_age10to19_EMS_9 (/ (+ infected_age10to19_EMS_9 recovered_age10to19_EMS_9) N_age10to19_EMS_9))    
+(func prevalence_age10to19_EMS_9 (/ infected_age10to19_EMS_9 (- N_age10to19_EMS_9 deaths_age10to19_EMS_9)))    
+(func seroprevalence_age10to19_EMS_9 (/ (+ infected_age10to19_EMS_9 recovered_age10to19_EMS_9) (- N_age10to19_EMS_9 deaths_age10to19_EMS_9)))    
 
-(func prevalence_det_age10to19_EMS_9 (/ infected_det_age10to19_EMS_9 N_age10to19_EMS_9))    
-(func seroprevalence_det_age10to19_EMS_9 (/ (+ infected_det_age10to19_EMS_9 recovered_det_age10to19_EMS_9) N_age10to19_EMS_9))    
+(func prevalence_det_age10to19_EMS_9 (/ infected_det_age10to19_EMS_9 (- N_age10to19_EMS_9 deaths_age10to19_EMS_9)))    
+(func seroprevalence_det_age10to19_EMS_9 (/ (+ infected_det_age10to19_EMS_9 recovered_det_age10to19_EMS_9) (- N_age10to19_EMS_9 deaths_age10to19_EMS_9)))    
 
 
 (func asymptomatic_age10to19_EMS_10  (+ As_age10to19::EMS_10 As_det1_age10to19::EMS_10))
@@ -3964,11 +3964,11 @@
 (func infected_det_age10to19_EMS_10 (+ infectious_det_age10to19_EMS_10 H1_det3_age10to19::EMS_10 H2_det3_age10to19::EMS_10 H3_det3_age10to19::EMS_10 C2_det3_age10to19::EMS_10 C3_det3_age10to19::EMS_10))
 (func infected_cumul_age10to19_EMS_10 (+ infected_age10to19_EMS_10 recovered_age10to19_EMS_10 deaths_age10to19_EMS_10))    
 
-(func prevalence_age10to19_EMS_10 (/ infected_age10to19_EMS_10 N_age10to19_EMS_10))    
-(func seroprevalence_age10to19_EMS_10 (/ (+ infected_age10to19_EMS_10 recovered_age10to19_EMS_10) N_age10to19_EMS_10))    
+(func prevalence_age10to19_EMS_10 (/ infected_age10to19_EMS_10 (- N_age10to19_EMS_10 deaths_age10to19_EMS_10)))    
+(func seroprevalence_age10to19_EMS_10 (/ (+ infected_age10to19_EMS_10 recovered_age10to19_EMS_10) (- N_age10to19_EMS_10 deaths_age10to19_EMS_10)))    
 
-(func prevalence_det_age10to19_EMS_10 (/ infected_det_age10to19_EMS_10 N_age10to19_EMS_10))    
-(func seroprevalence_det_age10to19_EMS_10 (/ (+ infected_det_age10to19_EMS_10 recovered_det_age10to19_EMS_10) N_age10to19_EMS_10))    
+(func prevalence_det_age10to19_EMS_10 (/ infected_det_age10to19_EMS_10 (- N_age10to19_EMS_10 deaths_age10to19_EMS_10)))    
+(func seroprevalence_det_age10to19_EMS_10 (/ (+ infected_det_age10to19_EMS_10 recovered_det_age10to19_EMS_10) (- N_age10to19_EMS_10 deaths_age10to19_EMS_10)))    
 
 
 (func asymptomatic_age10to19_EMS_11  (+ As_age10to19::EMS_11 As_det1_age10to19::EMS_11))
@@ -4017,11 +4017,11 @@
 (func infected_det_age10to19_EMS_11 (+ infectious_det_age10to19_EMS_11 H1_det3_age10to19::EMS_11 H2_det3_age10to19::EMS_11 H3_det3_age10to19::EMS_11 C2_det3_age10to19::EMS_11 C3_det3_age10to19::EMS_11))
 (func infected_cumul_age10to19_EMS_11 (+ infected_age10to19_EMS_11 recovered_age10to19_EMS_11 deaths_age10to19_EMS_11))    
 
-(func prevalence_age10to19_EMS_11 (/ infected_age10to19_EMS_11 N_age10to19_EMS_11))    
-(func seroprevalence_age10to19_EMS_11 (/ (+ infected_age10to19_EMS_11 recovered_age10to19_EMS_11) N_age10to19_EMS_11))    
+(func prevalence_age10to19_EMS_11 (/ infected_age10to19_EMS_11 (- N_age10to19_EMS_11 deaths_age10to19_EMS_11)))    
+(func seroprevalence_age10to19_EMS_11 (/ (+ infected_age10to19_EMS_11 recovered_age10to19_EMS_11) (- N_age10to19_EMS_11 deaths_age10to19_EMS_11)))    
 
-(func prevalence_det_age10to19_EMS_11 (/ infected_det_age10to19_EMS_11 N_age10to19_EMS_11))    
-(func seroprevalence_det_age10to19_EMS_11 (/ (+ infected_det_age10to19_EMS_11 recovered_det_age10to19_EMS_11) N_age10to19_EMS_11))    
+(func prevalence_det_age10to19_EMS_11 (/ infected_det_age10to19_EMS_11 (- N_age10to19_EMS_11 deaths_age10to19_EMS_11)))    
+(func seroprevalence_det_age10to19_EMS_11 (/ (+ infected_det_age10to19_EMS_11 recovered_det_age10to19_EMS_11) (- N_age10to19_EMS_11 deaths_age10to19_EMS_11)))    
 
 
 (func asymptomatic_age20to29_EMS_1  (+ As_age20to29::EMS_1 As_det1_age20to29::EMS_1))
@@ -4070,11 +4070,11 @@
 (func infected_det_age20to29_EMS_1 (+ infectious_det_age20to29_EMS_1 H1_det3_age20to29::EMS_1 H2_det3_age20to29::EMS_1 H3_det3_age20to29::EMS_1 C2_det3_age20to29::EMS_1 C3_det3_age20to29::EMS_1))
 (func infected_cumul_age20to29_EMS_1 (+ infected_age20to29_EMS_1 recovered_age20to29_EMS_1 deaths_age20to29_EMS_1))    
 
-(func prevalence_age20to29_EMS_1 (/ infected_age20to29_EMS_1 N_age20to29_EMS_1))    
-(func seroprevalence_age20to29_EMS_1 (/ (+ infected_age20to29_EMS_1 recovered_age20to29_EMS_1) N_age20to29_EMS_1))    
+(func prevalence_age20to29_EMS_1 (/ infected_age20to29_EMS_1 (- N_age20to29_EMS_1 deaths_age20to29_EMS_1)))    
+(func seroprevalence_age20to29_EMS_1 (/ (+ infected_age20to29_EMS_1 recovered_age20to29_EMS_1) (- N_age20to29_EMS_1 deaths_age20to29_EMS_1)))    
 
-(func prevalence_det_age20to29_EMS_1 (/ infected_det_age20to29_EMS_1 N_age20to29_EMS_1))    
-(func seroprevalence_det_age20to29_EMS_1 (/ (+ infected_det_age20to29_EMS_1 recovered_det_age20to29_EMS_1) N_age20to29_EMS_1))    
+(func prevalence_det_age20to29_EMS_1 (/ infected_det_age20to29_EMS_1 (- N_age20to29_EMS_1 deaths_age20to29_EMS_1)))    
+(func seroprevalence_det_age20to29_EMS_1 (/ (+ infected_det_age20to29_EMS_1 recovered_det_age20to29_EMS_1) (- N_age20to29_EMS_1 deaths_age20to29_EMS_1)))    
 
 
 (func asymptomatic_age20to29_EMS_2  (+ As_age20to29::EMS_2 As_det1_age20to29::EMS_2))
@@ -4123,11 +4123,11 @@
 (func infected_det_age20to29_EMS_2 (+ infectious_det_age20to29_EMS_2 H1_det3_age20to29::EMS_2 H2_det3_age20to29::EMS_2 H3_det3_age20to29::EMS_2 C2_det3_age20to29::EMS_2 C3_det3_age20to29::EMS_2))
 (func infected_cumul_age20to29_EMS_2 (+ infected_age20to29_EMS_2 recovered_age20to29_EMS_2 deaths_age20to29_EMS_2))    
 
-(func prevalence_age20to29_EMS_2 (/ infected_age20to29_EMS_2 N_age20to29_EMS_2))    
-(func seroprevalence_age20to29_EMS_2 (/ (+ infected_age20to29_EMS_2 recovered_age20to29_EMS_2) N_age20to29_EMS_2))    
+(func prevalence_age20to29_EMS_2 (/ infected_age20to29_EMS_2 (- N_age20to29_EMS_2 deaths_age20to29_EMS_2)))    
+(func seroprevalence_age20to29_EMS_2 (/ (+ infected_age20to29_EMS_2 recovered_age20to29_EMS_2) (- N_age20to29_EMS_2 deaths_age20to29_EMS_2)))    
 
-(func prevalence_det_age20to29_EMS_2 (/ infected_det_age20to29_EMS_2 N_age20to29_EMS_2))    
-(func seroprevalence_det_age20to29_EMS_2 (/ (+ infected_det_age20to29_EMS_2 recovered_det_age20to29_EMS_2) N_age20to29_EMS_2))    
+(func prevalence_det_age20to29_EMS_2 (/ infected_det_age20to29_EMS_2 (- N_age20to29_EMS_2 deaths_age20to29_EMS_2)))    
+(func seroprevalence_det_age20to29_EMS_2 (/ (+ infected_det_age20to29_EMS_2 recovered_det_age20to29_EMS_2) (- N_age20to29_EMS_2 deaths_age20to29_EMS_2)))    
 
 
 (func asymptomatic_age20to29_EMS_3  (+ As_age20to29::EMS_3 As_det1_age20to29::EMS_3))
@@ -4176,11 +4176,11 @@
 (func infected_det_age20to29_EMS_3 (+ infectious_det_age20to29_EMS_3 H1_det3_age20to29::EMS_3 H2_det3_age20to29::EMS_3 H3_det3_age20to29::EMS_3 C2_det3_age20to29::EMS_3 C3_det3_age20to29::EMS_3))
 (func infected_cumul_age20to29_EMS_3 (+ infected_age20to29_EMS_3 recovered_age20to29_EMS_3 deaths_age20to29_EMS_3))    
 
-(func prevalence_age20to29_EMS_3 (/ infected_age20to29_EMS_3 N_age20to29_EMS_3))    
-(func seroprevalence_age20to29_EMS_3 (/ (+ infected_age20to29_EMS_3 recovered_age20to29_EMS_3) N_age20to29_EMS_3))    
+(func prevalence_age20to29_EMS_3 (/ infected_age20to29_EMS_3 (- N_age20to29_EMS_3 deaths_age20to29_EMS_3)))    
+(func seroprevalence_age20to29_EMS_3 (/ (+ infected_age20to29_EMS_3 recovered_age20to29_EMS_3) (- N_age20to29_EMS_3 deaths_age20to29_EMS_3)))    
 
-(func prevalence_det_age20to29_EMS_3 (/ infected_det_age20to29_EMS_3 N_age20to29_EMS_3))    
-(func seroprevalence_det_age20to29_EMS_3 (/ (+ infected_det_age20to29_EMS_3 recovered_det_age20to29_EMS_3) N_age20to29_EMS_3))    
+(func prevalence_det_age20to29_EMS_3 (/ infected_det_age20to29_EMS_3 (- N_age20to29_EMS_3 deaths_age20to29_EMS_3)))    
+(func seroprevalence_det_age20to29_EMS_3 (/ (+ infected_det_age20to29_EMS_3 recovered_det_age20to29_EMS_3) (- N_age20to29_EMS_3 deaths_age20to29_EMS_3)))    
 
 
 (func asymptomatic_age20to29_EMS_4  (+ As_age20to29::EMS_4 As_det1_age20to29::EMS_4))
@@ -4229,11 +4229,11 @@
 (func infected_det_age20to29_EMS_4 (+ infectious_det_age20to29_EMS_4 H1_det3_age20to29::EMS_4 H2_det3_age20to29::EMS_4 H3_det3_age20to29::EMS_4 C2_det3_age20to29::EMS_4 C3_det3_age20to29::EMS_4))
 (func infected_cumul_age20to29_EMS_4 (+ infected_age20to29_EMS_4 recovered_age20to29_EMS_4 deaths_age20to29_EMS_4))    
 
-(func prevalence_age20to29_EMS_4 (/ infected_age20to29_EMS_4 N_age20to29_EMS_4))    
-(func seroprevalence_age20to29_EMS_4 (/ (+ infected_age20to29_EMS_4 recovered_age20to29_EMS_4) N_age20to29_EMS_4))    
+(func prevalence_age20to29_EMS_4 (/ infected_age20to29_EMS_4 (- N_age20to29_EMS_4 deaths_age20to29_EMS_4)))    
+(func seroprevalence_age20to29_EMS_4 (/ (+ infected_age20to29_EMS_4 recovered_age20to29_EMS_4) (- N_age20to29_EMS_4 deaths_age20to29_EMS_4)))    
 
-(func prevalence_det_age20to29_EMS_4 (/ infected_det_age20to29_EMS_4 N_age20to29_EMS_4))    
-(func seroprevalence_det_age20to29_EMS_4 (/ (+ infected_det_age20to29_EMS_4 recovered_det_age20to29_EMS_4) N_age20to29_EMS_4))    
+(func prevalence_det_age20to29_EMS_4 (/ infected_det_age20to29_EMS_4 (- N_age20to29_EMS_4 deaths_age20to29_EMS_4)))    
+(func seroprevalence_det_age20to29_EMS_4 (/ (+ infected_det_age20to29_EMS_4 recovered_det_age20to29_EMS_4) (- N_age20to29_EMS_4 deaths_age20to29_EMS_4)))    
 
 
 (func asymptomatic_age20to29_EMS_5  (+ As_age20to29::EMS_5 As_det1_age20to29::EMS_5))
@@ -4282,11 +4282,11 @@
 (func infected_det_age20to29_EMS_5 (+ infectious_det_age20to29_EMS_5 H1_det3_age20to29::EMS_5 H2_det3_age20to29::EMS_5 H3_det3_age20to29::EMS_5 C2_det3_age20to29::EMS_5 C3_det3_age20to29::EMS_5))
 (func infected_cumul_age20to29_EMS_5 (+ infected_age20to29_EMS_5 recovered_age20to29_EMS_5 deaths_age20to29_EMS_5))    
 
-(func prevalence_age20to29_EMS_5 (/ infected_age20to29_EMS_5 N_age20to29_EMS_5))    
-(func seroprevalence_age20to29_EMS_5 (/ (+ infected_age20to29_EMS_5 recovered_age20to29_EMS_5) N_age20to29_EMS_5))    
+(func prevalence_age20to29_EMS_5 (/ infected_age20to29_EMS_5 (- N_age20to29_EMS_5 deaths_age20to29_EMS_5)))    
+(func seroprevalence_age20to29_EMS_5 (/ (+ infected_age20to29_EMS_5 recovered_age20to29_EMS_5) (- N_age20to29_EMS_5 deaths_age20to29_EMS_5)))    
 
-(func prevalence_det_age20to29_EMS_5 (/ infected_det_age20to29_EMS_5 N_age20to29_EMS_5))    
-(func seroprevalence_det_age20to29_EMS_5 (/ (+ infected_det_age20to29_EMS_5 recovered_det_age20to29_EMS_5) N_age20to29_EMS_5))    
+(func prevalence_det_age20to29_EMS_5 (/ infected_det_age20to29_EMS_5 (- N_age20to29_EMS_5 deaths_age20to29_EMS_5)))    
+(func seroprevalence_det_age20to29_EMS_5 (/ (+ infected_det_age20to29_EMS_5 recovered_det_age20to29_EMS_5) (- N_age20to29_EMS_5 deaths_age20to29_EMS_5)))    
 
 
 (func asymptomatic_age20to29_EMS_6  (+ As_age20to29::EMS_6 As_det1_age20to29::EMS_6))
@@ -4335,11 +4335,11 @@
 (func infected_det_age20to29_EMS_6 (+ infectious_det_age20to29_EMS_6 H1_det3_age20to29::EMS_6 H2_det3_age20to29::EMS_6 H3_det3_age20to29::EMS_6 C2_det3_age20to29::EMS_6 C3_det3_age20to29::EMS_6))
 (func infected_cumul_age20to29_EMS_6 (+ infected_age20to29_EMS_6 recovered_age20to29_EMS_6 deaths_age20to29_EMS_6))    
 
-(func prevalence_age20to29_EMS_6 (/ infected_age20to29_EMS_6 N_age20to29_EMS_6))    
-(func seroprevalence_age20to29_EMS_6 (/ (+ infected_age20to29_EMS_6 recovered_age20to29_EMS_6) N_age20to29_EMS_6))    
+(func prevalence_age20to29_EMS_6 (/ infected_age20to29_EMS_6 (- N_age20to29_EMS_6 deaths_age20to29_EMS_6)))    
+(func seroprevalence_age20to29_EMS_6 (/ (+ infected_age20to29_EMS_6 recovered_age20to29_EMS_6) (- N_age20to29_EMS_6 deaths_age20to29_EMS_6)))    
 
-(func prevalence_det_age20to29_EMS_6 (/ infected_det_age20to29_EMS_6 N_age20to29_EMS_6))    
-(func seroprevalence_det_age20to29_EMS_6 (/ (+ infected_det_age20to29_EMS_6 recovered_det_age20to29_EMS_6) N_age20to29_EMS_6))    
+(func prevalence_det_age20to29_EMS_6 (/ infected_det_age20to29_EMS_6 (- N_age20to29_EMS_6 deaths_age20to29_EMS_6)))    
+(func seroprevalence_det_age20to29_EMS_6 (/ (+ infected_det_age20to29_EMS_6 recovered_det_age20to29_EMS_6) (- N_age20to29_EMS_6 deaths_age20to29_EMS_6)))    
 
 
 (func asymptomatic_age20to29_EMS_7  (+ As_age20to29::EMS_7 As_det1_age20to29::EMS_7))
@@ -4388,11 +4388,11 @@
 (func infected_det_age20to29_EMS_7 (+ infectious_det_age20to29_EMS_7 H1_det3_age20to29::EMS_7 H2_det3_age20to29::EMS_7 H3_det3_age20to29::EMS_7 C2_det3_age20to29::EMS_7 C3_det3_age20to29::EMS_7))
 (func infected_cumul_age20to29_EMS_7 (+ infected_age20to29_EMS_7 recovered_age20to29_EMS_7 deaths_age20to29_EMS_7))    
 
-(func prevalence_age20to29_EMS_7 (/ infected_age20to29_EMS_7 N_age20to29_EMS_7))    
-(func seroprevalence_age20to29_EMS_7 (/ (+ infected_age20to29_EMS_7 recovered_age20to29_EMS_7) N_age20to29_EMS_7))    
+(func prevalence_age20to29_EMS_7 (/ infected_age20to29_EMS_7 (- N_age20to29_EMS_7 deaths_age20to29_EMS_7)))    
+(func seroprevalence_age20to29_EMS_7 (/ (+ infected_age20to29_EMS_7 recovered_age20to29_EMS_7) (- N_age20to29_EMS_7 deaths_age20to29_EMS_7)))    
 
-(func prevalence_det_age20to29_EMS_7 (/ infected_det_age20to29_EMS_7 N_age20to29_EMS_7))    
-(func seroprevalence_det_age20to29_EMS_7 (/ (+ infected_det_age20to29_EMS_7 recovered_det_age20to29_EMS_7) N_age20to29_EMS_7))    
+(func prevalence_det_age20to29_EMS_7 (/ infected_det_age20to29_EMS_7 (- N_age20to29_EMS_7 deaths_age20to29_EMS_7)))    
+(func seroprevalence_det_age20to29_EMS_7 (/ (+ infected_det_age20to29_EMS_7 recovered_det_age20to29_EMS_7) (- N_age20to29_EMS_7 deaths_age20to29_EMS_7)))    
 
 
 (func asymptomatic_age20to29_EMS_8  (+ As_age20to29::EMS_8 As_det1_age20to29::EMS_8))
@@ -4441,11 +4441,11 @@
 (func infected_det_age20to29_EMS_8 (+ infectious_det_age20to29_EMS_8 H1_det3_age20to29::EMS_8 H2_det3_age20to29::EMS_8 H3_det3_age20to29::EMS_8 C2_det3_age20to29::EMS_8 C3_det3_age20to29::EMS_8))
 (func infected_cumul_age20to29_EMS_8 (+ infected_age20to29_EMS_8 recovered_age20to29_EMS_8 deaths_age20to29_EMS_8))    
 
-(func prevalence_age20to29_EMS_8 (/ infected_age20to29_EMS_8 N_age20to29_EMS_8))    
-(func seroprevalence_age20to29_EMS_8 (/ (+ infected_age20to29_EMS_8 recovered_age20to29_EMS_8) N_age20to29_EMS_8))    
+(func prevalence_age20to29_EMS_8 (/ infected_age20to29_EMS_8 (- N_age20to29_EMS_8 deaths_age20to29_EMS_8)))    
+(func seroprevalence_age20to29_EMS_8 (/ (+ infected_age20to29_EMS_8 recovered_age20to29_EMS_8) (- N_age20to29_EMS_8 deaths_age20to29_EMS_8)))    
 
-(func prevalence_det_age20to29_EMS_8 (/ infected_det_age20to29_EMS_8 N_age20to29_EMS_8))    
-(func seroprevalence_det_age20to29_EMS_8 (/ (+ infected_det_age20to29_EMS_8 recovered_det_age20to29_EMS_8) N_age20to29_EMS_8))    
+(func prevalence_det_age20to29_EMS_8 (/ infected_det_age20to29_EMS_8 (- N_age20to29_EMS_8 deaths_age20to29_EMS_8)))    
+(func seroprevalence_det_age20to29_EMS_8 (/ (+ infected_det_age20to29_EMS_8 recovered_det_age20to29_EMS_8) (- N_age20to29_EMS_8 deaths_age20to29_EMS_8)))    
 
 
 (func asymptomatic_age20to29_EMS_9  (+ As_age20to29::EMS_9 As_det1_age20to29::EMS_9))
@@ -4494,11 +4494,11 @@
 (func infected_det_age20to29_EMS_9 (+ infectious_det_age20to29_EMS_9 H1_det3_age20to29::EMS_9 H2_det3_age20to29::EMS_9 H3_det3_age20to29::EMS_9 C2_det3_age20to29::EMS_9 C3_det3_age20to29::EMS_9))
 (func infected_cumul_age20to29_EMS_9 (+ infected_age20to29_EMS_9 recovered_age20to29_EMS_9 deaths_age20to29_EMS_9))    
 
-(func prevalence_age20to29_EMS_9 (/ infected_age20to29_EMS_9 N_age20to29_EMS_9))    
-(func seroprevalence_age20to29_EMS_9 (/ (+ infected_age20to29_EMS_9 recovered_age20to29_EMS_9) N_age20to29_EMS_9))    
+(func prevalence_age20to29_EMS_9 (/ infected_age20to29_EMS_9 (- N_age20to29_EMS_9 deaths_age20to29_EMS_9)))    
+(func seroprevalence_age20to29_EMS_9 (/ (+ infected_age20to29_EMS_9 recovered_age20to29_EMS_9) (- N_age20to29_EMS_9 deaths_age20to29_EMS_9)))    
 
-(func prevalence_det_age20to29_EMS_9 (/ infected_det_age20to29_EMS_9 N_age20to29_EMS_9))    
-(func seroprevalence_det_age20to29_EMS_9 (/ (+ infected_det_age20to29_EMS_9 recovered_det_age20to29_EMS_9) N_age20to29_EMS_9))    
+(func prevalence_det_age20to29_EMS_9 (/ infected_det_age20to29_EMS_9 (- N_age20to29_EMS_9 deaths_age20to29_EMS_9)))    
+(func seroprevalence_det_age20to29_EMS_9 (/ (+ infected_det_age20to29_EMS_9 recovered_det_age20to29_EMS_9) (- N_age20to29_EMS_9 deaths_age20to29_EMS_9)))    
 
 
 (func asymptomatic_age20to29_EMS_10  (+ As_age20to29::EMS_10 As_det1_age20to29::EMS_10))
@@ -4547,11 +4547,11 @@
 (func infected_det_age20to29_EMS_10 (+ infectious_det_age20to29_EMS_10 H1_det3_age20to29::EMS_10 H2_det3_age20to29::EMS_10 H3_det3_age20to29::EMS_10 C2_det3_age20to29::EMS_10 C3_det3_age20to29::EMS_10))
 (func infected_cumul_age20to29_EMS_10 (+ infected_age20to29_EMS_10 recovered_age20to29_EMS_10 deaths_age20to29_EMS_10))    
 
-(func prevalence_age20to29_EMS_10 (/ infected_age20to29_EMS_10 N_age20to29_EMS_10))    
-(func seroprevalence_age20to29_EMS_10 (/ (+ infected_age20to29_EMS_10 recovered_age20to29_EMS_10) N_age20to29_EMS_10))    
+(func prevalence_age20to29_EMS_10 (/ infected_age20to29_EMS_10 (- N_age20to29_EMS_10 deaths_age20to29_EMS_10)))    
+(func seroprevalence_age20to29_EMS_10 (/ (+ infected_age20to29_EMS_10 recovered_age20to29_EMS_10) (- N_age20to29_EMS_10 deaths_age20to29_EMS_10)))    
 
-(func prevalence_det_age20to29_EMS_10 (/ infected_det_age20to29_EMS_10 N_age20to29_EMS_10))    
-(func seroprevalence_det_age20to29_EMS_10 (/ (+ infected_det_age20to29_EMS_10 recovered_det_age20to29_EMS_10) N_age20to29_EMS_10))    
+(func prevalence_det_age20to29_EMS_10 (/ infected_det_age20to29_EMS_10 (- N_age20to29_EMS_10 deaths_age20to29_EMS_10)))    
+(func seroprevalence_det_age20to29_EMS_10 (/ (+ infected_det_age20to29_EMS_10 recovered_det_age20to29_EMS_10) (- N_age20to29_EMS_10 deaths_age20to29_EMS_10)))    
 
 
 (func asymptomatic_age20to29_EMS_11  (+ As_age20to29::EMS_11 As_det1_age20to29::EMS_11))
@@ -4600,11 +4600,11 @@
 (func infected_det_age20to29_EMS_11 (+ infectious_det_age20to29_EMS_11 H1_det3_age20to29::EMS_11 H2_det3_age20to29::EMS_11 H3_det3_age20to29::EMS_11 C2_det3_age20to29::EMS_11 C3_det3_age20to29::EMS_11))
 (func infected_cumul_age20to29_EMS_11 (+ infected_age20to29_EMS_11 recovered_age20to29_EMS_11 deaths_age20to29_EMS_11))    
 
-(func prevalence_age20to29_EMS_11 (/ infected_age20to29_EMS_11 N_age20to29_EMS_11))    
-(func seroprevalence_age20to29_EMS_11 (/ (+ infected_age20to29_EMS_11 recovered_age20to29_EMS_11) N_age20to29_EMS_11))    
+(func prevalence_age20to29_EMS_11 (/ infected_age20to29_EMS_11 (- N_age20to29_EMS_11 deaths_age20to29_EMS_11)))    
+(func seroprevalence_age20to29_EMS_11 (/ (+ infected_age20to29_EMS_11 recovered_age20to29_EMS_11) (- N_age20to29_EMS_11 deaths_age20to29_EMS_11)))    
 
-(func prevalence_det_age20to29_EMS_11 (/ infected_det_age20to29_EMS_11 N_age20to29_EMS_11))    
-(func seroprevalence_det_age20to29_EMS_11 (/ (+ infected_det_age20to29_EMS_11 recovered_det_age20to29_EMS_11) N_age20to29_EMS_11))    
+(func prevalence_det_age20to29_EMS_11 (/ infected_det_age20to29_EMS_11 (- N_age20to29_EMS_11 deaths_age20to29_EMS_11)))    
+(func seroprevalence_det_age20to29_EMS_11 (/ (+ infected_det_age20to29_EMS_11 recovered_det_age20to29_EMS_11) (- N_age20to29_EMS_11 deaths_age20to29_EMS_11)))    
 
 
 (func asymptomatic_age30to39_EMS_1  (+ As_age30to39::EMS_1 As_det1_age30to39::EMS_1))
@@ -4653,11 +4653,11 @@
 (func infected_det_age30to39_EMS_1 (+ infectious_det_age30to39_EMS_1 H1_det3_age30to39::EMS_1 H2_det3_age30to39::EMS_1 H3_det3_age30to39::EMS_1 C2_det3_age30to39::EMS_1 C3_det3_age30to39::EMS_1))
 (func infected_cumul_age30to39_EMS_1 (+ infected_age30to39_EMS_1 recovered_age30to39_EMS_1 deaths_age30to39_EMS_1))    
 
-(func prevalence_age30to39_EMS_1 (/ infected_age30to39_EMS_1 N_age30to39_EMS_1))    
-(func seroprevalence_age30to39_EMS_1 (/ (+ infected_age30to39_EMS_1 recovered_age30to39_EMS_1) N_age30to39_EMS_1))    
+(func prevalence_age30to39_EMS_1 (/ infected_age30to39_EMS_1 (- N_age30to39_EMS_1 deaths_age30to39_EMS_1)))    
+(func seroprevalence_age30to39_EMS_1 (/ (+ infected_age30to39_EMS_1 recovered_age30to39_EMS_1) (- N_age30to39_EMS_1 deaths_age30to39_EMS_1)))    
 
-(func prevalence_det_age30to39_EMS_1 (/ infected_det_age30to39_EMS_1 N_age30to39_EMS_1))    
-(func seroprevalence_det_age30to39_EMS_1 (/ (+ infected_det_age30to39_EMS_1 recovered_det_age30to39_EMS_1) N_age30to39_EMS_1))    
+(func prevalence_det_age30to39_EMS_1 (/ infected_det_age30to39_EMS_1 (- N_age30to39_EMS_1 deaths_age30to39_EMS_1)))    
+(func seroprevalence_det_age30to39_EMS_1 (/ (+ infected_det_age30to39_EMS_1 recovered_det_age30to39_EMS_1) (- N_age30to39_EMS_1 deaths_age30to39_EMS_1)))    
 
 
 (func asymptomatic_age30to39_EMS_2  (+ As_age30to39::EMS_2 As_det1_age30to39::EMS_2))
@@ -4706,11 +4706,11 @@
 (func infected_det_age30to39_EMS_2 (+ infectious_det_age30to39_EMS_2 H1_det3_age30to39::EMS_2 H2_det3_age30to39::EMS_2 H3_det3_age30to39::EMS_2 C2_det3_age30to39::EMS_2 C3_det3_age30to39::EMS_2))
 (func infected_cumul_age30to39_EMS_2 (+ infected_age30to39_EMS_2 recovered_age30to39_EMS_2 deaths_age30to39_EMS_2))    
 
-(func prevalence_age30to39_EMS_2 (/ infected_age30to39_EMS_2 N_age30to39_EMS_2))    
-(func seroprevalence_age30to39_EMS_2 (/ (+ infected_age30to39_EMS_2 recovered_age30to39_EMS_2) N_age30to39_EMS_2))    
+(func prevalence_age30to39_EMS_2 (/ infected_age30to39_EMS_2 (- N_age30to39_EMS_2 deaths_age30to39_EMS_2)))    
+(func seroprevalence_age30to39_EMS_2 (/ (+ infected_age30to39_EMS_2 recovered_age30to39_EMS_2) (- N_age30to39_EMS_2 deaths_age30to39_EMS_2)))    
 
-(func prevalence_det_age30to39_EMS_2 (/ infected_det_age30to39_EMS_2 N_age30to39_EMS_2))    
-(func seroprevalence_det_age30to39_EMS_2 (/ (+ infected_det_age30to39_EMS_2 recovered_det_age30to39_EMS_2) N_age30to39_EMS_2))    
+(func prevalence_det_age30to39_EMS_2 (/ infected_det_age30to39_EMS_2 (- N_age30to39_EMS_2 deaths_age30to39_EMS_2)))    
+(func seroprevalence_det_age30to39_EMS_2 (/ (+ infected_det_age30to39_EMS_2 recovered_det_age30to39_EMS_2) (- N_age30to39_EMS_2 deaths_age30to39_EMS_2)))    
 
 
 (func asymptomatic_age30to39_EMS_3  (+ As_age30to39::EMS_3 As_det1_age30to39::EMS_3))
@@ -4759,11 +4759,11 @@
 (func infected_det_age30to39_EMS_3 (+ infectious_det_age30to39_EMS_3 H1_det3_age30to39::EMS_3 H2_det3_age30to39::EMS_3 H3_det3_age30to39::EMS_3 C2_det3_age30to39::EMS_3 C3_det3_age30to39::EMS_3))
 (func infected_cumul_age30to39_EMS_3 (+ infected_age30to39_EMS_3 recovered_age30to39_EMS_3 deaths_age30to39_EMS_3))    
 
-(func prevalence_age30to39_EMS_3 (/ infected_age30to39_EMS_3 N_age30to39_EMS_3))    
-(func seroprevalence_age30to39_EMS_3 (/ (+ infected_age30to39_EMS_3 recovered_age30to39_EMS_3) N_age30to39_EMS_3))    
+(func prevalence_age30to39_EMS_3 (/ infected_age30to39_EMS_3 (- N_age30to39_EMS_3 deaths_age30to39_EMS_3)))    
+(func seroprevalence_age30to39_EMS_3 (/ (+ infected_age30to39_EMS_3 recovered_age30to39_EMS_3) (- N_age30to39_EMS_3 deaths_age30to39_EMS_3)))    
 
-(func prevalence_det_age30to39_EMS_3 (/ infected_det_age30to39_EMS_3 N_age30to39_EMS_3))    
-(func seroprevalence_det_age30to39_EMS_3 (/ (+ infected_det_age30to39_EMS_3 recovered_det_age30to39_EMS_3) N_age30to39_EMS_3))    
+(func prevalence_det_age30to39_EMS_3 (/ infected_det_age30to39_EMS_3 (- N_age30to39_EMS_3 deaths_age30to39_EMS_3)))    
+(func seroprevalence_det_age30to39_EMS_3 (/ (+ infected_det_age30to39_EMS_3 recovered_det_age30to39_EMS_3) (- N_age30to39_EMS_3 deaths_age30to39_EMS_3)))    
 
 
 (func asymptomatic_age30to39_EMS_4  (+ As_age30to39::EMS_4 As_det1_age30to39::EMS_4))
@@ -4812,11 +4812,11 @@
 (func infected_det_age30to39_EMS_4 (+ infectious_det_age30to39_EMS_4 H1_det3_age30to39::EMS_4 H2_det3_age30to39::EMS_4 H3_det3_age30to39::EMS_4 C2_det3_age30to39::EMS_4 C3_det3_age30to39::EMS_4))
 (func infected_cumul_age30to39_EMS_4 (+ infected_age30to39_EMS_4 recovered_age30to39_EMS_4 deaths_age30to39_EMS_4))    
 
-(func prevalence_age30to39_EMS_4 (/ infected_age30to39_EMS_4 N_age30to39_EMS_4))    
-(func seroprevalence_age30to39_EMS_4 (/ (+ infected_age30to39_EMS_4 recovered_age30to39_EMS_4) N_age30to39_EMS_4))    
+(func prevalence_age30to39_EMS_4 (/ infected_age30to39_EMS_4 (- N_age30to39_EMS_4 deaths_age30to39_EMS_4)))    
+(func seroprevalence_age30to39_EMS_4 (/ (+ infected_age30to39_EMS_4 recovered_age30to39_EMS_4) (- N_age30to39_EMS_4 deaths_age30to39_EMS_4)))    
 
-(func prevalence_det_age30to39_EMS_4 (/ infected_det_age30to39_EMS_4 N_age30to39_EMS_4))    
-(func seroprevalence_det_age30to39_EMS_4 (/ (+ infected_det_age30to39_EMS_4 recovered_det_age30to39_EMS_4) N_age30to39_EMS_4))    
+(func prevalence_det_age30to39_EMS_4 (/ infected_det_age30to39_EMS_4 (- N_age30to39_EMS_4 deaths_age30to39_EMS_4)))    
+(func seroprevalence_det_age30to39_EMS_4 (/ (+ infected_det_age30to39_EMS_4 recovered_det_age30to39_EMS_4) (- N_age30to39_EMS_4 deaths_age30to39_EMS_4)))    
 
 
 (func asymptomatic_age30to39_EMS_5  (+ As_age30to39::EMS_5 As_det1_age30to39::EMS_5))
@@ -4865,11 +4865,11 @@
 (func infected_det_age30to39_EMS_5 (+ infectious_det_age30to39_EMS_5 H1_det3_age30to39::EMS_5 H2_det3_age30to39::EMS_5 H3_det3_age30to39::EMS_5 C2_det3_age30to39::EMS_5 C3_det3_age30to39::EMS_5))
 (func infected_cumul_age30to39_EMS_5 (+ infected_age30to39_EMS_5 recovered_age30to39_EMS_5 deaths_age30to39_EMS_5))    
 
-(func prevalence_age30to39_EMS_5 (/ infected_age30to39_EMS_5 N_age30to39_EMS_5))    
-(func seroprevalence_age30to39_EMS_5 (/ (+ infected_age30to39_EMS_5 recovered_age30to39_EMS_5) N_age30to39_EMS_5))    
+(func prevalence_age30to39_EMS_5 (/ infected_age30to39_EMS_5 (- N_age30to39_EMS_5 deaths_age30to39_EMS_5)))    
+(func seroprevalence_age30to39_EMS_5 (/ (+ infected_age30to39_EMS_5 recovered_age30to39_EMS_5) (- N_age30to39_EMS_5 deaths_age30to39_EMS_5)))    
 
-(func prevalence_det_age30to39_EMS_5 (/ infected_det_age30to39_EMS_5 N_age30to39_EMS_5))    
-(func seroprevalence_det_age30to39_EMS_5 (/ (+ infected_det_age30to39_EMS_5 recovered_det_age30to39_EMS_5) N_age30to39_EMS_5))    
+(func prevalence_det_age30to39_EMS_5 (/ infected_det_age30to39_EMS_5 (- N_age30to39_EMS_5 deaths_age30to39_EMS_5)))    
+(func seroprevalence_det_age30to39_EMS_5 (/ (+ infected_det_age30to39_EMS_5 recovered_det_age30to39_EMS_5) (- N_age30to39_EMS_5 deaths_age30to39_EMS_5)))    
 
 
 (func asymptomatic_age30to39_EMS_6  (+ As_age30to39::EMS_6 As_det1_age30to39::EMS_6))
@@ -4918,11 +4918,11 @@
 (func infected_det_age30to39_EMS_6 (+ infectious_det_age30to39_EMS_6 H1_det3_age30to39::EMS_6 H2_det3_age30to39::EMS_6 H3_det3_age30to39::EMS_6 C2_det3_age30to39::EMS_6 C3_det3_age30to39::EMS_6))
 (func infected_cumul_age30to39_EMS_6 (+ infected_age30to39_EMS_6 recovered_age30to39_EMS_6 deaths_age30to39_EMS_6))    
 
-(func prevalence_age30to39_EMS_6 (/ infected_age30to39_EMS_6 N_age30to39_EMS_6))    
-(func seroprevalence_age30to39_EMS_6 (/ (+ infected_age30to39_EMS_6 recovered_age30to39_EMS_6) N_age30to39_EMS_6))    
+(func prevalence_age30to39_EMS_6 (/ infected_age30to39_EMS_6 (- N_age30to39_EMS_6 deaths_age30to39_EMS_6)))    
+(func seroprevalence_age30to39_EMS_6 (/ (+ infected_age30to39_EMS_6 recovered_age30to39_EMS_6) (- N_age30to39_EMS_6 deaths_age30to39_EMS_6)))    
 
-(func prevalence_det_age30to39_EMS_6 (/ infected_det_age30to39_EMS_6 N_age30to39_EMS_6))    
-(func seroprevalence_det_age30to39_EMS_6 (/ (+ infected_det_age30to39_EMS_6 recovered_det_age30to39_EMS_6) N_age30to39_EMS_6))    
+(func prevalence_det_age30to39_EMS_6 (/ infected_det_age30to39_EMS_6 (- N_age30to39_EMS_6 deaths_age30to39_EMS_6)))    
+(func seroprevalence_det_age30to39_EMS_6 (/ (+ infected_det_age30to39_EMS_6 recovered_det_age30to39_EMS_6) (- N_age30to39_EMS_6 deaths_age30to39_EMS_6)))    
 
 
 (func asymptomatic_age30to39_EMS_7  (+ As_age30to39::EMS_7 As_det1_age30to39::EMS_7))
@@ -4971,11 +4971,11 @@
 (func infected_det_age30to39_EMS_7 (+ infectious_det_age30to39_EMS_7 H1_det3_age30to39::EMS_7 H2_det3_age30to39::EMS_7 H3_det3_age30to39::EMS_7 C2_det3_age30to39::EMS_7 C3_det3_age30to39::EMS_7))
 (func infected_cumul_age30to39_EMS_7 (+ infected_age30to39_EMS_7 recovered_age30to39_EMS_7 deaths_age30to39_EMS_7))    
 
-(func prevalence_age30to39_EMS_7 (/ infected_age30to39_EMS_7 N_age30to39_EMS_7))    
-(func seroprevalence_age30to39_EMS_7 (/ (+ infected_age30to39_EMS_7 recovered_age30to39_EMS_7) N_age30to39_EMS_7))    
+(func prevalence_age30to39_EMS_7 (/ infected_age30to39_EMS_7 (- N_age30to39_EMS_7 deaths_age30to39_EMS_7)))    
+(func seroprevalence_age30to39_EMS_7 (/ (+ infected_age30to39_EMS_7 recovered_age30to39_EMS_7) (- N_age30to39_EMS_7 deaths_age30to39_EMS_7)))    
 
-(func prevalence_det_age30to39_EMS_7 (/ infected_det_age30to39_EMS_7 N_age30to39_EMS_7))    
-(func seroprevalence_det_age30to39_EMS_7 (/ (+ infected_det_age30to39_EMS_7 recovered_det_age30to39_EMS_7) N_age30to39_EMS_7))    
+(func prevalence_det_age30to39_EMS_7 (/ infected_det_age30to39_EMS_7 (- N_age30to39_EMS_7 deaths_age30to39_EMS_7)))    
+(func seroprevalence_det_age30to39_EMS_7 (/ (+ infected_det_age30to39_EMS_7 recovered_det_age30to39_EMS_7) (- N_age30to39_EMS_7 deaths_age30to39_EMS_7)))    
 
 
 (func asymptomatic_age30to39_EMS_8  (+ As_age30to39::EMS_8 As_det1_age30to39::EMS_8))
@@ -5024,11 +5024,11 @@
 (func infected_det_age30to39_EMS_8 (+ infectious_det_age30to39_EMS_8 H1_det3_age30to39::EMS_8 H2_det3_age30to39::EMS_8 H3_det3_age30to39::EMS_8 C2_det3_age30to39::EMS_8 C3_det3_age30to39::EMS_8))
 (func infected_cumul_age30to39_EMS_8 (+ infected_age30to39_EMS_8 recovered_age30to39_EMS_8 deaths_age30to39_EMS_8))    
 
-(func prevalence_age30to39_EMS_8 (/ infected_age30to39_EMS_8 N_age30to39_EMS_8))    
-(func seroprevalence_age30to39_EMS_8 (/ (+ infected_age30to39_EMS_8 recovered_age30to39_EMS_8) N_age30to39_EMS_8))    
+(func prevalence_age30to39_EMS_8 (/ infected_age30to39_EMS_8 (- N_age30to39_EMS_8 deaths_age30to39_EMS_8)))    
+(func seroprevalence_age30to39_EMS_8 (/ (+ infected_age30to39_EMS_8 recovered_age30to39_EMS_8) (- N_age30to39_EMS_8 deaths_age30to39_EMS_8)))    
 
-(func prevalence_det_age30to39_EMS_8 (/ infected_det_age30to39_EMS_8 N_age30to39_EMS_8))    
-(func seroprevalence_det_age30to39_EMS_8 (/ (+ infected_det_age30to39_EMS_8 recovered_det_age30to39_EMS_8) N_age30to39_EMS_8))    
+(func prevalence_det_age30to39_EMS_8 (/ infected_det_age30to39_EMS_8 (- N_age30to39_EMS_8 deaths_age30to39_EMS_8)))    
+(func seroprevalence_det_age30to39_EMS_8 (/ (+ infected_det_age30to39_EMS_8 recovered_det_age30to39_EMS_8) (- N_age30to39_EMS_8 deaths_age30to39_EMS_8)))    
 
 
 (func asymptomatic_age30to39_EMS_9  (+ As_age30to39::EMS_9 As_det1_age30to39::EMS_9))
@@ -5077,11 +5077,11 @@
 (func infected_det_age30to39_EMS_9 (+ infectious_det_age30to39_EMS_9 H1_det3_age30to39::EMS_9 H2_det3_age30to39::EMS_9 H3_det3_age30to39::EMS_9 C2_det3_age30to39::EMS_9 C3_det3_age30to39::EMS_9))
 (func infected_cumul_age30to39_EMS_9 (+ infected_age30to39_EMS_9 recovered_age30to39_EMS_9 deaths_age30to39_EMS_9))    
 
-(func prevalence_age30to39_EMS_9 (/ infected_age30to39_EMS_9 N_age30to39_EMS_9))    
-(func seroprevalence_age30to39_EMS_9 (/ (+ infected_age30to39_EMS_9 recovered_age30to39_EMS_9) N_age30to39_EMS_9))    
+(func prevalence_age30to39_EMS_9 (/ infected_age30to39_EMS_9 (- N_age30to39_EMS_9 deaths_age30to39_EMS_9)))    
+(func seroprevalence_age30to39_EMS_9 (/ (+ infected_age30to39_EMS_9 recovered_age30to39_EMS_9) (- N_age30to39_EMS_9 deaths_age30to39_EMS_9)))    
 
-(func prevalence_det_age30to39_EMS_9 (/ infected_det_age30to39_EMS_9 N_age30to39_EMS_9))    
-(func seroprevalence_det_age30to39_EMS_9 (/ (+ infected_det_age30to39_EMS_9 recovered_det_age30to39_EMS_9) N_age30to39_EMS_9))    
+(func prevalence_det_age30to39_EMS_9 (/ infected_det_age30to39_EMS_9 (- N_age30to39_EMS_9 deaths_age30to39_EMS_9)))    
+(func seroprevalence_det_age30to39_EMS_9 (/ (+ infected_det_age30to39_EMS_9 recovered_det_age30to39_EMS_9) (- N_age30to39_EMS_9 deaths_age30to39_EMS_9)))    
 
 
 (func asymptomatic_age30to39_EMS_10  (+ As_age30to39::EMS_10 As_det1_age30to39::EMS_10))
@@ -5130,11 +5130,11 @@
 (func infected_det_age30to39_EMS_10 (+ infectious_det_age30to39_EMS_10 H1_det3_age30to39::EMS_10 H2_det3_age30to39::EMS_10 H3_det3_age30to39::EMS_10 C2_det3_age30to39::EMS_10 C3_det3_age30to39::EMS_10))
 (func infected_cumul_age30to39_EMS_10 (+ infected_age30to39_EMS_10 recovered_age30to39_EMS_10 deaths_age30to39_EMS_10))    
 
-(func prevalence_age30to39_EMS_10 (/ infected_age30to39_EMS_10 N_age30to39_EMS_10))    
-(func seroprevalence_age30to39_EMS_10 (/ (+ infected_age30to39_EMS_10 recovered_age30to39_EMS_10) N_age30to39_EMS_10))    
+(func prevalence_age30to39_EMS_10 (/ infected_age30to39_EMS_10 (- N_age30to39_EMS_10 deaths_age30to39_EMS_10)))    
+(func seroprevalence_age30to39_EMS_10 (/ (+ infected_age30to39_EMS_10 recovered_age30to39_EMS_10) (- N_age30to39_EMS_10 deaths_age30to39_EMS_10)))    
 
-(func prevalence_det_age30to39_EMS_10 (/ infected_det_age30to39_EMS_10 N_age30to39_EMS_10))    
-(func seroprevalence_det_age30to39_EMS_10 (/ (+ infected_det_age30to39_EMS_10 recovered_det_age30to39_EMS_10) N_age30to39_EMS_10))    
+(func prevalence_det_age30to39_EMS_10 (/ infected_det_age30to39_EMS_10 (- N_age30to39_EMS_10 deaths_age30to39_EMS_10)))    
+(func seroprevalence_det_age30to39_EMS_10 (/ (+ infected_det_age30to39_EMS_10 recovered_det_age30to39_EMS_10) (- N_age30to39_EMS_10 deaths_age30to39_EMS_10)))    
 
 
 (func asymptomatic_age30to39_EMS_11  (+ As_age30to39::EMS_11 As_det1_age30to39::EMS_11))
@@ -5183,11 +5183,11 @@
 (func infected_det_age30to39_EMS_11 (+ infectious_det_age30to39_EMS_11 H1_det3_age30to39::EMS_11 H2_det3_age30to39::EMS_11 H3_det3_age30to39::EMS_11 C2_det3_age30to39::EMS_11 C3_det3_age30to39::EMS_11))
 (func infected_cumul_age30to39_EMS_11 (+ infected_age30to39_EMS_11 recovered_age30to39_EMS_11 deaths_age30to39_EMS_11))    
 
-(func prevalence_age30to39_EMS_11 (/ infected_age30to39_EMS_11 N_age30to39_EMS_11))    
-(func seroprevalence_age30to39_EMS_11 (/ (+ infected_age30to39_EMS_11 recovered_age30to39_EMS_11) N_age30to39_EMS_11))    
+(func prevalence_age30to39_EMS_11 (/ infected_age30to39_EMS_11 (- N_age30to39_EMS_11 deaths_age30to39_EMS_11)))    
+(func seroprevalence_age30to39_EMS_11 (/ (+ infected_age30to39_EMS_11 recovered_age30to39_EMS_11) (- N_age30to39_EMS_11 deaths_age30to39_EMS_11)))    
 
-(func prevalence_det_age30to39_EMS_11 (/ infected_det_age30to39_EMS_11 N_age30to39_EMS_11))    
-(func seroprevalence_det_age30to39_EMS_11 (/ (+ infected_det_age30to39_EMS_11 recovered_det_age30to39_EMS_11) N_age30to39_EMS_11))    
+(func prevalence_det_age30to39_EMS_11 (/ infected_det_age30to39_EMS_11 (- N_age30to39_EMS_11 deaths_age30to39_EMS_11)))    
+(func seroprevalence_det_age30to39_EMS_11 (/ (+ infected_det_age30to39_EMS_11 recovered_det_age30to39_EMS_11) (- N_age30to39_EMS_11 deaths_age30to39_EMS_11)))    
 
 
 (func asymptomatic_age40to49_EMS_1  (+ As_age40to49::EMS_1 As_det1_age40to49::EMS_1))
@@ -5236,11 +5236,11 @@
 (func infected_det_age40to49_EMS_1 (+ infectious_det_age40to49_EMS_1 H1_det3_age40to49::EMS_1 H2_det3_age40to49::EMS_1 H3_det3_age40to49::EMS_1 C2_det3_age40to49::EMS_1 C3_det3_age40to49::EMS_1))
 (func infected_cumul_age40to49_EMS_1 (+ infected_age40to49_EMS_1 recovered_age40to49_EMS_1 deaths_age40to49_EMS_1))    
 
-(func prevalence_age40to49_EMS_1 (/ infected_age40to49_EMS_1 N_age40to49_EMS_1))    
-(func seroprevalence_age40to49_EMS_1 (/ (+ infected_age40to49_EMS_1 recovered_age40to49_EMS_1) N_age40to49_EMS_1))    
+(func prevalence_age40to49_EMS_1 (/ infected_age40to49_EMS_1 (- N_age40to49_EMS_1 deaths_age40to49_EMS_1)))    
+(func seroprevalence_age40to49_EMS_1 (/ (+ infected_age40to49_EMS_1 recovered_age40to49_EMS_1) (- N_age40to49_EMS_1 deaths_age40to49_EMS_1)))    
 
-(func prevalence_det_age40to49_EMS_1 (/ infected_det_age40to49_EMS_1 N_age40to49_EMS_1))    
-(func seroprevalence_det_age40to49_EMS_1 (/ (+ infected_det_age40to49_EMS_1 recovered_det_age40to49_EMS_1) N_age40to49_EMS_1))    
+(func prevalence_det_age40to49_EMS_1 (/ infected_det_age40to49_EMS_1 (- N_age40to49_EMS_1 deaths_age40to49_EMS_1)))    
+(func seroprevalence_det_age40to49_EMS_1 (/ (+ infected_det_age40to49_EMS_1 recovered_det_age40to49_EMS_1) (- N_age40to49_EMS_1 deaths_age40to49_EMS_1)))    
 
 
 (func asymptomatic_age40to49_EMS_2  (+ As_age40to49::EMS_2 As_det1_age40to49::EMS_2))
@@ -5289,11 +5289,11 @@
 (func infected_det_age40to49_EMS_2 (+ infectious_det_age40to49_EMS_2 H1_det3_age40to49::EMS_2 H2_det3_age40to49::EMS_2 H3_det3_age40to49::EMS_2 C2_det3_age40to49::EMS_2 C3_det3_age40to49::EMS_2))
 (func infected_cumul_age40to49_EMS_2 (+ infected_age40to49_EMS_2 recovered_age40to49_EMS_2 deaths_age40to49_EMS_2))    
 
-(func prevalence_age40to49_EMS_2 (/ infected_age40to49_EMS_2 N_age40to49_EMS_2))    
-(func seroprevalence_age40to49_EMS_2 (/ (+ infected_age40to49_EMS_2 recovered_age40to49_EMS_2) N_age40to49_EMS_2))    
+(func prevalence_age40to49_EMS_2 (/ infected_age40to49_EMS_2 (- N_age40to49_EMS_2 deaths_age40to49_EMS_2)))    
+(func seroprevalence_age40to49_EMS_2 (/ (+ infected_age40to49_EMS_2 recovered_age40to49_EMS_2) (- N_age40to49_EMS_2 deaths_age40to49_EMS_2)))    
 
-(func prevalence_det_age40to49_EMS_2 (/ infected_det_age40to49_EMS_2 N_age40to49_EMS_2))    
-(func seroprevalence_det_age40to49_EMS_2 (/ (+ infected_det_age40to49_EMS_2 recovered_det_age40to49_EMS_2) N_age40to49_EMS_2))    
+(func prevalence_det_age40to49_EMS_2 (/ infected_det_age40to49_EMS_2 (- N_age40to49_EMS_2 deaths_age40to49_EMS_2)))    
+(func seroprevalence_det_age40to49_EMS_2 (/ (+ infected_det_age40to49_EMS_2 recovered_det_age40to49_EMS_2) (- N_age40to49_EMS_2 deaths_age40to49_EMS_2)))    
 
 
 (func asymptomatic_age40to49_EMS_3  (+ As_age40to49::EMS_3 As_det1_age40to49::EMS_3))
@@ -5342,11 +5342,11 @@
 (func infected_det_age40to49_EMS_3 (+ infectious_det_age40to49_EMS_3 H1_det3_age40to49::EMS_3 H2_det3_age40to49::EMS_3 H3_det3_age40to49::EMS_3 C2_det3_age40to49::EMS_3 C3_det3_age40to49::EMS_3))
 (func infected_cumul_age40to49_EMS_3 (+ infected_age40to49_EMS_3 recovered_age40to49_EMS_3 deaths_age40to49_EMS_3))    
 
-(func prevalence_age40to49_EMS_3 (/ infected_age40to49_EMS_3 N_age40to49_EMS_3))    
-(func seroprevalence_age40to49_EMS_3 (/ (+ infected_age40to49_EMS_3 recovered_age40to49_EMS_3) N_age40to49_EMS_3))    
+(func prevalence_age40to49_EMS_3 (/ infected_age40to49_EMS_3 (- N_age40to49_EMS_3 deaths_age40to49_EMS_3)))    
+(func seroprevalence_age40to49_EMS_3 (/ (+ infected_age40to49_EMS_3 recovered_age40to49_EMS_3) (- N_age40to49_EMS_3 deaths_age40to49_EMS_3)))    
 
-(func prevalence_det_age40to49_EMS_3 (/ infected_det_age40to49_EMS_3 N_age40to49_EMS_3))    
-(func seroprevalence_det_age40to49_EMS_3 (/ (+ infected_det_age40to49_EMS_3 recovered_det_age40to49_EMS_3) N_age40to49_EMS_3))    
+(func prevalence_det_age40to49_EMS_3 (/ infected_det_age40to49_EMS_3 (- N_age40to49_EMS_3 deaths_age40to49_EMS_3)))    
+(func seroprevalence_det_age40to49_EMS_3 (/ (+ infected_det_age40to49_EMS_3 recovered_det_age40to49_EMS_3) (- N_age40to49_EMS_3 deaths_age40to49_EMS_3)))    
 
 
 (func asymptomatic_age40to49_EMS_4  (+ As_age40to49::EMS_4 As_det1_age40to49::EMS_4))
@@ -5395,11 +5395,11 @@
 (func infected_det_age40to49_EMS_4 (+ infectious_det_age40to49_EMS_4 H1_det3_age40to49::EMS_4 H2_det3_age40to49::EMS_4 H3_det3_age40to49::EMS_4 C2_det3_age40to49::EMS_4 C3_det3_age40to49::EMS_4))
 (func infected_cumul_age40to49_EMS_4 (+ infected_age40to49_EMS_4 recovered_age40to49_EMS_4 deaths_age40to49_EMS_4))    
 
-(func prevalence_age40to49_EMS_4 (/ infected_age40to49_EMS_4 N_age40to49_EMS_4))    
-(func seroprevalence_age40to49_EMS_4 (/ (+ infected_age40to49_EMS_4 recovered_age40to49_EMS_4) N_age40to49_EMS_4))    
+(func prevalence_age40to49_EMS_4 (/ infected_age40to49_EMS_4 (- N_age40to49_EMS_4 deaths_age40to49_EMS_4)))    
+(func seroprevalence_age40to49_EMS_4 (/ (+ infected_age40to49_EMS_4 recovered_age40to49_EMS_4) (- N_age40to49_EMS_4 deaths_age40to49_EMS_4)))    
 
-(func prevalence_det_age40to49_EMS_4 (/ infected_det_age40to49_EMS_4 N_age40to49_EMS_4))    
-(func seroprevalence_det_age40to49_EMS_4 (/ (+ infected_det_age40to49_EMS_4 recovered_det_age40to49_EMS_4) N_age40to49_EMS_4))    
+(func prevalence_det_age40to49_EMS_4 (/ infected_det_age40to49_EMS_4 (- N_age40to49_EMS_4 deaths_age40to49_EMS_4)))    
+(func seroprevalence_det_age40to49_EMS_4 (/ (+ infected_det_age40to49_EMS_4 recovered_det_age40to49_EMS_4) (- N_age40to49_EMS_4 deaths_age40to49_EMS_4)))    
 
 
 (func asymptomatic_age40to49_EMS_5  (+ As_age40to49::EMS_5 As_det1_age40to49::EMS_5))
@@ -5448,11 +5448,11 @@
 (func infected_det_age40to49_EMS_5 (+ infectious_det_age40to49_EMS_5 H1_det3_age40to49::EMS_5 H2_det3_age40to49::EMS_5 H3_det3_age40to49::EMS_5 C2_det3_age40to49::EMS_5 C3_det3_age40to49::EMS_5))
 (func infected_cumul_age40to49_EMS_5 (+ infected_age40to49_EMS_5 recovered_age40to49_EMS_5 deaths_age40to49_EMS_5))    
 
-(func prevalence_age40to49_EMS_5 (/ infected_age40to49_EMS_5 N_age40to49_EMS_5))    
-(func seroprevalence_age40to49_EMS_5 (/ (+ infected_age40to49_EMS_5 recovered_age40to49_EMS_5) N_age40to49_EMS_5))    
+(func prevalence_age40to49_EMS_5 (/ infected_age40to49_EMS_5 (- N_age40to49_EMS_5 deaths_age40to49_EMS_5)))    
+(func seroprevalence_age40to49_EMS_5 (/ (+ infected_age40to49_EMS_5 recovered_age40to49_EMS_5) (- N_age40to49_EMS_5 deaths_age40to49_EMS_5)))    
 
-(func prevalence_det_age40to49_EMS_5 (/ infected_det_age40to49_EMS_5 N_age40to49_EMS_5))    
-(func seroprevalence_det_age40to49_EMS_5 (/ (+ infected_det_age40to49_EMS_5 recovered_det_age40to49_EMS_5) N_age40to49_EMS_5))    
+(func prevalence_det_age40to49_EMS_5 (/ infected_det_age40to49_EMS_5 (- N_age40to49_EMS_5 deaths_age40to49_EMS_5)))    
+(func seroprevalence_det_age40to49_EMS_5 (/ (+ infected_det_age40to49_EMS_5 recovered_det_age40to49_EMS_5) (- N_age40to49_EMS_5 deaths_age40to49_EMS_5)))    
 
 
 (func asymptomatic_age40to49_EMS_6  (+ As_age40to49::EMS_6 As_det1_age40to49::EMS_6))
@@ -5501,11 +5501,11 @@
 (func infected_det_age40to49_EMS_6 (+ infectious_det_age40to49_EMS_6 H1_det3_age40to49::EMS_6 H2_det3_age40to49::EMS_6 H3_det3_age40to49::EMS_6 C2_det3_age40to49::EMS_6 C3_det3_age40to49::EMS_6))
 (func infected_cumul_age40to49_EMS_6 (+ infected_age40to49_EMS_6 recovered_age40to49_EMS_6 deaths_age40to49_EMS_6))    
 
-(func prevalence_age40to49_EMS_6 (/ infected_age40to49_EMS_6 N_age40to49_EMS_6))    
-(func seroprevalence_age40to49_EMS_6 (/ (+ infected_age40to49_EMS_6 recovered_age40to49_EMS_6) N_age40to49_EMS_6))    
+(func prevalence_age40to49_EMS_6 (/ infected_age40to49_EMS_6 (- N_age40to49_EMS_6 deaths_age40to49_EMS_6)))    
+(func seroprevalence_age40to49_EMS_6 (/ (+ infected_age40to49_EMS_6 recovered_age40to49_EMS_6) (- N_age40to49_EMS_6 deaths_age40to49_EMS_6)))    
 
-(func prevalence_det_age40to49_EMS_6 (/ infected_det_age40to49_EMS_6 N_age40to49_EMS_6))    
-(func seroprevalence_det_age40to49_EMS_6 (/ (+ infected_det_age40to49_EMS_6 recovered_det_age40to49_EMS_6) N_age40to49_EMS_6))    
+(func prevalence_det_age40to49_EMS_6 (/ infected_det_age40to49_EMS_6 (- N_age40to49_EMS_6 deaths_age40to49_EMS_6)))    
+(func seroprevalence_det_age40to49_EMS_6 (/ (+ infected_det_age40to49_EMS_6 recovered_det_age40to49_EMS_6) (- N_age40to49_EMS_6 deaths_age40to49_EMS_6)))    
 
 
 (func asymptomatic_age40to49_EMS_7  (+ As_age40to49::EMS_7 As_det1_age40to49::EMS_7))
@@ -5554,11 +5554,11 @@
 (func infected_det_age40to49_EMS_7 (+ infectious_det_age40to49_EMS_7 H1_det3_age40to49::EMS_7 H2_det3_age40to49::EMS_7 H3_det3_age40to49::EMS_7 C2_det3_age40to49::EMS_7 C3_det3_age40to49::EMS_7))
 (func infected_cumul_age40to49_EMS_7 (+ infected_age40to49_EMS_7 recovered_age40to49_EMS_7 deaths_age40to49_EMS_7))    
 
-(func prevalence_age40to49_EMS_7 (/ infected_age40to49_EMS_7 N_age40to49_EMS_7))    
-(func seroprevalence_age40to49_EMS_7 (/ (+ infected_age40to49_EMS_7 recovered_age40to49_EMS_7) N_age40to49_EMS_7))    
+(func prevalence_age40to49_EMS_7 (/ infected_age40to49_EMS_7 (- N_age40to49_EMS_7 deaths_age40to49_EMS_7)))    
+(func seroprevalence_age40to49_EMS_7 (/ (+ infected_age40to49_EMS_7 recovered_age40to49_EMS_7) (- N_age40to49_EMS_7 deaths_age40to49_EMS_7)))    
 
-(func prevalence_det_age40to49_EMS_7 (/ infected_det_age40to49_EMS_7 N_age40to49_EMS_7))    
-(func seroprevalence_det_age40to49_EMS_7 (/ (+ infected_det_age40to49_EMS_7 recovered_det_age40to49_EMS_7) N_age40to49_EMS_7))    
+(func prevalence_det_age40to49_EMS_7 (/ infected_det_age40to49_EMS_7 (- N_age40to49_EMS_7 deaths_age40to49_EMS_7)))    
+(func seroprevalence_det_age40to49_EMS_7 (/ (+ infected_det_age40to49_EMS_7 recovered_det_age40to49_EMS_7) (- N_age40to49_EMS_7 deaths_age40to49_EMS_7)))    
 
 
 (func asymptomatic_age40to49_EMS_8  (+ As_age40to49::EMS_8 As_det1_age40to49::EMS_8))
@@ -5607,11 +5607,11 @@
 (func infected_det_age40to49_EMS_8 (+ infectious_det_age40to49_EMS_8 H1_det3_age40to49::EMS_8 H2_det3_age40to49::EMS_8 H3_det3_age40to49::EMS_8 C2_det3_age40to49::EMS_8 C3_det3_age40to49::EMS_8))
 (func infected_cumul_age40to49_EMS_8 (+ infected_age40to49_EMS_8 recovered_age40to49_EMS_8 deaths_age40to49_EMS_8))    
 
-(func prevalence_age40to49_EMS_8 (/ infected_age40to49_EMS_8 N_age40to49_EMS_8))    
-(func seroprevalence_age40to49_EMS_8 (/ (+ infected_age40to49_EMS_8 recovered_age40to49_EMS_8) N_age40to49_EMS_8))    
+(func prevalence_age40to49_EMS_8 (/ infected_age40to49_EMS_8 (- N_age40to49_EMS_8 deaths_age40to49_EMS_8)))    
+(func seroprevalence_age40to49_EMS_8 (/ (+ infected_age40to49_EMS_8 recovered_age40to49_EMS_8) (- N_age40to49_EMS_8 deaths_age40to49_EMS_8)))    
 
-(func prevalence_det_age40to49_EMS_8 (/ infected_det_age40to49_EMS_8 N_age40to49_EMS_8))    
-(func seroprevalence_det_age40to49_EMS_8 (/ (+ infected_det_age40to49_EMS_8 recovered_det_age40to49_EMS_8) N_age40to49_EMS_8))    
+(func prevalence_det_age40to49_EMS_8 (/ infected_det_age40to49_EMS_8 (- N_age40to49_EMS_8 deaths_age40to49_EMS_8)))    
+(func seroprevalence_det_age40to49_EMS_8 (/ (+ infected_det_age40to49_EMS_8 recovered_det_age40to49_EMS_8) (- N_age40to49_EMS_8 deaths_age40to49_EMS_8)))    
 
 
 (func asymptomatic_age40to49_EMS_9  (+ As_age40to49::EMS_9 As_det1_age40to49::EMS_9))
@@ -5660,11 +5660,11 @@
 (func infected_det_age40to49_EMS_9 (+ infectious_det_age40to49_EMS_9 H1_det3_age40to49::EMS_9 H2_det3_age40to49::EMS_9 H3_det3_age40to49::EMS_9 C2_det3_age40to49::EMS_9 C3_det3_age40to49::EMS_9))
 (func infected_cumul_age40to49_EMS_9 (+ infected_age40to49_EMS_9 recovered_age40to49_EMS_9 deaths_age40to49_EMS_9))    
 
-(func prevalence_age40to49_EMS_9 (/ infected_age40to49_EMS_9 N_age40to49_EMS_9))    
-(func seroprevalence_age40to49_EMS_9 (/ (+ infected_age40to49_EMS_9 recovered_age40to49_EMS_9) N_age40to49_EMS_9))    
+(func prevalence_age40to49_EMS_9 (/ infected_age40to49_EMS_9 (- N_age40to49_EMS_9 deaths_age40to49_EMS_9)))    
+(func seroprevalence_age40to49_EMS_9 (/ (+ infected_age40to49_EMS_9 recovered_age40to49_EMS_9) (- N_age40to49_EMS_9 deaths_age40to49_EMS_9)))    
 
-(func prevalence_det_age40to49_EMS_9 (/ infected_det_age40to49_EMS_9 N_age40to49_EMS_9))    
-(func seroprevalence_det_age40to49_EMS_9 (/ (+ infected_det_age40to49_EMS_9 recovered_det_age40to49_EMS_9) N_age40to49_EMS_9))    
+(func prevalence_det_age40to49_EMS_9 (/ infected_det_age40to49_EMS_9 (- N_age40to49_EMS_9 deaths_age40to49_EMS_9)))    
+(func seroprevalence_det_age40to49_EMS_9 (/ (+ infected_det_age40to49_EMS_9 recovered_det_age40to49_EMS_9) (- N_age40to49_EMS_9 deaths_age40to49_EMS_9)))    
 
 
 (func asymptomatic_age40to49_EMS_10  (+ As_age40to49::EMS_10 As_det1_age40to49::EMS_10))
@@ -5713,11 +5713,11 @@
 (func infected_det_age40to49_EMS_10 (+ infectious_det_age40to49_EMS_10 H1_det3_age40to49::EMS_10 H2_det3_age40to49::EMS_10 H3_det3_age40to49::EMS_10 C2_det3_age40to49::EMS_10 C3_det3_age40to49::EMS_10))
 (func infected_cumul_age40to49_EMS_10 (+ infected_age40to49_EMS_10 recovered_age40to49_EMS_10 deaths_age40to49_EMS_10))    
 
-(func prevalence_age40to49_EMS_10 (/ infected_age40to49_EMS_10 N_age40to49_EMS_10))    
-(func seroprevalence_age40to49_EMS_10 (/ (+ infected_age40to49_EMS_10 recovered_age40to49_EMS_10) N_age40to49_EMS_10))    
+(func prevalence_age40to49_EMS_10 (/ infected_age40to49_EMS_10 (- N_age40to49_EMS_10 deaths_age40to49_EMS_10)))    
+(func seroprevalence_age40to49_EMS_10 (/ (+ infected_age40to49_EMS_10 recovered_age40to49_EMS_10) (- N_age40to49_EMS_10 deaths_age40to49_EMS_10)))    
 
-(func prevalence_det_age40to49_EMS_10 (/ infected_det_age40to49_EMS_10 N_age40to49_EMS_10))    
-(func seroprevalence_det_age40to49_EMS_10 (/ (+ infected_det_age40to49_EMS_10 recovered_det_age40to49_EMS_10) N_age40to49_EMS_10))    
+(func prevalence_det_age40to49_EMS_10 (/ infected_det_age40to49_EMS_10 (- N_age40to49_EMS_10 deaths_age40to49_EMS_10)))    
+(func seroprevalence_det_age40to49_EMS_10 (/ (+ infected_det_age40to49_EMS_10 recovered_det_age40to49_EMS_10) (- N_age40to49_EMS_10 deaths_age40to49_EMS_10)))    
 
 
 (func asymptomatic_age40to49_EMS_11  (+ As_age40to49::EMS_11 As_det1_age40to49::EMS_11))
@@ -5766,11 +5766,11 @@
 (func infected_det_age40to49_EMS_11 (+ infectious_det_age40to49_EMS_11 H1_det3_age40to49::EMS_11 H2_det3_age40to49::EMS_11 H3_det3_age40to49::EMS_11 C2_det3_age40to49::EMS_11 C3_det3_age40to49::EMS_11))
 (func infected_cumul_age40to49_EMS_11 (+ infected_age40to49_EMS_11 recovered_age40to49_EMS_11 deaths_age40to49_EMS_11))    
 
-(func prevalence_age40to49_EMS_11 (/ infected_age40to49_EMS_11 N_age40to49_EMS_11))    
-(func seroprevalence_age40to49_EMS_11 (/ (+ infected_age40to49_EMS_11 recovered_age40to49_EMS_11) N_age40to49_EMS_11))    
+(func prevalence_age40to49_EMS_11 (/ infected_age40to49_EMS_11 (- N_age40to49_EMS_11 deaths_age40to49_EMS_11)))    
+(func seroprevalence_age40to49_EMS_11 (/ (+ infected_age40to49_EMS_11 recovered_age40to49_EMS_11) (- N_age40to49_EMS_11 deaths_age40to49_EMS_11)))    
 
-(func prevalence_det_age40to49_EMS_11 (/ infected_det_age40to49_EMS_11 N_age40to49_EMS_11))    
-(func seroprevalence_det_age40to49_EMS_11 (/ (+ infected_det_age40to49_EMS_11 recovered_det_age40to49_EMS_11) N_age40to49_EMS_11))    
+(func prevalence_det_age40to49_EMS_11 (/ infected_det_age40to49_EMS_11 (- N_age40to49_EMS_11 deaths_age40to49_EMS_11)))    
+(func seroprevalence_det_age40to49_EMS_11 (/ (+ infected_det_age40to49_EMS_11 recovered_det_age40to49_EMS_11) (- N_age40to49_EMS_11 deaths_age40to49_EMS_11)))    
 
 
 (func asymptomatic_age50to59_EMS_1  (+ As_age50to59::EMS_1 As_det1_age50to59::EMS_1))
@@ -5819,11 +5819,11 @@
 (func infected_det_age50to59_EMS_1 (+ infectious_det_age50to59_EMS_1 H1_det3_age50to59::EMS_1 H2_det3_age50to59::EMS_1 H3_det3_age50to59::EMS_1 C2_det3_age50to59::EMS_1 C3_det3_age50to59::EMS_1))
 (func infected_cumul_age50to59_EMS_1 (+ infected_age50to59_EMS_1 recovered_age50to59_EMS_1 deaths_age50to59_EMS_1))    
 
-(func prevalence_age50to59_EMS_1 (/ infected_age50to59_EMS_1 N_age50to59_EMS_1))    
-(func seroprevalence_age50to59_EMS_1 (/ (+ infected_age50to59_EMS_1 recovered_age50to59_EMS_1) N_age50to59_EMS_1))    
+(func prevalence_age50to59_EMS_1 (/ infected_age50to59_EMS_1 (- N_age50to59_EMS_1 deaths_age50to59_EMS_1)))    
+(func seroprevalence_age50to59_EMS_1 (/ (+ infected_age50to59_EMS_1 recovered_age50to59_EMS_1) (- N_age50to59_EMS_1 deaths_age50to59_EMS_1)))    
 
-(func prevalence_det_age50to59_EMS_1 (/ infected_det_age50to59_EMS_1 N_age50to59_EMS_1))    
-(func seroprevalence_det_age50to59_EMS_1 (/ (+ infected_det_age50to59_EMS_1 recovered_det_age50to59_EMS_1) N_age50to59_EMS_1))    
+(func prevalence_det_age50to59_EMS_1 (/ infected_det_age50to59_EMS_1 (- N_age50to59_EMS_1 deaths_age50to59_EMS_1)))    
+(func seroprevalence_det_age50to59_EMS_1 (/ (+ infected_det_age50to59_EMS_1 recovered_det_age50to59_EMS_1) (- N_age50to59_EMS_1 deaths_age50to59_EMS_1)))    
 
 
 (func asymptomatic_age50to59_EMS_2  (+ As_age50to59::EMS_2 As_det1_age50to59::EMS_2))
@@ -5872,11 +5872,11 @@
 (func infected_det_age50to59_EMS_2 (+ infectious_det_age50to59_EMS_2 H1_det3_age50to59::EMS_2 H2_det3_age50to59::EMS_2 H3_det3_age50to59::EMS_2 C2_det3_age50to59::EMS_2 C3_det3_age50to59::EMS_2))
 (func infected_cumul_age50to59_EMS_2 (+ infected_age50to59_EMS_2 recovered_age50to59_EMS_2 deaths_age50to59_EMS_2))    
 
-(func prevalence_age50to59_EMS_2 (/ infected_age50to59_EMS_2 N_age50to59_EMS_2))    
-(func seroprevalence_age50to59_EMS_2 (/ (+ infected_age50to59_EMS_2 recovered_age50to59_EMS_2) N_age50to59_EMS_2))    
+(func prevalence_age50to59_EMS_2 (/ infected_age50to59_EMS_2 (- N_age50to59_EMS_2 deaths_age50to59_EMS_2)))    
+(func seroprevalence_age50to59_EMS_2 (/ (+ infected_age50to59_EMS_2 recovered_age50to59_EMS_2) (- N_age50to59_EMS_2 deaths_age50to59_EMS_2)))    
 
-(func prevalence_det_age50to59_EMS_2 (/ infected_det_age50to59_EMS_2 N_age50to59_EMS_2))    
-(func seroprevalence_det_age50to59_EMS_2 (/ (+ infected_det_age50to59_EMS_2 recovered_det_age50to59_EMS_2) N_age50to59_EMS_2))    
+(func prevalence_det_age50to59_EMS_2 (/ infected_det_age50to59_EMS_2 (- N_age50to59_EMS_2 deaths_age50to59_EMS_2)))    
+(func seroprevalence_det_age50to59_EMS_2 (/ (+ infected_det_age50to59_EMS_2 recovered_det_age50to59_EMS_2) (- N_age50to59_EMS_2 deaths_age50to59_EMS_2)))    
 
 
 (func asymptomatic_age50to59_EMS_3  (+ As_age50to59::EMS_3 As_det1_age50to59::EMS_3))
@@ -5925,11 +5925,11 @@
 (func infected_det_age50to59_EMS_3 (+ infectious_det_age50to59_EMS_3 H1_det3_age50to59::EMS_3 H2_det3_age50to59::EMS_3 H3_det3_age50to59::EMS_3 C2_det3_age50to59::EMS_3 C3_det3_age50to59::EMS_3))
 (func infected_cumul_age50to59_EMS_3 (+ infected_age50to59_EMS_3 recovered_age50to59_EMS_3 deaths_age50to59_EMS_3))    
 
-(func prevalence_age50to59_EMS_3 (/ infected_age50to59_EMS_3 N_age50to59_EMS_3))    
-(func seroprevalence_age50to59_EMS_3 (/ (+ infected_age50to59_EMS_3 recovered_age50to59_EMS_3) N_age50to59_EMS_3))    
+(func prevalence_age50to59_EMS_3 (/ infected_age50to59_EMS_3 (- N_age50to59_EMS_3 deaths_age50to59_EMS_3)))    
+(func seroprevalence_age50to59_EMS_3 (/ (+ infected_age50to59_EMS_3 recovered_age50to59_EMS_3) (- N_age50to59_EMS_3 deaths_age50to59_EMS_3)))    
 
-(func prevalence_det_age50to59_EMS_3 (/ infected_det_age50to59_EMS_3 N_age50to59_EMS_3))    
-(func seroprevalence_det_age50to59_EMS_3 (/ (+ infected_det_age50to59_EMS_3 recovered_det_age50to59_EMS_3) N_age50to59_EMS_3))    
+(func prevalence_det_age50to59_EMS_3 (/ infected_det_age50to59_EMS_3 (- N_age50to59_EMS_3 deaths_age50to59_EMS_3)))    
+(func seroprevalence_det_age50to59_EMS_3 (/ (+ infected_det_age50to59_EMS_3 recovered_det_age50to59_EMS_3) (- N_age50to59_EMS_3 deaths_age50to59_EMS_3)))    
 
 
 (func asymptomatic_age50to59_EMS_4  (+ As_age50to59::EMS_4 As_det1_age50to59::EMS_4))
@@ -5978,11 +5978,11 @@
 (func infected_det_age50to59_EMS_4 (+ infectious_det_age50to59_EMS_4 H1_det3_age50to59::EMS_4 H2_det3_age50to59::EMS_4 H3_det3_age50to59::EMS_4 C2_det3_age50to59::EMS_4 C3_det3_age50to59::EMS_4))
 (func infected_cumul_age50to59_EMS_4 (+ infected_age50to59_EMS_4 recovered_age50to59_EMS_4 deaths_age50to59_EMS_4))    
 
-(func prevalence_age50to59_EMS_4 (/ infected_age50to59_EMS_4 N_age50to59_EMS_4))    
-(func seroprevalence_age50to59_EMS_4 (/ (+ infected_age50to59_EMS_4 recovered_age50to59_EMS_4) N_age50to59_EMS_4))    
+(func prevalence_age50to59_EMS_4 (/ infected_age50to59_EMS_4 (- N_age50to59_EMS_4 deaths_age50to59_EMS_4)))    
+(func seroprevalence_age50to59_EMS_4 (/ (+ infected_age50to59_EMS_4 recovered_age50to59_EMS_4) (- N_age50to59_EMS_4 deaths_age50to59_EMS_4)))    
 
-(func prevalence_det_age50to59_EMS_4 (/ infected_det_age50to59_EMS_4 N_age50to59_EMS_4))    
-(func seroprevalence_det_age50to59_EMS_4 (/ (+ infected_det_age50to59_EMS_4 recovered_det_age50to59_EMS_4) N_age50to59_EMS_4))    
+(func prevalence_det_age50to59_EMS_4 (/ infected_det_age50to59_EMS_4 (- N_age50to59_EMS_4 deaths_age50to59_EMS_4)))    
+(func seroprevalence_det_age50to59_EMS_4 (/ (+ infected_det_age50to59_EMS_4 recovered_det_age50to59_EMS_4) (- N_age50to59_EMS_4 deaths_age50to59_EMS_4)))    
 
 
 (func asymptomatic_age50to59_EMS_5  (+ As_age50to59::EMS_5 As_det1_age50to59::EMS_5))
@@ -6031,11 +6031,11 @@
 (func infected_det_age50to59_EMS_5 (+ infectious_det_age50to59_EMS_5 H1_det3_age50to59::EMS_5 H2_det3_age50to59::EMS_5 H3_det3_age50to59::EMS_5 C2_det3_age50to59::EMS_5 C3_det3_age50to59::EMS_5))
 (func infected_cumul_age50to59_EMS_5 (+ infected_age50to59_EMS_5 recovered_age50to59_EMS_5 deaths_age50to59_EMS_5))    
 
-(func prevalence_age50to59_EMS_5 (/ infected_age50to59_EMS_5 N_age50to59_EMS_5))    
-(func seroprevalence_age50to59_EMS_5 (/ (+ infected_age50to59_EMS_5 recovered_age50to59_EMS_5) N_age50to59_EMS_5))    
+(func prevalence_age50to59_EMS_5 (/ infected_age50to59_EMS_5 (- N_age50to59_EMS_5 deaths_age50to59_EMS_5)))    
+(func seroprevalence_age50to59_EMS_5 (/ (+ infected_age50to59_EMS_5 recovered_age50to59_EMS_5) (- N_age50to59_EMS_5 deaths_age50to59_EMS_5)))    
 
-(func prevalence_det_age50to59_EMS_5 (/ infected_det_age50to59_EMS_5 N_age50to59_EMS_5))    
-(func seroprevalence_det_age50to59_EMS_5 (/ (+ infected_det_age50to59_EMS_5 recovered_det_age50to59_EMS_5) N_age50to59_EMS_5))    
+(func prevalence_det_age50to59_EMS_5 (/ infected_det_age50to59_EMS_5 (- N_age50to59_EMS_5 deaths_age50to59_EMS_5)))    
+(func seroprevalence_det_age50to59_EMS_5 (/ (+ infected_det_age50to59_EMS_5 recovered_det_age50to59_EMS_5) (- N_age50to59_EMS_5 deaths_age50to59_EMS_5)))    
 
 
 (func asymptomatic_age50to59_EMS_6  (+ As_age50to59::EMS_6 As_det1_age50to59::EMS_6))
@@ -6084,11 +6084,11 @@
 (func infected_det_age50to59_EMS_6 (+ infectious_det_age50to59_EMS_6 H1_det3_age50to59::EMS_6 H2_det3_age50to59::EMS_6 H3_det3_age50to59::EMS_6 C2_det3_age50to59::EMS_6 C3_det3_age50to59::EMS_6))
 (func infected_cumul_age50to59_EMS_6 (+ infected_age50to59_EMS_6 recovered_age50to59_EMS_6 deaths_age50to59_EMS_6))    
 
-(func prevalence_age50to59_EMS_6 (/ infected_age50to59_EMS_6 N_age50to59_EMS_6))    
-(func seroprevalence_age50to59_EMS_6 (/ (+ infected_age50to59_EMS_6 recovered_age50to59_EMS_6) N_age50to59_EMS_6))    
+(func prevalence_age50to59_EMS_6 (/ infected_age50to59_EMS_6 (- N_age50to59_EMS_6 deaths_age50to59_EMS_6)))    
+(func seroprevalence_age50to59_EMS_6 (/ (+ infected_age50to59_EMS_6 recovered_age50to59_EMS_6) (- N_age50to59_EMS_6 deaths_age50to59_EMS_6)))    
 
-(func prevalence_det_age50to59_EMS_6 (/ infected_det_age50to59_EMS_6 N_age50to59_EMS_6))    
-(func seroprevalence_det_age50to59_EMS_6 (/ (+ infected_det_age50to59_EMS_6 recovered_det_age50to59_EMS_6) N_age50to59_EMS_6))    
+(func prevalence_det_age50to59_EMS_6 (/ infected_det_age50to59_EMS_6 (- N_age50to59_EMS_6 deaths_age50to59_EMS_6)))    
+(func seroprevalence_det_age50to59_EMS_6 (/ (+ infected_det_age50to59_EMS_6 recovered_det_age50to59_EMS_6) (- N_age50to59_EMS_6 deaths_age50to59_EMS_6)))    
 
 
 (func asymptomatic_age50to59_EMS_7  (+ As_age50to59::EMS_7 As_det1_age50to59::EMS_7))
@@ -6137,11 +6137,11 @@
 (func infected_det_age50to59_EMS_7 (+ infectious_det_age50to59_EMS_7 H1_det3_age50to59::EMS_7 H2_det3_age50to59::EMS_7 H3_det3_age50to59::EMS_7 C2_det3_age50to59::EMS_7 C3_det3_age50to59::EMS_7))
 (func infected_cumul_age50to59_EMS_7 (+ infected_age50to59_EMS_7 recovered_age50to59_EMS_7 deaths_age50to59_EMS_7))    
 
-(func prevalence_age50to59_EMS_7 (/ infected_age50to59_EMS_7 N_age50to59_EMS_7))    
-(func seroprevalence_age50to59_EMS_7 (/ (+ infected_age50to59_EMS_7 recovered_age50to59_EMS_7) N_age50to59_EMS_7))    
+(func prevalence_age50to59_EMS_7 (/ infected_age50to59_EMS_7 (- N_age50to59_EMS_7 deaths_age50to59_EMS_7)))    
+(func seroprevalence_age50to59_EMS_7 (/ (+ infected_age50to59_EMS_7 recovered_age50to59_EMS_7) (- N_age50to59_EMS_7 deaths_age50to59_EMS_7)))    
 
-(func prevalence_det_age50to59_EMS_7 (/ infected_det_age50to59_EMS_7 N_age50to59_EMS_7))    
-(func seroprevalence_det_age50to59_EMS_7 (/ (+ infected_det_age50to59_EMS_7 recovered_det_age50to59_EMS_7) N_age50to59_EMS_7))    
+(func prevalence_det_age50to59_EMS_7 (/ infected_det_age50to59_EMS_7 (- N_age50to59_EMS_7 deaths_age50to59_EMS_7)))    
+(func seroprevalence_det_age50to59_EMS_7 (/ (+ infected_det_age50to59_EMS_7 recovered_det_age50to59_EMS_7) (- N_age50to59_EMS_7 deaths_age50to59_EMS_7)))    
 
 
 (func asymptomatic_age50to59_EMS_8  (+ As_age50to59::EMS_8 As_det1_age50to59::EMS_8))
@@ -6190,11 +6190,11 @@
 (func infected_det_age50to59_EMS_8 (+ infectious_det_age50to59_EMS_8 H1_det3_age50to59::EMS_8 H2_det3_age50to59::EMS_8 H3_det3_age50to59::EMS_8 C2_det3_age50to59::EMS_8 C3_det3_age50to59::EMS_8))
 (func infected_cumul_age50to59_EMS_8 (+ infected_age50to59_EMS_8 recovered_age50to59_EMS_8 deaths_age50to59_EMS_8))    
 
-(func prevalence_age50to59_EMS_8 (/ infected_age50to59_EMS_8 N_age50to59_EMS_8))    
-(func seroprevalence_age50to59_EMS_8 (/ (+ infected_age50to59_EMS_8 recovered_age50to59_EMS_8) N_age50to59_EMS_8))    
+(func prevalence_age50to59_EMS_8 (/ infected_age50to59_EMS_8 (- N_age50to59_EMS_8 deaths_age50to59_EMS_8)))    
+(func seroprevalence_age50to59_EMS_8 (/ (+ infected_age50to59_EMS_8 recovered_age50to59_EMS_8) (- N_age50to59_EMS_8 deaths_age50to59_EMS_8)))    
 
-(func prevalence_det_age50to59_EMS_8 (/ infected_det_age50to59_EMS_8 N_age50to59_EMS_8))    
-(func seroprevalence_det_age50to59_EMS_8 (/ (+ infected_det_age50to59_EMS_8 recovered_det_age50to59_EMS_8) N_age50to59_EMS_8))    
+(func prevalence_det_age50to59_EMS_8 (/ infected_det_age50to59_EMS_8 (- N_age50to59_EMS_8 deaths_age50to59_EMS_8)))    
+(func seroprevalence_det_age50to59_EMS_8 (/ (+ infected_det_age50to59_EMS_8 recovered_det_age50to59_EMS_8) (- N_age50to59_EMS_8 deaths_age50to59_EMS_8)))    
 
 
 (func asymptomatic_age50to59_EMS_9  (+ As_age50to59::EMS_9 As_det1_age50to59::EMS_9))
@@ -6243,11 +6243,11 @@
 (func infected_det_age50to59_EMS_9 (+ infectious_det_age50to59_EMS_9 H1_det3_age50to59::EMS_9 H2_det3_age50to59::EMS_9 H3_det3_age50to59::EMS_9 C2_det3_age50to59::EMS_9 C3_det3_age50to59::EMS_9))
 (func infected_cumul_age50to59_EMS_9 (+ infected_age50to59_EMS_9 recovered_age50to59_EMS_9 deaths_age50to59_EMS_9))    
 
-(func prevalence_age50to59_EMS_9 (/ infected_age50to59_EMS_9 N_age50to59_EMS_9))    
-(func seroprevalence_age50to59_EMS_9 (/ (+ infected_age50to59_EMS_9 recovered_age50to59_EMS_9) N_age50to59_EMS_9))    
+(func prevalence_age50to59_EMS_9 (/ infected_age50to59_EMS_9 (- N_age50to59_EMS_9 deaths_age50to59_EMS_9)))    
+(func seroprevalence_age50to59_EMS_9 (/ (+ infected_age50to59_EMS_9 recovered_age50to59_EMS_9) (- N_age50to59_EMS_9 deaths_age50to59_EMS_9)))    
 
-(func prevalence_det_age50to59_EMS_9 (/ infected_det_age50to59_EMS_9 N_age50to59_EMS_9))    
-(func seroprevalence_det_age50to59_EMS_9 (/ (+ infected_det_age50to59_EMS_9 recovered_det_age50to59_EMS_9) N_age50to59_EMS_9))    
+(func prevalence_det_age50to59_EMS_9 (/ infected_det_age50to59_EMS_9 (- N_age50to59_EMS_9 deaths_age50to59_EMS_9)))    
+(func seroprevalence_det_age50to59_EMS_9 (/ (+ infected_det_age50to59_EMS_9 recovered_det_age50to59_EMS_9) (- N_age50to59_EMS_9 deaths_age50to59_EMS_9)))    
 
 
 (func asymptomatic_age50to59_EMS_10  (+ As_age50to59::EMS_10 As_det1_age50to59::EMS_10))
@@ -6296,11 +6296,11 @@
 (func infected_det_age50to59_EMS_10 (+ infectious_det_age50to59_EMS_10 H1_det3_age50to59::EMS_10 H2_det3_age50to59::EMS_10 H3_det3_age50to59::EMS_10 C2_det3_age50to59::EMS_10 C3_det3_age50to59::EMS_10))
 (func infected_cumul_age50to59_EMS_10 (+ infected_age50to59_EMS_10 recovered_age50to59_EMS_10 deaths_age50to59_EMS_10))    
 
-(func prevalence_age50to59_EMS_10 (/ infected_age50to59_EMS_10 N_age50to59_EMS_10))    
-(func seroprevalence_age50to59_EMS_10 (/ (+ infected_age50to59_EMS_10 recovered_age50to59_EMS_10) N_age50to59_EMS_10))    
+(func prevalence_age50to59_EMS_10 (/ infected_age50to59_EMS_10 (- N_age50to59_EMS_10 deaths_age50to59_EMS_10)))    
+(func seroprevalence_age50to59_EMS_10 (/ (+ infected_age50to59_EMS_10 recovered_age50to59_EMS_10) (- N_age50to59_EMS_10 deaths_age50to59_EMS_10)))    
 
-(func prevalence_det_age50to59_EMS_10 (/ infected_det_age50to59_EMS_10 N_age50to59_EMS_10))    
-(func seroprevalence_det_age50to59_EMS_10 (/ (+ infected_det_age50to59_EMS_10 recovered_det_age50to59_EMS_10) N_age50to59_EMS_10))    
+(func prevalence_det_age50to59_EMS_10 (/ infected_det_age50to59_EMS_10 (- N_age50to59_EMS_10 deaths_age50to59_EMS_10)))    
+(func seroprevalence_det_age50to59_EMS_10 (/ (+ infected_det_age50to59_EMS_10 recovered_det_age50to59_EMS_10) (- N_age50to59_EMS_10 deaths_age50to59_EMS_10)))    
 
 
 (func asymptomatic_age50to59_EMS_11  (+ As_age50to59::EMS_11 As_det1_age50to59::EMS_11))
@@ -6349,11 +6349,11 @@
 (func infected_det_age50to59_EMS_11 (+ infectious_det_age50to59_EMS_11 H1_det3_age50to59::EMS_11 H2_det3_age50to59::EMS_11 H3_det3_age50to59::EMS_11 C2_det3_age50to59::EMS_11 C3_det3_age50to59::EMS_11))
 (func infected_cumul_age50to59_EMS_11 (+ infected_age50to59_EMS_11 recovered_age50to59_EMS_11 deaths_age50to59_EMS_11))    
 
-(func prevalence_age50to59_EMS_11 (/ infected_age50to59_EMS_11 N_age50to59_EMS_11))    
-(func seroprevalence_age50to59_EMS_11 (/ (+ infected_age50to59_EMS_11 recovered_age50to59_EMS_11) N_age50to59_EMS_11))    
+(func prevalence_age50to59_EMS_11 (/ infected_age50to59_EMS_11 (- N_age50to59_EMS_11 deaths_age50to59_EMS_11)))    
+(func seroprevalence_age50to59_EMS_11 (/ (+ infected_age50to59_EMS_11 recovered_age50to59_EMS_11) (- N_age50to59_EMS_11 deaths_age50to59_EMS_11)))    
 
-(func prevalence_det_age50to59_EMS_11 (/ infected_det_age50to59_EMS_11 N_age50to59_EMS_11))    
-(func seroprevalence_det_age50to59_EMS_11 (/ (+ infected_det_age50to59_EMS_11 recovered_det_age50to59_EMS_11) N_age50to59_EMS_11))    
+(func prevalence_det_age50to59_EMS_11 (/ infected_det_age50to59_EMS_11 (- N_age50to59_EMS_11 deaths_age50to59_EMS_11)))    
+(func seroprevalence_det_age50to59_EMS_11 (/ (+ infected_det_age50to59_EMS_11 recovered_det_age50to59_EMS_11) (- N_age50to59_EMS_11 deaths_age50to59_EMS_11)))    
 
 
 (func asymptomatic_age60to69_EMS_1  (+ As_age60to69::EMS_1 As_det1_age60to69::EMS_1))
@@ -6402,11 +6402,11 @@
 (func infected_det_age60to69_EMS_1 (+ infectious_det_age60to69_EMS_1 H1_det3_age60to69::EMS_1 H2_det3_age60to69::EMS_1 H3_det3_age60to69::EMS_1 C2_det3_age60to69::EMS_1 C3_det3_age60to69::EMS_1))
 (func infected_cumul_age60to69_EMS_1 (+ infected_age60to69_EMS_1 recovered_age60to69_EMS_1 deaths_age60to69_EMS_1))    
 
-(func prevalence_age60to69_EMS_1 (/ infected_age60to69_EMS_1 N_age60to69_EMS_1))    
-(func seroprevalence_age60to69_EMS_1 (/ (+ infected_age60to69_EMS_1 recovered_age60to69_EMS_1) N_age60to69_EMS_1))    
+(func prevalence_age60to69_EMS_1 (/ infected_age60to69_EMS_1 (- N_age60to69_EMS_1 deaths_age60to69_EMS_1)))    
+(func seroprevalence_age60to69_EMS_1 (/ (+ infected_age60to69_EMS_1 recovered_age60to69_EMS_1) (- N_age60to69_EMS_1 deaths_age60to69_EMS_1)))    
 
-(func prevalence_det_age60to69_EMS_1 (/ infected_det_age60to69_EMS_1 N_age60to69_EMS_1))    
-(func seroprevalence_det_age60to69_EMS_1 (/ (+ infected_det_age60to69_EMS_1 recovered_det_age60to69_EMS_1) N_age60to69_EMS_1))    
+(func prevalence_det_age60to69_EMS_1 (/ infected_det_age60to69_EMS_1 (- N_age60to69_EMS_1 deaths_age60to69_EMS_1)))    
+(func seroprevalence_det_age60to69_EMS_1 (/ (+ infected_det_age60to69_EMS_1 recovered_det_age60to69_EMS_1) (- N_age60to69_EMS_1 deaths_age60to69_EMS_1)))    
 
 
 (func asymptomatic_age60to69_EMS_2  (+ As_age60to69::EMS_2 As_det1_age60to69::EMS_2))
@@ -6455,11 +6455,11 @@
 (func infected_det_age60to69_EMS_2 (+ infectious_det_age60to69_EMS_2 H1_det3_age60to69::EMS_2 H2_det3_age60to69::EMS_2 H3_det3_age60to69::EMS_2 C2_det3_age60to69::EMS_2 C3_det3_age60to69::EMS_2))
 (func infected_cumul_age60to69_EMS_2 (+ infected_age60to69_EMS_2 recovered_age60to69_EMS_2 deaths_age60to69_EMS_2))    
 
-(func prevalence_age60to69_EMS_2 (/ infected_age60to69_EMS_2 N_age60to69_EMS_2))    
-(func seroprevalence_age60to69_EMS_2 (/ (+ infected_age60to69_EMS_2 recovered_age60to69_EMS_2) N_age60to69_EMS_2))    
+(func prevalence_age60to69_EMS_2 (/ infected_age60to69_EMS_2 (- N_age60to69_EMS_2 deaths_age60to69_EMS_2)))    
+(func seroprevalence_age60to69_EMS_2 (/ (+ infected_age60to69_EMS_2 recovered_age60to69_EMS_2) (- N_age60to69_EMS_2 deaths_age60to69_EMS_2)))    
 
-(func prevalence_det_age60to69_EMS_2 (/ infected_det_age60to69_EMS_2 N_age60to69_EMS_2))    
-(func seroprevalence_det_age60to69_EMS_2 (/ (+ infected_det_age60to69_EMS_2 recovered_det_age60to69_EMS_2) N_age60to69_EMS_2))    
+(func prevalence_det_age60to69_EMS_2 (/ infected_det_age60to69_EMS_2 (- N_age60to69_EMS_2 deaths_age60to69_EMS_2)))    
+(func seroprevalence_det_age60to69_EMS_2 (/ (+ infected_det_age60to69_EMS_2 recovered_det_age60to69_EMS_2) (- N_age60to69_EMS_2 deaths_age60to69_EMS_2)))    
 
 
 (func asymptomatic_age60to69_EMS_3  (+ As_age60to69::EMS_3 As_det1_age60to69::EMS_3))
@@ -6508,11 +6508,11 @@
 (func infected_det_age60to69_EMS_3 (+ infectious_det_age60to69_EMS_3 H1_det3_age60to69::EMS_3 H2_det3_age60to69::EMS_3 H3_det3_age60to69::EMS_3 C2_det3_age60to69::EMS_3 C3_det3_age60to69::EMS_3))
 (func infected_cumul_age60to69_EMS_3 (+ infected_age60to69_EMS_3 recovered_age60to69_EMS_3 deaths_age60to69_EMS_3))    
 
-(func prevalence_age60to69_EMS_3 (/ infected_age60to69_EMS_3 N_age60to69_EMS_3))    
-(func seroprevalence_age60to69_EMS_3 (/ (+ infected_age60to69_EMS_3 recovered_age60to69_EMS_3) N_age60to69_EMS_3))    
+(func prevalence_age60to69_EMS_3 (/ infected_age60to69_EMS_3 (- N_age60to69_EMS_3 deaths_age60to69_EMS_3)))    
+(func seroprevalence_age60to69_EMS_3 (/ (+ infected_age60to69_EMS_3 recovered_age60to69_EMS_3) (- N_age60to69_EMS_3 deaths_age60to69_EMS_3)))    
 
-(func prevalence_det_age60to69_EMS_3 (/ infected_det_age60to69_EMS_3 N_age60to69_EMS_3))    
-(func seroprevalence_det_age60to69_EMS_3 (/ (+ infected_det_age60to69_EMS_3 recovered_det_age60to69_EMS_3) N_age60to69_EMS_3))    
+(func prevalence_det_age60to69_EMS_3 (/ infected_det_age60to69_EMS_3 (- N_age60to69_EMS_3 deaths_age60to69_EMS_3)))    
+(func seroprevalence_det_age60to69_EMS_3 (/ (+ infected_det_age60to69_EMS_3 recovered_det_age60to69_EMS_3) (- N_age60to69_EMS_3 deaths_age60to69_EMS_3)))    
 
 
 (func asymptomatic_age60to69_EMS_4  (+ As_age60to69::EMS_4 As_det1_age60to69::EMS_4))
@@ -6561,11 +6561,11 @@
 (func infected_det_age60to69_EMS_4 (+ infectious_det_age60to69_EMS_4 H1_det3_age60to69::EMS_4 H2_det3_age60to69::EMS_4 H3_det3_age60to69::EMS_4 C2_det3_age60to69::EMS_4 C3_det3_age60to69::EMS_4))
 (func infected_cumul_age60to69_EMS_4 (+ infected_age60to69_EMS_4 recovered_age60to69_EMS_4 deaths_age60to69_EMS_4))    
 
-(func prevalence_age60to69_EMS_4 (/ infected_age60to69_EMS_4 N_age60to69_EMS_4))    
-(func seroprevalence_age60to69_EMS_4 (/ (+ infected_age60to69_EMS_4 recovered_age60to69_EMS_4) N_age60to69_EMS_4))    
+(func prevalence_age60to69_EMS_4 (/ infected_age60to69_EMS_4 (- N_age60to69_EMS_4 deaths_age60to69_EMS_4)))    
+(func seroprevalence_age60to69_EMS_4 (/ (+ infected_age60to69_EMS_4 recovered_age60to69_EMS_4) (- N_age60to69_EMS_4 deaths_age60to69_EMS_4)))    
 
-(func prevalence_det_age60to69_EMS_4 (/ infected_det_age60to69_EMS_4 N_age60to69_EMS_4))    
-(func seroprevalence_det_age60to69_EMS_4 (/ (+ infected_det_age60to69_EMS_4 recovered_det_age60to69_EMS_4) N_age60to69_EMS_4))    
+(func prevalence_det_age60to69_EMS_4 (/ infected_det_age60to69_EMS_4 (- N_age60to69_EMS_4 deaths_age60to69_EMS_4)))    
+(func seroprevalence_det_age60to69_EMS_4 (/ (+ infected_det_age60to69_EMS_4 recovered_det_age60to69_EMS_4) (- N_age60to69_EMS_4 deaths_age60to69_EMS_4)))    
 
 
 (func asymptomatic_age60to69_EMS_5  (+ As_age60to69::EMS_5 As_det1_age60to69::EMS_5))
@@ -6614,11 +6614,11 @@
 (func infected_det_age60to69_EMS_5 (+ infectious_det_age60to69_EMS_5 H1_det3_age60to69::EMS_5 H2_det3_age60to69::EMS_5 H3_det3_age60to69::EMS_5 C2_det3_age60to69::EMS_5 C3_det3_age60to69::EMS_5))
 (func infected_cumul_age60to69_EMS_5 (+ infected_age60to69_EMS_5 recovered_age60to69_EMS_5 deaths_age60to69_EMS_5))    
 
-(func prevalence_age60to69_EMS_5 (/ infected_age60to69_EMS_5 N_age60to69_EMS_5))    
-(func seroprevalence_age60to69_EMS_5 (/ (+ infected_age60to69_EMS_5 recovered_age60to69_EMS_5) N_age60to69_EMS_5))    
+(func prevalence_age60to69_EMS_5 (/ infected_age60to69_EMS_5 (- N_age60to69_EMS_5 deaths_age60to69_EMS_5)))    
+(func seroprevalence_age60to69_EMS_5 (/ (+ infected_age60to69_EMS_5 recovered_age60to69_EMS_5) (- N_age60to69_EMS_5 deaths_age60to69_EMS_5)))    
 
-(func prevalence_det_age60to69_EMS_5 (/ infected_det_age60to69_EMS_5 N_age60to69_EMS_5))    
-(func seroprevalence_det_age60to69_EMS_5 (/ (+ infected_det_age60to69_EMS_5 recovered_det_age60to69_EMS_5) N_age60to69_EMS_5))    
+(func prevalence_det_age60to69_EMS_5 (/ infected_det_age60to69_EMS_5 (- N_age60to69_EMS_5 deaths_age60to69_EMS_5)))    
+(func seroprevalence_det_age60to69_EMS_5 (/ (+ infected_det_age60to69_EMS_5 recovered_det_age60to69_EMS_5) (- N_age60to69_EMS_5 deaths_age60to69_EMS_5)))    
 
 
 (func asymptomatic_age60to69_EMS_6  (+ As_age60to69::EMS_6 As_det1_age60to69::EMS_6))
@@ -6667,11 +6667,11 @@
 (func infected_det_age60to69_EMS_6 (+ infectious_det_age60to69_EMS_6 H1_det3_age60to69::EMS_6 H2_det3_age60to69::EMS_6 H3_det3_age60to69::EMS_6 C2_det3_age60to69::EMS_6 C3_det3_age60to69::EMS_6))
 (func infected_cumul_age60to69_EMS_6 (+ infected_age60to69_EMS_6 recovered_age60to69_EMS_6 deaths_age60to69_EMS_6))    
 
-(func prevalence_age60to69_EMS_6 (/ infected_age60to69_EMS_6 N_age60to69_EMS_6))    
-(func seroprevalence_age60to69_EMS_6 (/ (+ infected_age60to69_EMS_6 recovered_age60to69_EMS_6) N_age60to69_EMS_6))    
+(func prevalence_age60to69_EMS_6 (/ infected_age60to69_EMS_6 (- N_age60to69_EMS_6 deaths_age60to69_EMS_6)))    
+(func seroprevalence_age60to69_EMS_6 (/ (+ infected_age60to69_EMS_6 recovered_age60to69_EMS_6) (- N_age60to69_EMS_6 deaths_age60to69_EMS_6)))    
 
-(func prevalence_det_age60to69_EMS_6 (/ infected_det_age60to69_EMS_6 N_age60to69_EMS_6))    
-(func seroprevalence_det_age60to69_EMS_6 (/ (+ infected_det_age60to69_EMS_6 recovered_det_age60to69_EMS_6) N_age60to69_EMS_6))    
+(func prevalence_det_age60to69_EMS_6 (/ infected_det_age60to69_EMS_6 (- N_age60to69_EMS_6 deaths_age60to69_EMS_6)))    
+(func seroprevalence_det_age60to69_EMS_6 (/ (+ infected_det_age60to69_EMS_6 recovered_det_age60to69_EMS_6) (- N_age60to69_EMS_6 deaths_age60to69_EMS_6)))    
 
 
 (func asymptomatic_age60to69_EMS_7  (+ As_age60to69::EMS_7 As_det1_age60to69::EMS_7))
@@ -6720,11 +6720,11 @@
 (func infected_det_age60to69_EMS_7 (+ infectious_det_age60to69_EMS_7 H1_det3_age60to69::EMS_7 H2_det3_age60to69::EMS_7 H3_det3_age60to69::EMS_7 C2_det3_age60to69::EMS_7 C3_det3_age60to69::EMS_7))
 (func infected_cumul_age60to69_EMS_7 (+ infected_age60to69_EMS_7 recovered_age60to69_EMS_7 deaths_age60to69_EMS_7))    
 
-(func prevalence_age60to69_EMS_7 (/ infected_age60to69_EMS_7 N_age60to69_EMS_7))    
-(func seroprevalence_age60to69_EMS_7 (/ (+ infected_age60to69_EMS_7 recovered_age60to69_EMS_7) N_age60to69_EMS_7))    
+(func prevalence_age60to69_EMS_7 (/ infected_age60to69_EMS_7 (- N_age60to69_EMS_7 deaths_age60to69_EMS_7)))    
+(func seroprevalence_age60to69_EMS_7 (/ (+ infected_age60to69_EMS_7 recovered_age60to69_EMS_7) (- N_age60to69_EMS_7 deaths_age60to69_EMS_7)))    
 
-(func prevalence_det_age60to69_EMS_7 (/ infected_det_age60to69_EMS_7 N_age60to69_EMS_7))    
-(func seroprevalence_det_age60to69_EMS_7 (/ (+ infected_det_age60to69_EMS_7 recovered_det_age60to69_EMS_7) N_age60to69_EMS_7))    
+(func prevalence_det_age60to69_EMS_7 (/ infected_det_age60to69_EMS_7 (- N_age60to69_EMS_7 deaths_age60to69_EMS_7)))    
+(func seroprevalence_det_age60to69_EMS_7 (/ (+ infected_det_age60to69_EMS_7 recovered_det_age60to69_EMS_7) (- N_age60to69_EMS_7 deaths_age60to69_EMS_7)))    
 
 
 (func asymptomatic_age60to69_EMS_8  (+ As_age60to69::EMS_8 As_det1_age60to69::EMS_8))
@@ -6773,11 +6773,11 @@
 (func infected_det_age60to69_EMS_8 (+ infectious_det_age60to69_EMS_8 H1_det3_age60to69::EMS_8 H2_det3_age60to69::EMS_8 H3_det3_age60to69::EMS_8 C2_det3_age60to69::EMS_8 C3_det3_age60to69::EMS_8))
 (func infected_cumul_age60to69_EMS_8 (+ infected_age60to69_EMS_8 recovered_age60to69_EMS_8 deaths_age60to69_EMS_8))    
 
-(func prevalence_age60to69_EMS_8 (/ infected_age60to69_EMS_8 N_age60to69_EMS_8))    
-(func seroprevalence_age60to69_EMS_8 (/ (+ infected_age60to69_EMS_8 recovered_age60to69_EMS_8) N_age60to69_EMS_8))    
+(func prevalence_age60to69_EMS_8 (/ infected_age60to69_EMS_8 (- N_age60to69_EMS_8 deaths_age60to69_EMS_8)))    
+(func seroprevalence_age60to69_EMS_8 (/ (+ infected_age60to69_EMS_8 recovered_age60to69_EMS_8) (- N_age60to69_EMS_8 deaths_age60to69_EMS_8)))    
 
-(func prevalence_det_age60to69_EMS_8 (/ infected_det_age60to69_EMS_8 N_age60to69_EMS_8))    
-(func seroprevalence_det_age60to69_EMS_8 (/ (+ infected_det_age60to69_EMS_8 recovered_det_age60to69_EMS_8) N_age60to69_EMS_8))    
+(func prevalence_det_age60to69_EMS_8 (/ infected_det_age60to69_EMS_8 (- N_age60to69_EMS_8 deaths_age60to69_EMS_8)))    
+(func seroprevalence_det_age60to69_EMS_8 (/ (+ infected_det_age60to69_EMS_8 recovered_det_age60to69_EMS_8) (- N_age60to69_EMS_8 deaths_age60to69_EMS_8)))    
 
 
 (func asymptomatic_age60to69_EMS_9  (+ As_age60to69::EMS_9 As_det1_age60to69::EMS_9))
@@ -6826,11 +6826,11 @@
 (func infected_det_age60to69_EMS_9 (+ infectious_det_age60to69_EMS_9 H1_det3_age60to69::EMS_9 H2_det3_age60to69::EMS_9 H3_det3_age60to69::EMS_9 C2_det3_age60to69::EMS_9 C3_det3_age60to69::EMS_9))
 (func infected_cumul_age60to69_EMS_9 (+ infected_age60to69_EMS_9 recovered_age60to69_EMS_9 deaths_age60to69_EMS_9))    
 
-(func prevalence_age60to69_EMS_9 (/ infected_age60to69_EMS_9 N_age60to69_EMS_9))    
-(func seroprevalence_age60to69_EMS_9 (/ (+ infected_age60to69_EMS_9 recovered_age60to69_EMS_9) N_age60to69_EMS_9))    
+(func prevalence_age60to69_EMS_9 (/ infected_age60to69_EMS_9 (- N_age60to69_EMS_9 deaths_age60to69_EMS_9)))    
+(func seroprevalence_age60to69_EMS_9 (/ (+ infected_age60to69_EMS_9 recovered_age60to69_EMS_9) (- N_age60to69_EMS_9 deaths_age60to69_EMS_9)))    
 
-(func prevalence_det_age60to69_EMS_9 (/ infected_det_age60to69_EMS_9 N_age60to69_EMS_9))    
-(func seroprevalence_det_age60to69_EMS_9 (/ (+ infected_det_age60to69_EMS_9 recovered_det_age60to69_EMS_9) N_age60to69_EMS_9))    
+(func prevalence_det_age60to69_EMS_9 (/ infected_det_age60to69_EMS_9 (- N_age60to69_EMS_9 deaths_age60to69_EMS_9)))    
+(func seroprevalence_det_age60to69_EMS_9 (/ (+ infected_det_age60to69_EMS_9 recovered_det_age60to69_EMS_9) (- N_age60to69_EMS_9 deaths_age60to69_EMS_9)))    
 
 
 (func asymptomatic_age60to69_EMS_10  (+ As_age60to69::EMS_10 As_det1_age60to69::EMS_10))
@@ -6879,11 +6879,11 @@
 (func infected_det_age60to69_EMS_10 (+ infectious_det_age60to69_EMS_10 H1_det3_age60to69::EMS_10 H2_det3_age60to69::EMS_10 H3_det3_age60to69::EMS_10 C2_det3_age60to69::EMS_10 C3_det3_age60to69::EMS_10))
 (func infected_cumul_age60to69_EMS_10 (+ infected_age60to69_EMS_10 recovered_age60to69_EMS_10 deaths_age60to69_EMS_10))    
 
-(func prevalence_age60to69_EMS_10 (/ infected_age60to69_EMS_10 N_age60to69_EMS_10))    
-(func seroprevalence_age60to69_EMS_10 (/ (+ infected_age60to69_EMS_10 recovered_age60to69_EMS_10) N_age60to69_EMS_10))    
+(func prevalence_age60to69_EMS_10 (/ infected_age60to69_EMS_10 (- N_age60to69_EMS_10 deaths_age60to69_EMS_10)))    
+(func seroprevalence_age60to69_EMS_10 (/ (+ infected_age60to69_EMS_10 recovered_age60to69_EMS_10) (- N_age60to69_EMS_10 deaths_age60to69_EMS_10)))    
 
-(func prevalence_det_age60to69_EMS_10 (/ infected_det_age60to69_EMS_10 N_age60to69_EMS_10))    
-(func seroprevalence_det_age60to69_EMS_10 (/ (+ infected_det_age60to69_EMS_10 recovered_det_age60to69_EMS_10) N_age60to69_EMS_10))    
+(func prevalence_det_age60to69_EMS_10 (/ infected_det_age60to69_EMS_10 (- N_age60to69_EMS_10 deaths_age60to69_EMS_10)))    
+(func seroprevalence_det_age60to69_EMS_10 (/ (+ infected_det_age60to69_EMS_10 recovered_det_age60to69_EMS_10) (- N_age60to69_EMS_10 deaths_age60to69_EMS_10)))    
 
 
 (func asymptomatic_age60to69_EMS_11  (+ As_age60to69::EMS_11 As_det1_age60to69::EMS_11))
@@ -6932,11 +6932,11 @@
 (func infected_det_age60to69_EMS_11 (+ infectious_det_age60to69_EMS_11 H1_det3_age60to69::EMS_11 H2_det3_age60to69::EMS_11 H3_det3_age60to69::EMS_11 C2_det3_age60to69::EMS_11 C3_det3_age60to69::EMS_11))
 (func infected_cumul_age60to69_EMS_11 (+ infected_age60to69_EMS_11 recovered_age60to69_EMS_11 deaths_age60to69_EMS_11))    
 
-(func prevalence_age60to69_EMS_11 (/ infected_age60to69_EMS_11 N_age60to69_EMS_11))    
-(func seroprevalence_age60to69_EMS_11 (/ (+ infected_age60to69_EMS_11 recovered_age60to69_EMS_11) N_age60to69_EMS_11))    
+(func prevalence_age60to69_EMS_11 (/ infected_age60to69_EMS_11 (- N_age60to69_EMS_11 deaths_age60to69_EMS_11)))    
+(func seroprevalence_age60to69_EMS_11 (/ (+ infected_age60to69_EMS_11 recovered_age60to69_EMS_11) (- N_age60to69_EMS_11 deaths_age60to69_EMS_11)))    
 
-(func prevalence_det_age60to69_EMS_11 (/ infected_det_age60to69_EMS_11 N_age60to69_EMS_11))    
-(func seroprevalence_det_age60to69_EMS_11 (/ (+ infected_det_age60to69_EMS_11 recovered_det_age60to69_EMS_11) N_age60to69_EMS_11))    
+(func prevalence_det_age60to69_EMS_11 (/ infected_det_age60to69_EMS_11 (- N_age60to69_EMS_11 deaths_age60to69_EMS_11)))    
+(func seroprevalence_det_age60to69_EMS_11 (/ (+ infected_det_age60to69_EMS_11 recovered_det_age60to69_EMS_11) (- N_age60to69_EMS_11 deaths_age60to69_EMS_11)))    
 
 
 (func asymptomatic_age70to100_EMS_1  (+ As_age70to100::EMS_1 As_det1_age70to100::EMS_1))
@@ -6985,11 +6985,11 @@
 (func infected_det_age70to100_EMS_1 (+ infectious_det_age70to100_EMS_1 H1_det3_age70to100::EMS_1 H2_det3_age70to100::EMS_1 H3_det3_age70to100::EMS_1 C2_det3_age70to100::EMS_1 C3_det3_age70to100::EMS_1))
 (func infected_cumul_age70to100_EMS_1 (+ infected_age70to100_EMS_1 recovered_age70to100_EMS_1 deaths_age70to100_EMS_1))    
 
-(func prevalence_age70to100_EMS_1 (/ infected_age70to100_EMS_1 N_age70to100_EMS_1))    
-(func seroprevalence_age70to100_EMS_1 (/ (+ infected_age70to100_EMS_1 recovered_age70to100_EMS_1) N_age70to100_EMS_1))    
+(func prevalence_age70to100_EMS_1 (/ infected_age70to100_EMS_1 (- N_age70to100_EMS_1 deaths_age70to100_EMS_1)))    
+(func seroprevalence_age70to100_EMS_1 (/ (+ infected_age70to100_EMS_1 recovered_age70to100_EMS_1) (- N_age70to100_EMS_1 deaths_age70to100_EMS_1)))    
 
-(func prevalence_det_age70to100_EMS_1 (/ infected_det_age70to100_EMS_1 N_age70to100_EMS_1))    
-(func seroprevalence_det_age70to100_EMS_1 (/ (+ infected_det_age70to100_EMS_1 recovered_det_age70to100_EMS_1) N_age70to100_EMS_1))    
+(func prevalence_det_age70to100_EMS_1 (/ infected_det_age70to100_EMS_1 (- N_age70to100_EMS_1 deaths_age70to100_EMS_1)))    
+(func seroprevalence_det_age70to100_EMS_1 (/ (+ infected_det_age70to100_EMS_1 recovered_det_age70to100_EMS_1) (- N_age70to100_EMS_1 deaths_age70to100_EMS_1)))    
 
 
 (func asymptomatic_age70to100_EMS_2  (+ As_age70to100::EMS_2 As_det1_age70to100::EMS_2))
@@ -7038,11 +7038,11 @@
 (func infected_det_age70to100_EMS_2 (+ infectious_det_age70to100_EMS_2 H1_det3_age70to100::EMS_2 H2_det3_age70to100::EMS_2 H3_det3_age70to100::EMS_2 C2_det3_age70to100::EMS_2 C3_det3_age70to100::EMS_2))
 (func infected_cumul_age70to100_EMS_2 (+ infected_age70to100_EMS_2 recovered_age70to100_EMS_2 deaths_age70to100_EMS_2))    
 
-(func prevalence_age70to100_EMS_2 (/ infected_age70to100_EMS_2 N_age70to100_EMS_2))    
-(func seroprevalence_age70to100_EMS_2 (/ (+ infected_age70to100_EMS_2 recovered_age70to100_EMS_2) N_age70to100_EMS_2))    
+(func prevalence_age70to100_EMS_2 (/ infected_age70to100_EMS_2 (- N_age70to100_EMS_2 deaths_age70to100_EMS_2)))    
+(func seroprevalence_age70to100_EMS_2 (/ (+ infected_age70to100_EMS_2 recovered_age70to100_EMS_2) (- N_age70to100_EMS_2 deaths_age70to100_EMS_2)))    
 
-(func prevalence_det_age70to100_EMS_2 (/ infected_det_age70to100_EMS_2 N_age70to100_EMS_2))    
-(func seroprevalence_det_age70to100_EMS_2 (/ (+ infected_det_age70to100_EMS_2 recovered_det_age70to100_EMS_2) N_age70to100_EMS_2))    
+(func prevalence_det_age70to100_EMS_2 (/ infected_det_age70to100_EMS_2 (- N_age70to100_EMS_2 deaths_age70to100_EMS_2)))    
+(func seroprevalence_det_age70to100_EMS_2 (/ (+ infected_det_age70to100_EMS_2 recovered_det_age70to100_EMS_2) (- N_age70to100_EMS_2 deaths_age70to100_EMS_2)))    
 
 
 (func asymptomatic_age70to100_EMS_3  (+ As_age70to100::EMS_3 As_det1_age70to100::EMS_3))
@@ -7091,11 +7091,11 @@
 (func infected_det_age70to100_EMS_3 (+ infectious_det_age70to100_EMS_3 H1_det3_age70to100::EMS_3 H2_det3_age70to100::EMS_3 H3_det3_age70to100::EMS_3 C2_det3_age70to100::EMS_3 C3_det3_age70to100::EMS_3))
 (func infected_cumul_age70to100_EMS_3 (+ infected_age70to100_EMS_3 recovered_age70to100_EMS_3 deaths_age70to100_EMS_3))    
 
-(func prevalence_age70to100_EMS_3 (/ infected_age70to100_EMS_3 N_age70to100_EMS_3))    
-(func seroprevalence_age70to100_EMS_3 (/ (+ infected_age70to100_EMS_3 recovered_age70to100_EMS_3) N_age70to100_EMS_3))    
+(func prevalence_age70to100_EMS_3 (/ infected_age70to100_EMS_3 (- N_age70to100_EMS_3 deaths_age70to100_EMS_3)))    
+(func seroprevalence_age70to100_EMS_3 (/ (+ infected_age70to100_EMS_3 recovered_age70to100_EMS_3) (- N_age70to100_EMS_3 deaths_age70to100_EMS_3)))    
 
-(func prevalence_det_age70to100_EMS_3 (/ infected_det_age70to100_EMS_3 N_age70to100_EMS_3))    
-(func seroprevalence_det_age70to100_EMS_3 (/ (+ infected_det_age70to100_EMS_3 recovered_det_age70to100_EMS_3) N_age70to100_EMS_3))    
+(func prevalence_det_age70to100_EMS_3 (/ infected_det_age70to100_EMS_3 (- N_age70to100_EMS_3 deaths_age70to100_EMS_3)))    
+(func seroprevalence_det_age70to100_EMS_3 (/ (+ infected_det_age70to100_EMS_3 recovered_det_age70to100_EMS_3) (- N_age70to100_EMS_3 deaths_age70to100_EMS_3)))    
 
 
 (func asymptomatic_age70to100_EMS_4  (+ As_age70to100::EMS_4 As_det1_age70to100::EMS_4))
@@ -7144,11 +7144,11 @@
 (func infected_det_age70to100_EMS_4 (+ infectious_det_age70to100_EMS_4 H1_det3_age70to100::EMS_4 H2_det3_age70to100::EMS_4 H3_det3_age70to100::EMS_4 C2_det3_age70to100::EMS_4 C3_det3_age70to100::EMS_4))
 (func infected_cumul_age70to100_EMS_4 (+ infected_age70to100_EMS_4 recovered_age70to100_EMS_4 deaths_age70to100_EMS_4))    
 
-(func prevalence_age70to100_EMS_4 (/ infected_age70to100_EMS_4 N_age70to100_EMS_4))    
-(func seroprevalence_age70to100_EMS_4 (/ (+ infected_age70to100_EMS_4 recovered_age70to100_EMS_4) N_age70to100_EMS_4))    
+(func prevalence_age70to100_EMS_4 (/ infected_age70to100_EMS_4 (- N_age70to100_EMS_4 deaths_age70to100_EMS_4)))    
+(func seroprevalence_age70to100_EMS_4 (/ (+ infected_age70to100_EMS_4 recovered_age70to100_EMS_4) (- N_age70to100_EMS_4 deaths_age70to100_EMS_4)))    
 
-(func prevalence_det_age70to100_EMS_4 (/ infected_det_age70to100_EMS_4 N_age70to100_EMS_4))    
-(func seroprevalence_det_age70to100_EMS_4 (/ (+ infected_det_age70to100_EMS_4 recovered_det_age70to100_EMS_4) N_age70to100_EMS_4))    
+(func prevalence_det_age70to100_EMS_4 (/ infected_det_age70to100_EMS_4 (- N_age70to100_EMS_4 deaths_age70to100_EMS_4)))    
+(func seroprevalence_det_age70to100_EMS_4 (/ (+ infected_det_age70to100_EMS_4 recovered_det_age70to100_EMS_4) (- N_age70to100_EMS_4 deaths_age70to100_EMS_4)))    
 
 
 (func asymptomatic_age70to100_EMS_5  (+ As_age70to100::EMS_5 As_det1_age70to100::EMS_5))
@@ -7197,11 +7197,11 @@
 (func infected_det_age70to100_EMS_5 (+ infectious_det_age70to100_EMS_5 H1_det3_age70to100::EMS_5 H2_det3_age70to100::EMS_5 H3_det3_age70to100::EMS_5 C2_det3_age70to100::EMS_5 C3_det3_age70to100::EMS_5))
 (func infected_cumul_age70to100_EMS_5 (+ infected_age70to100_EMS_5 recovered_age70to100_EMS_5 deaths_age70to100_EMS_5))    
 
-(func prevalence_age70to100_EMS_5 (/ infected_age70to100_EMS_5 N_age70to100_EMS_5))    
-(func seroprevalence_age70to100_EMS_5 (/ (+ infected_age70to100_EMS_5 recovered_age70to100_EMS_5) N_age70to100_EMS_5))    
+(func prevalence_age70to100_EMS_5 (/ infected_age70to100_EMS_5 (- N_age70to100_EMS_5 deaths_age70to100_EMS_5)))    
+(func seroprevalence_age70to100_EMS_5 (/ (+ infected_age70to100_EMS_5 recovered_age70to100_EMS_5) (- N_age70to100_EMS_5 deaths_age70to100_EMS_5)))    
 
-(func prevalence_det_age70to100_EMS_5 (/ infected_det_age70to100_EMS_5 N_age70to100_EMS_5))    
-(func seroprevalence_det_age70to100_EMS_5 (/ (+ infected_det_age70to100_EMS_5 recovered_det_age70to100_EMS_5) N_age70to100_EMS_5))    
+(func prevalence_det_age70to100_EMS_5 (/ infected_det_age70to100_EMS_5 (- N_age70to100_EMS_5 deaths_age70to100_EMS_5)))    
+(func seroprevalence_det_age70to100_EMS_5 (/ (+ infected_det_age70to100_EMS_5 recovered_det_age70to100_EMS_5) (- N_age70to100_EMS_5 deaths_age70to100_EMS_5)))    
 
 
 (func asymptomatic_age70to100_EMS_6  (+ As_age70to100::EMS_6 As_det1_age70to100::EMS_6))
@@ -7250,11 +7250,11 @@
 (func infected_det_age70to100_EMS_6 (+ infectious_det_age70to100_EMS_6 H1_det3_age70to100::EMS_6 H2_det3_age70to100::EMS_6 H3_det3_age70to100::EMS_6 C2_det3_age70to100::EMS_6 C3_det3_age70to100::EMS_6))
 (func infected_cumul_age70to100_EMS_6 (+ infected_age70to100_EMS_6 recovered_age70to100_EMS_6 deaths_age70to100_EMS_6))    
 
-(func prevalence_age70to100_EMS_6 (/ infected_age70to100_EMS_6 N_age70to100_EMS_6))    
-(func seroprevalence_age70to100_EMS_6 (/ (+ infected_age70to100_EMS_6 recovered_age70to100_EMS_6) N_age70to100_EMS_6))    
+(func prevalence_age70to100_EMS_6 (/ infected_age70to100_EMS_6 (- N_age70to100_EMS_6 deaths_age70to100_EMS_6)))    
+(func seroprevalence_age70to100_EMS_6 (/ (+ infected_age70to100_EMS_6 recovered_age70to100_EMS_6) (- N_age70to100_EMS_6 deaths_age70to100_EMS_6)))    
 
-(func prevalence_det_age70to100_EMS_6 (/ infected_det_age70to100_EMS_6 N_age70to100_EMS_6))    
-(func seroprevalence_det_age70to100_EMS_6 (/ (+ infected_det_age70to100_EMS_6 recovered_det_age70to100_EMS_6) N_age70to100_EMS_6))    
+(func prevalence_det_age70to100_EMS_6 (/ infected_det_age70to100_EMS_6 (- N_age70to100_EMS_6 deaths_age70to100_EMS_6)))    
+(func seroprevalence_det_age70to100_EMS_6 (/ (+ infected_det_age70to100_EMS_6 recovered_det_age70to100_EMS_6) (- N_age70to100_EMS_6 deaths_age70to100_EMS_6)))    
 
 
 (func asymptomatic_age70to100_EMS_7  (+ As_age70to100::EMS_7 As_det1_age70to100::EMS_7))
@@ -7303,11 +7303,11 @@
 (func infected_det_age70to100_EMS_7 (+ infectious_det_age70to100_EMS_7 H1_det3_age70to100::EMS_7 H2_det3_age70to100::EMS_7 H3_det3_age70to100::EMS_7 C2_det3_age70to100::EMS_7 C3_det3_age70to100::EMS_7))
 (func infected_cumul_age70to100_EMS_7 (+ infected_age70to100_EMS_7 recovered_age70to100_EMS_7 deaths_age70to100_EMS_7))    
 
-(func prevalence_age70to100_EMS_7 (/ infected_age70to100_EMS_7 N_age70to100_EMS_7))    
-(func seroprevalence_age70to100_EMS_7 (/ (+ infected_age70to100_EMS_7 recovered_age70to100_EMS_7) N_age70to100_EMS_7))    
+(func prevalence_age70to100_EMS_7 (/ infected_age70to100_EMS_7 (- N_age70to100_EMS_7 deaths_age70to100_EMS_7)))    
+(func seroprevalence_age70to100_EMS_7 (/ (+ infected_age70to100_EMS_7 recovered_age70to100_EMS_7) (- N_age70to100_EMS_7 deaths_age70to100_EMS_7)))    
 
-(func prevalence_det_age70to100_EMS_7 (/ infected_det_age70to100_EMS_7 N_age70to100_EMS_7))    
-(func seroprevalence_det_age70to100_EMS_7 (/ (+ infected_det_age70to100_EMS_7 recovered_det_age70to100_EMS_7) N_age70to100_EMS_7))    
+(func prevalence_det_age70to100_EMS_7 (/ infected_det_age70to100_EMS_7 (- N_age70to100_EMS_7 deaths_age70to100_EMS_7)))    
+(func seroprevalence_det_age70to100_EMS_7 (/ (+ infected_det_age70to100_EMS_7 recovered_det_age70to100_EMS_7) (- N_age70to100_EMS_7 deaths_age70to100_EMS_7)))    
 
 
 (func asymptomatic_age70to100_EMS_8  (+ As_age70to100::EMS_8 As_det1_age70to100::EMS_8))
@@ -7356,11 +7356,11 @@
 (func infected_det_age70to100_EMS_8 (+ infectious_det_age70to100_EMS_8 H1_det3_age70to100::EMS_8 H2_det3_age70to100::EMS_8 H3_det3_age70to100::EMS_8 C2_det3_age70to100::EMS_8 C3_det3_age70to100::EMS_8))
 (func infected_cumul_age70to100_EMS_8 (+ infected_age70to100_EMS_8 recovered_age70to100_EMS_8 deaths_age70to100_EMS_8))    
 
-(func prevalence_age70to100_EMS_8 (/ infected_age70to100_EMS_8 N_age70to100_EMS_8))    
-(func seroprevalence_age70to100_EMS_8 (/ (+ infected_age70to100_EMS_8 recovered_age70to100_EMS_8) N_age70to100_EMS_8))    
+(func prevalence_age70to100_EMS_8 (/ infected_age70to100_EMS_8 (- N_age70to100_EMS_8 deaths_age70to100_EMS_8)))    
+(func seroprevalence_age70to100_EMS_8 (/ (+ infected_age70to100_EMS_8 recovered_age70to100_EMS_8) (- N_age70to100_EMS_8 deaths_age70to100_EMS_8)))    
 
-(func prevalence_det_age70to100_EMS_8 (/ infected_det_age70to100_EMS_8 N_age70to100_EMS_8))    
-(func seroprevalence_det_age70to100_EMS_8 (/ (+ infected_det_age70to100_EMS_8 recovered_det_age70to100_EMS_8) N_age70to100_EMS_8))    
+(func prevalence_det_age70to100_EMS_8 (/ infected_det_age70to100_EMS_8 (- N_age70to100_EMS_8 deaths_age70to100_EMS_8)))    
+(func seroprevalence_det_age70to100_EMS_8 (/ (+ infected_det_age70to100_EMS_8 recovered_det_age70to100_EMS_8) (- N_age70to100_EMS_8 deaths_age70to100_EMS_8)))    
 
 
 (func asymptomatic_age70to100_EMS_9  (+ As_age70to100::EMS_9 As_det1_age70to100::EMS_9))
@@ -7409,11 +7409,11 @@
 (func infected_det_age70to100_EMS_9 (+ infectious_det_age70to100_EMS_9 H1_det3_age70to100::EMS_9 H2_det3_age70to100::EMS_9 H3_det3_age70to100::EMS_9 C2_det3_age70to100::EMS_9 C3_det3_age70to100::EMS_9))
 (func infected_cumul_age70to100_EMS_9 (+ infected_age70to100_EMS_9 recovered_age70to100_EMS_9 deaths_age70to100_EMS_9))    
 
-(func prevalence_age70to100_EMS_9 (/ infected_age70to100_EMS_9 N_age70to100_EMS_9))    
-(func seroprevalence_age70to100_EMS_9 (/ (+ infected_age70to100_EMS_9 recovered_age70to100_EMS_9) N_age70to100_EMS_9))    
+(func prevalence_age70to100_EMS_9 (/ infected_age70to100_EMS_9 (- N_age70to100_EMS_9 deaths_age70to100_EMS_9)))    
+(func seroprevalence_age70to100_EMS_9 (/ (+ infected_age70to100_EMS_9 recovered_age70to100_EMS_9) (- N_age70to100_EMS_9 deaths_age70to100_EMS_9)))    
 
-(func prevalence_det_age70to100_EMS_9 (/ infected_det_age70to100_EMS_9 N_age70to100_EMS_9))    
-(func seroprevalence_det_age70to100_EMS_9 (/ (+ infected_det_age70to100_EMS_9 recovered_det_age70to100_EMS_9) N_age70to100_EMS_9))    
+(func prevalence_det_age70to100_EMS_9 (/ infected_det_age70to100_EMS_9 (- N_age70to100_EMS_9 deaths_age70to100_EMS_9)))    
+(func seroprevalence_det_age70to100_EMS_9 (/ (+ infected_det_age70to100_EMS_9 recovered_det_age70to100_EMS_9) (- N_age70to100_EMS_9 deaths_age70to100_EMS_9)))    
 
 
 (func asymptomatic_age70to100_EMS_10  (+ As_age70to100::EMS_10 As_det1_age70to100::EMS_10))
@@ -7462,11 +7462,11 @@
 (func infected_det_age70to100_EMS_10 (+ infectious_det_age70to100_EMS_10 H1_det3_age70to100::EMS_10 H2_det3_age70to100::EMS_10 H3_det3_age70to100::EMS_10 C2_det3_age70to100::EMS_10 C3_det3_age70to100::EMS_10))
 (func infected_cumul_age70to100_EMS_10 (+ infected_age70to100_EMS_10 recovered_age70to100_EMS_10 deaths_age70to100_EMS_10))    
 
-(func prevalence_age70to100_EMS_10 (/ infected_age70to100_EMS_10 N_age70to100_EMS_10))    
-(func seroprevalence_age70to100_EMS_10 (/ (+ infected_age70to100_EMS_10 recovered_age70to100_EMS_10) N_age70to100_EMS_10))    
+(func prevalence_age70to100_EMS_10 (/ infected_age70to100_EMS_10 (- N_age70to100_EMS_10 deaths_age70to100_EMS_10)))    
+(func seroprevalence_age70to100_EMS_10 (/ (+ infected_age70to100_EMS_10 recovered_age70to100_EMS_10) (- N_age70to100_EMS_10 deaths_age70to100_EMS_10)))    
 
-(func prevalence_det_age70to100_EMS_10 (/ infected_det_age70to100_EMS_10 N_age70to100_EMS_10))    
-(func seroprevalence_det_age70to100_EMS_10 (/ (+ infected_det_age70to100_EMS_10 recovered_det_age70to100_EMS_10) N_age70to100_EMS_10))    
+(func prevalence_det_age70to100_EMS_10 (/ infected_det_age70to100_EMS_10 (- N_age70to100_EMS_10 deaths_age70to100_EMS_10)))    
+(func seroprevalence_det_age70to100_EMS_10 (/ (+ infected_det_age70to100_EMS_10 recovered_det_age70to100_EMS_10) (- N_age70to100_EMS_10 deaths_age70to100_EMS_10)))    
 
 
 (func asymptomatic_age70to100_EMS_11  (+ As_age70to100::EMS_11 As_det1_age70to100::EMS_11))
@@ -7515,11 +7515,11 @@
 (func infected_det_age70to100_EMS_11 (+ infectious_det_age70to100_EMS_11 H1_det3_age70to100::EMS_11 H2_det3_age70to100::EMS_11 H3_det3_age70to100::EMS_11 C2_det3_age70to100::EMS_11 C3_det3_age70to100::EMS_11))
 (func infected_cumul_age70to100_EMS_11 (+ infected_age70to100_EMS_11 recovered_age70to100_EMS_11 deaths_age70to100_EMS_11))    
 
-(func prevalence_age70to100_EMS_11 (/ infected_age70to100_EMS_11 N_age70to100_EMS_11))    
-(func seroprevalence_age70to100_EMS_11 (/ (+ infected_age70to100_EMS_11 recovered_age70to100_EMS_11) N_age70to100_EMS_11))    
+(func prevalence_age70to100_EMS_11 (/ infected_age70to100_EMS_11 (- N_age70to100_EMS_11 deaths_age70to100_EMS_11)))    
+(func seroprevalence_age70to100_EMS_11 (/ (+ infected_age70to100_EMS_11 recovered_age70to100_EMS_11) (- N_age70to100_EMS_11 deaths_age70to100_EMS_11)))    
 
-(func prevalence_det_age70to100_EMS_11 (/ infected_det_age70to100_EMS_11 N_age70to100_EMS_11))    
-(func seroprevalence_det_age70to100_EMS_11 (/ (+ infected_det_age70to100_EMS_11 recovered_det_age70to100_EMS_11) N_age70to100_EMS_11))    
+(func prevalence_det_age70to100_EMS_11 (/ infected_det_age70to100_EMS_11 (- N_age70to100_EMS_11 deaths_age70to100_EMS_11)))    
+(func seroprevalence_det_age70to100_EMS_11 (/ (+ infected_det_age70to100_EMS_11 recovered_det_age70to100_EMS_11) (- N_age70to100_EMS_11 deaths_age70to100_EMS_11)))    
 
 
 (observe susceptible_All (+ S_age0to9::EMS_1 S_age0to9::EMS_2 S_age0to9::EMS_3 S_age0to9::EMS_4 S_age0to9::EMS_5 S_age0to9::EMS_6 S_age0to9::EMS_7 S_age0to9::EMS_8 S_age0to9::EMS_9 S_age0to9::EMS_10 S_age0to9::EMS_11 S_age10to19::EMS_1 S_age10to19::EMS_2 S_age10to19::EMS_3 S_age10to19::EMS_4 S_age10to19::EMS_5 S_age10to19::EMS_6 S_age10to19::EMS_7 S_age10to19::EMS_8 S_age10to19::EMS_9 S_age10to19::EMS_10 S_age10to19::EMS_11 S_age20to29::EMS_1 S_age20to29::EMS_2 S_age20to29::EMS_3 S_age20to29::EMS_4 S_age20to29::EMS_5 S_age20to29::EMS_6 S_age20to29::EMS_7 S_age20to29::EMS_8 S_age20to29::EMS_9 S_age20to29::EMS_10 S_age20to29::EMS_11 S_age30to39::EMS_1 S_age30to39::EMS_2 S_age30to39::EMS_3 S_age30to39::EMS_4 S_age30to39::EMS_5 S_age30to39::EMS_6 S_age30to39::EMS_7 S_age30to39::EMS_8 S_age30to39::EMS_9 S_age30to39::EMS_10 S_age30to39::EMS_11 S_age40to49::EMS_1 S_age40to49::EMS_2 S_age40to49::EMS_3 S_age40to49::EMS_4 S_age40to49::EMS_5 S_age40to49::EMS_6 S_age40to49::EMS_7 S_age40to49::EMS_8 S_age40to49::EMS_9 S_age40to49::EMS_10 S_age40to49::EMS_11 S_age50to59::EMS_1 S_age50to59::EMS_2 S_age50to59::EMS_3 S_age50to59::EMS_4 S_age50to59::EMS_5 S_age50to59::EMS_6 S_age50to59::EMS_7 S_age50to59::EMS_8 S_age50to59::EMS_9 S_age50to59::EMS_10 S_age50to59::EMS_11 S_age60to69::EMS_1 S_age60to69::EMS_2 S_age60to69::EMS_3 S_age60to69::EMS_4 S_age60to69::EMS_5 S_age60to69::EMS_6 S_age60to69::EMS_7 S_age60to69::EMS_8 S_age60to69::EMS_9 S_age60to69::EMS_10 S_age60to69::EMS_11 S_age70to100::EMS_1 S_age70to100::EMS_2 S_age70to100::EMS_3 S_age70to100::EMS_4 S_age70to100::EMS_5 S_age70to100::EMS_6 S_age70to100::EMS_7 S_age70to100::EMS_8 S_age70to100::EMS_9 S_age70to100::EMS_10 S_age70to100::EMS_11))
@@ -12219,12 +12219,14 @@
 (param Ki_red3b_EMS_1 (* Ki_EMS_1 @ki_multiplier_3b_EMS_1@))
 (param Ki_red3c_EMS_1 (* Ki_EMS_1 @ki_multiplier_3c_EMS_1@))
 (param Ki_red4_EMS_1 (* Ki_EMS_1 @ki_multiplier_4_EMS_1@))
+(param Ki_red5_EMS_1 (* Ki_EMS_1 @ki_multiplier_5_EMS_1@))
 (param Ki_red6_EMS_1 (* Ki_EMS_1 @ki_multiplier_6_EMS_1@))
 (param Ki_red7_EMS_1 (* Ki_EMS_1 @ki_multiplier_7_EMS_1@))
 (param Ki_red8_EMS_1 (* Ki_EMS_1 @ki_multiplier_8_EMS_1@))
 (param Ki_red9_EMS_1 (* Ki_EMS_1 @ki_multiplier_9_EMS_1@))
 (param Ki_red10_EMS_1 (* Ki_EMS_1 @ki_multiplier_10_EMS_1@))
 (param Ki_red11_EMS_1 (* Ki_EMS_1 @ki_multiplier_11_EMS_1@))
+(param Ki_red12_EMS_1 (* Ki_EMS_1 @ki_multiplier_12_EMS_1@))
 
 (param backtonormal_multiplier_1_EMS_1  (/ (- Ki_red6_EMS_1  Ki_red4_EMS_1 ) (- Ki_EMS_1 Ki_red4_EMS_1 ) ) )  
 (observe backtonormal_multiplier_1_EMS_1 backtonormal_multiplier_1_EMS_1)
@@ -12233,23 +12235,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_1 Ki_red3b_EMS_1)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_1 Ki_red3c_EMS_1)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_1 Ki_red4_EMS_1)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_1 Ki_red5_EMS_1)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_1 Ki_red6_EMS_1)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_1 Ki_red7_EMS_1)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_1 Ki_red8_EMS_1)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_1 Ki_red9_EMS_1)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_1 Ki_red10_EMS_1)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_1 Ki_red11_EMS_1)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_1 Ki_red12_EMS_1)))
             
 (param Ki_red3a_EMS_2 (* Ki_EMS_2 @ki_multiplier_3a_EMS_2@))
 (param Ki_red3b_EMS_2 (* Ki_EMS_2 @ki_multiplier_3b_EMS_2@))
 (param Ki_red3c_EMS_2 (* Ki_EMS_2 @ki_multiplier_3c_EMS_2@))
 (param Ki_red4_EMS_2 (* Ki_EMS_2 @ki_multiplier_4_EMS_2@))
+(param Ki_red5_EMS_2 (* Ki_EMS_2 @ki_multiplier_5_EMS_2@))
 (param Ki_red6_EMS_2 (* Ki_EMS_2 @ki_multiplier_6_EMS_2@))
 (param Ki_red7_EMS_2 (* Ki_EMS_2 @ki_multiplier_7_EMS_2@))
 (param Ki_red8_EMS_2 (* Ki_EMS_2 @ki_multiplier_8_EMS_2@))
 (param Ki_red9_EMS_2 (* Ki_EMS_2 @ki_multiplier_9_EMS_2@))
 (param Ki_red10_EMS_2 (* Ki_EMS_2 @ki_multiplier_10_EMS_2@))
 (param Ki_red11_EMS_2 (* Ki_EMS_2 @ki_multiplier_11_EMS_2@))
+(param Ki_red12_EMS_2 (* Ki_EMS_2 @ki_multiplier_12_EMS_2@))
 
 (param backtonormal_multiplier_1_EMS_2  (/ (- Ki_red6_EMS_2  Ki_red4_EMS_2 ) (- Ki_EMS_2 Ki_red4_EMS_2 ) ) )  
 (observe backtonormal_multiplier_1_EMS_2 backtonormal_multiplier_1_EMS_2)
@@ -12258,23 +12264,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_2 Ki_red3b_EMS_2)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_2 Ki_red3c_EMS_2)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_2 Ki_red4_EMS_2)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_2 Ki_red5_EMS_2)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_2 Ki_red6_EMS_2)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_2 Ki_red7_EMS_2)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_2 Ki_red8_EMS_2)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_2 Ki_red9_EMS_2)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_2 Ki_red10_EMS_2)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_2 Ki_red11_EMS_2)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_2 Ki_red12_EMS_2)))
             
 (param Ki_red3a_EMS_3 (* Ki_EMS_3 @ki_multiplier_3a_EMS_3@))
 (param Ki_red3b_EMS_3 (* Ki_EMS_3 @ki_multiplier_3b_EMS_3@))
 (param Ki_red3c_EMS_3 (* Ki_EMS_3 @ki_multiplier_3c_EMS_3@))
 (param Ki_red4_EMS_3 (* Ki_EMS_3 @ki_multiplier_4_EMS_3@))
+(param Ki_red5_EMS_3 (* Ki_EMS_3 @ki_multiplier_5_EMS_3@))
 (param Ki_red6_EMS_3 (* Ki_EMS_3 @ki_multiplier_6_EMS_3@))
 (param Ki_red7_EMS_3 (* Ki_EMS_3 @ki_multiplier_7_EMS_3@))
 (param Ki_red8_EMS_3 (* Ki_EMS_3 @ki_multiplier_8_EMS_3@))
 (param Ki_red9_EMS_3 (* Ki_EMS_3 @ki_multiplier_9_EMS_3@))
 (param Ki_red10_EMS_3 (* Ki_EMS_3 @ki_multiplier_10_EMS_3@))
 (param Ki_red11_EMS_3 (* Ki_EMS_3 @ki_multiplier_11_EMS_3@))
+(param Ki_red12_EMS_3 (* Ki_EMS_3 @ki_multiplier_12_EMS_3@))
 
 (param backtonormal_multiplier_1_EMS_3  (/ (- Ki_red6_EMS_3  Ki_red4_EMS_3 ) (- Ki_EMS_3 Ki_red4_EMS_3 ) ) )  
 (observe backtonormal_multiplier_1_EMS_3 backtonormal_multiplier_1_EMS_3)
@@ -12283,23 +12293,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_3 Ki_red3b_EMS_3)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_3 Ki_red3c_EMS_3)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_3 Ki_red4_EMS_3)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_3 Ki_red5_EMS_3)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_3 Ki_red6_EMS_3)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_3 Ki_red7_EMS_3)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_3 Ki_red8_EMS_3)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_3 Ki_red9_EMS_3)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_3 Ki_red10_EMS_3)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_3 Ki_red11_EMS_3)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_3 Ki_red12_EMS_3)))
             
 (param Ki_red3a_EMS_4 (* Ki_EMS_4 @ki_multiplier_3a_EMS_4@))
 (param Ki_red3b_EMS_4 (* Ki_EMS_4 @ki_multiplier_3b_EMS_4@))
 (param Ki_red3c_EMS_4 (* Ki_EMS_4 @ki_multiplier_3c_EMS_4@))
 (param Ki_red4_EMS_4 (* Ki_EMS_4 @ki_multiplier_4_EMS_4@))
+(param Ki_red5_EMS_4 (* Ki_EMS_4 @ki_multiplier_5_EMS_4@))
 (param Ki_red6_EMS_4 (* Ki_EMS_4 @ki_multiplier_6_EMS_4@))
 (param Ki_red7_EMS_4 (* Ki_EMS_4 @ki_multiplier_7_EMS_4@))
 (param Ki_red8_EMS_4 (* Ki_EMS_4 @ki_multiplier_8_EMS_4@))
 (param Ki_red9_EMS_4 (* Ki_EMS_4 @ki_multiplier_9_EMS_4@))
 (param Ki_red10_EMS_4 (* Ki_EMS_4 @ki_multiplier_10_EMS_4@))
 (param Ki_red11_EMS_4 (* Ki_EMS_4 @ki_multiplier_11_EMS_4@))
+(param Ki_red12_EMS_4 (* Ki_EMS_4 @ki_multiplier_12_EMS_4@))
 
 (param backtonormal_multiplier_1_EMS_4  (/ (- Ki_red6_EMS_4  Ki_red4_EMS_4 ) (- Ki_EMS_4 Ki_red4_EMS_4 ) ) )  
 (observe backtonormal_multiplier_1_EMS_4 backtonormal_multiplier_1_EMS_4)
@@ -12308,23 +12322,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_4 Ki_red3b_EMS_4)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_4 Ki_red3c_EMS_4)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_4 Ki_red4_EMS_4)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_4 Ki_red5_EMS_4)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_4 Ki_red6_EMS_4)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_4 Ki_red7_EMS_4)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_4 Ki_red8_EMS_4)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_4 Ki_red9_EMS_4)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_4 Ki_red10_EMS_4)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_4 Ki_red11_EMS_4)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_4 Ki_red12_EMS_4)))
             
 (param Ki_red3a_EMS_5 (* Ki_EMS_5 @ki_multiplier_3a_EMS_5@))
 (param Ki_red3b_EMS_5 (* Ki_EMS_5 @ki_multiplier_3b_EMS_5@))
 (param Ki_red3c_EMS_5 (* Ki_EMS_5 @ki_multiplier_3c_EMS_5@))
 (param Ki_red4_EMS_5 (* Ki_EMS_5 @ki_multiplier_4_EMS_5@))
+(param Ki_red5_EMS_5 (* Ki_EMS_5 @ki_multiplier_5_EMS_5@))
 (param Ki_red6_EMS_5 (* Ki_EMS_5 @ki_multiplier_6_EMS_5@))
 (param Ki_red7_EMS_5 (* Ki_EMS_5 @ki_multiplier_7_EMS_5@))
 (param Ki_red8_EMS_5 (* Ki_EMS_5 @ki_multiplier_8_EMS_5@))
 (param Ki_red9_EMS_5 (* Ki_EMS_5 @ki_multiplier_9_EMS_5@))
 (param Ki_red10_EMS_5 (* Ki_EMS_5 @ki_multiplier_10_EMS_5@))
 (param Ki_red11_EMS_5 (* Ki_EMS_5 @ki_multiplier_11_EMS_5@))
+(param Ki_red12_EMS_5 (* Ki_EMS_5 @ki_multiplier_12_EMS_5@))
 
 (param backtonormal_multiplier_1_EMS_5  (/ (- Ki_red6_EMS_5  Ki_red4_EMS_5 ) (- Ki_EMS_5 Ki_red4_EMS_5 ) ) )  
 (observe backtonormal_multiplier_1_EMS_5 backtonormal_multiplier_1_EMS_5)
@@ -12333,23 +12351,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_5 Ki_red3b_EMS_5)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_5 Ki_red3c_EMS_5)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_5 Ki_red4_EMS_5)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_5 Ki_red5_EMS_5)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_5 Ki_red6_EMS_5)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_5 Ki_red7_EMS_5)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_5 Ki_red8_EMS_5)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_5 Ki_red9_EMS_5)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_5 Ki_red10_EMS_5)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_5 Ki_red11_EMS_5)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_5 Ki_red12_EMS_5)))
             
 (param Ki_red3a_EMS_6 (* Ki_EMS_6 @ki_multiplier_3a_EMS_6@))
 (param Ki_red3b_EMS_6 (* Ki_EMS_6 @ki_multiplier_3b_EMS_6@))
 (param Ki_red3c_EMS_6 (* Ki_EMS_6 @ki_multiplier_3c_EMS_6@))
 (param Ki_red4_EMS_6 (* Ki_EMS_6 @ki_multiplier_4_EMS_6@))
+(param Ki_red5_EMS_6 (* Ki_EMS_6 @ki_multiplier_5_EMS_6@))
 (param Ki_red6_EMS_6 (* Ki_EMS_6 @ki_multiplier_6_EMS_6@))
 (param Ki_red7_EMS_6 (* Ki_EMS_6 @ki_multiplier_7_EMS_6@))
 (param Ki_red8_EMS_6 (* Ki_EMS_6 @ki_multiplier_8_EMS_6@))
 (param Ki_red9_EMS_6 (* Ki_EMS_6 @ki_multiplier_9_EMS_6@))
 (param Ki_red10_EMS_6 (* Ki_EMS_6 @ki_multiplier_10_EMS_6@))
 (param Ki_red11_EMS_6 (* Ki_EMS_6 @ki_multiplier_11_EMS_6@))
+(param Ki_red12_EMS_6 (* Ki_EMS_6 @ki_multiplier_12_EMS_6@))
 
 (param backtonormal_multiplier_1_EMS_6  (/ (- Ki_red6_EMS_6  Ki_red4_EMS_6 ) (- Ki_EMS_6 Ki_red4_EMS_6 ) ) )  
 (observe backtonormal_multiplier_1_EMS_6 backtonormal_multiplier_1_EMS_6)
@@ -12358,23 +12380,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_6 Ki_red3b_EMS_6)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_6 Ki_red3c_EMS_6)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_6 Ki_red4_EMS_6)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_6 Ki_red5_EMS_6)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_6 Ki_red6_EMS_6)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_6 Ki_red7_EMS_6)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_6 Ki_red8_EMS_6)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_6 Ki_red9_EMS_6)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_6 Ki_red10_EMS_6)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_6 Ki_red11_EMS_6)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_6 Ki_red12_EMS_6)))
             
 (param Ki_red3a_EMS_7 (* Ki_EMS_7 @ki_multiplier_3a_EMS_7@))
 (param Ki_red3b_EMS_7 (* Ki_EMS_7 @ki_multiplier_3b_EMS_7@))
 (param Ki_red3c_EMS_7 (* Ki_EMS_7 @ki_multiplier_3c_EMS_7@))
 (param Ki_red4_EMS_7 (* Ki_EMS_7 @ki_multiplier_4_EMS_7@))
+(param Ki_red5_EMS_7 (* Ki_EMS_7 @ki_multiplier_5_EMS_7@))
 (param Ki_red6_EMS_7 (* Ki_EMS_7 @ki_multiplier_6_EMS_7@))
 (param Ki_red7_EMS_7 (* Ki_EMS_7 @ki_multiplier_7_EMS_7@))
 (param Ki_red8_EMS_7 (* Ki_EMS_7 @ki_multiplier_8_EMS_7@))
 (param Ki_red9_EMS_7 (* Ki_EMS_7 @ki_multiplier_9_EMS_7@))
 (param Ki_red10_EMS_7 (* Ki_EMS_7 @ki_multiplier_10_EMS_7@))
 (param Ki_red11_EMS_7 (* Ki_EMS_7 @ki_multiplier_11_EMS_7@))
+(param Ki_red12_EMS_7 (* Ki_EMS_7 @ki_multiplier_12_EMS_7@))
 
 (param backtonormal_multiplier_1_EMS_7  (/ (- Ki_red6_EMS_7  Ki_red4_EMS_7 ) (- Ki_EMS_7 Ki_red4_EMS_7 ) ) )  
 (observe backtonormal_multiplier_1_EMS_7 backtonormal_multiplier_1_EMS_7)
@@ -12383,23 +12409,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_7 Ki_red3b_EMS_7)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_7 Ki_red3c_EMS_7)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_7 Ki_red4_EMS_7)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_7 Ki_red5_EMS_7)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_7 Ki_red6_EMS_7)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_7 Ki_red7_EMS_7)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_7 Ki_red8_EMS_7)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_7 Ki_red9_EMS_7)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_7 Ki_red10_EMS_7)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_7 Ki_red11_EMS_7)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_7 Ki_red12_EMS_7)))
             
 (param Ki_red3a_EMS_8 (* Ki_EMS_8 @ki_multiplier_3a_EMS_8@))
 (param Ki_red3b_EMS_8 (* Ki_EMS_8 @ki_multiplier_3b_EMS_8@))
 (param Ki_red3c_EMS_8 (* Ki_EMS_8 @ki_multiplier_3c_EMS_8@))
 (param Ki_red4_EMS_8 (* Ki_EMS_8 @ki_multiplier_4_EMS_8@))
+(param Ki_red5_EMS_8 (* Ki_EMS_8 @ki_multiplier_5_EMS_8@))
 (param Ki_red6_EMS_8 (* Ki_EMS_8 @ki_multiplier_6_EMS_8@))
 (param Ki_red7_EMS_8 (* Ki_EMS_8 @ki_multiplier_7_EMS_8@))
 (param Ki_red8_EMS_8 (* Ki_EMS_8 @ki_multiplier_8_EMS_8@))
 (param Ki_red9_EMS_8 (* Ki_EMS_8 @ki_multiplier_9_EMS_8@))
 (param Ki_red10_EMS_8 (* Ki_EMS_8 @ki_multiplier_10_EMS_8@))
 (param Ki_red11_EMS_8 (* Ki_EMS_8 @ki_multiplier_11_EMS_8@))
+(param Ki_red12_EMS_8 (* Ki_EMS_8 @ki_multiplier_12_EMS_8@))
 
 (param backtonormal_multiplier_1_EMS_8  (/ (- Ki_red6_EMS_8  Ki_red4_EMS_8 ) (- Ki_EMS_8 Ki_red4_EMS_8 ) ) )  
 (observe backtonormal_multiplier_1_EMS_8 backtonormal_multiplier_1_EMS_8)
@@ -12408,23 +12438,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_8 Ki_red3b_EMS_8)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_8 Ki_red3c_EMS_8)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_8 Ki_red4_EMS_8)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_8 Ki_red5_EMS_8)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_8 Ki_red6_EMS_8)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_8 Ki_red7_EMS_8)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_8 Ki_red8_EMS_8)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_8 Ki_red9_EMS_8)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_8 Ki_red10_EMS_8)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_8 Ki_red11_EMS_8)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_8 Ki_red12_EMS_8)))
             
 (param Ki_red3a_EMS_9 (* Ki_EMS_9 @ki_multiplier_3a_EMS_9@))
 (param Ki_red3b_EMS_9 (* Ki_EMS_9 @ki_multiplier_3b_EMS_9@))
 (param Ki_red3c_EMS_9 (* Ki_EMS_9 @ki_multiplier_3c_EMS_9@))
 (param Ki_red4_EMS_9 (* Ki_EMS_9 @ki_multiplier_4_EMS_9@))
+(param Ki_red5_EMS_9 (* Ki_EMS_9 @ki_multiplier_5_EMS_9@))
 (param Ki_red6_EMS_9 (* Ki_EMS_9 @ki_multiplier_6_EMS_9@))
 (param Ki_red7_EMS_9 (* Ki_EMS_9 @ki_multiplier_7_EMS_9@))
 (param Ki_red8_EMS_9 (* Ki_EMS_9 @ki_multiplier_8_EMS_9@))
 (param Ki_red9_EMS_9 (* Ki_EMS_9 @ki_multiplier_9_EMS_9@))
 (param Ki_red10_EMS_9 (* Ki_EMS_9 @ki_multiplier_10_EMS_9@))
 (param Ki_red11_EMS_9 (* Ki_EMS_9 @ki_multiplier_11_EMS_9@))
+(param Ki_red12_EMS_9 (* Ki_EMS_9 @ki_multiplier_12_EMS_9@))
 
 (param backtonormal_multiplier_1_EMS_9  (/ (- Ki_red6_EMS_9  Ki_red4_EMS_9 ) (- Ki_EMS_9 Ki_red4_EMS_9 ) ) )  
 (observe backtonormal_multiplier_1_EMS_9 backtonormal_multiplier_1_EMS_9)
@@ -12433,23 +12467,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_9 Ki_red3b_EMS_9)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_9 Ki_red3c_EMS_9)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_9 Ki_red4_EMS_9)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_9 Ki_red5_EMS_9)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_9 Ki_red6_EMS_9)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_9 Ki_red7_EMS_9)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_9 Ki_red8_EMS_9)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_9 Ki_red9_EMS_9)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_9 Ki_red10_EMS_9)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_9 Ki_red11_EMS_9)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_9 Ki_red12_EMS_9)))
             
 (param Ki_red3a_EMS_10 (* Ki_EMS_10 @ki_multiplier_3a_EMS_10@))
 (param Ki_red3b_EMS_10 (* Ki_EMS_10 @ki_multiplier_3b_EMS_10@))
 (param Ki_red3c_EMS_10 (* Ki_EMS_10 @ki_multiplier_3c_EMS_10@))
 (param Ki_red4_EMS_10 (* Ki_EMS_10 @ki_multiplier_4_EMS_10@))
+(param Ki_red5_EMS_10 (* Ki_EMS_10 @ki_multiplier_5_EMS_10@))
 (param Ki_red6_EMS_10 (* Ki_EMS_10 @ki_multiplier_6_EMS_10@))
 (param Ki_red7_EMS_10 (* Ki_EMS_10 @ki_multiplier_7_EMS_10@))
 (param Ki_red8_EMS_10 (* Ki_EMS_10 @ki_multiplier_8_EMS_10@))
 (param Ki_red9_EMS_10 (* Ki_EMS_10 @ki_multiplier_9_EMS_10@))
 (param Ki_red10_EMS_10 (* Ki_EMS_10 @ki_multiplier_10_EMS_10@))
 (param Ki_red11_EMS_10 (* Ki_EMS_10 @ki_multiplier_11_EMS_10@))
+(param Ki_red12_EMS_10 (* Ki_EMS_10 @ki_multiplier_12_EMS_10@))
 
 (param backtonormal_multiplier_1_EMS_10  (/ (- Ki_red6_EMS_10  Ki_red4_EMS_10 ) (- Ki_EMS_10 Ki_red4_EMS_10 ) ) )  
 (observe backtonormal_multiplier_1_EMS_10 backtonormal_multiplier_1_EMS_10)
@@ -12458,23 +12496,27 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_10 Ki_red3b_EMS_10)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_10 Ki_red3c_EMS_10)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_10 Ki_red4_EMS_10)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_10 Ki_red5_EMS_10)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_10 Ki_red6_EMS_10)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_10 Ki_red7_EMS_10)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_10 Ki_red8_EMS_10)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_10 Ki_red9_EMS_10)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_10 Ki_red10_EMS_10)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_10 Ki_red11_EMS_10)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_10 Ki_red12_EMS_10)))
             
 (param Ki_red3a_EMS_11 (* Ki_EMS_11 @ki_multiplier_3a_EMS_11@))
 (param Ki_red3b_EMS_11 (* Ki_EMS_11 @ki_multiplier_3b_EMS_11@))
 (param Ki_red3c_EMS_11 (* Ki_EMS_11 @ki_multiplier_3c_EMS_11@))
 (param Ki_red4_EMS_11 (* Ki_EMS_11 @ki_multiplier_4_EMS_11@))
+(param Ki_red5_EMS_11 (* Ki_EMS_11 @ki_multiplier_5_EMS_11@))
 (param Ki_red6_EMS_11 (* Ki_EMS_11 @ki_multiplier_6_EMS_11@))
 (param Ki_red7_EMS_11 (* Ki_EMS_11 @ki_multiplier_7_EMS_11@))
 (param Ki_red8_EMS_11 (* Ki_EMS_11 @ki_multiplier_8_EMS_11@))
 (param Ki_red9_EMS_11 (* Ki_EMS_11 @ki_multiplier_9_EMS_11@))
 (param Ki_red10_EMS_11 (* Ki_EMS_11 @ki_multiplier_10_EMS_11@))
 (param Ki_red11_EMS_11 (* Ki_EMS_11 @ki_multiplier_11_EMS_11@))
+(param Ki_red12_EMS_11 (* Ki_EMS_11 @ki_multiplier_12_EMS_11@))
 
 (param backtonormal_multiplier_1_EMS_11  (/ (- Ki_red6_EMS_11  Ki_red4_EMS_11 ) (- Ki_EMS_11 Ki_red4_EMS_11 ) ) )  
 (observe backtonormal_multiplier_1_EMS_11 backtonormal_multiplier_1_EMS_11)
@@ -12483,12 +12525,14 @@
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_EMS_11 Ki_red3b_EMS_11)))
 (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_EMS_11 Ki_red3c_EMS_11)))
 (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_EMS_11 Ki_red4_EMS_11)))
+(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_EMS_11 Ki_red5_EMS_11)))
 (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_EMS_11 Ki_red6_EMS_11)))
 (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_EMS_11 Ki_red7_EMS_11)))
 (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_EMS_11 Ki_red8_EMS_11)))
 (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_EMS_11 Ki_red9_EMS_11)))
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_EMS_11 Ki_red10_EMS_11)))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_EMS_11 Ki_red11_EMS_11)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_EMS_11 Ki_red12_EMS_11)))
             
 (param d_Sym_EMS_1 @d_Sym_EMS_1@)
 (observe d_Sym_t_EMS-1 d_Sym_EMS_1)

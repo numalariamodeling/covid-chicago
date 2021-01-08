@@ -94,12 +94,11 @@
 (func infected_det (+ infectious_det H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected_cumul (+ infected recovered deaths))  
 
-(func prevalence (/ infected N))  
-(func seroprevalence (/ (+ infected recovered) N))  
+(func prevalence (/ infected (- N deaths)))  
+(func seroprevalence (/ (+ infected recovered) (- N deaths)))  
 
-(func prevalence_det (/ infected_det N))  
-(func seroprevalence_det (/ (+ infected_det recovered_det) N))  
-
+(func prevalence_det (/ infected_det (- N deaths)))  
+(func seroprevalence_det (/ (+ infected_det recovered_det) (- N deaths)))  
 
 
 

@@ -249,11 +249,11 @@ def write_functions(age, region, expandModel=None):
 (func infected_det_{age}_{region} (+ infectious_det_{age}_{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
 (func infected_cumul_{age}_{region} (+ infected_{age}_{region} recovered_{age}_{region} deaths_{age}_{region}))    
 
-(func prevalence_{age}_{region} (/ infected_{age}_{region} N_{age}_{region}))    
-(func seroprevalence_{age}_{region} (/ (+ infected_{age}_{region} recovered_{age}_{region}) N_{age}_{region}))    
+(func prevalence_{age}_{region} (/ infected_{age}_{region} (- N_{age}_{region} deaths_{age}_{region})))    
+(func seroprevalence_{age}_{region} (/ (+ infected_{age}_{region} recovered_{age}_{region}) (- N_{age}_{region} deaths_{age}_{region})))    
 
-(func prevalence_det_{age}_{region} (/ infected_det_{age}_{region} N_{age}_{region}))    
-(func seroprevalence_det_{age}_{region} (/ (+ infected_det_{age}_{region} recovered_det_{age}_{region}) N_{age}_{region}))    
+(func prevalence_det_{age}_{region} (/ infected_det_{age}_{region} (- N_{age}_{region} deaths_{age}_{region})))    
+(func seroprevalence_det_{age}_{region} (/ (+ infected_det_{age}_{region} recovered_det_{age}_{region}) (- N_{age}_{region} deaths_{age}_{region})))    
 
 """.format(age=age, region=region)
     

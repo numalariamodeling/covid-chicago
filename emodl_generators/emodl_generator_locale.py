@@ -188,11 +188,11 @@ def write_functions(grp, expandModel=None):
 (func infected_det_{grp} (+ infectious_det_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
 
-(func prevalence_{grp} (/ infected_{grp} N_{grp}))    
-(func seroprevalence_{grp} (/ (+ infected_{grp} recovered_{grp}) N_{grp}))    
+(func prevalence_{grp} (/ infected_{grp} (- N_{grp} deaths_{grp} )))    
+(func seroprevalence_{grp} (/ (+ infected_{grp} recovered_{grp}) (- N_{grp} deaths_{grp} )))    
 
-(func prevalence_det_{grp} (/ infected_det_{grp} N_{grp}))    
-(func seroprevalence_det_{grp} (/ (+ infected_det_{grp} recovered_det_{grp}) N_{grp}))    
+(func prevalence_det_{grp} (/ infected_det_{grp} (- N_{grp} deaths_{grp} )))    
+(func seroprevalence_det_{grp} (/ (+ infected_det_{grp} recovered_det_{grp}) (- N_{grp} deaths_{grp} )))    
 
 """.format(grp=grp)
     
