@@ -57,7 +57,7 @@ def trim_trajectories(simpath, scenario, colnames, ems):
 
 def plot_prevalences(exp_name, first_day, last_day, channels, fname='trajectoriesDat.csv'):
 
-    ems = ['All'] +  ['EMS-%d' % x for x in range(1, 12)]
+    ems = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
     get_det =0
     for ch in channels:
         if 'det' in ch: get_det = get_det + 1
@@ -74,7 +74,8 @@ def plot_prevalences(exp_name, first_day, last_day, channels, fname='trajectorie
                 column_list.append('infected_det_cumul_' + str(ems_num))
                 column_list.append('recovered_det_' + str(ems_num))
                 column_list.append('deaths_det_' + str(ems_num))
-        df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False, add_prevalence = True)
+        df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False)
+        df = calculate_prevalence(df,ems=ems)
         #df.to_csv(os.path.join(wdir, 'simulation_output', exp_name, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
 
     df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
