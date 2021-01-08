@@ -178,11 +178,6 @@ def write_observe(age, region, observeLevel='primary'):
 (observe infectious_det_{age}_{grpout} infectious_det_{age}_{region})
 (observe infectious_det_symp_{age}_{grpout} infectious_det_symp_{age}_{region})
 (observe infectious_det_AsP_{age}_{grpout} infectious_det_AsP_{age}_{region})
-
-(observe prevalence_{age}_{grpout} prevalence_{age}_{region})    
-(observe seroprevalence_{age}_{grpout} seroprevalence_{age}_{region} )
-(observe prevalence_det_{age}_{grpout} prevalence_det_{age}_{region})    
-(observe seroprevalence_det_{age}_{grpout} seroprevalence_det_{age}_{region} )
 """.format(grpout=grpout, age=age, region=region)
 
     if observeLevel == 'primary' :
@@ -248,13 +243,6 @@ def write_functions(age, region, expandModel=None):
 (func infected_{age}_{region} (+ infectious_det_{age}_{region} infectious_undet_{age}_{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
 (func infected_det_{age}_{region} (+ infectious_det_{age}_{region} H1_det3_{age}::{region} H2_det3_{age}::{region} H3_det3_{age}::{region} C2_det3_{age}::{region} C3_det3_{age}::{region}))
 (func infected_cumul_{age}_{region} (+ infected_{age}_{region} recovered_{age}_{region} deaths_{age}_{region}))    
-
-(func prevalence_{age}_{region} (/ infected_{age}_{region} (- N_{age}_{region} deaths_{age}_{region})))    
-(func seroprevalence_{age}_{region} (/ (+ infected_{age}_{region} recovered_{age}_{region}) (- N_{age}_{region} deaths_{age}_{region})))    
-
-(func prevalence_det_{age}_{region} (/ infected_det_{age}_{region} (- N_{age}_{region} deaths_{age}_{region})))    
-(func seroprevalence_det_{age}_{region} (/ (+ infected_det_{age}_{region} recovered_det_{age}_{region}) (- N_{age}_{region} deaths_{age}_{region})))    
-
 """.format(age=age, region=region)
     
 
@@ -537,11 +525,6 @@ def write_All(ageList, regionList, observeLevel='primary'):
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_',  ageList, regionList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_symp_All (+ " + repeat_string_by_grp('infectious_det_symp_',  ageList, regionList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_AsP_All (+ " + repeat_string_by_grp( 'infectious_det_AsP_',  ageList, regionList) + "))"
-   
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_All (+ " + repeat_string_by_grp( 'prevalence_',  ageList, regionList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_All (+ " + repeat_string_by_grp( 'seroprevalence_',  ageList, regionList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_det_All (+ " + repeat_string_by_grp( 'prevalence_det_',  ageList, regionList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_det_All (+ " + repeat_string_by_grp( 'seroprevalence_det_',  ageList, regionList) + "))"
 
     if observeLevel == 'primary' :
         obs_All_str = obs_primary_All_str

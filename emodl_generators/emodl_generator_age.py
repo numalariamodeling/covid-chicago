@@ -131,11 +131,6 @@ def write_observe(grp, observeLevel='primary'):
 (observe infectious_det_{grp} infectious_det_{grp})
 (observe infectious_det_symp_{grp} infectious_det_symp_{grp})
 (observe infectious_det_AsP_{grp} infectious_det_AsP_{grp})
-
-(observe prevalence_{grp} prevalence_{grp})    
-(observe seroprevalence_{grp} seroprevalence_{grp} )
-(observe prevalence_det_{grp} prevalence_det_{grp})    
-(observe seroprevalence_det_{grp} seroprevalence_det_{grp} )
 """.format(grp=grp)
 
     if observeLevel == 'primary' :
@@ -182,13 +177,6 @@ def write_functions(grp, expandModel=None):
 (func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
 (func infected_det_{grp} (+ infectious_det_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
 (func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
-
-(func prevalence_{grp} (/ infected_{grp} (- N_{grp} deaths_{grp} )))    
-(func seroprevalence_{grp} (/ (+ infected_{grp} recovered_{grp}) (- N_{grp} deaths_{grp} )))    
-
-(func prevalence_det_{grp} (/ infected_det_{grp} (- N_{grp} deaths_{grp} )))    
-(func seroprevalence_det_{grp} (/ (+ infected_det_{grp} recovered_det_{grp}) (- N_{grp} deaths_{grp} )))    
-
 """.format(grp=grp)
 
 
@@ -611,18 +599,12 @@ def write_All(grpList, observeLevel='primary'):
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_mild_det_All (+ " + repeat_string_by_grp(  'symptomatic_mild_det_', grpList) + "))"
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_severe_det_All (+ " + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe recovered_det_All (+ " + repeat_string_by_grp('recovered_det_',    grpList) + "))"   
-    
-    
+
     obs_tertiary_All_str = ""
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_All (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_symp_All (+ " + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_AsP_All (+ " + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
-   
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_All (+ " + repeat_string_by_grp( 'prevalence_', grpList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_All (+ " + repeat_string_by_grp( 'seroprevalence_', grpList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_det_All (+ " + repeat_string_by_grp( 'prevalence_det_', grpList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_det_All (+ " + repeat_string_by_grp( 'seroprevalence_det_', grpList) + "))"
 
     if observeLevel == 'primary' :
         obs_All_str = obs_primary_All_str

@@ -84,8 +84,10 @@ def write_observe(grp, observeLevel='primary'):
     observe_primary_channels_str = """
 (observe susceptible_{grpout} S::{grp})
 (observe infected_{grpout} infected_{grp})
+(observe infected_det_{grpout} infected_det_{grp})
 (observe recovered_{grpout} recovered_{grp})
 (observe infected_cumul_{grpout} infected_cumul_{grp})
+(observe infected_det_cumul_{grpout} infected_det_cumul_{grp})
 
 (observe asymp_cumul_{grpout} asymp_cumul_{grp} )
 (observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
@@ -135,11 +137,6 @@ def write_observe(grp, observeLevel='primary'):
 (observe infectious_det_{grpout} infectious_det_{grp})
 (observe infectious_det_symp_{grpout} infectious_det_symp_{grp})
 (observe infectious_det_AsP_{grpout} infectious_det_AsP_{grp})
-
-(observe prevalence_{grpout} prevalence_{grp})    
-(observe seroprevalence_{grpout} seroprevalence_{grp} )
-(observe prevalence_det_{grpout} prevalence_det_{grp})    
-(observe seroprevalence_det_{grpout} seroprevalence_det_{grp} )
 """.format(grpout=grpout, grp=grp)
 
     if observeLevel == 'primary' :
@@ -186,14 +183,8 @@ def write_functions(grp, expandModel=None):
 
 (func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infected_det_{grp} (+ infectious_det_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
-(func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
-
-(func prevalence_{grp} (/ infected_{grp} (- N_{grp} deaths_{grp} )))    
-(func seroprevalence_{grp} (/ (+ infected_{grp} recovered_{grp}) (- N_{grp} deaths_{grp} )))    
-
-(func prevalence_det_{grp} (/ infected_det_{grp} (- N_{grp} deaths_{grp} )))    
-(func seroprevalence_det_{grp} (/ (+ infected_det_{grp} recovered_det_{grp}) (- N_{grp} deaths_{grp} )))    
-
+(func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))   
+(func infected_det_cumul_{grp} (+ infected_det_{grp} recovered_det_{grp} D3_det3::{grp}))    
 """.format(grp=grp)
     
 
@@ -424,7 +415,8 @@ def write_N_population(grpList):
         stringAll = stringAll + string1
 
     string2 = "\n(param N_All (+ " + repeat_string_by_grp('N_', grpList) + "))"
-    stringAll = stringAll + string2
+    string3 = "\n(observe N_All N_All)"
+    stringAll = stringAll + string2 + string3
 
     return (stringAll)
 
@@ -439,13 +431,18 @@ def repeat_string_by_grp(fixedstring, grpList):
 
 
 def write_All(grpList, observeLevel='primary'):
-    
+
+    obs_primary_All_str = ""
+
     obs_primary_All_str = ""
     obs_primary_All_str = obs_primary_All_str + "\n(observe susceptible_All (+ " + repeat_string_by_grp('S::', grpList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe infected_All (+ " + repeat_string_by_grp('infected_', grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe infected_det_All (+ " + repeat_string_by_grp( 'infected_det_', grpList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe recovered_All (+ " + repeat_string_by_grp('recovered_',    grpList) + "))"
+    obs_primary_All_str = obs_primary_All_str + "\n(observe recovered_det_All (+ " + repeat_string_by_grp('recovered_det_',    grpList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe infected_cumul_All (+ " + repeat_string_by_grp('infected_cumul_', grpList) + "))"
- 
+    obs_primary_All_str = obs_primary_All_str + "\n(observe infected_det_cumul_All (+ " + repeat_string_by_grp('infected_det_cumul_', grpList) + "))"
+
     obs_primary_All_str = obs_primary_All_str + "\n(observe asymp_cumul_All (+ " + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe asymp_det_cumul_All (+ " + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe symptomatic_mild_All (+ " + repeat_string_by_grp(  'symptomatic_mild_', grpList) + "))"
@@ -471,7 +468,7 @@ def write_All(grpList, observeLevel='primary'):
     obs_primary_All_str = obs_primary_All_str + "\n(observe hosp_det_All (+ " + repeat_string_by_grp('hosp_det_', grpList) + "))"
     obs_primary_All_str = obs_primary_All_str + "\n(observe hospitalized_All (+ " + repeat_string_by_grp('hospitalized_', grpList) + "))"    
     
-    
+
     obs_secondary_All_str = ""
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe exposed_All (+ " + repeat_string_by_grp('E::',  grpList) + "))"
     
@@ -485,19 +482,14 @@ def write_All(grpList, observeLevel='primary'):
     
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_mild_det_All (+ " + repeat_string_by_grp(  'symptomatic_mild_det_', grpList) + "))"
     obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_severe_det_All (+ " + repeat_string_by_grp( 'symptomatic_severe_det_', grpList) + "))"
-    obs_secondary_All_str = obs_secondary_All_str + "\n(observe recovered_det_All (+ " + repeat_string_by_grp('recovered_det_',    grpList) + "))"   
-    
+
     
     obs_tertiary_All_str = ""
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_All (+ " + repeat_string_by_grp('infectious_det_', grpList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_undet_All (+ " + repeat_string_by_grp( 'infectious_undet_', grpList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_symp_All (+ " + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
     obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_AsP_All (+ " + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
-   
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_All (+ " + repeat_string_by_grp( 'prevalence_', grpList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_All (+ " + repeat_string_by_grp( 'seroprevalence_', grpList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe prevalence_det_All (+ " + repeat_string_by_grp( 'prevalence_det_', grpList) + "))"
-    obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe seroprevalence_det_All (+ " + repeat_string_by_grp( 'seroprevalence_det_', grpList) + "))"
+
 
     if observeLevel == 'primary' :
         obs_All_str = obs_primary_All_str
@@ -521,6 +513,7 @@ def write_Custom_Groups(grpDic,observeLevel):
         obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe infected_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_', grpList) + "))"
         obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe recovered_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('recovered_',    grpList) + "))"
         obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe infected_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_cumul_', grpList) + "))"
+        obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe infected_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infected_det_cumul_', grpList) + "))"
 
         obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe asymp_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymp_cumul_', grpList) + "))"
         obs_customGrp_primary_str = obs_customGrp_primary_str + """\n(observe asymp_det_cumul_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'asymp_det_cumul_', grpList) + "))"
@@ -570,11 +563,6 @@ def write_Custom_Groups(grpDic,observeLevel):
         obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe infectious_det_symp_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp('infectious_det_symp_', grpList) + "))"
         obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe infectious_det_AsP_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'infectious_det_AsP_', grpList) + "))"
 
-        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe prevalence_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'prevalence_', grpList) + "))"
-        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe seroprevalence_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'seroprevalence_', grpList) + "))"
-        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe prevalence_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'prevalence_det_', grpList) + "))"
-        obs_customGrp_tertiary_str = obs_customGrp_tertiary_str + """\n(observe seroprevalence_det_{obs_customGrp} (+ """.format(obs_customGrp=obs_customGrp) + repeat_string_by_grp( 'seroprevalence_det_', grpList) + "))"
-    
         if observeLevel == 'primary' :
             obs_customGrp_str = obs_customGrp_primary_str
         if observeLevel == 'secondary' :
@@ -1211,6 +1199,7 @@ if __name__ == '__main__':
     ### Emodls without migration between EMS areas
     generateBaselineReopeningEmodls = True
     if generateBaselineReopeningEmodls:
+        generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', observeLevel='all',  add_migration=False, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_obsall_EMS.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='continuedSIP', add_migration=False, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='rollback', add_migration=False, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_rollback.emodl'))
         generate_emodl(grpList=ems_grp, expandModel="testDelay_AsSymSys", add_interventions='reopen_rollback', add_migration=False, observe_customGroups = False, file_output=os.path.join(emodl_dir, 'extendedmodel_EMS_reopen_rollback.emodl'))
