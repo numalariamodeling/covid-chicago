@@ -59,28 +59,20 @@ def plot_prevalences(exp_name, first_day, last_day, channels=['prevalence'], fna
     ems = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
     column_list = ['time', 'startdate', 'scen_num', 'run_num', 'sample_num']
     for ems_num in ems:
-        if not ems_num == "All":
-            column_list.append('N_' + str(ems_num.replace("EMS-", "EMS_"))) # Fixed pop
         column_list.append('infected_' + str(ems_num))
         column_list.append('exposed_' + str(ems_num))
         column_list.append('recovered_' + str(ems_num))
         column_list.append('susceptible_' + str(ems_num))
 
     df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False)
-    df[f'N_All'] = df['N_EMS_1'] + df['N_EMS_2'] + df['N_EMS_3'] + df['N_EMS_4'] + df['N_EMS_5'] + df['N_EMS_6'] + \
-                   df['N_EMS_7'] + df['N_EMS_8'] + df['N_EMS_9'] + df['N_EMS_10'] + df['N_EMS_11']
 
     for ems_num in ems:
 
-        df[f'N_{ems_num}'] = df[f'N_{ems_num.replace("EMS-", "EMS_")}'] # Static N
-        df[f'N_t_{ems_num}'] = df[f'susceptible_{ems_num}'] + df[f'exposed_{ems_num}'] + \
-                               df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']  # Time varying N
+        df[f'N_{ems_num}'] = df[f'susceptible_{ems_num}'] + df[f'exposed_{ems_num}'] + \
+                             df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']
 
-        # df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_t_{ems_num}']
-        # df[f'seroprevalence_{ems_num}'] = (df[f'infected_{ems_num}'] + df[f'recovered_{ems_num}']) / df[f'N_t_{ems_num}']
         df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
-        df[f'seroprevalence_current_{ems_num}'] = (df[f'recovered_{ems_num}']) / df[f'N_{ems_num}']
-
+        df[f'seroprevalence_current_{ems_num}'] = df[f'recovered_{ems_num}'] / df[f'N_{ems_num}']
         df[f'seroprevalence_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_{ems_num}'].transform('shift', 14)
 
     df.to_csv(os.path.join(wdir, 'simulation_output', exp_name, "prevalenceDat.csv"), index=False,
