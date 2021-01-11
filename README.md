@@ -376,6 +376,9 @@ The postprocessing steps include 1) aggregation of the model predictions 2) prob
 The model is updated every week to fit to latest hospitalisation and deaths reports. 
 <details><summary>Show history of updates</summary>
 <p>  
+
+- 20210106 added region specific recovery time critical
+- 20201216 updated parameter fit
 - 20201204 updated parameter fit, use muliplier 11 for decrease in trend
 - 20201201 updated parameter fit
 - 20201130 added transmission multiplier 12
