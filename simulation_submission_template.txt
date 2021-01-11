@@ -19,6 +19,13 @@ python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extende
 python runScenarios.py -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS.emodl -n "baseline" --post_process "dataComparison" --noSamplePlot
 
 
+## Specify custom yaml files i.e. for testing 
+python runScenarios.py -rl Local -r IL -mc extendedcobey_200428_means_normal.yaml -c spatial_EMS_experiment_means.yaml -e extendedmodel_EMS.emodl -n "test_means_normal"
+python runScenarios.py -rl Local -r IL -mc extendedcobey_200428_means.yaml -c spatial_EMS_experiment_means.yaml -e extendedmodel_EMS.emodl -n "test_means"
+
+
+spatial_EMS_experiment_means_normal.yaml
+
 ## Current and past scenarios to submit for weekly updates
 
 ### Baseline and reopening scenarios
