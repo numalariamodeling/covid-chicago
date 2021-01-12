@@ -9,12 +9,12 @@ fixed_parameters_region_specific:
   populations:
     'NU': 12830632 # Used only to retain current framework.
   startdate:
-    'NU': 2021-01-01
+    'NU': 2021-01-03
 fixed_parameters_global:
 sampled_parameters:
   'expected_campus':
     np.random: uniform
-    function_kwargs: {'low': 3600, 'high':4000}
+    function_kwargs: {'low': 2500, 'high':3000}
   'expected_evanston':
     np.random: uniform
     function_kwargs: {'low': 4500, 'high':4900}
@@ -26,7 +26,7 @@ sampled_parameters:
     function_kwargs: {'low': 0.002, 'high':0.006}
   'expected_seroprevalence':
     np.random: uniform
-    function_kwargs: {'low': 0.10, 'high':0.20}
+    function_kwargs: {'low': 0.15, 'high':0.25}
   'time_to_infectious':
     np.random: uniform
     function_kwargs: {'low': 3.4, 'high':4.5}
@@ -74,7 +74,7 @@ sampled_parameters:
     function_kwargs: {'low': 0.85, 'high':0.95}
   'turnaround_time':
     np.random: uniform
-    function_kwargs: {'low': 1.75, 'high':3.25}
+    function_kwargs: {'low': 1.0, 'high':1.5}
   'time_to_isolate':
     np.random: uniform
     function_kwargs: {'low': 0, 'high':0}
@@ -111,6 +111,12 @@ sampled_parameters:
   'quar_period':
     np.random: uniform
     function_kwargs: {'low': 14, 'high':14}
+  'shelter_in_place_reduction':
+    np.random: uniform
+    function_kwargs: {'low': 0.5, 'high':0.5}
+  'wildcat_wellness_reduction':
+    np.random: uniform
+    function_kwargs: {'low': 0.5, 'high':0.5}
   'cfr': # Used only to retain current framework.
     np.random: uniform
     function_kwargs: {'low': 0.2, 'high':0.2}
@@ -126,11 +132,20 @@ intervention_parameters:
     function_kwargs: {'start': 0.1, 'stop': 0.2, 'num':2}
   'testing_period_campus':
     np: linspace
-    function_kwargs: {'start': 3.5, 'stop': 7.0, 'num':2}
+    function_kwargs: {'start': 7.0, 'stop': 7.0, 'num':1}
   'testing_period_evanston':
     np: linspace
     function_kwargs: {'start': 7.0, 'stop': 7.0, 'num':1}
 time_parameters:
+  'shelter_in_place_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-02-01}
+  'wildcat_wellness_start':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-01-03}
+  'wildcat_wellness_end':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-01-17}
 fitted_parameters:
   Kis: # Used only to retain current framework.
     'NU':
