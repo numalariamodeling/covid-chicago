@@ -65,14 +65,16 @@ def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True, 
 
     ax.set_title(panel_heading, y=0.85)
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
-    ax.set_ylim(0, ymax)
+    if not ymax is None:
+        ax.set_ylim(0, ymax)
 
-def plot_main(nscen=None, showLegend =True) :
+def plot_main(nscen=None, showLegend =True, channels=None) :
     fig = plt.figure(figsize=(15, 8))
     fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
     palette = sns.color_palette('GnBu_d', len(exp_names))
 
-    channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+    if channels ==None:
+        channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
     axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
     for d, exp_name in enumerate(exp_names) :
@@ -129,7 +131,7 @@ def plot_covidregions(subgroups =None,nscen=None, showLegend=True) :
         plt.savefig(os.path.join(plot_path, 'trajectories_%s.png' % region_label2))
         #plt.savefig(os.path.join(plot_path, 'pdf', 'trajectories_%s.pdf' % region_label2))
 
-def plot_covidregions_inone(subgroups=None,channel='hospitalized',nscen=None,showLegend = True, ymax=50) :
+def plot_covidregions_inone(subgroups=None,channel='hospitalized',nscen=None,showLegend = True, ymax=None) :
 
     if subgroups ==None:
         subgroups = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9',
@@ -169,7 +171,7 @@ if __name__ == '__main__' :
     trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    first_plot_day = date.today() - timedelta(60)
+    first_plot_day = date.today() - timedelta(300)
     last_plot_day = date.today() + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location="Local")
@@ -181,7 +183,14 @@ if __name__ == '__main__' :
         showLegend = True
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
-    plot_main(nscen=None, showLegend=showLegend)
+    plot_main(nscen=None, showLegend=showLegend, channels=['cfr_t','frac_crit_t','fraction_hospitalized_t',
+                                                           'fraction_dead_t','fraction_symptomatic','fraction_severe'])
+    #plot_main(nscen=None, showLegend=showLegend)
     #plot_covidregions(nscen=None, showLegend=showLegend)
     plot_covidregions_inone(channel='Ki_t', nscen=None, showLegend=showLegend, ymax=1.5)
     plot_covidregions_inone(channel='d_Sym_t', nscen=None, showLegend=showLegend, ymax=1)
+    #plot_covidregions_inone(channel='Ki_t', nscen=None, showLegend=showLegend, ymax=1.5)
+    #plot_covidregions_inone(channel='cfr_t', nscen=None, showLegend=showLegend)
+    #plot_covidregions_inone(channel='frac_crit_t', nscen=None, showLegend=showLegend)
+    #plot_covidregions_inone(channel='fraction_hospitalized_t', nscen=None, showLegend=showLegend1)
+    #plot_covidregions_inone(channel='fraction_dead_t', nscen=None, showLegend=showLegend)

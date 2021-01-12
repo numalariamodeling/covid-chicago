@@ -1,8 +1,8 @@
 experiment_setup_parameters:
-  'number_of_samples': 600
+  'number_of_samples': 50
   'number_of_runs': 1
-  'duration': 504
-  'monitoring_samples': 504 # needs to be less than or equal to duration
+  'duration': 730
+  'monitoring_samples': 730 # needs to be less than or equal to duration
   'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -41,88 +41,79 @@ fixed_parameters_region_specific:
 fixed_parameters_global:
 sampled_parameters:
   'time_to_infectious':
-    np.random: uniform
-    function_kwargs: {'low': 3.4, 'high':4.5}
+    np.random: normal
+    function_kwargs: {'loc': 3.981, 'scale':0.1}
   'time_to_symptoms':
-    np.random: uniform
-    function_kwargs: {'low': 2.4, 'high': 3.5}
+    np.random: normal
+    function_kwargs: {'loc': 2.967, 'scale':0.1}
   'time_to_hospitalization':
-    np.random: uniform
-    function_kwargs: {'low':3, 'high':6}
+    np.random: normal
+    function_kwargs: {'loc':4.713, 'scale':0.1}
   'time_to_critical':
-    np.random: uniform
-    function_kwargs: {'low':4, 'high':6}
+    np.random: normal
+    function_kwargs: {'loc':4.977, 'scale':0.1}
   'time_to_death':
-    np.random: uniform
-    function_kwargs: {'low':4, 'high':6}
+    np.random: normal
+    function_kwargs: {'loc':4.978, 'scale':0.1}
   ### DELAY BETWEEN ONSET OF SYMPTOMS AND BEING TESTED 
   ### Parameter values are substracted from the time values above and need to be >=1
   'time_to_detection':
-    np.random: uniform
-    function_kwargs: {'low':2.0, 'high':2.0}
+    np.random: normal
+    function_kwargs: {'loc':2.0, 'scale':0.1}
   ### Optionally use separate time to detection (use matching emodl))
   'time_to_detection_As':
-    np.random: uniform
-    function_kwargs: {'low':1.0, 'high':6.0}
+    np.random: normal
+    function_kwargs: {'loc':3.441, 'scale':0.1}
   'time_to_detection_Sym':
-    np.random: uniform
-    function_kwargs: {'low':7.0, 'high':7.0}
-    #function_kwargs: {'low':2.0, 'high':5.0}
+    np.random: normal
+    function_kwargs: {'loc':7.0, 'scale':0.1}
+    #function_kwargs: {'loc':2.0}
   'time_to_detection_Sys':
-    np.random: uniform
-    function_kwargs: {'low':2.0, 'high':2.0}
+    np.random: normal
+    function_kwargs: {'loc':2.0, 'scale':0.1}
   ### RECOVERY TIMES 
   'recovery_time_asymp':
-    np.random: uniform
-    function_kwargs: {'low':7, 'high':10}
+    np.random: normal
+    function_kwargs: {'loc':8.481, 'scale':0.1}
   'recovery_time_mild':
-    np.random: uniform
-    function_kwargs: {'low':9, 'high':9}
-    #function_kwargs: {'low':7, 'high':10}
+    np.random: normal
+    function_kwargs: {'loc':9, 'scale':0.1}
+    #function_kwargs: {'loc':7}
   'recovery_time_hosp':
-    np.random: uniform
-    function_kwargs: {'low':4, 'high':6}
+    np.random: normal
+    function_kwargs: {'loc':5.051, 'scale':0.1}
   'recovery_time_crit':
-    np.random: uniform
-    function_kwargs: {'low':8, 'high':10}
+    np.random: normal
+    function_kwargs: {'loc':9.000, 'scale':0.1}
   'fraction_symptomatic':
-    np.random: uniform
-    function_kwargs: {'low':0.5, 'high':0.7}
+    np.random: normal
+    function_kwargs: {'loc':0.601, 'scale':0.1}
   'fraction_severe':
-    np.random: uniform
-    function_kwargs: {'low':0.06, 'high':0.1}
+    np.random: normal
+    function_kwargs: {'loc':0.082, 'scale':0.01}
   'fraction_critical':
-    np.random: uniform
-    function_kwargs: {'low':0.20, 'high':0.35}
+    np.random: normal
+    function_kwargs: {'loc':0.271, 'scale':0.01}
   'cfr': 
-    np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.03}
+    np.random: normal
+    function_kwargs: {'loc':0.019, 'scale':0.001}
   'reduced_inf_of_det_cases':
-    np.random: uniform
-    function_kwargs: {'low':0, 'high':0.3}
-  'reduced_infectious_As':
-    np.random: uniform
-    function_kwargs: {'low':0.8, 'high':0.8}
-  'time_to_loose_immunity':
-    np.random: uniform
-    function_kwargs: {'low':365, 'high':365}
-  'fraction_lost_immunity':
-    np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
+    np.random: normal
+    function_kwargs: {'loc':0.159, 'scale':0.01}
   ## DETECTION RATES 
   ## In locale model, d_Sym is group specific
   #'d_Sym':
   #  np.random: uniform
   #  function_kwargs: {'low':0.00, 'high':0.02}
   'd_Sys':
-    np.random: uniform
-    function_kwargs: {'low':0.00, 'high':0.0185} 
+    np.random: normal
+    function_kwargs: {'loc':0.009, 'scale':0.001} 
   'd_As':
     np.random: uniform
     function_kwargs: {'low':0, 'high':0}
   'd_P':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}  
+    function_kwargs: {'low':0, 'high':0}
   ## TIME EVENT EFFECT SIZE PARAMETER  
   ### Reduce Ki due to stay-at-home policy
   #'ki_multiplier_3a':
@@ -137,57 +128,57 @@ sampled_parameters:
   ### Increased testing - increased detectioon of severe symptomatic infections
   ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
-    np.random: uniform
-    function_kwargs: {'low':0.029, 'high':0.090}
+    np.random: normal
+    function_kwargs: {'loc':0.061, 'scale':0.01}
   'd_Sys_incr2':
-    np.random: uniform
-    function_kwargs: {'low':0.090, 'high':0.192}
+    np.random: normal
+    function_kwargs: {'loc':0.143, 'scale':0.01}
   'd_Sys_incr3':
-    np.random: uniform
-    function_kwargs: {'low':0.192, 'high':0.330}
+    np.random: normal
+    function_kwargs: {'loc':0.261, 'scale':0.01}
   'd_Sys_incr4':
-    np.random: uniform
-    function_kwargs: {'low':0.330, 'high':0.450}
+    np.random: normal
+    function_kwargs: {'loc':0.393, 'scale':0.01}
   'd_Sys_incr5':
-    np.random: uniform
-    function_kwargs: {'low':0.450, 'high':0.600}
+    np.random: normal
+    function_kwargs: {'loc':0.518, 'scale':0.01}
   'd_Sys_incr6':
-    np.random: uniform
-    function_kwargs: {'low':0.600, 'high':0.800}
+    np.random: normal
+    function_kwargs: {'loc':0.708, 'scale':0.01}
   'd_Sys_incr7':
-    np.random: uniform
-    function_kwargs: {'low':0.800, 'high':1.000}
+    np.random: normal
+    function_kwargs: {'loc':0.898, 'scale':0.01}
   ### d_Sym
   ## In locale model, d_Sym  increase is group specific
   ## However when using this yaml for running single groups or non locale models it would be needed here
   #'d_Sym_incr1':
-  #  np.random: uniform
+  #  np.random: normal
   #  function_kwargs: {'low':0.000, 'high':0.049}
   #'d_Sym_incr2':
-  #  np.random: uniform
+  #  np.random: normal
   #  function_kwargs: {'low':0.022, 'high':0.078}
   #'d_Sym_incr3':
-  #  np.random: uniform
+  #  np.random: normal
   #  function_kwargs: {'low':0.045, 'high':0.111}
   #'d_Sym_incr4':
-  #  np.random: uniform
+  #  np.random: normal
   #  function_kwargs: {'low':0.047, 'high':0.111}
   #'d_Sym_incr5':
-  #  np.random: uniform
+  #  np.random: normal
   #  function_kwargs: {'low':0.058, 'high':0.147}
   #'d_Sym_incr6':
-  #  np.random: uniform
+  #  np.random: normal
   #  function_kwargs: {'low':0.097, 'high':0.258}
   ### fraction_critical
   'fraction_critical_incr1':
-    np.random: uniform
-    function_kwargs: {'low':0.13, 'high':0.23}
+    np.random: normal
+    function_kwargs: {'loc':0.176, 'scale':0.01}
   'fraction_critical_incr2':
-    np.random: uniform
-    function_kwargs: {'low':0.07, 'high':0.12}
+    np.random: normal
+    function_kwargs: {'loc':0.094, 'scale':0.01}
   'fraction_critical_incr3':
-    np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.09}
+    np.random: normal
+    function_kwargs: {'loc':0.069, 'scale':0.01}
 intervention_parameters:
   ### TIME-VARYING PARAMETER - EFFECT SIZE
   ### Reset Ki to defined proporions of it's initial value  
@@ -375,6 +366,9 @@ time_parameters:
   'cfr_time_2':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}   
+  'cfr_time_3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-01}   
   'start_time_2ndWave':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}   

@@ -125,10 +125,6 @@ def write_observe(observeLevel='primary'):
 (observe infectious_det infectious_det)
 (observe infectious_det_symp infectious_det_symp)
 (observe infectious_det_AsP infectious_det_AsP)
-(observe prevalence prevalence)    
-(observe seroprevalence seroprevalence )
-(observe prevalence_det prevalence_det)    
-(observe seroprevalence_det seroprevalence_det )
 """
 
     if observeLevel == 'primary' :
@@ -175,14 +171,7 @@ def write_functions(expandModel=None):
 
 (func infected (+ infectious_det infectious_undet H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected_det (+ infectious_det H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
-(func infected_cumul (+ infected recovered deaths))    
-
-(func prevalence (/ infected N))    
-(func seroprevalence (/ (+ infected recovered) N))    
-
-(func prevalence_det (/ infected_det N))    
-(func seroprevalence_det (/ (+ infected_det recovered_det) N))    
-
+(func infected_cumul (+ infected recovered deaths))      
 """
 
 
@@ -795,7 +784,7 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 
 ###stringing all of my functions together to make the file:
 
-def generate_emodl( file_output, expandModel, add_interventions, observeLevel='secondary', trigger_channel=None, change_testDelay =None):
+def generate_emodl( file_output, expandModel, add_interventions, observeLevel='all', trigger_channel=None, change_testDelay =None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 

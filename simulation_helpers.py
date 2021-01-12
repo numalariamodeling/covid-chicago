@@ -215,10 +215,10 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python hosp_icu_deaths_forecast_plotter.py --stem "{exp_name}"  \n')
             file.write(f'cd {plotters_dir} \n python plot_by_param_ICU_nonICU.py --exp_names "{exp_name}"  \n')
             file.write(f'cd {plotters_dir} \n python plot_prevalence.py --stem "{exp_name}"  \n')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/seroprevalence_plot.R" "{exp_name}" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_createAdditionalPlots.txt" \n')
+            #file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/seroprevalence_plot.R" "{exp_name}" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_createAdditionalPlots.txt" \n')
 
-            file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fitting/fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
+            #file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.bat'), 'w')
+            #file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
 
             ## runProcessForCivis
             file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.bat'), 'w')
@@ -228,14 +228,10 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" >> "{sim_output_path}/log/2_runProcessForCivis.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, '3_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "estimate_Rt/get_Rt_forCivisOutputs.R" "{exp_name}" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/3_runProcessForCivis.txt" \n')
+            file.write(f'cd {plotters_dir} \n python estimate_Rt_forCivisOutputs.py --exp_name "{exp_name}" >> "{sim_output_path}/log/3_runProcessForCivis.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" >> "{sim_output_path}/log/4_runProcessForCivis.txt" \n')
-
-            # R Iteration comparison plot 
-            file = open(os.path.join(temp_exp_dir, '5_runProcessForCivis_optional.bat'), 'w')
-            file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/compare_simulation_iterations.R" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/5_runProcessForCivis_optional.txt" \n')
+            file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n python "iteration_comparison.py" "{exp_name}" >> "{sim_output_path}/log/4_runProcessForCivis.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, '5_runProcessFor_CDPH.bat'), 'w')
             file.write(f'\ncd {data_plotters_dir} \n python "emresource_cli_per_covidregion.py" --cdph_date "{today.strftime("%Y%m%d")}"')
@@ -298,10 +294,10 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    rcommand = f'cd {os.path.join(rfiles_dir, "fitting")} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
-    file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.sh'), 'w')
-    file.write(header + jobname + err + out + rmodule + rcommand)
-    file.close()
+    #rcommand = f'cd {rfiles_dir} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
+    #file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.sh'), 'w')
+    #file.write(header + jobname + err + out + rmodule + rcommand)
+    #file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.sh'), 'w')
@@ -314,12 +310,12 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    rcommand =  f'cd {os.path.join(rfiles_dir, "estimate_Rt")} \n R --vanilla -f "get_Rt_forCivisOutputs.R" "{exp_name}" "NUCLUSTER" "{rfiles_dir}" \n'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/estimate_Rt_forCivisOutputs.py --exp_name "{exp_name}"'
     file = open(os.path.join(temp_exp_dir, '3_runProcessForCivis.sh'), 'w')
-    file.write(header + jobname + err + out + rmodule + rcommand)
+    file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/NUcivis_filecopy.py "{exp_name}"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/NUcivis_filecopy.py "{exp_name}" \n python "iteration_comparison.py" "{exp_name}"'
     file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
