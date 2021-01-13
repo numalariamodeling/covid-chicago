@@ -1,6 +1,5 @@
 """
-Compare COVID-19 simulation outputs to data.
-Used for spatial - covidregion - model
+Assigns negative log-likelihoods to each trace in a set of trajectories.
 """
 import argparse
 import os
