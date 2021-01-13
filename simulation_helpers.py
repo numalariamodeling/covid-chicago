@@ -200,14 +200,14 @@ echo end""")
         plotters_dir = os.path.join(git_dir, "plotters")
         data_plotters_dir = os.path.join(git_dir, "data_processing")
         rfiles_dir = os.path.join(git_dir, "Rfiles")
-        if experiment_config == "spatial_EMS_experiment.yaml" :
+        if "spatial_EMS" in experiment_config:
             fname = "data_comparison_spatial.py"
-        if experiment_config != "spatial_EMS_experiment.yaml" :
+        if "spatial_EMS" not in experiment_config:
             fname = "data_comparison.py"
         file = open(os.path.join(temp_exp_dir, '0_runDataComparison.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" >> "{sim_output_path}/log/0_runDataComparison.txt"  \n')
 
-        if experiment_config == "spatial_EMS_experiment.yaml" :
+        if "spatial_EMS" in experiment_config :
             file = open(os.path.join(temp_exp_dir, '0_runTrimTrajectories.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python trim_trajectoriesDat.py "{exp_name}" "{120}" "{15}" \n')
 
@@ -285,9 +285,9 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    if experiment_config == "spatial_EMS_experiment.yaml" :
+    if "spatial_EMS" in experiment_config:
         fname = "data_comparison_spatial.py"
-    if experiment_config != "spatial_EMS_experiment.yaml" :
+    if "spatial_EMS" not in experiment_config:
         fname = "data_comparison.py"
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, '0_compareToData.sh'), 'w')
