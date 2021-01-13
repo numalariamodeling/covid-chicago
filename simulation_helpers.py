@@ -200,9 +200,9 @@ echo end""")
         plotters_dir = os.path.join(git_dir, "plotters")
         data_plotters_dir = os.path.join(git_dir, "data_processing")
         rfiles_dir = os.path.join(git_dir, "Rfiles")
-        if experiment_config == "spatial_EMS_experiment.yaml" :
+        if "spatial_EMS" in experiment_config:
             fname = "data_comparison_spatial.py"
-        if experiment_config != "spatial_EMS_experiment.yaml" :
+        if "spatial_EMS" not in experiment_config:
             fname = "data_comparison.py"
         file = open(os.path.join(temp_exp_dir, '0_runDataComparison.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" >> "{sim_output_path}/log/0_runDataComparison.txt"  \n')
