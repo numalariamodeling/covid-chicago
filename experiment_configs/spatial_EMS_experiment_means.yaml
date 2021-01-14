@@ -180,10 +180,10 @@ sampled_parameters:
         - {'low': 0.330, 'high': 0.330}
         - {'low': 0.340, 'high': 0.340}
         - {'low': 0.260, 'high': 0.260}
-        - {'low': 0.188, 'high': 0.188}
+        - {'low': 0.189, 'high': 0.189}
         - {'low': 0.240, 'high': 0.240}
         - {'low': 0.255, 'high': 0.255}
-        - {'low': 0.180, 'high': 0.180}
+        - {'low': 0.190, 'high': 0.190}
   ki_multiplier_11:
     IL:
       expand_by_age: True
@@ -199,7 +199,7 @@ sampled_parameters:
         - {'low': 0.110, 'high': 0.110}
         - {'low': 0.115, 'high': 0.115}
         - {'low': 0.155, 'high': 0.155}
-        - {'low': 0.105, 'high': 0.105}
+        - {'low': 0.110, 'high': 0.110}
   ki_multiplier_12:
     IL:
       expand_by_age: True
@@ -320,14 +320,14 @@ sampled_parameters:
         - {'low': 9, 'high': 9}
         - {'low': 9, 'high': 9}
         - {'low': 8, 'high': 8}
-        - {'low': 6, 'high': 6}
+        - {'low': 3.25, 'high': 3.25}
         - {'low': 6, 'high': 6}
         - {'low': 4.5, 'high': 4.5}
+        - {'low': 3.5, 'high': 3.5}
+        - {'low': 3.5, 'high': 3.5}
+        - {'low': 3, 'high': 3}
         - {'low': 5, 'high': 5}
-        - {'low': 5, 'high': 5}
-        - {'low': 5, 'high': 5}
-        - {'low': 7, 'high': 7}
-        - {'low': 11, 'high': 11}
+        - {'low': 9, 'high': 9}
   recovery_time_crit_change_time_1:
     IL:
       expand_by_age: True
@@ -336,14 +336,14 @@ sampled_parameters:
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
+        - {'low': 311, 'high': 311}
         - {'low': 292, 'high': 292}
         - {'low': 262, 'high': 262}
+        - {'low': 231, 'high': 231}
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
+        - {'low': 184, 'high': 184}
   reopening_multiplier_4_not_used: #such that 100% exceed by Jan 1
     IL:
       expand_by_age: True
