@@ -69,6 +69,7 @@ def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona v
 
 def get_probs(exp_name):    
     trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
+    trajectories = trajectories.dropna()
     fname = get_latest_filedate()
     civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname))
     civis_template = civis_template.drop_duplicates()
@@ -110,7 +111,7 @@ def plot_probs(exp_name, show_75=True) :
     file_str = 'nu_hospitaloverflow_' + simdate + '.csv'
     df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, file_str))
     df['date'] = pd.to_datetime(df['date_window_upper_bound'])
-    df['date_md'] = df['date'].dt.strftime('%m-%d')
+    df['date_md'] = df['date'].dt.strftime('%m-%d\n%Y')
 
     covidregionlist = list(df.geography_modeled.unique())
 
