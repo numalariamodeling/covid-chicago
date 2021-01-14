@@ -75,6 +75,16 @@ def plot_prevalences(exp_name, first_day, last_day, channels, fname='trajectorie
                 column_list.append('recovered_det_' + str(ems_num))
                 column_list.append('deaths_det_' + str(ems_num))
         df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False)
+
+        for ems_num in ems:
+            sort_channels = ['scen_num','sample_num','run_num','time']
+            group_channels = ['scen_num','sample_num','run_num']
+            df[f'new_deaths_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'deaths_{ems_num}'].diff()
+            df[f'new_recovered_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'recovered_{ems_num}'].diff()
+            if get_det > 0:
+                df[f'new_deaths_det_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'deaths_det_{ems_num}'].diff()
+                df[f'new_recovered_det_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'recovered_det_{ems_num}'].diff()
+
         df = calculate_prevalence(df,ems=ems)
         #df.to_csv(os.path.join(wdir, 'simulation_output', exp_name, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
 
@@ -138,6 +148,7 @@ if __name__ == '__main__':
         plot_prevalences(exp_name, channels=['prevalence'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
         plot_prevalences(exp_name, channels=['seroprevalence'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
         plot_prevalences(exp_name, channels=['IFR'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
-        #plot_prevalences(exp_name, channels=['IFR', 'IFR_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
-        #plot_prevalences(exp_name, channels=['seroprevalence', 'seroprevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
-        #plot_prevalences(exp_name, channels=['prevalence', 'prevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
+        plot_prevalences(exp_name, channels=['IFR_t'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
+        plot_prevalences(exp_name, channels=['IFR', 'IFR_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
+        plot_prevalences(exp_name, channels=['seroprevalence', 'seroprevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
+        plot_prevalences(exp_name, channels=['prevalence', 'prevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
