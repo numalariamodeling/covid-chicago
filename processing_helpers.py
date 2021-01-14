@@ -13,7 +13,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='traje
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list, engine='python')
+    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
     df = df.dropna()
     try:
         first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
