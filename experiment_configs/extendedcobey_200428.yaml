@@ -74,7 +74,7 @@ sampled_parameters:
   ### RECOVERY TIMES 
   'recovery_time_asymp':
     np.random: uniform
-    function_kwargs: {'low':7, 'high':10}
+    function_kwargs: {'low':8.481, 'high':8.481}
   'recovery_time_mild':
     np.random: uniform
     function_kwargs: {'low':9, 'high':9}
