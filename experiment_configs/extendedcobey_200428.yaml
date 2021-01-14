@@ -163,7 +163,7 @@ sampled_parameters:
   'd_Sys_incr7':
     np.random: uniform
     function_kwargs: {'low':0.800, 'high':1.000}
-  ### Increase in d_Sym  
+  ###-------- Increase in d_Sym  ---------------
   ### In locale model, d_Sym  increase is group specific
   ### However when using this yaml for running single groups or non locale models it would be needed here
   #'d_Sym_incr1':
@@ -184,7 +184,15 @@ sampled_parameters:
   #'d_Sym_incr6':
   #  np.random: uniform
   #  function_kwargs: {'low':0.097, 'high':0.258}
-  ### fraction_critical
+  ### --------- Change in d_P and d_As -------------
+  ### Separate parameter but same value as in practice not distinguishible
+  'd_PAs_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.02, 'high':0.02}
+  'd_PAs_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.04, 'high':0.04}
+  ### ----- fraction_critical ----------
   'fraction_critical_incr1':
     np.random: uniform
     function_kwargs: {'low':0.13, 'high':0.23}
