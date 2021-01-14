@@ -889,20 +889,18 @@ def write_time_varying_parameter(grpList, total_string) :
                 """.format(grp=grp)
         ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
-    d_Sym_change_str = ""
-    for grp in grpList:
-        grpout = sub(grp)
-        temp_str = """
-(param d_Sym_{grp} @d_Sym_{grp}@)
-(observe d_Sym_t_{grpout} d_Sym_{grp})
+    d_Sym_change_str = """
+(observe d_Sym_t d_Sym)
 
-(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym_{grp} @d_Sym_change1_{grp}@)))
-(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym_{grp} @d_Sym_change2_{grp}@)))
-(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_{grp} @d_Sym_change3_{grp}@)))
-(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_{grp} @d_Sym_change4_{grp}@)))
-(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_{grp} @d_Sym_change5_{grp}@)))
-""".format(grpout=grpout, grp=grp)
-        d_Sym_change_str = d_Sym_change_str + temp_str
+(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@)))
+(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@)))
+(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@)))
+(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@)))
+(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@)))
+(time-event d_Sym_change6 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change6@)))
+(time-event d_Sym_change7 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change7@)))
+(time-event d_Sym_change8 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change8@)))
+"""
 
     d_PAs_change_str = """
 (observe d_P_t d_P)

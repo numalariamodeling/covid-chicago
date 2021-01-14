@@ -116,9 +116,9 @@ sampled_parameters:
     function_kwargs: {'low':0.8, 'high':0.8}
   ### ----DETECTION RATES ----------------------
   ### In locale model, d_Sym is group specific
-  #'d_Sym':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.00, 'high':0.02}
+  'd_Sym':
+    np.random: uniform
+    function_kwargs: {'low':0.00, 'high':0.02}
   'd_Sys':
     np.random: uniform
     function_kwargs: {'low':0.00, 'high':0.0185} 
@@ -169,24 +169,33 @@ sampled_parameters:
   ###-------- Increase in d_Sym  ---------------
   ### In locale model, d_Sym  increase is group specific
   ### However when using this yaml for running single groups or non locale models it would be needed here
-  #'d_Sym_incr1':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.000, 'high':0.049}
-  #'d_Sym_incr2':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.022, 'high':0.078}
-  #'d_Sym_incr3':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.045, 'high':0.111}
-  #'d_Sym_incr4':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.047, 'high':0.111}
-  #'d_Sym_incr5':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.058, 'high':0.147}
-  #'d_Sym_incr6':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.097, 'high':0.258}
+  'd_Sym_incr1':
+    np.random: uniform
+    function_kwargs: {'low':0.000, 'high':0.05}
+  'd_Sym_incr2':
+    np.random: uniform
+    function_kwargs: {'low':0.062, 'high':0.094}
+  'd_Sym_incr3':
+    np.random: uniform
+    function_kwargs: {'low': 0.108, 'high':0.162}
+  'd_Sym_incr4':
+    np.random: uniform
+    function_kwargs: {'low':0.13 , 'high':0.194}
+  'd_Sym_incr5':
+    np.random: uniform
+    function_kwargs: {'low':0.097, 'high':0.145}
+  'd_Sym_incr6':
+    np.random: uniform
+    function_kwargs: {'low':0.139 , 'high':0.209}
+  'd_Sym_incr6':
+    np.random: uniform
+    function_kwargs: {'low':0.131 , 'high':0.197}
+  'd_Sym_incr7':
+    np.random: uniform
+    function_kwargs: {'low':0.16 , 'high':0.24}
+  'd_Sym_incr8':
+    np.random: uniform
+    function_kwargs: {'low':0.376 , 'high':0.564}
   ### --------- Change in d_P and d_As -------------
   ### Separate parameter but same value as in practice not distinguishible
   'd_PAs_change1':
@@ -337,19 +346,28 @@ time_parameters:
   ### Change in d_Sym
   'd_Sym_change_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-15}
+    function_kwargs: {'dates': 2020-04-01}
   'd_Sym_change_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-15}
+    function_kwargs: {'dates': 2020-05-01}
   'd_Sym_change_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-01}
+    function_kwargs: {'dates': 2020-06-01}
   'd_Sym_change_time_4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-07-01}
   'd_Sym_change_time_5':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}
+    function_kwargs: {'dates': 2020-08-01}
+  'd_Sym_change_time_6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-01}
+  'd_Sym_change_time_7':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01}
+  'd_Sym_change_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-11-01}
   ### Change in d_P and d_As
   'd_PAs_change_time_1':
     custom_function: DateToTimestep
