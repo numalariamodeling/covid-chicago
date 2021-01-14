@@ -103,7 +103,7 @@ sampled_parameters:
     function_kwargs: {'low':0.06, 'high':0.1}
   'fraction_critical':
     np.random: uniform
-    function_kwargs: {'low':0.20, 'high':0.35}
+    function_kwargs: {'low':0.455, 'high':0.845}
   'cfr': 
     np.random: uniform
     function_kwargs: {'low':0.01, 'high':0.03}
@@ -205,15 +205,36 @@ sampled_parameters:
     np.random: uniform
     function_kwargs: {'low':0.04, 'high':0.04}
   ### ----- fraction_critical ----------
-  'fraction_critical_incr1':
+  'fraction_critical_change1':
     np.random: uniform
-    function_kwargs: {'low':0.13, 'high':0.23}
-  'fraction_critical_incr2':
+    function_kwargs: {'low':0.378, 'high':0.702}
+  'fraction_critical_change2':
     np.random: uniform
-    function_kwargs: {'low':0.07, 'high':0.12}
-  'fraction_critical_incr3':
+    function_kwargs: {'low':0.217, 'high':0.403}
+  'fraction_critical_change3':
     np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.09}
+    function_kwargs: {'low':0.154, 'high':0.286}
+  'fraction_critical_change4':
+    np.random: uniform
+    function_kwargs: {'low':0.126, 'high':0.234}
+  'fraction_critical_change5':
+    np.random: uniform
+    function_kwargs: {'low':0.119, 'high':0.221}
+  'fraction_critical_change6':
+    np.random: uniform
+    function_kwargs: {'low':0.112, 'high':0.208}
+  'fraction_critical_change7':
+    np.random: uniform
+    function_kwargs: {'low':0.105, 'high':0.195}
+  'fraction_critical_change8':
+    np.random: uniform
+    function_kwargs: {'low':0.091, 'high':0.169}
+  'fraction_critical_change9':
+    np.random: uniform
+    function_kwargs: {'low':0.070, 'high':0.13}
+  'fraction_critical_change10':
+    np.random: uniform
+    function_kwargs: {'low':0.042, 'high':0.078}
 intervention_parameters:
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - EFFECT SIZE
@@ -382,10 +403,31 @@ time_parameters:
     function_kwargs: {'dates': 2020-04-01} 
   'crit_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-01} 
+    function_kwargs: {'dates': 2020-04-15} 
   'crit_time_3':
     custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-01} 
+  'crit_time_4':
+    custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}
+  'crit_time_5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-01} 
+  'crit_time_6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-01} 
+  'crit_time_7':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-01}
+  'crit_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01} 
+  'crit_time_9':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-11-01} 
+  'crit_time_10':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-12-20}
   ### Change in CFR
   'cfr_time_1':
     custom_function: DateToTimestep
