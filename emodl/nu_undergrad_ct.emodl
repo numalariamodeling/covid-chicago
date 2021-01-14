@@ -14,23 +14,23 @@
 (param E_campus_init (floor (* expected_campus expected_prevalence)))
 (param R_campus_init (floor (* expected_campus expected_seroprevalence)))
 (param S_campus_init (floor (- expected_campus (+ E_campus_init R_campus_init))))
-(observe S_campus_init S_campus_init)
-(observe R_campus_init R_campus_init)
-(observe E_campus_init E_campus_init)
+;(observe S_campus_init S_campus_init)
+;(observe R_campus_init R_campus_init)
+;(observe E_campus_init E_campus_init)
 
 (param E_evanston_init (floor (* expected_evanston expected_prevalence)))
 (param R_evanston_init (floor (* expected_evanston expected_seroprevalence)))
 (param S_evanston_init (floor (- expected_evanston (+ E_evanston_init R_evanston_init))))
-(observe S_evanston_init S_evanston_init)
-(observe R_evanston_init R_evanston_init)
-(observe E_evanston_init E_evanston_init)
+;(observe S_evanston_init S_evanston_init)
+;(observe R_evanston_init R_evanston_init)
+;(observe E_evanston_init E_evanston_init)
 
 (param E_unofficial_init (floor (* expected_unofficial expected_prevalence)))
 (param R_unofficial_init (floor (* expected_unofficial expected_seroprevalence)))
 (param S_unofficial_init (floor (- expected_unofficial (+ E_unofficial_init R_unofficial_init))))
-(observe S_unofficial_init S_unofficial_init)
-(observe R_unofficial_init R_unofficial_init)
-(observe E_unofficial_init E_unofficial_init)
+;(observe S_unofficial_init S_unofficial_init)
+;(observe R_unofficial_init R_unofficial_init)
+;(observe E_unofficial_init E_unofficial_init)
 
 (param N_campus (+ E_campus_init R_campus_init S_campus_init))
 (param N_evanston (+ E_evanston_init R_evanston_init S_evanston_init))
@@ -103,6 +103,8 @@
 ; transmission parameters
 (param Ki_NU @Ki_NU@)
 (param Ki_nonNU @Ki_nonNU@)
+(observe Ki_NU_observe Ki_NU)
+(observe Ki_nonNU_observe Ki_nonNU)
 
 ; time to infectious
 (param time_to_infectious @time_to_infectious@)
@@ -224,8 +226,8 @@
 (observe infectious_adjusted infectious_adjusted)
 (observe prevalence prevalence)
 (observe seroprevalence seroprevalence)
-(observe prob_det_before_symptoms_campus prob_det_before_symptoms_campus)
-(observe N N)
+;(observe prob_det_before_symptoms_campus prob_det_before_symptoms_campus)
+;(observe N N)
 
 ; reaction helper functions
 (func detection_rate_campus_presym_det (/ (* prob_det_before_symptoms_campus P_campus) detection_time_before_symptoms))
@@ -339,5 +341,10 @@
 (reaction evanston_As_quarantine (E_campus) (As_evanston_quarantine) (max 0.0 (/ (* (- 1 prob_Sym) E_evanston_contacts_isolated) time_to_infectious)))
 (reaction evanston_quarantine_As_recovery (As_evanston_quarantine) (R_evanston) (/ As_evanston_quarantine time_to_recovery))
 (reaction evanston_quarantine_Sym_recovery (Sym_evanston_quarantine) (R_evanston) (/ Sym_evanston_quarantine (- time_to_recovery time_to_symptoms)))
+
+; time events
+(time-event shelter_in_place @shelter_in_place_time@ ((Ki_NU (* @shelter_in_place_reduction@ @Ki_NU@)) (Ki_nonNU (* @shelter_in_place_reduction@ @Ki_nonNU@))))
+(time-event ww_start @wildcat_wellness_start@ ((Ki_NU (* @wildcat_wellness_reduction@ @Ki_NU@))))
+(time-event ww_end @wildcat_wellness_end@ ((Ki_NU @Ki_NU@)))
 
 (end-model)
