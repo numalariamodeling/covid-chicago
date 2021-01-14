@@ -217,6 +217,7 @@ def calculate_prevalence(df, ems=None):
     for ems_num in ems:
             df[f'N_{ems_num}'] = df[f'N_{str(ems_num.replace("-","_"))}'] - df[f'deaths_{ems_num}']
             df[f'IFR_{ems_num}'] = df[f'deaths_{ems_num}'] / (df[f'recovered_{ems_num}'] + df[f'deaths_{ems_num}'])
+            df[f'IFR_t_{ems_num}'] = df[f'new_deaths_{ems_num}'] / (df[f'new_recovered_{ems_num}'] + df[f'new_deaths_{ems_num}'])
             df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
             df[f'seroprevalence_current_{ems_num}'] = df[f'recovered_{ems_num}'] / df[f'N_{ems_num}']
             df[f'seroprevalence_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_{ems_num}'].transform('shift', 14)
@@ -224,6 +225,7 @@ def calculate_prevalence(df, ems=None):
             if f'infected_det_{ems_num}' in df.columns:
                 df[f'N_det_{ems_num}'] = df[f'N_{str(ems_num.replace("-", "_"))}'] - df[f'deaths_det_{ems_num}']
                 df[f'IFR_det_{ems_num}'] = df[f'deaths_det_{ems_num}'] / (df[f'recovered_det_{ems_num}'] + df[f'deaths_det_{ems_num}'])
+                df[f'IFR_det_t_{ems_num}'] = df[f'new_deaths_det_{ems_num}'] / (df[f'new_recovered_det_{ems_num}'] + df[f'new_deaths_det_{ems_num}'])
                 df[f'prevalence_det_{ems_num}'] = df[f'infected_det_{ems_num}'] / df[f'N_det_{ems_num}']
                 df[f'seroprevalence_current_det_{ems_num}'] = df[f'recovered_det_{ems_num}'] / df[f'N_det_{ems_num}']
                 df[f'seroprevalence_det_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_det_{ems_num}'].transform('shift', 14)
