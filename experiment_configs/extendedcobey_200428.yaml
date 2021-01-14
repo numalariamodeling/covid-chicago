@@ -169,31 +169,31 @@ sampled_parameters:
   ###-------- Increase in d_Sym  ---------------
   ### In locale model, d_Sym  increase is group specific
   ### However when using this yaml for running single groups or non locale models it would be needed here
-  'd_Sym_incr1':
+  'd_Sym_change1':
     np.random: uniform
     function_kwargs: {'low':0.000, 'high':0.05}
-  'd_Sym_incr2':
+  'd_Sym_change2':
     np.random: uniform
     function_kwargs: {'low':0.062, 'high':0.094}
-  'd_Sym_incr3':
+  'd_Sym_change3':
     np.random: uniform
     function_kwargs: {'low': 0.108, 'high':0.162}
-  'd_Sym_incr4':
+  'd_Sym_change4':
     np.random: uniform
     function_kwargs: {'low':0.13 , 'high':0.194}
-  'd_Sym_incr5':
+  'd_Sym_change5':
     np.random: uniform
     function_kwargs: {'low':0.097, 'high':0.145}
-  'd_Sym_incr6':
+  'd_Sym_change6':
     np.random: uniform
     function_kwargs: {'low':0.139 , 'high':0.209}
-  'd_Sym_incr6':
+  'd_Sym_change6':
     np.random: uniform
     function_kwargs: {'low':0.131 , 'high':0.197}
-  'd_Sym_incr7':
+  'd_Sym_change7':
     np.random: uniform
     function_kwargs: {'low':0.16 , 'high':0.24}
-  'd_Sym_incr8':
+  'd_Sym_change8':
     np.random: uniform
     function_kwargs: {'low':0.376 , 'high':0.564}
   ### --------- Change in d_P and d_As -------------
