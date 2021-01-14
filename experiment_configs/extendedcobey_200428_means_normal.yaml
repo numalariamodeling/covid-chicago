@@ -1,14 +1,18 @@
 experiment_setup_parameters:
   'number_of_samples': 50
   'number_of_runs': 1
-  'duration': 730
-  'monitoring_samples': 730 # needs to be less than or equal to duration
+  'duration': 504
+  'monitoring_samples': 504 # needs to be less than or equal to duration
   'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
   populations:
-    'IL': 12671821
+    ### Not actively used
     'NMH_catchment': 327667
+    'Chicago': 2456274
+    ### Used for spatial model, or base model all IL
+    'IL': 12671821
+    ### Used for base and age model    
     'EMS_1': 660965
     'EMS_2': 1243906
     'EMS_3': 556776
@@ -21,12 +25,15 @@ fixed_parameters_region_specific:
     'EMS_10': 2693959
     'EMS_11': 2456274
   startdate:
-    'NMH_catchment': 2020-02-28
-    'Chicago': 2020-02-20  
-    'IL': 2020-02-13  # used for spatial model 
     # To specify a range of dates instead of a single date:
     # 'EMS_1': [2020-02-26, 2020-02-28]
-    # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.                                                           
+    # This would mean using all dates between 2020-02-26 and 2020-02-28, inclusive.  
+    ### Not actively used
+    'NMH_catchment': 2020-02-28
+    'Chicago': 2020-02-20 
+    ### Used for spatial model, or base model all IL
+    'IL': 2020-02-13 
+    ### Used for base and age model    
     'EMS_1': 2020-02-26       
     'EMS_2': 2020-02-25  
     'EMS_3': 2020-02-16     
@@ -40,6 +47,7 @@ fixed_parameters_region_specific:
     'EMS_11': 2020-02-22       
 fixed_parameters_global:
 sampled_parameters:
+  ### ---- INFECTION AND DISEASE PROGRESSION TIMES ---------- 
   'time_to_infectious':
     np.random: normal
     function_kwargs: {'loc': 3.981, 'scale':0.1}
@@ -55,36 +63,38 @@ sampled_parameters:
   'time_to_death':
     np.random: normal
     function_kwargs: {'loc':4.978, 'scale':0.1}
-  ### DELAY BETWEEN ONSET OF SYMPTOMS AND BEING TESTED 
-  ### Parameter values are substracted from the time values above and need to be >=1
+  ### ---- DETECTION TIMES  ----------------------- 
+  ### Time to detection for all (not used,depending on model specification)
   'time_to_detection':
     np.random: normal
     function_kwargs: {'loc':2.0, 'scale':0.1}
-  ### Optionally use separate time to detection (use matching emodl))
+  ### Time to detection for As
   'time_to_detection_As':
     np.random: normal
     function_kwargs: {'loc':3.441, 'scale':0.1}
+  ### Time to detection for Sym
   'time_to_detection_Sym':
     np.random: normal
     function_kwargs: {'loc':7.0, 'scale':0.1}
-    #function_kwargs: {'loc':2.0}
+    #function_kwargs: {'low':2.0, 'high':5.0}
+  ### Time to detection for Sys
   'time_to_detection_Sys':
     np.random: normal
     function_kwargs: {'loc':2.0, 'scale':0.1}
-  ### RECOVERY TIMES 
+  ### ---- RECOVERY TIMES  ----------------------- 
   'recovery_time_asymp':
     np.random: normal
     function_kwargs: {'loc':8.481, 'scale':0.1}
   'recovery_time_mild':
     np.random: normal
     function_kwargs: {'loc':9, 'scale':0.1}
-    #function_kwargs: {'loc':7}
   'recovery_time_hosp':
     np.random: normal
     function_kwargs: {'loc':5.051, 'scale':0.1}
   'recovery_time_crit':
     np.random: normal
     function_kwargs: {'loc':9.000, 'scale':0.1}
+  ### ---- FRACTIONS  ----------------------- 
   'fraction_symptomatic':
     np.random: normal
     function_kwargs: {'loc':0.601, 'scale':0.1}
@@ -97,11 +107,12 @@ sampled_parameters:
   'cfr': 
     np.random: normal
     function_kwargs: {'loc':0.019, 'scale':0.001}
+  ### ---- INFECTIOUSNESS  ----------------------
   'reduced_inf_of_det_cases':
     np.random: normal
     function_kwargs: {'loc':0.159, 'scale':0.01}
-  ## DETECTION RATES 
-  ## In locale model, d_Sym is group specific
+  ### ----DETECTION RATES ----------------------
+  ### In locale model, d_Sym is group specific
   #'d_Sym':
   #  np.random: uniform
   #  function_kwargs: {'low':0.00, 'high':0.02}
@@ -113,8 +124,10 @@ sampled_parameters:
     function_kwargs: {'low':0, 'high':0}
   'd_P':
     np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
-  ## TIME EVENT EFFECT SIZE PARAMETER  
+    function_kwargs: {'low':0, 'high':0}  
+  ###------------------------------------------------
+  ### TIME_VARYING PARAMETERS  - EFFECT SIZE 
+  ###------------------------------------------------
   ### Reduce Ki due to stay-at-home policy
   #'ki_multiplier_3a':
   #  np.random: uniform
@@ -126,7 +139,6 @@ sampled_parameters:
   #  np.random: uniform
   #  function_kwargs: {'low':0.08, 'high':0.08}        
   ### Increased testing - increased detectioon of severe symptomatic infections
-  ### (only used if corresponding emodl is defined)    
   'd_Sys_incr1':
     np.random: normal
     function_kwargs: {'loc':0.061, 'scale':0.01}
@@ -148,26 +160,26 @@ sampled_parameters:
   'd_Sys_incr7':
     np.random: normal
     function_kwargs: {'loc':0.898, 'scale':0.01}
-  ### d_Sym
-  ## In locale model, d_Sym  increase is group specific
-  ## However when using this yaml for running single groups or non locale models it would be needed here
+  ### Increase in d_Sym  
+  ### In locale model, d_Sym  increase is group specific
+  ### However when using this yaml for running single groups or non locale models it would be needed here
   #'d_Sym_incr1':
-  #  np.random: normal
+  #  np.random: uniform
   #  function_kwargs: {'low':0.000, 'high':0.049}
   #'d_Sym_incr2':
-  #  np.random: normal
+  #  np.random: uniform
   #  function_kwargs: {'low':0.022, 'high':0.078}
   #'d_Sym_incr3':
-  #  np.random: normal
+  #  np.random: uniform
   #  function_kwargs: {'low':0.045, 'high':0.111}
   #'d_Sym_incr4':
-  #  np.random: normal
+  #  np.random: uniform
   #  function_kwargs: {'low':0.047, 'high':0.111}
   #'d_Sym_incr5':
-  #  np.random: normal
+  #  np.random: uniform
   #  function_kwargs: {'low':0.058, 'high':0.147}
   #'d_Sym_incr6':
-  #  np.random: normal
+  #  np.random: uniform
   #  function_kwargs: {'low':0.097, 'high':0.258}
   ### fraction_critical
   'fraction_critical_incr1':
@@ -180,14 +192,18 @@ sampled_parameters:
     np.random: normal
     function_kwargs: {'loc':0.069, 'scale':0.01}
 intervention_parameters:
-  ### TIME-VARYING PARAMETER - EFFECT SIZE
+  ###------------------------------------------------
+  ### INTERVENTION PARAMETERS  - EFFECT SIZE
+  ### (only used if corresponding emodl is defined)   
+  ###------------------------------------------------  
+  ### ---- IMMEDIATE REOPENING ----------------------
   ### Reset Ki to defined proporions of it's initial value  
-  ### (only used if corresponding emodl is defined)    
   'backtonormal_multiplier':
     np.random: uniform
     # Add 'size' in function_kwargs to have multiple values instead of just one
     function_kwargs: {'low':0.10, 'high':0.10}
-  ### Gradual reopening (time-wise)
+  ### ---- GRADUAL REOPENING ----------------------
+  ### Reset Ki to defined proporions of it's initial value using multiple time-events
   ### Default in the yaml is a linear increase, scaling  reopening_multiplier_4 by 0.25, 0.5, 0.75 and 1
   #'reopening_multiplier_1':
   #  np.random: uniform
@@ -201,14 +217,7 @@ intervention_parameters:
   'reopening_multiplier_4':
     np: linspace
     function_kwargs: {'start':0, 'stop':0.20, 'num' : 1}
-  ### INCREASE DETECTION RATES of asymptomatic, presymptomatic and mild infections
-  'd_AsP_ct1':
-    np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
-  ### Since d_Sym differs per group, this parameter defines relative increase rather than fraction detected!
-  'd_Sym_ct1':
-    np.random: uniform
-    function_kwargs: {'low':0.170, 'high':0.170}
+  ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
     function_kwargs: {'start':2, 'stop':7, 'num' : 1}
@@ -216,21 +225,35 @@ intervention_parameters:
     np: linspace
     function_kwargs: {'start':2, 'stop':7, 'num' : 1}
     #function_kwargs: {'start':2, 'stop':7, 'num' : 11}
-  #### Change 'isolation success' in contact tracing simulations
+  ### ---- CONTACT TRACING ----------------------
+  ### increase detection rates of asymptomatic, presymptomatic and mild infections
+  'd_AsP_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0, 'high':0}
+  ### Since d_Sym differs per group, this parameter defines relative increase rather than fraction detected!
+  'd_Sym_ct1':
+    np.random: uniform
+    function_kwargs: {'low':0.170, 'high':0.170}
   'reduced_inf_of_det_cases_ct1':
     np.random: uniform
     function_kwargs: {'low':0, 'high':1}
+  ### ---- TRIGGERED 'LOCKDOWN' ----------------------
+  ### decreases transmission rate at a specific threshold (spatial model only)
   'capacity_multiplier':
     np.random: uniform
     function_kwargs: {'low':0.75, 'high':0.75}
   'trigger_delay_days':
     np.random: uniform
-    function_kwargs: {'low':1, 'high':1}   
+    function_kwargs: {'low':1, 'high':1}  
+  ### ---- AGE MODEL SPECIFIC ----------------------
+  ### Adjusts transmission among elderly during 2nd wave (age model only)
   'multiplier_elderly':
     np.random: uniform
     function_kwargs: {'low': 0.6, 'high':0.6}
 time_parameters:
-  ### TIME-VARYING PARAMETER  - DATES
+  ###------------------------------------------------
+  ### TIME_VARYING PARAMETERS  - DATES
+  ###------------------------------------------------
   ### Reduce Ki due to stay-at-home policy 
   'ki_multiplier_time_3a':
     custom_function: DateToTimestep
@@ -271,36 +294,8 @@ time_parameters:
   'ki_multiplier_time_12':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-12-20}
-  'socialDistance_rollback_time':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-11-14}
-    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01, 2020-08-15, 2020-08-30, 2020-09-15]}
-  ### Reset Ki to defined proporions of it's initial value  
-  ### (only used if corresponding emodl is defined)    
-  'socialDistanceSTOP_time':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
-  ### Gradual reopening (time-wise)
-  'gradual_reopening_time1':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
-  'gradual_reopening_time2':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-03}        
-  'gradual_reopening_time3':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-08}    
-  'gradual_reopening_time4':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-13}  
-  ### 'today' parameter used to constrain after when state events can be activated
-  ### should be set to after reopening time events are completed
-  'today' :
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-14}
-  ### Increased testing - increased detectioon of severe symptomatic infections
-  ### (only used if corresponding emodl is defined)
-  ### Use fixed dates or define detection time relative to  ki_multiplier_time_3c
+  ### ---- Increased detections ---- 
+  ### Change in d_Sys
   'detection_time_1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-07}
@@ -322,15 +317,7 @@ time_parameters:
   'detection_time_7':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}
-  'crit_time_1':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-01} 
-  'crit_time_2':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-01} 
-  'crit_time_3':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+  ### Change in d_Sym
   'd_Sym_change_time_1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-03-15}
@@ -346,43 +333,90 @@ time_parameters:
   'd_Sym_change_time_5':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}
-  ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
-  ### Note detection of asymptomatic and presymptomatic assumed to be the same
-  ### (only used if corresponding emodl is defined)
-  'contact_tracing_start_1':
+  ### ---- Better case/ decreased mortality ---- 
+  ###  Change in fraction_critical 
+  'crit_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
-  ## stop after simulation end to simulate indefinite contact tracing
-  'contact_tracing_stop1':
+    function_kwargs: {'dates': 2020-04-01} 
+  'crit_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2022-05-30}
-  'change_testDelay_time1':
+    function_kwargs: {'dates': 2020-05-01} 
+  'crit_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
-    #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
+    function_kwargs: {'dates': 2020-06-01}
+  ### Change in CFR
   'cfr_time_1':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}   
   'cfr_time_2':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}   
-  'cfr_time_3':
+  ###------------------------------------------------
+  ### INTERVENTION PARAMETERS  - DATES
+  ### (only used with corresponding emodl)
+  ###------------------------------------------------
+  ### ---- IMMEDIATE REOPENING ---
+  'socialDistance_rollback_time':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-01}   
+    function_kwargs: {'dates': 2020-11-14}
+    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01, 2020-08-15, 2020-08-30, 2020-09-15]}
+  ### Reset Ki to defined proporions of it's initial value  
+  ### (only used if corresponding emodl is defined)    
+  'socialDistanceSTOP_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-30}
+  ### ---- GRADUAL REOPENING ---
+  'gradual_reopening_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-30}
+  'gradual_reopening_time2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-03}        
+  'gradual_reopening_time3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-08}    
+  'gradual_reopening_time4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-13}  
+  ### ---- TRIGGERED 'LOCKDOWN' ---
+  ### 'today' parameter used to constrain after when state events can be activated
+  ### should be set to after reopening time events are completed
+  'today' :
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-14}
+  ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
+  'change_testDelay_time1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-30}
+    #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
+  ### ---- CONTACT TRACING ---
+  ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
+  ### Note detection of asymptomatic and presymptomatic assumed to be the same
+  'contact_tracing_start_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-30}
+  ### Stop after simulation end to simulate indefinite contact tracing
+  'contact_tracing_stop1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2022-05-30}
+  ### Specific for age model
   'start_time_2ndWave':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}   
 fitted_parameters:
   Kis:
+    #### NOT ACTIVELY USED
     'NMH_catchment':
       np: linspace
       function_kwargs: {'start': 1.5e-6, 'stop': 2.0e-6, 'num': 1}
     'Chicago':
       np: linspace
       function_kwargs: {'start': 2.0e-7, 'stop': 3.0e-7, 'num': 1}
+    #### LOCALE/SPATIAL MODEL - PLACEHOLDER (Ki's are in spatial yaml)
     'IL':
       np: linspace
       function_kwargs: {'start': 6.0e-8, 'stop': 9.0e-8, 'num': 1}
+    #### BASE AND AGE MODEL - RUNNING SEPARATE REGIONS
     'EMS_1':
       np: linspace
       function_kwargs: {'start': 0.628, 'stop': 0.628, 'num': 1}
