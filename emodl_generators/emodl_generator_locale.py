@@ -834,13 +834,14 @@ def write_time_varying_parameter(grpList, total_string) :
 
     param_change_str = """
 (observe d_Sys_t d_Sys)
-(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
-(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
-(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
-(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@)))
-(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
-(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
-(time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
+(time-event dSys_change1 @d_Sys_change_time_1@ ((d_Sys @d_Sys_incr1@)))
+(time-event dSys_change2 @d_Sys_change_time_2@ ((d_Sys @d_Sys_incr2@)))
+(time-event dSys_change3 @d_Sys_change_time_3@ ((d_Sys @d_Sys_incr3@)))
+(time-event dSys_change4 @d_Sys_change_time_4@ ((d_Sys @d_Sys_incr4@)))
+(time-event dSys_change5 @d_Sys_change_time_5@ ((d_Sys @d_Sys_incr5@)))
+(time-event dSys_change6 @d_Sys_change_time_6@ ((d_Sys @d_Sys_incr6@)))
+(time-event dSys_change7 @d_Sys_change_time_7@ ((d_Sys @d_Sys_incr7@)))
+(time-event dSys_change8 @d_Sys_change_time_8@ ((d_Sys @d_Sys_incr8@)))
 
 (observe frac_crit_t fraction_critical)
 (observe fraction_hospitalized_t fraction_hospitalized)

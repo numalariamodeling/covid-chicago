@@ -144,25 +144,28 @@ sampled_parameters:
   ### Increased testing - increased detectioon of severe symptomatic infections
   'd_Sys_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.029, 'high':0.090}
+    function_kwargs: {'low':0.131, 'high':0.177}
   'd_Sys_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.090, 'high':0.192}
+    function_kwargs: {'low':0.433, 'high':0.585}
   'd_Sys_incr3':
     np.random: uniform
-    function_kwargs: {'low':0.192, 'high':0.330}
+    function_kwargs: {'low':0.672, 'high':0.910}
   'd_Sys_incr4':
     np.random: uniform
-    function_kwargs: {'low':0.330, 'high':0.450}
+    function_kwargs: {'low':0.746, 'high':1.000}
   'd_Sys_incr5':
     np.random: uniform
-    function_kwargs: {'low':0.450, 'high':0.600}
+    function_kwargs: {'low':0.478, 'high':0.646}
   'd_Sys_incr6':
     np.random: uniform
-    function_kwargs: {'low':0.600, 'high':0.800}
+    function_kwargs: {'low':0.435 , 'high':0.589}
   'd_Sys_incr7':
     np.random: uniform
-    function_kwargs: {'low':0.800, 'high':1.000}
+    function_kwargs: {'low':0.592, 'high':0.800}
+  'd_Sys_incr8':
+    np.random: uniform
+    function_kwargs: {'low':0.746, 'high':1.000}
   ###-------- Increase in d_Sym  ---------------
   ### In locale model, d_Sym  increase is group specific
   ### However when using this yaml for running single groups or non locale models it would be needed here
@@ -307,27 +310,30 @@ time_parameters:
     function_kwargs: {'dates': 2020-12-20}
   ### ---- Increased detections ---- 
   ### Change in d_Sys
-  'detection_time_1':
+  'd_Sys_change_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-07}
-  'detection_time_2':
+    function_kwargs: {'dates': 2020-03-15}
+  'd_Sys_change_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-14}
-  'detection_time_3':
+    function_kwargs: {'dates': 2020-04-01}
+  'd_Sys_change_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21} 
-  'detection_time_4':
+    function_kwargs: {'dates': 2020-05-01}
+  'd_Sys_change_time_4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-28} 
-  'detection_time_5':
+    function_kwargs: {'dates': 2020-06-01} 
+  'd_Sys_change_time_5':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-04}
-  'detection_time_6':
+    function_kwargs: {'dates': 2020-07-01} 
+  'd_Sys_change_time_6':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-18}
-  'detection_time_7':
+    function_kwargs: {'dates': 2020-08-01}
+  'd_Sys_change_time_7':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-09-01}
+  'd_Sys_change_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01}
   ### Change in d_Sym
   'd_Sym_change_time_1':
     custom_function: DateToTimestep
