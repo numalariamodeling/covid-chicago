@@ -344,6 +344,13 @@ time_parameters:
   'd_Sym_change_time_5':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}
+  ### Change in d_P and d_As
+  'd_PAs_change_time_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01}
+  'd_PAs_change_time_2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01}
   ### ---- Better case/ decreased mortality ---- 
   ###  Change in fraction_critical 
   'crit_time_1':
