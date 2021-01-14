@@ -1998,6 +1998,7 @@
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_1 @d_Sym_change4_EMS_1@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_1 @d_Sym_change5_EMS_1@)))
 
+
 (param d_Sym_EMS_2 @d_Sym_EMS_2@)
 (observe d_Sym_t_EMS-2 d_Sym_EMS_2)
 
@@ -2006,6 +2007,7 @@
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_EMS_2 @d_Sym_change3_EMS_2@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_2 @d_Sym_change4_EMS_2@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_2 @d_Sym_change5_EMS_2@)))
+
 
 (param d_Sym_EMS_3 @d_Sym_EMS_3@)
 (observe d_Sym_t_EMS-3 d_Sym_EMS_3)
@@ -2016,6 +2018,7 @@
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_3 @d_Sym_change4_EMS_3@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_3 @d_Sym_change5_EMS_3@)))
 
+
 (param d_Sym_EMS_4 @d_Sym_EMS_4@)
 (observe d_Sym_t_EMS-4 d_Sym_EMS_4)
 
@@ -2024,6 +2027,7 @@
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_EMS_4 @d_Sym_change3_EMS_4@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_4 @d_Sym_change4_EMS_4@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_4 @d_Sym_change5_EMS_4@)))
+
 
 (param d_Sym_EMS_5 @d_Sym_EMS_5@)
 (observe d_Sym_t_EMS-5 d_Sym_EMS_5)
@@ -2034,6 +2038,7 @@
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_5 @d_Sym_change4_EMS_5@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_5 @d_Sym_change5_EMS_5@)))
 
+
 (param d_Sym_EMS_6 @d_Sym_EMS_6@)
 (observe d_Sym_t_EMS-6 d_Sym_EMS_6)
 
@@ -2042,6 +2047,7 @@
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_EMS_6 @d_Sym_change3_EMS_6@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_6 @d_Sym_change4_EMS_6@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_6 @d_Sym_change5_EMS_6@)))
+
 
 (param d_Sym_EMS_7 @d_Sym_EMS_7@)
 (observe d_Sym_t_EMS-7 d_Sym_EMS_7)
@@ -2052,6 +2058,7 @@
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_7 @d_Sym_change4_EMS_7@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_7 @d_Sym_change5_EMS_7@)))
 
+
 (param d_Sym_EMS_8 @d_Sym_EMS_8@)
 (observe d_Sym_t_EMS-8 d_Sym_EMS_8)
 
@@ -2060,6 +2067,7 @@
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_EMS_8 @d_Sym_change3_EMS_8@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_8 @d_Sym_change4_EMS_8@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_8 @d_Sym_change5_EMS_8@)))
+
 
 (param d_Sym_EMS_9 @d_Sym_EMS_9@)
 (observe d_Sym_t_EMS-9 d_Sym_EMS_9)
@@ -2070,6 +2078,7 @@
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_9 @d_Sym_change4_EMS_9@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_9 @d_Sym_change5_EMS_9@)))
 
+
 (param d_Sym_EMS_10 @d_Sym_EMS_10@)
 (observe d_Sym_t_EMS-10 d_Sym_EMS_10)
 
@@ -2079,6 +2088,7 @@
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_10 @d_Sym_change4_EMS_10@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_10 @d_Sym_change5_EMS_10@)))
 
+
 (param d_Sym_EMS_11 @d_Sym_EMS_11@)
 (observe d_Sym_t_EMS-11 d_Sym_EMS_11)
 
@@ -2087,6 +2097,7 @@
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym_EMS_11 @d_Sym_change3_EMS_11@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym_EMS_11 @d_Sym_change4_EMS_11@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym_EMS_11 @d_Sym_change5_EMS_11@)))
+
 
 
 (param recovery_time_crit_EMS_1 recovery_time_crit)
@@ -2143,6 +2154,12 @@
 (param Kr_c_EMS_11 (/ 1 recovery_time_crit_EMS_11))
 (observe recovery_time_crit_t_EMS-11 recovery_time_crit_EMS_11)
 (time-event LOS_ICU_change_1 @recovery_time_crit_change_time_1_EMS_11@ ((recovery_time_crit_EMS_11 @recovery_time_crit_change1_EMS_11@) (Kr_c_EMS_11 (/ 1 @recovery_time_crit_change1_EMS_11@))))
+
+
+(observe d_P_t d_P)
+(observe d_As_t d_As)
+(time-event d_PAs_change1 @d_PAs_change_time_1@ ((d_P @d_PAs_change1@) (d_As @d_PAs_change1@) ))
+(time-event d_PAs_change1 @d_PAs_change_time_2@ ((d_P @d_PAs_change2@) (d_As @d_PAs_change2@) ))
 
 ;[INTERVENTIONS]
 

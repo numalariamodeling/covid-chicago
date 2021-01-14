@@ -903,6 +903,13 @@ def write_time_varying_parameter(grpList, total_string) :
 """.format(grpout=grpout, grp=grp)
         d_Sym_change_str = d_Sym_change_str + temp_str
 
+    d_PAs_change_str = """
+(observe d_P_t d_P)
+(observe d_As_t d_As)
+(time-event d_PAs_change1 @d_PAs_change_time_1@ ((d_P @d_PAs_change1@) (d_As @d_PAs_change1@) ))
+(time-event d_PAs_change1 @d_PAs_change_time_2@ ((d_P @d_PAs_change2@) (d_As @d_PAs_change2@) ))
+"""
+
     recovery_time_crit_change_str = ""
     for grp in grpList:
         grpout = sub(grp)
@@ -917,7 +924,9 @@ def write_time_varying_parameter(grpList, total_string) :
     param_update_string = param_change_str + \
                           '\n' + ki_multiplier_change_str + \
                           '\n' + d_Sym_change_str + \
-                          '\n' + recovery_time_crit_change_str
+                          '\n' + recovery_time_crit_change_str + \
+                          '\n' + d_PAs_change_str
+
     total_string = total_string.replace(';[TIMEVARYING_PARAMETERS]', param_update_string)
 
 
