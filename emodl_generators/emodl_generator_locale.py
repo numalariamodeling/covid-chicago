@@ -351,13 +351,6 @@ def write_params(expandModel=None):
 (param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
 """
 
-    expand_loss_in_immunity_str = """
-(param time_to_loose_immunity @time_to_loose_immunity@)
-(param fraction_lost_immunity @fraction_lost_immunity@)
-(param Kg (/ fraction_lost_immunity time_to_loose_immunity))
- """
-
-    params_str = params_str + expand_loss_in_immunity_str
 
     if expandModel == None:
         params_str = params_str + expand_base_str
@@ -734,26 +727,12 @@ def write_reactions(grp, expandModel=None):
 (reaction recovery_Sym_det2b_{grp}   (Sym_det2b::{grp})   (RSym_det2::{grp})   (* Kr_m  Sym_det2b::{grp}))
  """.format(grp=grp)
 
-    expand_loss_in_immunity_str = """
-(reaction immunityloss_As_{grp} (RAs::{grp})  (S::{grp})  (* Kg As::{grp}))
-(reaction immunityloss_As_det_{grp} (RAs_det1::{grp}) (S::{grp}) (* Kg As_det1::{grp}))
-
-(reaction immunityloss_Sym_{grp} (RSym::{grp}) (S::{grp})  (* Kg  Sym::{grp}))
-(reaction immunityloss_Sym_det2a_{grp} (RSym_det2::{grp})  (S::{grp}) (* Kg  Sym_det2a::{grp}))
-(reaction immunityloss_Sym_det2b_{grp} (RSym_det2::{grp}) (S::{grp}) (* Kg  Sym_det2b::{grp}))
-
-(reaction immunityloss_H1_{grp} (RH1::{grp}) (S::{grp}) (* Kg H1::{grp}))
-(reaction immunityloss_C2_{grp} (RC2::{grp}) (S::{grp}) (* Kg C2::{grp}))
-(reaction immunityloss_H1_det3_{grp} (RH1_det3::{grp}) (S::{grp}) (* Kg H1_det3::{grp}))
-(reaction immunityloss_C2_det3_{grp} (RC2_det3::{grp}) (S::{grp}) (* Kg C2_det3::{grp}))
- """.format(grp=grp)
-
     if expandModel ==None :
-        reaction_str = reaction_str_I + expand_base_str + reaction_str_III + expand_loss_in_immunity_str
+        reaction_str = reaction_str_I + expand_base_str + reaction_str_III
     if expandModel == "testDelay_SymSys" or  expandModel == "uniformtestDelay" :
-        reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III + expand_loss_in_immunity_str
+        reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III
     if expandModel == 'testDelay_AsSymSys':
-        reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III + expand_loss_in_immunity_str
+        reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III
         
     reaction_str = reaction_str.replace("  ", " ")
 

@@ -103,12 +103,6 @@ sampled_parameters:
   'reduced_infectious_As':
     np.random: uniform
     function_kwargs: {'low':0.8, 'high':0.8}
-  'time_to_loose_immunity':
-    np.random: uniform
-    function_kwargs: {'low':365, 'high':365}
-  'fraction_lost_immunity':
-    np.random: uniform
-    function_kwargs: {'low':0, 'high':0}
   ## DETECTION RATES 
   ## In locale model, d_Sym is group specific
   #'d_Sym':
