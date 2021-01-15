@@ -14,7 +14,7 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
-    'IL': [688393,1269519, 581432, 676017, 424810, 760362, 791009, 1432193, 1012222, 2477754, 2716921]
+    'IL': [660965,1243906, 556776, 656946, 403659, 739098, 800605, 1455324, 1004309, 2693959, 2456274]
 fixed_parameters_global:
   initialAs:
     expand_by_age: True
@@ -24,38 +24,41 @@ fixed_parameters_global:
     custom_function: subtract
     function_kwargs: {'x1': N, 'x2': initialAs}
 sampled_parameters:
+  ###------------------------------------------------
+  ### MONTHLY TRANSMISSION MULTIPLIER ('mitigation effect sizes')
+  ###------------------------------------------------
   ki_multiplier_3a:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.7, 'high': 0.7}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.6, 'high': 0.8}
   ki_multiplier_3b:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.251, 'high': 0.251} 
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.1, 'high': 0.4} 
   ki_multiplier_3c:
     IL:
       expand_by_age: True
@@ -216,6 +219,10 @@ sampled_parameters:
         - {'low': 0.140, 'high': 0.140}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.095, 'high': 0.095}
+  ###------------------------------------------------
+  ### REGION SPECIFIC LOS
+  ###------------------------------------------------
+  ### Change relative of previous value, which is in range 8-10
   recovery_time_crit_change1:
     IL:
       expand_by_age: True
@@ -248,6 +255,8 @@ sampled_parameters:
         - {'low':4, 'high':6}
         - {'low':4, 'high':6}
         - {'low':4, 'high':6}
+  ### --------- Time in timesteps since startdate ---------
+  ### (Note: introduces an error when using a different startdate!)
   recovery_time_crit_change_time_1:
     IL:
       expand_by_age: True
@@ -280,6 +289,9 @@ sampled_parameters:
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
         - {'low': 184, 'high': 184}
+  ###------------------------------------------------
+  ### REGION SPECIFIC INTERVENTION PARAMETERS
+  ###------------------------------------------------
   reopening_multiplier_4_not_used: #such that 100% exceed by Jan 1
     IL:
       expand_by_age: True
@@ -328,6 +340,9 @@ sampled_parameters:
         - {'low': 0.25, 'high': 0.25}
         - {'low': 0.25, 'high': 0.25}
         - {'low': 0.25, 'high': 0.25}
+  ###------------------------------------------------
+  ### INITIAL INFECTION IMPORTATION 
+  ###------------------------------------------------
   Ki:  
     IL:
       expand_by_age: True
