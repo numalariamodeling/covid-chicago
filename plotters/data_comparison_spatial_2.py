@@ -56,13 +56,13 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
         region_suffix = "_EMS-" + str(ems_nr)
         region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths', 'new_detected_hospitalized',
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
-    data_channel_names = ['confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)',
-              'New Detected\nDeaths (LL)',
+    data_channel_names = ['deaths',
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
+    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+
 
     ref_df = load_ref_df(ems_nr)
 
