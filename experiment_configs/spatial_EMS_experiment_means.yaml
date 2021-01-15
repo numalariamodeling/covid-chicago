@@ -24,6 +24,9 @@ fixed_parameters_global:
     custom_function: subtract
     function_kwargs: {'x1': N, 'x2': initialAs}
 sampled_parameters:
+  ###------------------------------------------------
+  ### MONTHLY TRANSMISSION MULTIPLIER ('mitigation effect sizes')
+  ###------------------------------------------------
   ki_multiplier_3a:
     IL:
       expand_by_age: True
@@ -216,6 +219,10 @@ sampled_parameters:
         - {'low': 0.140, 'high': 0.140}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.095, 'high': 0.095}
+  ###------------------------------------------------
+  ### REGION-SPECIFIC PARAMETER UPDATE
+  ###------------------------------------------------
+  ### Note: dSym here not region specific anymore
   d_Sym:
     IL:
       expand_by_age: True
@@ -312,6 +319,10 @@ sampled_parameters:
         - {'low': 0.247, 'high': 0.247}
         - {'low': 0.247, 'high': 0.247}
         - {'low': 0.247, 'high': 0.247}
+  ###------------------------------------------------
+  ### REGION SPECIFIC LOS
+  ###------------------------------------------------
+  ### Change relative of previous value, which is in range 8-10
   recovery_time_crit_change1:
     IL:
       expand_by_age: True
@@ -328,6 +339,8 @@ sampled_parameters:
         - {'low': 3, 'high': 3}
         - {'low': 5, 'high': 5}
         - {'low': 9, 'high': 9}
+  ### --------- Time in timesteps since startdate ---------
+  ### (Note: introduces an error when using a different startdate!)
   recovery_time_crit_change_time_1:
     IL:
       expand_by_age: True
@@ -360,6 +373,9 @@ sampled_parameters:
         - {'low': 0.126, 'high': 0.126}
         - {'low': 0.111, 'high': 0.111}
         - {'low': 0.113, 'high': 0.113}
+  ###------------------------------------------------
+  ### REGION SPECIFIC INTERVENTION PARAMETERS
+  ###------------------------------------------------
   reopening_multiplier_4: #such that 50% exceed by Jan 1
     IL:
       expand_by_age: True
@@ -392,6 +408,9 @@ sampled_parameters:
         - {'low': 0.25, 'high': 0.25}
         - {'low': 0.25, 'high': 0.25}
         - {'low': 0.25, 'high': 0.25}
+  ###------------------------------------------------
+  ### INITIAL INFECTION IMPORTATION 
+  ###------------------------------------------------
   Ki:  
     IL:
       expand_by_age: True
