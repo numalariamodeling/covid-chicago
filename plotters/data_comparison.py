@@ -187,9 +187,9 @@ def compare_ems(exp_name, ems, first_day, last_day,param=None) :
     ref_df = load_ref_df(ems_nr=ems)
     channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
-    data_channel_names = ['confirmed_covid_deaths_prev_24h',
+    data_channel_names = ['deaths',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
+    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
