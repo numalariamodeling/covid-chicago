@@ -906,9 +906,9 @@ def write_time_varying_parameter(grpList, total_string) :
 (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@)))
 (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@)))
 (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@)))
-(time-event d_Sym_change6 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change6@)))
-(time-event d_Sym_change7 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change7@)))
-(time-event d_Sym_change8 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change8@)))
+(time-event d_Sym_change6 @d_Sym_change_time_6@ ((d_Sym @d_Sym_change6@)))
+(time-event d_Sym_change7 @d_Sym_change_time_7@ ((d_Sym @d_Sym_change7@)))
+(time-event d_Sym_change8 @d_Sym_change_time_8@ ((d_Sym @d_Sym_change8@)))
 """
 
     d_PAs_change_str = """
