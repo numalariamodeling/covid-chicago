@@ -125,10 +125,6 @@ def write_observe(observeLevel='primary'):
 (observe infectious_det infectious_det)
 (observe infectious_det_symp infectious_det_symp)
 (observe infectious_det_AsP infectious_det_AsP)
-(observe prevalence prevalence)    
-(observe seroprevalence seroprevalence )
-(observe prevalence_det prevalence_det)    
-(observe seroprevalence_det seroprevalence_det )
 """
 
     if observeLevel == 'primary' :
@@ -175,14 +171,7 @@ def write_functions(expandModel=None):
 
 (func infected (+ infectious_det infectious_undet H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
 (func infected_det (+ infectious_det H1_det3 H2_det3 H3_det3 C2_det3 C3_det3))
-(func infected_cumul (+ infected recovered deaths))    
-
-(func prevalence (/ infected N))    
-(func seroprevalence (/ (+ infected recovered) N))    
-
-(func prevalence_det (/ infected_det N))    
-(func seroprevalence_det (/ (+ infected_det recovered_det) N))    
-
+(func infected_cumul (+ infected recovered deaths))      
 """
 
 
@@ -593,9 +582,9 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
 (time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
 
-(time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
-(time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
-(time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ @fraction_dead@))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_incr1@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr1@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_incr2@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr2@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_incr3@) (fraction_hospitalized (- 1 (+ @fraction_critical_incr3@ fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 
 (param cfr_change1 (* @cfr@ (/ 2 3) ) )
 (param cfr_change2 (* @cfr@ (/ 1 3) ) )
@@ -795,7 +784,7 @@ def write_interventions( total_string, scenarioName, change_testDelay=None, trig
 
 ###stringing all of my functions together to make the file:
 
-def generate_emodl( file_output, expandModel, add_interventions, observeLevel='secondary', trigger_channel=None, change_testDelay =None):
+def generate_emodl( file_output, expandModel, add_interventions, observeLevel='all', trigger_channel=None, change_testDelay =None):
     if (os.path.exists(file_output)):
         os.remove(file_output)
 

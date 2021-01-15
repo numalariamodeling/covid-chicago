@@ -7,8 +7,6 @@ import argparse
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-import matplotlib.dates as mdates
 import sys
 
 sys.path.append('../')
@@ -20,6 +18,7 @@ import seaborn as sns
 from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
+
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -49,8 +48,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=True, fname="trajectoriesDat.csv"):
-
+def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscale=True, fname="trajectoriesDat.csv"):
     if ems_nr == 0:
         region_suffix = "_All"
         region_label = 'Illinois'
@@ -60,10 +58,11 @@ def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=T
 
     channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
-    data_channel_names = ['confirmed_covid_deaths_prev_24h',
+    data_channel_names = ['deaths',
                           'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
+    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+
 
     ref_df = load_ref_df(ems_nr)
 
@@ -74,7 +73,7 @@ def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=T
 
     for c, channel in enumerate(channels):
         ax = axes[c]
-        for d, exp_name in enumerate(exp_names) :
+        for d, exp_name in enumerate(exp_names):
 
             column_list = ['time', 'startdate', 'scen_num', 'sample_num', 'run_num']
             outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
@@ -92,9 +91,9 @@ def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=T
             mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
             ax.plot(mdf['date'], mdf['CI_50'], color=palette[d], label=exp_name_label)
             ax.fill_between(mdf['date'], mdf['CI_2pt5'], mdf['CI_97pt5'],
-                        color=palette[d], linewidth=0, alpha=0.1)
+                            color=palette[d], linewidth=0, alpha=0.1)
             ax.fill_between(mdf['date'], mdf['CI_25'], mdf['CI_75'],
-                        color=palette[d], linewidth=0, alpha=0.3)
+                            color=palette[d], linewidth=0, alpha=0.3)
 
             ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
             ax.set_title(titles[c], y=0.8, fontsize=12)
@@ -114,7 +113,7 @@ def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=T
     plt.subplots_adjust(top=0.88)
 
     plot_name = f'compare_to_data_{ems_nr}'
-    if logscale == False :
+    if logscale == False:
         plot_name = plot_name + "_nolog"
 
     if not os.path.exists(plot_path):
@@ -122,7 +121,8 @@ def plot_sim_and_ref(exp_names, ems_nr,first_day,last_day,ymax=10000, logscale=T
     if not os.path.exists(os.path.join(plot_path, 'pdf')):
         os.makedirs(os.path.join(plot_path, 'pdf'))
     plt.savefig(os.path.join(plot_path, plot_name + '.png'))
-    plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'))
+    plt.savefig(os.path.join(plot_path, 'pdf', plot_name + '.pdf'))
+
 
 if __name__ == '__main__':
 
@@ -136,9 +136,9 @@ if __name__ == '__main__':
     first_plot_day = date(2020, 2, 13)
     last_plot_day = date.today() + timedelta(15)
 
-    plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
+    plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
-    for ems_nr in range(0, 12):
+    for ems_nr in range(1, 12):
         print("Start processing region " + str(ems_nr))
         plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
                          last_day=last_plot_day, fname=trajectoriesName, logscale=True)

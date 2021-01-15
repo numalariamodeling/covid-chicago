@@ -1,0 +1,6 @@
+R  (R files will gradually be changed to python)
+R version 4.0.2
+tidyverse (inlcudes ggplot2, tidyr, dplyr among others)
+readr
+cowplot
+scales

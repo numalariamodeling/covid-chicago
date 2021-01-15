@@ -367,13 +367,6 @@
 (func infected_det_age0to9 (+ infectious_det_age0to9 H1_det3_age0to9 H2_det3_age0to9 H3_det3_age0to9 C2_det3_age0to9 C3_det3_age0to9))
 (func infected_cumul_age0to9 (+ infected_age0to9 recovered_age0to9 deaths_age0to9))    
 
-(func prevalence_age0to9 (/ infected_age0to9 N_age0to9))    
-(func seroprevalence_age0to9 (/ (+ infected_age0to9 recovered_age0to9) N_age0to9))    
-
-(func prevalence_det_age0to9 (/ infected_det_age0to9 N_age0to9))    
-(func seroprevalence_det_age0to9 (/ (+ infected_det_age0to9 recovered_det_age0to9) N_age0to9))    
-
-
 (func asymptomatic_age10to19  (+ As_preD_age10to19 As_age10to19 As_det1_age10to19))
 
 (func symptomatic_mild_age10to19  (+ Sym_age10to19 Sym_preD_age10to19 Sym_det2a_age10to19 Sym_det2b_age10to19))
@@ -419,13 +412,6 @@
 (func infected_age10to19 (+ infectious_det_age10to19 infectious_undet_age10to19 H1_det3_age10to19 H2_det3_age10to19 H3_det3_age10to19 C2_det3_age10to19 C3_det3_age10to19))
 (func infected_det_age10to19 (+ infectious_det_age10to19 H1_det3_age10to19 H2_det3_age10to19 H3_det3_age10to19 C2_det3_age10to19 C3_det3_age10to19))
 (func infected_cumul_age10to19 (+ infected_age10to19 recovered_age10to19 deaths_age10to19))    
-
-(func prevalence_age10to19 (/ infected_age10to19 N_age10to19))    
-(func seroprevalence_age10to19 (/ (+ infected_age10to19 recovered_age10to19) N_age10to19))    
-
-(func prevalence_det_age10to19 (/ infected_det_age10to19 N_age10to19))    
-(func seroprevalence_det_age10to19 (/ (+ infected_det_age10to19 recovered_det_age10to19) N_age10to19))    
-
 
 (func asymptomatic_age20to29  (+ As_preD_age20to29 As_age20to29 As_det1_age20to29))
 
@@ -473,13 +459,6 @@
 (func infected_det_age20to29 (+ infectious_det_age20to29 H1_det3_age20to29 H2_det3_age20to29 H3_det3_age20to29 C2_det3_age20to29 C3_det3_age20to29))
 (func infected_cumul_age20to29 (+ infected_age20to29 recovered_age20to29 deaths_age20to29))    
 
-(func prevalence_age20to29 (/ infected_age20to29 N_age20to29))    
-(func seroprevalence_age20to29 (/ (+ infected_age20to29 recovered_age20to29) N_age20to29))    
-
-(func prevalence_det_age20to29 (/ infected_det_age20to29 N_age20to29))    
-(func seroprevalence_det_age20to29 (/ (+ infected_det_age20to29 recovered_det_age20to29) N_age20to29))    
-
-
 (func asymptomatic_age30to39  (+ As_preD_age30to39 As_age30to39 As_det1_age30to39))
 
 (func symptomatic_mild_age30to39  (+ Sym_age30to39 Sym_preD_age30to39 Sym_det2a_age30to39 Sym_det2b_age30to39))
@@ -525,13 +504,6 @@
 (func infected_age30to39 (+ infectious_det_age30to39 infectious_undet_age30to39 H1_det3_age30to39 H2_det3_age30to39 H3_det3_age30to39 C2_det3_age30to39 C3_det3_age30to39))
 (func infected_det_age30to39 (+ infectious_det_age30to39 H1_det3_age30to39 H2_det3_age30to39 H3_det3_age30to39 C2_det3_age30to39 C3_det3_age30to39))
 (func infected_cumul_age30to39 (+ infected_age30to39 recovered_age30to39 deaths_age30to39))    
-
-(func prevalence_age30to39 (/ infected_age30to39 N_age30to39))    
-(func seroprevalence_age30to39 (/ (+ infected_age30to39 recovered_age30to39) N_age30to39))    
-
-(func prevalence_det_age30to39 (/ infected_det_age30to39 N_age30to39))    
-(func seroprevalence_det_age30to39 (/ (+ infected_det_age30to39 recovered_det_age30to39) N_age30to39))    
-
 
 (func asymptomatic_age40to49  (+ As_preD_age40to49 As_age40to49 As_det1_age40to49))
 
@@ -579,13 +551,6 @@
 (func infected_det_age40to49 (+ infectious_det_age40to49 H1_det3_age40to49 H2_det3_age40to49 H3_det3_age40to49 C2_det3_age40to49 C3_det3_age40to49))
 (func infected_cumul_age40to49 (+ infected_age40to49 recovered_age40to49 deaths_age40to49))    
 
-(func prevalence_age40to49 (/ infected_age40to49 N_age40to49))    
-(func seroprevalence_age40to49 (/ (+ infected_age40to49 recovered_age40to49) N_age40to49))    
-
-(func prevalence_det_age40to49 (/ infected_det_age40to49 N_age40to49))    
-(func seroprevalence_det_age40to49 (/ (+ infected_det_age40to49 recovered_det_age40to49) N_age40to49))    
-
-
 (func asymptomatic_age50to59  (+ As_preD_age50to59 As_age50to59 As_det1_age50to59))
 
 (func symptomatic_mild_age50to59  (+ Sym_age50to59 Sym_preD_age50to59 Sym_det2a_age50to59 Sym_det2b_age50to59))
@@ -631,13 +596,6 @@
 (func infected_age50to59 (+ infectious_det_age50to59 infectious_undet_age50to59 H1_det3_age50to59 H2_det3_age50to59 H3_det3_age50to59 C2_det3_age50to59 C3_det3_age50to59))
 (func infected_det_age50to59 (+ infectious_det_age50to59 H1_det3_age50to59 H2_det3_age50to59 H3_det3_age50to59 C2_det3_age50to59 C3_det3_age50to59))
 (func infected_cumul_age50to59 (+ infected_age50to59 recovered_age50to59 deaths_age50to59))    
-
-(func prevalence_age50to59 (/ infected_age50to59 N_age50to59))    
-(func seroprevalence_age50to59 (/ (+ infected_age50to59 recovered_age50to59) N_age50to59))    
-
-(func prevalence_det_age50to59 (/ infected_det_age50to59 N_age50to59))    
-(func seroprevalence_det_age50to59 (/ (+ infected_det_age50to59 recovered_det_age50to59) N_age50to59))    
-
 
 (func asymptomatic_age60to69  (+ As_preD_age60to69 As_age60to69 As_det1_age60to69))
 
@@ -685,13 +643,6 @@
 (func infected_det_age60to69 (+ infectious_det_age60to69 H1_det3_age60to69 H2_det3_age60to69 H3_det3_age60to69 C2_det3_age60to69 C3_det3_age60to69))
 (func infected_cumul_age60to69 (+ infected_age60to69 recovered_age60to69 deaths_age60to69))    
 
-(func prevalence_age60to69 (/ infected_age60to69 N_age60to69))    
-(func seroprevalence_age60to69 (/ (+ infected_age60to69 recovered_age60to69) N_age60to69))    
-
-(func prevalence_det_age60to69 (/ infected_det_age60to69 N_age60to69))    
-(func seroprevalence_det_age60to69 (/ (+ infected_det_age60to69 recovered_det_age60to69) N_age60to69))    
-
-
 (func asymptomatic_age70to100  (+ As_preD_age70to100 As_age70to100 As_det1_age70to100))
 
 (func symptomatic_mild_age70to100  (+ Sym_age70to100 Sym_preD_age70to100 Sym_det2a_age70to100 Sym_det2b_age70to100))
@@ -737,13 +688,6 @@
 (func infected_age70to100 (+ infectious_det_age70to100 infectious_undet_age70to100 H1_det3_age70to100 H2_det3_age70to100 H3_det3_age70to100 C2_det3_age70to100 C3_det3_age70to100))
 (func infected_det_age70to100 (+ infectious_det_age70to100 H1_det3_age70to100 H2_det3_age70to100 H3_det3_age70to100 C2_det3_age70to100 C3_det3_age70to100))
 (func infected_cumul_age70to100 (+ infected_age70to100 recovered_age70to100 deaths_age70to100))    
-
-(func prevalence_age70to100 (/ infected_age70to100 N_age70to100))    
-(func seroprevalence_age70to100 (/ (+ infected_age70to100 recovered_age70to100) N_age70to100))    
-
-(func prevalence_det_age70to100 (/ infected_det_age70to100 N_age70to100))    
-(func seroprevalence_det_age70to100 (/ (+ infected_det_age70to100 recovered_det_age70to100) N_age70to100))    
-
 
 (observe susceptible_All (+ S_age0to9 S_age10to19 S_age20to29 S_age30to39 S_age40to49 S_age50to59 S_age60to69 S_age70to100))
 (observe infected_All (+ infected_age0to9 infected_age10to19 infected_age20to29 infected_age30to39 infected_age40to49 infected_age50to59 infected_age60to69 infected_age70to100))

@@ -14,7 +14,7 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
-    'IL': [660965,1243906, 556776, 656946, 403659, 739098, 800605, 1455324, 1004309, 2693959, 2456274]
+    'IL': [688393,1269519, 581432, 676017, 424810, 760362, 791009, 1432193, 1012222, 2477754, 2716921]
 fixed_parameters_global:
   initialAs:
     expand_by_age: True
@@ -32,33 +32,33 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.7, 'high': 0.9}
-        - {'low': 0.6, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.8, 'high': 0.8}
+        - {'low': 0.7, 'high': 0.7}
   ki_multiplier_3b:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.1, 'high': 0.4} 
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.353, 'high': 0.353}
+        - {'low': 0.251, 'high': 0.251} 
   ki_multiplier_3c:
     IL:
       expand_by_age: True
@@ -220,6 +220,106 @@ sampled_parameters:
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.095, 'high': 0.095}
   ###------------------------------------------------
+  ### REGION-SPECIFIC PARAMETER UPDATE
+  ###------------------------------------------------
+  ### Note: dSym here not region specific anymore
+  d_Sym:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+        - {'low': 0.005, 'high': 0.005}
+  d_Sym_change1:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+        - {'low': 0.048, 'high': 0.048}
+  d_Sym_change2:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+        - {'low': 0.074, 'high': 0.074}
+  d_Sym_change3:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+        - {'low': 0.151, 'high': 0.151}
+  d_Sym_change4:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+        - {'low': 0.202, 'high': 0.202}
+  d_Sym_change5:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+        - {'low': 0.247, 'high': 0.247}
+  ###------------------------------------------------
   ### REGION SPECIFIC LOS
   ###------------------------------------------------
   ### Change relative of previous value, which is in range 8-10
@@ -239,22 +339,6 @@ sampled_parameters:
         - {'low': 3, 'high': 3}
         - {'low': 5, 'high': 5}
         - {'low': 9, 'high': 9}
-  recovery_time_hosp_change1:
-    IL:
-      expand_by_age: True
-      np.random: uniform
-      function_kwargs:
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
-        - {'low':4, 'high':6}
   ### --------- Time in timesteps since startdate ---------
   ### (Note: introduces an error when using a different startdate!)
   recovery_time_crit_change_time_1:
@@ -273,25 +357,6 @@ sampled_parameters:
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
         - {'low': 184, 'high': 184}
-  recovery_time_hosp_change_time_1:
-    IL:
-      expand_by_age: True
-      np.random: uniform
-      function_kwargs:
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 311, 'high': 311}
-        - {'low': 292, 'high': 292}
-        - {'low': 262, 'high': 262}
-        - {'low': 231, 'high': 231}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 184, 'high': 184}
-  ###------------------------------------------------
-  ### REGION SPECIFIC INTERVENTION PARAMETERS
-  ###------------------------------------------------
   reopening_multiplier_4_not_used: #such that 100% exceed by Jan 1
     IL:
       expand_by_age: True
@@ -308,6 +373,9 @@ sampled_parameters:
         - {'low': 0.126, 'high': 0.126}
         - {'low': 0.111, 'high': 0.111}
         - {'low': 0.113, 'high': 0.113}
+  ###------------------------------------------------
+  ### REGION SPECIFIC INTERVENTION PARAMETERS
+  ###------------------------------------------------
   reopening_multiplier_4: #such that 50% exceed by Jan 1
     IL:
       expand_by_age: True
