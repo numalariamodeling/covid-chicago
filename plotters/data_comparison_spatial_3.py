@@ -117,13 +117,13 @@ def compare_ems(exp_name,fname, param, ems_nr,first_day,last_day):
     sampled_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, "sampled_parameters.csv"), usecols=['scen_num', param])
     df = pd.merge(how='left', left=df, left_on='scen_num', right=sampled_df, right_on='scen_num')
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths', 'new_detected_hospitalized',
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
-    data_channel_names = ['confirmed_covid_deaths_prev_24h',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths', 'inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (EMR)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)',
-              'New Detected\nDeaths (LL)',
+    data_channel_names = ['deaths',
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
+    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+
 
     plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
                      region_label=region_label, logscale=True,param=param,first_day=first_day,last_day=last_day)
