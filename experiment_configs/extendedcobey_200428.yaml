@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 600
+  'number_of_samples': 10
   'number_of_runs': 1
   'duration': 504
   'monitoring_samples': 504 # needs to be less than or equal to duration
@@ -198,12 +198,11 @@ sampled_parameters:
     function_kwargs: {'low':0.376 , 'high':0.564}
   ### --------- Change in d_P and d_As -------------
   ### Separate parameter but same value as in practice not distinguishible
-  'd_PAs_change1':
+  ###'d_PAs_change1'  - d_PAs_change98 relative to d_Sym
+  ### set dSym_dAsP_ratio to be 2 for half, 3 a third etc, to disable set ratio to very large number i.e. 10000
+  'dSym_dAsP_ratio':
     np.random: uniform
-    function_kwargs: {'low':0.02, 'high':0.02}
-  'd_PAs_change2':
-    np.random: uniform
-    function_kwargs: {'low':0.04, 'high':0.04}
+    function_kwargs: {'low':4 , 'high':4}  
   ### ----- fraction_critical ----------
   'fraction_critical_change1':
     np.random: uniform
@@ -390,12 +389,7 @@ time_parameters:
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-11-01}
   ### Change in d_P and d_As
-  'd_PAs_change_time_1':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
-  'd_PAs_change_time_2':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-10-01}
+  ### Same as for d_Sym_change_times
   ### ---- Better case/ decreased mortality ---- 
   ###  Change in fraction_critical 
   'crit_time_1':

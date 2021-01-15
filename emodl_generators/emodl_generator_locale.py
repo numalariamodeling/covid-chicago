@@ -898,24 +898,28 @@ def write_time_varying_parameter(grpList, total_string) :
                 """.format(grp=grp)
         ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
-    d_Sym_change_str = """
+    d_Sym_P_As_change_str = """
 (observe d_Sym_t d_Sym)
+(observe d_P_t d_P)                           
+(observe d_As_t d_As)                         
+(param dSym_dAsP_ratio @dSym_dAsP_ratio@)                                          
+(param d_PAs_change1 (/ @d_Sym_change1@ dSym_dAsP_ratio))   
+(param d_PAs_change2 (/ @d_Sym_change2@ dSym_dAsP_ratio))   
+(param d_PAs_change3 (/ @d_Sym_change3@ dSym_dAsP_ratio))   
+(param d_PAs_change4 (/ @d_Sym_change4@ dSym_dAsP_ratio))   
+(param d_PAs_change5 (/ @d_Sym_change5@ dSym_dAsP_ratio))   
+(param d_PAs_change6 (/ @d_Sym_change6@ dSym_dAsP_ratio))   
+(param d_PAs_change7 (/ @d_Sym_change7@ dSym_dAsP_ratio))   
+(param d_PAs_change8 (/ @d_Sym_change8@ dSym_dAsP_ratio))   
 
-(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@)))
-(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@)))
-(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@)))
-(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@)))
-(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@)))
-(time-event d_Sym_change6 @d_Sym_change_time_6@ ((d_Sym @d_Sym_change6@)))
-(time-event d_Sym_change7 @d_Sym_change_time_7@ ((d_Sym @d_Sym_change7@)))
-(time-event d_Sym_change8 @d_Sym_change_time_8@ ((d_Sym @d_Sym_change8@)))
-"""
-
-    d_PAs_change_str = """
-(observe d_P_t d_P)
-(observe d_As_t d_As)
-(time-event d_PAs_change1 @d_PAs_change_time_1@ ((d_P @d_PAs_change1@) (d_As @d_PAs_change1@) ))
-(time-event d_PAs_change1 @d_PAs_change_time_2@ ((d_P @d_PAs_change2@) (d_As @d_PAs_change2@) ))
+(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@) (d_P d_PAs_change1) (d_As d_PAs_change1) ))
+(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@) (d_P d_PAs_change2) (d_As d_PAs_change2) ))
+(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@) (d_P d_PAs_change3) (d_As d_PAs_change3) ))
+(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@) (d_P d_PAs_change4) (d_As d_PAs_change4) ))
+(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@) (d_P d_PAs_change5) (d_As d_PAs_change5) ))
+(time-event d_Sym_change6 @d_Sym_change_time_6@ ((d_Sym @d_Sym_change6@) (d_P d_PAs_change6) (d_As d_PAs_change6) ))
+(time-event d_Sym_change7 @d_Sym_change_time_7@ ((d_Sym @d_Sym_change7@) (d_P d_PAs_change7) (d_As d_PAs_change7) ))
+(time-event d_Sym_change8 @d_Sym_change_time_8@ ((d_Sym @d_Sym_change8@) (d_P d_PAs_change8) (d_As d_PAs_change8) ))
 """
 
     recovery_time_crit_change_str = ""
@@ -931,9 +935,8 @@ def write_time_varying_parameter(grpList, total_string) :
 
     param_update_string = param_change_str + \
                           '\n' + ki_multiplier_change_str + \
-                          '\n' + d_Sym_change_str + \
-                          '\n' + recovery_time_crit_change_str + \
-                          '\n' + d_PAs_change_str
+                          '\n' + d_Sym_P_As_change_str + \
+                          '\n' + recovery_time_crit_change_str
 
     total_string = total_string.replace(';[TIMEVARYING_PARAMETERS]', param_update_string)
 
