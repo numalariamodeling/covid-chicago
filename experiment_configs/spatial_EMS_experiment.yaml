@@ -14,7 +14,7 @@ experiment_setup_parameters:
 fixed_parameters_region_specific:
   N:
     expand_by_age: True
-    'IL': [688393,1269519, 581432, 676017, 424810, 760362, 791009, 1432193, 1012222, 2477754, 2716921]
+    'IL': [660965,1243906, 556776, 656946, 403659, 739098, 800605, 1455324, 1004309, 2693959, 2456274]
 fixed_parameters_global:
   initialAs:
     expand_by_age: True
@@ -29,33 +29,33 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.8, 'high': 0.8}
-        - {'low': 0.7, 'high': 0.7}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.7, 'high': 0.9}
+        - {'low': 0.6, 'high': 0.8}
   ki_multiplier_3b:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.353, 'high': 0.353}
-        - {'low': 0.251, 'high': 0.251} 
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.2, 'high': 0.5}
+        - {'low': 0.1, 'high': 0.4} 
   ki_multiplier_3c:
     IL:
       expand_by_age: True
