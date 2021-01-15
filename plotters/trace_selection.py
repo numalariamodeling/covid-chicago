@@ -45,7 +45,7 @@ def parse_args():
         "--deaths_weight",
         type=float,
         help="Weight of deaths in negative log likelihood calculation. Default is 1.0.",
-        default=1.0
+        default=0.0
     )
     parser.add_argument(
         "--crit_weight",
@@ -63,7 +63,7 @@ def parse_args():
         "--cli_weight",
         type=float,
         help="Weight of CLI admissions in negative log likelihood calculation. Default is 1.0.",
-        default=1.0
+        default=0.0
     )
     parser.add_argument(
         "--plot",
