@@ -1579,8 +1579,8 @@
 (param fraction_severe @fraction_severe@)
 (param fraction_critical @fraction_critical@ )
 
-(param cfr @cfr@)
-(param fraction_dead (/ cfr fraction_severe))
+;(param fraction_dead (/ cfr fraction_severe))
+(param fraction_dead @fraction_dead@ )
 (param fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))
 
 (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
@@ -1594,13 +1594,16 @@
 
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
-(param Kr_h (/ 1 recovery_time_hosp))
 (param Kl (/ (- 1 fraction_symptomatic ) time_to_infectious))
 (param Ks (/ fraction_symptomatic time_to_infectious))
 (param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
 (param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
-(param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
+(param Kc (/ 1 time_to_critical))
+
+; region specific
+;(param Kr_h (/ 1 recovery_time_hosp))
+;(param Kr_c (/ 1 recovery_time_crit))
 
 (param Kh1 (/ fraction_hospitalized time_to_hospitalization))
 (param Kh2 (/ fraction_critical time_to_hospitalization ))
@@ -1704,13 +1707,16 @@
 (time-event frac_crit_adjust9 @crit_time_9@ ((fraction_critical @fraction_critical_change8@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 (time-event frac_crit_adjust10 @crit_time_10@ ((fraction_critical @fraction_critical_change8@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
 
-
-(param cfr_change1 (* @cfr@ (/ 2 3) ) )
-(param cfr_change2 (* @cfr@ (/ 1 3) ) )
-(observe cfr_t cfr)
-(time-event cfr_adjust1 @cfr_time_1@ ((cfr cfr_change1) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event cfr_adjust2 @cfr_time_2@ ((cfr cfr_change2) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-    
+(time-event fraction_dead_adjust1 @fraction_dead_time_1@ ((fraction_dead @fraction_dead_change1@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_2@ ((fraction_dead @fraction_dead_change2@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_3@ ((fraction_dead @fraction_dead_change3@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_4@ ((fraction_dead @fraction_dead_change4@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_5@ ((fraction_dead @fraction_dead_change5@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_6@ ((fraction_dead @fraction_dead_change6@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_7@ ((fraction_dead @fraction_dead_change7@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_8@ ((fraction_dead @fraction_dead_change8@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2 @fraction_dead_time_9@ ((fraction_dead @fraction_dead_change9@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+ 
 
 (param Ki_red3a_EMS_1 (* Ki_EMS_1 @ki_multiplier_3a_EMS_1@))
 (param Ki_red3b_EMS_1 (* Ki_EMS_1 @ki_multiplier_3b_EMS_1@))
@@ -2188,9 +2194,9 @@
 (reaction recovery_Sym_det2a_EMS_1  (Sym_det2a::EMS_1)  (RSym_det2::EMS_1)  (* Kr_m_D Sym_det2a::EMS_1))
 (reaction recovery_Sym_det2b_EMS_1  (Sym_det2b::EMS_1)  (RSym_det2::EMS_1)  (* Kr_m Sym_det2b::EMS_1))
  
-(reaction recovery_H1_EMS_1  (H1::EMS_1)  (RH1::EMS_1)  (* Kr_h H1::EMS_1))
+(reaction recovery_H1_EMS_1  (H1::EMS_1)  (RH1::EMS_1)  (* Kr_h_EMS_1 H1::EMS_1))
 (reaction recovery_C2_EMS_1  (C2::EMS_1)  (RC2::EMS_1)  (* Kr_c_EMS_1 C2::EMS_1))
-(reaction recovery_H1_det3_EMS_1  (H1_det3::EMS_1)  (RH1_det3::EMS_1)  (* Kr_h H1_det3::EMS_1))
+(reaction recovery_H1_det3_EMS_1  (H1_det3::EMS_1)  (RH1_det3::EMS_1)  (* Kr_h_EMS_1 H1_det3::EMS_1))
 (reaction recovery_C2_det3_EMS_1  (C2_det3::EMS_1)  (RC2_det3::EMS_1)  (* Kr_c_EMS_1 C2_det3::EMS_1))
   
 (reaction exposure_EMS_2  (S::EMS_2) (E::EMS_2) (* Ki_EMS_2 S::EMS_2 (/ (+ infectious_undet_symp_EMS_2 (* infectious_undet_As_EMS_2 reduced_infectious_As ) (* infectious_det_symp_EMS_2 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_2 reduced_inf_of_det_cases_ct)) N_EMS_2 )))
@@ -2244,9 +2250,9 @@
 (reaction recovery_Sym_det2a_EMS_2  (Sym_det2a::EMS_2)  (RSym_det2::EMS_2)  (* Kr_m_D Sym_det2a::EMS_2))
 (reaction recovery_Sym_det2b_EMS_2  (Sym_det2b::EMS_2)  (RSym_det2::EMS_2)  (* Kr_m Sym_det2b::EMS_2))
  
-(reaction recovery_H1_EMS_2  (H1::EMS_2)  (RH1::EMS_2)  (* Kr_h H1::EMS_2))
+(reaction recovery_H1_EMS_2  (H1::EMS_2)  (RH1::EMS_2)  (* Kr_h_EMS_2 H1::EMS_2))
 (reaction recovery_C2_EMS_2  (C2::EMS_2)  (RC2::EMS_2)  (* Kr_c_EMS_2 C2::EMS_2))
-(reaction recovery_H1_det3_EMS_2  (H1_det3::EMS_2)  (RH1_det3::EMS_2)  (* Kr_h H1_det3::EMS_2))
+(reaction recovery_H1_det3_EMS_2  (H1_det3::EMS_2)  (RH1_det3::EMS_2)  (* Kr_h_EMS_2 H1_det3::EMS_2))
 (reaction recovery_C2_det3_EMS_2  (C2_det3::EMS_2)  (RC2_det3::EMS_2)  (* Kr_c_EMS_2 C2_det3::EMS_2))
   
 (reaction exposure_EMS_3  (S::EMS_3) (E::EMS_3) (* Ki_EMS_3 S::EMS_3 (/ (+ infectious_undet_symp_EMS_3 (* infectious_undet_As_EMS_3 reduced_infectious_As ) (* infectious_det_symp_EMS_3 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_3 reduced_inf_of_det_cases_ct)) N_EMS_3 )))
@@ -2300,9 +2306,9 @@
 (reaction recovery_Sym_det2a_EMS_3  (Sym_det2a::EMS_3)  (RSym_det2::EMS_3)  (* Kr_m_D Sym_det2a::EMS_3))
 (reaction recovery_Sym_det2b_EMS_3  (Sym_det2b::EMS_3)  (RSym_det2::EMS_3)  (* Kr_m Sym_det2b::EMS_3))
  
-(reaction recovery_H1_EMS_3  (H1::EMS_3)  (RH1::EMS_3)  (* Kr_h H1::EMS_3))
+(reaction recovery_H1_EMS_3  (H1::EMS_3)  (RH1::EMS_3)  (* Kr_h_EMS_3 H1::EMS_3))
 (reaction recovery_C2_EMS_3  (C2::EMS_3)  (RC2::EMS_3)  (* Kr_c_EMS_3 C2::EMS_3))
-(reaction recovery_H1_det3_EMS_3  (H1_det3::EMS_3)  (RH1_det3::EMS_3)  (* Kr_h H1_det3::EMS_3))
+(reaction recovery_H1_det3_EMS_3  (H1_det3::EMS_3)  (RH1_det3::EMS_3)  (* Kr_h_EMS_3 H1_det3::EMS_3))
 (reaction recovery_C2_det3_EMS_3  (C2_det3::EMS_3)  (RC2_det3::EMS_3)  (* Kr_c_EMS_3 C2_det3::EMS_3))
   
 (reaction exposure_EMS_4  (S::EMS_4) (E::EMS_4) (* Ki_EMS_4 S::EMS_4 (/ (+ infectious_undet_symp_EMS_4 (* infectious_undet_As_EMS_4 reduced_infectious_As ) (* infectious_det_symp_EMS_4 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_4 reduced_inf_of_det_cases_ct)) N_EMS_4 )))
@@ -2356,9 +2362,9 @@
 (reaction recovery_Sym_det2a_EMS_4  (Sym_det2a::EMS_4)  (RSym_det2::EMS_4)  (* Kr_m_D Sym_det2a::EMS_4))
 (reaction recovery_Sym_det2b_EMS_4  (Sym_det2b::EMS_4)  (RSym_det2::EMS_4)  (* Kr_m Sym_det2b::EMS_4))
  
-(reaction recovery_H1_EMS_4  (H1::EMS_4)  (RH1::EMS_4)  (* Kr_h H1::EMS_4))
+(reaction recovery_H1_EMS_4  (H1::EMS_4)  (RH1::EMS_4)  (* Kr_h_EMS_4 H1::EMS_4))
 (reaction recovery_C2_EMS_4  (C2::EMS_4)  (RC2::EMS_4)  (* Kr_c_EMS_4 C2::EMS_4))
-(reaction recovery_H1_det3_EMS_4  (H1_det3::EMS_4)  (RH1_det3::EMS_4)  (* Kr_h H1_det3::EMS_4))
+(reaction recovery_H1_det3_EMS_4  (H1_det3::EMS_4)  (RH1_det3::EMS_4)  (* Kr_h_EMS_4 H1_det3::EMS_4))
 (reaction recovery_C2_det3_EMS_4  (C2_det3::EMS_4)  (RC2_det3::EMS_4)  (* Kr_c_EMS_4 C2_det3::EMS_4))
   
 (reaction exposure_EMS_5  (S::EMS_5) (E::EMS_5) (* Ki_EMS_5 S::EMS_5 (/ (+ infectious_undet_symp_EMS_5 (* infectious_undet_As_EMS_5 reduced_infectious_As ) (* infectious_det_symp_EMS_5 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_5 reduced_inf_of_det_cases_ct)) N_EMS_5 )))
@@ -2412,9 +2418,9 @@
 (reaction recovery_Sym_det2a_EMS_5  (Sym_det2a::EMS_5)  (RSym_det2::EMS_5)  (* Kr_m_D Sym_det2a::EMS_5))
 (reaction recovery_Sym_det2b_EMS_5  (Sym_det2b::EMS_5)  (RSym_det2::EMS_5)  (* Kr_m Sym_det2b::EMS_5))
  
-(reaction recovery_H1_EMS_5  (H1::EMS_5)  (RH1::EMS_5)  (* Kr_h H1::EMS_5))
+(reaction recovery_H1_EMS_5  (H1::EMS_5)  (RH1::EMS_5)  (* Kr_h_EMS_5 H1::EMS_5))
 (reaction recovery_C2_EMS_5  (C2::EMS_5)  (RC2::EMS_5)  (* Kr_c_EMS_5 C2::EMS_5))
-(reaction recovery_H1_det3_EMS_5  (H1_det3::EMS_5)  (RH1_det3::EMS_5)  (* Kr_h H1_det3::EMS_5))
+(reaction recovery_H1_det3_EMS_5  (H1_det3::EMS_5)  (RH1_det3::EMS_5)  (* Kr_h_EMS_5 H1_det3::EMS_5))
 (reaction recovery_C2_det3_EMS_5  (C2_det3::EMS_5)  (RC2_det3::EMS_5)  (* Kr_c_EMS_5 C2_det3::EMS_5))
   
 (reaction exposure_EMS_6  (S::EMS_6) (E::EMS_6) (* Ki_EMS_6 S::EMS_6 (/ (+ infectious_undet_symp_EMS_6 (* infectious_undet_As_EMS_6 reduced_infectious_As ) (* infectious_det_symp_EMS_6 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_6 reduced_inf_of_det_cases_ct)) N_EMS_6 )))
@@ -2468,9 +2474,9 @@
 (reaction recovery_Sym_det2a_EMS_6  (Sym_det2a::EMS_6)  (RSym_det2::EMS_6)  (* Kr_m_D Sym_det2a::EMS_6))
 (reaction recovery_Sym_det2b_EMS_6  (Sym_det2b::EMS_6)  (RSym_det2::EMS_6)  (* Kr_m Sym_det2b::EMS_6))
  
-(reaction recovery_H1_EMS_6  (H1::EMS_6)  (RH1::EMS_6)  (* Kr_h H1::EMS_6))
+(reaction recovery_H1_EMS_6  (H1::EMS_6)  (RH1::EMS_6)  (* Kr_h_EMS_6 H1::EMS_6))
 (reaction recovery_C2_EMS_6  (C2::EMS_6)  (RC2::EMS_6)  (* Kr_c_EMS_6 C2::EMS_6))
-(reaction recovery_H1_det3_EMS_6  (H1_det3::EMS_6)  (RH1_det3::EMS_6)  (* Kr_h H1_det3::EMS_6))
+(reaction recovery_H1_det3_EMS_6  (H1_det3::EMS_6)  (RH1_det3::EMS_6)  (* Kr_h_EMS_6 H1_det3::EMS_6))
 (reaction recovery_C2_det3_EMS_6  (C2_det3::EMS_6)  (RC2_det3::EMS_6)  (* Kr_c_EMS_6 C2_det3::EMS_6))
   
 (reaction exposure_EMS_7  (S::EMS_7) (E::EMS_7) (* Ki_EMS_7 S::EMS_7 (/ (+ infectious_undet_symp_EMS_7 (* infectious_undet_As_EMS_7 reduced_infectious_As ) (* infectious_det_symp_EMS_7 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_7 reduced_inf_of_det_cases_ct)) N_EMS_7 )))
@@ -2524,9 +2530,9 @@
 (reaction recovery_Sym_det2a_EMS_7  (Sym_det2a::EMS_7)  (RSym_det2::EMS_7)  (* Kr_m_D Sym_det2a::EMS_7))
 (reaction recovery_Sym_det2b_EMS_7  (Sym_det2b::EMS_7)  (RSym_det2::EMS_7)  (* Kr_m Sym_det2b::EMS_7))
  
-(reaction recovery_H1_EMS_7  (H1::EMS_7)  (RH1::EMS_7)  (* Kr_h H1::EMS_7))
+(reaction recovery_H1_EMS_7  (H1::EMS_7)  (RH1::EMS_7)  (* Kr_h_EMS_7 H1::EMS_7))
 (reaction recovery_C2_EMS_7  (C2::EMS_7)  (RC2::EMS_7)  (* Kr_c_EMS_7 C2::EMS_7))
-(reaction recovery_H1_det3_EMS_7  (H1_det3::EMS_7)  (RH1_det3::EMS_7)  (* Kr_h H1_det3::EMS_7))
+(reaction recovery_H1_det3_EMS_7  (H1_det3::EMS_7)  (RH1_det3::EMS_7)  (* Kr_h_EMS_7 H1_det3::EMS_7))
 (reaction recovery_C2_det3_EMS_7  (C2_det3::EMS_7)  (RC2_det3::EMS_7)  (* Kr_c_EMS_7 C2_det3::EMS_7))
   
 (reaction exposure_EMS_8  (S::EMS_8) (E::EMS_8) (* Ki_EMS_8 S::EMS_8 (/ (+ infectious_undet_symp_EMS_8 (* infectious_undet_As_EMS_8 reduced_infectious_As ) (* infectious_det_symp_EMS_8 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_8 reduced_inf_of_det_cases_ct)) N_EMS_8 )))
@@ -2580,9 +2586,9 @@
 (reaction recovery_Sym_det2a_EMS_8  (Sym_det2a::EMS_8)  (RSym_det2::EMS_8)  (* Kr_m_D Sym_det2a::EMS_8))
 (reaction recovery_Sym_det2b_EMS_8  (Sym_det2b::EMS_8)  (RSym_det2::EMS_8)  (* Kr_m Sym_det2b::EMS_8))
  
-(reaction recovery_H1_EMS_8  (H1::EMS_8)  (RH1::EMS_8)  (* Kr_h H1::EMS_8))
+(reaction recovery_H1_EMS_8  (H1::EMS_8)  (RH1::EMS_8)  (* Kr_h_EMS_8 H1::EMS_8))
 (reaction recovery_C2_EMS_8  (C2::EMS_8)  (RC2::EMS_8)  (* Kr_c_EMS_8 C2::EMS_8))
-(reaction recovery_H1_det3_EMS_8  (H1_det3::EMS_8)  (RH1_det3::EMS_8)  (* Kr_h H1_det3::EMS_8))
+(reaction recovery_H1_det3_EMS_8  (H1_det3::EMS_8)  (RH1_det3::EMS_8)  (* Kr_h_EMS_8 H1_det3::EMS_8))
 (reaction recovery_C2_det3_EMS_8  (C2_det3::EMS_8)  (RC2_det3::EMS_8)  (* Kr_c_EMS_8 C2_det3::EMS_8))
   
 (reaction exposure_EMS_9  (S::EMS_9) (E::EMS_9) (* Ki_EMS_9 S::EMS_9 (/ (+ infectious_undet_symp_EMS_9 (* infectious_undet_As_EMS_9 reduced_infectious_As ) (* infectious_det_symp_EMS_9 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_9 reduced_inf_of_det_cases_ct)) N_EMS_9 )))
@@ -2636,9 +2642,9 @@
 (reaction recovery_Sym_det2a_EMS_9  (Sym_det2a::EMS_9)  (RSym_det2::EMS_9)  (* Kr_m_D Sym_det2a::EMS_9))
 (reaction recovery_Sym_det2b_EMS_9  (Sym_det2b::EMS_9)  (RSym_det2::EMS_9)  (* Kr_m Sym_det2b::EMS_9))
  
-(reaction recovery_H1_EMS_9  (H1::EMS_9)  (RH1::EMS_9)  (* Kr_h H1::EMS_9))
+(reaction recovery_H1_EMS_9  (H1::EMS_9)  (RH1::EMS_9)  (* Kr_h_EMS_9 H1::EMS_9))
 (reaction recovery_C2_EMS_9  (C2::EMS_9)  (RC2::EMS_9)  (* Kr_c_EMS_9 C2::EMS_9))
-(reaction recovery_H1_det3_EMS_9  (H1_det3::EMS_9)  (RH1_det3::EMS_9)  (* Kr_h H1_det3::EMS_9))
+(reaction recovery_H1_det3_EMS_9  (H1_det3::EMS_9)  (RH1_det3::EMS_9)  (* Kr_h_EMS_9 H1_det3::EMS_9))
 (reaction recovery_C2_det3_EMS_9  (C2_det3::EMS_9)  (RC2_det3::EMS_9)  (* Kr_c_EMS_9 C2_det3::EMS_9))
   
 (reaction exposure_EMS_10  (S::EMS_10) (E::EMS_10) (* Ki_EMS_10 S::EMS_10 (/ (+ infectious_undet_symp_EMS_10 (* infectious_undet_As_EMS_10 reduced_infectious_As ) (* infectious_det_symp_EMS_10 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_10 reduced_inf_of_det_cases_ct)) N_EMS_10 )))
@@ -2692,9 +2698,9 @@
 (reaction recovery_Sym_det2a_EMS_10  (Sym_det2a::EMS_10)  (RSym_det2::EMS_10)  (* Kr_m_D Sym_det2a::EMS_10))
 (reaction recovery_Sym_det2b_EMS_10  (Sym_det2b::EMS_10)  (RSym_det2::EMS_10)  (* Kr_m Sym_det2b::EMS_10))
  
-(reaction recovery_H1_EMS_10  (H1::EMS_10)  (RH1::EMS_10)  (* Kr_h H1::EMS_10))
+(reaction recovery_H1_EMS_10  (H1::EMS_10)  (RH1::EMS_10)  (* Kr_h_EMS_10 H1::EMS_10))
 (reaction recovery_C2_EMS_10  (C2::EMS_10)  (RC2::EMS_10)  (* Kr_c_EMS_10 C2::EMS_10))
-(reaction recovery_H1_det3_EMS_10  (H1_det3::EMS_10)  (RH1_det3::EMS_10)  (* Kr_h H1_det3::EMS_10))
+(reaction recovery_H1_det3_EMS_10  (H1_det3::EMS_10)  (RH1_det3::EMS_10)  (* Kr_h_EMS_10 H1_det3::EMS_10))
 (reaction recovery_C2_det3_EMS_10  (C2_det3::EMS_10)  (RC2_det3::EMS_10)  (* Kr_c_EMS_10 C2_det3::EMS_10))
   
 (reaction exposure_EMS_11  (S::EMS_11) (E::EMS_11) (* Ki_EMS_11 S::EMS_11 (/ (+ infectious_undet_symp_EMS_11 (* infectious_undet_As_EMS_11 reduced_infectious_As ) (* infectious_det_symp_EMS_11 reduced_inf_of_det_cases) (* infectious_det_AsP_EMS_11 reduced_inf_of_det_cases_ct)) N_EMS_11 )))
@@ -2748,9 +2754,9 @@
 (reaction recovery_Sym_det2a_EMS_11  (Sym_det2a::EMS_11)  (RSym_det2::EMS_11)  (* Kr_m_D Sym_det2a::EMS_11))
 (reaction recovery_Sym_det2b_EMS_11  (Sym_det2b::EMS_11)  (RSym_det2::EMS_11)  (* Kr_m Sym_det2b::EMS_11))
  
-(reaction recovery_H1_EMS_11  (H1::EMS_11)  (RH1::EMS_11)  (* Kr_h H1::EMS_11))
+(reaction recovery_H1_EMS_11  (H1::EMS_11)  (RH1::EMS_11)  (* Kr_h_EMS_11 H1::EMS_11))
 (reaction recovery_C2_EMS_11  (C2::EMS_11)  (RC2::EMS_11)  (* Kr_c_EMS_11 C2::EMS_11))
-(reaction recovery_H1_det3_EMS_11  (H1_det3::EMS_11)  (RH1_det3::EMS_11)  (* Kr_h H1_det3::EMS_11))
+(reaction recovery_H1_det3_EMS_11  (H1_det3::EMS_11)  (RH1_det3::EMS_11)  (* Kr_h_EMS_11 H1_det3::EMS_11))
 (reaction recovery_C2_det3_EMS_11  (C2_det3::EMS_11)  (RC2_det3::EMS_11)  (* Kr_c_EMS_11 C2_det3::EMS_11))
   
 

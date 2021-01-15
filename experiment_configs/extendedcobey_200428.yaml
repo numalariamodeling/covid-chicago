@@ -103,10 +103,10 @@ sampled_parameters:
     function_kwargs: {'low':0.06, 'high':0.1}
   'fraction_critical':
     np.random: uniform
-    function_kwargs: {'low':0.455, 'high':0.845}
-  'cfr': 
+    function_kwargs: {'low':0.455, 'high':0.65}
+  'fraction_dead': 
     np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.03}
+    function_kwargs: {'low':0.133, 'high':0.247}
   ### ---- INFECTIOUSNESS  ----------------------
   'reduced_inf_of_det_cases':
     np.random: uniform
@@ -202,7 +202,7 @@ sampled_parameters:
   ### set dSym_dAsP_ratio to be 2 for half, 3 a third etc, to disable set ratio to very large number i.e. 10000
   'dSym_dAsP_ratio':
     np.random: uniform
-    function_kwargs: {'low':4 , 'high':4}  
+    function_kwargs: {'low':6 , 'high':6}  
   ### ----- fraction_critical ----------
   'fraction_critical_change1':
     np.random: uniform
@@ -234,6 +234,34 @@ sampled_parameters:
   'fraction_critical_change10':
     np.random: uniform
     function_kwargs: {'low':0.042, 'high':0.078}
+  ### ----- fraction_dead ----------
+  'fraction_dead_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.154, 'high':0.286}
+  'fraction_dead_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.126, 'high':0.234}
+  'fraction_dead_change3':
+    np.random: uniform
+    function_kwargs: {'low':0.0840, 'high':0.156}
+  'fraction_dead_change4':
+    np.random: uniform
+    function_kwargs: {'low':0.063 , 'high':0.117}
+  'fraction_dead_change5':
+    np.random: uniform
+    function_kwargs: {'low':0.0700, 'high':0.13}
+  'fraction_dead_change6':
+    np.random: uniform
+    function_kwargs: {'low':0.105, 'high':0.195}
+  'fraction_dead_change7':
+    np.random: uniform
+    function_kwargs: {'low':0.105, 'high':0.195}
+  'fraction_dead_change8':
+    np.random: uniform
+    function_kwargs: {'low':0.091 , 'high':0.169}
+  'fraction_dead_change9':
+    np.random: uniform
+    function_kwargs: {'low':0.0280, 'high':0.052}
 intervention_parameters:
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - EFFECT SIZE
@@ -422,13 +450,34 @@ time_parameters:
   'crit_time_10':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-12-20}
-  ### Change in CFR
-  'cfr_time_1':
+  ### Change in fraction dead
+  'fraction_dead_time_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-01}   
+  'fraction_dead_time_2':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}   
-  'cfr_time_2':
+  'fraction_dead_time_3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}   
+  'fraction_dead_time_4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-01}   
+  'fraction_dead_time_5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-01}   
+  'fraction_dead_time_6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01}   
+  'fraction_dead_time_7':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-11-01} 
+  'fraction_dead_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-12-01}      
+  'fraction_dead_time_9':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-01-01}      
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - DATES
   ### (only used with corresponding emodl)
