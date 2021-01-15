@@ -232,7 +232,39 @@ sampled_parameters:
         - {'low': 3, 'high': 3}
         - {'low': 5, 'high': 5}
         - {'low': 9, 'high': 9}
+  recovery_time_hosp_change1:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
   recovery_time_crit_change_time_1:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 262, 'high': 262}
+        - {'low': 262, 'high': 262}
+        - {'low': 262, 'high': 262}
+        - {'low': 311, 'high': 311}
+        - {'low': 292, 'high': 292}
+        - {'low': 262, 'high': 262}
+        - {'low': 231, 'high': 231}
+        - {'low': 262, 'high': 262}
+        - {'low': 262, 'high': 262}
+        - {'low': 262, 'high': 262}
+        - {'low': 184, 'high': 184}
+  recovery_time_hosp_change_time_1:
     IL:
       expand_by_age: True
       np.random: uniform

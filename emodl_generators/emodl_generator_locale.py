@@ -289,13 +289,16 @@ def write_params(expandModel=None):
 
 (param Kr_a (/ 1 recovery_time_asymp))
 (param Kr_m (/ 1 recovery_time_mild))
-(param Kr_h (/ 1 recovery_time_hosp))
 (param Kl (/ (- 1 fraction_symptomatic ) time_to_infectious))
 (param Ks (/ fraction_symptomatic  time_to_infectious))
 (param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
 (param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
-(param Kc (/ 1 time_to_critical))
 (param Km (/ 1 time_to_death))
+(param Kc (/ 1 time_to_critical))
+
+; region specific
+;(param Kr_h (/ 1 recovery_time_hosp))
+;(param Kr_c (/ 1 recovery_time_crit))
 """
 
     expand_base_str = """
@@ -596,9 +599,9 @@ def write_reactions(grp, expandModel=None):
 """.format(grp=grp)
 
     reaction_str_III = """
-(reaction recovery_H1_{grp}   (H1::{grp})   (RH1::{grp})   (* Kr_h H1::{grp}))
+(reaction recovery_H1_{grp}   (H1::{grp})   (RH1::{grp})   (* Kr_h_{grp} H1::{grp}))
 (reaction recovery_C2_{grp}   (C2::{grp})   (RC2::{grp})   (* Kr_c_{grp} C2::{grp}))
-(reaction recovery_H1_det3_{grp}   (H1_det3::{grp})   (RH1_det3::{grp})   (* Kr_h H1_det3::{grp}))
+(reaction recovery_H1_det3_{grp}   (H1_det3::{grp})   (RH1_det3::{grp})   (* Kr_h_{grp} H1_det3::{grp}))
 (reaction recovery_C2_det3_{grp}   (C2_det3::{grp})   (RC2_det3::{grp})   (* Kr_c_{grp} C2_det3::{grp}))
     """.format(grp=grp)
 
@@ -933,6 +936,17 @@ def write_time_varying_parameter(grpList, total_string) :
 """.format(grpout=grpout, grp=grp)
         recovery_time_crit_change_str = recovery_time_crit_change_str + temp_str
 
+    recovery_time_hosp_change_str = ""
+    for grp in grpList:
+        grpout = sub(grp)
+        temp_str = """
+(param recovery_time_hosp_{grp} recovery_time_hosp)
+(param Kr_h_{grp} (/ 1 recovery_time_hosp_{grp}))
+(observe recovery_time_hosp_t_{grpout} recovery_time_hosp_{grp})
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_{grp}@ ((recovery_time_hosp_{grp} @recovery_time_hosp_change1_{grp}@) (Kr_h_{grp} (/ 1 @recovery_time_hosp_change1_{grp}@))))
+""".format(grpout=grpout, grp=grp)
+        recovery_time_hosp_change_str = recovery_time_hosp_change_str + temp_str
+            
     param_update_string = param_change_str + \
                           '\n' + ki_multiplier_change_str + \
                           '\n' + d_Sym_P_As_change_str + \
