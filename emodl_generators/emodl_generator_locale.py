@@ -950,7 +950,8 @@ def write_time_varying_parameter(grpList, total_string) :
     param_update_string = param_change_str + \
                           '\n' + ki_multiplier_change_str + \
                           '\n' + d_Sym_P_As_change_str + \
-                          '\n' + recovery_time_crit_change_str
+                          '\n' + recovery_time_crit_change_str  + \
+                          '\n' + recovery_time_hosp_change_str
 
     total_string = total_string.replace(';[TIMEVARYING_PARAMETERS]', param_update_string)
 

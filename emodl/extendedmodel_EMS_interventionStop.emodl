@@ -2076,6 +2076,62 @@
 (time-event LOS_ICU_change_1 @recovery_time_crit_change_time_1_EMS_11@ ((recovery_time_crit_EMS_11 @recovery_time_crit_change1_EMS_11@) (Kr_c_EMS_11 (/ 1 @recovery_time_crit_change1_EMS_11@))))
 
 
+(param recovery_time_hosp_EMS_1 recovery_time_hosp)
+(param Kr_h_EMS_1 (/ 1 recovery_time_hosp_EMS_1))
+(observe recovery_time_hosp_t_EMS-1 recovery_time_hosp_EMS_1)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_1@ ((recovery_time_hosp_EMS_1 @recovery_time_hosp_change1_EMS_1@) (Kr_h_EMS_1 (/ 1 @recovery_time_hosp_change1_EMS_1@))))
+
+(param recovery_time_hosp_EMS_2 recovery_time_hosp)
+(param Kr_h_EMS_2 (/ 1 recovery_time_hosp_EMS_2))
+(observe recovery_time_hosp_t_EMS-2 recovery_time_hosp_EMS_2)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_2@ ((recovery_time_hosp_EMS_2 @recovery_time_hosp_change1_EMS_2@) (Kr_h_EMS_2 (/ 1 @recovery_time_hosp_change1_EMS_2@))))
+
+(param recovery_time_hosp_EMS_3 recovery_time_hosp)
+(param Kr_h_EMS_3 (/ 1 recovery_time_hosp_EMS_3))
+(observe recovery_time_hosp_t_EMS-3 recovery_time_hosp_EMS_3)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_3@ ((recovery_time_hosp_EMS_3 @recovery_time_hosp_change1_EMS_3@) (Kr_h_EMS_3 (/ 1 @recovery_time_hosp_change1_EMS_3@))))
+
+(param recovery_time_hosp_EMS_4 recovery_time_hosp)
+(param Kr_h_EMS_4 (/ 1 recovery_time_hosp_EMS_4))
+(observe recovery_time_hosp_t_EMS-4 recovery_time_hosp_EMS_4)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_4@ ((recovery_time_hosp_EMS_4 @recovery_time_hosp_change1_EMS_4@) (Kr_h_EMS_4 (/ 1 @recovery_time_hosp_change1_EMS_4@))))
+
+(param recovery_time_hosp_EMS_5 recovery_time_hosp)
+(param Kr_h_EMS_5 (/ 1 recovery_time_hosp_EMS_5))
+(observe recovery_time_hosp_t_EMS-5 recovery_time_hosp_EMS_5)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_5@ ((recovery_time_hosp_EMS_5 @recovery_time_hosp_change1_EMS_5@) (Kr_h_EMS_5 (/ 1 @recovery_time_hosp_change1_EMS_5@))))
+
+(param recovery_time_hosp_EMS_6 recovery_time_hosp)
+(param Kr_h_EMS_6 (/ 1 recovery_time_hosp_EMS_6))
+(observe recovery_time_hosp_t_EMS-6 recovery_time_hosp_EMS_6)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_6@ ((recovery_time_hosp_EMS_6 @recovery_time_hosp_change1_EMS_6@) (Kr_h_EMS_6 (/ 1 @recovery_time_hosp_change1_EMS_6@))))
+
+(param recovery_time_hosp_EMS_7 recovery_time_hosp)
+(param Kr_h_EMS_7 (/ 1 recovery_time_hosp_EMS_7))
+(observe recovery_time_hosp_t_EMS-7 recovery_time_hosp_EMS_7)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_7@ ((recovery_time_hosp_EMS_7 @recovery_time_hosp_change1_EMS_7@) (Kr_h_EMS_7 (/ 1 @recovery_time_hosp_change1_EMS_7@))))
+
+(param recovery_time_hosp_EMS_8 recovery_time_hosp)
+(param Kr_h_EMS_8 (/ 1 recovery_time_hosp_EMS_8))
+(observe recovery_time_hosp_t_EMS-8 recovery_time_hosp_EMS_8)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_8@ ((recovery_time_hosp_EMS_8 @recovery_time_hosp_change1_EMS_8@) (Kr_h_EMS_8 (/ 1 @recovery_time_hosp_change1_EMS_8@))))
+
+(param recovery_time_hosp_EMS_9 recovery_time_hosp)
+(param Kr_h_EMS_9 (/ 1 recovery_time_hosp_EMS_9))
+(observe recovery_time_hosp_t_EMS-9 recovery_time_hosp_EMS_9)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_9@ ((recovery_time_hosp_EMS_9 @recovery_time_hosp_change1_EMS_9@) (Kr_h_EMS_9 (/ 1 @recovery_time_hosp_change1_EMS_9@))))
+
+(param recovery_time_hosp_EMS_10 recovery_time_hosp)
+(param Kr_h_EMS_10 (/ 1 recovery_time_hosp_EMS_10))
+(observe recovery_time_hosp_t_EMS-10 recovery_time_hosp_EMS_10)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_10@ ((recovery_time_hosp_EMS_10 @recovery_time_hosp_change1_EMS_10@) (Kr_h_EMS_10 (/ 1 @recovery_time_hosp_change1_EMS_10@))))
+
+(param recovery_time_hosp_EMS_11 recovery_time_hosp)
+(param Kr_h_EMS_11 (/ 1 recovery_time_hosp_EMS_11))
+(observe recovery_time_hosp_t_EMS-11 recovery_time_hosp_EMS_11)
+(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_11@ ((recovery_time_hosp_EMS_11 @recovery_time_hosp_change1_EMS_11@) (Kr_h_EMS_11 (/ 1 @recovery_time_hosp_change1_EMS_11@))))
+
+
 (param Ki_back_EMS_1 (* Ki_EMS_1 @backtonormal_multiplier@))
 (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_EMS_1 Ki_back_EMS_1)))
         
