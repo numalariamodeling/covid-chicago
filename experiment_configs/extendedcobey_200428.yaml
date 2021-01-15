@@ -94,6 +94,9 @@ sampled_parameters:
   'recovery_time_crit':
     np.random: uniform
     function_kwargs: {'low':8, 'high':10}
+  'recovery_time_postcrit':
+    np.random: uniform
+    function_kwargs: {'low':1, 'high':4}    
   ### ---- FRACTIONS  ----------------------- 
   'fraction_symptomatic':
     np.random: uniform

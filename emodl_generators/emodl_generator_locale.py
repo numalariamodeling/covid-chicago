@@ -24,10 +24,12 @@ def write_species(grp, expandModel=None):
 (species Sys::{grp} 0)
 (species Sys_det3::{grp} 0)
 (species H1::{grp} 0)
-(species H2::{grp} 0)
+(species H2pre::{grp} 0)
+(species H2post::{grp} 0)   
 (species H3::{grp} 0)
 (species H1_det3::{grp} 0)
-(species H2_det3::{grp} 0)
+(species H2pre_det3::{grp} 0)
+(species H2post_det3::{grp} 0)       
 (species H3_det3::{grp} 0)
 (species C2::{grp} 0)
 (species C3::{grp} 0)
@@ -76,7 +78,7 @@ def write_species(grp, expandModel=None):
 def sub(x):
     xout = re.sub('_','-', str(x), count=1)
     return(xout)
-    
+
 def write_observe(grp, observeLevel='primary'):
     grp = str(grp)
     grpout = sub(grp)
@@ -147,7 +149,7 @@ def write_observe(grp, observeLevel='primary'):
         observe_str = observe_primary_channels_str +  observe_tertiary_channels_str
     if observeLevel == 'all' :
         observe_str = observe_primary_channels_str + observe_secondary_channels_str + observe_tertiary_channels_str
-        
+
     observe_str = observe_str.replace("  ", " ")
     return (observe_str)
 
@@ -157,8 +159,8 @@ def write_functions(grp, expandModel=None):
     functions_str = """
 (func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
 
-(func hospitalized_{grp}  (+ H1::{grp} H2::{grp} H3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
-(func hosp_det_{grp}  (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp}))
+(func hospitalized_{grp}  (+ H1::{grp} H2pre::{grp} H2post::{grp} H3::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp}))
+(func hosp_det_{grp}  (+ H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp}))
 (func critical_{grp} (+ C2::{grp} C3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func crit_det_{grp} (+ C2_det3::{grp} C3_det3::{grp}))
 (func deaths_{grp} (+ D3::{grp} D3_det3::{grp}))
@@ -175,14 +177,14 @@ def write_functions(grp, expandModel=None):
 (func symp_severe_det_cumul_{grp} (+ symptomatic_severe_det_{grp} hosp_det_{grp} crit_det_{grp} D3_det3::{grp}  RH1_det3::{grp} RC2_det3::{grp}))
 
 (func hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(func hosp_det_cumul_{grp} (+ H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp}  RH1_det3::{grp}  RC2_det3::{grp}))
+(func hosp_det_cumul_{grp} (+ H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp}  RH1_det3::{grp}  RC2_det3::{grp}))
 (func crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
 (func crit_det_cumul_{grp} (+ C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RC2_det3::{grp}))
-(func detected_cumul_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} C2_det3::{grp} C3_det3::{grp} RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
+(func detected_cumul_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2pre_det3::{grp}  H2post_det3::{grp}  C2_det3::{grp} C3_det3::{grp} RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
 (func death_det_cumul_{grp} D3_det3::{grp} )
 
-(func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
-(func infected_det_{grp} (+ infectious_det_{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(func infected_det_{grp} (+ infectious_det_{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))   
 (func infected_det_cumul_{grp} (+ infected_det_{grp} recovered_det_{grp} D3_det3::{grp}))    
 """.format(grp=grp)
@@ -197,9 +199,9 @@ def write_functions(grp, expandModel=None):
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
 (func symptomatic_severe_det_{grp}   ( Sys_det3::{grp}))
 
-(func detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(func detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 
-(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2pre::{grp} H2post::{grp}  H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 
 (func infectious_det_symp_{grp} (+ Sym_det2::{grp} Sys_det3::{grp} ))
@@ -216,9 +218,9 @@ def write_functions(grp, expandModel=None):
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3::{grp}))
 (func symptomatic_severe_det_{grp}  (+ Sys_preD::{grp} Sys_det3::{grp}))
 
-(func detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(func detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 
-(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2pre::{grp}  H2post::{grp}  H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2::{grp} Sys_det3::{grp} ))
 
 (func infectious_det_symp_{grp} (+ Sym_det2::{grp} Sys_det3::{grp} ))
@@ -235,12 +237,12 @@ def write_functions(grp, expandModel=None):
 (func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 (func symptomatic_severe_det_{grp}  (+ Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 
-(func detected_{grp} (+ As_det1::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp} H1_det3::{grp} H2_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
+(func detected_{grp} (+ As_det1::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 
-(func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2pre::{grp} H2post::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_det_{grp} (+ As_det1::{grp} P_det::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 
-(func infectious_undet_symp_{grp} (+ P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2::{grp} H3::{grp} C2::{grp} C3::{grp}))
+(func infectious_undet_symp_{grp} (+ P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2pre::{grp} H2post::{grp} H3::{grp} C2::{grp} C3::{grp}))
 (func infectious_undet_As_{grp} (+ As_preD::{grp} As::{grp}))
 
 (func infectious_det_symp_{grp} (+ Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp} ))
@@ -270,6 +272,7 @@ def write_params(expandModel=None):
 (param recovery_time_mild @recovery_time_mild@)
 (param recovery_time_hosp @recovery_time_hosp@)
 (param recovery_time_crit @recovery_time_crit@)
+(param recovery_time_postcrit @recovery_time_postcrit@)
 (param fraction_symptomatic @fraction_symptomatic@)
 (param fraction_severe @fraction_severe@)
 (param fraction_critical @fraction_critical@ )
@@ -295,6 +298,7 @@ def write_params(expandModel=None):
 (param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
 (param Km (/ 1 time_to_death))
 (param Kc (/ 1 time_to_critical))
+(param Kr_hc (/ 1 recovery_time_postcrit))
 
 ; region specific
 ;(param Kr_h (/ 1 recovery_time_hosp))
@@ -600,9 +604,11 @@ def write_reactions(grp, expandModel=None):
 
     reaction_str_III = """
 (reaction recovery_H1_{grp}   (H1::{grp})   (RH1::{grp})   (* Kr_h_{grp} H1::{grp}))
-(reaction recovery_C2_{grp}   (C2::{grp})   (RC2::{grp})   (* Kr_c_{grp} C2::{grp}))
+(reaction recovery_C2_{grp}   (C2::{grp})   (H2post::{grp})   (* Kr_c_{grp} C2::{grp}))
+(reaction recovery_H2post_{grp}   (H2post::{grp})   (RC2::{grp})   (* Kr_hc H2post::{grp}))
 (reaction recovery_H1_det3_{grp}   (H1_det3::{grp})   (RH1_det3::{grp})   (* Kr_h_{grp} H1_det3::{grp}))
-(reaction recovery_C2_det3_{grp}   (C2_det3::{grp})   (RC2_det3::{grp})   (* Kr_c_{grp} C2_det3::{grp}))
+(reaction recovery_C2_det3_{grp}   (C2_det3::{grp})   (H2post_det3::{grp})   (* Kr_c_{grp} C2_det3::{grp}))
+(reaction recovery_H2post_det3_{grp}   (H2post_det3::{grp})   (RC2_det3::{grp})   (* Kr_hc H2post_det3::{grp}))
     """.format(grp=grp)
 
     expand_base_str = """
@@ -620,16 +626,16 @@ def write_reactions(grp, expandModel=None):
 (reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3::{grp})  (* Ksys P_det::{grp} ))
 
 (reaction hospitalization_1_{grp}   (Sys::{grp})   (H1::{grp})   (* Kh1 Sys::{grp}))
-(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2::{grp})   (* Kh2 Sys::{grp}))
+(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2pre::{grp})   (* Kh2 Sys::{grp}))
 (reaction hospitalization_3_{grp}   (Sys::{grp})   (H3::{grp})   (* Kh3 Sys::{grp}))
-(reaction critical_2_{grp}   (H2::{grp})   (C2::{grp})   (* Kc H2::{grp}))
+(reaction critical_2_{grp}   (H2pre::{grp})   (C2::{grp})   (* Kc H2pre::{grp}))
 (reaction critical_3_{grp}   (H3::{grp})   (C3::{grp})   (* Kc H3::{grp}))
 (reaction death_{grp}   (C3::{grp})   (D3::{grp})   (* Km C3::{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3::{grp})   (H1_det3::{grp})   (* Kh1 Sys_det3::{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3::{grp})   (H2_det3::{grp})   (* Kh2 Sys_det3::{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3::{grp})   (H2pre_det3::{grp})   (* Kh2 Sys_det3::{grp}))
 (reaction hospitalization_3_det_{grp}   (Sys_det3::{grp})   (H3_det3::{grp})   (* Kh3 Sys_det3::{grp}))
-(reaction critical_2_det2_{grp}   (H2_det3::{grp})   (C2_det3::{grp})   (* Kc H2_det3::{grp}))
+(reaction critical_2_det2_{grp}   (H2pre_det3::{grp})   (C2_det3::{grp})   (* Kc H2pre_det3::{grp}))
 (reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
 (reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
 
@@ -659,16 +665,16 @@ def write_reactions(grp, expandModel=None):
 (reaction severe_symptomatic_det_{grp} (Sys_preD::{grp})  (Sys_det3::{grp})  (* Ksys_D Sys_preD::{grp} d_Sys))
 
 (reaction hospitalization_1_{grp}   (Sys::{grp})   (H1::{grp})   (* Kh1_D Sys::{grp}))
-(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2::{grp})   (* Kh2_D Sys::{grp}))
+(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2pre::{grp})   (* Kh2_D Sys::{grp}))
 (reaction hospitalization_3_{grp}   (Sys::{grp})   (H3::{grp})   (* Kh3_D Sys::{grp}))
-(reaction critical_2_{grp}   (H2::{grp})   (C2::{grp})   (* Kc H2::{grp}))
+(reaction critical_2_{grp}   (H2pre::{grp})   (C2::{grp})   (* Kc H2pre::{grp}))
 (reaction critical_3_{grp}   (H3::{grp})   (C3::{grp})   (* Kc H3::{grp}))
 (reaction death_{grp}   (C3::{grp})   (D3::{grp})   (* Km C3::{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3::{grp})   (H1_det3::{grp})   (* Kh1_D Sys_det3::{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3::{grp})   (H2_det3::{grp})   (* Kh2_D Sys_det3::{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3::{grp})   (H2pre_det3::{grp})   (* Kh2_D Sys_det3::{grp}))
 (reaction hospitalization_3_det_{grp}   (Sys_det3::{grp})   (H3_det3::{grp})   (* Kh3_D Sys_det3::{grp}))
-(reaction critical_2_det2_{grp}   (H2_det3::{grp})   (C2_det3::{grp})   (* Kc H2_det3::{grp}))
+(reaction critical_2_det2_{grp}   (H2pre_det3::{grp})   (C2_det3::{grp})   (* Kc H2pre_det3::{grp}))
 (reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
 (reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
 
@@ -705,21 +711,21 @@ def write_reactions(grp, expandModel=None):
 (reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3b::{grp})  (* Ksys  P_det::{grp} ))
 
 (reaction hospitalization_1_{grp}  (Sys::{grp})   (H1::{grp})   (* Kh1_D Sys::{grp}))
-(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2::{grp})   (* Kh2_D Sys::{grp}))
+(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2pre::{grp})   (* Kh2_D Sys::{grp}))
 (reaction hospitalization_3_{grp}   (Sys::{grp})   (H3::{grp})   (* Kh3_D Sys::{grp}))
-(reaction critical_2_{grp}  (H2::{grp})   (C2::{grp})   (* Kc H2::{grp}))
+(reaction critical_2_{grp}  (H2pre::{grp})   (C2::{grp})   (* Kc H2pre::{grp}))
 (reaction critical_3_{grp}   (H3::{grp})   (C3::{grp})   (* Kc H3::{grp}))
 (reaction death_{grp}   (C3::{grp})   (D3::{grp})   (* Km C3::{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3a::{grp})   (H1_det3::{grp})   (* Kh1_D Sys_det3a::{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3a::{grp})   (H2_det3::{grp})   (* Kh2_D Sys_det3a::{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3a::{grp})   (H2pre_det3::{grp})   (* Kh2_D Sys_det3a::{grp}))
 (reaction hospitalization_3_det_{grp}   (Sys_det3a::{grp})   (H3_det3::{grp})   (* Kh3_D Sys_det3a::{grp}))
 
 (reaction hospitalization_1_det_{grp}   (Sys_det3b::{grp})   (H1_det3::{grp})   (* Kh1 Sys_det3b::{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3b::{grp})   (H2_det3::{grp})   (* Kh2 Sys_det3b::{grp}))
+(reaction hospitalization_2pre_det_{grp}   (Sys_det3b::{grp})   (H2pre_det3::{grp})   (* Kh2 Sys_det3b::{grp}))
 (reaction hospitalization_3_det_{grp}   (Sys_det3b::{grp})   (H3_det3::{grp})   (* Kh3 Sys_det3b::{grp}))
 
-(reaction critical_2_det2_{grp}   (H2_det3::{grp})   (C2_det3::{grp})   (* Kc H2_det3::{grp}))
+(reaction critical_2_det2_{grp}   (H2pre_det3::{grp})   (C2_det3::{grp})   (* Kc H2pre_det3::{grp}))
 (reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
 (reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
 
