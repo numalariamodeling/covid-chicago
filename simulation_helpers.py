@@ -221,6 +221,9 @@ echo end""")
             #file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
 
             ## runProcessForCivis
+            file = open(os.path.join(temp_exp_dir, '0_runTraceSelection.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python trace_selection.py --stem "{exp_name}" --plot  >> "{sim_output_path}/log/0_runProcessForCivis.txt" \n')
+
             file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py --exp_name "{exp_name}" --processStep "generate_outputs" >> "{sim_output_path}/log/1_runProcessForCivis.txt" \n')
 
@@ -304,8 +307,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/overflow_probabilities.py "{exp_name}"' \
-                f'\npython {plotters_dir}/overflow_numbers.py "{exp_name}"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/overflow_probabilities.py "{exp_name}"'
+               # f'\npython {plotters_dir}/overflow_numbers.py "{exp_name}"'
     file = open(os.path.join(temp_exp_dir, '2_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
