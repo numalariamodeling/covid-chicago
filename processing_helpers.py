@@ -8,13 +8,22 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='trajectoriesDat.csv',
-                  input_sim_output_path =None, column_list=None, add_incidence=True) :
+                  input_sim_output_path =None, column_list=None, add_incidence=True, select_traces=None) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
     df = df.dropna()
+
+    if select_traces is not False and region_suffix is not None:
+        ems_nr = region_suffix.replace("EMS-","")
+        if region_suffix == "_All": ems_nr = 0
+        if os.path.exists(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv')):
+            rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
+            rank_export_df_sub = rank_export_df[0:int(len(rank_export_df) / 2)]
+            df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
+
     try:
         first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     except:
