@@ -149,11 +149,13 @@ if __name__ == '__main__':
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
 
-        df = get_prev_df(exp_name, channels=['prevalence','seroprevalence','IFR','IFR_t'], fname=trajectoriesName)
+        channels = ['prevalence','seroprevalence','IFR','IFR_t']
+        #channels = ['prevalence','prevalence_det' ,'seroprevalence','seroprevalence_det' ,'IFR','IFR_t','IFR_det']
+        df = get_prev_df(exp_name, channels=channels, fname=trajectoriesName)
         plot_prevalences(df, channels=['prevalence'], first_day=first_plot_day, last_day=last_plot_day)
         plot_prevalences(df, channels=['seroprevalence'], first_day=first_plot_day,last_day=last_plot_day)
-        plot_prevalences(df, channels=['IFR'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
-        #plot_prevalences(df, channels=['IFR_t'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
-        #plot_prevalences(df, channels=['IFR', 'IFR_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
-        #plot_prevalences(df, channels=['seroprevalence', 'seroprevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
-        #plot_prevalences(df, channels=['prevalence', 'prevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
+        plot_prevalences(df, channels=['IFR'],first_day=first_plot_day,last_day=last_plot_day)
+        #plot_prevalences(df, channels=['IFR_t'], first_day=first_plot_day,last_day=last_plot_day)
+        #plot_prevalences(df, channels=['IFR', 'IFR_det'], first_day=first_plot_day, last_day=last_plot_day)
+        #plot_prevalences(df, channels=['seroprevalence', 'seroprevalence_det'], first_day=first_plot_day, last_day=last_plot_day)
+        #plot_prevalences(df, channels=['prevalence', 'prevalence_det'], first_day=first_plot_day, last_day=last_plot_day)
