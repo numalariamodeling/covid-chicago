@@ -295,7 +295,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-12-20}
   'ki_multiplier_time_13':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-1-20}
+    function_kwargs: {'dates': 2021-01-20}
   ### ---- Increased detections ---- 
   ### Change in d_Sys
   'detection_time_1':
