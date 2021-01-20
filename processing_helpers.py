@@ -8,13 +8,22 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='trajectoriesDat.csv',
-                  input_sim_output_path =None, column_list=None, add_incidence=True) :
+                  input_sim_output_path =None, column_list=None, add_incidence=True, select_traces=None) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
     df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
     df = df.dropna()
+
+    if select_traces is not False and region_suffix is not None:
+        ems_nr = region_suffix.replace("_EMS-","")
+        if region_suffix == "_All": ems_nr = 0
+        if os.path.exists(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv')):
+            rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
+            rank_export_df_sub = rank_export_df[0:int(len(rank_export_df) / 2)]
+            df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
+
     try:
         first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     except:
@@ -210,25 +219,22 @@ def load_ref_df(ems_nr):
     return ref_df
 
 
-def calculate_prevalence(df, ems=None):
-    if ems is None:
-        ems = ['EMS-%d' % x for x in range(1, 12)]
+def calculate_prevalence(df):
 
-    for ems_num in ems:
-            df[f'N_{ems_num}'] = df[f'N_{str(ems_num.replace("-","_"))}'] - df[f'deaths_{ems_num}']
-            df[f'IFR_{ems_num}'] = df[f'deaths_{ems_num}'] / (df[f'recovered_{ems_num}'] + df[f'deaths_{ems_num}'])
-            df[f'IFR_t_{ems_num}'] = df[f'new_deaths_{ems_num}'] / (df[f'new_recovered_{ems_num}'] + df[f'new_deaths_{ems_num}'])
-            df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
-            df[f'seroprevalence_current_{ems_num}'] = df[f'recovered_{ems_num}'] / df[f'N_{ems_num}']
-            df[f'seroprevalence_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_{ems_num}'].transform('shift', 14)
+    df['N'] = df['N'] - df['deaths']
+    df['IFR'] = df['deaths'] / (df['recovered'] + df['deaths'])
+    df['IFR_t'] = df['new_deaths'] / (df['new_recovered'] + df['new_deaths'])
+    df['prevalence'] = df['infected'] / df['N']
+    df['seroprevalence_current'] = df['recovered'] / df['N']
+    df['seroprevalence'] = df.groupby(['scen_num', 'sample_num'])['seroprevalence_current'].transform('shift', 14)
 
-            if f'infected_det_{ems_num}' in df.columns:
-                df[f'N_det_{ems_num}'] = df[f'N_{str(ems_num.replace("-", "_"))}'] - df[f'deaths_det_{ems_num}']
-                df[f'IFR_det_{ems_num}'] = df[f'deaths_det_{ems_num}'] / (df[f'recovered_det_{ems_num}'] + df[f'deaths_det_{ems_num}'])
-                df[f'IFR_det_t_{ems_num}'] = df[f'new_deaths_det_{ems_num}'] / (df[f'new_recovered_det_{ems_num}'] + df[f'new_deaths_det_{ems_num}'])
-                df[f'prevalence_det_{ems_num}'] = df[f'infected_det_{ems_num}'] / df[f'N_det_{ems_num}']
-                df[f'seroprevalence_current_det_{ems_num}'] = df[f'recovered_det_{ems_num}'] / df[f'N_det_{ems_num}']
-                df[f'seroprevalence_det_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_det_{ems_num}'].transform('shift', 14)
+    if 'infected_det' in df.columns:
+        df['N_det'] = df['N'] - df['deaths_det']
+        df['IFR_det'] = df['deaths_det'] / (df['recovered_det'] + df['deaths_det'])
+        df['IFR_det_t'] = df['new_deaths_det'] / (df['new_recovered_det'] + df['new_deaths_det'])
+        df['prevalence_det'] = df['infected_det'] / df['N_det']
+        df['seroprevalence_current_det'] = df['recovered_det'] / df['N_det']
+        df['seroprevalence_det'] = df.groupby(['scen_num', 'sample_num'])['seroprevalence_current_det'].transform('shift', 14)
     return df
 
 def calculate_incidence(adf, output_filename=None, trimmed=False) :

@@ -42,77 +42,79 @@ def parse_args():
     )
     return parser.parse_args()
 
+def get_prev_df(df, channels, fname='trajectoriesDat.csv'):
 
-def trim_trajectories(simpath, scenario, colnames, ems):
-    """also see plotter 'trim_trajectoriesDat.py' """
-    df = pd.read_csv(os.path.join(simpath, 'trajectoriesDat.csv'))
-    df = df.rename(columns={'N_EMS_%d' % ems_num: 'N_EMS-%d' % ems_num for ems_num in range(1, 12)})
-    df['N_All'] = df['susceptible_All'] + df['exposed_All'] + df['infected_All'] + df['recovered_All']
-    keep_cols = ['%s_%s' % (x, y) for x in colnames for y in ems]
-    df['startdate'] = pd.to_datetime(df['startdate'])
-    df['date'] = df.apply(lambda x: x['startdate'] + timedelta(days=x['time']), axis=1)
-    df = df[['date'] + keep_cols]
-    df.to_csv(os.path.join(simpath, 'trimmed_trajectoriesDat_%s.csv' % scenario), index=False)
+    sort_channels = ['scen_num', 'sample_num', 'run_num', 'time']
+    group_channels = ['scen_num', 'sample_num', 'run_num']
+    region_list = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
 
-
-def plot_prevalences(exp_name, first_day, last_day, channels, fname='trajectoriesDat.csv'):
-
-    ems = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
-    get_det =0
-    for ch in channels:
-        if 'det' in ch: get_det = get_det + 1
+    df = pd.DataFrame()
+    for ems_region in region_list:
+        print(ems_region)
+        ems_nr = ems_region.replace("EMS-","")
+        if ems_region=="All": ems_nr  = 0
+        get_det =0
+        for ch in channels:
+            if 'det' in ch: get_det = get_det + 1
 
         column_list = ['time', 'startdate', 'scen_num', 'run_num', 'sample_num']
-        for ems_num in ems:
-            column_list.append('N_' + str(ems_num.replace("-", "_")))
-            column_list.append('infected_' + str(ems_num))
-            column_list.append('infected_cumul_' + str(ems_num))
-            column_list.append('recovered_' + str(ems_num))
-            column_list.append('deaths_' + str(ems_num))
-            if get_det >0:
-                column_list.append('infected_det_' + str(ems_num))
-                column_list.append('infected_det_cumul_' + str(ems_num))
-                column_list.append('recovered_det_' + str(ems_num))
-                column_list.append('deaths_det_' + str(ems_num))
-        df = load_sim_data(exp_name, region_suffix=None, fname=fname, column_list=column_list, add_incidence=False)
+        column_list.append('N_' + str(ems_region.replace("-", "_")))
+        column_list.append('infected_' + str(ems_region))
+        column_list.append('infected_cumul_' + str(ems_region))
+        column_list.append('recovered_' + str(ems_region))
+        column_list.append('deaths_' + str(ems_region))
+        if get_det >0:
+            column_list.append('infected_det_' + str(ems_region))
+            column_list.append('infected_det_cumul_' + str(ems_region))
+            column_list.append('recovered_det_' + str(ems_region))
+            column_list.append('deaths_det_' + str(ems_region))
 
-        for ems_num in ems:
-            sort_channels = ['scen_num','sample_num','run_num','time']
-            group_channels = ['scen_num','sample_num','run_num']
-            df[f'new_deaths_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'deaths_{ems_num}'].diff()
-            df[f'new_recovered_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'recovered_{ems_num}'].diff()
-            if get_det > 0:
-                df[f'new_deaths_det_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'deaths_det_{ems_num}'].diff()
-                df[f'new_recovered_det_{ems_num}'] = df.sort_values(sort_channels).groupby(group_channels)[f'recovered_det_{ems_num}'].diff()
+        df_i = load_sim_data(exp_name, region_suffix=f'_{ems_region}', fname=fname, column_list=column_list, add_incidence=False)
+        if ems_region !="All" :
+            df_i['N'] = df_i['N_' + str(ems_region.replace("-", "_"))]
+        df_i[f'new_deaths'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'deaths'].diff()
+        df_i[f'new_recovered'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'recovered'].diff()
+        if get_det > 0:
+            df_i[f'new_deaths_det'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'deaths_det'].diff()
+            df_i[f'new_recovered_det'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'recovered_det'].diff()
 
-        df = calculate_prevalence(df,ems=ems)
-        #df.to_csv(os.path.join(wdir, 'simulation_output', exp_name, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
+        df_i = calculate_prevalence(df_i)
+        df_i['region'] = ems_nr
+        df_i = df_i[['region','date','scen_num','sample_num']+channels]
+
+        if df.empty:
+            df= df_i
+        else:
+            df = pd.concat([df,df_i])
+    #df.to_csv(os.path.join(wdir, 'simulation_output', exp_name, "prevalenceDat.csv"), index=False, date_format='%Y-%m-%d')
+    return df
+
+def plot_prevalences(df, first_day, last_day, channels):
 
     df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
     fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('husl', 8)
-    for e, ems_num in enumerate(ems):
+    for e, ems_num in enumerate(df['region'].unique()):
         ax = fig.add_subplot(3, 4, e + 1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
+        adf = df[df['region'] == ems_num]
         for k, channel in enumerate(channels):
             plot_label = ''
             if len(channels) > 1:
-                plot_label = channel #channel.split('_')[0]
-            channel_label = channel
-            channel = f'{channel}_{ems_num}'
-            df[channel] = df[channel].astype(float)
-            mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+                plot_label = channel
+            channel_label = channel + str(ems_num)
+            mdf = adf.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
             ax.plot(mdf['date'], mdf['CI_50'], color=palette[k], label=plot_label)
             ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],
                             color=palette[k], linewidth=0, alpha=0.2)
             ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                             color=palette[k], linewidth=0, alpha=0.4)
-        if ems_num == 'EMS-1':
+        if ems_num == len(df['region'].unique()):
             ax.legend()
-        plotsubtitle = ems_num.replace('EMS-', 'COVID-19 Region ')
-        if ems_num == 'All':
-            plotsubtitle = ems_num.replace('All', 'Illinois')
+        plotsubtitle = f'COVID-19 Region {ems_num}'
+        if ems_num == 0:
+            plotsubtitle = 'Illinois'
         ax.set_title(plotsubtitle)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         ax.set_xlim(first_day, last_day)
@@ -143,12 +145,17 @@ if __name__ == '__main__':
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
-        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
+        print(exp_name)
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
 
-        plot_prevalences(exp_name, channels=['prevalence'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
-        plot_prevalences(exp_name, channels=['seroprevalence'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
-        plot_prevalences(exp_name, channels=['IFR'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
-        plot_prevalences(exp_name, channels=['IFR_t'], fname=trajectoriesName, first_day=first_plot_day,last_day=last_plot_day)
-        plot_prevalences(exp_name, channels=['IFR', 'IFR_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
-        plot_prevalences(exp_name, channels=['seroprevalence', 'seroprevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
-        plot_prevalences(exp_name, channels=['prevalence', 'prevalence_det'], fname=trajectoriesName, first_day=first_plot_day, last_day=last_plot_day)
+        channels = ['prevalence','seroprevalence','IFR','IFR_t']
+        #channels = ['prevalence','prevalence_det' ,'seroprevalence','seroprevalence_det' ,'IFR','IFR_t','IFR_det']
+        df = get_prev_df(exp_name, channels=channels, fname=trajectoriesName)
+        plot_prevalences(df, channels=['prevalence'], first_day=first_plot_day, last_day=last_plot_day)
+        plot_prevalences(df, channels=['seroprevalence'], first_day=first_plot_day,last_day=last_plot_day)
+        plot_prevalences(df, channels=['IFR'],first_day=first_plot_day,last_day=last_plot_day)
+        #plot_prevalences(df, channels=['IFR_t'], first_day=first_plot_day,last_day=last_plot_day)
+        #plot_prevalences(df, channels=['IFR', 'IFR_det'], first_day=first_plot_day, last_day=last_plot_day)
+        #plot_prevalences(df, channels=['seroprevalence', 'seroprevalence_det'], first_day=first_plot_day, last_day=last_plot_day)
+        #plot_prevalences(df, channels=['prevalence', 'prevalence_det'], first_day=first_plot_day, last_day=last_plot_day)
