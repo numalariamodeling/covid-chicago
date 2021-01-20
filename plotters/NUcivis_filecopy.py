@@ -35,23 +35,6 @@ def subset_df(fname, regions_to_keep, output_dir,save_dir=None):
         save_dir = os.path.join(output_dir,'csv')
     df.to_csv(os.path.join(save_dir, fname))
 
-def copyFiles_subset(output_dir):
-    fname1 = f'nu_{simdate}.csv'
-    fname2 = f'nu_hospitaloverflow_{simdate}.csv'
-    regions_to_keep = ['covidregion_10', 'covidregion_11']
-    subset_df(fname=fname1, output_dir=output_dir, regions_to_keep=regions_to_keep)
-    subset_df(fname=fname2, output_dir=output_dir,regions_to_keep=regions_to_keep)
-
-    if os.path.exists(os.path.join(output_dir,'trajectories')):
-        shutil.rmtree(os.path.join(output_dir,'trajectories'))
-    if os.path.exists(os.path.join(output_dir,'plots')):
-        shutil.rmtree(os.path.join(output_dir,'plots'))
-
-    filelist= [file for file in os.listdir(os.path.join(exp_dir,'_plots')) if
-               file.endswith(('10.png','10_nolog.png','11.png','11_nolog.png'))]
-    for file in filelist:
-        shutil.copyfile(os.path.join(exp_dir,'_plots', file), os.path.join(output_dir, file))
-
 
 def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=None):
     Q1 = "1) How has the date range of data used changed since your last update?"
@@ -91,14 +74,8 @@ if __name__ == '__main__' :
     fname = f"nu_{simdate}.csv"
     exp_dir = os.path.join(wdir,"simulation_output", exp_name)
     NUcivis_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate)
-    NUcdph_dir = os.path.join(projectpath, 'NU_cdph_outputs', simdate)
 
     """ Deliverables for CIVIS"""
     createFolder(output_dir=NUcivis_dir)
     copyFiles(output_dir=NUcivis_dir)
     writeChangelog(output_dir=NUcivis_dir)
-
-    """ Deliverables for CDPH"""
-    createFolder(output_dir=NUcdph_dir)
-    copyFiles_subset(output_dir=NUcdph_dir)
-    writeChangelog(output_dir=NUcdph_dir)

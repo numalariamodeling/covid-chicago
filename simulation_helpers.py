@@ -236,11 +236,6 @@ echo end""")
             file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n python "iteration_comparison.py" "{exp_name}" >> "{sim_output_path}/log/4_runProcessForCivis.txt" \n')
 
-            file = open(os.path.join(temp_exp_dir, '5_runProcessFor_CDPH.bat'), 'w')
-            file.write(f'\ncd {data_plotters_dir} \n python "emresource_cli_per_covidregion.py" --cdph_date "{today.strftime("%Y%m%d")}"')
-            file.write(f'\ncd {rfiles_dir}/estimate_Rt \n R --vanilla -f "covidregion_Rt_timelines.R" "{rfiles_dir}"')
-            file.write('\npause')
-
         if experiment_config != "EMSspecific_sample_parameters.yaml" :
             ## locale_age_postprocessing
             file = open(os.path.join(temp_exp_dir, '0_locale_age_postprocessing.bat'), 'w')
@@ -296,11 +291,6 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file = open(os.path.join(temp_exp_dir, '0_compareToData.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
-
-    #rcommand = f'cd {rfiles_dir} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE"  "NUCLUSTER" "{rfiles_dir}" \n'
-    #file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.sh'), 'w')
-    #file.write(header + jobname + err + out + rmodule + rcommand)
-    #file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.sh'), 'w')
