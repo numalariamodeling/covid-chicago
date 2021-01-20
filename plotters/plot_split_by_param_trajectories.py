@@ -31,12 +31,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default = "Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
     return parser.parse_args()
 
 def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
@@ -168,7 +162,6 @@ if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
     first_plot_day = date.today() - timedelta(300)

@@ -32,12 +32,6 @@ def parse_args():
         default = "Local"
     )
     parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
-    parser.add_argument(
         "-p", "--param",
         type=str,
         help="Name of parameter with varying levels to plot",
@@ -115,7 +109,6 @@ if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
     param = args.param
     channel = args.channel

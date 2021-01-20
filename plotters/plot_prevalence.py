@@ -34,25 +34,19 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
     return parser.parse_args()
 
 def get_prev_df(df, channels, fname='trajectoriesDat.csv'):
 
     sort_channels = ['scen_num', 'sample_num', 'run_num', 'time']
     group_channels = ['scen_num', 'sample_num', 'run_num']
-    region_list = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
+    region_list = ['EMS-%d' % x for x in range(1, 12)]
 
     df = pd.DataFrame()
     for ems_region in region_list:
         print(ems_region)
         ems_nr = ems_region.replace("EMS-","")
-        if ems_region=="All": ems_nr  = 0
+        if ems_region== "All": ems_nr = 0
         get_det =0
         for ch in channels:
             if 'det' in ch: get_det = get_det + 1
@@ -69,7 +63,7 @@ def get_prev_df(df, channels, fname='trajectoriesDat.csv'):
             column_list.append('recovered_det_' + str(ems_region))
             column_list.append('deaths_det_' + str(ems_region))
 
-        df_i = load_sim_data(exp_name, region_suffix=f'_{ems_region}', fname=fname, column_list=column_list, add_incidence=False)
+        df_i = load_sim_data(exp_name, region_suffix=f'_{ems_region}', column_list=column_list, add_incidence=False)
         if ems_region !="All" :
             df_i['N'] = df_i['N_' + str(ems_region.replace("-", "_"))]
         df_i[f'new_deaths'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'deaths'].diff()
@@ -135,7 +129,6 @@ if __name__ == '__main__':
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
     first_plot_day = date.today() - timedelta(300)
@@ -151,7 +144,7 @@ if __name__ == '__main__':
 
         channels = ['prevalence','seroprevalence','IFR','IFR_t']
         #channels = ['prevalence','prevalence_det' ,'seroprevalence','seroprevalence_det' ,'IFR','IFR_t','IFR_det']
-        df = get_prev_df(exp_name, channels=channels, fname=trajectoriesName)
+        df = get_prev_df(exp_name, channels=channels)
         plot_prevalences(df, channels=['prevalence'], first_day=first_plot_day, last_day=last_plot_day)
         plot_prevalences(df, channels=['seroprevalence'], first_day=first_plot_day,last_day=last_plot_day)
         plot_prevalences(df, channels=['IFR'],first_day=first_plot_day,last_day=last_plot_day)

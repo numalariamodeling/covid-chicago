@@ -7,32 +7,49 @@ from datetime import date, timedelta, datetime
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 
-def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='trajectoriesDat.csv',
-                  input_sim_output_path =None, column_list=None, add_incidence=True, select_traces=None) :
+def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
+                  input_sim_output_path =None, column_list=None, add_incidence=True,
+                  select_traces=True, traces_to_keep_ratio=2, min_traces_to_keep=10) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
-    df = df.dropna()
 
-    if select_traces is not False and region_suffix is not None:
-        ems_nr = region_suffix.replace("_EMS-","")
+    if region_suffix is not None:
+        ems_nr = region_suffix.replace("_EMS-", "")
         if region_suffix == "_All": ems_nr = 0
-        if os.path.exists(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv')):
-            rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
-            rank_export_df_sub = rank_export_df[0:int(len(rank_export_df) / 2)]
-            df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
 
+        if fname is None:
+            fname = f'trajectoriesDat_region_{str(ems_nr)}.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = 'trajectoriesDat.csv'
+
+        df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
+        df.columns = df.columns.str.replace(region_suffix, '')
+
+        if select_traces:
+            if os.path.exists(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv')):
+                rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
+
+                n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
+                if n_traces_to_keep < min_traces_to_keep and len(rank_export_df) >= min_traces_to_keep :
+                    n_traces_to_keep = min_traces_to_keep
+                elif n_traces_to_keep < min_traces_to_keep and len(rank_export_df) < min_traces_to_keep :
+                    n_traces_to_keep = len(rank_export_df)
+
+                rank_export_df_sub = rank_export_df[0:n_traces_to_keep]
+                df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
+    else :
+        fname = 'trajectoriesDat.csv'
+        df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
+
+    df = df.dropna()
     try:
         first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
     except:
         first_day = datetime.strptime(df['startdate'].unique()[0], '%m/%d/%Y')
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df['date'] = pd.to_datetime(df['date']).dt.date
-
-    if region_suffix !=None :
-        df.columns = df.columns.str.replace(region_suffix, '')
 
     if add_incidence:
         if 'recovered' in df.columns:

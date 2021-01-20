@@ -38,17 +38,11 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
 
     return parser.parse_args()
 
 
-def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscale=True, fname="trajectoriesDat.csv"):
+def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscale=True):
     if ems_nr == 0:
         region_suffix = "_All"
         region_label = 'Illinois'
@@ -83,7 +77,7 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
             for chn in outcome_channels:
                 column_list.append(chn + "_EMS-" + str(ems_nr))
 
-            df = load_sim_data(exp_name, region_suffix, fname=fname, column_list=column_list)
+            df = load_sim_data(exp_name, region_suffix, column_list=column_list)
             df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
             df['critical_with_suspected'] = df['critical']
             exp_name_label = str(exp_name.split('_')[-1])
@@ -127,7 +121,6 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
 if __name__ == '__main__':
 
     args = parse_args()
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
     exp_names = args.exp_names
 

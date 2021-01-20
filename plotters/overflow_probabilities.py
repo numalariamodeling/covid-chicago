@@ -54,8 +54,8 @@ def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona v
 
 def get_probs(exp_name,select_traces=True):
 
-    fname = get_latest_filedate()
-    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname))
+    fname_capacity = get_latest_filedate()
+    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname_capacity))
     civis_template = civis_template.drop_duplicates()
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
     lower_limit = 170
@@ -145,7 +145,7 @@ def plot_probs(exp_name, show_75=True) :
 
 
 if __name__ == '__main__':
-    stem = sys.argv[1]
+    stem = '20210119_IL_quest_varyParamForFit'
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:

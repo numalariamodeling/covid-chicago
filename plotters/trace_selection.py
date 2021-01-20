@@ -36,12 +36,6 @@ def parse_args():
         default = "Local"
     )
     parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv'
-    )
-    parser.add_argument(
         "--deaths_weight",
         type=float,
         help="Weight of deaths in negative log likelihood calculation. Default is 1.0.",
@@ -159,7 +153,7 @@ def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles
         plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
 
 
-def compare_ems(exp_name,fname, ems_nr,first_day,last_day,weights_array,plot_trajectories=False):
+def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajectories=False):
 
     if ems_nr == 0:
         region_suffix = "_All"
@@ -176,7 +170,7 @@ def compare_ems(exp_name,fname, ems_nr,first_day,last_day,weights_array,plot_tra
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
 
-    df = load_sim_data(exp_name, region_suffix=region_suffix, fname=fname,column_list=column_list)
+    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
     df = df[(df['date'] >= date(2020, 2, 13)) & (df['date'] <= date.today() + timedelta(15))]
     df['critical_with_suspected'] = df['critical']
 
@@ -196,7 +190,6 @@ if __name__ == '__main__':
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
     weights_array = [args.deaths_weight, args.crit_weight, args.non_icu_weight, args.cli_weight]
 
@@ -210,4 +203,4 @@ if __name__ == '__main__':
         output_path = os.path.join(wdir, 'simulation_output',exp_name)
         for ems_nr in range(0,12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name,fname=trajectoriesName, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,weights_array=weights_array, plot_trajectories=args.plot)
+            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,weights_array=weights_array, plot_trajectories=True)

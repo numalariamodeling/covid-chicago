@@ -39,12 +39,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
     return parser.parse_args()
 
 
@@ -113,7 +107,7 @@ def compare_ems(exp_name,fname, param, ems_nr,first_day,last_day):
 
     if "ki" in param.lower() :
         param = param + region_suffix2
-    df = load_sim_data(exp_name, region_suffix=region_suffix, fname=fname, column_list=column_list)
+    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
     df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
     df['critical_with_suspected'] = df['critical']
 
@@ -134,7 +128,6 @@ def compare_ems(exp_name,fname, param, ems_nr,first_day,last_day):
 if __name__ == '__main__':
 
     args = parse_args()
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
@@ -148,5 +141,5 @@ if __name__ == '__main__':
         plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
         for ems_nr in range(1, 12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name, fname=trajectoriesName, ems_nr=int(ems_nr), param="Ki",
+            compare_ems(exp_name,  ems_nr=int(ems_nr), param="Ki",
                         first_day=first_plot_day, last_day=last_plot_day)

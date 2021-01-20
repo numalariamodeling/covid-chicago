@@ -43,12 +43,12 @@ def plot_param_by_channel(sample_df, param_list, param_class, plot_path, region_
         time_step = 262
     if fname is None:
         fname = 'trajectoriesDat_trim.csv'
-        if not os.path.exists(os.path.join(exp_dir, fname)):
+        if not os.path.exists(os.path.join(sim_output_path, fname)):
             fname = 'trajectoriesDat.csv'
     if channel is None:
         channel = 'crit_det'
     channel_name = f'{channel}_{region_suffix}'
-    df = pd.read_csv(os.path.join(exp_dir, fname), usecols=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name])
+    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name])
     df['time'] = df['time'].astype('int64')
     df = df[df['time'] == time_step]
     df = pd.merge(how='left', left=df, left_on=['scen_num', 'sample_num'], right=sample_df,
@@ -94,7 +94,7 @@ def plot_param_distributions(df, param_list, param_class, plot_path):
     plt.savefig(os.path.join(plot_path, 'pdf', plot_name + '.pdf'))
 
 
-def extract_samples(exp_dir, nsamples=100, seed_nr=751, save_dir=None, save_all_successfull=False, plot_dists=False,
+def extract_samples(nsamples=100, seed_nr=751, save_dir=None, save_all_successfull=False, plot_dists=False,
                     include_grp_param=True):
     sample_params, sample_params_core, IL_specific_param, IL_locale_param_stem = get_parameter_names(include_new=False)
 
@@ -106,9 +106,9 @@ def extract_samples(exp_dir, nsamples=100, seed_nr=751, save_dir=None, save_all_
         sample_params = sample_params + IL_locale_param
 
     fname = 'trajectoriesDat_trim.csv'
-    if not os.path.exists(os.path.join(exp_dir, fname)):
+    if not os.path.exists(os.path.join(sim_output_path, fname)):
         fname = 'trajectoriesDat.csv'
-    df = pd.read_csv(os.path.join(exp_dir, fname), usecols=['time', 'scen_num', 'sample_num', 'run_num'])
+    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=['time', 'scen_num', 'sample_num', 'run_num'])
     # sample_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'sampled_parameters.csv'),usecols=['scen_num'] + sample_params)
     sample_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'sampled_parameters.csv'))
 
@@ -126,7 +126,7 @@ def extract_samples(exp_dir, nsamples=100, seed_nr=751, save_dir=None, save_all_
     df_extract['scen_num'] = range(len(df_extract.index))
 
     if save_dir is None:
-        save_dir = exp_dir
+        save_dir = sim_output_path
     df_extract.to_csv(os.path.join(save_dir, f'sample_parameters_extract_n{str(nsamples)}.csv'), index=False)
     if save_all_successfull:
         df_all_success = sample_df[sample_df['scen_num'].isin(scen_success)]
@@ -143,7 +143,7 @@ def extract_samples(exp_dir, nsamples=100, seed_nr=751, save_dir=None, save_all_
                               plot_path=plot_path)
 
 
-def extract_mean_of_samples(exp_dir, save_dir=None, plot_dists=False, include_grp_param=True, fname=None):
+def extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True, fname=None):
     sample_params, sample_params_core, IL_specific_param, IL_locale_param_stem = get_parameter_names(include_new=False)
 
     if include_grp_param:
@@ -153,13 +153,8 @@ def extract_mean_of_samples(exp_dir, save_dir=None, plot_dists=False, include_gr
                 IL_locale_param = IL_locale_param + [f'{param}_EMS_{reg_nr}']
         sample_params = sample_params + IL_locale_param
 
-    if fname is None:
-        fname = 'trajectoriesDat_trim.csv'
-        if not os.path.exists(os.path.join(exp_dir, fname)):
-            fname = 'trajectoriesDat.csv'
-    df = pd.read_csv(os.path.join(exp_dir, fname),
-                     usecols=['time', 'scen_num', 'sample_num', 'run_num'])
-    sample_df = pd.read_csv(os.path.join(exp_dir, 'sampled_parameters.csv'))
+    df = load_sim_data(exp_name, column_list=['time', 'scen_num', 'sample_num', 'run_num'], add_incidence=False)
+    sample_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
 
     scen_success = list((df.scen_num.unique()))
     del df
@@ -176,7 +171,7 @@ def extract_mean_of_samples(exp_dir, save_dir=None, plot_dists=False, include_gr
             df_stats = pd.merge(how='left', left=df_stats, left_on='parameter', right=mdf, right_on='parameter')
 
     if save_dir is None:
-        save_dir = exp_dir
+        save_dir = sim_output_path
     df_stats.to_csv(os.path.join(save_dir, 'sample_parameters_summary_stats.csv'), index=False)
     df_mean = sample_df_success.groupby('dummy')[sample_df.columns].agg(np.mean).reset_index()
     df_mean['index'] = 1
@@ -184,6 +179,16 @@ def extract_mean_of_samples(exp_dir, save_dir=None, plot_dists=False, include_gr
     df_mean['sample_num'] = 1
     df_mean['startdate'] = sample_df_success['startdate'].unique()
     df_mean.to_csv(os.path.join(save_dir, 'sample_parameters_mean.csv'), index=False)
+
+    if plot_dists:
+        plot_param_distributions(df=sample_df, param_list=sample_params_core, param_class="Core_model_parameters",
+                                 plot_path=plot_path)
+        plot_param_distributions(df=sample_df, param_list=IL_specific_param, param_class="IL_specific_model_parameters",
+                                 plot_path=plot_path)
+        plot_param_distributions(df=sample_df, param_list=IL_locale_param[1:20],
+                                 param_class="IL_specific_grp_parameters", plot_path=plot_path)
+
+
 
     if plot_dists:
         plot_param_distributions(df=sample_df, param_list=sample_params_core, param_class="Core_model_parameters",
@@ -196,12 +201,12 @@ def extract_mean_of_samples(exp_dir, save_dir=None, plot_dists=False, include_gr
 
 if __name__ == '__main__':
     args = parse_args()
-    exp_name = args.exp_name
+    exp_name = "'20210119_IL_quest_varyParamForFit'"
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location="Local")
-    exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = os.path.join(exp_dir, '_plots')
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+    plot_path = os.path.join(sim_output_path, '_plots')
 
-    extract_samples(exp_dir, save_dir=None, plot_dists=True, include_grp_param=True)
-    extract_mean_of_samples(exp_dir, save_dir=None, plot_dists=False, include_grp_param=True)
+    #extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
+    extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True)
