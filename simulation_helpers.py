@@ -272,14 +272,14 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     pymodule = '\n\nml python/anaconda3.6\n'
     rmodule = '\n\nml module load R/4.0.0\n'
 
-    pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine.py  "{exp_name}" "120" "10"'
-    file = open(os.path.join(temp_exp_dir, 'combineSimulations.sh'), 'w')
+    pycommand = f'\npython /projects/p30781/covidproject/covid-chicago/nucluster/combine_and_trim.py  --stem "{exp_name}" '
+    file = open(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "{exp_name}"' \
                 ' --delete_simsfiles "True"'
-    file = open(os.path.join(temp_exp_dir, 'cleanupSimulations.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, '0_cleanupSimulations.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
@@ -288,7 +288,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     if "spatial_EMS" not in experiment_config:
         fname = "data_comparison.py"
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
-    file = open(os.path.join(temp_exp_dir, '0_compareToData.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, '0_runDataComparison.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 

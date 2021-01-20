@@ -1,17 +1,45 @@
+import argparse
 import numpy as np
 import pandas as pd
 import subprocess
-import matplotlib.pyplot as plt
 import os
 import seaborn as sns
-import matplotlib as mpl
-import matplotlib.dates as mdates
 from datetime import date, timedelta
 import shutil
+import sys
+sys.path.append('../')
+from load_paths import load_box_paths
 
-import numpy as np
+def parse_args():
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-stem",
+        "--stem",
+        type=str,
+        help="Name of simulation experiment"
+    )
+    
+    parser.add_argument(
+        "-loc",
+        "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default = "NUCLUSTER"
+    )
+    parser.add_argument(
+        "-limit",
+        "--scen_limit",
+        type=int,
+        help="Number of simulations to combine",
+        default = 700
+    )
 
 
+    return parser.parse_args()
+    
+    
 def writeTxt(txtdir, filename, textstring):
     file = open(os.path.join(txtdir, filename), 'w')
     file.write(textstring)
@@ -47,7 +75,7 @@ def trim_trajectories_Dat(df, fname, VarsToKeep, time_start, time_stop,channels=
     if VarsToKeep == None :
         VarsToKeep = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
     if VarsToKeep != None :
-        VarsToKeep =  ['startdate', 'time', 'scen_num', 'sample_num', 'run_num'] + VarsToKeep
+        VarsToKeep = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num'] + VarsToKeep
         VarsToKeep = [i for n, i in enumerate(VarsToKeep) if i not in VarsToKeep[:n]]
 
     if grpnames == None:
@@ -61,27 +89,30 @@ def trim_trajectories_Dat(df, fname, VarsToKeep, time_start, time_stop,channels=
                     'symp_severe_cumul','symptomatic_severe', 'symp_severe_det_cumul',
                     'hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
                     'crit_cumul','crit_det_cumul', 'crit_det',  'critical',
-                    'death_det_cumul',  'deaths' ]
+                    'death_det_cumul',  'deaths']
 
     if grpspecific_params == None:
-        grpspecific_params = ['Ki_t']  # ['Ki_t', 'triggertime','reopening_multiplier_4']
+        grpspecific_params = ['Ki_t']
 
     column_list = VarsToKeep
     for channel in channels:
         for grp in grpnames:
             column_list.append(channel + "_" + str(grp))
 
+    param_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
     for grpspecific_param in grpspecific_params:
         for grp in grpnames_ki:
+            param_list.append(grpspecific_param + "_" + str(grp))
             column_list.append(grpspecific_param + "_" + str(grp))
 
-    df = df[column_list]
     df = df[df['time'] > time_start]
     df = df[df['time'] < time_stop]
-    df.to_csv(os.path.join(temp_exp_dir, fname + '_trim.csv'), index=False, date_format='%Y-%m-%d')
-    del df
 
-def combineTrajectories(VarsToKeep,Nscenarios_start=0, Nscenarios_stop=1000, time_start=1, time_stop=400, fname='trajectoriesDat.csv',SAVE=True):
+    df = df[column_list ]
+    df.to_csv(os.path.join(temp_exp_dir, fname + '_trim.csv'), index=False, date_format='%Y-%m-%d')
+
+
+def combineTrajectories(VarsToKeep,Nscenarios_start=0, Nscenarios_stop=1000, time_start=1, time_stop=1000, fname='trajectoriesDat.csv',SAVE=True):
 
     df_list = []
     n_errors = 0
@@ -112,32 +143,32 @@ def combineTrajectories(VarsToKeep,Nscenarios_start=0, Nscenarios_stop=1000, tim
 
 
 if __name__ == '__main__':
-    sim_out_dir = "/projects/p30781/covidproject/covid-chicago/_temp/"
 
-    stem = '20201204_IL_mr_multiplier1211_quest_v5'
+    args = parse_args()  
+    stem = args.stem
+    Location = args.Location
+    Scenario_save_limit = args.scen_limit
+
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
     exp_names = [x for x in os.listdir(sim_out_dir) if stem in x]
 
     time_start = 1
-    time_end = 410
-    additionalVars = ['capacity_multiplier','trigger_delay_days']
-    VarsToKeepI = ['startdate',  'scen_num', 'sample_num'] + additionalVars
+    time_stop = 1000
+    VarsToKeepI = ['startdate',  'scen_num', 'sample_num'] 
     VarsToKeep = ['time', 'run_num'] + VarsToKeepI
 
 
     for exp_name in exp_names:
         print(exp_name)
 
-        git_dir = os.path.join(sim_out_dir, exp_name)
         trajectoriesDat = os.path.join(git_dir, 'trajectories')
         temp_exp_dir = git_dir
         sampledf = pd.read_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"))
         sampledf = sampledf[VarsToKeepI]
         Nscenario = max(sampledf['scen_num'])
 
-        Scenario_save_limit = 500
-
         if Nscenario <= Scenario_save_limit:
-            combineTrajectories(VarsToKeep=VarsToKeep,Nscenarios_start=0, Nscenarios_stop=Nscenario+1,time_start=time_start, time_stop=time_end, fname='trajectoriesDat.csv')
+            combineTrajectories(VarsToKeep=VarsToKeep,Nscenarios_start=0, Nscenarios_stop=Nscenario+1,time_start=time_start, time_stop=time_stop)
         if Nscenario > Scenario_save_limit:
             n_subsets = int(Nscenario/Scenario_save_limit)
 
@@ -149,4 +180,5 @@ if __name__ == '__main__':
                 combineTrajectories(VarsToKeep=VarsToKeep,
                                     Nscenarios_start=Nscenarios_start,
                                     Nscenarios_stop=Nscenario_stop,
+                                    time_start=time_start, time_stop=time_stop,
                                     fname='trajectoriesDat_'+str(Nscenario_stop)+'.csv')
