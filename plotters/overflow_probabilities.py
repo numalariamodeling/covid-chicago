@@ -25,15 +25,6 @@ import re
 
 datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
-def load_sim_data(exp_name, input_wdir=None, input_sim_output_path=None, column_list=None):
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
-
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), usecols=column_list)
-    return df
-
-
 def exceeds(trajectory, metric, lower_limit, upper_limit, maximum):
     return (trajectory[metric].values[lower_limit:upper_limit] > maximum).any()
 
@@ -42,12 +33,6 @@ def when_exceeds(trajectory, metric, lower_limit, upper_limit, maximum):
     while trajectory[metric].values[ii] <= maximum:
         ii += 1
     return ii
-
-column_list = ['scen_num',  'hosp_det_All', 'crit_det_All']  #'reopening_multiplier_4'
-for ems_region in range(1,12):
-    column_list.append('hosp_det_EMS-' + str(ems_region))
-    column_list.append('crit_det_EMS-' + str(ems_region))
-    #column_list.append('death_det_cumul_EMS-' + str(ems_region))
 
 def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
                                                'hospital_capacity_thresholds'), extraThresholds=False):
@@ -67,44 +52,61 @@ def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona v
     return fname
 
 
-def get_probs(exp_name):    
-    trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
-    trajectories = trajectories.dropna()
+def get_probs(exp_name,select_traces=True):
+
     fname = get_latest_filedate()
     civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname))
     civis_template = civis_template.drop_duplicates()
-
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
-    
-    for ems_region in range(1,12):
-        trajectories['total_hosp_census_EMS-' + str(ems_region)] = trajectories['hosp_det_EMS-'+str(ems_region)]+trajectories['crit_det_EMS-'+str(ems_region)]
-
-
     lower_limit = 170
-    unique_scen = np.array(list(set(trajectories['scen_num'].values)))
-    
-    for index, row in civis_template.iterrows():
-        upper_limit = (row['date_window_upper_bound'] - dt.datetime(month=2, day=13, year=2020)).days
-        if row['resource_type'] == 'hb_availforcovid':
-            metric_root = 'total_hosp_census_EMS-'
-        if row['resource_type'] == 'icu_availforcovid':
-            metric_root = 'crit_det_EMS-'
-        elif row['resource_type'] == 'vent_availforcovid':
-            metric_root = 'vent_EMS-'
-        thresh = row['avg_resource_available']
-        region = int(re.sub('[^0-9]','', row['geography_modeled']))
-        prob = 0
-        for scen in unique_scen:
-            new = trajectories[(trajectories['scen_num'] == scen)].reset_index()
-            if row['resource_type'] == 'vent_availforcovid':
-                new[metric_root + str(region)] = get_vents(new['crit_det_EMS-' + str(region)])
-            if exceeds(new, metric_root + str(region), lower_limit, upper_limit, thresh):
-                prob += 1/len(unique_scen)
-        civis_template.loc[index, 'percent_of_simulations_that_exceed'] = prob
-        
-    civis_template['scenario_name'] = 'baseline'
+
+    civis_template_all = pd.DataFrame()
+    region_list = ['EMS-%d' % x for x in range(1, 12)]
+    for ems_region in region_list:
+        ems_nr = ems_region.replace("EMS-","")
+        column_list = ['scen_num','sample_num','run_num','startdate','time']
+        column_list.append('hosp_det_' + str(ems_region))
+        column_list.append('crit_det_' + str(ems_region))
+
+        df = load_sim_data(exp_name, region_suffix= f'_{ems_region}', column_list=column_list,add_incidence=False)
+        df = df.dropna()
+        df['total_hosp_census'] = df['hosp_det'] + df['crit_det']
+
+        if select_traces:
+            if os.path.exists(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv')) :
+                rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
+                rank_export_df_sub = rank_export_df[0:int(len(rank_export_df) / 2)]
+                df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
+
+        unique_scen = np.array(list(set(df['scen_num'].values)))
+        civis_template_sub = civis_template[civis_template['geography_modeled']==f'covidregion_{ems_nr}']
+
+        for index, row in civis_template_sub.iterrows():
+            upper_limit = (row['date_window_upper_bound'] - dt.datetime(month=2, day=13, year=2020)).days
+            if row['resource_type'] == 'hb_availforcovid':
+                metric_root = 'total_hosp_census'
+            if row['resource_type'] == 'icu_availforcovid':
+                metric_root = 'crit_det'
+            elif row['resource_type'] == 'vent_availforcovid':
+                metric_root = 'vent'
+            thresh = row['avg_resource_available']
+            prob = 0
+            for scen in unique_scen:
+                new = df[(df['scen_num'] == scen)].reset_index()
+                if row['resource_type'] == 'vent_availforcovid':
+                    new[metric_root] = get_vents(new['crit_det'])
+                if exceeds(new, metric_root, lower_limit, upper_limit, thresh):
+                    prob += 1/len(unique_scen)
+            civis_template_sub.loc[index, 'percent_of_simulations_that_exceed'] = prob
+
+        if civis_template_all.empty:
+            civis_template_all = civis_template_sub
+        else:
+            civis_template_all = pd.concat([civis_template_all, civis_template_sub])
+
+    civis_template_all['scenario_name'] = 'baseline'
     file_str = 'nu_hospitaloverflow_' + str(exp_name[:8]) + '.csv'
-    civis_template.to_csv(os.path.join(wdir, 'simulation_output', exp_name, file_str), index=False)
+    civis_template_all.to_csv(os.path.join(sim_output_path, file_str), index=False)
 
 def plot_probs(exp_name, show_75=True) :
     simdate = str(exp_name[:8])
@@ -147,5 +149,7 @@ if __name__ == '__main__':
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        print(exp_name)
         get_probs(exp_name)
         plot_probs(exp_name)

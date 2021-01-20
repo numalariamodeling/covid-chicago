@@ -80,7 +80,7 @@ def sum_nll(df_values, ref_df_values):
         print('Length simulation: ' + str(len(df_values)))
         print('Length reference: ' + str(len(ref_df_values)))
     x[np.abs(x) == np.inf] = 0
-    return np.sum(x)
+    return np.nansum(x)
 
 def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, region_label,
                      first_day, last_day, ymax=10000, logscale=True, weights_array=[1.0,1.0,1.0,1.0], plot_trajectories=False):
@@ -88,6 +88,14 @@ def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles
     [deaths_weight, crit_weight, non_icu_weight, cli_weight] = weights_array
     ref_df_trunc = ref_df[(ref_df['date'] > first_day) & (ref_df['date'] < last_day)]
     df_trunc = df[(df['date'] > first_day) & (df['date'] < last_day)]
+
+    """ Ensure common dates"""
+    df_trunc_dates = df_trunc[df_trunc['date'].isin(ref_df_trunc['date'].unique())].date.unique()
+    ref_df_trunc_dates = ref_df_trunc[ref_df_trunc['date'].isin(df_trunc['date'].unique())].date.unique()
+    common_dates = df_trunc_dates[np.isin(df_trunc_dates, ref_df_trunc_dates)]
+    df_trunc = df_trunc[df_trunc['date'].isin(common_dates)]
+    ref_df_trunc = ref_df_trunc[ref_df_trunc['date'].isin(common_dates)]
+
     run_sample_scen_list = list(df_trunc.groupby(['run_num','sample_num','scen_num']).size().index)
     rank_export_df = pd.DataFrame({'run_num':[], 'sample_num':[], 'scen_num':[], 'nll':[]})
     for x in run_sample_scen_list:
