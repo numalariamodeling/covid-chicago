@@ -74,8 +74,8 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, r
     plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
     if logscale == False :
         plot_name = plot_name + "_nolog"
-    plt.savefig(os.path.join(plot_path, plot_name + '_50perc.png'))
-    plt.savefig(os.path.join(plot_path,'pdf', plot_name + '_50perc.pdf'), format='PDF')
+    plt.savefig(os.path.join(plot_path, plot_name + '.png'))
+    plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
 
 def compare_ems(exp_name, ems_nr,first_day,last_day):
 
@@ -120,7 +120,7 @@ def compare_ems(exp_name, ems_nr,first_day,last_day):
 if __name__ == '__main__':
 
     args = parse_args()
-    stem = '20210115_IL_quest_As8_corPop'
+    stem = args.stem
     Location = args.Location
 
     first_plot_day = date(2020, 2, 13)

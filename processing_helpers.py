@@ -9,7 +9,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                   input_sim_output_path =None, column_list=None, add_incidence=True,
-                  select_traces=True, traces_to_keep_ratio=2, min_traces_to_keep=10) :
+                  select_traces=True, traces_to_keep_ratio=4, min_traces_to_keep=100) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
@@ -34,7 +34,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                 n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
                 if n_traces_to_keep < min_traces_to_keep and len(rank_export_df) >= min_traces_to_keep :
                     n_traces_to_keep = min_traces_to_keep
-                elif n_traces_to_keep < min_traces_to_keep and len(rank_export_df) < min_traces_to_keep :
+                if len(rank_export_df) < min_traces_to_keep :
                     n_traces_to_keep = len(rank_export_df)
 
                 rank_export_df_sub = rank_export_df[0:n_traces_to_keep]

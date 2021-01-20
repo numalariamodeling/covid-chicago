@@ -145,7 +145,7 @@ def plot_probs(exp_name, show_75=True) :
 
 
 if __name__ == '__main__':
-    stem = '20210119_IL_quest_varyParamForFit'
+    stem = sys.argv[1]
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:
