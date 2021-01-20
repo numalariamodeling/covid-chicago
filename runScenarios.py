@@ -609,6 +609,10 @@ if __name__ == '__main__':
             p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
             subprocess.call([p0])
 
+            log.info("Trace selection")
+            p0 = os.path.join(sim_output_path, '0_runTraceSelection.bat')
+            subprocess.call([p0])
+
             log.info("Additional plots")
             p0 = os.path.join(sim_output_path, '0_createAdditionalPlots.bat')
             subprocess.call([p0])
@@ -628,14 +632,5 @@ if __name__ == '__main__':
             log.info("Process for civis - file copy and changelog")
             p4 = os.path.join(sim_output_path, '4_runProcessForCivis.bat')
             subprocess.call([p4])
-
-            log.info("Process for civis - iteration comparison figure")
-            p5 = os.path.join(sim_output_path, '5_runProcessForCivis_optional.bat')
-            subprocess.call([p5])
-
-            log.info("Process for civis - plots region 10 and 11")
-            p6 = os.path.join(sim_output_path, '5_runProcessFor_CDPH.bat')
-            subprocess.call([p6])
-
 
 
