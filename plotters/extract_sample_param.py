@@ -37,18 +37,14 @@ def parse_args():
     return parser.parse_args()
 
 
-def plot_param_by_channel(sample_df, param_list, param_class, plot_path, region_suffix='All', fname=None, channel=None,
+def plot_param_by_channel(sample_df, param_list, param_class, plot_path, region_suffix='All', channel=None,
                           time_step=None):
     if time_step is None:
         time_step = 262
-    if fname is None:
-        fname = 'trajectoriesDat_trim.csv'
-        if not os.path.exists(os.path.join(sim_output_path, fname)):
-            fname = 'trajectoriesDat.csv'
     if channel is None:
         channel = 'crit_det'
     channel_name = f'{channel}_{region_suffix}'
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name])
+    df = load_sim_data(exp_name, region_suffix=None, column_list=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name])
     df['time'] = df['time'].astype('int64')
     df = df[df['time'] == time_step]
     df = pd.merge(how='left', left=df, left_on=['scen_num', 'sample_num'], right=sample_df,

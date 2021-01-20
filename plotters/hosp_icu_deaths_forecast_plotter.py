@@ -89,7 +89,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
     plt.savefig(os.path.join(plot_path, plot_name_full + '.png'))
     plt.savefig(os.path.join(plot_path, 'pdf', plot_name_full + '.pdf'), format='PDF')
 
-def compare_ems(exp_name, fname, plot_name, ems_nr, first_day , last_day):
+def compare_ems(exp_name, plot_name, ems_nr, first_day , last_day):
 
     if ems_nr == 0:
         region_suffix = "_All"

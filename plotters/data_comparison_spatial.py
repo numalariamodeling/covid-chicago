@@ -94,11 +94,7 @@ def compare_ems(exp_name, ems_nr,first_day,last_day):
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
 
-    fname = f'trajectoriesDat_region_{str(ems_nr)}.csv'
-    if os.path.exists(os.path.join(sim_output_path, fname)) == False:
-        fname = 'trajectoriesDat.csv'
-
-    df = load_sim_data(exp_name, region_suffix=region_suffix, fname=fname,column_list=column_list)
+    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
     df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
     df['critical_with_suspected'] = df['critical']
 
