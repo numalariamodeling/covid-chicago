@@ -134,6 +134,6 @@ if __name__ == '__main__':
     for ems_nr in range(1, 12):
         print("Start processing region " + str(ems_nr))
         plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
-                         last_day=last_plot_day, fname=trajectoriesName, logscale=True)
+                         last_day=last_plot_day, logscale=True)
         plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
-                         last_day=last_plot_day, fname=trajectoriesName, logscale=False)
+                         last_day=last_plot_day, logscale=False)
