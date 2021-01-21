@@ -54,8 +54,8 @@ def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona v
 
 def get_probs(exp_name,select_traces=True):
 
-    fname = get_latest_filedate()
-    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname))
+    fname_capacity = get_latest_filedate()
+    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname_capacity))
     civis_template = civis_template.drop_duplicates()
     civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
     lower_limit = 170

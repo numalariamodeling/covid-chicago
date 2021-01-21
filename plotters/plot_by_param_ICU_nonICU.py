@@ -31,13 +31,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
-
     return parser.parse_args()
 
 def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgrid=True) :
@@ -149,7 +142,6 @@ def plot_covidregions(channel,subgroups, plot_path,first_day, last_day) :
 if __name__ == '__main__' :
 
     args = parse_args()
-    trajectoriesName = args.trajectoriesName
     exp_names = args.exp_names
     Location = args.Location
 

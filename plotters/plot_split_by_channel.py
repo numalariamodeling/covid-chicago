@@ -31,12 +31,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
     return parser.parse_args()
 
 def plot_on_fig(df, channels, axes, color, label) :
@@ -84,7 +78,7 @@ def compare_channels(channelGrp):
     axes = [fig.add_subplot(2, 3, x + 1) for x in range(len(nchannels['channels1']))]
 
     for d, key in enumerate(nchannels.keys()):
-        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+
         df = load_sim_data(exp_name)
         df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
 
@@ -106,7 +100,6 @@ if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
@@ -116,7 +109,8 @@ if __name__ == '__main__' :
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
-        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
         #compare_channels(channelGrp= "symp")
         #compare_channels(channelGrp= "infect")
         compare_channels(channelGrp= "hospCrit")

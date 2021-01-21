@@ -31,12 +31,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
     return parser.parse_args()
 
 
@@ -211,7 +205,6 @@ if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()

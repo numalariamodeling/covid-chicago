@@ -31,12 +31,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
     return parser.parse_args()
 
 def calculate_mean_and_CI(adf, channel, output_filename=None) :
@@ -77,7 +71,6 @@ if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
@@ -89,7 +82,7 @@ if __name__ == '__main__' :
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
 
-        df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'trajectoriesDat.csv'))
+        df = load_sim_data(exp_name, region_suffix=None, add_incidence=False)
         suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
         base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
