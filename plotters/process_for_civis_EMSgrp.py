@@ -99,7 +99,7 @@ def load_and_plot_data(ems_region, savePlot=True) :
 
     df = load_sim_data(exp_name,region_suffix = region_suffix, column_list=column_list)
     df['ems'] = ems_region
-    df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
+    df = df[df['date'].between(first_plot_day, last_plot_day)]
 
     df['ventilators'] = get_vents(df['crit_det'].values)
     df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
