@@ -46,7 +46,7 @@ def parse_args():
         "--scen_limit",
         type=int,
         help="Number of simulations to combine",
-        default = 10
+        default = 700
     )
     parser.add_argument(
         "--additional_sample_param",
@@ -109,10 +109,11 @@ def trim_trajectories(df, fname,sample_param_to_keep, time_start=1, time_stop=10
     column_list = ['time', 'run_num'] + sample_param_to_keep
     if grpnames is not None:
         for grp in grpnames:
-            for channel in channels:
-                column_list.append(channel + "_" + str(grp))
-            if grp !="All":
-                column_list.append(time_varying_params + "_" + str(grp.replace('_','-')))
+            grp_ch = str(grp.replace('_', '-'))
+            [column_list.append(f'{channel}_{str(grp_ch)}') for channel in channels]
+            if grp_ch !="All":
+                [column_list.append(f'{time_varying_param}_{str(grp_ch)}') for time_varying_param in time_varying_params]
+            del grp, grp_ch
     else:
         column_list = column_list + channels + time_varying_params
 
