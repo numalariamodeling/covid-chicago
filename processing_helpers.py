@@ -4,7 +4,13 @@ import pandas as pd
 from load_paths import load_box_paths
 from datetime import date, timedelta, datetime
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+try:
+    print(Location)
+except NameError:
+    if os.name == "posix": Location ="NUCLUSTER"
+    else: Location ="Local"
+
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths(Location=Location)
 
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,

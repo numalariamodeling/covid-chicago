@@ -11,6 +11,9 @@ import pandas as pd
 import yaml
 import yamlordereddictloader
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
                                 generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
@@ -574,7 +577,7 @@ if __name__ == '__main__':
         region=region    )
 
     if Location == 'NUCLUSTER':
-        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir,  temp_exp_dir,sim_output_path)
+        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir)
         runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER')
 
     if Location == 'Local':
