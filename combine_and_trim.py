@@ -111,7 +111,7 @@ def trim_trajectories(df, fname,sample_param_to_keep, time_start=1, time_stop=10
         for grp in grpnames:
             grp_ch = str(grp.replace('_', '-'))
             [column_list.append(f'{channel}_{str(grp_ch)}') for channel in channels]
-            if grp_ch !="All":
+            if grp_ch !="All" and not 'age' in grp_ch :
                 [column_list.append(f'{time_varying_param}_{str(grp_ch)}') for time_varying_param in time_varying_params]
             del grp, grp_ch
     else:
