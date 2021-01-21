@@ -108,7 +108,7 @@ def compare_ems(exp_name, param, ems_nr,first_day,last_day):
     if "ki" in param.lower() :
         param = param + region_suffix2
     df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = df[df['date'].between(first_day, last_day)]
     df['critical_with_suspected'] = df['critical']
 
     sampled_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, "sampled_parameters.csv"), usecols=['scen_num', param])
@@ -131,8 +131,8 @@ if __name__ == '__main__':
     Location = args.Location
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date(2020, 2, 13)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp('2020-02-13')
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
 
     stem = args.stem
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]

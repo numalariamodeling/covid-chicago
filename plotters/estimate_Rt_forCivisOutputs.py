@@ -61,9 +61,9 @@ def rt_plot(df, first_day=None, last_day=None):
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
     palette = sns.color_palette('husl', 8)
 
-    df['date'] = pd.to_datetime(df['date']).dt.date
+    df['date'] = pd.to_datetime(df['date'])
     if first_day != None:
-        df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+        df = df[df['date'].between(first_day, last_day)]
 
     rt_min = df['rt_lower'].min()
     rt_max = df['rt_upper'].max()
@@ -107,8 +107,8 @@ def run_Rt_estimation(smoothing_window,r_window_size):
     """
     simdate = exp_name.split("_")[0]
     df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'))
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    df = df[(df['date'] > date(2020, 3, 1))]
+    df['date'] = pd.to_datetime(df['date'])
+    df = df[(df['date'] >  pd.Timestamp('2020-03-01'))]
 
     df_rt_all = pd.DataFrame()
     for ems_nr in range(0, 12):
@@ -170,8 +170,8 @@ if __name__ == '__main__':
         exp_name = args.exp_name
         Location = args.Location
 
-    first_plot_day = date.today() - timedelta(30)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

@@ -58,8 +58,8 @@ if __name__ == '__main__' :
 
     mixed_scenarios = True
     simdate = "20200506"
-    plot_first_day = date(2020, 3, 1)
-    plot_last_day = date(2020, 10, 1)
+    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     if mixed_scenarios == False :
@@ -98,10 +98,10 @@ if __name__ == '__main__' :
             df = load_sim_data(exp_name, input_sim_output_path = sim_output_path)
 
             df['ventilators'] = get_vents(df['crit_det'].values)
-            first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+            first_day = pd.Timestamp(df['startdate'].unique()[0])
 
             df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-            df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
+            df = df[df['date'].between(plot_first_day, plot_last_day)]
             df['ems'] = ems
 
             fig_exp = plt.figure(figsize=(8, 8))

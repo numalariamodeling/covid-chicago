@@ -28,7 +28,7 @@ if __name__ == '__main__' :
     adf = adf[adf['ems'] == ems]
 
     adf = calculate_incidence(adf)
-    adf = adf[adf['date'] >= date(2020,10,1)]
+    adf = adf[adf['date'] >= pd.Timestamp('2020-10-01')]
     # print(adf.columns.values)
 
     channels = ['infected', 'new_detected_hospitalized']

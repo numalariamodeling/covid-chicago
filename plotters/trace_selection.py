@@ -65,7 +65,7 @@ def parse_args():
         help="If specified, plots with top 50% best-fitting trajectories will be generated.",
     )
     return parser.parse_args()
-    
+
 def sum_nll(df_values, ref_df_values):
     try:
         x = -np.log10(scipy.stats.poisson(mu=df_values).pmf(k=ref_df_values))
@@ -76,19 +76,17 @@ def sum_nll(df_values, ref_df_values):
     x[np.abs(x) == np.inf] = 0
     return np.nansum(x)
 
-def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, region_label,
-                     first_day, last_day, ymax=10000, logscale=True, weights_array=[1.0,1.0,1.0,1.0], plot_trajectories=False):
+def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles,region_label,
+                        ymax=10000, logscale=True, weights_array=[1.0,1.0,1.0,1.0], plot_trajectories=False):
     #Creation of rank_df
     [deaths_weight, crit_weight, non_icu_weight, cli_weight] = weights_array
-    ref_df_trunc = ref_df[(ref_df['date'] > first_day) & (ref_df['date'] < last_day)]
-    df_trunc = df[(df['date'] > first_day) & (df['date'] < last_day)]
 
     """ Ensure common dates"""
-    df_trunc_dates = df_trunc[df_trunc['date'].isin(ref_df_trunc['date'].unique())].date.unique()
-    ref_df_trunc_dates = ref_df_trunc[ref_df_trunc['date'].isin(df_trunc['date'].unique())].date.unique()
-    common_dates = df_trunc_dates[np.isin(df_trunc_dates, ref_df_trunc_dates)]
-    df_trunc = df_trunc[df_trunc['date'].isin(common_dates)]
-    ref_df_trunc = ref_df_trunc[ref_df_trunc['date'].isin(common_dates)]
+    df_dates = df[df['date'].isin(ref_df['date'].unique())].date.unique()
+    ref_df_dates = ref_df[ref_df['date'].isin(df['date'].unique())].date.unique()
+    common_dates = df_dates[np.isin(df_dates, ref_df_dates)]
+    df_trunc = df[df['date'].isin(common_dates)]
+    ref_df_trunc = ref_df[ref_df['date'].isin(common_dates)]
 
     run_sample_scen_list = list(df_trunc.groupby(['run_num','sample_num','scen_num']).size().index)
     rank_export_df = pd.DataFrame({'run_num':[], 'sample_num':[], 'scen_num':[], 'nll':[]})
@@ -170,11 +168,13 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajector
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
 
-    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
-    df = df[(df['date'] >= date(2020, 2, 13)) & (df['date'] <= date.today() + timedelta(15))]
-    df['critical_with_suspected'] = df['critical']
-
     ref_df = load_ref_df(ems_nr)
+    ref_df = ref_df[ref_df['date'].between(first_day, last_day)]
+    ref_df = ref_df.dropna()
+
+    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
+    df = df[df['date'].between(first_day, ref_df['date'].max())]
+    df['critical_with_suspected'] = df['critical']
 
     channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
@@ -184,7 +184,7 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajector
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
 
     compare_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label,first_day= first_day, last_day= last_day, logscale=True, weights_array=weights_array, plot_trajectories=plot_trajectories)
+                     region_label=region_label,logscale=True, weights_array=weights_array, plot_trajectories=plot_trajectories)
 
 if __name__ == '__main__':
 
@@ -193,8 +193,13 @@ if __name__ == '__main__':
     Location = args.Location
     weights_array = [args.deaths_weight, args.crit_weight, args.non_icu_weight, args.cli_weight]
 
-    first_plot_day = date(2020, 3, 25)
-    last_plot_day = date(2021, 1, 1)
+    """If fitting to deaths, include a lag of 14 days (applies to all indicators)"""
+    timelag_days = 0
+    if args.deaths_weight is not 0:
+        timelag_days = 14
+
+    first_plot_day = pd.Timestamp('2020-03-25')
+    last_plot_day = pd.Timestamp(date.today()) - timedelta(timelag_days)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

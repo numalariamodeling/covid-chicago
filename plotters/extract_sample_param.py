@@ -44,7 +44,7 @@ def plot_param_by_channel(sample_df, param_list, param_class, plot_path, region_
     if channel is None:
         channel = 'crit_det'
     channel_name = f'{channel}_{region_suffix}'
-    df = load_sim_data(exp_name, region_suffix=None, column_list=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name])
+    df = load_sim_data(exp_name, region_suffix=None, column_list=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name], add_incidence=False)
     df['time'] = df['time'].astype('int64')
     df = df[df['time'] == time_step]
     df = pd.merge(how='left', left=df, left_on=['scen_num', 'sample_num'], right=sample_df,
@@ -104,7 +104,7 @@ def extract_samples(nsamples=100, seed_nr=751, save_dir=None, save_all_successfu
     fname = 'trajectoriesDat_trim.csv'
     if not os.path.exists(os.path.join(sim_output_path, fname)):
         fname = 'trajectoriesDat.csv'
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=['time','startdate' ,'scen_num', 'sample_num', 'run_num'])
+    df = load_sim_data(exp_name, column_list=['time','startdate', 'scen_num', 'sample_num', 'run_num'], add_incidence=False)
     sample_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'sampled_parameters.csv'))
 
     scen_success = list((df.scen_num.unique()))
@@ -203,5 +203,5 @@ if __name__ == '__main__':
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = os.path.join(sim_output_path, '_plots')
 
-    #extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
+    extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
     extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True)

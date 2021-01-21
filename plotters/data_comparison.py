@@ -17,8 +17,6 @@ from processing_helpers import *
 
 
 mpl.rcParams['pdf.fonttype'] = 42
-today = datetime.today()
-datetoday = date(today.year, today.month, today.day)
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -175,7 +173,7 @@ def compare_county(exp_name, county_name, first_day, last_day) :
 def compare_ems(exp_name, ems, first_day, last_day,param=None) :
 
     df = load_sim_data(exp_name)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = df[df['date'].between(first_day, last_day)]
     df['critical_with_suspected'] = df['critical']
 
     ref_df = load_ref_df(ems_nr=ems)
@@ -206,9 +204,9 @@ if __name__ == '__main__' :
     Location = args.Location
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date(2020, 2, 13)
-    today = datetime.today() + timedelta(15)
-    last_plot_day = date(today.year, today.month, today.day)
+    first_plot_day = pd.Timestamp('2020-02-13')
+    today = pd.Timestamp(date.today()) + timedelta(15)
+    last_plot_day = today
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names :

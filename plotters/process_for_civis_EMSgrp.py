@@ -175,9 +175,9 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
 
-    plot_first_day = date(2020,3,1)
-    plot_last_day = date(2021,4,1)
-
+    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
     exp_suffix = exp_name.split("_")[-1]
     scenarioName = get_scenarioName(exp_suffix)

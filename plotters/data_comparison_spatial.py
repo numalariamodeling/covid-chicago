@@ -95,7 +95,8 @@ def compare_ems(exp_name, ems_nr,first_day,last_day):
         column_list.append(channel + region_suffix)
 
     df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = df[df['date'].between(first_day, last_day)]
+
     df['critical_with_suspected'] = df['critical']
 
     ref_df = load_ref_df(ems_nr)
@@ -119,8 +120,8 @@ if __name__ == '__main__':
     stem = args.stem
     Location = args.Location
 
-    first_plot_day = date(2020, 2, 13)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp('2020-02-13')
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
