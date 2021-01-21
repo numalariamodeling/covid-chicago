@@ -58,8 +58,7 @@ def plot_covidregions(exp_names,channel,subgroups, psuffix) :
         region_label= region_label.replace('_All', 'all ')
 
         for d, exp_name in enumerate(exp_names) :
-            sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-            df = load_sim_data_age(exp_name, channel=channel, age_suffix=age_suffix)
+            df = load_sim_data(exp_name, region_suffix=age_suffix, add_incidence=False)
             df = df[df['date'].between(first_plot_day, last_plot_day)]
             
             version = exp_name.split("_")[-1]

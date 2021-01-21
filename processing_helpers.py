@@ -67,24 +67,6 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
 
     return df
 
-def load_sim_data_age(exp_name,channel, age_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
-
-    column_list = ['scen_num',  'time', 'startdate']
-    for grp in ageGroup_list:
-        column_list.append(channel + str(grp))
-
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
-    df = df.dropna()
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    df.columns = df.columns.str.replace(age_suffix, '')
-
-    return df
-
 def merge_county_covidregions(df_x, key_x='region', key_y='County'):
     """ Add covidregions (new_restore_regions from covidregion_population_by_county.csv)
     to a file that only includes counties. Country names are changes to lowercase before the merge.
