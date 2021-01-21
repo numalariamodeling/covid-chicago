@@ -203,4 +203,4 @@ if __name__ == '__main__':
         output_path = os.path.join(wdir, 'simulation_output',exp_name)
         for ems_nr in range(0,12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,weights_array=weights_array, plot_trajectories=True)
+            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,weights_array=weights_array, plot_trajectories=args.plot)
