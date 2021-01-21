@@ -196,27 +196,27 @@ echo end""")
         ) + "\n ECHO end")
 
 
-        """ Postprocessing batch files """
+        ## runDataComparison
         plotters_dir = os.path.join(git_dir, "plotters")
-
-        """ Combine and trim trajectories """
-        file = open(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.bat'), 'w')
-        file.write(f'cd {git_dir} \n python combine_and_trim.py --exp_name "{exp_name}" \n')
-
-        """ Data comparison (different script depending on model type) """
+        data_plotters_dir = os.path.join(git_dir, "data_processing")
+        rfiles_dir = os.path.join(git_dir, "Rfiles")
         if "spatial_EMS" in experiment_config:
             fname = "data_comparison_spatial.py"
         if "spatial_EMS" not in experiment_config:
             fname = "data_comparison.py"
-        file = open(os.path.join(temp_exp_dir, '1_runDataComparison.bat'), 'w')
+        file = open(os.path.join(temp_exp_dir, '0_runDataComparison.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" >> "{sim_output_path}/log/0_runDataComparison.txt"  \n')
 
-        """ Scripts specific for spatial model"""
         if "spatial_EMS" in experiment_config :
+
             file = open(os.path.join(temp_exp_dir, '0_createAdditionalPlots.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python hosp_icu_deaths_forecast_plotter.py --stem "{exp_name}"  \n')
             file.write(f'cd {plotters_dir} \n python plot_by_param_ICU_nonICU.py --exp_names "{exp_name}"  \n')
             file.write(f'cd {plotters_dir} \n python plot_prevalence.py --stem "{exp_name}"  \n')
+            #file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "simulation_plotter/seroprevalence_plot.R" "{exp_name}" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_createAdditionalPlots.txt" \n')
+
+            #file = open(os.path.join(temp_exp_dir, '0_runFittingProcess.bat'), 'w')
+            #file.write(f'cd {os.path.join(rfiles_dir)} \n R --vanilla -f "fit_to_data_spatial.R" "{exp_name}" "FALSE" "Local" "{rfiles_dir}" >> "{sim_output_path}/log/0_runFittingProcess.txt" \n')
 
             ## runProcessForCivis
             file = open(os.path.join(temp_exp_dir, '0_runTraceSelection.bat'), 'w')
@@ -240,7 +240,7 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py --stem "{exp_name}" >> "{sim_output_path}/log/0_locale_age_postprocessing.txt" \n')
 
 
-def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir) :
+def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,sim_output_path) :
     # Generic shell submission script that should run for all having access to  projects/p30781
     # submit_runSimulations.sh
     exp_name_short = exp_name[-20:]
@@ -265,22 +265,24 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     module = '\n\nmodule load singularity'
     slurmID = '${SLURM_ARRAY_TASK_ID}'
     singularity = '\n\nsingularity exec -B /projects:/projects/ /software/singularity/images/singwine-v1.img wine ' \
-                  f'{exe_dir}/compartments.exe ' \
-                  f'-c {git_dir}/_temp/{exp_name}/simulations/model_{slurmID}.cfg ' \
-                  f'-m {git_dir}/_temp/{exp_name}/simulations/simulation_{slurmID}.emodl'
+                  '/projects/p30781/covidproject/binaries/compartments/compartments.exe ' \
+                  f'-c /projects/p30781/covidproject/covid-chicago/_temp/{exp_name}/simulations/model_{slurmID}.cfg ' \
+                  f'-m /projects/p30781/covidproject/covid-chicago/_temp/{exp_name}/simulations/simulation_{slurmID}.emodl'
     file = open(os.path.join(trajectories_dir, 'runSimulations.sh'), 'w')
     file.write(header + jobname + array + err + out + module + singularity)
     file.close()
 
     plotters_dir = os.path.join(git_dir, "plotters")
+    rfiles_dir = os.path.join(git_dir, "Rfiles")
     pymodule = '\n\nml python/anaconda3.6\n'
+    rmodule = '\n\nml module load R/4.0.0\n'
 
-    pycommand = f'\ncd {git_dir}\npython combine_and_trim.py  --exp_name "{exp_name}" --Location "NUCLUSTER" '
+    pycommand = f'\ncd /projects/p30781/covidproject/covid-chicago/nucluster/\npython combine_and_trim.py  --stem "{exp_name}" '
     file = open(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.sh'), 'w')
     file.write(header_post + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"' \
+    pycommand = f'cd {plotters_dir} \npython /projects/p30781/covidproject/covid-chicago/nucluster/cleanup.py --stem "{exp_name}"' \
                 ' --delete_simsfiles "True"'
     file = open(os.path.join(temp_exp_dir, '0_cleanupSimulations.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
