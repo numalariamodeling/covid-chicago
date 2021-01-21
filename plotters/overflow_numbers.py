@@ -99,7 +99,7 @@ def get_plot(selected_resource_type='hb_availforcovid', errorbars=True):
     fig.savefig(os.path.join(exp_dir, '_plots', 'pdf', f'{plotname}.pdf'))
 
 def get_numbers(exp_name, load_template=False):
-    trajectories = load_sim_data(exp_name)  # pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
+    trajectories = load_sim_data(exp_name)
 
     if load_template:
         fname = get_latest_filedate()
@@ -147,9 +147,9 @@ def get_numbers(exp_name, load_template=False):
 if __name__ == '__main__':
     stem = sys.argv[1]
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    #exp_names = ['20201028_IL_rollback_toki8']
 
     for exp_name in exp_names:
+
         civis_template = get_numbers(exp_name)
         get_plot(selected_resource_type='icu_availforcovid')
         get_plot(selected_resource_type='hb_availforcovid')

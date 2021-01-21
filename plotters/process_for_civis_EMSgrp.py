@@ -37,13 +37,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default='Local',
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
-
     return parser.parse_args()
     
 def get_scenarioName(exp_suffix) :
@@ -94,7 +87,7 @@ def plot_sim(dat,suffix,channels) :
         plt.savefig(os.path.join(plot_path, 'pdf', plotname + '.pdf'), format='PDF')
         # plt.show()
 
-def load_and_plot_data(ems_region, fname , savePlot=True) :
+def load_and_plot_data(ems_region, savePlot=True) :
     region_suffix = f'_{str(ems_region)}'
     column_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
     outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
@@ -104,7 +97,7 @@ def load_and_plot_data(ems_region, fname , savePlot=True) :
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
 
-    df = load_sim_data(exp_name,region_suffix = region_suffix,fname=fname, column_list=column_list)
+    df = load_sim_data(exp_name,region_suffix = region_suffix, column_list=column_list)
     df['ems'] = ems_region
     df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
 
@@ -179,7 +172,6 @@ if __name__ == '__main__' :
     exp_name = args.exp_name # "20200910_IL_RR_baseline_combined"
     simdate = exp_name.split("_")[0]
     processStep = args.processStep # 'generate_outputs'
-    trajectoriesName = args.trajectoriesName
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
 
@@ -197,7 +189,7 @@ if __name__ == '__main__' :
         dfAll = pd.DataFrame()
         for reg in regions :
             print( f'Start processing {reg}')
-            tdf = load_and_plot_data(reg,fname=trajectoriesName , savePlot=True)
+            tdf = load_and_plot_data(reg, savePlot=True)
             adf = process_and_save(tdf, reg, SAVE=True)
             dfAll = pd.concat([dfAll, adf])
             del tdf
