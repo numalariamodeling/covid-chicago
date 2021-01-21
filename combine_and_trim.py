@@ -225,7 +225,7 @@ if __name__ == '__main__':
     sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"))
     N_cols = [col for col in sampledf.columns if 'N_' in col]
     if len(N_cols)!=0:
-        grp_list = [col.replace('N_','') for col in N_cols]
+        grp_list = [col.replace('N_','') for col in N_cols] + ['All']
         grp_suffix = grp_list[0][:3]
     else:
         grp_list = None
@@ -290,7 +290,7 @@ if __name__ == '__main__':
         """Combine trajectory scenario batches per grp, 
         if grpList not specified default to spatial (EMS) model,
         deletes the trajectory chunks when done"""
-        combine_trajectories_chunks(grp_list=['All']+grp_list)
+        combine_trajectories_chunks(grp_list= grp_list)
 
     if args.delete_trajectories:
         """THIS WILL DELETE ALL SINGLE TRAJECTORIES!"""
