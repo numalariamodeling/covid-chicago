@@ -65,7 +65,7 @@ def parse_args():
         help="If specified, plots with top 50% best-fitting trajectories will be generated.",
     )
     return parser.parse_args()
-    
+
 def sum_nll(df_values, ref_df_values):
     try:
         x = -np.log10(scipy.stats.poisson(mu=df_values).pmf(k=ref_df_values))
