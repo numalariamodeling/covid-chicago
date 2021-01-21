@@ -28,6 +28,10 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
         if fname is None:
             fname = f'trajectoriesDat_region_{str(ems_nr)}.csv'
             if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = f'trajectoriesDat_region_{str(ems_nr)}_trim.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = 'trajectoriesDat_trim.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
                 fname = 'trajectoriesDat.csv'
 
         df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
