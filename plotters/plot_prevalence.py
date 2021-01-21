@@ -40,7 +40,7 @@ def get_prev_df(df, channels, fname='trajectoriesDat.csv'):
 
     sort_channels = ['scen_num', 'sample_num', 'run_num', 'time']
     group_channels = ['scen_num', 'sample_num', 'run_num']
-    region_list = ['EMS-%d' % x for x in range(1, 12)]
+    region_list = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
 
     df = pd.DataFrame()
     for ems_region in region_list:
