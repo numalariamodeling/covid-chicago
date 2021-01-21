@@ -80,7 +80,7 @@ def compare_channels(channelGrp):
     for d, key in enumerate(nchannels.keys()):
 
         df = load_sim_data(exp_name)
-        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+        df = df[df['date'].between(first_plot_day, last_plot_day)]
 
         channels = nchannels[key]
         if d == 0:
@@ -104,8 +104,8 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
-    first_plot_day = date(2020, 10, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:

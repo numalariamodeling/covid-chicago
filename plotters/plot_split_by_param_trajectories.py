@@ -73,7 +73,7 @@ def plot_main(nscen=None, showLegend =True, channels=None) :
 
     for d, exp_name in enumerate(exp_names) :
         df = load_sim_data(exp_name)
-        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+        df = df[df['date'].between(first_day, last_day)]
 
         if nscen != None :
             df = df[df['scen_num'].isin(nscen)]

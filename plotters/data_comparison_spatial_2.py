@@ -78,7 +78,7 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
                 column_list.append(chn + "_EMS-" + str(ems_nr))
 
             df = load_sim_data(exp_name, region_suffix, column_list=column_list)
-            df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+            df = df[df['date'].between(first_day, last_day)]
             df['critical_with_suspected'] = df['critical']
             exp_name_label = str(exp_name.split('_')[-1])
 
@@ -126,8 +126,8 @@ if __name__ == '__main__':
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date(2020, 2, 13)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp('2020-02-13')
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
