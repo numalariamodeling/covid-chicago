@@ -587,8 +587,9 @@ if __name__ == '__main__':
 
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+        #                    temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        subprocess.call(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.bat'))
         cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
                 plot_path=plot_path, delete_temp_dir=True)
         log.info(f"Outputs are in {sim_output_path}")
@@ -603,10 +604,6 @@ if __name__ == '__main__':
             subprocess.call([p0])
 
         if args.post_process == 'processForCivis':
-
-            log.info("Trim trajectories")
-            p0 = os.path.join(sim_output_path, '0_runTrimTrajectories.bat')
-            subprocess.call([p0])
 
             log.info("Compare to data")
             p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
