@@ -1,10 +1,11 @@
+"""
+Combine, reformat and trim single simulation trajectories.
+Output: tracjectoriesDat including all outcome channels, and trajectoriesDat_trim including key channels only
+If number of trajectories exceeds a specified limit, multiple trajectories in chunks will be returned.
+"""
 import argparse
-import numpy as np
 import pandas as pd
-import subprocess
 import os
-import seaborn as sns
-from datetime import date, timedelta
 import shutil
 import sys
 sys.path.append('../')
@@ -15,8 +16,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
-        "-stem",
-        "--stem",
+        "-exp",
+        "--exp_name",
         type=str,
         help="Name of simulation experiment"
     )
@@ -26,26 +27,46 @@ def parse_args():
         "--Location",
         type=str,
         help="Local or NUCLUSTER",
-        default = "NUCLUSTER"
+        default = "Local"
+    )
+    parser.add_argument(
+        "--time_start",
+        type=int,
+        help="Lower limit of time steps to keep",
+        default=1
+    )
+    parser.add_argument(
+        "--time_stop",
+        type=int,
+        help="Upper limit of time steps to keep",
+        default=1000
     )
     parser.add_argument(
         "-limit",
         "--scen_limit",
         type=int,
         help="Number of simulations to combine",
-        default = 700
+        default = 10
     )
-
+    parser.add_argument(
+        "--additional_sample_param",
+        type=str,
+        nargs='+',
+        help="""Name of additional sample parameters to keep, reduced to minimum to reduce file size
+                format: --additional_sample_param time_to_infectious time_to_death (no quotes)
+                Note: sample parameters can also always be added from the sample_parameters.csv if required in the postprocessing""",
+        default = ''
+    )
+    parser.add_argument(
+        "--delete_trajectories",
+        action='store_true',
+        help="If specified, single trajectories will be deleted after postprocessing.",
+    )
 
     return parser.parse_args()
     
-    
-def writeTxt(txtdir, filename, textstring):
-    file = open(os.path.join(txtdir, filename), 'w')
-    file.write(textstring)
-    file.close()
 
-def reprocess(input_fname='trajectories.csv', output_fname=None):
+def reprocess(input_fname='trajectories.csv'):
     fname = os.path.join(git_dir, input_fname)
     row_df = pd.read_csv(fname, skiprows=1)
     df = row_df.set_index('sampletimes').transpose()
@@ -67,20 +88,11 @@ def reprocess(input_fname='trajectories.csv', output_fname=None):
     del adf['index']
     return adf
 
-def trim_trajectories_Dat(df, fname, VarsToKeep, time_start, time_stop,channels=None, grpspecific_params=None, grpnames=None):
+def trim_trajectories(df, fname,sample_param_to_keep, time_start=1, time_stop=1000,
+                      channels=None, time_varying_params=None, grpnames=None):
     """Generate a subset of the trajectoriesDat dataframe
     The new csv file is saved under trajectoriesDat_trim.csv, no dataframe is returned
     """
-
-    if VarsToKeep == None :
-        VarsToKeep = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
-    if VarsToKeep != None :
-        VarsToKeep = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num'] + VarsToKeep
-        VarsToKeep = [i for n, i in enumerate(VarsToKeep) if i not in VarsToKeep[:n]]
-
-    if grpnames == None:
-        grpnames = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10', 'EMS-11']
-        grpnames_ki = ['EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
 
     if channels == None:
         channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'detected_cumul',
@@ -89,96 +101,197 @@ def trim_trajectories_Dat(df, fname, VarsToKeep, time_start, time_stop,channels=
                     'symp_severe_cumul','symptomatic_severe', 'symp_severe_det_cumul',
                     'hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
                     'crit_cumul','crit_det_cumul', 'crit_det',  'critical',
-                    'death_det_cumul',  'deaths']
+                    'death_det_cumul', 'deaths']
 
-    if grpspecific_params == None:
-        grpspecific_params = ['Ki_t']
+    if time_varying_params == None:
+        time_varying_params = ['Ki_t']
 
-    column_list = VarsToKeep
-    for channel in channels:
+    column_list = ['time', 'run_num'] + sample_param_to_keep
+    if grpnames is not None:
         for grp in grpnames:
-            column_list.append(channel + "_" + str(grp))
+            for channel in channels:
+                column_list.append(channel + "_" + str(grp))
+            if grp !="All":
+                column_list.append(time_varying_params + "_" + str(grp.replace('_','-')))
+    else:
+        column_list = column_list + channels + time_varying_params
 
-    param_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
-    for grpspecific_param in grpspecific_params:
-        for grp in grpnames_ki:
-            param_list.append(grpspecific_param + "_" + str(grp))
-            column_list.append(grpspecific_param + "_" + str(grp))
-
+    """Trim df and save"""
+    df = df[column_list]
     df = df[df['time'] > time_start]
     df = df[df['time'] < time_stop]
-
-    df = df[column_list ]
-    df.to_csv(os.path.join(temp_exp_dir, fname + '_trim.csv'), index=False, date_format='%Y-%m-%d')
+    df.to_csv(os.path.join(exp_path, fname + '_trim.csv'), index=False, date_format='%Y-%m-%d')
 
 
-def combineTrajectories(VarsToKeep,Nscenarios_start=0, Nscenarios_stop=1000, time_start=1, time_stop=1000, fname='trajectoriesDat.csv',SAVE=True):
+def combine_trajectories(sampledf, Nscenarios_start=0, Nscenarios_stop=1000, fname='trajectoriesDat.csv',SAVE=True):
 
     df_list = []
     n_errors = 0
     for scen_i in range(Nscenarios_start, Nscenarios_stop):
         input_name = "trajectories_scen" + str(scen_i) + ".csv"
         try:
-            df_i = reprocess(os.path.join(trajectoriesDat, input_name))
+            df_i = reprocess(os.path.join(trajectories_path, input_name))
             df_i['scen_num'] = scen_i
-            # print("df_length " + str(len(df_i)))
             df_i = df_i.merge(sampledf, on=['scen_num'])
-            # print("df_length " + str(len(df_i)))
-            df_i = df_i[df_i['time'] > time_start]
-            df_i = df_i[df_i['time'] < time_stop]
             df_list.append(df_i)
         except:
             n_errors += 1
             continue
     print("Number of errors:" + str(n_errors))
-    dfc = pd.concat(df_list)
-    dfc = dfc.dropna()
-    if SAVE:
-        dfc.to_csv(os.path.join(temp_exp_dir, fname), index=False, date_format='%Y-%m-%d')
+    try:
+        dfc = pd.concat(df_list)
+        dfc = dfc.dropna()
+        if SAVE:
+            dfc.to_csv(os.path.join(exp_path, fname), index=False, date_format='%Y-%m-%d')
+    except ValueError:
+        print('WARNING: No objects to concatenate - either no trajectories or n_scen_limit size is too small')
+        dfc = pd.DataFrame()
 
-    trim_trajectories_Dat(df=dfc, VarsToKeep=VarsToKeep,
-                          time_start=time_start, time_stop=time_stop,
-                          channels=None, grpspecific_params=None, grpnames=None,
-                          fname=fname.split(".csv")[0])
+    return dfc
 
+def combine_trajectories_chunks(grp_list, useTrim=True):
+
+    """workaround for using EMS vs region in filename for spatial model and keep suffix also for 'All'"""
+    grp_save_suffix = [grp for grp in grp_list[1:]][0][:3]
+    if grp_save_suffix == 'EMS': grp_save_suffix = 'region'
+
+    files = os.listdir(exp_path)
+    files = [file for file in files if '.csv' in file ]
+    files = [file for file in files if not grp_save_suffix in file ]
+    files = [file for file in files if 'trajectories' in file]
+    files_not_trim = [file for file in files if not 'trim' in file]
+    files_trim = [file for file in files if 'trim' in file]
+    if useTrim:
+        files = files_trim
+        [os.unlink(os.path.join(exp_path, file)) for file in files_not_trim]
+        del files_trim,  files_not_trim
+    else:
+        files = files_not_trim
+        [os.unlink(os.path.join(exp_path, file)) for file in files_trim]
+        del files_trim,  files_not_trim
+
+    for i, grp in enumerate(grp_list):
+        print(f'Combine trajectories for {grp}')
+        """extract grp suffix, might need to be applicable for age model or any other grp"""
+        grp_suffix = grp[:3]
+        df_all = pd.DataFrame()
+        for file in files:
+            df_f = pd.read_csv(os.path.join(exp_path, file))
+            df_cols = df_f.columns
+            outcome_cols = [df_col for df_col in df_cols if grp_suffix in df_col or 'All' in df_col ]
+            outcomeVars_to_drop = [outcome_col for outcome_col in outcome_cols if not grp in outcome_col or not grp.replace(f'{grp_suffix}_',f'{grp_suffix}-')]
+            df_f = df_f.drop(outcomeVars_to_drop, axis=1)
+            if df_all.empty:
+                df_all = df_f
+            else:
+                df_all.append(df_f)
+            del df_f
+
+        fname = f'trajectoriesDat_{grp_save_suffix}_{i}'
+        if useTrim: fname = f'{fname}_trim'
+        df_all.to_csv(os.path.join(exp_path, f'{fname}.csv'), index=False, date_format='%Y-%m-%d')
+        if i ==0:
+            write_report(nscenarios_processed= len(df_all['scen_num'].unique()))
+    [os.unlink(os.path.join(exp_path,file)) for file in files]
+
+def write_report(nscenarios_processed):
+    trackScen = f'Number of scenarios processed n= {str(nscenarios_processed)} out of total ' \
+                f'N= {str(Nscenario)} ({str(nscenarios_processed / Nscenario)} %)'
+    file = open(os.path.join(exp_path, "Simulation_report.txt"), 'w')
+    file.write(trackScen)
+    file.close()
 
 if __name__ == '__main__':
 
     args = parse_args()  
-    stem = args.stem
+    exp_name = args.exp_name
+    time_start = args.time_start
+    time_stop = args.time_stop
     Location = args.Location
+    additional_sample_param = args.additional_sample_param
     Scenario_save_limit = args.scen_limit
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
-    exp_names = [x for x in os.listdir(sim_out_dir) if stem in x]
+    sim_out_dir = os.path.join(wdir, "simulation_output")
+    if Location == "NUCLUSTER" or not os.path.exists(os.path.join(sim_out_dir,exp_name)):
+        sim_out_dir = os.path.join(git_dir, "_temp")
+        print(f'Processing trajectories from {sim_out_dir}')
 
-    time_start = 1
-    time_stop = 1000
-    VarsToKeepI = ['startdate',  'scen_num', 'sample_num'] 
-    VarsToKeep = ['time', 'run_num'] + VarsToKeepI
+    exp_path = os.path.join(sim_out_dir, exp_name)
+    trajectories_path = os.path.join(exp_path, 'trajectories')
 
+    """Define model type and grp suffix of parameters and outcome channels"""
+    sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"))
+    N_cols = [col for col in sampledf.columns if 'N_' in col]
+    if len(N_cols)!=0:
+        grp_list = [col.replace('N_','') for col in N_cols]
+        grp_suffix = grp_list[0][:3]
+    else:
+        grp_list = None
+        N_cols = ['speciesS', 'initialAs']
 
-    for exp_name in exp_names:
-        print(exp_name)
+    """Define parameters to keep"""
+    sample_param_to_keep = ['startdate', 'scen_num', 'sample_num'] + N_cols
+    if isinstance(additional_sample_param, list): sample_param_to_keep = sample_param_to_keep + additional_sample_param
 
-        trajectoriesDat = os.path.join(git_dir, 'trajectories')
-        temp_exp_dir = git_dir
-        sampledf = pd.read_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"))
-        sampledf = sampledf[VarsToKeepI]
-        Nscenario = max(sampledf['scen_num'])
+    sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"), usecols= sample_param_to_keep)
+    Nscenario = max(sampledf['scen_num'])
 
-        if Nscenario <= Scenario_save_limit:
-            combineTrajectories(VarsToKeep=VarsToKeep,Nscenarios_start=0, Nscenarios_stop=Nscenario+1,time_start=time_start, time_stop=time_stop)
-        if Nscenario > Scenario_save_limit:
-            n_subsets = int(Nscenario/Scenario_save_limit)
+    if Nscenario <= Scenario_save_limit:
+        fname = "trajectoriesDat.csv"
+        if not os.path.exists(os.path.join(exp_path, fname)):
+            dfc = combine_trajectories(sampledf=sampledf,
+                                       Nscenarios_start=0,
+                                       Nscenarios_stop=Nscenario + 1,
+                                       fname=fname)
+        else:
+            dfc = pd.read_csv(os.path.join(exp_path, fname))
 
-            for i in range(1,n_subsets+2):
-                if i ==1 : Nscenario_stop=Scenario_save_limit
-                if i > 1 : Nscenario_stop = Nscenario_stop + Scenario_save_limit
-                print(Nscenario_stop)
-                Nscenarios_start = Nscenario_stop-Scenario_save_limit
-                combineTrajectories(VarsToKeep=VarsToKeep,
-                                    Nscenarios_start=Nscenarios_start,
-                                    Nscenarios_stop=Nscenario_stop,
-                                    time_start=time_start, time_stop=time_stop,
-                                    fname='trajectoriesDat_'+str(Nscenario_stop)+'.csv')
+        trim_trajectories(df=dfc,
+                          sample_param_to_keep = sample_param_to_keep,
+                          time_start=time_start,
+                          time_stop=time_stop,
+                          grpnames = grp_list ,
+                          fname=fname.split(".csv")[0])
+
+        write_report(nscenarios_processed= len(dfc['scen_num'].unique()))
+
+    if Nscenario > Scenario_save_limit:
+        n_subsets = int(Nscenario/Scenario_save_limit)
+
+        """Combine trajectories in specified chunks for n subsets"""
+        for i in range(1,n_subsets+2):
+            if i ==1 : Nscenario_stop=Scenario_save_limit
+            if i > 1 : Nscenario_stop = Nscenario_stop + Scenario_save_limit
+            print(Nscenario_stop)
+            Nscenarios_start = Nscenario_stop-Scenario_save_limit
+            fname = 'trajectoriesDat_'+str(Nscenario_stop)+'.csv'
+            if not os.path.exists(os.path.join(exp_path, fname)):
+                dfc = combine_trajectories(sampledf=sampledf,
+                                           Nscenarios_start=Nscenarios_start,
+                                           Nscenarios_stop=Nscenario_stop,
+                                           fname=fname)
+            else:
+                dfc = pd.read_csv(os.path.join(exp_path, fname))
+
+            """Trim trajectories"""
+            if not dfc.empty:
+                trim_trajectories(df=dfc,
+                                  sample_param_to_keep=sample_param_to_keep,
+                                  time_start=time_start,
+                                  time_stop=time_stop,
+                                  fname=fname.split(".csv")[0])
+                del dfc
+            else:
+                print(f'WARNING: No trajectories found for scenarios {Nscenarios_start} to {Nscenario_stop}')
+                continue
+
+        """Combine trajectory scenario batches per grp, 
+        if grpList not specified default to spatial (EMS) model,
+        deletes the trajectory chunks when done"""
+        combine_trajectories_chunks(grp_list=['All']+grp_list)
+
+    if args.delete_trajectories:
+        """THIS WILL DELETE ALL SINGLE TRAJECTORIES!"""
+        shutil.rmtree(trajectories_path, ignore_errors=True)
+        print(f'Single trajectories deleted')
