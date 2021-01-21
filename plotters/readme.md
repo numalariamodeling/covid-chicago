@@ -82,7 +82,6 @@ Reads in several EMS specific simulation experiments and sums the trajectores to
 - [plot_split_by_channel.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_channel.py)
 - [plot_split_by_param_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param_trajectories.py)
 - [plot_single_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_single_trajectories.py)
-- trim_trajectoriesDat.py
 - county_estimation.py
 - generate_trajectories_for_dash.py
 - Ki_map.py and  ki_red_map.py
