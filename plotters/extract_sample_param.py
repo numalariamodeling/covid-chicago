@@ -44,7 +44,7 @@ def plot_param_by_channel(sample_df, param_list, param_class, plot_path, region_
     if channel is None:
         channel = 'crit_det'
     channel_name = f'{channel}_{region_suffix}'
-    df = load_sim_data(exp_name, region_suffix=None, column_list=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name])
+    df = load_sim_data(exp_name, region_suffix=None, column_list=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name], add_incidence=False)
     df['time'] = df['time'].astype('int64')
     df = df[df['time'] == time_step]
     df = pd.merge(how='left', left=df, left_on=['scen_num', 'sample_num'], right=sample_df,
@@ -104,8 +104,7 @@ def extract_samples(nsamples=100, seed_nr=751, save_dir=None, save_all_successfu
     fname = 'trajectoriesDat_trim.csv'
     if not os.path.exists(os.path.join(sim_output_path, fname)):
         fname = 'trajectoriesDat.csv'
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=['time', 'scen_num', 'sample_num', 'run_num'])
-    # sample_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'sampled_parameters.csv'),usecols=['scen_num'] + sample_params)
+    df = load_sim_data(exp_name, column_list=['time','startdate', 'scen_num', 'sample_num', 'run_num'], add_incidence=False)
     sample_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'sampled_parameters.csv'))
 
     scen_success = list((df.scen_num.unique()))
@@ -149,7 +148,7 @@ def extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=T
                 IL_locale_param = IL_locale_param + [f'{param}_EMS_{reg_nr}']
         sample_params = sample_params + IL_locale_param
 
-    df = load_sim_data(exp_name, column_list=['time', 'scen_num', 'sample_num', 'run_num'], add_incidence=False)
+    df = load_sim_data(exp_name, column_list=['time','startdate', 'scen_num', 'sample_num', 'run_num'], add_incidence=False)
     sample_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
 
     scen_success = list((df.scen_num.unique()))
@@ -197,12 +196,12 @@ def extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=T
 
 if __name__ == '__main__':
     args = parse_args()
-    exp_name = "'20210119_IL_quest_varyParamForFit'"
+    exp_name = args.exp_name
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location="Local")
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = os.path.join(sim_output_path, '_plots')
 
-    #extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
+    extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
     extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True)
