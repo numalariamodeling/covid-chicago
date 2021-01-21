@@ -184,7 +184,7 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajector
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
 
     compare_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label,first_day= first_day, last_day= last_day, logscale=True, weights_array=weights_array, plot_trajectories=plot_trajectories)
+                     region_label=region_label,logscale=True, weights_array=weights_array, plot_trajectories=plot_trajectories)
 
 if __name__ == '__main__':
 
