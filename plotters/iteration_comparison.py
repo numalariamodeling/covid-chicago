@@ -48,7 +48,7 @@ def comparison_plot(reg_nr=0, channels=None, n_iter=3):
 
     for i, simdate in enumerate(exp_simdates):
         df = pd.read_csv(os.path.join(NU_civis_path, simdate, 'csv', f'nu_{simdate}.csv'))
-        df['date'] = pd.to_datetime(df['date']).dt.date
+        df['date'] = pd.to_datetime(df['date'])
         df = df[df['geography_modeled'] == region]
         #df = df[df['scenario_name'] == 'baseline']
 
@@ -95,7 +95,7 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
 
     for i, simdate in enumerate(exp_simdates):
         df = pd.read_csv(os.path.join(NU_civis_path, simdate, 'csv', f'nu_{simdate}.csv'))
-        df['date'] = pd.to_datetime(df['date']).dt.date
+        df['date'] = pd.to_datetime(df['date'])
         df = df[df['geography_modeled'] == region]
         #df = df[df['scenario_name'] == 'baseline']
 
@@ -107,7 +107,7 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
         ax.fill_between(df['date'], df['rt_lower'], df['rt_upper'], color=palette[i], linewidth=0, alpha=0.2)
 
         if i + 1 == len(exp_simdates):
-            df_today = df[df['date'] == date.today()]
+            df_today = df[df['date'] == pd.Timestamp(date.today())]
             df_initial = df[df['date'] == df['date'].min()]
             rt_median_today = df_today.iloc[0]['rt_median'].round(decimals=3)
             rt_lower_today = df_today.iloc[0]['rt_lower'].round(decimals=3)
@@ -143,9 +143,10 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
 
 
 if __name__ == '__main__':
+    
     Location = 'Local'
-    first_plot_day = date.today() - timedelta(30)
-    last_plot_day = date.today() + timedelta(30)
+    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(30)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
     comparison_plot()

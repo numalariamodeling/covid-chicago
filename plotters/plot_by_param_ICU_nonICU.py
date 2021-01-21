@@ -105,8 +105,7 @@ def compare_ems( ems,channel):
         data_channel_names = ['confirmed_covid_icu']
 
     ref_df = ref_df.groupby('date')[data_channel_names].agg(np.sum).reset_index()
-    ref_df = ref_df[(ref_df['date'] >= pd.to_datetime(first_plot_day)) &
-                    (ref_df['date'] <= pd.to_datetime(last_plot_day))]
+    ref_df = ref_df[ref_df['date'].between(first_plot_day, last_plot_day)]
 
     return ref_df
 
@@ -147,8 +146,8 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date.today() - timedelta(60)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp(date.today()) - timedelta(60)
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
 
     covidregionlist = range(0, 12)
 
