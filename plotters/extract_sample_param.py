@@ -104,8 +104,7 @@ def extract_samples(nsamples=100, seed_nr=751, save_dir=None, save_all_successfu
     fname = 'trajectoriesDat_trim.csv'
     if not os.path.exists(os.path.join(sim_output_path, fname)):
         fname = 'trajectoriesDat.csv'
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=['time', 'scen_num', 'sample_num', 'run_num'])
-    # sample_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'sampled_parameters.csv'),usecols=['scen_num'] + sample_params)
+    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=['time','startdate' ,'scen_num', 'sample_num', 'run_num'])
     sample_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, 'sampled_parameters.csv'))
 
     scen_success = list((df.scen_num.unique()))
@@ -149,7 +148,7 @@ def extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=T
                 IL_locale_param = IL_locale_param + [f'{param}_EMS_{reg_nr}']
         sample_params = sample_params + IL_locale_param
 
-    df = load_sim_data(exp_name, column_list=['time', 'scen_num', 'sample_num', 'run_num'], add_incidence=False)
+    df = load_sim_data(exp_name, column_list=['time','startdate', 'scen_num', 'sample_num', 'run_num'], add_incidence=False)
     sample_df = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
 
     scen_success = list((df.scen_num.unique()))
@@ -197,7 +196,7 @@ def extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=T
 
 if __name__ == '__main__':
     args = parse_args()
-    exp_name = "'20210119_IL_quest_varyParamForFit'"
+    exp_name = args.exp_name
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location="Local")
