@@ -54,12 +54,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
         df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
 
     df = df.dropna()
-    try:
-        first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    except:
-        first_day = datetime.strptime(df['startdate'].unique()[0], '%m/%d/%Y')
+    first_day = pd.Timestamp(df['startdate'].unique()[0])
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df['date'] = pd.to_datetime(df['date']).dt.date
+    df['date'] = df['date']
 
     if add_incidence:
         if 'recovered' in df.columns:
@@ -239,9 +236,8 @@ def load_ref_df(ems_nr):
         ref_df[ref_df['covid_region'].isin(ems_nr)]
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
-    ref_df['date'] = pd.to_datetime(ref_df['date']).dt.date
-    ref_df = ref_df[(ref_df['date'] > pd.to_datetime(date(2020,1,1))) &
-                    (ref_df['date'] <= pd.to_datetime(date.today()))]
+    ref_df['date'] = pd.to_datetime(ref_df['date'])
+    ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp(date.today()))]
 
     return ref_df
 

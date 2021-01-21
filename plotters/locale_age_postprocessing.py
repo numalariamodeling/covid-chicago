@@ -74,8 +74,8 @@ if __name__ == '__main__' :
     Location = args.Location
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date(2020, 3, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
@@ -86,9 +86,9 @@ if __name__ == '__main__' :
         suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
         base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
-        startdate = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+        startdate = pd.Timestamp(df['startdate'].unique()[0])
         df['date'] = df['time'].apply(lambda x: startdate + timedelta(days=int(x)))
-        df['date'] = pd.to_datetime(df['date']).dt.date
+        df['date'] = pd.to_datetime(df['date'])
 
         channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators','recovered']
 

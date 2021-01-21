@@ -80,8 +80,8 @@ def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles
                      first_day, last_day, ymax=10000, logscale=True, weights_array=[1.0,1.0,1.0,1.0], plot_trajectories=False):
     #Creation of rank_df
     [deaths_weight, crit_weight, non_icu_weight, cli_weight] = weights_array
-    ref_df_trunc = ref_df[(ref_df['date'] > first_day) & (ref_df['date'] < last_day)]
-    df_trunc = df[(df['date'] > first_day) & (df['date'] < last_day)]
+    ref_df_trunc = ref_df[ref_df['date'].between(first_day, last_day)]
+    df_trunc = df[df['date'].between(first_day, last_day)]
 
     """ Ensure common dates"""
     df_trunc_dates = df_trunc[df_trunc['date'].isin(ref_df_trunc['date'].unique())].date.unique()
@@ -193,8 +193,9 @@ if __name__ == '__main__':
     Location = args.Location
     weights_array = [args.deaths_weight, args.crit_weight, args.non_icu_weight, args.cli_weight]
 
-    first_plot_day = date(2020, 3, 25)
-    last_plot_day = date(2021, 1, 1)
+    first_plot_day = pd.Timestamp('2020-03-25')
+    last_plot_day = pd.Timestamp('2021-01-01')
+    
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

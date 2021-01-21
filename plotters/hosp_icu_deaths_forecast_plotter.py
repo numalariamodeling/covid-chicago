@@ -109,10 +109,10 @@ def compare_ems(exp_name, plot_name, ems_nr, first_day , last_day):
         column_list.append(channel + region_suffix)
 
     df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = df[df['date'].between(first_day, last_day)]
 
     ref_df = load_ref_df(ems_nr)
-    ref_df = ref_df[(ref_df['date'] >= first_plot_day) & (ref_df['date'] <= last_plot_day)]
+    ref_df = ref_df[ref_df['date'].between(first_day, last_day)]
     channels = ['crit_det', 'hosp_det', 'new_deaths']
     data_channel_names = ['confirmed_covid_icu', 'covid_non_icu', 'deaths']
     titles = ['ICU census\n(EMR)', 'non-ICU inpatient census\n(EMR)','daily deaths\n(LL)']
