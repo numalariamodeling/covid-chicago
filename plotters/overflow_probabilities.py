@@ -202,7 +202,7 @@ def write_probs_to_template(df, plot=True):
 
 def plot_probs_from_template(df=None, show_75=True):
     if df is None:
-        file_str = 'nu_hospitaloverflow_2_' + str(exp_name[:8]) + '.csv'
+        file_str = 'nu_hospitaloverflow_' + str(exp_name[:8]) + '.csv'
         df = pd.read_csv(os.path.join(sim_output_path, file_str))
 
     regionlist = df['geography_modeled'].unique()
@@ -234,8 +234,8 @@ def plot_probs_from_template(df=None, show_75=True):
 
     axes[-1].legend()
 
-    plt.savefig(os.path.join(plot_path, 'overflow_probabilities_2.png'))
-    plt.savefig(os.path.join(plot_path, 'pdf', 'overflow_probabilities_2.pdf'))
+    plt.savefig(os.path.join(plot_path, 'overflow_probabilities.png'))
+    plt.savefig(os.path.join(plot_path, 'pdf', 'overflow_probabilities.pdf'))
 
 
 if __name__ == '__main__':
