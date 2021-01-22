@@ -40,7 +40,7 @@ def parse_args():
     return parser.parse_args()
     
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, region_label,
-                     first_day, last_day, ymax=10000, logscale=True):
+                     first_day, last_day,plot_path, ymax=10000, logscale=False,plot_name_suffix=None):
 
     fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
@@ -87,10 +87,8 @@ def compare_ems(exp_name, ems_nr,first_day,last_day):
         region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
     column_list = ['time', 'startdate', 'scen_num', 'sample_num','run_num']
-    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
-                        'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                        'death_det_cumul', 'deaths']
-
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
+    
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
 
@@ -101,12 +99,6 @@ def compare_ems(exp_name, ems_nr,first_day,last_day):
 
     ref_df = load_ref_df(ems_nr)
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
 
     plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
                      region_label=region_label,first_day= first_day, last_day= last_day, logscale=True)

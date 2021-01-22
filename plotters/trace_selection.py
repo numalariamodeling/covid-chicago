@@ -77,7 +77,7 @@ def sum_nll(df_values, ref_df_values):
     return np.nansum(x)
 
 def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles,region_label,
-                        ymax=10000, logscale=True, weights_array=[1.0,1.0,1.0,1.0], plot_trajectories=False):
+                        ymax=10000, logscale=False, weights_array=[1.0,1.0,1.0,1.0], plot_trajectories=False):
     #Creation of rank_df
     [deaths_weight, crit_weight, non_icu_weight, cli_weight] = weights_array
 
@@ -113,7 +113,6 @@ def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles
         else:
             region_suffix = "_EMS-" + str(ems_nr)
             region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
-        logscale=False
         fig = plt.figure(figsize=(13, 6))
         palette = sns.color_palette('husl', 8)
         k = 0
@@ -175,16 +174,11 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajector
     df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
     df = df[df['date'].between(first_day, ref_df['date'].max())]
     df['critical_with_suspected'] = df['critical']
+    channels, data_channel_names, titles = get_datacomparison_channels()
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
 
     compare_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label,logscale=True, weights_array=weights_array, plot_trajectories=plot_trajectories)
+                     region_label=region_label,logscale=False, weights_array=weights_array, plot_trajectories=plot_trajectories)
 
 if __name__ == '__main__':
 

@@ -405,6 +405,19 @@ def civis_colnames(reverse=False) :
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)
 
+
+def get_datacomparison_channels():
+    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
+                    'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
+                    'death_det_cumul', 'deaths']
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
+                'new_detected_hospitalized']
+    data_channel_names = ['deaths',
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
+    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
+              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+    return outcome_channels, channels, data_channel_names, titles
+    
 def get_parameter_names(include_new=True):
 
     sample_params_core = ['time_to_infectious',
