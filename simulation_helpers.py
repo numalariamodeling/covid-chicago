@@ -273,7 +273,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.close()
 
     plotters_dir = os.path.join(git_dir, "plotters")
-    pymodule = '\n\nml python/anaconda3.6\n'
+    pymodule = '\n\nmodule purge all\nmodule load python/anaconda3.6\nsource activate /projects/p30781/anaconda3/envs/team-test-py37\n'
 
     pycommand = f'\ncd {git_dir}\npython combine_and_trim.py  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.sh'), 'w')
