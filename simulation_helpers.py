@@ -226,7 +226,7 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py --exp_name "{exp_name}" --processStep "generate_outputs" >> "{sim_output_path}/log/1_runProcessForCivis.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, '2_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py "{exp_name}" >> "{sim_output_path}/log/2_runProcessForCivis.txt" \n')
+            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py --stem "{exp_name}" >> "{sim_output_path}/log/2_runProcessForCivis.txt" \n')
 
             file = open(os.path.join(temp_exp_dir, '3_runProcessForCivis.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python estimate_Rt_forCivisOutputs.py --exp_name "{exp_name}" >> "{sim_output_path}/log/3_runProcessForCivis.txt" \n')
@@ -300,8 +300,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/overflow_probabilities.py "{exp_name}"'
-               # f'\npython {plotters_dir}/overflow_numbers.py "{exp_name}"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/overflow_probabilities.py --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, '2_runProcessForCivis.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
