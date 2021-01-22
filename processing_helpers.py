@@ -9,7 +9,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                   input_sim_output_path =None, column_list=None, add_incidence=True,
-                  select_traces=True, traces_to_keep_ratio=4, min_traces_to_keep=100) :
+                  select_traces=True, traces_to_keep_ratio=4, traces_to_keep_min=100) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
@@ -32,9 +32,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                 rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
 
                 n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
-                if n_traces_to_keep < min_traces_to_keep and len(rank_export_df) >= min_traces_to_keep :
-                    n_traces_to_keep = min_traces_to_keep
-                if len(rank_export_df) < min_traces_to_keep :
+                if n_traces_to_keep < traces_to_keep_min :
+                    n_traces_to_keep = traces_to_keep_min
+                if len(rank_export_df) < traces_to_keep_min :
                     n_traces_to_keep = len(rank_export_df)
 
                 rank_export_df_sub = rank_export_df[0:n_traces_to_keep]
@@ -225,9 +225,8 @@ def load_ref_df(ems_nr):
         ref_df[ref_df['covid_region'].isin(ems_nr)]
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
-    ref_df['date'] = pd.to_datetime(ref_df['date']).dt.date
-    ref_df = ref_df[(ref_df['date'] > pd.to_datetime(date(2020,1,1))) &
-                    (ref_df['date'] <= pd.to_datetime(date.today()))]
+    ref_df['date'] = pd.to_datetime(ref_df['date'])
+    ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp(date.today()))]
 
     return ref_df
 
