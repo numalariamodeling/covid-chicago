@@ -18,9 +18,6 @@ import seaborn as sns
 from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
-today = datetime.today()
-datetoday = date(today.year, today.month, today.day)
-
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
