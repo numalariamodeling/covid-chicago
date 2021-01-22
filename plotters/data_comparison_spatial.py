@@ -74,10 +74,12 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, r
     plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
     if logscale == False :
         plot_name = plot_name + "_nolog"
+    if plot_name_suffix is not None:
+        plot_name= plot_name + plot_name_suffix
     plt.savefig(os.path.join(plot_path, plot_name + '.png'))
     plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
 
-def compare_ems(exp_name, ems_nr,first_day,last_day):
+def compare_ems(exp_name, ems_nr,first_day,last_day,plot_path):
 
     if ems_nr == 0:
         region_suffix = "_All"
@@ -99,11 +101,10 @@ def compare_ems(exp_name, ems_nr,first_day,last_day):
 
     ref_df = load_ref_df(ems_nr)
 
-
+    #plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+    #                 region_label=region_label,first_day= first_day, last_day= last_day,plot_path=plot_path, logscale=True)
     plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label,first_day= first_day, last_day= last_day, logscale=True)
-    plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label, first_day= first_day, last_day= last_day,  logscale=False)
+                     region_label=region_label, first_day= first_day, last_day= last_day,plot_path=plot_path)
 
 
 if __name__ == '__main__':
@@ -123,4 +124,4 @@ if __name__ == '__main__':
         plot_path = os.path.join(sim_output_path, '_plots')
         for ems_nr in range(1,12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day)
+            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,plot_path=plot_path)
