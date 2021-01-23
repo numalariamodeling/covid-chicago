@@ -214,7 +214,7 @@ if __name__ == '__main__':
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
     sim_out_dir = os.path.join(wdir, "simulation_output")
-    if Location == "NUCLUSTER" or not os.path.exists(os.path.join(sim_out_dir,exp_name)):
+    if not os.path.exists(os.path.join(sim_out_dir,exp_name)):
         sim_out_dir = os.path.join(git_dir, "_temp")
         print(f'Processing trajectories from {sim_out_dir}')
 
@@ -281,6 +281,7 @@ if __name__ == '__main__':
                                   sample_param_to_keep=sample_param_to_keep,
                                   time_start=time_start,
                                   time_stop=time_stop,
+                                  grpnames=grp_list,
                                   fname=fname.split(".csv")[0])
                 del dfc
             else:
