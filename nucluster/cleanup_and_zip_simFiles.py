@@ -29,9 +29,11 @@ def parse_args():
         help="If specified archives the simulation folder",
     )
     parser.add_argument(
-        "--delete_from_dir",
+        "--del_dir",
         action='store_true',
-        help="If specified deletes the simulation folder after zipping",
+        help="""If specified deletes the simulation folder, 
+              use in combination with zip_dir for archiving 
+              or transferring and without zip_dir for cleanup (deleting)"""
     )
     return parser.parse_args()
 
@@ -48,16 +50,15 @@ def make_archive(source, destination):
     shutil.make_archive(name, format, archive_from, archive_to)
     shutil.move('%s.%s' % (name, format), destination)
 
-def zip_exp_files(wdir, sim_output_path, delete_from_dir):
-    make_archive(sim_output_path, os.path.join(wdir,'simulation_output', f'{exp_name}_zip.zip'))
-    shutil.rmtree(os.path.join(sim_output_path, 'simulations'), ignore_errors=True)
-    if delete_from_dir:
-        shutil.rmtree(os.path.join(sim_output_path), ignore_errors=True)
 
-def cleanup(sim_output_path):
+def cleanup_and_zip_simFiles(sim_output_path, zip_dir, delete_from_dir):
     """Delete single trajectories and simulation files"""
     shutil.rmtree(os.path.join(sim_output_path,'trajectories'), ignore_errors=True)
     shutil.rmtree(os.path.join(sim_output_path,'simulations'), ignore_errors=True)
+    if args.zip_dir:
+        make_archive(sim_output_path, os.path.join(wdir, 'simulation_output', f'{exp_name}_zip.zip'))
+    if args.delete_from_dir:
+        shutil.rmtree(os.path.join(sim_output_path), ignore_errors=True)
 
 if __name__ == '__main__':
 
@@ -70,6 +71,4 @@ if __name__ == '__main__':
     for exp_name in exp_names:
         print("Zipping files for " + exp_name)
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-        cleanup(sim_output_path)
-        if zip_dir:
-            zip_exp_files(wdir, sim_output_path, delete_from_dir=args.delete_from_dir)
+        cleanup_and_zip_simFiles(sim_output_path, zip_dir=args.zip_dir, del_dir=args.del_dir)
