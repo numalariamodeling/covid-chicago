@@ -6,10 +6,9 @@ sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.dates as mdates
 import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np

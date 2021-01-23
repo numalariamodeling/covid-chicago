@@ -1,12 +1,11 @@
 import argparse
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
-import matplotlib as mpl
 import matplotlib.dates as mdates
 import sys
 sys.path.append('../')
