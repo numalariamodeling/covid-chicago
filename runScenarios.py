@@ -605,7 +605,40 @@ if __name__ == '__main__':
 
         if args.post_process == 'processForCivis':
 
-            log.info("Process for civis")
-            p0 = os.path.join(sim_output_path, 'run_postprocess_for_civis.bat')
+            log.info("Compare to data")
+            p0 = os.path.join(sim_output_path, 'bat','2_runDataComparison.bat')
             subprocess.call([p0])
 
+            log.info("Trace selection")
+            p0 = os.path.join(sim_output_path,'bat' , '0_runTraceSelection.bat')
+            subprocess.call([p0])
+
+            log.info("Process for civis - csv file")
+            p0 = os.path.join(sim_output_path, 'bat' ,'3_runProcessTrajectories.bat')
+            subprocess.call([p0])
+
+            log.info("Process for civis - Rt estimation")
+            p0 = os.path.join(sim_output_path,'bat' , '4_runRtEstimation.bat')
+            subprocess.call([p0])
+
+            log.info("Process for civis - overflow probabilities")
+            p0 = os.path.join(sim_output_path, 'bat' ,'5_runOverflowProbabilities.bat')
+            subprocess.call([p0])
+
+            log.info("Additional plots")
+            p0 = os.path.join(sim_output_path, 'bat', '6_runPrevalenceIFR.bat')
+            subprocess.call([p0])
+
+            p0 = os.path.join(sim_output_path, 'bat', '7_runICUnonICU.bat')
+            subprocess.call([p0])
+
+            p0 = os.path.join(sim_output_path, 'bat', '8_runHospICUDeathsForecast.bat')
+            subprocess.call([p0])
+
+            log.info("Process for civis - file copy and changelog")
+            p0 = os.path.join(sim_output_path,'bat' , '9_runCopyDeliverables.bat')
+            subprocess.call([p0])
+
+            log.info("Process for civis - file copy and changelog")
+            p0 = os.path.join(sim_output_path,'bat' , '10_runIterationComparison.bat')
+            subprocess.call([p0])
