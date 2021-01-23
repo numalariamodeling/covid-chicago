@@ -6,6 +6,8 @@ Allow lines per varying input parameter to be specified
 import argparse
 import os
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 

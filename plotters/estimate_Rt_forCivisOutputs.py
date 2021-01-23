@@ -5,6 +5,8 @@ Estimate Rt using epyestim
 import argparse
 import os
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 import matplotlib as mpl

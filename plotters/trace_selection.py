@@ -11,6 +11,8 @@ import sys
 
 sys.path.append('../')
 from load_paths import load_box_paths
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib as mpl
 import matplotlib.dates as mdates
 from datetime import date, timedelta, datetime
