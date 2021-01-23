@@ -214,7 +214,7 @@ echo end""")
         plotters_dir = os.path.join(git_dir, "plotters")
 
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[0]}.bat'), 'w')
-        file.write(f'cd {git_dir} \n python {list(process_dict.values())[0]} --stem "{exp_name}" \n')
+        file.write(f'cd {git_dir} \n python {list(process_dict.values())[0]} --exp_name "{exp_name}" \n')
 
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[1]}.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[1]} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[1]}.txt" \n')
@@ -300,7 +300,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     if "spatial_EMS" in experiment_config:
         fname = 'data_comparison_spatial.py'
 
-    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --stem "{exp_name}" --Location "NUCLUSTER" '
+    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'run_postprocessing.sh'), 'w')
     file.write(header_post + jobname + err + out + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
