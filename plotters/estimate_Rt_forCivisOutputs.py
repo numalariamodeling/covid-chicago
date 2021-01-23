@@ -6,6 +6,7 @@ import argparse
 import os
 import pandas as pd
 import matplotlib as mpl
+
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
@@ -99,7 +100,7 @@ def rt_plot(df, first_day=None, last_day=None):
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def run_Rt_estimation(smoothing_window,r_window_size):
+def run_Rt_estimation(smoothing_window, r_window_size):
     """Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
     smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
@@ -108,7 +109,7 @@ def run_Rt_estimation(smoothing_window,r_window_size):
     simdate = exp_name.split("_")[0]
     df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'))
     df['date'] = pd.to_datetime(df['date'])
-    df = df[(df['date'] >  pd.Timestamp('2020-03-01'))]
+    df = df[(df['date'] > pd.Timestamp('2020-03-01'))]
 
     df_rt_all = pd.DataFrame()
     for ems_nr in range(0, 12):
@@ -133,14 +134,14 @@ def run_Rt_estimation(smoothing_window,r_window_size):
                                       'Q0.5': 'rt_median',
                                       'Q0.025': 'rt_lower',
                                       'Q0.975': 'rt_upper'})
-        df_rt['model_date'] = datetime.strptime(simdate, '%Y%m%d').date()
+        df_rt['model_date'] = pd.Timestamp(simdate)
         df_rt = df_rt[['model_date', 'date', 'geography_modeled', 'rt_median', 'rt_lower', 'rt_upper']]
-        #df_rt['smoothing_window'] =smoothing_window
-        #df_rt['r_window_size'] = r_window_size
+        # df_rt['smoothing_window'] =smoothing_window
+        # df_rt['r_window_size'] = r_window_size
         df_rt_all = df_rt_all.append(df_rt)
 
     df_rt_all.to_csv(os.path.join(exp_dir, 'rtNU.csv'), index=False)
-    rt_plot(df=df_rt_all, first_day=None, last_day=None )
+    rt_plot(df=df_rt_all, first_day=None, last_day=None)
     rt_plot(df=df_rt_all, first_day=first_plot_day, last_day=last_plot_day)
 
     if not 'rt_median' in df.columns:
@@ -170,15 +171,15 @@ if __name__ == '__main__':
         stem = args.stem
         Location = args.Location
 
-    first_plot_day = pd.Timestamp.today() - pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15,'days')
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(30, 'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15, 'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
-    
+
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
         print(exp_name)
         exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(exp_dir, '_plots')
-        #run_Rt_estimation(smoothing_window=14,r_window_size=7)
-        run_Rt_estimation(smoothing_window=28,r_window_size=3)
+        # run_Rt_estimation(smoothing_window=14,r_window_size=7)
+        run_Rt_estimation(smoothing_window=28, r_window_size=3)
