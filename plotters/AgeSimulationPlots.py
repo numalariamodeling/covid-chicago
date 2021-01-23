@@ -1,12 +1,12 @@
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -58,8 +58,7 @@ def plot_covidregions(exp_names,channel,subgroups, psuffix) :
         region_label= region_label.replace('_All', 'all ')
 
         for d, exp_name in enumerate(exp_names) :
-            sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-            df = load_sim_data_age(exp_name, channel=channel, age_suffix=age_suffix)
+            df = load_sim_data(exp_name, region_suffix=age_suffix, add_incidence=False)
             df = df[df['date'].between(first_plot_day, last_plot_day)]
             
             version = exp_name.split("_")[-1]
@@ -87,8 +86,8 @@ if __name__ == '__main__' :
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
     ageGroup_list = ['_All',"_age0to9", "_age10to19", "_age20to29", "_age30to39", "_age40to49", "_age50to59", "_age60to69", "_age70to100"]
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
     
     psuffix = '_MarchOct_log'
     #plot_covidregions(exp_names,channel='crit_det', subgroups = ageGroup_list, psuffix ='_MarchOct')

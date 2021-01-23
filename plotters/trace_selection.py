@@ -13,8 +13,8 @@ from data_comparison_spatial import plot_sim_and_ref
 sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 from sample_parameters import make_identifier, gen_combos
@@ -216,7 +216,7 @@ if __name__ == '__main__':
         timelag_days = 14
 
     first_plot_day = pd.Timestamp('2020-03-25')
-    last_plot_day = pd.Timestamp(date.today()) - timedelta(timelag_days)
+    last_plot_day =  pd.Timestamp.today() - pd.Timedelta(timelag_days,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

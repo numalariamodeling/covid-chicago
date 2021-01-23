@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import sys
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import epyestim
 import epyestim.covid19 as covid19
 import seaborn as sns
@@ -60,9 +59,9 @@ def rt_plot(df, first_day=None, last_day=None):
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
     palette = sns.color_palette('husl', 8)
 
-    df['date'] = pd.to_datetime(df['date']).dt.date
+    df['date'] = pd.to_datetime(df['date'])
     if first_day != None:
-        df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+        df = df[df['date'].between(first_day, last_day)]
 
     rt_min = df['rt_lower'].min()
     rt_max = df['rt_upper'].max()
@@ -87,7 +86,7 @@ def rt_plot(df, first_day=None, last_day=None):
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         if first_day != None:
             ax.set_xlim(first_day, last_day)
-        ax.axvline(x=date.today(), color='#737373', linestyle='--')
+        ax.axvline(x=pd.Timestamp.today(), color='#737373', linestyle='--')
         ax.axhline(y=1, color='black', linestyle='-')
         ax.set_ylim(rt_min, rt_max)
 
@@ -106,8 +105,8 @@ def run_Rt_estimation(smoothing_window=14, r_window_size=7):
     LL_file_date = get_latest_LLfiledate(file_path=os.path.join(datapath, 'covid_IDPH', 'Cleaned Data'))
     df = pd.read_csv(
         os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', f'{LL_file_date}_jg_aggregated_covidregion.csv'))
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    df = df[(df['date'] > date(2020, 4, 1)) & (df['date'] <= date.today())]
+    df['date'] = pd.to_datetime(df['date'])
+    df = df[df['date'].between(pd.Timestamp('2020-04-01'), pd.Timestamp.today())]
 
     df_rt_all = pd.DataFrame()
     for ems_nr in range(1, 12):
@@ -138,8 +137,10 @@ def run_Rt_estimation(smoothing_window=14, r_window_size=7):
 
 
 if __name__ == '__main__':
-    first_plot_day = date.today() - timedelta(30)
-    last_plot_day = date.today()
+    
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()
+
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 

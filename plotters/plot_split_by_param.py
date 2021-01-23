@@ -1,13 +1,13 @@
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -209,8 +209,8 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(60)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]

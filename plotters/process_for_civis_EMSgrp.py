@@ -1,17 +1,17 @@
 import argparse
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import sys
 sys.path.append('../')
 from processing_helpers import *
 from load_paths import load_box_paths
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -20,7 +20,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
-        "-e", "--exp_name",
+        "-stem", "--stem",
         type=str,
         help="Name of experiment and folder name",
         default=None,
@@ -168,45 +168,49 @@ def rename_geography_and_save(df,filename) :
 if __name__ == '__main__' :
 
     args = parse_args()
+    stem = args.stem 
+    Location = args.Location 
 
-    exp_name = args.exp_name # "20200910_IL_RR_baseline_combined"
-    simdate = exp_name.split("_")[0]
     processStep = args.processStep # 'generate_outputs'
 
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(60,'days')
     
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
-    exp_suffix = exp_name.split("_")[-1]
-    scenarioName = get_scenarioName(exp_suffix)
-
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = os.path.join(sim_output_path, '_plots')
-
-    if processStep == 'generate_outputs' :
-        dfAll = pd.DataFrame()
-        for reg in regions :
-            print( f'Start processing {reg}')
-            tdf = load_and_plot_data(reg, savePlot=True)
-            adf = process_and_save(tdf, reg, SAVE=True)
-            dfAll = pd.concat([dfAll, adf])
-            del tdf
-
-        if len(regions) == 12 :
+    
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    for exp_name in exp_names:
+        simdate = exp_name.split("_")[0]
+        exp_suffix = exp_name.split("_")[-1]
+        scenarioName = get_scenarioName(exp_suffix)
+    
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
+    
+        if processStep == 'generate_outputs' :
+            dfAll = pd.DataFrame()
+            for reg in regions :
+                print( f'Start processing {reg}')
+                tdf = load_and_plot_data(reg, savePlot=True)
+                adf = process_and_save(tdf, reg, SAVE=True)
+                dfAll = pd.concat([dfAll, adf])
+                del tdf
+    
+            if len(regions) == 12 :
+                filename = f'nu_{simdate}.csv'
+                rename_geography_and_save(dfAll,filename=filename)
+    
+        ### Optional
+        if processStep == 'combine_outputs' :
+    
+            for reg in regions :
+                print("Start processing" + reg)
+                filename = "nu_" + simdate + "_" + reg + ".csv"
+                adf = pd.read_csv(os.path.join(sim_output_path, filename))
+                dfAll = pd.concat([dfAll, adf])
+    
             filename = f'nu_{simdate}.csv'
-            rename_geography_and_save(dfAll,filename=filename)
-
-    ### Optional
-    if processStep == 'combine_outputs' :
-
-        for reg in regions :
-            print("Start processing" + reg)
-            filename = "nu_" + simdate + "_" + reg + ".csv"
-            adf = pd.read_csv(os.path.join(sim_output_path, filename))
-            dfAll = pd.concat([dfAll, adf])
-
-        filename = f'nu_{simdate}.csv'
-        rename_geography_and_save(dfAll, filename=filename)
-
+            rename_geography_and_save(dfAll, filename=filename)
+    

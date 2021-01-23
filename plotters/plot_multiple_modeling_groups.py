@@ -8,7 +8,6 @@ from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.patches as patches
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import load_capacity
 

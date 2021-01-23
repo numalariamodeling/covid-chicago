@@ -7,7 +7,6 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -164,10 +163,10 @@ if __name__ == '__main__' :
     stem = args.stem
     Location = args.Location
 
-    first_plot_day = date.today() - timedelta(300)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(300,'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15,'days')
 
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location="Local")
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 

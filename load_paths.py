@@ -1,8 +1,5 @@
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
-
 def load_box_paths(user_path=None, Location='Local'):
     if Location == 'NUCLUSTER':
         user_path = '/projects/p30781/'
@@ -11,7 +8,7 @@ def load_box_paths(user_path=None, Location='Local'):
         git_dir = os.path.join(user_path, 'covidproject', 'covid-chicago')
         project_path = os.path.join(home_path, 'covid_chicago')
         wdir = os.path.join(project_path, 'cms_sim')
-        exe_dir = os.path.join(home_path, 'binaries', 'compartments')
+        exe_dir = os.path.join(user_path,'covidproject', 'binaries', 'compartments')
 
     else:
         home_path = os.getenv("HOME_PATH")

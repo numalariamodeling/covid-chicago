@@ -275,6 +275,10 @@ The detailes are described below.
 
 <details><summary>Show setup description</summary>
 <p> 
+
+### Software requirements and packages
+The [`requirements.txt`](https://github.com/numalariamodeling/covid-chicago/blob/master/requirements.txt) includes name and version of required python modules.
+
   
 ### Local environment setup  
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
@@ -288,7 +292,7 @@ To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in 
 ### Running on Quest (NUCLUSTER) 
 A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
 
-#### Requirements on quest 
+Requirements:
 All the modules need to be installed on the personal quest environment 
 - use pip install ... in your terminal 
 - install `dotenv` and `yamlordereddictloader`
@@ -296,62 +300,107 @@ All the modules need to be installed on the personal quest environment
 `source activate dotenv-py37`
 `conda install -c conda-forge yamlordereddictloader`
 
-<!--- (The `source activate dotenv-py37` needs to be run before runnung the `runScenarios.py`)(not always?) -->
+Alternatively, a virtual environment can be activated using:
+i.e. add a `set-covid-chicago` command in the `bash.profile` file in the home directory
+
+	set-covid-chicago(){
+		module purge all
+		module load python/anaconda3.6
+		source activate /projects/p30781/anaconda3/envs/team-test-py37
+	}
+  
+[Box syncing](https://kb.northwestern.edu/page.php?id=70521):
+
+	mirror-box-covid(){
+		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Cleaned\ Data/ /projects/p30781/covidproject/data/covid_IDPH/Cleaned\ Data/; exit"
+		lftp -p 990 -u  <useremail> ftps://box.com -e "mirror -R /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/ NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/; exit"
+	}
+ 
 
 ##### Submit job 
+On Quest jobs are submitted using the SLURM workload manager and syntax ([SLURM on quest](https://kb.northwestern.edu/page.php?id=89456))
 `cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel.emodl --name_suffix "quest_run_<your initial>"`
+`python runScenarios.py -rl NUCLUSTER --r EMS_11 -c extendedcobey_200428.yaml --emodl_template extendedmodel.emodl -n "quest_run"`
 
-The experiments will go to the _temp folder on the quest gitrepository. To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
+The experiments will go to the _temp folder on the quest gitrepository. 
+To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
 
-Next step copy the content of the submit_runSimulations.sh (should be a simple txt file) to the terminal to run:
-- `cd /projects/p30781/covidproject/covid-chicago/_temp/<exp_name>/trajectories/`
-- `dos2unix runSimulations.sh`  # converts windows format to linux format
-- `sbatch runSimulations.sh`  # submits the simulations as an array job, note maximum array <5000 scenarios. 
-
-### Software requirements and packages
-The [`requirements.txt`](https://github.com/numalariamodeling/covid-chicago/blob/master/requirements.txt) includes name and version of required python and R modules.
+The status of the job submission can be called via `squeue -u <username>`
 
 </p>
 </details>
 
-# 3 Postprocess and analyse simulation outputs
-Via the `--post_process` argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
-A sample plot is produced automatically, can be disabled via --noSamplePlot.
-Even if no postprocess is specified, default batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl).
-Additional batch files or postprocesses can be linked to runScenarios of needed, otherwise the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) provides a range of python files that do different visualizations (see readme in folder for details).
+# 3 Postprocessing and visualization of simulation outputs
+Via the `--post_process` argument in the runScenarios command additional scripts will run directly after simulations finished.
+A sample plot (`master_sample_plot.png`) is generated for every simulation regardless of type (base, age, spatial) for all Illinois, which can be disabled via --noSamplePlot.
+Batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl regardless of the  `--post_process` argument.
+Batch files are only generated for the most important postprocessing files and additional batch files or postprocesses may be linked to runScenarios of needed. 
+To see all the available postprocessing scripts, go to the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) (see readme in folder for details).
+When adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the batch files related to the weekly deliverables are automatically executed. 
 
-## Sample plot and additional plots 
-Per default a `master_sample_plot.png` is generated for every simulation regardless of type (base, age, spatial) for all Illinois. 
-- `locale_age_postprocessing.bat` - generates trajectories for pre-specified outcome channels per age group using [locale_age_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/locale_age_postprocessing.py).
+## Postprocessing on local machine
+Locally, there are two main batch files:
+- `run_postprocess.bat` is a wrapper batch file that runs postprocessing files from the list below (general postprocessing not for weekly deliverables)
+- `run_postprocess_for_civis.bat` is a wrapper batch file that runs postprocessing from the list below (postprocessing for weekly deliverables)
 
-## Data comparison 
-- `0_runDataComparison.bat` comparing model predictions to data per region over time
+The postprocessing includes the following steps below:
 
-## Fitting
-- 0_runTraceSelection.bat (currently implemented for the spatial model only)
-[Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py) calculating the negative log-likelihood per simulated trajectory, used for thinning predictions and parameter estimation
-
-
-## Postprocessing scripts for weekly deliverables
-Several batch files are automatically generated when running the spatial model using the `spatial_EMS_experiment.yaml` in the runScenario submission command. 
-When adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the files are automatically executed. 
-The postprocessing steps include 0) selection of best fitting trajectories (optional) 1) aggregation of the model predictions 2) probability of exceeding capacities, 3) estimate time varying reproductive number, and additional descriptive plots.
-
-<details><summary>Show batch file description</summary>
+<details><summary>Show postprocessing scripts</summary>
 <p> 
 
-- `0_runTrimTrajectories.bat` calls  [trim_trajectoriesDat.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trim_trajectoriesDat.py) trims the trajectories and per default keeps only dates after 2020-06-12 (timesteps >120) and selected outcome measures. 
-- `0_createAdditionalPlots.bat` calls three Python scripts [plot_by_param_ICU_nonICU.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_by_param_ICU_nonICU.py) and [hosp_icu_deaths_forecast_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/hosp_icu_deaths_forecast_plotter.py), requires to run 0_runTrimTrajectories.bat before (or change name of trajectories.csv). It generates additional plots, such as recent + nearest predictions on hospitalizations, ICU and deaths per region, and [plot_prevalence.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_prevalence.py).
-- `0_runDataComparison.bat`  calls [data_comparison_spatial.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) comparing model predictions to data per region over time
-- `0_runTraceSelection.bat`  calls [trace_selection.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py) calculating the negative log-likelihood per simulated trajectory, used for thinning predictions and parameter estimation
-- `1_runProcessForCivis.bat`  calls [process_for_civis_EMSgrp.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
-- `2_runProcessForCivis.bat`  calls [overflow_probabilities.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_probabilities.py) calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv), also adds total number of beds [additional script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_numbers.py)
-- `3_runProcessForCivis.bat`  calls [estimate_Rt_forCivisOutputs.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/estimate_Rt_forCivisOutputs.py)  that  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
-- `4_runProcessForCivis.bat`  calls two python scripts [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
- and [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
+- `0_runCombineAndTrimTrajectories.bat` calls  [combine_and_trim.py](https://github.com/numalariamodeling/covid-chicago/blob/master/combine_and_trim.py) combines and trims the simulation output csv files (trajectories.csv files) 
+- `0_locale_age_postprocessing.bat` calls  [locale_age_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/locale_age_postprocessing.py) to plot trajectories for pre-specified outcome channels per age group.
+- `1_runTraceSelection.bat`  calls [trace_selection.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py) calculating the negative log-likelihood per simulated trajectory, used for thinning predictions and parameter estimation
+- `2_runDataComparison.bat`  calls [data_comparison_spatial.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) comparing model predictions to data per region over time
+- `3_runProcessTrajectories.bat`  calls [process_for_civis_EMSgrp.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
+- `4_runRtEstimation.bat`  calls [estimate_Rt_forCivisOutputs.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/estimate_Rt_forCivisOutputs.py)  that  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
+- `5_runOverflowProbabilities.bat`  calls [overflow_probabilities.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_probabilities.py) calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv), also adds total number of beds [additional script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_numbers.py)
+- `6_runPrevalenceIFR.bat`  calls [plot_prevalence.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_prevalence.py)
+- `7_runICUnonICU.bat`  calls [plot_by_param_ICU_nonICU.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_by_param_ICU_nonICU.py)
+- `8_runHospICUDeathsForecast.bat`  calls  [hosp_icu_deaths_forecast_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/hosp_icu_deaths_forecast_plotter.py)
+- `9_runCopyDeliverables.bat` calls [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Note: the changelog.txt will need manual editing to reflect new changes per week. 
+- `10_runIterationComparison.bat` calls [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
+Note: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
 
-Note: if `0_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default use the filtered trajectoriesDat, if not explicily set to False when loading the trajectoriesDat.csv via load_sim_data.
+To clean up simulations (delete trajectories and optinally zip and delete simulation folder run  [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py))
+
+</p>
+</details>
+
+## Postprocessing on the NU cluster 'Quest'
+On Quest shell instead of batch files are generated for the same python files as shown above.
+For a detailed descripton of the shell files and processing steps, expand below:
+
+<details><summary>Detailed processing steps</summary>
+<p> 
+
+The time limit for each single simulation was set to 30 min per default.
+Simulation run in the `_temp` folder (`/projects/p30781/covidproject/covid-chicago/_temp/`) in the git repository.
+After all simulations ran, they are automatically combined and moved to the Box folder on Quest, located in 
+`simulation_output` (`/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/`)
+
+Wrapper shell script:
+- `run_postprocessing.sh` runs automatically after simulation finish, it includes scripts from the list below.
+
+Run from `/projects/p30781/covidproject/covid-chicago/_temp/<exp_name>`
+- `0_runCombineAndTrimTrajectories.sh` 
+- `0_cleanupSimulations.sh`  calls  [cleanup.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup.py) and transfers files from temp to Box (on Quest)
+
+Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>`
+- `0_locale_age_postprocessing.sh`
+- `1_runTraceSelection.sh` 
+- `2_runDataComparison.sh` 
+- `3_runProcessTrajectories.sh
+- `4_runRtEstimation.sh` 
+- `5_runOverflowProbabilities.sh` 
+- `6_runPrevalenceIFR.sh` 
+- `7_runICUnonICU.sh` 
+- `8_runHospICUDeathsForecast.sh` 
+- `9_runCopyDeliverables.sh`
+- `10_runIterationComparison.sh` 
+
+To clean up simulations (delete trajectories and optinally zip and delete simulation folder run  [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py))
+Zipping the simulation folder facilitiates copying file to Box or the local machine.
 
 </p>
 </details>
@@ -424,8 +473,9 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 </p>
 </details>
 
-# 6. Resources 
-- CMS software [publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [online documentation](https://idmod.org/docs/cms/index.html)
+# 6. Resources and publications
+- [Illinois COVID-19 Modeling Website](https://illinoiscovid.org/)
+- [CMS software publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [CMS online documentation](https://idmod.org/docs/cms/index.html)
 - [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 - [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
 - [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)
