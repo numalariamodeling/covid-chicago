@@ -577,7 +577,7 @@ if __name__ == '__main__':
         region=region    )
 
     if Location == 'NUCLUSTER':
-        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir)
+        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path)
         runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER')
 
     if Location == 'Local':
