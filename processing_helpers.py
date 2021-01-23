@@ -2,9 +2,14 @@ import numpy as np
 import os
 import pandas as pd
 from load_paths import load_box_paths
-from datetime import date, timedelta, datetime
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+try:
+    print(Location)
+except NameError:
+    if os.name == "posix": Location ="NUCLUSTER"
+    else: Location ="Local"
+
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths(Location=Location)
 
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
@@ -21,6 +26,10 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
 
         if fname is None:
             fname = f'trajectoriesDat_region_{str(ems_nr)}.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = f'trajectoriesDat_region_{str(ems_nr)}_trim.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = 'trajectoriesDat_trim.csv'
             if os.path.exists(os.path.join(sim_output_path, fname)) == False:
                 fname = 'trajectoriesDat.csv'
 
@@ -45,7 +54,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
 
     df = df.dropna()
     first_day = pd.Timestamp(df['startdate'].unique()[0])
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
 
     if add_incidence:
         if 'recovered' in df.columns:
@@ -53,24 +62,6 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
             df = calculate_incidence(df)
         else:
             df = calculate_incidence(df, trimmed =True)
-
-    return df
-
-def load_sim_data_age(exp_name,channel, age_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
-
-    column_list = ['scen_num',  'time', 'startdate']
-    for grp in ageGroup_list:
-        column_list.append(channel + str(grp))
-
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
-    df = df.dropna()
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    df.columns = df.columns.str.replace(age_suffix, '')
 
     return df
 
@@ -226,7 +217,7 @@ def load_ref_df(ems_nr):
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
     ref_df['date'] = pd.to_datetime(ref_df['date'])
-    ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp(date.today()))]
+    ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp.today())]
 
     return ref_df
 
@@ -356,6 +347,7 @@ def load_capacity(ems):
         df = df[df['ems'] == str(ems)]
 
     capacity = {'hosp_det': int(df['hb_availforcovid']),
+                'total_hosp_census': int(df['hb_availforcovid']),
                 'crit_det': int(df['icu_availforcovid']),
                 'ventilators': int(df['vent_availforcovid'])}
     return capacity

@@ -6,14 +6,13 @@ Allow comparison of multiple simulation experiments
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
-
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
@@ -113,16 +112,19 @@ if __name__ == '__main__':
 
     args = parse_args()
     Location = args.Location
-    exp_names = args.exp_names
+    exp_names = ['20210120_IL_ae_base_v1_baseline','20210122_IL_quest_ki13']
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     first_plot_day = pd.Timestamp('2020-02-13')
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15,'days')
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
     for ems_nr in range(1, 12):
         print("Start processing region " + str(ems_nr))
-        #plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day, last_day=last_plot_day, logscale=True)
-        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,last_day=last_plot_day)
+        #plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
+        #                 last_day=last_plot_day, logscale=True)
+        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
+                         last_day=last_plot_day, logscale=False)
+

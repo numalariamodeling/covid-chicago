@@ -4,7 +4,6 @@ import numpy as np
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-from datetime import date, timedelta, datetime
 from processing_helpers import calculate_incidence
 import matplotlib.pyplot as plt
 import matplotlib as mpl

@@ -7,7 +7,6 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -146,8 +145,8 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(60)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
     covidregionlist = range(0, 12)
 

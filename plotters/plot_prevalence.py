@@ -1,14 +1,14 @@
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
@@ -112,7 +112,7 @@ def plot_prevalences(df, first_day, last_day, channels):
         ax.set_title(plotsubtitle)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         ax.set_xlim(first_day, last_day)
-        ax.axvline(x=date.today(), color='#666666', linestyle='--')
+        ax.axvline(x=pd.Timestamp.today(), color='#666666', linestyle='--')
 
     if len(channels) == 1:
         fig.suptitle(x=0.5, y=0.999, t=channel_label)
@@ -131,8 +131,8 @@ if __name__ == '__main__':
     stem = args.stem
     Location = args.Location
 
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(300)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(300,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
