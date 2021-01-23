@@ -610,7 +610,7 @@ if __name__ == '__main__':
             subprocess.call([p0])
 
             log.info("Trace selection")
-            p0 = os.path.join(sim_output_path,'bat' , '0_runTraceSelection.bat')
+            p0 = os.path.join(sim_output_path,'bat' , '1_runTraceSelection.bat')
             subprocess.call([p0])
 
             log.info("Process for civis - csv file")
