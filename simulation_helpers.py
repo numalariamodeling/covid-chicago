@@ -6,10 +6,13 @@ import stat
 import sys
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import seaborn as sns
 
+mpl.rcParams['pdf.fonttype'] = 42
 from processing_helpers import CI_50, CI_25, CI_75,CI_2pt5, CI_97pt5
 
 ### GE added 04/10/20 to fix "wdir not defined error"

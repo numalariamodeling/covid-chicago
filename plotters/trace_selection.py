@@ -12,9 +12,8 @@ from data_comparison_spatial import plot_sim_and_ref
 
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib
-matplotlib.use('Agg')
 import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.dates as mdates
 import seaborn as sns
 from processing_helpers import *

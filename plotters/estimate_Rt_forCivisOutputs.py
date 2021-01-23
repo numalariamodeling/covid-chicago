@@ -5,11 +5,10 @@ Estimate Rt using epyestim
 import argparse
 import os
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
-import matplotlib as mpl
 import matplotlib.dates as mdates
 import epyestim
 import epyestim.covid19 as covid19

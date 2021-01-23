@@ -6,14 +6,13 @@ Allow lines per varying input parameter to be specified
 import argparse
 import os
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
 import seaborn as sns
 from processing_helpers import *
