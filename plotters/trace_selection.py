@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
 import sys
+from data_comparison_spatial import plot_sim_and_ref
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -17,6 +18,7 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 import seaborn as sns
 from processing_helpers import *
+from sample_parameters import make_identifier, gen_combos
 
 def parse_args():
 
@@ -65,6 +67,18 @@ def parse_args():
         action='store_true',
         help="If specified, plots with top 50% best-fitting trajectories will be generated.",
     )
+    parser.add_argument(
+        "--traces_to_keep_ratio",
+        type=int,
+        help="Ratio of traces to keep out of all trajectories",
+        default=2
+    )
+    parser.add_argument(
+        "--traces_to_keep_min",
+        type=int,
+        help="Minimum number of traces to keep, might overwrite traces_to_keep_ratio for small simulations",
+        default=5
+    )
     return parser.parse_args()
 
 def sum_nll(df_values, ref_df_values):
@@ -77,8 +91,7 @@ def sum_nll(df_values, ref_df_values):
     x[np.abs(x) == np.inf] = 0
     return np.nansum(x)
 
-def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles,region_label,
-                        ymax=10000, logscale=True, weights_array=[1.0,1.0,1.0,1.0], plot_trajectories=False):
+def rank_traces_nll(df, ems_nr, ref_df, weights_array=[1.0,1.0,1.0,1.0]):
     #Creation of rank_df
     [deaths_weight, crit_weight, non_icu_weight, cli_weight] = weights_array
 
@@ -104,55 +117,11 @@ def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles
     rank_export_df = rank_export_df.sort_values(by=['norm_rank']).reset_index(drop=True)
     rank_export_df.to_csv(os.path.join(output_path,'traces_ranked_region_' + str(ems_nr) + '.csv'), index=False)
 
-    #Creation of plots
-    if plot_trajectories:
-        plot_path = os.path.join(wdir, 'simulation_output',exp_name, '_plots')
-        df = pd.merge(rank_export_df[0:int(len(rank_export_df)/2)],df)
-        if ems_nr == 0:
-            region_suffix = "_All"
-            region_label = 'Illinois'
-        else:
-            region_suffix = "_EMS-" + str(ems_nr)
-            region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
-        logscale=False
-        fig = plt.figure(figsize=(13, 6))
-        palette = sns.color_palette('husl', 8)
-        k = 0
-        for c, channel in enumerate(channels):
-            ax = fig.add_subplot(2, 3, c + 1)
-
-            mdf = df.groupby('date')[channel].agg([CI_50,CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-            ax.plot(mdf['date'], mdf['CI_50'], color=palette[k])
-            ax.fill_between(mdf['date'], mdf['CI_2pt5'], mdf['CI_97pt5'],
-                            color=palette[k], linewidth=0, alpha=0.2)
-            ax.fill_between(mdf['date'], mdf['CI_25'], mdf['CI_75'],
-                            color=palette[k], linewidth=0, alpha=0.4)
-
-            ax.set_title(titles[c], y=0.8, fontsize=12)
-
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
-            #ax.set_xlim(pd.Timestamp('2020-02-13'), pd.Timestamp.today() + pd.Timedelta(15, 'days'))
-            ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
-            if logscale :
-                ax.set_ylim(0.1, ymax)
-                ax.set_yscale('log')
-
-            ax.plot(ref_df['date'], ref_df[data_channel_names[c]], 'o', color='#303030', linewidth=0, ms=1)
-            ax.plot(ref_df['date'], ref_df[data_channel_names[c]].rolling(window = 7, center=True).mean(), c='k', alpha=1.0)
-
-        fig.suptitle(region_label, y=1, fontsize=14)
-        fig.tight_layout()
-        fig.subplots_adjust(top=0.88)
-
-        plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
-        if logscale == False :
-            plot_name = plot_name + "_nolog"
-        plot_name = plot_name + "_best_fit"
-        plt.savefig(os.path.join(plot_path, plot_name + '.png'))
-        plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
+    return rank_export_df
 
 
-def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajectories=False):
+def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,
+                traces_to_keep_ratio=2,traces_to_keep_min=1,plot_trajectories=False):
 
     if ems_nr == 0:
         region_suffix = "_All"
@@ -162,9 +131,7 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajector
         region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
     column_list = ['time', 'startdate', 'scen_num', 'sample_num','run_num']
-    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
-                        'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                        'death_det_cumul', 'deaths']
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
 
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
@@ -176,16 +143,62 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,plot_trajector
     df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
     df = df[df['date'].between(first_day, ref_df['date'].max())]
     df['critical_with_suspected'] = df['critical']
+    rank_export_df = rank_traces_nll(df, ems_nr, ref_df, weights_array=weights_array)
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+    #Creation of plots
+    if plot_trajectories:
+        plot_path = os.path.join(output_path, '_plots')
+        df = pd.merge(rank_export_df[0:int(len(rank_export_df)/traces_to_keep_ratio)],df)
 
-    compare_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label,logscale=True, weights_array=weights_array, plot_trajectories=plot_trajectories)
+        plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                         region_label=region_label, first_day=first_day, last_day=last_day, plot_path=plot_path,
+                         plot_name_suffix =f'_best_fit_{str(1/traces_to_keep_ratio)}')
+
+def extract_sample_traces(traces_to_keep_ratio, traces_to_keep_min):
+
+    df_samples = pd.read_csv(os.path.join(output_path, 'sampled_parameters.csv'))
+    """Drop parameter columns that have equal values in all scenarios (rows) to assess fitted parameters"""
+    nunique = df_samples.apply(pd.Series.nunique)
+    cols_to_drop = nunique[nunique == 1].index
+    df_samples = df_samples.drop(cols_to_drop, axis=1)
+
+    df_traces = pd.DataFrame()
+    for ems_region in range(1,12):
+
+        rank_export_df = pd.read_csv(os.path.join(output_path, f'traces_ranked_region_{str(ems_region)}.csv'))
+        n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
+        if n_traces_to_keep < traces_to_keep_min and len(rank_export_df) >= traces_to_keep_min:
+            n_traces_to_keep = traces_to_keep_min
+        if len(rank_export_df) < traces_to_keep_min:
+            n_traces_to_keep = len(rank_export_df)
+
+        df_samples_sub = pd.merge(how='left', left=rank_export_df[['scen_num','norm_rank']], left_on=['scen_num'],
+                                 right=df_samples, right_on=['scen_num'])
+        df_samples_sub = df_samples_sub.sort_values(by=['norm_rank']).reset_index(drop=True)
+        df_samples_sub.columns = df_samples_sub.columns + f'_EMS_{str(ems_region)}'
+        df_samples_sub['row_num'] = df_samples_sub.index
+
+        if df_traces.empty:
+            df_traces = df_samples_sub
+        else:
+            df_traces = pd.merge(how='left', left=df_traces, left_on=['row_num'], right=df_samples_sub, right_on=['row_num'])
+        del df_samples_sub, rank_export_df
+    del df_samples
+
+    """Export fitted parameters"""
+    df_traces.to_csv(os.path.join(output_path, f'fitted_parameters_ntraces{n_traces_to_keep}.csv'), index=False)
+    df_traces.head(n=1).to_csv(os.path.join(output_path, f'fitted_parameters_besttrace.csv'), index=False)
+
+    """Export all parameter columns to be used as simulation input"""
+    df_samples = pd.read_csv(os.path.join(output_path, 'sampled_parameters.csv'))
+    df_samples = df_samples.loc[:n_traces_to_keep+1 , cols_to_drop]
+    df_samples['scen_num'] = df_samples.reset_index().index
+
+    """Generate combinations of samples (df_samples) and fitted parameters (df_traces)"""
+    df_traces_n = gen_combos(df_samples, df_traces)
+    df_traces_best = gen_combos(df_samples, df_traces.head(n=1))
+    df_traces_n.to_csv(os.path.join(output_path, f'sample_parameters_ntraces{n_traces_to_keep}.csv'), index=False)
+    df_traces_best.to_csv(os.path.join(output_path, f'sample_parameters_besttrace.csv'), index=False)
 
 if __name__ == '__main__':
 
@@ -194,19 +207,27 @@ if __name__ == '__main__':
     Location = args.Location
     weights_array = [args.deaths_weight, args.crit_weight, args.non_icu_weight, args.cli_weight]
 
+    """ For plotting and extracting best traces"""
+    traces_to_keep_ratio = args.traces_to_keep_ratio
+    traces_to_keep_min = args.traces_to_keep_min
+
     """If fitting to deaths, include a lag of 14 days (applies to all indicators)"""
     timelag_days = 0
     if args.deaths_weight is not 0:
         timelag_days = 14
 
     first_plot_day = pd.Timestamp('2020-03-25')
-    last_plot_day = pd.Timestamp.today() - pd.Timedelta(timelag_days,'days')
+    last_plot_day =  pd.Timestamp.today() - pd.Timedelta(timelag_days,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
+        print(exp_name)
         output_path = os.path.join(wdir, 'simulation_output',exp_name)
         for ems_nr in range(0,12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,weights_array=weights_array, plot_trajectories=args.plot)
+            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,
+                        weights_array=weights_array, plot_trajectories=args.plot,
+                        traces_to_keep_ratio=traces_to_keep_ratio,traces_to_keep_min=traces_to_keep_min)
+        extract_sample_traces(traces_to_keep_ratio=traces_to_keep_ratio,traces_to_keep_min=traces_to_keep_min)

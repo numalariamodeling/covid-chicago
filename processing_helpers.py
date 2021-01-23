@@ -14,7 +14,7 @@ datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths(Location=Location)
 
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                   input_sim_output_path =None, column_list=None, add_incidence=True,
-                  select_traces=True, traces_to_keep_ratio=4, min_traces_to_keep=100) :
+                  select_traces=True, traces_to_keep_ratio=4, traces_to_keep_min=100) :
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
@@ -41,9 +41,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                 rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
 
                 n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
-                if n_traces_to_keep < min_traces_to_keep and len(rank_export_df) >= min_traces_to_keep :
-                    n_traces_to_keep = min_traces_to_keep
-                if len(rank_export_df) < min_traces_to_keep :
+                if n_traces_to_keep < traces_to_keep_min :
+                    n_traces_to_keep = traces_to_keep_min
+                if len(rank_export_df) < traces_to_keep_min :
                     n_traces_to_keep = len(rank_export_df)
 
                 rank_export_df_sub = rank_export_df[0:n_traces_to_keep]
@@ -55,7 +55,6 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
     df = df.dropna()
     first_day = pd.Timestamp(df['startdate'].unique()[0])
     df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
-    df['date'] = df['date']
 
     if add_incidence:
         if 'recovered' in df.columns:
@@ -392,6 +391,19 @@ def civis_colnames(reverse=False) :
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)
 
+
+def get_datacomparison_channels():
+    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
+                    'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
+                    'death_det_cumul', 'deaths']
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
+                'new_detected_hospitalized']
+    data_channel_names = ['deaths',
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
+    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
+              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+    return outcome_channels, channels, data_channel_names, titles
+    
 def get_parameter_names(include_new=True):
 
     sample_params_core = ['time_to_infectious',

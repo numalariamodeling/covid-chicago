@@ -61,7 +61,7 @@ def compare_NMH(exp_name) :
 
 
 def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day, last_day,
-                     ymax=1000, plot_path=None, logscale=True, param="Ki"):
+                     ymax=1000, plot_path=None, logscale=False, param="Ki"):
 
     fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
@@ -101,7 +101,7 @@ def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, 
 
 
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day, last_day,
-                     ymax=1000, plot_path=None, logscale=True):
+                     ymax=1000, plot_path=None, logscale=False):
     fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
     k = 0
@@ -178,24 +178,15 @@ def compare_ems(exp_name, ems, first_day, last_day,param=None) :
     df['critical_with_suspected'] = df['critical']
 
     ref_df = load_ref_df(ems_nr=ems)
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
     if param == None :
-        plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=True)
         plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=False)
+                         plot_path=plot_path, first_day=first_day, last_day=last_day)
     else :
-        plot_sim_and_ref_by_param(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=True,param=param)
         plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path,first_day=first_day, last_day=last_day, logscale=False,param=param)
+                         plot_path=plot_path,first_day=first_day, last_day=last_day, param=param)
 
 
 if __name__ == '__main__' :
