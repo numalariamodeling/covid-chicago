@@ -218,7 +218,7 @@ def load_ref_df(ems_nr):
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
     ref_df['date'] = pd.to_datetime(ref_df['date'])
-    ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp(date.today()))]
+    ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp.today())]
 
     return ref_df
 
