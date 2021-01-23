@@ -8,7 +8,6 @@ import os
 import seaborn as sns
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import timedelta
 import sys
 sys.path.append('../')
 from processing_helpers import *
@@ -89,7 +88,7 @@ if __name__ == '__main__' :
         base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
         startdate = pd.Timestamp(df['startdate'].unique()[0])
-        df['date'] = df['time'].apply(lambda x: startdate + timedelta(days=int(x)))
+        df['date'] = df['time'].apply(lambda x: startdate + pd.Timedelta(int(x), 'days'))
         df['date'] = pd.to_datetime(df['date'])
 
         channels = ['infected', 'new_deaths', 'hospitalized', 'critical', 'ventilators','recovered']

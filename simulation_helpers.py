@@ -4,14 +4,8 @@ import subprocess
 import shutil
 import stat
 import sys
-from datetime import timedelta
-import datetime
-
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import seaborn as sns
 
 from processing_helpers import CI_50, CI_25, CI_75,CI_2pt5, CI_97pt5
 
@@ -31,7 +25,7 @@ def DateToTimestep(date, startdate) :
 
 
 def TimestepToDate(timesteps, startdate) :
-    dates= startdate + timedelta(days=timesteps)
+    dates= startdate + pd.Timedelta(timesteps,'days')
     return dates
 
 
@@ -168,7 +162,6 @@ def writeTxt(txtdir, filename, textstring) :
 def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
                            exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
 
-    today = datetime.datetime.today()
     fname = 'runSimulations.bat'
     log.debug(f"Generating submission file {fname}")
     if sys.platform not in ["win32", "cygwin"]:
@@ -389,7 +382,7 @@ def sampleplot(adf, allchannels, start_date, plot_fname=None):
     for c, channel in enumerate(allchannels):
         mdf = adf.groupby('time')[channel].agg([np.min, CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75, np.max]).reset_index()
         ax = axes[c]
-        dates = [start_date + timedelta(days=int(x)) for x in mdf['time']]
+        dates = [start_date + pd.Timedelta(int(x),'days') for x in mdf['time']]
         ax.plot(dates, mdf['CI_50'], label=channel, color=palette[c])
         ax.fill_between(dates, mdf['CI_2pt5'], mdf['CI_97pt5'],
                         color=palette[c], linewidth=0, alpha=0.2)

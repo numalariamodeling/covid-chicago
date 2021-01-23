@@ -2,7 +2,6 @@ import numpy as np
 import os
 import pandas as pd
 from load_paths import load_box_paths
-from datetime import date, timedelta, datetime
 
 try:
     print(Location)
@@ -55,7 +54,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
 
     df = df.dropna()
     first_day = pd.Timestamp(df['startdate'].unique()[0])
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+    df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
     df['date'] = df['date']
 
     if add_incidence:

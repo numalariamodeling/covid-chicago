@@ -7,7 +7,6 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -85,8 +84,8 @@ def plot_main(param, channel, first_day, last_day,time_param=False) :
             adf = mdf[mdf[param]== param_value]
 
             if time_param:
-                startdate = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-                param_value = startdate + timedelta(days=int(param_value))
+                first_day = pd.Timestamp(df['startdate'].unique()[0])
+                param_value = first_day + pd.Timedelta(int(param_value), 'days')
 
             ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
             ax.plot(adf['date'], adf['CI_50'], color=palette[d], label=param_value)
@@ -113,8 +112,8 @@ if __name__ == '__main__' :
     param = args.param
     channel = args.channel
 
-    first_plot_day = pd.Timestamp.today() - timedelta(60)
-    last_plot_day = pd.Timestamp.today() + timedelta(15)
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(60,'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
