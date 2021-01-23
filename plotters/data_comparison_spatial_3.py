@@ -18,9 +18,6 @@ import seaborn as sns
 from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
-today = datetime.today()
-datetoday = date(today.year, today.month, today.day)
-
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -43,7 +40,7 @@ def parse_args():
 
 
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names,region_label,
-                     titles, param, first_day, last_day, ymax=10000, logscale=True):
+                     titles, param, first_day, last_day, ymax=10000, logscale=False):
 
     fig = plt.figure(figsize=(15, 8))
     palette = sns.color_palette('husl', 12)
@@ -96,9 +93,7 @@ def compare_ems(exp_name, param, ems_nr,first_day,last_day):
         region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
     column_list = ['time', 'startdate', 'scen_num', 'sample_num', 'run_num']
-    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
-                        'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                        'death_det_cumul', 'deaths']
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
 
     ref_df = load_ref_df(ems_nr)
 
@@ -114,16 +109,8 @@ def compare_ems(exp_name, param, ems_nr,first_day,last_day):
     sampled_df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, "sampled_parameters.csv"), usecols=['scen_num', param])
     df = pd.merge(how='left', left=df, left_on='scen_num', right=sampled_df, right_on='scen_num')
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
-
-
     plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label, logscale=True,param=param,first_day=first_day,last_day=last_day)
+                     region_label=region_label, param=param,first_day=first_day,last_day=last_day)
 
 if __name__ == '__main__':
 

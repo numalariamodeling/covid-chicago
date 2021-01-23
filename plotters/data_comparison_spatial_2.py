@@ -42,7 +42,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscale=True):
+def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscale=False):
     if ems_nr == 0:
         region_suffix = "_All"
         region_label = 'Illinois'
@@ -50,13 +50,7 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
         region_suffix = "_EMS-" + str(ems_nr)
         region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
-
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
 
     ref_df = load_ref_df(ems_nr)
 
@@ -70,9 +64,6 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
         for d, exp_name in enumerate(exp_names):
 
             column_list = ['time', 'startdate', 'scen_num', 'sample_num', 'run_num']
-            outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
-                                'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                                'death_det_cumul', 'deaths']
 
             for chn in outcome_channels:
                 column_list.append(chn + "_EMS-" + str(ems_nr))
@@ -133,7 +124,5 @@ if __name__ == '__main__':
 
     for ems_nr in range(1, 12):
         print("Start processing region " + str(ems_nr))
-        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
-                         last_day=last_plot_day, logscale=True)
-        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
-                         last_day=last_plot_day, logscale=False)
+        #plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day, last_day=last_plot_day, logscale=True)
+        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,last_day=last_plot_day)
