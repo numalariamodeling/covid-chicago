@@ -418,12 +418,12 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     Submit run simultation 
     Start postprocessing using singleton dependency
     """
-    #submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
-    #submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing.sh'
-    #file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
-    #file.write(submit_runSimulations)
-    #file.write(submit_combineSimulations)
-    #file.close()
+    submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
+    submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing.sh'
+    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
+    file.write(submit_runSimulations)
+    file.write(submit_combineSimulations)
+    file.close()
 
     """
     Draft for setting up job dependencies 
