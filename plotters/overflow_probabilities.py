@@ -173,7 +173,7 @@ def write_probs_to_template(df, plot=True):
     civis_template_all = pd.DataFrame()
     for index, row in civis_template.iterrows():
         upper_limit = row['date_window_upper_bound']
-        lower_limit = upper_limit - timedelta(7)
+        lower_limit = upper_limit - pd.Timedelta(7,'days')
 
         df_sub = df[df['date'].between(lower_limit, upper_limit)]
         df_sub = df_sub[df_sub['region'] == int(row['geography_modeled'].replace("covidregion_", ""))]
@@ -246,8 +246,8 @@ if __name__ == '__main__':
     overflow_threshold_percents = args.overflow_threshold_percents
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_day = pd.Timestamp(date.today()) - timedelta(14)
-    last_day = pd.Timestamp(date.today()) + timedelta(90)
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(14,'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(90,'days')
 
     if overflow_threshold_percents ==99:
         fname_capacity = get_latest_filedate()

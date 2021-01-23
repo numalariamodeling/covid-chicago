@@ -87,8 +87,8 @@ if __name__ == '__main__' :
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
     ageGroup_list = ['_All',"_age0to9", "_age10to19", "_age20to29", "_age30to39", "_age40to49", "_age50to59", "_age60to69", "_age70to100"]
-    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + pd.Timedelta(15,'days')
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
     
     psuffix = '_MarchOct_log'
     #plot_covidregions(exp_names,channel='crit_det', subgroups = ageGroup_list, psuffix ='_MarchOct')

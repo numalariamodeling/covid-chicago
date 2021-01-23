@@ -206,7 +206,7 @@ if __name__ == '__main__' :
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     first_plot_day = pd.Timestamp('2020-02-13')
-    today = pd.Timestamp(pd.Timestamp.today()) + pd.Timedelta(15,'days')
+    today = pd.Timestamp.today()+ pd.Timedelta(15,'days')
     last_plot_day = today
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]

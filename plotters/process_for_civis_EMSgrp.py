@@ -176,8 +176,8 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
 
-    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + pd.Timedelta(60,'days')
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(60,'days')
     
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
     exp_suffix = exp_name.split("_")[-1]

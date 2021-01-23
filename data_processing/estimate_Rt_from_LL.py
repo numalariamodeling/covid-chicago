@@ -138,8 +138,8 @@ def run_Rt_estimation(smoothing_window=14, r_window_size=7):
 
 if __name__ == '__main__':
     
-    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp(pd.Timestamp.today()) 
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()
 
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()

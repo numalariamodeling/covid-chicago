@@ -59,8 +59,8 @@ if __name__ == '__main__' :
 
     mixed_scenarios = True
     simdate = "20200506"
-    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + pd.Timedelta(15,'days')
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     if mixed_scenarios == False :

@@ -16,8 +16,8 @@ if __name__ == '__main__' :
 
     df = pd.read_csv(os.path.join(wdir,'simulation_output/_csv', filename))
     df['date'] = pd.to_datetime(df['date'])
-    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + pd.Timedelta(15,'days')
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
     df['symptomatic'] = df['output_symptomatic_mild'] + df['output_symptomatic_severe']
     df['new_symptomatic'] = df['output_new_symptomatic_mild'] + df['output_new_symptomatic_severe']
