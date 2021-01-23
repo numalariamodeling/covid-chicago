@@ -21,8 +21,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
-        "-e",
-        "--exp_name",
+        "-stem",
+        "--stem",
         type=str,
         help="Experiment name "
     )
@@ -196,12 +196,16 @@ def extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=T
 
 if __name__ == '__main__':
     args = parse_args()
-    exp_name = args.exp_name
+    stem = args.stem
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
-    sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = os.path.join(sim_output_path, '_plots')
+    
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    for exp_name in exp_names:
+        
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
 
-    extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
-    extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True)
+        extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
+        extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True)

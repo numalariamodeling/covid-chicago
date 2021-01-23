@@ -247,7 +247,7 @@ echo end""")
         plotters_dir = os.path.join(git_dir, "plotters")
 
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[0]}.bat'), 'w')
-        file.write(f'cd {git_dir} \n python {list(process_dict.values())[0]} --exp_name "{exp_name}" \n')
+        file.write(f'cd {git_dir} \n python {list(process_dict.values())[0]} --stem "{exp_name}" \n')
 
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[1]}.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[1]} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[1]}.txt" \n')
@@ -333,17 +333,17 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     if "spatial_EMS" in experiment_config:
         fname = 'data_comparison_spatial.py'
 
-    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
+    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --stem "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'run_postprocessing.sh'), 'w')
     file.write(header_post + jobname + err + out + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
-    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[4]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
-    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[5]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
-    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[6]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
-    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[7]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
-    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[8]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
-    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[9]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[8]} --exp_names "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"')
     #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}"')
     #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}"')
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup_and_zip_simFiles.py --stem "{exp_name}" --zip_dir')
@@ -353,8 +353,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     Single shell files for single job submission 
     (to do set up dependencies)
     """
-    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
-    file = open(os.path.join(temp_exp_dir, f'{list(process_dict.keys())[0]}.sh'), 'w')
+    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --stem "{exp_name}" --Location "NUCLUSTER" '
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[0]}.sh'), 'w')
     file.write(header_post + jobname + err + out + pymodule + pycommand)
     file.close()
 
@@ -369,12 +369,12 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[4]} --exp_name "{exp_name}" --Location "NUCLUSTER"'
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[4]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[5]} --exp_name "{exp_name}"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}"'
     file = open(os.path.join(temp_exp_dir,  'sh',f'{list(process_dict.keys())[5]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
@@ -418,23 +418,23 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     Submit run simultation 
     Start postprocessing using singleton dependency
     """
-    submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
-    submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing.sh'
-    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
-    file.write(submit_runSimulations)
-    file.write(submit_combineSimulations)
-    file.close()
+    #submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
+    #submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing.sh'
+    #file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
+    #file.write(submit_runSimulations)
+    #file.write(submit_combineSimulations)
+    #file.close()
 
     """
     Draft for setting up job dependencies 
     """
-    file = open(os.path.join(temp_exp_dir,'submit_runPostprocessing_test2.sh'), 'w')
-    file.write(f'\n\n#cd {temp_exp_dir}'
-               '\n\n#Submit after simulation are finished using job id\n#sbatch --dependency=afterok:<jobid> combineSimulations.sh'
-               '\n\n#Submit after combineSimulations using job id\n#sbatch --dependency=afterany:<jobid> cleanupSimulations.sh'
-               '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterany:<jobid> compareToData.sh'
-               '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterany:<jobid> processForCivis.sh')
-    file.close()
+    #file = open(os.path.join(temp_exp_dir,'submit_runPostprocessing_test2.sh'), 'w')
+    #file.write(f'\n\n#cd {temp_exp_dir}'
+    #           '\n\n#Submit after simulation are finished using job id\n#sbatch --dependency=afterok:<jobid> combineSimulations.sh'
+    #           '\n\n#Submit after combineSimulations using job id\n#sbatch --dependency=afterany:<jobid> cleanupSimulations.sh'
+    #           '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterany:<jobid> compareToData.sh'
+    #           '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterany:<jobid> processForCivis.sh')
+    #file.close()
 
 
 def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml_dir, DEFAULT_CONFIG, experiment_config, temp_exp_dir=None,

@@ -89,19 +89,18 @@ def reprocess(input_fname='trajectories.csv'):
     return adf
 
 def trim_trajectories(df, fname,sample_param_to_keep, time_start=1, time_stop=1000,
-                      channels=None, time_varying_params=None, grpnames=None):
+                      time_varying_params=None, grpnames=None):
     """Generate a subset of the trajectoriesDat dataframe
     The new csv file is saved under trajectoriesDat_trim.csv, no dataframe is returned
     """
 
-    if channels == None:
-        channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'detected_cumul',
-                    'asymp_cumul', 'asymp_det_cumul',
-                    'symp_mild_cumul', 'symptomatic_mild', 'symp_mild_det_cumul',
-                    'symp_severe_cumul','symptomatic_severe', 'symp_severe_det_cumul',
-                    'hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
-                    'crit_cumul','crit_det_cumul', 'crit_det',  'critical',
-                    'death_det_cumul', 'deaths']
+    channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'detected_cumul',
+                'asymp_cumul', 'asymp_det_cumul',
+                'symp_mild_cumul', 'symptomatic_mild', 'symp_mild_det_cumul',
+                'symp_severe_cumul','symptomatic_severe', 'symp_severe_det_cumul',
+                'hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
+                'crit_cumul','crit_det_cumul', 'crit_det',  'critical',
+                'death_det_cumul', 'deaths']
 
     if time_varying_params == None:
         time_varying_params = ['Ki_t']
@@ -114,6 +113,7 @@ def trim_trajectories(df, fname,sample_param_to_keep, time_start=1, time_stop=10
             if grp_ch !="All" and not 'age' in grp_ch :
                 [column_list.append(f'{time_varying_param}_{str(grp_ch)}') for time_varying_param in time_varying_params]
             del grp, grp_ch
+        column_list = column_list + ['N_All']
     else:
         column_list = column_list + channels + time_varying_params
 
@@ -225,7 +225,7 @@ if __name__ == '__main__':
     sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"))
     N_cols = [col for col in sampledf.columns if 'N_' in col]
     if len(N_cols)!=0:
-        grp_list = [col.replace('N_','') for col in N_cols] + ['All']
+        grp_list = ['All'] + [col.replace('N_','') for col in N_cols]
         grp_suffix = grp_list[0][:3]
     else:
         grp_list = None

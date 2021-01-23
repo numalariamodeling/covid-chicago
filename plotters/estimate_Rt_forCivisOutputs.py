@@ -27,8 +27,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
-        "-exp",
-        "--exp_name",
+        "-stem",
+        "--stem",
         type=str,
         help="Name of simulation experiment"
     )
@@ -164,19 +164,22 @@ if __name__ == '__main__':
 
     test_mode = False
     if test_mode:
-        exp_name = '20210105_IL_mr_testrun'
+        stem = '20210105_IL_mr_testrun'
         Location = 'Local'
     else:
         args = parse_args()
-        exp_name = args.exp_name
+        stem = args.stem
         Location = args.Location
 
     first_plot_day = pd.Timestamp.today() - pd.Timedelta(30,'days')
     last_plot_day = pd.Timestamp.today() + pd.Timedelta(15,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
-
-    exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
-    plot_path = os.path.join(exp_dir, '_plots')
-    #run_Rt_estimation(smoothing_window=14,r_window_size=7)
-    run_Rt_estimation(smoothing_window=28,r_window_size=3)
+    
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    for exp_name in exp_names:
+        print(exp_name)
+        exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = os.path.join(exp_dir, '_plots')
+        #run_Rt_estimation(smoothing_window=14,r_window_size=7)
+        run_Rt_estimation(smoothing_window=28,r_window_size=3)
