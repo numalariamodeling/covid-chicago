@@ -6,6 +6,9 @@ import stat
 import sys
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 from processing_helpers import CI_50, CI_25, CI_75,CI_2pt5, CI_97pt5
 
@@ -206,42 +209,6 @@ echo end""")
             os.path.join(temp_exp_dir)
         ) + "\n ECHO end")
 
-        """ Run all """
-        file = open(os.path.join(temp_exp_dir, 'run_postprocess.bat'), 'w')
-        file.write(':: ----------------------------------------------------------------------\n'
-                   ':: This script runs general postprocessing for simulations\n'
-                   ':: ----------------------------------------------------------------------\n'
-                   'cd bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[0]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[1]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[2]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[3]}.bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[4]}.bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[5]}.bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[6]}.bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[7]}.bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[8]}.bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[9]}.bat\n'
-                   'pause')
-
-        file = open(os.path.join(temp_exp_dir, 'run_postprocess_for_civis.bat'), 'w')
-        file.write(':: ----------------------------------------------------------------------\n'
-                   ':: This script runs the relevant processes for the weekly deliverables\n'
-                   ':: ----------------------------------------------------------------------\n'
-                   'cd bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[0]}.bat\n'
-                   f':: START /WAIT  {list(process_dict.keys())[1]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[2]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[3]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[4]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[5]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[6]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[7]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[8]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[9]}.bat\n'
-                   f'START /WAIT  {list(process_dict.keys())[10]}.bat\n'                   
-                   f'START /WAIT  {list(process_dict.keys())[11]}.bat\n'
-                   'pause')
 
         """ Postprocessing batch files """
         plotters_dir = os.path.join(git_dir, "plotters")
