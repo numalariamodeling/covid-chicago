@@ -162,7 +162,21 @@ def writeTxt(txtdir, filename, textstring) :
 def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
                            exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
 
-    fname = 'runSimulations.bat'
+
+    process_dict = {'0_runCombineAndTrimTrajectories':'combine_and_trim.py',
+                    '0_locale_age_postprocessing': 'locale_age_postprocessing.py',
+                    '1_runTraceSelection': 'trace_selection.py',
+                    '2_runDataComparison': 'data_comparison.py',
+                    '3_runProcessTrajectories': 'process_for_civis_EMSgrp.py',
+                    '4_runRtEstimation': 'estimate_Rt_forCivisOutputs.py',
+                    '5_runOverflowProbabilities': 'overflow_probabilities.py',
+                    '6_runPrevalenceIFR': 'plot_prevalence.py',
+                    '7_runICUnonICU': 'plot_by_param_ICU_nonICU.py',
+                    '8_runHospICUDeathsForecast': 'hosp_icu_deaths_forecast_plotter.py',
+                    '9_runCopyDeliverables': 'NUcivis_filecopy.py',
+                    '10_runIterationComparison': 'iteration_comparison.py'}
+
+    fname = f'runSimulations.bat'
     log.debug(f"Generating submission file {fname}")
     if sys.platform not in ["win32", "cygwin"]:
         file = open(os.path.join(trajectories_dir, fname), 'w')
@@ -179,7 +193,7 @@ for i in {{1..{scen_num}}}
   done
 echo end""")
     else:
-        file = open(os.path.join(trajectories_dir, 'runSimulations.bat'), 'w')
+        file = open(os.path.join(trajectories_dir, fname), 'w')
         file.write('ECHO start' + '\n' + 'FOR /L %%i IN (1,1,{}) DO ( "{}" -c "{}" -m "{}") >> "{}/log/log.txt"'.format(
             str(scen_num),
             get_cms_cmd(exe_dir, temp_exp_dir),
@@ -188,49 +202,87 @@ echo end""")
             os.path.join(temp_exp_dir)
         ) + "\n ECHO end")
 
+        """ Run all """
+        file = open(os.path.join(temp_exp_dir, 'run_postprocess.bat'), 'w')
+        file.write(':: ----------------------------------------------------------------------\n'
+                   ':: This script runs general postprocessing for simulations\n'
+                   ':: ----------------------------------------------------------------------\n'
+                   'cd bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[0]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[1]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[2]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[3]}.bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[4]}.bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[5]}.bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[6]}.bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[7]}.bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[8]}.bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[9]}.bat\n'
+                   'pause')
+
+        file = open(os.path.join(temp_exp_dir, 'run_postprocess_for_civis.bat'), 'w')
+        file.write(':: ----------------------------------------------------------------------\n'
+                   ':: This script runs the relevant processes for the weekly deliverables\n'
+                   ':: ----------------------------------------------------------------------\n'
+                   'cd bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[0]}.bat\n'
+                   f':: START /WAIT  {list(process_dict.keys())[1]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[2]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[3]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[4]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[5]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[6]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[7]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[8]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[9]}.bat\n'
+                   f'START /WAIT  {list(process_dict.keys())[10]}.bat\n'                   
+                   f'START /WAIT  {list(process_dict.keys())[11]}.bat\n'
+                   'pause')
 
         """ Postprocessing batch files """
         plotters_dir = os.path.join(git_dir, "plotters")
 
-        """ Combine and trim trajectories """
-        file = open(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.bat'), 'w')
-        file.write(f'cd {git_dir} \n python combine_and_trim.py --exp_name "{exp_name}" \n')
+        file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[0]}.bat'), 'w')
+        file.write(f'cd {git_dir} \n python {list(process_dict.values())[0]} --exp_name "{exp_name}" \n')
 
-        """ Data comparison (different script depending on model type) """
+        file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[1]}.bat'), 'w')
+        file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[1]} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[1]}.txt" \n')
+
+        file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[2]}.bat'), 'w')
+        file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[2]} --stem "{exp_name}" --plot >> "{sim_output_path}/log/{list(process_dict.keys())[2]}.txt" \n')
+
+
+        fname = list(process_dict.values())[3]
         if "spatial_EMS" in experiment_config:
-            fname = "data_comparison_spatial.py"
-        if "spatial_EMS" not in experiment_config:
-            fname = "data_comparison.py"
-        file = open(os.path.join(temp_exp_dir, '1_runDataComparison.bat'), 'w')
-        file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" >> "{sim_output_path}/log/0_runDataComparison.txt"  \n')
+            fname = fname + '_spatial'
+        file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[3]}.bat'), 'w')
+        file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[3]}.txt"  \n')
 
-        """ Scripts specific for spatial model"""
         if "spatial_EMS" in experiment_config :
-            file = open(os.path.join(temp_exp_dir, '0_createAdditionalPlots.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python hosp_icu_deaths_forecast_plotter.py --stem "{exp_name}"  \n')
-            file.write(f'cd {plotters_dir} \n python plot_by_param_ICU_nonICU.py --exp_names "{exp_name}"  \n')
-            file.write(f'cd {plotters_dir} \n python plot_prevalence.py --stem "{exp_name}"  \n')
 
-            ## runProcessForCivis
-            file = open(os.path.join(temp_exp_dir, '0_runTraceSelection.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python trace_selection.py --stem "{exp_name}" --plot  >> "{sim_output_path}/log/0_runProcessForCivis.txt" \n')
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[4]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[4]} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[4]}.txt" \n')
 
-            file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python process_for_civis_EMSgrp.py --exp_name "{exp_name}" --processStep "generate_outputs" >> "{sim_output_path}/log/1_runProcessForCivis.txt" \n')
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[5]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[5]} --stem "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[5]}.txt" \n')
 
-            file = open(os.path.join(temp_exp_dir, '2_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python overflow_probabilities.py --stem "{exp_name}" >> "{sim_output_path}/log/2_runProcessForCivis.txt" \n')
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[6]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[6]} --stem "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[6]}.txt" \n')
 
-            file = open(os.path.join(temp_exp_dir, '3_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python estimate_Rt_forCivisOutputs.py --exp_name "{exp_name}" >> "{sim_output_path}/log/3_runProcessForCivis.txt" \n')
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[7]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[7]} --stem "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[7]}.txt" \n')
 
-            file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python "NUcivis_filecopy.py" "{exp_name}" \n python "iteration_comparison.py" "{exp_name}" >> "{sim_output_path}/log/4_runProcessForCivis.txt" \n')
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[8]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[8]} --exp_names "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[8]}.txt" \n')
 
-        if experiment_config != "EMSspecific_sample_parameters.yaml" :
-            ## locale_age_postprocessing
-            file = open(os.path.join(temp_exp_dir, '0_locale_age_postprocessing.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python locale_age_postprocessing.py --stem "{exp_name}" >> "{sim_output_path}/log/0_locale_age_postprocessing.txt" \n')
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[9]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[9]} --stem "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[9]}.txt" \n')
+
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[10]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[10]}  "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[10]}.txt" \n')
+
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[11]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[11]}  "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[11]}.txt" \n')
 
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir) :
@@ -340,6 +392,8 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
         os.makedirs(os.path.join(trajectories_dir, 'log'))  # location of log file on quest
         os.makedirs(os.path.join(temp_exp_dir, '_plots'))
         os.makedirs(os.path.join(temp_exp_dir, '_plots','pdf'))
+        os.makedirs(os.path.join(temp_exp_dir, 'bat'))
+        os.makedirs(os.path.join(temp_exp_dir, 'sh'))
 
     ## Copy emodl and cfg file  to experiment folder
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))

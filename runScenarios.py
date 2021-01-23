@@ -589,7 +589,7 @@ if __name__ == '__main__':
 
         #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
         #                    temp_exp_dir=temp_exp_dir, deleteFiles=False)
-        subprocess.call(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.bat'))
+        subprocess.call(os.path.join(temp_exp_dir,'bat', '0_runCombineAndTrimTrajectories.bat'))
         cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
                 plot_path=plot_path, delete_temp_dir=True)
         log.info(f"Outputs are in {sim_output_path}")
@@ -600,37 +600,12 @@ if __name__ == '__main__':
 
         if args.post_process == 'dataComparison':
             log.info("Compare to data")
-            p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
+            p0 = os.path.join(sim_output_path,'bat', '2_runDataComparison.bat')
             subprocess.call([p0])
 
         if args.post_process == 'processForCivis':
 
-            log.info("Compare to data")
-            p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
+            log.info("Process for civis")
+            p0 = os.path.join(sim_output_path, 'run_postprocess_for_civis.bat')
             subprocess.call([p0])
-
-            log.info("Trace selection")
-            p0 = os.path.join(sim_output_path, '0_runTraceSelection.bat')
-            subprocess.call([p0])
-
-            log.info("Additional plots")
-            p0 = os.path.join(sim_output_path, '0_createAdditionalPlots.bat')
-            subprocess.call([p0])
-
-            log.info("Process for civis - csv file")
-            p1 = os.path.join(sim_output_path, '1_runProcessForCivis.bat')
-            subprocess.call([p1])
-
-            log.info("Process for civis - overflow probabilities")
-            p2 = os.path.join(sim_output_path, '2_runProcessForCivis.bat')
-            subprocess.call([p2])
-
-            log.info("Process for civis - Rt estimation")
-            p3 = os.path.join(sim_output_path, '3_runProcessForCivis.bat')
-            subprocess.call([p3])
-
-            log.info("Process for civis - file copy and changelog")
-            p4 = os.path.join(sim_output_path, '4_runProcessForCivis.bat')
-            subprocess.call([p4])
-
 
