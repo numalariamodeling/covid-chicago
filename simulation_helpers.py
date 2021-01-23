@@ -257,7 +257,7 @@ echo end""")
 
         fname = list(process_dict.values())[3]
         if "spatial_EMS" in experiment_config:
-            fname = fname + '_spatial'
+            fname = 'data_comparison_spatial.py'
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[3]}.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {fname} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[3]}.txt"  \n')
 
@@ -331,7 +331,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     """
     fname = list(process_dict.values())[3]
     if "spatial_EMS" in experiment_config:
-        fname = fname + '_spatial'
+        fname = 'data_comparison_spatial.py'
 
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'run_postprocessing.sh'), 'w')
