@@ -199,7 +199,7 @@ if __name__ == '__main__':
     exp_name = args.exp_name
     Location = args.Location
 
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location="Local")
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = os.path.join(sim_output_path, '_plots')
 

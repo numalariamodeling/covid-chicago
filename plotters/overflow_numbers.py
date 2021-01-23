@@ -10,8 +10,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import matplotlib.dates as mdates
-import datetime
-from datetime import date, timedelta
 # sns.set(color_codes=True)
 import matplotlib as mpl
 

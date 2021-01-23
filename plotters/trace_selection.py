@@ -15,7 +15,6 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
@@ -132,7 +131,7 @@ def compare_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles
             ax.set_title(titles[c], y=0.8, fontsize=12)
 
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
-            ax.set_xlim(date(2020, 2, 13), date.today() + timedelta(15))
+            ax.set_xlim(date(2020, 2, 13), pd.Timestamp.today() + timedelta(15))
             ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
             if logscale :
                 ax.set_ylim(0.1, ymax)
@@ -201,7 +200,7 @@ if __name__ == '__main__':
         timelag_days = 14
 
     first_plot_day = pd.Timestamp('2020-03-25')
-    last_plot_day = pd.Timestamp(date.today()) - timedelta(timelag_days)
+    last_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(timelag_days,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

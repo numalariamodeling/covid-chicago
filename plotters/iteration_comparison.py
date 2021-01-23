@@ -109,7 +109,7 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
         ax.fill_between(df['date'], df['rt_lower'], df['rt_upper'], color=palette[i], linewidth=0, alpha=0.2)
 
         if i + 1 == len(exp_simdates):
-            df_today = df[df['date'] == pd.Timestamp(date.today())]
+            df_today = df[df['date'] == pd.Timestamp(pd.Timestamp.today())]
             df_initial = df[df['date'] == df['date'].min()]
             rt_median_today = df_today.iloc[0]['rt_median'].round(decimals=3)
             rt_lower_today = df_today.iloc[0]['rt_lower'].round(decimals=3)
@@ -119,7 +119,7 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
             rt_upper_initial = df_initial.iloc[0]['rt_upper'].round(decimals=3)
 
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
-    ax.axvline(x=date.today(), color='#737373', linestyle='--')
+    ax.axvline(x=pd.Timestamp.today(), color='#737373', linestyle='--')
     ax.axhline(y=1, color='black', linestyle='-')
     ax.set_ylim(rt_min, rt_max)
     ax.set_ylabel('Rt')
@@ -132,7 +132,7 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
                    "Plot truncated at Rt=2, initial Rt is estimated at " \
                    f"{rt_median_initial} (95%CI{rt_lower_initial} - {rt_upper_initial})"
     text_top = "Estimated Rt using NU's COVID-19 model"
-    text_bottom = f"Estimated Rt for {date.today().strftime('%Y-%b-%d')}:" \
+    text_bottom = f"Estimated Rt for {pd.Timestamp.today().strftime('%Y-%b-%d')}:" \
                   f" {str(rt_median_today)} (95%CI {str(rt_lower_today)} - {str(rt_upper_today)})"
     fig.suptitle(x=0.07, y=0.969, t=f"{region_label}\n{text_top}\n{text_bottom}", ha='left')
     fig.text(0.07, 0.02, caption_text, wrap=True, horizontalalignment='left', fontsize=8)
@@ -147,8 +147,8 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
 if __name__ == '__main__':
     
     Location = 'Local'
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(30)
+    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + pd.Timedelta(30,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
     comparison_plot()

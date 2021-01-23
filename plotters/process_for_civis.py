@@ -8,7 +8,6 @@ from load_paths import load_box_paths
 from dotenv import load_dotenv
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
@@ -60,7 +59,7 @@ if __name__ == '__main__' :
         for c, channel in enumerate(channels) :
             ax = fig.add_subplot(4,2,c+1)
             mdf = df.groupby('time')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-            mdf['date'] = mdf['time'].apply(lambda x : first_day + timedelta(days=int(x)))
+            mdf['date'] = mdf['time'].apply(lambda x : first_day + pd.Timedelta(int(x),'days'))
 
             ax.plot(mdf['date'], mdf['CI_50'], color=palette[c])
             ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'],

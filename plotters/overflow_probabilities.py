@@ -5,17 +5,15 @@ import sys
 sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
-
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.dates as mdates
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-import datetime as dt
 import seaborn as sns
 import numpy as np
-import matplotlib.dates as mdates
-# sns.set(color_codes=True)
-import matplotlib as mpl
+
 
 mpl.rcParams['pdf.fonttype'] = 42
 sns.set_style('whitegrid', {'axes.linewidth': 0.5})

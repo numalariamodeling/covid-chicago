@@ -8,7 +8,6 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 from scenario_sets import *
@@ -60,8 +59,8 @@ if __name__ == '__main__' :
 
     mixed_scenarios = True
     simdate = "20200506"
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + pd.Timedelta(15,'days')
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     if mixed_scenarios == False :
@@ -102,7 +101,7 @@ if __name__ == '__main__' :
             df['ventilators'] = get_vents(df['crit_det'].values)
             first_day = pd.Timestamp(df['startdate'].unique()[0])
 
-            df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
+            df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
             df = df[df['date'].between(plot_first_day, plot_last_day)]
             df['ems'] = ems
 

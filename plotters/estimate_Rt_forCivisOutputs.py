@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 import sys
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import epyestim
 import epyestim.covid19 as covid19
 import seaborn as sns
@@ -90,7 +89,7 @@ def rt_plot(df, first_day=None, last_day=None):
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         if first_day != None:
             ax.set_xlim(first_day, last_day)
-        ax.axvline(x=date.today(), color='#737373', linestyle='--')
+        ax.axvline(x=pd.Timestamp.today(), color='#737373', linestyle='--')
         ax.axhline(y=1, color='black', linestyle='-')
         ax.set_ylim(rt_min, rt_max)
 
@@ -172,8 +171,8 @@ if __name__ == '__main__':
         exp_name = args.exp_name
         Location = args.Location
 
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + timedelta(15)
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

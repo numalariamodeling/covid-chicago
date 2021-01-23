@@ -8,12 +8,11 @@ import os
 import seaborn as sns
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import sys
 sys.path.append('../')
 from processing_helpers import *
 from load_paths import load_box_paths
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -177,8 +176,8 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
 
-    first_plot_day = pd.Timestamp(date.today()) - timedelta(30)
-    last_plot_day = pd.Timestamp(date.today()) + timedelta(15)
+    first_plot_day = pd.Timestamp(pd.Timestamp.today()) - timedelta(30)
+    last_plot_day = pd.Timestamp(pd.Timestamp.today()) + timedelta(15)
     
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
     exp_suffix = exp_name.split("_")[-1]
