@@ -158,11 +158,7 @@ def writeTxt(txtdir, filename, textstring) :
     file.write(textstring)
     file.close()
 
-
-def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
-                           exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
-
-
+def get_process_dict():
     process_dict = {'0_runCombineAndTrimTrajectories':'combine_and_trim.py',
                     '0_locale_age_postprocessing': 'locale_age_postprocessing.py',
                     '1_runTraceSelection': 'trace_selection.py',
@@ -175,6 +171,14 @@ def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_d
                     '8_runHospICUDeathsForecast': 'hosp_icu_deaths_forecast_plotter.py',
                     '9_runCopyDeliverables': 'NUcivis_filecopy.py',
                     '10_runIterationComparison': 'iteration_comparison.py'}
+    return process_dict
+
+
+def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
+                           exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
+
+
+    process_dict = get_process_dict()
 
     fname = f'runSimulations.bat'
     log.debug(f"Generating submission file {fname}")
@@ -251,7 +255,6 @@ echo end""")
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[2]}.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[2]} --stem "{exp_name}" --plot >> "{sim_output_path}/log/{list(process_dict.keys())[2]}.txt" \n')
 
-
         fname = list(process_dict.values())[3]
         if "spatial_EMS" in experiment_config:
             fname = fname + '_spatial'
@@ -288,6 +291,9 @@ echo end""")
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir) :
     # Generic shell submission script that should run for all having access to  projects/p30781
     # submit_runSimulations.sh
+
+    process_dict = get_process_dict()
+
     exp_name_short = exp_name[-20:]
     header = '#!/bin/bash\n' \
              '#SBATCH -A p30781\n' \
@@ -302,7 +308,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
                   '#SBATCH -t 02:00:00\n' \
                   '#SBATCH -N 1\n' \
                   '#SBATCH --ntasks-per-node=1\n' \
-                  '#SBATCH --mem=32G'
+                  '#SBATCH --mem=64G'
     jobname = f'\n#SBATCH	--job-name="{exp_name_short}"'
     array = f'\n#SBATCH --array=1-{str(scen_num)}'
     err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
@@ -320,55 +326,92 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     plotters_dir = os.path.join(git_dir, "plotters")
     pymodule = '\n\nmodule purge all\nmodule load python/anaconda3.6\nsource activate /projects/p30781/anaconda3/envs/team-test-py37\n'
 
-    pycommand = f'\ncd {git_dir}\npython combine_and_trim.py  --exp_name "{exp_name}" --Location "NUCLUSTER" '
-    file = open(os.path.join(temp_exp_dir, '0_runCombineAndTrimTrajectories.sh'), 'w')
+    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
+    file = open(os.path.join(temp_exp_dir, f'{list(process_dict.keys())[0]}.sh'), 'w')
     file.write(header_post + jobname + err + out + pymodule + pycommand)
+    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.close()
 
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"' \
                 ' --delete_simsfiles "True"'
-    file = open(os.path.join(temp_exp_dir, '0_cleanupSimulations.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir,'sh', '0_cleanupSimulations.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
+    fname = list(process_dict.values())[3]
     if "spatial_EMS" in experiment_config:
-        fname = "data_comparison_spatial.py"
-    if "spatial_EMS" not in experiment_config:
-        fname = "data_comparison.py"
+        fname = fname + '_spatial'
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
-    file = open(os.path.join(temp_exp_dir, '0_runDataComparison.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir,'sh', f'{list(process_dict.keys())[3]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/process_for_civis_EMSgrp.py --exp_name "{exp_name}"  --processStep "generate_outputs"  --Location "NUCLUSTER"'
-    file = open(os.path.join(temp_exp_dir, '1_runProcessForCivis.sh'), 'w')
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[4]} --exp_name "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[4]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/overflow_probabilities.py --stem "{exp_name}" --Location "NUCLUSTER"'
-    file = open(os.path.join(temp_exp_dir, '2_runProcessForCivis.sh'), 'w')
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[5]} --exp_name "{exp_name}"'
+    file = open(os.path.join(temp_exp_dir,  'sh',f'{list(process_dict.keys())[5]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/estimate_Rt_forCivisOutputs.py --exp_name "{exp_name}"'
-    file = open(os.path.join(temp_exp_dir, '3_runProcessForCivis.sh'), 'w')
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[6]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/NUcivis_filecopy.py "{exp_name}" \n python "iteration_comparison.py" "{exp_name}"'
-    file = open(os.path.join(temp_exp_dir, '4_runProcessForCivis.sh'), 'w')
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[6]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[7]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
 
-    submit_runSimulations = f'cd /projects/p30781/covidproject/covid-chicago/_temp/{exp_name}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[8]} --stem "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[8]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
+
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[9]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
+
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}" --Location "NUCLUSTER'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[10]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
+
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}" --Location "NUCLUSTER'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[11]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
+    """"""
+
+
+    submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
+    submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton 0_runCombineAndTrimTrajectories.sh'
     file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
     file.write(submit_runSimulations)
+    file.write(submit_combineSimulations)
+    file.close()
+
+    file = open(os.path.join(temp_exp_dir, 'submit_runPostprocessing_test.sh'), 'w')
+    file.write(f'\n\n#cd {temp_exp_dir}'
+               '\nsbatch 0_runCombineAndTrimTrajectories.sh'
+               '\n\nsbatch --dependency=singleton 0_cleanUp_and_Postprocess.sh')
+    file.close()
+
+    file = open(os.path.join(temp_exp_dir,'submit_runPostprocessing_test2.sh'), 'w')
     file.write(f'\n\n#cd {temp_exp_dir}'
                '\n\n#Submit after simulation are finished using job id\n#sbatch --dependency=afterok:<jobid> combineSimulations.sh'
-               '\n\n#Submit after combineSimulations using job id\n#sbatch --dependency=afterok:<jobid> cleanupSimulations.sh'
-               '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterok:<jobid> compareToData.sh'
-               '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterok:<jobid> processForCivis.sh')
+               '\n\n#Submit after combineSimulations using job id\n#sbatch --dependency=afterany:<jobid> cleanupSimulations.sh'
+               '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterany:<jobid> compareToData.sh'
+               '\n\n#Submit after cleanupSimulations using job id\n#sbatch --dependency=afterany:<jobid> processForCivis.sh')
     file.close()
 
 
