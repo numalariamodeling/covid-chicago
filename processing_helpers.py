@@ -347,6 +347,7 @@ def load_capacity(ems):
         df = df[df['ems'] == str(ems)]
 
     capacity = {'hosp_det': int(df['hb_availforcovid']),
+                'total_hosp_census': int(df['hb_availforcovid']),
                 'crit_det': int(df['icu_availforcovid']),
                 'ventilators': int(df['vent_availforcovid'])}
     return capacity

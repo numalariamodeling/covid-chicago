@@ -96,7 +96,7 @@ def get_probs(ems_nr, channels=['total_hosp_census', 'crit_det', 'ventilators'],
     df_all = pd.DataFrame()
     for channel in channels:
         if channel == "crit_det": channel_label = 'icu_availforcovid'
-        #if channel == "hosp_det": channel_label = 'hb_availforcovid'
+        if channel == "hosp_det": channel_label = 'hb_availforcovid'
         if channel == "total_hosp_census": channel_label = 'hb_availforcovid'
         if channel == "ventilators": channel_label = 'vent_availforcovid'
 
@@ -139,7 +139,7 @@ def plot_probs(df, region_label):
     palette = sns.color_palette('Set1', 12)
     axes = [fig.add_subplot(1, 3, x + 1) for x in range(3)]
 
-    linestyles = ['solid','dashed']
+    linestyles = ['solid', 'dashed']
     for c, channel in enumerate(df.capacity_channel.unique()):
 
         mdf = df[df['capacity_channel'] == channel]
@@ -149,7 +149,7 @@ def plot_probs(df, region_label):
         ax.set_ylabel(f'Probability of overflow')
 
         for e, t in enumerate(list(df.overflow_threshold_percent.unique())):
-            line_label = f'{channel} ({t*100})%'
+            line_label = f'{channel} ({t * 100})%'
             adf = mdf[mdf['overflow_threshold_percent'] == t]
             ax.plot(adf['date'], adf['prob'], linestyle=linestyles[e], color=palette[c], label=line_label)
 
@@ -172,7 +172,7 @@ def write_probs_to_template(df, plot=True):
     civis_template_all = pd.DataFrame()
     for index, row in civis_template.iterrows():
         upper_limit = row['date_window_upper_bound']
-        lower_limit = upper_limit - pd.Timedelta(7,'days')
+        lower_limit = upper_limit - pd.Timedelta(7, 'days')
 
         df_sub = df[df['date'].between(lower_limit, upper_limit)]
         df_sub = df_sub[df_sub['region'] == int(row['geography_modeled'].replace("covidregion_", ""))]
@@ -245,12 +245,14 @@ if __name__ == '__main__':
     overflow_threshold_percents = args.overflow_threshold_percents
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = pd.Timestamp.today() - pd.Timedelta(14,'days')
-    last_plot_day = pd.Timestamp.today() + pd.Timedelta(90,'days')
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(14, 'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(90, 'days')
 
-    if overflow_threshold_percents ==99:
+    if overflow_threshold_percents == 99:
         fname_capacity = get_latest_filedate()
-        civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname_capacity))
+        civis_template = pd.read_csv(
+            os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds',
+                         fname_capacity))
         overflow_threshold_percents = civis_template.overflow_threshold_percent.unique()
     print(overflow_threshold_percents)
 
@@ -264,7 +266,7 @@ if __name__ == '__main__':
         for ems_nr in range(1, 12):
             print("Start processing region " + str(ems_nr))
             df = get_probs(ems_nr, overflow_threshold_percents=overflow_threshold_percents, save_csv=False, plot=False)
-            df = df[df['date'].between(first_day, last_day)]
+            df = df[df['date'].between(first_plot_day, last_plot_day)]
             if df_all.empty:
                 df_all = df
             else:
