@@ -356,7 +356,6 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'{list(process_dict.keys())[0]}.sh'), 'w')
     file.write(header_post + jobname + err + out + pymodule + pycommand)
-    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.close()
 
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"' \
