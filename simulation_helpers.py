@@ -76,13 +76,15 @@ def get_cms_cmd(exe_dir=EXE_DIR, workdir=None, docker_image=None):
         return cmd
 
 
-def runExp(trajectories_dir, Location = 'Local' ):
+def runExp(trajectories_dir, Location = 'Local', submission_script=None ):
     if Location =='Local' :
         log.info("Starting experiment.")
         p = os.path.join(trajectories_dir,  'runSimulations.bat')
         subprocess.call([p])
     if Location =='NUCLUSTER' :
-        p = os.path.join(trajectories_dir, 'submit_runSimulations.sh')
+        if submission_script is None:
+            submission_script = 'submit_runSimulations.sh'
+        p = os.path.join(trajectories_dir, submission_script)
         subprocess.call(['sh',p])
 
 
@@ -176,7 +178,8 @@ def get_process_dict():
                     '7_runICUnonICU': 'plot_by_param_ICU_nonICU.py',
                     '8_runHospICUDeathsForecast': 'hosp_icu_deaths_forecast_plotter.py',
                     '9_runCopyDeliverables': 'NUcivis_filecopy.py',
-                    '10_runIterationComparison': 'iteration_comparison.py'}
+                    '10_runIterationComparison': 'iteration_comparison.py',
+                    '11_runCleanUpAndZip': 'cleanup_and_zip_simFiles.py'}
     return process_dict
 
 
@@ -257,6 +260,9 @@ echo end""")
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[11]}.bat'), 'w')
             file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[11]}  "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[11]}.txt" \n')
 
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[12]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[12]}  --stem "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[11]}.txt" \n')
+
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir,sim_output_path) :
     # Generic shell submission script that should run for all having access to  projects/p30781
@@ -308,6 +314,22 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header_post + jobname + err + out + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[3]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir --Location "NUCLUSTER"')
+    file.close()
+
+
+    pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
+    file = open(os.path.join(temp_exp_dir, f'run_postprocessing_with_trace_selection.sh'), 'w')
+    file.write(header_post + jobname + err + out + pymodule + pycommand)
+    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
+    file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[3]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -316,7 +338,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"')
     #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}"')
     #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}"')
-    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup_and_zip_simFiles.py --stem "{exp_name}" --zip_dir')
+    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir --Location "NUCLUSTER"')
     file.close()
 
     """
@@ -334,6 +356,16 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[1]} --stem "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[1]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
+
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER"'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[2]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
+
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir,'sh', f'{list(process_dict.keys())[3]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
@@ -346,11 +378,6 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}"'
     file = open(os.path.join(temp_exp_dir,  'sh',f'{list(process_dict.keys())[5]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
-    file.close()
-
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"'
-    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[6]}.sh'), 'w')
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
@@ -384,16 +411,28 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header + jobname + err + out + pymodule + pycommand)
     file.close()
 
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir  --Location "NUCLUSTER'
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[12]}.sh'), 'w')
+    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.close()
+
     """
     Submit run simultation 
     Start postprocessing using singleton dependency
     """
     submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
     submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing.sh'
+    submit_combineSimulations_trace = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing_with_trace_selection.sh'
     file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
     file.write(submit_runSimulations)
     file.write(submit_combineSimulations)
     file.close()
+
+    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations_with_trace_selection.sh'), 'w')
+    file.write(submit_runSimulations)
+    file.write(submit_combineSimulations_trace)
+    file.close()
+
 
     """
     Draft for setting up job dependencies 
