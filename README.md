@@ -313,6 +313,7 @@ i.e. add a `set-covid-chicago` command in the `bash.profile` file in the home di
 
 	mirror-box-covid(){
 		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Cleaned\ Data/ /projects/p30781/covidproject/data/covid_IDPH/Cleaned\ Data/; exit"
+		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Corona\ virus\ reports/ /projects/p30781/covidproject/data/covid_IDPH/Corona\ virus\ reports/; exit"
 		lftp -p 990 -u  <useremail> ftps://box.com -e "mirror -R /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/ NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/; exit"
 	}
  
@@ -322,10 +323,12 @@ On Quest jobs are submitted using the SLURM workload manager and syntax ([SLURM 
 `cd /projects/p30781/covidproject/covid-chicago/`
 `python runScenarios.py -rl NUCLUSTER --r EMS_11 -c extendedcobey_200428.yaml --emodl_template extendedmodel.emodl -n "quest_run"`
 
-The experiments will go to the _temp folder on the quest gitrepository. 
+The experiments will go to the `_temp` folder on the quest gitrepository. 
 To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
 
 The status of the job submission can be called via `squeue -u <username>`
+
+Further helpful examples are in the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
 
 </p>
 </details>
@@ -360,9 +363,9 @@ The postprocessing includes the following steps below:
 - `8_runHospICUDeathsForecast.bat`  calls  [hosp_icu_deaths_forecast_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/hosp_icu_deaths_forecast_plotter.py)
 - `9_runCopyDeliverables.bat` calls [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Note: the changelog.txt will need manual editing to reflect new changes per week. 
 - `10_runIterationComparison.bat` calls [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
+- `11_runCleanUpAndZip.bat` calls [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py) to clean up simulations (deletes per default single trajectories !! and optinally zips and/or deletes simulation folder
 Note: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
 
-To clean up simulations (delete trajectories and optinally zip and delete simulation folder run  [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py))
 
 </p>
 </details>
@@ -398,9 +401,7 @@ Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulatio
 - `8_runHospICUDeathsForecast.sh` 
 - `9_runCopyDeliverables.sh`
 - `10_runIterationComparison.sh` 
-
-To clean up simulations (delete trajectories and optinally zip and delete simulation folder run  [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py))
-Zipping the simulation folder facilitiates copying file to Box or the local machine.
+- `11_runCleanUpAndZip.sh` 
 
 </p>
 </details>

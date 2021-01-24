@@ -56,11 +56,11 @@ def cleanup(temp_dir, temp_exp_dir, sim_output_path, delete_temp_dir=True) :
     
 if __name__ == '__main__':
   args = parse_args()  
-  sim_out_dir = os.path.join(git_dir, "_temp") 
   stem = args.stem
   
   Location = args.Location
   datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
+  sim_out_dir = os.path.join(git_dir, "_temp")
   
   delete_temp_dir=False
   if args.delete_simsfiles == "True" : 
