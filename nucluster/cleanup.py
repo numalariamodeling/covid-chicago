@@ -8,16 +8,10 @@ import os
 import seaborn as sns
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import shutil
+sys.path.append('../')
+from load_paths import load_box_paths
 
-#os.chdir("/projects/p30781/covidproject/covid-chicago/")
-#from load_paths import load_box_paths
-#Location = "NUCLUSTER"
-#datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
-
-git_dir = '/projects/p30781/covidproject/covid-chicago'
-wdir= '/projects/p30781/covidproject/projects/covid_chicago/cms_sim'
   
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -36,7 +30,13 @@ def parse_args():
         type=str,
         help="Delete single emodl simulation files"
     )
-
+    parser.add_argument(
+        "-loc",
+        "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default = "NUCLUSTER"
+    )
 
     return parser.parse_args()
     
@@ -56,16 +56,17 @@ def cleanup(temp_dir, temp_exp_dir, sim_output_path, delete_temp_dir=True) :
     
 if __name__ == '__main__':
   args = parse_args()  
-  sim_out_dir = os.path.join(git_dir, "_temp") #"/projects/p30781/covidproject/covid-chicago/_temp/"
   stem = args.stem
   
+  Location = args.Location
+  datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
+  sim_out_dir = os.path.join(git_dir, "_temp")
+  
   delete_temp_dir=False
-  if args.delete_simsfiles == "True" : delete_temp_dir = True
-    
-  #stem = "20200525_EMS_11"
+  if args.delete_simsfiles == "True" : 
+      delete_temp_dir = True
+   
   exp_names = [x for x in os.listdir(sim_out_dir) if stem in x]
-
-
   for exp_name in exp_names :
     print(exp_name)
     temp_exp_dir =os.path.join(sim_out_dir, exp_name)

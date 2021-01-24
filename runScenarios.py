@@ -11,6 +11,9 @@ import pandas as pd
 import yaml
 import yamlordereddictloader
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
                                 generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
@@ -560,8 +563,11 @@ if __name__ == '__main__':
         region=region    )
 
     if Location == 'NUCLUSTER':
-        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir,  temp_exp_dir,sim_output_path)
-        runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER')
+        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path)
+        submission_script=None
+        if args.post_process == 'processForCivis':
+            submission_script = 'submit_runSimulations_with_trace_selection.sh'
+        runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER',submission_script=submission_script )
 
     if Location == 'Local':
         generateSubmissionFile(
@@ -570,8 +576,9 @@ if __name__ == '__main__':
 
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-        combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-                            temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
+        #                    temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        subprocess.call(os.path.join(temp_exp_dir,'bat', '0_runCombineAndTrimTrajectories.bat'))
         cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
                 plot_path=plot_path, delete_temp_dir=True)
         log.info(f"Outputs are in {sim_output_path}")
@@ -582,46 +589,45 @@ if __name__ == '__main__':
 
         if args.post_process == 'dataComparison':
             log.info("Compare to data")
-            p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
+            p0 = os.path.join(sim_output_path,'bat', '2_runDataComparison.bat')
             subprocess.call([p0])
 
         if args.post_process == 'processForCivis':
 
-            log.info("Trim trajectories")
-            p0 = os.path.join(sim_output_path, '0_runTrimTrajectories.bat')
-            subprocess.call([p0])
-
             log.info("Compare to data")
-            p0 = os.path.join(sim_output_path, '0_runDataComparison.bat')
+            p0 = os.path.join(sim_output_path, 'bat','2_runDataComparison.bat')
             subprocess.call([p0])
 
-            log.info("Additional plots")
-            p0 = os.path.join(sim_output_path, '0_createAdditionalPlots.bat')
+            log.info("Trace selection")
+            p0 = os.path.join(sim_output_path,'bat' , '1_runTraceSelection.bat')
             subprocess.call([p0])
 
             log.info("Process for civis - csv file")
-            p1 = os.path.join(sim_output_path, '1_runProcessForCivis.bat')
-            subprocess.call([p1])
-
-            log.info("Process for civis - overflow probabilities")
-            p2 = os.path.join(sim_output_path, '2_runProcessForCivis.bat')
-            subprocess.call([p2])
+            p0 = os.path.join(sim_output_path, 'bat' ,'3_runProcessTrajectories.bat')
+            subprocess.call([p0])
 
             log.info("Process for civis - Rt estimation")
-            p3 = os.path.join(sim_output_path, '3_runProcessForCivis.bat')
-            subprocess.call([p3])
+            p0 = os.path.join(sim_output_path,'bat' , '4_runRtEstimation.bat')
+            subprocess.call([p0])
+
+            log.info("Process for civis - overflow probabilities")
+            p0 = os.path.join(sim_output_path, 'bat' ,'5_runOverflowProbabilities.bat')
+            subprocess.call([p0])
+
+            log.info("Additional plots")
+            p0 = os.path.join(sim_output_path, 'bat', '6_runPrevalenceIFR.bat')
+            subprocess.call([p0])
+
+            p0 = os.path.join(sim_output_path, 'bat', '7_runICUnonICU.bat')
+            subprocess.call([p0])
+
+            p0 = os.path.join(sim_output_path, 'bat', '8_runHospICUDeathsForecast.bat')
+            subprocess.call([p0])
 
             log.info("Process for civis - file copy and changelog")
-            p4 = os.path.join(sim_output_path, '4_runProcessForCivis.bat')
-            subprocess.call([p4])
+            p0 = os.path.join(sim_output_path,'bat' , '9_runCopyDeliverables.bat')
+            subprocess.call([p0])
 
-            log.info("Process for civis - iteration comparison figure")
-            p5 = os.path.join(sim_output_path, '5_runProcessForCivis_optional.bat')
-            subprocess.call([p5])
-
-            log.info("Process for civis - plots region 10 and 11")
-            p6 = os.path.join(sim_output_path, '5_runProcessFor_CDPH.bat')
-            subprocess.call([p6])
-
-
-
+            log.info("Process for civis - file copy and changelog")
+            p0 = os.path.join(sim_output_path,'bat' , '10_runIterationComparison.bat')
+            subprocess.call([p0])

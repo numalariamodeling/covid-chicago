@@ -7,7 +7,6 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -31,13 +30,6 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
-
     return parser.parse_args()
 
 def plot_on_fig(df, c, axes,channel, color,panel_heading, ems, label=None, addgrid=True) :
@@ -112,8 +104,7 @@ def compare_ems( ems,channel):
         data_channel_names = ['confirmed_covid_icu']
 
     ref_df = ref_df.groupby('date')[data_channel_names].agg(np.sum).reset_index()
-    ref_df = ref_df[(ref_df['date'] >= pd.to_datetime(first_plot_day)) &
-                    (ref_df['date'] <= pd.to_datetime(last_plot_day))]
+    ref_df = ref_df[ref_df['date'].between(first_plot_day, last_plot_day)]
 
     return ref_df
 
@@ -149,14 +140,13 @@ def plot_covidregions(channel,subgroups, plot_path,first_day, last_day) :
 if __name__ == '__main__' :
 
     args = parse_args()
-    trajectoriesName = args.trajectoriesName
     exp_names = args.exp_names
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date.today() - timedelta(60)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
     covidregionlist = range(0, 12)
 

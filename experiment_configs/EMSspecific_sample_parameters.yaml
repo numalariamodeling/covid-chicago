@@ -408,6 +408,40 @@ sampled_parameters:
     EMS_11:
       np.random: uniform
       function_kwargs: {'low': 0.095, 'high': 0.095} 
+  'ki_multiplier_13':
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low': 0.180, 'high': 0.180}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low': 0.131, 'high': 0.131}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low': 0.315, 'high': 0.315}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low': 0.205, 'high': 0.205}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low': 0.180, 'high': 0.180}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low': 0.220, 'high': 0.220}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low': 0.140, 'high': 0.140}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low': 0.120, 'high': 0.120}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low': 0.140, 'high': 0.140}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low': 0.150, 'high': 0.150}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low': 0.095, 'high': 0.095}
   'd_Sym':
     EMS_1:
       np.random: uniform
@@ -612,5 +646,71 @@ sampled_parameters:
     EMS_11:
       np.random: uniform
       function_kwargs: {'low':0.10, 'high': 0.40}          
-      
-      
+  'recovery_time_crit_change1':
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low': 9, 'high': 9}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low': 9, 'high': 9}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low': 8, 'high': 8}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low': 3.25, 'high': 3.25}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low': 6, 'high': 6}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low': 4.5, 'high': 4.5}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low': 3.5, 'high': 3.5}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low': 3.5, 'high': 3.5}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low': 3, 'high': 3}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low': 5, 'high': 5}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low': 9, 'high': 9} 
+  'recovery_time_crit_change_time_1':
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low': 262, 'high': 262}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low': 262, 'high': 262}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low': 262, 'high': 262}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low': 311, 'high': 311}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low': 292, 'high': 292}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low': 262, 'high': 262}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low': 231, 'high': 231}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low': 262, 'high': 262}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low': 262, 'high': 262}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low': 262, 'high': 262}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low': 184, 'high': 184} 

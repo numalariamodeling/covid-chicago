@@ -1078,6 +1078,10 @@
 (observe detected_All (+ detected_EMS_1 detected_EMS_2 detected_EMS_3 detected_EMS_4 detected_EMS_5 detected_EMS_6 detected_EMS_7 detected_EMS_8 detected_EMS_9 detected_EMS_10 detected_EMS_11))
 (observe symptomatic_mild_det_All (+ symptomatic_mild_det_EMS_1 symptomatic_mild_det_EMS_2 symptomatic_mild_det_EMS_3 symptomatic_mild_det_EMS_4 symptomatic_mild_det_EMS_5 symptomatic_mild_det_EMS_6 symptomatic_mild_det_EMS_7 symptomatic_mild_det_EMS_8 symptomatic_mild_det_EMS_9 symptomatic_mild_det_EMS_10 symptomatic_mild_det_EMS_11))
 (observe symptomatic_severe_det_All (+ symptomatic_severe_det_EMS_1 symptomatic_severe_det_EMS_2 symptomatic_severe_det_EMS_3 symptomatic_severe_det_EMS_4 symptomatic_severe_det_EMS_5 symptomatic_severe_det_EMS_6 symptomatic_severe_det_EMS_7 symptomatic_severe_det_EMS_8 symptomatic_severe_det_EMS_9 symptomatic_severe_det_EMS_10 symptomatic_severe_det_EMS_11))
+(observe infectious_det_All (+ infectious_det_EMS_1 infectious_det_EMS_2 infectious_det_EMS_3 infectious_det_EMS_4 infectious_det_EMS_5 infectious_det_EMS_6 infectious_det_EMS_7 infectious_det_EMS_8 infectious_det_EMS_9 infectious_det_EMS_10 infectious_det_EMS_11))
+(observe infectious_undet_All (+ infectious_undet_EMS_1 infectious_undet_EMS_2 infectious_undet_EMS_3 infectious_undet_EMS_4 infectious_undet_EMS_5 infectious_undet_EMS_6 infectious_undet_EMS_7 infectious_undet_EMS_8 infectious_undet_EMS_9 infectious_undet_EMS_10 infectious_undet_EMS_11))
+(observe infectious_det_symp_All (+ infectious_det_symp_EMS_1 infectious_det_symp_EMS_2 infectious_det_symp_EMS_3 infectious_det_symp_EMS_4 infectious_det_symp_EMS_5 infectious_det_symp_EMS_6 infectious_det_symp_EMS_7 infectious_det_symp_EMS_8 infectious_det_symp_EMS_9 infectious_det_symp_EMS_10 infectious_det_symp_EMS_11))
+(observe infectious_det_AsP_All (+ infectious_det_AsP_EMS_1 infectious_det_AsP_EMS_2 infectious_det_AsP_EMS_3 infectious_det_AsP_EMS_4 infectious_det_AsP_EMS_5 infectious_det_AsP_EMS_6 infectious_det_AsP_EMS_7 infectious_det_AsP_EMS_8 infectious_det_AsP_EMS_9 infectious_det_AsP_EMS_10 infectious_det_AsP_EMS_11))
 
 
 (observe susceptible_EMS-1 S::EMS_1)
@@ -1126,6 +1130,11 @@
 (observe symptomatic_severe_det_EMS-1 symptomatic_severe_det_EMS_1)
 (observe recovered_det_EMS-1 recovered_det_EMS_1)
 
+(observe infectious_undet_EMS-1 infectious_undet_EMS_1)
+(observe infectious_det_EMS-1 infectious_det_EMS_1)
+(observe infectious_det_symp_EMS-1 infectious_det_symp_EMS_1)
+(observe infectious_det_AsP_EMS-1 infectious_det_AsP_EMS_1)
+
 (observe susceptible_EMS-2 S::EMS_2)
 (observe infected_EMS-2 infected_EMS_2)
 (observe infected_det_EMS-2 infected_det_EMS_2)
@@ -1171,6 +1180,11 @@
 (observe symptomatic_mild_det_EMS-2 symptomatic_mild_det_EMS_2)
 (observe symptomatic_severe_det_EMS-2 symptomatic_severe_det_EMS_2)
 (observe recovered_det_EMS-2 recovered_det_EMS_2)
+
+(observe infectious_undet_EMS-2 infectious_undet_EMS_2)
+(observe infectious_det_EMS-2 infectious_det_EMS_2)
+(observe infectious_det_symp_EMS-2 infectious_det_symp_EMS_2)
+(observe infectious_det_AsP_EMS-2 infectious_det_AsP_EMS_2)
 
 (observe susceptible_EMS-3 S::EMS_3)
 (observe infected_EMS-3 infected_EMS_3)
@@ -1218,6 +1232,11 @@
 (observe symptomatic_severe_det_EMS-3 symptomatic_severe_det_EMS_3)
 (observe recovered_det_EMS-3 recovered_det_EMS_3)
 
+(observe infectious_undet_EMS-3 infectious_undet_EMS_3)
+(observe infectious_det_EMS-3 infectious_det_EMS_3)
+(observe infectious_det_symp_EMS-3 infectious_det_symp_EMS_3)
+(observe infectious_det_AsP_EMS-3 infectious_det_AsP_EMS_3)
+
 (observe susceptible_EMS-4 S::EMS_4)
 (observe infected_EMS-4 infected_EMS_4)
 (observe infected_det_EMS-4 infected_det_EMS_4)
@@ -1263,6 +1282,11 @@
 (observe symptomatic_mild_det_EMS-4 symptomatic_mild_det_EMS_4)
 (observe symptomatic_severe_det_EMS-4 symptomatic_severe_det_EMS_4)
 (observe recovered_det_EMS-4 recovered_det_EMS_4)
+
+(observe infectious_undet_EMS-4 infectious_undet_EMS_4)
+(observe infectious_det_EMS-4 infectious_det_EMS_4)
+(observe infectious_det_symp_EMS-4 infectious_det_symp_EMS_4)
+(observe infectious_det_AsP_EMS-4 infectious_det_AsP_EMS_4)
 
 (observe susceptible_EMS-5 S::EMS_5)
 (observe infected_EMS-5 infected_EMS_5)
@@ -1310,6 +1334,11 @@
 (observe symptomatic_severe_det_EMS-5 symptomatic_severe_det_EMS_5)
 (observe recovered_det_EMS-5 recovered_det_EMS_5)
 
+(observe infectious_undet_EMS-5 infectious_undet_EMS_5)
+(observe infectious_det_EMS-5 infectious_det_EMS_5)
+(observe infectious_det_symp_EMS-5 infectious_det_symp_EMS_5)
+(observe infectious_det_AsP_EMS-5 infectious_det_AsP_EMS_5)
+
 (observe susceptible_EMS-6 S::EMS_6)
 (observe infected_EMS-6 infected_EMS_6)
 (observe infected_det_EMS-6 infected_det_EMS_6)
@@ -1355,6 +1384,11 @@
 (observe symptomatic_mild_det_EMS-6 symptomatic_mild_det_EMS_6)
 (observe symptomatic_severe_det_EMS-6 symptomatic_severe_det_EMS_6)
 (observe recovered_det_EMS-6 recovered_det_EMS_6)
+
+(observe infectious_undet_EMS-6 infectious_undet_EMS_6)
+(observe infectious_det_EMS-6 infectious_det_EMS_6)
+(observe infectious_det_symp_EMS-6 infectious_det_symp_EMS_6)
+(observe infectious_det_AsP_EMS-6 infectious_det_AsP_EMS_6)
 
 (observe susceptible_EMS-7 S::EMS_7)
 (observe infected_EMS-7 infected_EMS_7)
@@ -1402,6 +1436,11 @@
 (observe symptomatic_severe_det_EMS-7 symptomatic_severe_det_EMS_7)
 (observe recovered_det_EMS-7 recovered_det_EMS_7)
 
+(observe infectious_undet_EMS-7 infectious_undet_EMS_7)
+(observe infectious_det_EMS-7 infectious_det_EMS_7)
+(observe infectious_det_symp_EMS-7 infectious_det_symp_EMS_7)
+(observe infectious_det_AsP_EMS-7 infectious_det_AsP_EMS_7)
+
 (observe susceptible_EMS-8 S::EMS_8)
 (observe infected_EMS-8 infected_EMS_8)
 (observe infected_det_EMS-8 infected_det_EMS_8)
@@ -1447,6 +1486,11 @@
 (observe symptomatic_mild_det_EMS-8 symptomatic_mild_det_EMS_8)
 (observe symptomatic_severe_det_EMS-8 symptomatic_severe_det_EMS_8)
 (observe recovered_det_EMS-8 recovered_det_EMS_8)
+
+(observe infectious_undet_EMS-8 infectious_undet_EMS_8)
+(observe infectious_det_EMS-8 infectious_det_EMS_8)
+(observe infectious_det_symp_EMS-8 infectious_det_symp_EMS_8)
+(observe infectious_det_AsP_EMS-8 infectious_det_AsP_EMS_8)
 
 (observe susceptible_EMS-9 S::EMS_9)
 (observe infected_EMS-9 infected_EMS_9)
@@ -1494,6 +1538,11 @@
 (observe symptomatic_severe_det_EMS-9 symptomatic_severe_det_EMS_9)
 (observe recovered_det_EMS-9 recovered_det_EMS_9)
 
+(observe infectious_undet_EMS-9 infectious_undet_EMS_9)
+(observe infectious_det_EMS-9 infectious_det_EMS_9)
+(observe infectious_det_symp_EMS-9 infectious_det_symp_EMS_9)
+(observe infectious_det_AsP_EMS-9 infectious_det_AsP_EMS_9)
+
 (observe susceptible_EMS-10 S::EMS_10)
 (observe infected_EMS-10 infected_EMS_10)
 (observe infected_det_EMS-10 infected_det_EMS_10)
@@ -1540,6 +1589,11 @@
 (observe symptomatic_severe_det_EMS-10 symptomatic_severe_det_EMS_10)
 (observe recovered_det_EMS-10 recovered_det_EMS_10)
 
+(observe infectious_undet_EMS-10 infectious_undet_EMS_10)
+(observe infectious_det_EMS-10 infectious_det_EMS_10)
+(observe infectious_det_symp_EMS-10 infectious_det_symp_EMS_10)
+(observe infectious_det_AsP_EMS-10 infectious_det_AsP_EMS_10)
+
 (observe susceptible_EMS-11 S::EMS_11)
 (observe infected_EMS-11 infected_EMS_11)
 (observe infected_det_EMS-11 infected_det_EMS_11)
@@ -1585,6 +1639,11 @@
 (observe symptomatic_mild_det_EMS-11 symptomatic_mild_det_EMS_11)
 (observe symptomatic_severe_det_EMS-11 symptomatic_severe_det_EMS_11)
 (observe recovered_det_EMS-11 recovered_det_EMS_11)
+
+(observe infectious_undet_EMS-11 infectious_undet_EMS_11)
+(observe infectious_det_EMS-11 infectious_det_EMS_11)
+(observe infectious_det_symp_EMS-11 infectious_det_symp_EMS_11)
+(observe infectious_det_AsP_EMS-11 infectious_det_AsP_EMS_11)
 
 
 
@@ -2185,111 +2244,7 @@
 (observe recovery_time_hosp_t_EMS-11 recovery_time_hosp_EMS_11)
 (time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_EMS_11@ ((recovery_time_hosp_EMS_11 @recovery_time_hosp_change1_EMS_11@) (Kr_h_EMS_11 (/ 1 @recovery_time_hosp_change1_EMS_11@))))
 
-
-(param Ki_back1_EMS_1 (+ Ki_red7_EMS_1 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_1 Ki_red7_EMS_1))))
-(param Ki_back2_EMS_1 (+ Ki_red7_EMS_1 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_1 Ki_red7_EMS_1))))
-(param Ki_back3_EMS_1 (+ Ki_red7_EMS_1 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_1 Ki_red7_EMS_1))))
-(param Ki_back4_EMS_1 (+ Ki_red7_EMS_1 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_1 Ki_red7_EMS_1))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_1 Ki_back1_EMS_1)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_1 Ki_back2_EMS_1)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_1 Ki_back3_EMS_1)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_1 Ki_back4_EMS_1)))
-        
-(param Ki_back1_EMS_2 (+ Ki_red7_EMS_2 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_2 Ki_red7_EMS_2))))
-(param Ki_back2_EMS_2 (+ Ki_red7_EMS_2 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_2 Ki_red7_EMS_2))))
-(param Ki_back3_EMS_2 (+ Ki_red7_EMS_2 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_2 Ki_red7_EMS_2))))
-(param Ki_back4_EMS_2 (+ Ki_red7_EMS_2 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_2 Ki_red7_EMS_2))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_2 Ki_back1_EMS_2)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_2 Ki_back2_EMS_2)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_2 Ki_back3_EMS_2)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_2 Ki_back4_EMS_2)))
-        
-(param Ki_back1_EMS_3 (+ Ki_red7_EMS_3 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_3 Ki_red7_EMS_3))))
-(param Ki_back2_EMS_3 (+ Ki_red7_EMS_3 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_3 Ki_red7_EMS_3))))
-(param Ki_back3_EMS_3 (+ Ki_red7_EMS_3 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_3 Ki_red7_EMS_3))))
-(param Ki_back4_EMS_3 (+ Ki_red7_EMS_3 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_3 Ki_red7_EMS_3))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_3 Ki_back1_EMS_3)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_3 Ki_back2_EMS_3)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_3 Ki_back3_EMS_3)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_3 Ki_back4_EMS_3)))
-        
-(param Ki_back1_EMS_4 (+ Ki_red7_EMS_4 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_4 Ki_red7_EMS_4))))
-(param Ki_back2_EMS_4 (+ Ki_red7_EMS_4 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_4 Ki_red7_EMS_4))))
-(param Ki_back3_EMS_4 (+ Ki_red7_EMS_4 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_4 Ki_red7_EMS_4))))
-(param Ki_back4_EMS_4 (+ Ki_red7_EMS_4 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_4 Ki_red7_EMS_4))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_4 Ki_back1_EMS_4)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_4 Ki_back2_EMS_4)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_4 Ki_back3_EMS_4)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_4 Ki_back4_EMS_4)))
-        
-(param Ki_back1_EMS_5 (+ Ki_red7_EMS_5 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_5 Ki_red7_EMS_5))))
-(param Ki_back2_EMS_5 (+ Ki_red7_EMS_5 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_5 Ki_red7_EMS_5))))
-(param Ki_back3_EMS_5 (+ Ki_red7_EMS_5 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_5 Ki_red7_EMS_5))))
-(param Ki_back4_EMS_5 (+ Ki_red7_EMS_5 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_5 Ki_red7_EMS_5))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_5 Ki_back1_EMS_5)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_5 Ki_back2_EMS_5)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_5 Ki_back3_EMS_5)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_5 Ki_back4_EMS_5)))
-        
-(param Ki_back1_EMS_6 (+ Ki_red7_EMS_6 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_6 Ki_red7_EMS_6))))
-(param Ki_back2_EMS_6 (+ Ki_red7_EMS_6 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_6 Ki_red7_EMS_6))))
-(param Ki_back3_EMS_6 (+ Ki_red7_EMS_6 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_6 Ki_red7_EMS_6))))
-(param Ki_back4_EMS_6 (+ Ki_red7_EMS_6 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_6 Ki_red7_EMS_6))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_6 Ki_back1_EMS_6)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_6 Ki_back2_EMS_6)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_6 Ki_back3_EMS_6)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_6 Ki_back4_EMS_6)))
-        
-(param Ki_back1_EMS_7 (+ Ki_red7_EMS_7 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_7 Ki_red7_EMS_7))))
-(param Ki_back2_EMS_7 (+ Ki_red7_EMS_7 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_7 Ki_red7_EMS_7))))
-(param Ki_back3_EMS_7 (+ Ki_red7_EMS_7 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_7 Ki_red7_EMS_7))))
-(param Ki_back4_EMS_7 (+ Ki_red7_EMS_7 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_7 Ki_red7_EMS_7))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_7 Ki_back1_EMS_7)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_7 Ki_back2_EMS_7)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_7 Ki_back3_EMS_7)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_7 Ki_back4_EMS_7)))
-        
-(param Ki_back1_EMS_8 (+ Ki_red7_EMS_8 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_8 Ki_red7_EMS_8))))
-(param Ki_back2_EMS_8 (+ Ki_red7_EMS_8 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_8 Ki_red7_EMS_8))))
-(param Ki_back3_EMS_8 (+ Ki_red7_EMS_8 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_8 Ki_red7_EMS_8))))
-(param Ki_back4_EMS_8 (+ Ki_red7_EMS_8 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_8 Ki_red7_EMS_8))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_8 Ki_back1_EMS_8)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_8 Ki_back2_EMS_8)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_8 Ki_back3_EMS_8)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_8 Ki_back4_EMS_8)))
-        
-(param Ki_back1_EMS_9 (+ Ki_red7_EMS_9 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_9 Ki_red7_EMS_9))))
-(param Ki_back2_EMS_9 (+ Ki_red7_EMS_9 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_9 Ki_red7_EMS_9))))
-(param Ki_back3_EMS_9 (+ Ki_red7_EMS_9 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_9 Ki_red7_EMS_9))))
-(param Ki_back4_EMS_9 (+ Ki_red7_EMS_9 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_9 Ki_red7_EMS_9))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_9 Ki_back1_EMS_9)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_9 Ki_back2_EMS_9)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_9 Ki_back3_EMS_9)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_9 Ki_back4_EMS_9)))
-        
-(param Ki_back1_EMS_10 (+ Ki_red7_EMS_10 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_10 Ki_red7_EMS_10))))
-(param Ki_back2_EMS_10 (+ Ki_red7_EMS_10 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_10 Ki_red7_EMS_10))))
-(param Ki_back3_EMS_10 (+ Ki_red7_EMS_10 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_10 Ki_red7_EMS_10))))
-(param Ki_back4_EMS_10 (+ Ki_red7_EMS_10 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_10 Ki_red7_EMS_10))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_10 Ki_back1_EMS_10)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_10 Ki_back2_EMS_10)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_10 Ki_back3_EMS_10)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_10 Ki_back4_EMS_10)))
-        
-(param Ki_back1_EMS_11 (+ Ki_red7_EMS_11 (* @reopening_multiplier_4@ 0.25 (- Ki_EMS_11 Ki_red7_EMS_11))))
-(param Ki_back2_EMS_11 (+ Ki_red7_EMS_11 (* @reopening_multiplier_4@ 0.50 (- Ki_EMS_11 Ki_red7_EMS_11))))
-(param Ki_back3_EMS_11 (+ Ki_red7_EMS_11 (* @reopening_multiplier_4@ 0.75 (- Ki_EMS_11 Ki_red7_EMS_11))))
-(param Ki_back4_EMS_11 (+ Ki_red7_EMS_11 (* @reopening_multiplier_4@ 1.00 (- Ki_EMS_11 Ki_red7_EMS_11))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_EMS_11 Ki_back1_EMS_11)))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_EMS_11 Ki_back2_EMS_11)))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_EMS_11 Ki_back3_EMS_11)))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_EMS_11 Ki_back4_EMS_11)))
-        
-(observe d_As_t d_As)
-(observe d_P_t d_P)
-
-
-(time-event contact_tracing_start @contact_tracing_start_1@ ( (reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ )(d_As @d_AsP_ct1@)(d_P @d_AsP_ct1@) ))
+;[INTERVENTIONS]
 ;[ADDITIONAL_TIMEEVENTS]
 
 

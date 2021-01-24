@@ -1,13 +1,13 @@
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -30,12 +30,6 @@ def parse_args():
         type=str,
         help="Local or NUCLUSTER",
         default="Local"
-    )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
     )
     return parser.parse_args()
 
@@ -82,7 +76,7 @@ def plot_main() :
 
     for d, exp_name in enumerate(exp_names) :
         df = load_sim_data(exp_name)
-        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+        df = df[df['date'].between(first_plot_day, last_plot_day)]
         df['symptomatic_census'] = df['symptomatic_mild'] + df['symptomatic_severe']
         df['ventilators'] = get_vents(df['crit_det'].values)
 
@@ -111,7 +105,7 @@ def plot_covidregions() :
 
         for d, exp_name in enumerate(exp_names) :
             df = load_sim_data(exp_name, region_suffix=region_suffix)
-            df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+            df = df[df['date'].between(first_plot_day, last_plot_day)]
             df['symptomatic_census'] = df['symptomatic_mild'] + df['symptomatic_severe']
             df['ventilators'] = get_vents(df['crit_det'].values)
 
@@ -169,7 +163,7 @@ def plot_covidregions_inone2(channels=None):
 
             for d, exp_name in enumerate(exp_names) :
                 df = load_sim_data(exp_name, region_suffix=region_suffix)
-                df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+                df = df[df['date'].between(first_plot_day, last_plot_day)]
                 plot_on_fig2(df, c, axes, channel=channel, color=palette[d],panel_heading = region_label,  label="")
 
             axes[-1].legend()
@@ -197,7 +191,7 @@ def plot_restoreregions_inone(channel='hospitalized') :
 
         for d, exp_name in enumerate(exp_names) :
             df = load_sim_data(exp_name, region_suffix=region_suffix)
-            df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+            df = df[df['date'].between(first_plot_day, last_plot_day)]
             plot_on_fig2(df, c, axes, channel=channel, color=palette[d],panel_heading = region_label,  label=exp_name)
 
         axes[-1].legend()
@@ -211,13 +205,13 @@ if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
-    first_plot_day = date(2020, 10, 1)
-    last_plot_day = date(2020, 12, 31)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
+
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:

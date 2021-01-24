@@ -1,12 +1,12 @@
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 from scenario_sets import *
@@ -58,8 +58,8 @@ if __name__ == '__main__' :
 
     mixed_scenarios = True
     simdate = "20200506"
-    plot_first_day = date(2020, 3, 1)
-    plot_last_day = date(2020, 10, 1)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
     channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     if mixed_scenarios == False :
@@ -98,10 +98,10 @@ if __name__ == '__main__' :
             df = load_sim_data(exp_name, input_sim_output_path = sim_output_path)
 
             df['ventilators'] = get_vents(df['crit_det'].values)
-            first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
+            first_day = pd.Timestamp(df['startdate'].unique()[0])
 
-            df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-            df = df[(df['date'] >= plot_first_day) & (df['date'] <= plot_last_day)]
+            df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
+            df = df[df['date'].between(plot_first_day, plot_last_day)]
             df['ems'] = ems
 
             fig_exp = plt.figure(figsize=(8, 8))

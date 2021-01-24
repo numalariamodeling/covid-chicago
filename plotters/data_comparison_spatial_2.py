@@ -6,14 +6,13 @@ Allow comparison of multiple simulation experiments
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
-
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
@@ -38,17 +37,11 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
 
     return parser.parse_args()
 
 
-def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscale=True, fname="trajectoriesDat.csv"):
+def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscale=False):
     if ems_nr == 0:
         region_suffix = "_All"
         region_label = 'Illinois'
@@ -56,13 +49,7 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
         region_suffix = "_EMS-" + str(ems_nr)
         region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
-
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
 
     ref_df = load_ref_df(ems_nr)
 
@@ -76,15 +63,12 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
         for d, exp_name in enumerate(exp_names):
 
             column_list = ['time', 'startdate', 'scen_num', 'sample_num', 'run_num']
-            outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
-                                'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                                'death_det_cumul', 'deaths']
 
             for chn in outcome_channels:
                 column_list.append(chn + "_EMS-" + str(ems_nr))
 
-            df = load_sim_data(exp_name, region_suffix, fname=fname, column_list=column_list)
-            df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+            df = load_sim_data(exp_name, region_suffix, column_list=column_list)
+            df = df[df['date'].between(first_day, last_day)]
             df['critical_with_suspected'] = df['critical']
             exp_name_label = str(exp_name.split('_')[-1])
 
@@ -127,20 +111,20 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
 if __name__ == '__main__':
 
     args = parse_args()
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
-    exp_names = args.exp_names
+    exp_names = ['20210120_IL_ae_base_v1_baseline','20210122_IL_quest_ki13']
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date(2020, 2, 13)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp('2020-02-13')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15,'days')
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
     for ems_nr in range(1, 12):
         print("Start processing region " + str(ems_nr))
+        #plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
+        #                 last_day=last_plot_day, logscale=True)
         plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
-                         last_day=last_plot_day, fname=trajectoriesName, logscale=True)
-        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
-                         last_day=last_plot_day, fname=trajectoriesName, logscale=False)
+                         last_day=last_plot_day, logscale=False)
+

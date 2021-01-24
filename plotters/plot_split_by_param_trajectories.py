@@ -7,7 +7,6 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 import seaborn as sns
 from processing_helpers import *
 
@@ -30,12 +29,6 @@ def parse_args():
         type=str,
         help="Local or NUCLUSTER",
         default = "Local"
-    )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
     )
     return parser.parse_args()
 
@@ -79,7 +72,7 @@ def plot_main(nscen=None, showLegend =True, channels=None) :
 
     for d, exp_name in enumerate(exp_names) :
         df = load_sim_data(exp_name)
-        df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+        df = df[df['date'].between(first_day, last_day)]
 
         if nscen != None :
             df = df[df['scen_num'].isin(nscen)]
@@ -168,13 +161,12 @@ if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    first_plot_day = date.today() - timedelta(300)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(300,'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15,'days')
 
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location="Local")
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 

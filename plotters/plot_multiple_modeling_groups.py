@@ -8,7 +8,6 @@ from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.patches as patches
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import load_capacity
 
@@ -30,11 +29,11 @@ def plot_with_ref_data(results_path, fname, channel='deaths') :
 
     ref_df = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Cleaned Data', 'daily_deaths_line_list_200515.csv'))
     ref_df['date'] = pd.to_datetime(ref_df['deceased_date'])
-    ref_df = ref_df[ref_df['date'] <= date(2020,5,5)]
+    ref_df = ref_df[ref_df['date'] <= pd.Timestamp('2020-05-05')]
 
     df = df[df['geography_modeled'] == 'illinois']
     df = df[df['scenario_name'] == 'baseline']
-    df = df[df['date'] <= date(2020,6,1)]
+    df = df[df['date'] <=  pd.Timestamp('2020-06-01')]
 
     fig = plt.figure(figsize=(5,4))
     ax = fig.gca()
@@ -146,7 +145,7 @@ def plot_overall_nums(results_path, fname, geog) :
     num_groups = len(df['model_team'].unique())
 
     df = df[df['geography_modeled'] == geog]
-    df = df[df['date'] >= date(2020,6,1)]
+    df = df[df['date'] >= pd.Timestamp('2020-06-01')]
 
     colors = {
         'uiuc' : '#00b9f2',
