@@ -363,7 +363,7 @@ The postprocessing includes the following steps below:
 - `8_runHospICUDeathsForecast.bat`  calls  [hosp_icu_deaths_forecast_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/hosp_icu_deaths_forecast_plotter.py)
 - `9_runCopyDeliverables.bat` calls [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Note: the changelog.txt will need manual editing to reflect new changes per week. 
 - `10_runIterationComparison.bat` calls [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
-- `11_runIterationComparison.bat` calls [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py) to clean up simulations (deletes per default single trajectories !! and optinally zips and/or deletes simulation folder
+- `11_runCleanUpAndZip.bat` calls [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py) to clean up simulations (deletes per default single trajectories !! and optinally zips and/or deletes simulation folder
 Note: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
 
 
@@ -401,9 +401,7 @@ Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulatio
 - `8_runHospICUDeathsForecast.sh` 
 - `9_runCopyDeliverables.sh`
 - `10_runIterationComparison.sh` 
-- `11_runIterationComparison.sh` 
-
-Zipping the simulation folder facilitiates copying file to Box or the local machine.
+- `11_runCleanUpAndZip.sh` 
 
 </p>
 </details>
