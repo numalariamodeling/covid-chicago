@@ -426,12 +426,12 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
-- 20210125 added ki_multiplier_12 and ki_multiplier_13 to emodl_generator_base, ran emodl_generator_base
+- 20210125 added ki_multiplier_12 and ki_multiplier_13 to emodl_generator_base, emodl_generator_age, emodl_generator_age_locale & ran 3 emodls
 - 20210120 updated parameter fit, added transmission multiplier 13, fixed bug in region populations, adjusted ki_multiplier_3a and ki_multiplier_3b to use means rather than range, adjusted region-specific recovery_time_crit_change1 and recovery_time_crit_change_time_1)
 - 20210114 updated parameter fit, activated transmission multiplier 12 for Dec, updated region populations
 - 20210106 added region specific recovery time critical
 - 20201216 updated parameter fit
-- 20201204 updated parameter fit, use muliplier 11 for decrease in trend
+- 20201204 updated parameter fit, use multiplier 11 for decrease in trend
 - 20201201 updated parameter fit
 - 20201130 added transmission multiplier 12
 - 20201124 updated parameter fit
