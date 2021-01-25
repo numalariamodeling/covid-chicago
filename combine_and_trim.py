@@ -180,7 +180,9 @@ def combine_trajectories_chunks(grp_list, useTrim=True):
             df_f = pd.read_csv(os.path.join(exp_path, file))
             df_cols = df_f.columns
             outcome_cols = [df_col for df_col in df_cols if grp_suffix in df_col or 'All' in df_col ]
-            outcomeVars_to_drop = [outcome_col for outcome_col in outcome_cols if not grp in outcome_col or not grp.replace(f'{grp_suffix}_',f'{grp_suffix}-')]
+            outcomeVars_to_drop = [outcome_col for outcome_col in outcome_cols if not grp in outcome_col]
+            outcomeVars_to_drop = [outcome_col for outcome_col in outcomeVars_to_drop if not grp.replace(f'{grp_suffix}_',f'{grp_suffix}-') in outcome_col]
+
             df_f = df_f.drop(outcomeVars_to_drop, axis=1)
             if df_all.empty:
                 df_all = df_f
@@ -216,7 +218,7 @@ if __name__ == '__main__':
     sim_out_dir = os.path.join(wdir, "simulation_output")
     if not os.path.exists(os.path.join(sim_out_dir,exp_name)):
         sim_out_dir = os.path.join(git_dir, "_temp")
-        print(f'Processing trajectories from {sim_out_dir}')
+    print(f'Processing trajectories from {sim_out_dir}')
 
     exp_path = os.path.join(sim_out_dir, exp_name)
     trajectories_path = os.path.join(exp_path, 'trajectories')
