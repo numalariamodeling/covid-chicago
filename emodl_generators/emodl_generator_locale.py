@@ -882,7 +882,7 @@ def write_interventions(grpList, total_string, scenarioName, change_testDelay=No
 (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_{grp} Ki_red10_{grp})))
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_{grp} Ki_red11_{grp})))
 (time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_{grp} Ki_red12_{grp})))
-(time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki_{grp} Ki_red12_{grp})))
+(time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki_{grp} Ki_red13_{grp})))
             """.format(grp=grp)
         ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
