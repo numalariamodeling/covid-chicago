@@ -29,7 +29,7 @@ The initialAs is added to the sample dataset and replaced in the emodl file.
 - time_to_hospitalization
 - ...
 
-These parameters take a random uniform distributio, but other np.random distributions could be defined as well. 
+These parameters take a random uniform distribution, but other np.random distributions could be defined as well.
 The number of samples drawn is specified in the experiment_setup_parameters, and full factorial among sample parameters is disabled.
 In order to repeat one of the sample parameters for all other variables, the parameter needs to be moved to the intervention_parameters.
 
@@ -39,7 +39,7 @@ In order to repeat one of the sample parameters for all other variables, the par
 ### [intervention_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L101)
 Intervention parameters or also scenario parameter  are repeated for each sample, fitting parameter and startdate.
 Most of the intervention parameter include time varying parameters to simulate an intervention put in place or being lifted at any time point. 
-Since time in the cms model depends on the startdate, the effect size parameter and time event parameter have been separated (see time_parameter below). 
+Since time in the cms model depends on the start date, the effect size parameter and time event parameter have been separated (see time_parameter below).
 Below are some examples: 
 
 Adding social distancing interventions
