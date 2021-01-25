@@ -426,7 +426,8 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
-- 20210114 updated parameter fit, activated transmission multiplier 12 for Dec, updated region populations, reduced recovery time As
+- 20210120 updated parameter fit, added transmission multiplier 13, fixed bug in region populations, adjusted ki_multiplier_3a and ki_multiplier_3b to use means rather than range, adjusted region-specific recovery_time_crit_change1 and recovery_time_crit_change_time_1)
+- 20210114 updated parameter fit, activated transmission multiplier 12 for Dec, updated region populations
 - 20210106 added region specific recovery time critical
 - 20201216 updated parameter fit
 - 20201204 updated parameter fit, use muliplier 11 for decrease in trend
