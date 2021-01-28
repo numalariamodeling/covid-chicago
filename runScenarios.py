@@ -224,18 +224,6 @@ def add_fixed_parameters_region_specific(df, config, region, age_bins):
     return df
 
 
-def add_computed_parameters(df):
-    """ Parameters that are computed from other parameters are computed and added to the parameters
-    dataframe.
-    """
-    df['fraction_dead'] = df['cfr'] / df['fraction_severe']
-    df['fraction_hospitalized'] = 1 - df['fraction_critical'] - df['fraction_dead']
-
-    ##If due to random sampling  time_to_detection > time_to_hospitalization, set to at least one day before hospitalization
-    ##df['time_to_detection'][df.time_to_detection > df.time_to_hospitalization] = df['time_to_hospitalization'][df.time_to_detection > df.time_to_hospitalization] -1
-
-    return df
-
 
 def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=True):
     """Append parameters to the DataFrame"""
@@ -275,7 +263,6 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
             df_copy = df.copy()
             df_copy['startdate'] = start_date
             df_copy = add_parameters(df_copy, "time_parameters", config, region, age_bins)
-            df_copy = add_computed_parameters(df_copy)
             dfs.append(df_copy)
 
         result = pd.concat(dfs, ignore_index=True)
