@@ -1,5 +1,8 @@
 fixed_parameters_global:
 sampled_parameters:
+  ###------------------------------------------------
+  ### MONTHLY TRANSMISSION MULTIPLIER ('mitigation effect sizes')
+  ###------------------------------------------------
   'ki_multiplier_3a':
     EMS_1:
       np.random: uniform
@@ -442,6 +445,9 @@ sampled_parameters:
     EMS_11:
       np.random: uniform
       function_kwargs: {'low': 0.110, 'high': 0.110}
+  ###------------------------------------------------
+  ### REGION-SPECIFIC PARAMETER UPDATE
+  ###------------------------------------------------
   'd_Sym':
     EMS_1:
       np.random: uniform
@@ -645,7 +651,10 @@ sampled_parameters:
       function_kwargs: {'low':0.10, 'high': 0.40}
     EMS_11:
       np.random: uniform
-      function_kwargs: {'low':0.10, 'high': 0.40}          
+      function_kwargs: {'low':0.10, 'high': 0.40}  
+  ###------------------------------------------------
+  ### REGION SPECIFIC LOS IN ICU
+  ###------------------------------------------------
   'recovery_time_crit_change1':
     EMS_1:
       np.random: uniform
@@ -680,6 +689,8 @@ sampled_parameters:
     EMS_11:
       np.random: uniform
       function_kwargs: {'low': 9, 'high': 9} 
+  ### --------- Time in timesteps since startdate ---------
+  ### (Note: introduces an error when using a different startdate!)
   'recovery_time_crit_change_time_1':
     EMS_1:
       np.random: uniform
@@ -714,3 +725,77 @@ sampled_parameters:
     EMS_11:
       np.random: uniform
       function_kwargs: {'low': 184, 'high': 184} 
+  ###------------------------------------------------
+  ### REGION SPECIFIC LOS IN NON-ICU 
+  ### (DEACTIVATED USING TIMESTEP BEYOND SIMULATION TIMEFRAME AS DEFAULT)
+  ###------------------------------------------------
+  'recovery_time_hosp_change1':
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low': 4, 'high': 6}
+  ### --------- Time in timesteps since startdate ---------
+  ### (Note: introduces an error when using a different startdate!)
+  'recovery_time_hosp_change_time_1':
+    EMS_1:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_2:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_3:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_4:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_5:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_6:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_7:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_8:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_9:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_10:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
+    EMS_11:
+      np.random: uniform
+      function_kwargs: {'low': 1000, 'high': 1000}
