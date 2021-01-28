@@ -336,9 +336,8 @@ sampled_parameters:
         - {'low': 0.247, 'high': 0.247}
         - {'low': 0.247, 'high': 0.247}
   ###------------------------------------------------
-  ### REGION SPECIFIC LOS
+  ### REGION SPECIFIC LOS IN ICU
   ###------------------------------------------------
-  ### Change relative of previous value, which is in range 8-10
   recovery_time_crit_change1:
     IL:
       expand_by_age: True
@@ -373,6 +372,42 @@ sampled_parameters:
         - {'low': 262, 'high': 262}
         - {'low': 262, 'high': 262}
         - {'low': 184, 'high': 184}
+  ###------------------------------------------------
+  ### REGION SPECIFIC LOS IN NON-ICU 
+  ### (DEACTIVATED USING TIMESTEP BEYOND SIMULATION TIMEFRAME AS DEFAULT)
+  ###------------------------------------------------
+  recovery_time_hosp_change1:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+        - {'low':4, 'high':6}
+  recovery_time_hosp_change_time_1:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
   ###------------------------------------------------
   ### REGION SPECIFIC INTERVENTION PARAMETERS
   ###------------------------------------------------
