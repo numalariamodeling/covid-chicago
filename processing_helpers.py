@@ -12,6 +12,19 @@ except NameError:
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths(Location=Location)
 
 
+def get_grp_list(exp_name,  input_wdir=None, input_sim_output_path =None):
+    input_wdir = input_wdir or wdir
+    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
+    sim_output_path = input_sim_output_path or sim_output_path_base
+
+    df_samples = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
+    N_cols = [col for col in df_samples.columns if 'N_' in col]
+    if len(N_cols) != 0:
+        grp_list = [col.replace('N_', '') for col in N_cols]
+    else:
+        grp_list = None
+    return grp_list
+
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                   input_sim_output_path =None, column_list=None, add_incidence=True,
                   select_traces=True, traces_to_keep_ratio=4, traces_to_keep_min=100) :
