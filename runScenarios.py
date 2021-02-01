@@ -420,14 +420,14 @@ def parse_args():
         type=str,
         help="Location where the simulation is being run.",
         choices=["Local", "NUCLUSTER"],
-        default=None,
+        default="Local",
     )
     parser.add_argument(
         "-r",
         "--region",
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
-        required=True
+        default='IL',
     )
     parser.add_argument(
         "-c",
@@ -436,14 +436,14 @@ def parse_args():
         help=("Config file (in YAML) containing the parameters to override the default config. "
               "This file should have the same structure as the default config. "
               "example: ./experiment_configs/sample_experiment.yaml "),
-        required=True
+        default="spatial_EMS_experiment.yaml",
     )
     parser.add_argument(
         "-e",
         "--emodl_template",
         type=str,
         help="Template emodl file to use",
-        default="extendedmodel.emodl"
+        default="extendedmodel_EMS.emodl"
     )
     parser.add_argument(
         "-cfg",
@@ -458,7 +458,7 @@ def parse_args():
         "--name_suffix",
         type=str,
         help="Adding custom suffix to the experiment name. Ignored if '--name' specified.",
-        default= f"_test_rn{str(today.microsecond)[-2:]}"
+        default= f"test_rn{str(today.microsecond)[-2:]}"
     )
 
     parser.add_argument(
