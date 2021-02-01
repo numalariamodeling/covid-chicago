@@ -87,10 +87,10 @@ def sum_nll(df_values, ref_df_values):
         print('ERROR: The simulation and reference arrays may not be the same length.')
         print('Length simulation: ' + str(len(df_values)))
         print('Length reference: ' + str(len(ref_df_values)))
-    len_inf = len(list(i for i in list(x) if i == float('inf')))
+    len_inf = len(list(i for i in list(x) if i == np.inf))
     if len_inf <= len(x)*0.9:
         x[np.abs(x) == np.inf] = 0
-    return np.nansum(x)
+    return np.sum(x)
 
 def rank_traces_nll(df, ems_nr, ref_df, weights_array=[1.0,1.0,1.0,1.0]):
     #Creation of rank_df
