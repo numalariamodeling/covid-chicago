@@ -1,8 +1,10 @@
 """
-Extract sampled paramaters of selected traces
+Extract sampled paramaters of selected traces and prepare simulation input files with fitted parameters
 Outputs:
 - 2 csvs with fitting paramerers for a) single best fit and b) n best fits
 - 2 csv with samples parameters that can be used as input csv for subsequent simulation (for a and b as above)
+- 1 emodl with fitting parameters renamed for each grp for next simulation
+- 2 batch files to submit run scenarios for either a) or b) from above
 """
 import argparse
 import os
@@ -56,8 +58,62 @@ def parse_args():
     return parser.parse_args()
 
 
+def modify_emodl_and_save(exp_name,output_path):
+    """Reads in emodl file and renames the parameters that had been identified in exact_sample_traces
+        with grp_suffix to have grp specific parameters.
+        Assumptions:
+        1 - each fitting parameters occurs once or twice the lengths as the defined groups (i.e. EMS-1 to 11)
+        2 - if parameters occur twice for each group, they do that in repeated order (i.e. EMS-1, EMS-1, EMS-2, EMS-2 ...)
+        3 - duplicated group names are not wanted and removed if accidentally added (i.e. EMS-1_EMS-1)
+    """
+    grp_list = get_grp_list(exp_name)
+    grp_suffix = grp_list[-1].split('_')[0]
+    param_cols = pd.read_csv(os.path.join(output_path, f'fitted_parameters_besttrace.csv')).columns
+    param_cols = [i for i in param_cols if grp_suffix in i]
+
+    param_cols_unique = param_cols
+    for grp in reversed(grp_list):
+        param_cols_unique = [col.replace(f'_{grp}', '') for col in param_cols_unique]
+    param_cols_unique = list(set(param_cols_unique))
+
+    emodl_name = [file for file in os.listdir(output_path) if 'emodl' in file][0].replace('.emodl','')
+    emodl_name_new = f'{emodl_name}_resim'
+
+    fin = open(os.path.join(output_path, f'{emodl_name}.emodl'), "rt")
+    emodl_txt = fin.read()
+    fin.close()
+    emodl_chunks = emodl_txt.split('@')
+
+    for col in param_cols_unique:
+        col_pos = []
+        for i, chunk in enumerate(emodl_chunks):
+            if col in chunk:
+                col_pos = col_pos + [i]
+
+        for i, pos in enumerate(col_pos):
+            #print(emodl_chunks[pos])
+            if len(col_pos) == len(grp_list):
+                emodl_chunks[pos] = f'{emodl_chunks[pos]}_{grp_list[i]}'
+            if len(col_pos) == len(grp_list)*2:
+                """assuming if occuring twice, its the same grp in two consecutive instances"""
+                grp_list_dup = [grp for grp in grp_list for i in range(2)]
+                emodl_chunks[pos] = f'{emodl_chunks[pos]}_{grp_list_dup[i]}'
+            #print(emodl_chunks[pos])
+
+    emodl_txt_new = '@'.join(emodl_chunks)
+    for grp in grp_list:
+        emodl_txt_new = emodl_txt_new.replace(f'{grp}_{grp}',f'{grp}')
+    fin = open(os.path.join(output_path, f'{emodl_name_new}.emodl'), "w")
+    fin.write(emodl_txt_new)
+    fin.close()
+
 
 def write_submission_file(trace_selection, r= 'IL'):
+    """Writes batch file that copies required input csvs and emodl to the corresponding location in git_dir
+       Assumptions:
+       Running location fixed to IL for spatial model (momentarily)
+       Works only on Location 'Local' (momentarily)
+    """
     emodl_name = [file for file in os.listdir(output_path) if 'emodl' in file][0].replace('.emodl','')
     yaml_file = [file for file in os.listdir(output_path) if 'yaml' in file][-1]  # placeholder
     sample_csv = f'sample_parameters_{trace_selection}.csv'
@@ -66,7 +122,7 @@ def write_submission_file(trace_selection, r= 'IL'):
 
     csv_from = os.path.join(output_path, sample_csv ).replace("/","\\")
     csv_to = os.path.join(git_dir,"experiment_configs","input_csv").replace ("/","\\")
-    emodl_from = os.path.join(output_path,emodl_name+".emodl")
+    emodl_from = os.path.join(output_path,emodl_name+"_resim.emodl")
     emodl_to = os.path.join(git_dir,"emodl",emodl_name+"_resim.emodl").replace("/","\\")
     file = open(os.path.join(output_path, 'bat', f'00_runScenarios_{trace_selection}.bat'), 'w')
     file.write(
@@ -75,7 +131,13 @@ def write_submission_file(trace_selection, r= 'IL'):
         f'cd {git_dir} \n python runScenarios.py -rl {Location} -r {r} -c {str(yaml_file)} -e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str} \npause')
     file.close()
 
-def extract_sample_traces(traces_to_keep_ratio, traces_to_keep_min,trace_to_run):
+def extract_sample_traces(exp_name,traces_to_keep_ratio, traces_to_keep_min):
+    """Identifies parameters that vary as fitting parameters and writes them out into csvs.
+       Combines fitting with sample parameters to simulate 'full' simulation.
+       Assumption:
+       Parameter that wish to no be grp specific were fixed
+       (could be aggregated before fitting, which needs to be edited together with trace_selection.py)
+    """
 
     df_samples = pd.read_csv(os.path.join(output_path, 'sampled_parameters.csv'))
     """Drop parameter columns that have equal values in all scenarios (rows) to assess fitted parameters"""
@@ -103,7 +165,10 @@ def extract_sample_traces(traces_to_keep_ratio, traces_to_keep_min,trace_to_run)
 
         df_samples_sub = pd.merge(how='left', left=rank_export_df[['scen_num','norm_rank']], left_on=['scen_num'], right=df_samples_sub, right_on=['scen_num'])
         df_samples_sub = df_samples_sub.sort_values(by=['norm_rank']).reset_index(drop=True)
-        df_samples_sub = df_samples_sub.drop(['scen_num','sample_num','norm_rank'], axis=1)
+        try:
+            df_samples_sub = df_samples_sub.drop(['scen_num', 'sample_num', 'norm_rank'], axis=1)
+        except:
+            df_samples_sub = df_samples_sub.drop(['scen_num', 'norm_rank'], axis=1)
         df_samples_sub.columns = df_samples_sub.columns + f'_{str(grp)}'
         df_samples_sub.columns = [col.replace( f'_{str(grp)}_{str(grp)}', f'_{str(grp)}') for col in df_samples_sub.columns ]
         df_samples_sub['row_num'] = df_samples_sub.index
@@ -132,27 +197,10 @@ def extract_sample_traces(traces_to_keep_ratio, traces_to_keep_min,trace_to_run)
     df_traces_n.to_csv(os.path.join(output_path, f'sample_parameters_ntraces{n_traces_to_keep}.csv'), index=False)
     df_traces_best.to_csv(os.path.join(output_path, f'sample_parameters_besttrace.csv'), index=False)
 
-    """Per default save and overwrite in experiment_configs/input_csv to run in next simulation"""
-    df_traces_n.to_csv(os.path.join(git_dir,'experiment_configs','input_csv', f'sample_parameters_ntraces.csv'), index=False)
-    df_traces_best.to_csv(os.path.join(git_dir,'experiment_configs','input_csv', f'sample_parameters_besttrace.csv'), index=False)
-
-    """ToDo expand below to be applicable to base and age model"""
-    #if len(grp_list) == 11 and grp_suffix == 'EMS':
-    #    r = 'IL'
-
-    trace_selections = ['besttrace', f'ntraces']
-    for trace_selection in trace_selections:
-        write_submission_file(trace_selection)
-
-    if trace_to_run is not None:
-        p0 = os.path.join(output_path, 'bat', f'runScenarios_{trace_to_run}.bat')
-        subprocess.call([p0])
-
-
 if __name__ == '__main__':
 
     args = parse_args()
-    stem = args.stem
+    stem = "20210128_IL_mr_quest_recoveryAs9kiscalefactor"
     Location = args.Location
     trace_to_run = args.trace_to_run
 
@@ -166,6 +214,16 @@ if __name__ == '__main__':
     for exp_name in exp_names:
         print(exp_name)
         output_path = os.path.join(wdir, 'simulation_output',exp_name)
-        for ems_nr in range(0,12):
-            print("Start processing region " + str(ems_nr))
-        extract_sample_traces(traces_to_keep_ratio=traces_to_keep_ratio,traces_to_keep_min=traces_to_keep_min,trace_to_run=trace_to_run)
+        extract_sample_traces(exp_name,traces_to_keep_ratio,traces_to_keep_min)
+        modify_emodl_and_save(exp_name, output_path)
+
+        """ToDo expand below to be applicable to base and age model"""
+        # if len(grp_list) == 11 and grp_suffix == 'EMS':
+        #    r = 'IL'
+        trace_selections = ['besttrace', f'ntraces']
+        for trace_selection in trace_selections:
+            write_submission_file(trace_selection,r = 'IL')
+
+        if trace_to_run is not None:
+            p0 = os.path.join(output_path, 'bat', f'runScenarios_{trace_to_run}.bat')
+            subprocess.call([p0])
