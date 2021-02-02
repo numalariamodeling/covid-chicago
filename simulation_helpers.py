@@ -184,7 +184,7 @@ def get_process_dict():
 
 
 def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
-                           exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
+                           Location, exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
 
 
     process_dict = get_process_dict()
@@ -215,6 +215,20 @@ echo end""")
             os.path.join(temp_exp_dir)
         ) + "\n ECHO end")
 
+        emodl_name = str([i for i in os.listdir(temp_exp_dir) if "emodl" in i][0]).replace('.emodl','')
+        emodl_from = os.path.join(sim_output_path, emodl_name + ".emodl")
+        emodl_to = os.path.join(git_dir, "emodl", emodl_name + "_resim.emodl").replace ("/","\\")
+        csv_from = os.path.join(sim_output_path, 'sampled_parameters.csv').replace("/", "\\")
+        csv_to = os.path.join(git_dir, "experiment_configs", "input_csv").replace("/", "\\")
+        git_dir = git_dir.replace("/","\\")
+        file = open(os.path.join(temp_exp_dir,'bat',  '00_copySampleParam_rerunScenarios.bat'), 'w')
+        file.write(f'copy {csv_from} {csv_to}\n'
+                   f'copy {emodl_from} {emodl_to}\n'
+                   f'cd {git_dir}\n'
+                   f'python runScenarios.py -rl {Location} -r IL -e {emodl_name}_resim.emodl '
+                   f'--exp-name {exp_name}_resim  --load_sample_parameters --sample_csv sampled_parameters.csv\n'
+                   'pause')
+        file.close()
 
         """ Postprocessing batch files """
         plotters_dir = os.path.join(git_dir, "plotters")

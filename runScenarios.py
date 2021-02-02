@@ -568,14 +568,14 @@ if __name__ == '__main__':
         submission_script=None
         if args.post_process == 'processForCivis':
             submission_script = 'submit_runSimulations_with_trace_selection.sh'
-        runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER',submission_script=submission_script )
+        runExp(trajectories_dir=temp_exp_dir, Location=Location,submission_script=submission_script )
 
     if Location == 'Local':
         generateSubmissionFile(
             nscen, exp_name, args.experiment_config,trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
-            exe_dir=exe_dir, docker_image=docker_image)
+            Location=Location, exe_dir=exe_dir, docker_image=docker_image)
 
-        runExp(trajectories_dir=trajectories_dir, Location='Local')
+        runExp(trajectories_dir=trajectories_dir, Location=Location)
 
         #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
         #                    temp_exp_dir=temp_exp_dir, deleteFiles=False)
