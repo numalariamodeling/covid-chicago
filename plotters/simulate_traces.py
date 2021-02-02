@@ -200,7 +200,7 @@ def extract_sample_traces(exp_name,traces_to_keep_ratio, traces_to_keep_min):
 if __name__ == '__main__':
 
     args = parse_args()
-    stem = "20210128_IL_mr_quest_recoveryAs9kiscalefactor"
+    stem = args.stem
     Location = args.Location
     trace_to_run = args.trace_to_run
 
