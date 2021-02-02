@@ -68,7 +68,7 @@ def write_submission_file(trace_selection, r= 'IL'):
     csv_to = os.path.join(git_dir,"experiment_configs","input_csv").replace ("/","\\")
     emodl_from = os.path.join(output_path,emodl_name+".emodl")
     emodl_to = os.path.join(git_dir,"emodl",emodl_name+"_resim.emodl").replace("/","\\")
-    file = open(os.path.join(output_path, 'bat', f'runScenarios_{trace_selection}.bat'), 'w')
+    file = open(os.path.join(output_path, 'bat', f'00_runScenarios_{trace_selection}.bat'), 'w')
     file.write(
         f'copy {csv_from} {csv_to}\n'
         f'copy {emodl_from} {emodl_to}\n'
