@@ -15,6 +15,7 @@ import subprocess
 sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
+from simulation_helpers import shell_header
 from sample_parameters import make_identifier, gen_combos
 
 def parse_args():
@@ -84,6 +85,7 @@ def modify_emodl_and_save(exp_name,output_path):
     fin.close()
     emodl_chunks = emodl_txt.split('@')
 
+    sample_cols=[]
     for col in param_cols_unique:
         col_pos = []
         for i, chunk in enumerate(emodl_chunks):
@@ -92,6 +94,8 @@ def modify_emodl_and_save(exp_name,output_path):
 
         for i, pos in enumerate(col_pos):
             #print(emodl_chunks[pos])
+            if len(col_pos) <len(grp_list):
+                sample_cols = sample_cols + [col]
             if len(col_pos) == len(grp_list):
                 emodl_chunks[pos] = f'{emodl_chunks[pos]}_{grp_list[i]}'
             if len(col_pos) == len(grp_list)*2:
@@ -132,13 +136,16 @@ def write_submission_file(trace_selection,Location, r= 'IL'):
             f'-e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str} \npause')
         file.close()
     if Location =='NUCLUSTER':
+        csv_from = csv_from.replace("\\","/")
+        csv_to = csv_to.replace("\\","/")
+        emodl_to = emodl_to.replace("\\","/")
         jobname = 'runFittedParamSim'
         header = shell_header(job_name=jobname)
         commands = f'\ncp {csv_from} {csv_to}\n' \
                    f'\ncp {emodl_from} {emodl_to}\n' \
                    f'\ncd {git_dir} \n python runScenarios.py -rl {Location} -r {r} -c {str(yaml_file)} ' \
                    f'-e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str}'
-        file = open(os.path.join(temp_exp_dir, f'00_runScenarios_{trace_selection}.sh'), 'w')
+        file = open(os.path.join(output_path,'sh', f'00_runScenarios_{trace_selection}.sh'), 'w')
         file.write(header + commands)
         file.close()
 
