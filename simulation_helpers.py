@@ -277,6 +277,25 @@ echo end""")
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[12]}.bat'), 'w')
             file.write(f'cd { os.path.join(git_dir, "nucluster")} \n python {list(process_dict.values())[12]}  --stem "{exp_name}" --del_trajectories --zip_dir  >> "{sim_output_path}/log/{list(process_dict.keys())[12]}.txt" \n')
 
+def shell_header(A='p30781',p='short',t='00:30:00',N=1,ntasks_per_node=1, memG=18,job_name='myjob', arrayJob=None):
+    header = f'#!/bin/bash\n' \
+             f'#SBATCH -A {A}\n' \
+             f'#SBATCH -p {p}\n' \
+             f'#SBATCH -t {t}\n' \
+             f'#SBATCH -N {N}\n' \
+             f'#SBATCH --ntasks-per-node={ntasks_per_node}\n' \
+             f'#SBATCH --mem={memG}G\n'\
+             f'#SBATCH --job-name="{job_name}"\n'
+    if arrayJob is not None:
+        array = arrayJob
+        err = '#SBATCH --error=log/arrayJob_%A_%a.err\n'
+        out = '#SBATCH --output=log/arrayJob_%A_%a.out\n'
+        header = header + array + err + out
+    else:
+        err = f'#SBATCH --error={job_name}.%j.err\n'
+        out = f'#SBATCH --output={job_name}.%j.out\n'
+        header = header + err + out
+    return header
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir,sim_output_path) :
     # Generic shell submission script that should run for all having access to  projects/p30781
@@ -285,24 +304,9 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     process_dict = get_process_dict()
 
     exp_name_short = exp_name[-20:]
-    header = '#!/bin/bash\n' \
-             '#SBATCH -A p30781\n' \
-             '#SBATCH -p short\n' \
-             '#SBATCH -t 00:30:00\n' \
-             '#SBATCH -N 1\n' \
-             '#SBATCH --ntasks-per-node=1\n' \
-             '#SBATCH --mem=18G'
-    header_post = '#!/bin/bash\n'\
-                  '#SBATCH -A p30781\n' \
-                  '#SBATCH -p short\n' \
-                  '#SBATCH -t 02:00:00\n' \
-                  '#SBATCH -N 1\n' \
-                  '#SBATCH --ntasks-per-node=1\n' \
-                  '#SBATCH --mem=64G'
-    jobname = f'\n#SBATCH --job-name="{exp_name_short}"'
-    array = f'\n#SBATCH --array=1-{str(scen_num)}'
-    err = '\n#SBATCH --error=log/arrayJob_%A_%a.err'
-    out = '\n#SBATCH --output=log/arrayJob_%A_%a.out'
+    array = f'#SBATCH --array=1-{str(scen_num)}\n'
+    header = shell_header(job_name=exp_name_short, arrayJob=array)
+    header_post = shell_header(t="02:00:00",memG=64, job_name=exp_name_short)
     module = '\n\nmodule load singularity'
     slurmID = '${SLURM_ARRAY_TASK_ID}'
     singularity = '\n\nsingularity exec -B /projects:/projects/ /software/singularity/images/singwine-v1.img wine ' \
@@ -310,7 +314,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
                   f'-c {git_dir}/_temp/{exp_name}/simulations/model_{slurmID}.cfg ' \
                   f'-m {git_dir}/_temp/{exp_name}/simulations/simulation_{slurmID}.emodl'
     file = open(os.path.join(trajectories_dir, 'runSimulations.sh'), 'w')
-    file.write(header + jobname + array + err + out + module + singularity)
+    file.write(header + module + singularity)
     file.close()
 
     plotters_dir = os.path.join(git_dir, "plotters")
@@ -325,7 +329,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'run_postprocessing.sh'), 'w')
-    file.write(header_post + jobname + err + out + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[3]} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -339,7 +343,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'run_postprocessing_with_trace_selection.sh'), 'w')
-    file.write(header_post + jobname + err + out + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot')
@@ -361,73 +365,73 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     """
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[0]}.sh'), 'w')
-    file.write(header_post + jobname + err + out + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"' \
                 ' --delete_simsfiles "True"'
     file = open(os.path.join(temp_exp_dir,'sh', '0_cleanupSimulations.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[1]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[1]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[2]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir,'sh', f'{list(process_dict.keys())[3]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[4]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir,  'sh',f'{list(process_dict.keys())[5]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[6]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[7]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[8]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[8]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[9]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[10]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[11]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[12]}.sh'), 'w')
-    file.write(header + jobname + err + out + pymodule + pycommand)
+    file.write(header + pymodule + pycommand)
     file.close()
 
     """

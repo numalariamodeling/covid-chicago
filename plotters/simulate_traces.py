@@ -108,11 +108,10 @@ def modify_emodl_and_save(exp_name,output_path):
     fin.close()
 
 
-def write_submission_file(trace_selection, r= 'IL'):
+def write_submission_file(trace_selection,Location, r= 'IL'):
     """Writes batch file that copies required input csvs and emodl to the corresponding location in git_dir
        Assumptions:
        Running location fixed to IL for spatial model (momentarily)
-       Works only on Location 'Local' (momentarily)
     """
     emodl_name = [file for file in os.listdir(output_path) if 'emodl' in file][0].replace('.emodl','')
     yaml_file = [file for file in os.listdir(output_path) if 'yaml' in file][-1]  # placeholder
@@ -124,12 +123,30 @@ def write_submission_file(trace_selection, r= 'IL'):
     csv_to = os.path.join(git_dir,"experiment_configs","input_csv").replace ("/","\\")
     emodl_from = os.path.join(output_path,emodl_name+"_resim.emodl")
     emodl_to = os.path.join(git_dir,"emodl",emodl_name+"_resim.emodl").replace("/","\\")
-    file = open(os.path.join(output_path, 'bat', f'00_runScenarios_{trace_selection}.bat'), 'w')
-    file.write(
-        f'copy {csv_from} {csv_to}\n'
-        f'copy {emodl_from} {emodl_to}\n'
-        f'cd {git_dir} \n python runScenarios.py -rl {Location} -r {r} -c {str(yaml_file)} -e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str} \npause')
-    file.close()
+    if Location =='Local':
+        file = open(os.path.join(output_path, 'bat', f'00_runScenarios_{trace_selection}.bat'), 'w')
+        file.write(
+            f'copy {csv_from} {csv_to}\n'
+            f'copy {emodl_from} {emodl_to}\n'
+            f'cd {git_dir} \n python runScenarios.py -rl {Location} -r {r} -c {str(yaml_file)} '
+            f'-e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str} \npause')
+        file.close()
+    if Location =='NUCLUSTER':
+        jobname = 'runFittedParamSim'
+        header = shell_header(job_name=jobname)
+        commands = f'\ncp {csv_from} {csv_to}\n' \
+                   f'\ncp {emodl_from} {emodl_to}\n' \
+                   f'\ncd {git_dir} \n python runScenarios.py -rl {Location} -r {r} -c {str(yaml_file)} ' \
+                   f'-e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str}'
+        file = open(os.path.join(temp_exp_dir, f'00_runScenarios_{trace_selection}.sh'), 'w')
+        file.write(header + commands)
+        file.close()
+
+        file = open(os.path.join(output_path, f'submit_runScenarios_{trace_selection}.sh'), 'w')
+        file.write(
+            f'cd {os.path.join(output_path,"sh")}\n'
+            f'sbatch 00_runScenarios_{trace_selection}.sh\n')
+        file.close()
 
 def extract_sample_traces(exp_name,traces_to_keep_ratio, traces_to_keep_min):
     """Identifies parameters that vary as fitting parameters and writes them out into csvs.
@@ -222,8 +239,12 @@ if __name__ == '__main__':
         #    r = 'IL'
         trace_selections = ['besttrace', f'ntraces']
         for trace_selection in trace_selections:
-            write_submission_file(trace_selection,r = 'IL')
+            write_submission_file(trace_selection,Location,r = 'IL')
 
+        """Submit simulations to run"""
         if trace_to_run is not None:
-            p0 = os.path.join(output_path, 'bat', f'runScenarios_{trace_to_run}.bat')
+            if Location =='Local':
+                p0 = os.path.join(output_path, 'bat', f'runScenarios_{trace_to_run}.bat')
+            if Location =='NUCLUSTER':
+                p0 = os.path.join(output_path, f'submit_runScenarios_{trace_selection}.sh')
             subprocess.call([p0])
