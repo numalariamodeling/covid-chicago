@@ -46,6 +46,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
             if os.path.exists(os.path.join(sim_output_path, fname)) == False:
                 fname = 'trajectoriesDat.csv'
 
+        print(f'Using {fname}')
         df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
         df.columns = df.columns.str.replace(region_suffix, '')
 
@@ -63,6 +64,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                 df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
     else :
         fname = 'trajectoriesDat.csv'
+        if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+            fname = 'trajectoriesDat_trim.csv'
+        print(f'Using {fname}')
         df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
 
     df = df.dropna()
