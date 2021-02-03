@@ -73,3 +73,5 @@ testrun/Package_install_progress.txt
 .Rhistory
 python
 Rfiles/.RData
+emodl/_SYNCAPP/
+experiment_configs/_SYNCAPP/
