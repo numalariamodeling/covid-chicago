@@ -60,6 +60,7 @@ def plot_sim(dat,suffix,channels) :
             suffix_nr ="illinois"
         capacity = load_capacity(suffix_nr)
 
+
         fig = plt.figure(figsize=(18, 12))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.07, hspace=0.15)
         palette = sns.color_palette('Set1', len(channels))
@@ -99,7 +100,7 @@ def load_and_plot_data(ems_region, savePlot=True) :
 
     df = load_sim_data(exp_name,region_suffix = region_suffix, column_list=column_list)
     df['ems'] = ems_region
-    df = df[df['date'].between(first_plot_day, last_plot_day)]
+
 
     df['ventilators'] = get_vents(df['crit_det'].values)
     df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
@@ -122,7 +123,7 @@ def load_and_plot_data(ems_region, savePlot=True) :
             adf = pd.merge(left=adf, right=mdf, on=['date', 'ems'])
 
     if savePlot :
-        plot_sim(adf, ems_region, channels=plotchannels)
+        plot_sim(adf, suffix=ems_region, channels=plotchannels)
 
     return adf
 
@@ -175,9 +176,7 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(60,'days')
-    
+
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
     
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]

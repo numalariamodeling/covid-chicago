@@ -56,7 +56,7 @@ def get_distributions(show_plot=False):
     return si_distrb, delay_distrb
 
 
-def rt_plot(df, first_day=None, last_day=None):
+def rt_plot(df, plotname,first_day=None, last_day=None):
     fig = plt.figure(figsize=(16, 8))
     fig.suptitle(x=0.5, y=0.989, t='Estimated time-varying reproductive number (Rt)')
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
@@ -93,9 +93,7 @@ def rt_plot(df, first_day=None, last_day=None):
         ax.axhline(y=1, color='black', linestyle='-')
         ax.set_ylim(rt_min, rt_max)
 
-    plotname = 'estimated_rt_by_covidregion_full'
-    if not first_day == None:
-        plotname = 'rt_by_covidregion_truncated'
+
     plt.savefig(os.path.join(plot_path, f'{plotname}.png'))
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
@@ -141,8 +139,7 @@ def run_Rt_estimation(smoothing_window, r_window_size):
         df_rt_all = df_rt_all.append(df_rt)
 
     df_rt_all.to_csv(os.path.join(exp_dir, 'rtNU.csv'), index=False)
-    rt_plot(df=df_rt_all, first_day=None, last_day=None)
-    rt_plot(df=df_rt_all, first_day=first_plot_day, last_day=last_plot_day)
+    rt_plot(df=df_rt_all, first_day=last_plot_day - pd.Timedelta(60,'days'), last_day=last_plot_day, plotname='rt_by_covidregion_truncated')
 
     if not 'rt_median' in df.columns:
         df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
@@ -156,23 +153,24 @@ def run_Rt_estimation(smoothing_window, r_window_size):
                               left_on=['date', 'geography_modeled'],
                               right_on=['date', 'geography_modeled'])
         df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
+    rt_plot(df=df_rt_all,plotname='estimated_rt_by_covidregion_full')
 
     return df_rt
 
 
 if __name__ == '__main__':
 
-    test_mode = False
+    test_mode = True
     if test_mode:
-        stem = '20210105_IL_mr_testrun'
+        stem = "20210203_IL_quest_baseline"
         Location = 'Local'
     else:
         args = parse_args()
         stem = args.stem
         Location = args.Location
 
-    first_plot_day = pd.Timestamp.today() - pd.Timedelta(30, 'days')
-    last_plot_day = pd.Timestamp.today() + pd.Timedelta(15, 'days')
+    first_plot_day = pd.Timestamp('2020-03-01')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(60,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
