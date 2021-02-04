@@ -852,6 +852,23 @@ class covidModel:
                 """.format(grp=grp)
             ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
+
+        bvariant_str_I = ""
+        for grp in self.grpList:
+            temp_str = """
+;COVID-19 B variant scenario
+(param Ki_bvariant_1_{grp} (* Ki_{grp} @bvariant_infectivity@ @bvariant_fracinfect@))
+(time-event ki_bvariant_change1 @today@ ((Ki_{grp} Ki_bvariant_1_{grp})))
+                        """.format(grp=grp)
+            bvariant_str_I = bvariant_str_I + temp_str
+
+
+        bvariant_str_II = """
+(param fracsevere_bvariant1 (* fraction_severe @bvariant_severity@))
+(time-event fracsevere_bvariant_change1 @today@ ((fraction_severe fracsevere_bvariant1) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
+        """
+        bvariant_str = bvariant_str_I + bvariant_str_II
+
         rollback_str = ""
         for grp in self.grpList:
             temp_str = """
@@ -1035,6 +1052,8 @@ class covidModel:
 
         fittedTimeEvents_str = param_change_str + ki_multiplier_change_str + d_Sym_change_str + LOS_change_str
 
+        if self.add_interventions == "bvariant":
+            total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + bvariant_str)
         if self.add_interventions == "interventionStop":
             total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + interventionSTOP_str)
         if self.add_interventions == "interventionSTOP_adj":
@@ -1164,6 +1183,7 @@ class covidModel:
         model_options = {'expandModel': ("uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"),
                          'observeLevel': ('primary', 'secondary', 'tertiary', 'all'),
                          'add_interventions': ("baseline",
+                                               "bvariant",
                                                "rollback",
                                                "reopen_rollback",
                                                "rollbacktriggered_delay",
