@@ -11,10 +11,10 @@ Rfiles/.Rproj.user/
 nucluster/errors/
 nucluster/outputs/
 emodl/
-!simplemodel_testing.emodl
-!README.md
-!nu_undergrad_ct.emodl
-!nu_undergrad.emodl
+!emodl/simplemodel_testing.emodl
+!emodl/README.md
+!emodl/nu_undergrad_ct.emodl
+!emodl/nu_undergrad.emodl
 *.png
 .Rproj.user
 testrun/log.txt
@@ -25,3 +25,5 @@ testrun/Package_install_progress.txt
 .Rhistory
 python
 Rfiles/.RData
+experiment_configs/input_csv/
+!experiment_configs/input_csv/sampled_parameters_means.csv
