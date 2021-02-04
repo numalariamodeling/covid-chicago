@@ -15,9 +15,6 @@ import seaborn as sns
 mpl.rcParams['pdf.fonttype'] = 42
 from processing_helpers import CI_50, CI_25, CI_75,CI_2pt5, CI_97pt5
 
-### GE added 04/10/20 to fix "wdir not defined error"
-#import sys
-#sys.path.append("C:\\Users\\garrett\\Documents\\GitHub\\covid-chicago") #added for the loadpaths for garrett
 from load_paths import load_box_paths
 datapath, projectpath, WDIR, EXE_DIR, GIT_DIR = load_box_paths()
 
@@ -446,8 +443,28 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     #file.close()
 
 
+def write_emodl(model,scenario,observeLevel, expandModel, trigger_channel, emodl_name):
+    if model =='base':
+        from emodl_generators.emodl_generator_base import covidModel
+    if model =='locale':
+        from emodl_generators.emodl_generator_locale import covidModel
+    if model =='age':
+        from emodl_generators.emodl_generator_age import covidModel
+    if model == 'agelocale':
+        from emodl_generators.emodl_generator_age_locale import covidModel
+
+    #covidModel.showOptions()
+    ml = covidModel(add_interventions=scenario,
+                    observeLevel=observeLevel,
+                    expandModel=expandModel,
+                    trigger_channel=trigger_channel,
+                    emodl_name=emodl_name)
+    emodl_name = ml.generate_emodl()
+    return f'{emodl_name}.emodl'
+
+
 def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml_dir, DEFAULT_CONFIG, experiment_config, temp_exp_dir=None,
-                         wdir=WDIR, git_dir=GIT_DIR): ## GE 04/10/20 added exp_name, emodl_dir,emodlname, cfg_dir here to fix exp_name not defined error
+                         wdir=WDIR, git_dir=GIT_DIR):
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
     # Create temporary folder for the simulation files
