@@ -67,19 +67,19 @@ class covidModel:
         species_str = species_str.replace("  ", " ")
 
         expand_testDelay_SymSys_str = """
-    (species Sym_preD_{grp} 0)
-    (species Sys_preD_{grp} 0)
+(species Sym_preD_{grp} 0)
+(species Sys_preD_{grp} 0)
     """.format(grp=grp)
 
 
         expand_testDelay_AsSymSys_str = """
-    (species As_preD_{grp} 0)
-    (species Sym_preD_{grp} 0)
-    (species Sym_det2a_{grp} 0)
-    (species Sym_det2b_{grp} 0)
-    (species Sys_preD_{grp} 0)
-    (species Sys_det3a_{grp} 0)
-    (species Sys_det3b_{grp} 0)
+(species As_preD_{grp} 0)
+(species Sym_preD_{grp} 0)
+(species Sym_det2a_{grp} 0)
+(species Sym_det2b_{grp} 0)
+(species Sys_preD_{grp} 0)
+(species Sys_det3a_{grp} 0)
+(species Sys_det3b_{grp} 0)
     """.format(grp=grp)
 
 
@@ -96,59 +96,59 @@ class covidModel:
         grp = str(grp)
 
         observe_primary_channels_str = """
-    (observe susceptible_{grp} S_{grp})
-    (observe infected_{grp} infected_{grp})
-    (observe recovered_{grp} recovered_{grp})
-    (observe infected_cumul_{grp} infected_cumul_{grp})
-    
-    (observe asymp_cumul_{grp} asymp_cumul_{grp} )
-    (observe asymp_det_cumul_{grp} asymp_det_cumul_{grp})
-    (observe symptomatic_mild_{grp} symptomatic_mild_{grp})
-    (observe symptomatic_severe_{grp} symptomatic_severe_{grp})
-    (observe symp_mild_cumul_{grp} symp_mild_cumul_{grp})
-    (observe symp_severe_cumul_{grp} symp_severe_cumul_{grp})
-    (observe symp_mild_det_cumul_{grp} symp_mild_det_cumul_{grp})
-    (observe symp_severe_det_cumul_{grp} symp_severe_det_cumul_{grp})
-    
-    (observe hosp_det_cumul_{grp} hosp_det_cumul_{grp} )
-    (observe hosp_cumul_{grp} hosp_cumul_{grp})
-    (observe detected_cumul_{grp} detected_cumul_{grp} )
-    
-    (observe crit_cumul_{grp} crit_cumul_{grp})
-    (observe crit_det_cumul_{grp} crit_det_cumul_{grp})
-    (observe death_det_cumul_{grp} death_det_cumul_{grp} )
-    
-    (observe deaths_det_{grp} D3_det3_{grp})
-    (observe deaths_{grp} deaths_{grp})
-    
-    (observe crit_det_{grp} crit_det_{grp})
-    (observe critical_{grp} critical_{grp})
-    (observe hosp_det_{grp} hosp_det_{grp})
-    (observe hospitalized_{grp} hospitalized_{grp})
+(observe susceptible_{grp} S_{grp})
+(observe infected_{grp} infected_{grp})
+(observe recovered_{grp} recovered_{grp})
+(observe infected_cumul_{grp} infected_cumul_{grp})
+
+(observe asymp_cumul_{grp} asymp_cumul_{grp} )
+(observe asymp_det_cumul_{grp} asymp_det_cumul_{grp})
+(observe symptomatic_mild_{grp} symptomatic_mild_{grp})
+(observe symptomatic_severe_{grp} symptomatic_severe_{grp})
+(observe symp_mild_cumul_{grp} symp_mild_cumul_{grp})
+(observe symp_severe_cumul_{grp} symp_severe_cumul_{grp})
+(observe symp_mild_det_cumul_{grp} symp_mild_det_cumul_{grp})
+(observe symp_severe_det_cumul_{grp} symp_severe_det_cumul_{grp})
+
+(observe hosp_det_cumul_{grp} hosp_det_cumul_{grp} )
+(observe hosp_cumul_{grp} hosp_cumul_{grp})
+(observe detected_cumul_{grp} detected_cumul_{grp} )
+
+(observe crit_cumul_{grp} crit_cumul_{grp})
+(observe crit_det_cumul_{grp} crit_det_cumul_{grp})
+(observe death_det_cumul_{grp} death_det_cumul_{grp} )
+
+(observe deaths_det_{grp} D3_det3_{grp})
+(observe deaths_{grp} deaths_{grp})
+
+(observe crit_det_{grp} crit_det_{grp})
+(observe critical_{grp} critical_{grp})
+(observe hosp_det_{grp} hosp_det_{grp})
+(observe hospitalized_{grp} hospitalized_{grp})
     """.format(grp=grp)
 
 
         observe_secondary_channels_str = """
-    (observe exposed_{grp} E_{grp})
-    
-    (observe asymptomatic_det_{grp} As_det1_{grp})
-    (observe asymptomatic_{grp} asymptomatic_{grp})
-    
-    (observe presymptomatic_{grp} presymptomatic_{grp})
-    (observe presymptomatic_det{grp} P_det_{grp} )
-    
-    (observe detected_{grp} detected_{grp})
-    
-    (observe symptomatic_mild_det_{grp} symptomatic_mild_det_{grp})
-    (observe symptomatic_severe_det_{grp} symptomatic_severe_det_{grp})
-    (observe recovered_det_{grp} recovered_det_{grp})
+(observe exposed_{grp} E_{grp})
+
+(observe asymptomatic_det_{grp} As_det1_{grp})
+(observe asymptomatic_{grp} asymptomatic_{grp})
+
+(observe presymptomatic_{grp} presymptomatic_{grp})
+(observe presymptomatic_det{grp} P_det_{grp} )
+
+(observe detected_{grp} detected_{grp})
+
+(observe symptomatic_mild_det_{grp} symptomatic_mild_det_{grp})
+(observe symptomatic_severe_det_{grp} symptomatic_severe_det_{grp})
+(observe recovered_det_{grp} recovered_det_{grp})
     """.format(grp=grp)
 
         observe_tertiary_channels_str = """
-    (observe infectious_undet_{grp} infectious_undet_{grp})
-    (observe infectious_det_{grp} infectious_det_{grp})
-    (observe infectious_det_symp_{grp} infectious_det_symp_{grp})
-    (observe infectious_det_AsP_{grp} infectious_det_AsP_{grp})
+(observe infectious_undet_{grp} infectious_undet_{grp})
+(observe infectious_det_{grp} infectious_det_{grp})
+(observe infectious_det_symp_{grp} infectious_det_symp_{grp})
+(observe infectious_det_AsP_{grp} infectious_det_AsP_{grp})
     """.format(grp=grp)
 
         if self.observeLevel == 'primary' :
@@ -166,92 +166,92 @@ class covidModel:
     def write_functions(self,grp):
         grp = str(grp)
         functions_str = """
-    (func presymptomatic_{grp}  (+ P_{grp} P_det_{grp}))
-    
-    (func hospitalized_{grp}  (+ H1_{grp} H2_{grp} H3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp}))
-    (func hosp_det_{grp}  (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp}))
-    (func critical_{grp} (+ C2_{grp} C3_{grp} C2_det3_{grp} C3_det3_{grp}))
-    (func crit_det_{grp} (+ C2_det3_{grp} C3_det3_{grp}))
-    (func deaths_{grp} (+ D3_{grp} D3_det3_{grp}))
-    (func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-    (func recovered_det_{grp} (+ RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-    
-    (func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
-    (func asymp_det_cumul_{grp} (+ As_det1_{grp} RAs_det1_{grp}))
-    
-    (func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
-    (func symp_mild_det_cumul_{grp} (+ symptomatic_mild_det_{grp} RSym_det2_{grp} ))
-    
-    (func symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-    (func symp_severe_det_cumul_{grp} (+ symptomatic_severe_det_{grp} hosp_det_{grp} crit_det_{grp} D3_det3_{grp}  RH1_det3_{grp} RC2_det3_{grp}))
-    
-    (func hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
-    (func hosp_det_cumul_{grp} (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp}  RH1_det3_{grp}  RC2_det3_{grp}))
-    (func crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2_{grp} RC2_det3_{grp}))
-    (func crit_det_cumul_{grp} (+ C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RC2_det3_{grp}))
-    (func detected_cumul_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
-    (func death_det_cumul_{grp} D3_det3_{grp} )
-    
-    (func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-    (func infected_det_{grp} (+ infectious_det_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-    (func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
+(func presymptomatic_{grp}  (+ P_{grp} P_det_{grp}))
+
+(func hospitalized_{grp}  (+ H1_{grp} H2_{grp} H3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp}))
+(func hosp_det_{grp}  (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp}))
+(func critical_{grp} (+ C2_{grp} C3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(func crit_det_{grp} (+ C2_det3_{grp} C3_det3_{grp}))
+(func deaths_{grp} (+ D3_{grp} D3_det3_{grp}))
+(func recovered_{grp} (+ RAs_{grp} RSym_{grp} RH1_{grp} RC2_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func recovered_det_{grp} (+ RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+
+(func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs_{grp} RAs_det1_{grp} ))
+(func asymp_det_cumul_{grp} (+ As_det1_{grp} RAs_det1_{grp}))
+
+(func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym_{grp} RSym_det2_{grp}))
+(func symp_mild_det_cumul_{grp} (+ symptomatic_mild_det_{grp} RSym_det2_{grp} ))
+
+(func symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func symp_severe_det_cumul_{grp} (+ symptomatic_severe_det_{grp} hosp_det_{grp} crit_det_{grp} D3_det3_{grp}  RH1_det3_{grp} RC2_det3_{grp}))
+
+(func hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1_{grp} RC2_{grp} RH1_det3_{grp} RC2_det3_{grp}))
+(func hosp_det_cumul_{grp} (+ H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp} D3_det3_{grp}  RH1_det3_{grp}  RC2_det3_{grp}))
+(func crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2_{grp} RC2_det3_{grp}))
+(func crit_det_cumul_{grp} (+ C2_det3_{grp} C3_det3_{grp} D3_det3_{grp} RC2_det3_{grp}))
+(func detected_cumul_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} C2_det3_{grp} C3_det3_{grp} RAs_det1_{grp} RSym_det2_{grp} RH1_det3_{grp} RC2_det3_{grp} D3_det3_{grp}))
+(func death_det_cumul_{grp} D3_det3_{grp} )
+
+(func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(func infected_det_{grp} (+ infectious_det_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+(func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))    
     """.format(grp=grp)
 
 
         expand_base_str = """
-    (func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
-    
-    (func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_det2_{grp}))
-    (func symptomatic_mild_det_{grp}  ( Sym_det2_{grp}))
-    
-    (func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_det3_{grp}))
-    (func symptomatic_severe_det_{grp}   ( Sys_det3_{grp}))
-    
-    (func detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-    
-    (func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
-    (func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
-    
-    (func infectious_det_symp_{grp} (+ Sym_det2_{grp} Sys_det3_{grp} ))
-    (func infectious_det_AsP_{grp} (+ As_det1_{grp} P_det_{grp}))
+(func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
+
+(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_det2_{grp}))
+(func symptomatic_mild_det_{grp}  ( Sym_det2_{grp}))
+
+(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_det3_{grp}))
+(func symptomatic_severe_det_{grp}   ( Sys_det3_{grp}))
+
+(func detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+
+(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
+
+(func infectious_det_symp_{grp} (+ Sym_det2_{grp} Sys_det3_{grp} ))
+(func infectious_det_AsP_{grp} (+ As_det1_{grp} P_det_{grp}))
     """.format(grp=grp)
 
 
         expand_testDelay_SymSys_str = """
-    (func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
-    
-    (func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2_{grp}))
-    (func symptomatic_mild_det_{grp}  (+  Sym_preD_{grp} Sym_det2_{grp}))
-    
-    (func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3_{grp}))
-    (func symptomatic_severe_det_{grp}  (+ Sys_preD_{grp} Sys_det3_{grp}))
-    
-    (func detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-    
-    (func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_preD_{grp} Sym_{grp} Sys_preD_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
-    (func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
-    
-    (func infectious_det_symp_{grp} (+ Sym_det2_{grp} Sys_det3_{grp} ))
-    (func infectious_det_AsP_{grp} (+ As_det1_{grp} P_det_{grp}))
+(func asymptomatic_{grp}  (+ As_{grp} As_det1_{grp}))
+
+(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2_{grp}))
+(func symptomatic_mild_det_{grp}  (+  Sym_preD_{grp} Sym_det2_{grp}))
+
+(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3_{grp}))
+(func symptomatic_severe_det_{grp}  (+ Sys_preD_{grp} Sys_det3_{grp}))
+
+(func detected_{grp} (+ As_det1_{grp} Sym_det2_{grp} Sys_det3_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+
+(func infectious_undet_{grp} (+ As_{grp} P_{grp} Sym_preD_{grp} Sym_{grp} Sys_preD_{grp} Sys_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2_{grp} Sys_det3_{grp} ))
+
+(func infectious_det_symp_{grp} (+ Sym_det2_{grp} Sys_det3_{grp} ))
+(func infectious_det_AsP_{grp} (+ As_det1_{grp} P_det_{grp}))
     """.format(grp=grp)
 
 
         expand_testDelay_AsSymSys_str = """
-    (func asymptomatic_{grp}  (+ As_preD_{grp} As_{grp} As_det1_{grp}))
-    
-    (func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2a_{grp} Sym_det2b_{grp}))
-    (func symptomatic_mild_det_{grp}  (+ Sym_preD_{grp} Sym_det2a_{grp} Sym_det2b_{grp}))
-    
-    (func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
-    (func symptomatic_severe_det_{grp}  (+ Sys_preD_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
-    
-    (func detected_{grp} (+ As_det1_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
-    
-    (func infectious_undet_{grp} (+ As_preD_{grp} As_{grp} P_{grp} Sym_{grp} Sym_preD_{grp} Sys_{grp} Sys_preD_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
-    (func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
-    
-    (func infectious_det_symp_{grp} (+ Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp} ))
-    (func infectious_det_AsP_{grp} (+ As_det1_{grp} P_det_{grp}))
+(func asymptomatic_{grp}  (+ As_preD_{grp} As_{grp} As_det1_{grp}))
+
+(func symptomatic_mild_{grp}  (+ Sym_{grp} Sym_preD_{grp} Sym_det2a_{grp} Sym_det2b_{grp}))
+(func symptomatic_mild_det_{grp}  (+ Sym_preD_{grp} Sym_det2a_{grp} Sym_det2b_{grp}))
+
+(func symptomatic_severe_{grp}  (+ Sys_{grp} Sys_preD_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
+(func symptomatic_severe_det_{grp}  (+ Sys_preD_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
+
+(func detected_{grp} (+ As_det1_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp} H1_det3_{grp} H2_det3_{grp} H3_det3_{grp} C2_det3_{grp} C3_det3_{grp}))
+
+(func infectious_undet_{grp} (+ As_preD_{grp} As_{grp} P_{grp} Sym_{grp} Sym_preD_{grp} Sys_{grp} Sys_preD_{grp} H1_{grp} H2_{grp} H3_{grp} C2_{grp} C3_{grp}))
+(func infectious_det_{grp} (+ As_det1_{grp} P_det_{grp} Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp}))
+
+(func infectious_det_symp_{grp} (+ Sym_det2a_{grp} Sym_det2b_{grp} Sys_det3a_{grp} Sys_det3b_{grp} ))
+(func infectious_det_AsP_{grp} (+ As_det1_{grp} P_det_{grp}))
     """.format(grp=grp)
 
 
@@ -376,61 +376,61 @@ class covidModel:
     # If Ki mix is defined, Ki here can be set to 0 in script that generates the simulation
     def write_params(self):
         params_str = """
-    (param time_to_infectious @time_to_infectious@)
-    (param time_to_symptoms @time_to_symptoms@)
-    (param time_to_hospitalization @time_to_hospitalization@)
-    (param time_to_death @time_to_death@)
-    (param recovery_time_asymp @recovery_time_asymp@)
-    (param recovery_time_mild @recovery_time_mild@)
-    (param recovery_time_crit @recovery_time_crit@)
-    (param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
-    (param d_As @d_As@)
-    (param d_P @d_P@)
-    (param d_Sym @d_Sym@)
-    (param d_Sys @d_Sys@)
-    (param Ki @Ki@)
-    (param Kr_a (/ 1 recovery_time_asymp))
-    (param Kr_m (/ 1 recovery_time_mild))
-    (param Kr_c (/ 1 recovery_time_crit))
-    (param Km (/ 1 time_to_death))
-    
-    (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) ))  
-    (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) ))
-    (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) )) 
-    (time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) )) 
-    (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) )) 
+(param time_to_infectious @time_to_infectious@)
+(param time_to_symptoms @time_to_symptoms@)
+(param time_to_hospitalization @time_to_hospitalization@)
+(param time_to_death @time_to_death@)
+(param recovery_time_asymp @recovery_time_asymp@)
+(param recovery_time_mild @recovery_time_mild@)
+(param recovery_time_crit @recovery_time_crit@)
+(param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
+(param d_As @d_As@)
+(param d_P @d_P@)
+(param d_Sym @d_Sym@)
+(param d_Sys @d_Sys@)
+(param Ki @Ki@)
+(param Kr_a (/ 1 recovery_time_asymp))
+(param Kr_m (/ 1 recovery_time_mild))
+(param Kr_c (/ 1 recovery_time_crit))
+(param Km (/ 1 time_to_death))
+
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@) ))  
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@) ))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@) )) 
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@) )) 
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@) )) 
     """
 
 
         expand_uniformtestDelay_str = """
-    (param time_D @time_to_detection@)
-    (param Ksym_D (/ 1 time_D))
-    (param Ksys_D (/ 1 time_D))
-    
-    (param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
+(param time_D @time_to_detection@)
+(param Ksym_D (/ 1 time_D))
+(param Ksys_D (/ 1 time_D))
+
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
     """
 
 
         expand_testDelay_SymSys_str = """
-    (param time_D_Sym @time_to_detection_Sym@)
-    (param time_D_Sys @time_to_detection_Sys@)
-    (param Ksym_D (/ 1 time_D_Sym))
-    (param Ksys_D (/ 1 time_D_Sys))
-    
-    (param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
+(param time_D_Sym @time_to_detection_Sym@)
+(param time_D_Sys @time_to_detection_Sys@)
+(param Ksym_D (/ 1 time_D_Sym))
+(param Ksys_D (/ 1 time_D_Sys))
+
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
     """
 
         expand_testDelay_AsSymSys_str = """
-    (param time_D_Sys @time_to_detection_Sys@)
-    (param Ksys_D (/ 1 time_D_Sys))
-    
-    (param time_D_Sym @time_to_detection_Sym@)
-    (param Ksym_D (/ 1 time_D_Sym))
-    (param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
-    
-    (param time_D_As @time_to_detection_As@)
-    (param Kl_D (/ 1 time_D_As))
-    (param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
+(param time_D_Sys @time_to_detection_Sys@)
+(param Ksys_D (/ 1 time_D_Sys))
+
+(param time_D_Sym @time_to_detection_Sym@)
+(param Ksym_D (/ 1 time_D_Sym))
+(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
+
+(param time_D_As @time_to_detection_As@)
+(param Kl_D (/ 1 time_D_As))
+(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
     """
 
 
@@ -453,59 +453,59 @@ class covidModel:
     def write_age_specific_param(self,grp):
         grp = str(grp)
         params_str =  """
-    (param fraction_severe_{grp} @fraction_severe_{grp}@)
-    (param Ksys{grp} (* fraction_severe_{grp} (/ 1 time_to_symptoms)))
-    (param Ksym{grp} (* (- 1 fraction_severe_{grp}) (/ 1 time_to_symptoms))) 
-    (param fraction_critical_{grp} @fraction_critical_{grp}@ )
-    
-    ; Direct input or calculate from cfr and fraction severe as in base emodl (negative counts!)
-    (param fraction_dead_{grp} @fraction_dead_{grp}@)
-    (param fraction_hospitalized_{grp} @fraction_hospitalized_{grp}@)
-    
-    (param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
-    (param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) time_to_infectious))
-    (param Ks{grp} (/ fraction_symptomatic_{grp}  time_to_infectious))
-    
-    (param recovery_time_hosp_{grp} @recovery_time_hosp_{grp}@)
-    (param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))
-    
-    (param time_to_critical_{grp} @time_to_critical_{grp}@)
-    (param Kc{grp}  (/ 1 time_to_critical_{grp}))
+(param fraction_severe_{grp} @fraction_severe_{grp}@)
+(param Ksys{grp} (* fraction_severe_{grp} (/ 1 time_to_symptoms)))
+(param Ksym{grp} (* (- 1 fraction_severe_{grp}) (/ 1 time_to_symptoms))) 
+(param fraction_critical_{grp} @fraction_critical_{grp}@ )
+
+; Direct input or calculate from cfr and fraction severe as in base emodl (negative counts!)
+(param fraction_dead_{grp} @fraction_dead_{grp}@)
+(param fraction_hospitalized_{grp} @fraction_hospitalized_{grp}@)
+
+(param fraction_symptomatic_{grp} @fraction_symptomatic_{grp}@)
+(param Kl{grp} (/ (- 1 fraction_symptomatic_{grp} ) time_to_infectious))
+(param Ks{grp} (/ fraction_symptomatic_{grp}  time_to_infectious))
+
+(param recovery_time_hosp_{grp} @recovery_time_hosp_{grp}@)
+(param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))
+
+(param time_to_critical_{grp} @time_to_critical_{grp}@)
+(param Kc{grp}  (/ 1 time_to_critical_{grp}))
     
     """.format(grp=grp)
 
         expand_base_str = """
-    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
     """.format(grp=grp)
 
         expand_uniformtestDelay_str = """
-    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-    (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
-    (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
-    (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D)))
     """.format(grp=grp)
 
 
         expand_testDelay_SymSys_str = """
-    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-    (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
-    (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
-    (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
     """.format(grp=grp)
 
         expand_testDelay_AsSymSys_str = """
-    (param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
-    (param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
-    (param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
-    (param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
-    (param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
-    (param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
+(param Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization))
+(param Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization ))
+(param Kh3{grp} (/ fraction_dead_{grp}  time_to_hospitalization))
+(param Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys)))
+(param Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+(param Kh3_D{grp} (/ fraction_dead_{grp}  (- time_to_hospitalization time_D_Sys)))
     """.format(grp=grp)
 
         if self.expandModel == None:
@@ -523,9 +523,9 @@ class covidModel:
 
     def write_observed_param(self):
         observed_param_str = """  
-    (observe Ki_t Ki)
-    (observe d_Sym_t d_Sym)
-    (observe d_Sys_t d_Sys)
+(observe Ki_t Ki)
+(observe d_Sym_t d_Sym)
+(observe d_Sys_t d_Sys)
     """
 
     ## If age specific parameters would change over time and should be tracked
@@ -643,25 +643,25 @@ class covidModel:
 
     def write_exposure_reaction4():
         exposure_reaction_str = """  
-    (reaction exposure_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (+ (* C1_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C1_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C1_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C1_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
-    (reaction exposure_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (+ (* C2_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C2_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C2_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C2_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
-    (reaction exposure_age40to59 (S_age40to59) (E_age40to59) (* Ki S_age40to59 (+ (* C3_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C3_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C3_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C3_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
-    (reaction exposure_age60to100 (S_age60to100) (E_age60to100) (* Ki S_age60to100 (+ (* C4_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C4_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C4_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C4_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
-    
+(reaction exposure_age0to19 (S_age0to19) (E_age0to19) (* Ki S_age0to19 (+ (* C1_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C1_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C1_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C1_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
+(reaction exposure_age20to39 (S_age20to39) (E_age20to39) (* Ki S_age20to39 (+ (* C2_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C2_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C2_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C2_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
+(reaction exposure_age40to59 (S_age40to59) (E_age40to59) (* Ki S_age40to59 (+ (* C3_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C3_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C3_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C3_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
+(reaction exposure_age60to100 (S_age60to100) (E_age60to100) (* Ki S_age60to100 (+ (* C4_1 (/ (+ infectious_undet_age0to19 (* infectious_det_age0to19 reduced_inf_of_det_cases)) N_age0to19)) (* C4_2 (/ (+ infectious_undet_age20to39 (* infectious_det_age20to39 reduced_inf_of_det_cases)) N_age20to39)) (* C4_3 (/ (+ infectious_undet_age40to59 (* infectious_det_age40to59 reduced_inf_of_det_cases)) N_age40to59)) (* C4_4 (/ (+ infectious_undet_age60to100 (* infectious_det_age60to100 reduced_inf_of_det_cases)) N_age60to100)))))
+
     """
         return exposure_reaction_str
 
 
     def write_exposure_reaction8():
         exposure_reaction_str = """  
-    (reaction exposure_age0to9 (S_age0to9) (E_age0to9) (* Ki S_age0to9 (+ (* C1_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C1_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C1_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C1_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C1_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C1_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C1_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C1_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
-    (reaction exposure_age10to19 (S_age10to19) (E_age10to19) (* Ki S_age10to19 (+ (* C2_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C2_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C2_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C2_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C2_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C2_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C2_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C2_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
-    (reaction exposure_age20to29 (S_age20to29) (E_age20to29) (* Ki S_age20to29 (+ (* C3_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C3_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C3_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C3_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C3_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C3_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C3_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C3_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
-    (reaction exposure_age30to39 (S_age30to39) (E_age30to39) (* Ki S_age30to39 (+ (* C4_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C4_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C4_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C4_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C4_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C4_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C4_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C4_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
-    (reaction exposure_age40to49 (S_age40to49) (E_age40to49) (* Ki S_age40to49 (+ (* C5_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C5_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C5_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C5_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C5_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C5_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C5_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C5_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
-    (reaction exposure_age50to59 (S_age50to59) (E_age50to59) (* Ki S_age50to59 (+ (* C6_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C6_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C6_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C6_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C6_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C6_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C6_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C6_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
-    (reaction exposure_age60to69 (S_age60to69) (E_age60to69) (* Ki S_age60to69 (+ (* C7_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C7_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C7_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C7_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C7_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C7_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C7_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C7_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
-    (reaction exposure_age70to100 (S_age70to100) (E_age70to100) (* Ki S_age70to100 (+ (* C8_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C8_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C8_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C8_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C8_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C8_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C8_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C8_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age0to9 (S_age0to9) (E_age0to9) (* Ki S_age0to9 (+ (* C1_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C1_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C1_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C1_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C1_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C1_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C1_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C1_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age10to19 (S_age10to19) (E_age10to19) (* Ki S_age10to19 (+ (* C2_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C2_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C2_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C2_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C2_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C2_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C2_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C2_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age20to29 (S_age20to29) (E_age20to29) (* Ki S_age20to29 (+ (* C3_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C3_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C3_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C3_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C3_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C3_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C3_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C3_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age30to39 (S_age30to39) (E_age30to39) (* Ki S_age30to39 (+ (* C4_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C4_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C4_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C4_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C4_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C4_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C4_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C4_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age40to49 (S_age40to49) (E_age40to49) (* Ki S_age40to49 (+ (* C5_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C5_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C5_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C5_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C5_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C5_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C5_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C5_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age50to59 (S_age50to59) (E_age50to59) (* Ki S_age50to59 (+ (* C6_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C6_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C6_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C6_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C6_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C6_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C6_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C6_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age60to69 (S_age60to69) (E_age60to69) (* Ki S_age60to69 (+ (* C7_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C7_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C7_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C7_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C7_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C7_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C7_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C7_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
+(reaction exposure_age70to100 (S_age70to100) (E_age70to100) (* Ki S_age70to100 (+ (* C8_1 (/ (+ infectious_undet_age0to9 (* infectious_det_age0to9 reduced_inf_of_det_cases)) N_age0to9)) (* C8_2 (/ (+ infectious_undet_age10to19 (* infectious_det_age10to19 reduced_inf_of_det_cases)) N_age10to19)) (* C8_3 (/ (+ infectious_undet_age20to29 (* infectious_det_age20to29 reduced_inf_of_det_cases)) N_age20to29)) (* C8_4 (/ (+ infectious_undet_age30to39 (* infectious_det_age30to39 reduced_inf_of_det_cases)) N_age30to39)) (* C8_5 (/ (+ infectious_undet_age40to49 (* infectious_det_age40to49 reduced_inf_of_det_cases)) N_age40to49)) (* C8_6 (/ (+ infectious_undet_age50to59 (* infectious_det_age50to59 reduced_inf_of_det_cases)) N_age50to59)) (* C8_7 (/ (+ infectious_undet_age60to69 (* infectious_det_age60to69 reduced_inf_of_det_cases)) N_age60to69)) (* C8_8 (/ (+ infectious_undet_age70to100 (* infectious_det_age70to100 reduced_inf_of_det_cases)) N_age70to100)))))
     """
         return exposure_reaction_str
 
@@ -670,136 +670,136 @@ class covidModel:
         grp = str(grp)
 
         reaction_str_III = """
-    (reaction recovery_H1_{grp}   (H1_{grp})   (RH1_{grp})   (* Kr_h{grp} H1_{grp}))
-    (reaction recovery_C2_{grp}   (C2_{grp})   (RC2_{grp})   (* Kr_c C2_{grp}))
-    (reaction recovery_H1_det3_{grp}   (H1_det3_{grp})   (RH1_det3_{grp})   (* Kr_h{grp} H1_det3_{grp}))
-    (reaction recovery_C2_det3_{grp}   (C2_det3_{grp})   (RC2_det3_{grp})   (* Kr_c C2_det3_{grp}))
+(reaction recovery_H1_{grp}   (H1_{grp})   (RH1_{grp})   (* Kr_h{grp} H1_{grp}))
+(reaction recovery_C2_{grp}   (C2_{grp})   (RC2_{grp})   (* Kr_c C2_{grp}))
+(reaction recovery_H1_det3_{grp}   (H1_det3_{grp})   (RH1_det3_{grp})   (* Kr_h{grp} H1_det3_{grp}))
+(reaction recovery_C2_det3_{grp}   (C2_det3_{grp})   (RC2_det3_{grp})   (* Kr_c C2_det3_{grp}))
         """.format(grp=grp)
 
         expand_base_str = """
-    (reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
-    (reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
-    (reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp} (- 1 d_P)))
-    (reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp} E_{grp} d_P))
-    
-    (reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym{grp} P_{grp} (- 1 d_Sym)))
-    (reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_{grp} d_Sym))
-    (reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys{grp} P_{grp} (- 1 d_Sys)))
-    (reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_{grp} d_Sys))
-    
-    (reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_det_{grp}))
-    (reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_det_{grp} ))
-    
-    (reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1{grp} Sys_{grp}))
-    (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2{grp} Sys_{grp}))
-    (reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3{grp} Sys_{grp}))
-    (reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
-    (reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
-    (reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
-    
-    (reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1{grp} Sys_det3_{grp}))
-    (reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3_{grp}))
-    (reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3_{grp}))
-    (reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
-    (reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
-    (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
-    
-    (reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
-    (reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
-    
-    (reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m  Sym_{grp}))
-    (reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2_{grp}))
+(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
+(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp} (- 1 d_P)))
+(reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp} E_{grp} d_P))
+
+(reaction mild_symptomatic_undet_{grp} (P_{grp})  (Sym_{grp}) (* Ksym{grp} P_{grp} (- 1 d_Sym)))
+(reaction mild_symptomatic_det_{grp} (P_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_{grp} d_Sym))
+(reaction severe_symptomatic_undet_{grp} (P_{grp})  (Sys_{grp})  (* Ksys{grp} P_{grp} (- 1 d_Sys)))
+(reaction severe_symptomatic_det_{grp} (P_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_{grp} d_Sys))
+
+(reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2_{grp}) (* Ksym{grp} P_det_{grp}))
+(reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3_{grp})  (* Ksys{grp} P_det_{grp} ))
+
+(reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1{grp} Sys_{grp}))
+(reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2{grp} Sys_{grp}))
+(reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3{grp} Sys_{grp}))
+(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
+(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
+(reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
+
+(reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1{grp} Sys_det3_{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3_{grp}))
+(reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3_{grp}))
+(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
+(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
+(reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
+
+(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
+(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
+
+(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m  Sym_{grp}))
+(reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2_{grp}))
     """.format(grp=grp)
 
 
         expand_testDelay_SymSys_str = """
-    (reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
-    (reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
-    (reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp}))
-    
-    ; developing symptoms - same time to symptoms as in master emodl
-    (reaction mild_symptomatic_{grp} (P_{grp})  (Sym_preD_{grp}) (* Ksym{grp} P_{grp}))
-    (reaction severe_symptomatic_{grp} (P_{grp})  (Sys_preD_{grp})  (* Ksys{grp} P_{grp}))
-    
-    ; never detected 
-    (reaction mild_symptomatic_undet_{grp} (Sym_preD_{grp})  (Sym_{grp}) (* Ksym_D Sym_preD_{grp} (- 1 d_Sym)))
-    (reaction severe_symptomatic_undet_{grp} (Sys_preD_{grp})  (Sys_{grp})  (* Ksys_D Sys_preD_{grp} (- 1 d_Sys)))
-    
-    ; new detections  - time to detection is substracted from hospital time
-    (reaction mild_symptomatic_det_{grp} (Sym_preD_{grp})  (Sym_det2_{grp}) (* Ksym_D Sym_preD_{grp} d_Sym))
-    (reaction severe_symptomatic_det_{grp} (Sys_preD_{grp})  (Sys_det3_{grp})  (* Ksys_D Sys_preD_{grp} d_Sys))
-    
-    (reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1_D{grp} Sys_{grp}))
-    (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2_D{grp} Sys_{grp}))
-    (reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3_D{grp} Sys_{grp}))
-    (reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
-    (reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
-    (reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
-    
-    (reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1_D{grp} Sys_det3_{grp}))
-    (reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2_D{grp} Sys_det3_{grp}))
-    (reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3_D{grp} Sys_det3_{grp}))
-    (reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
-    (reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
-    (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
-    
-    (reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
-    (reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
-    (reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m_D  Sym_{grp}))
-    (reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m_D  Sym_det2_{grp}))
+(reaction infection_asymp_undet_{grp}  (E_{grp})   (As_{grp})   (* Kl{grp} E_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_det1_{grp})   (* Kl{grp} E_{grp} d_As))
+(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp} E_{grp}))
+
+; developing symptoms - same time to symptoms as in master emodl
+(reaction mild_symptomatic_{grp} (P_{grp})  (Sym_preD_{grp}) (* Ksym{grp} P_{grp}))
+(reaction severe_symptomatic_{grp} (P_{grp})  (Sys_preD_{grp})  (* Ksys{grp} P_{grp}))
+
+; never detected 
+(reaction mild_symptomatic_undet_{grp} (Sym_preD_{grp})  (Sym_{grp}) (* Ksym_D Sym_preD_{grp} (- 1 d_Sym)))
+(reaction severe_symptomatic_undet_{grp} (Sys_preD_{grp})  (Sys_{grp})  (* Ksys_D Sys_preD_{grp} (- 1 d_Sys)))
+
+; new detections  - time to detection is substracted from hospital time
+(reaction mild_symptomatic_det_{grp} (Sym_preD_{grp})  (Sym_det2_{grp}) (* Ksym_D Sym_preD_{grp} d_Sym))
+(reaction severe_symptomatic_det_{grp} (Sys_preD_{grp})  (Sys_det3_{grp})  (* Ksys_D Sys_preD_{grp} d_Sys))
+
+(reaction hospitalization_1_{grp}   (Sys_{grp})   (H1_{grp})   (* Kh1_D{grp} Sys_{grp}))
+(reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2_D{grp} Sys_{grp}))
+(reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3_D{grp} Sys_{grp}))
+(reaction critical_2_{grp}   (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
+(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
+(reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
+
+(reaction hospitalization_1_det_{grp}   (Sys_det3_{grp})   (H1_det3_{grp})   (* Kh1_D{grp} Sys_det3_{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3_{grp})   (H2_det3_{grp})   (* Kh2_D{grp} Sys_det3_{grp}))
+(reaction hospitalization_3_det_{grp}   (Sys_det3_{grp})   (H3_det3_{grp})   (* Kh3_D{grp} Sys_det3_{grp}))
+(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
+(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
+(reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
+
+(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a As_{grp}))
+(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a As_det1_{grp}))
+(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m_D  Sym_{grp}))
+(reaction recovery_Sym_det2_{grp}   (Sym_det2_{grp})   (RSym_det2_{grp})   (* Kr_m_D  Sym_det2_{grp}))
     
     """.format(grp=grp)
 
 
         expand_testDelay_AsSymSys_str = """
-    (reaction infection_asymp_det_{grp}  (E_{grp})   (As_preD_{grp})   (* Kl{grp} E_{grp}))
-    (reaction infection_asymp_undet_{grp}  (As_preD_{grp})   (As_{grp})   (* Kl_D As_preD_{grp} (- 1 d_As)))
-    (reaction infection_asymp_det_{grp}  (As_preD_{grp})   (As_det1_{grp})   (* Kl_D As_preD_{grp} d_As))
-    
-    (reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp}  E_{grp} (- 1 d_P)))
-    (reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp}  E_{grp} d_P))
-    
-    ; developing symptoms - same time to symptoms as in master emodl
-    (reaction mild_symptomatic_{grp} (P_{grp})  (Sym_preD_{grp}) (* Ksym{grp} P_{grp}))
-    (reaction severe_symptomatic_{grp} (P_{grp})  (Sys_preD_{grp})  (* Ksys{grp} P_{grp}))
-    
-    ; never detected 
-    (reaction mild_symptomatic_undet_{grp} (Sym_preD_{grp})  (Sym_{grp}) (* Ksym_D Sym_preD_{grp} (- 1 d_Sym)))
-    (reaction severe_symptomatic_undet_{grp} (Sys_preD_{grp})  (Sys_{grp})  (* Ksys_D Sys_preD_{grp} (- 1 d_Sys)))
-    
-    ; new detections  - time to detection is subtracted from hospital time
-    (reaction mild_symptomatic_det_{grp} (Sym_preD_{grp})  (Sym_det2a_{grp}) (* Ksym_D Sym_preD_{grp} d_Sym))
-    (reaction severe_symptomatic_det_{grp} (Sys_preD_{grp})  (Sys_det3a_{grp})  (* Ksys_D Sys_preD_{grp} d_Sys))
-    
-    ; developing symptoms - already detected, same time to symptoms as in master emodl
-    (reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2b_{grp}) (* Ksym{grp}  P_det_{grp}))
-    (reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3b_{grp})  (* Ksys{grp}  P_det_{grp} ))
-    
-    (reaction hospitalization_1_{grp}  (Sys_{grp})   (H1_{grp})   (* Kh1_D{grp} Sys_{grp}))
-    (reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2_D{grp} Sys_{grp}))
-    (reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3_D{grp} Sys_{grp}))
-    (reaction critical_2_{grp}  (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
-    (reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
-    (reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
-    
-    (reaction hospitalization_1_det_{grp}   (Sys_det3a_{grp})   (H1_det3_{grp})   (* Kh1_D{grp} Sys_det3a_{grp}))
-    (reaction hospitalization_2_det_{grp}   (Sys_det3a_{grp})   (H2_det3_{grp})   (* Kh2_D{grp} Sys_det3a_{grp}))
-    (reaction hospitalization_3_det_{grp}   (Sys_det3a_{grp})   (H3_det3_{grp})   (* Kh3_D{grp} Sys_det3a_{grp}))
-    
-    (reaction hospitalization_1_det_{grp}   (Sys_det3b_{grp})   (H1_det3_{grp})   (* Kh1{grp} Sys_det3b_{grp}))
-    (reaction hospitalization_2_det_{grp}   (Sys_det3b_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3b_{grp}))
-    (reaction hospitalization_3_det_{grp}   (Sys_det3b_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3b_{grp}))
-    
-    (reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
-    (reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
-    (reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
-    
-    (reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a_D As_{grp}))
-    (reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a_D As_det1_{grp}))
-    
-    (reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m_D  Sym_{grp}))
-    (reaction recovery_Sym_det2a_{grp}   (Sym_det2a_{grp})   (RSym_det2_{grp})   (* Kr_m_D  Sym_det2a_{grp}))
-    (reaction recovery_Sym_det2b_{grp}   (Sym_det2b_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2b_{grp}))
+(reaction infection_asymp_det_{grp}  (E_{grp})   (As_preD_{grp})   (* Kl{grp} E_{grp}))
+(reaction infection_asymp_undet_{grp}  (As_preD_{grp})   (As_{grp})   (* Kl_D As_preD_{grp} (- 1 d_As)))
+(reaction infection_asymp_det_{grp}  (As_preD_{grp})   (As_det1_{grp})   (* Kl_D As_preD_{grp} d_As))
+
+(reaction presymptomatic_{grp} (E_{grp})   (P_{grp})   (* Ks{grp}  E_{grp} (- 1 d_P)))
+(reaction presymptomatic_{grp} (E_{grp})   (P_det_{grp})   (* Ks{grp}  E_{grp} d_P))
+
+; developing symptoms - same time to symptoms as in master emodl
+(reaction mild_symptomatic_{grp} (P_{grp})  (Sym_preD_{grp}) (* Ksym{grp} P_{grp}))
+(reaction severe_symptomatic_{grp} (P_{grp})  (Sys_preD_{grp})  (* Ksys{grp} P_{grp}))
+
+; never detected 
+(reaction mild_symptomatic_undet_{grp} (Sym_preD_{grp})  (Sym_{grp}) (* Ksym_D Sym_preD_{grp} (- 1 d_Sym)))
+(reaction severe_symptomatic_undet_{grp} (Sys_preD_{grp})  (Sys_{grp})  (* Ksys_D Sys_preD_{grp} (- 1 d_Sys)))
+
+; new detections  - time to detection is subtracted from hospital time
+(reaction mild_symptomatic_det_{grp} (Sym_preD_{grp})  (Sym_det2a_{grp}) (* Ksym_D Sym_preD_{grp} d_Sym))
+(reaction severe_symptomatic_det_{grp} (Sys_preD_{grp})  (Sys_det3a_{grp})  (* Ksys_D Sys_preD_{grp} d_Sys))
+
+; developing symptoms - already detected, same time to symptoms as in master emodl
+(reaction mild_symptomatic_det_{grp} (P_det_{grp})  (Sym_det2b_{grp}) (* Ksym{grp}  P_det_{grp}))
+(reaction severe_symptomatic_det_{grp} (P_det_{grp})  (Sys_det3b_{grp})  (* Ksys{grp}  P_det_{grp} ))
+
+(reaction hospitalization_1_{grp}  (Sys_{grp})   (H1_{grp})   (* Kh1_D{grp} Sys_{grp}))
+(reaction hospitalization_2_{grp}   (Sys_{grp})   (H2_{grp})   (* Kh2_D{grp} Sys_{grp}))
+(reaction hospitalization_3_{grp}   (Sys_{grp})   (H3_{grp})   (* Kh3_D{grp} Sys_{grp}))
+(reaction critical_2_{grp}  (H2_{grp})   (C2_{grp})   (* Kc{grp} H2_{grp}))
+(reaction critical_3_{grp}   (H3_{grp})   (C3_{grp})   (* Kc{grp} H3_{grp}))
+(reaction death_{grp}   (C3_{grp})   (D3_{grp})   (* Km C3_{grp}))
+
+(reaction hospitalization_1_det_{grp}   (Sys_det3a_{grp})   (H1_det3_{grp})   (* Kh1_D{grp} Sys_det3a_{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3a_{grp})   (H2_det3_{grp})   (* Kh2_D{grp} Sys_det3a_{grp}))
+(reaction hospitalization_3_det_{grp}   (Sys_det3a_{grp})   (H3_det3_{grp})   (* Kh3_D{grp} Sys_det3a_{grp}))
+
+(reaction hospitalization_1_det_{grp}   (Sys_det3b_{grp})   (H1_det3_{grp})   (* Kh1{grp} Sys_det3b_{grp}))
+(reaction hospitalization_2_det_{grp}   (Sys_det3b_{grp})   (H2_det3_{grp})   (* Kh2{grp} Sys_det3b_{grp}))
+(reaction hospitalization_3_det_{grp}   (Sys_det3b_{grp})   (H3_det3_{grp})   (* Kh3{grp} Sys_det3b_{grp}))
+
+(reaction critical_2_det2_{grp}   (H2_det3_{grp})   (C2_det3_{grp})   (* Kc{grp} H2_det3_{grp}))
+(reaction critical_3_det2_{grp}   (H3_det3_{grp})   (C3_det3_{grp})   (* Kc{grp} H3_det3_{grp}))
+(reaction death_det3_{grp}   (C3_det3_{grp})   (D3_det3_{grp})   (* Km C3_det3_{grp}))
+
+(reaction recovery_As_{grp}   (As_{grp})   (RAs_{grp})   (* Kr_a_D As_{grp}))
+(reaction recovery_As_det_{grp} (As_det1_{grp})   (RAs_det1_{grp})   (* Kr_a_D As_det1_{grp}))
+
+(reaction recovery_Sym_{grp}   (Sym_{grp})   (RSym_{grp})   (* Kr_m_D  Sym_{grp}))
+(reaction recovery_Sym_det2a_{grp}   (Sym_det2a_{grp})   (RSym_det2_{grp})   (* Kr_m_D  Sym_det2a_{grp}))
+(reaction recovery_Sym_det2b_{grp}   (Sym_det2b_{grp})   (RSym_det2_{grp})   (* Kr_m  Sym_det2b_{grp}))
      """.format(grp=grp)
 
         if self.expandModel ==None :
@@ -849,8 +849,8 @@ class covidModel:
         """
 
         observe_str = """
-    (observe d_As_t d_As)
-    (observe d_P_t d_P)
+(observe d_As_t d_As)
+(observe d_P_t d_P)
     """
 
         reduced_inf_of_det_cases_str = ""
@@ -906,13 +906,13 @@ class covidModel:
     def write_interventions(self,total_string) :
 
         param_change_str = """
-    (time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
-    (time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
-    (time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
-    (time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@)))
-    (time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
-    (time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
-    (time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
+(time-event detection1 @detection_time_1@ ((d_Sys @d_Sys_incr1@)))
+(time-event detection2 @detection_time_2@ ((d_Sys @d_Sys_incr2@)))
+(time-event detection3 @detection_time_3@ ((d_Sys @d_Sys_incr3@)))
+(time-event detection4 @detection_time_4@ ((d_Sys @d_Sys_incr4@)))
+(time-event detection5 @detection_time_5@ ((d_Sys @d_Sys_incr5@)))
+(time-event detection6 @detection_time_6@ ((d_Sys @d_Sys_incr6@)))
+(time-event detection5 @detection_time_7@ ((d_Sys @d_Sys_incr7@)))
     """
 
     #TODO results in negative counts
@@ -925,18 +925,18 @@ class covidModel:
         param_change_age_specific_str = ""
         for grp in self.grpList:
             temp_str =  """
-    (observe frac_crit_t_{grp} fraction_critical_{grp})
-    (observe fraction_hospitalized_t_{grp} fraction_hospitalized_{grp})
-    (observe fraction_dead_t_{grp} fraction_dead_{grp})
-    
-    (time-event frac_crit_adjust1_{grp} @crit_time_1@ ((fraction_critical_{grp} @fraction_critical_incr1@) (fraction_hospitalized_{grp} (- 1 (+ @fraction_critical_incr1@ fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) ))  
-    (time-event frac_crit_adjust2_{grp} @crit_time_2@ ((fraction_critical_{grp} @fraction_critical_incr2@) (fraction_hospitalized_{grp} (- 1 (+ @fraction_critical_incr2@ fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) ))
-    (time-event frac_crit_adjust3_{grp} @crit_time_3@ ((fraction_critical_{grp} @fraction_critical_incr3@) (fraction_hospitalized_{grp} (- 1 (+ @fraction_critical_incr3@ fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) )) 
-    
-    (param fraction_dead_change1_{grp} (* @fraction_dead_{grp}@ (/ 2 3) ) )
-    (param fraction_dead_change2_{grp} (* @fraction_dead_{grp}@ (/ 1 3) ) )
-    (time-event fraction_dead_adjust1_{grp} @cfr_time_1@ ((fraction_dead_{grp} fraction_dead_change1_{grp}) (fraction_hospitalized_{grp} (- 1 (+ fraction_critical_{grp} fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) )) 
-    (time-event fraction_dead_adjust2_{grp} @cfr_time_2@ ((fraction_dead_{grp} fraction_dead_change2_{grp}) (fraction_hospitalized_{grp} (- 1 (+ fraction_critical_{grp} fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) )) 
+(observe frac_crit_t_{grp} fraction_critical_{grp})
+(observe fraction_hospitalized_t_{grp} fraction_hospitalized_{grp})
+(observe fraction_dead_t_{grp} fraction_dead_{grp})
+
+(time-event frac_crit_adjust1_{grp} @crit_time_1@ ((fraction_critical_{grp} @fraction_critical_incr1@) (fraction_hospitalized_{grp} (- 1 (+ @fraction_critical_incr1@ fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) ))  
+(time-event frac_crit_adjust2_{grp} @crit_time_2@ ((fraction_critical_{grp} @fraction_critical_incr2@) (fraction_hospitalized_{grp} (- 1 (+ @fraction_critical_incr2@ fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) ))
+(time-event frac_crit_adjust3_{grp} @crit_time_3@ ((fraction_critical_{grp} @fraction_critical_incr3@) (fraction_hospitalized_{grp} (- 1 (+ @fraction_critical_incr3@ fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) )) 
+
+(param fraction_dead_change1_{grp} (* @fraction_dead_{grp}@ (/ 2 3) ) )
+(param fraction_dead_change2_{grp} (* @fraction_dead_{grp}@ (/ 1 3) ) )
+(time-event fraction_dead_adjust1_{grp} @cfr_time_1@ ((fraction_dead_{grp} fraction_dead_change1_{grp}) (fraction_hospitalized_{grp} (- 1 (+ fraction_critical_{grp} fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) )) 
+(time-event fraction_dead_adjust2_{grp} @cfr_time_2@ ((fraction_dead_{grp} fraction_dead_change2_{grp}) (fraction_hospitalized_{grp} (- 1 (+ fraction_critical_{grp} fraction_dead_{grp}))) (Kh1{grp} (/ fraction_hospitalized_{grp} time_to_hospitalization)) (Kh2{grp} (/ fraction_critical_{grp} time_to_hospitalization )) (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) )) )) 
     """.format(grp=grp)
             param_change_age_specific_str = param_change_age_specific_str + temp_str
 
@@ -944,116 +944,116 @@ class covidModel:
         #param_change_str = param_change_str + param_change_age_specific_str
 
         ki_multiplier_change_str = """
-    (param Ki_red3a (* Ki @ki_multiplier_3a@))
-    (param Ki_red3b (* Ki @ki_multiplier_3b@))
-    (param Ki_red3c (* Ki @ki_multiplier_3c@))
-    (param Ki_red4 (* Ki @ki_multiplier_4@))
-    (param Ki_red6 (* Ki @ki_multiplier_6@))
-    (param Ki_red7 (* Ki @ki_multiplier_7@))
-    (param Ki_red8 (* Ki @ki_multiplier_8@))
-    (param Ki_red9 (* Ki @ki_multiplier_9@))
-    (param Ki_red10 (* Ki @ki_multiplier_10@))
-    (param Ki_red11 (* Ki @ki_multiplier_11@))
-    (param Ki_red12 (* Ki @ki_multiplier_12@))
-    (param Ki_red13 (* Ki @ki_multiplier_13@))
-    
-    (param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
-    (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
-    
-    (time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki Ki_red3a)))
-    (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki Ki_red3b)))
-    (time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki Ki_red3c)))
-    (time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki Ki_red4)))
-    (time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki Ki_red6)))
-    (time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
-    (time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
-    (time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki Ki_red9)))
-    (time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki Ki_red10)))
-    (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki Ki_red11)))
-    (time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki Ki_red12)))
-    (time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki Ki_red13)))
+(param Ki_red3a (* Ki @ki_multiplier_3a@))
+(param Ki_red3b (* Ki @ki_multiplier_3b@))
+(param Ki_red3c (* Ki @ki_multiplier_3c@))
+(param Ki_red4 (* Ki @ki_multiplier_4@))
+(param Ki_red6 (* Ki @ki_multiplier_6@))
+(param Ki_red7 (* Ki @ki_multiplier_7@))
+(param Ki_red8 (* Ki @ki_multiplier_8@))
+(param Ki_red9 (* Ki @ki_multiplier_9@))
+(param Ki_red10 (* Ki @ki_multiplier_10@))
+(param Ki_red11 (* Ki @ki_multiplier_11@))
+(param Ki_red12 (* Ki @ki_multiplier_12@))
+(param Ki_red13 (* Ki @ki_multiplier_13@))
+
+(param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
+(observe backtonormal_multiplier_1 backtonormal_multiplier_1)
+
+(time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki Ki_red3a)))
+(time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki Ki_red3b)))
+(time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki Ki_red3c)))
+(time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki Ki_red4)))
+(time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki Ki_red6)))
+(time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki Ki_red7)))
+(time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki Ki_red8)))
+(time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki Ki_red9)))
+(time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki Ki_red10)))
+(time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki Ki_red11)))
+(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki Ki_red12)))
+(time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki Ki_red13)))
     """
 
         rollback_str = """
-    (time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red7)))
+(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red7)))
     """
 
 
         rollbacktriggered_str =  """
-    (state-event rollbacktrigger (and (> time @today@) (> {channel} (* @trigger@ @capacity_multiplier@)) ) ((Ki Ki_red7)))
+(state-event rollbacktrigger (and (> time @today@) (> {channel} (* @trigger@ @capacity_multiplier@)) ) ((Ki Ki_red7)))
     """
 
         rollbacktriggered_delay_str = """
-    (param time_of_trigger 10000)
-    (state-event rollbacktrigger (and (> time @today@) (> crit_det (* @trigger@ @capacity_multiplier@)) ) ((time_of_trigger time)))
-    (func time_since_trigger (- time time_of_trigger))
-    (state-event apply_rollback (> (- time_since_trigger @trigger_delay_days@) 0) ((Ki Ki_red7)))   
-    (observe triggertime_{grpout} time_of_trigger)
+(param time_of_trigger 10000)
+(state-event rollbacktrigger (and (> time @today@) (> crit_det (* @trigger@ @capacity_multiplier@)) ) ((time_of_trigger time)))
+(func time_since_trigger (- time time_of_trigger))
+(state-event apply_rollback (> (- time_since_trigger @trigger_delay_days@) 0) ((Ki Ki_red7)))   
+(observe triggertime_{grpout} time_of_trigger)
     """
 
         d_Sym_change_str = """
-    (time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@)))
-    (time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@)))
-    (time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@)))
-    (time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@)))
-    (time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@)))
+(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@)))
+(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@)))
+(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@)))
+(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@)))
+(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@)))
     """
 
         interventionSTOP_str ="""
-    (param Ki_back (* Ki @backtonormal_multiplier@))
-    (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+(param Ki_back (* Ki @backtonormal_multiplier@))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
      """
 
     # % change from lowest transmission level - immediate
     # starting point is lowest level of transmission  Ki_red4
         interventionSTOP_adj_str = """
-    (param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
-    (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+(param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
     """
 
     # % change from current transmission level - immediate
     # starting point is current level of transmission  Ki_red6
         interventionSTOP_adj2_str = """
-    (param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
-    (time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
+(param Ki_back (+ Ki_red7 (* @backtonormal_multiplier@ (- Ki Ki_red7))))
+(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki Ki_back)))
     """
 
 
     # gradual reopening from 'lowest' transmission level,  Ki_red6 == Ki_back1
         gradual_reopening_str = """
-    (param backtonormal_multiplier_1_adj  (- @backtonormal_multiplier@ backtonormal_multiplier_1 ))
-    (observe backtonormal_multiplier_1_adj  backtonormal_multiplier_1_adj)
-    
-    (param Ki_back2 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.3333 (- Ki Ki_red4))))
-    (param Ki_back3 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.6666 (- Ki Ki_red4))))
-    (param Ki_back4 (+ Ki_red6 (* backtonormal_multiplier_1_adj 1.00 (- Ki Ki_red4))))
-    (time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki Ki_back2)))
-    (time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki Ki_back3)))
-    (time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki Ki_back4)))
+(param backtonormal_multiplier_1_adj  (- @backtonormal_multiplier@ backtonormal_multiplier_1 ))
+(observe backtonormal_multiplier_1_adj  backtonormal_multiplier_1_adj)
+
+(param Ki_back2 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.3333 (- Ki Ki_red4))))
+(param Ki_back3 (+ Ki_red6 (* backtonormal_multiplier_1_adj 0.6666 (- Ki Ki_red4))))
+(param Ki_back4 (+ Ki_red6 (* backtonormal_multiplier_1_adj 1.00 (- Ki Ki_red4))))
+(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki Ki_back2)))
+(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki Ki_back4)))
     """
 
     # gradual reopening from 'current' transmission level
         gradual_reopening2_str = """
-    (param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
-    (param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
-    (param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
-    (param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
-    (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
-    (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
-    (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
-    (time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
+(param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
+(param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
+(param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
+(param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
      """
 
     # gradual reopening from 'current' transmission level with region-specific reopening
         gradual_reopening3_str = """
-    (param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
-    (param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
-    (param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
-    (param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
-    (time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
-    (time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
-    (time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
-    (time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
+(param Ki_back1 (+ Ki_red7 (* @reopening_multiplier_4@ 0.25 (- Ki Ki_red7))))
+(param Ki_back2 (+ Ki_red7 (* @reopening_multiplier_4@ 0.50 (- Ki Ki_red7))))
+(param Ki_back3 (+ Ki_red7 (* @reopening_multiplier_4@ 0.75 (- Ki Ki_red7))))
+(param Ki_back4 (+ Ki_red7 (* @reopening_multiplier_4@ 1.00 (- Ki Ki_red7))))
+(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki Ki_back1)))
+(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki Ki_back2)))
+(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki Ki_back3)))
+(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki Ki_back4)))
     """
 
 
@@ -1087,21 +1087,21 @@ class covidModel:
         temp_age_str = ""
         for grp in self.grpList:
             temp_str =  """
-    (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D))) 
-    (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
-    (Kh3_D{grp} (/ fraction_dead_{grp} (- time_to_hospitalization time_D)))
+(Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D))) 
+(Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D) ))
+(Kh3_D{grp} (/ fraction_dead_{grp} (- time_to_hospitalization time_D)))
     """.format(grp=grp)
             temp_age_str = temp_age_str + temp_str
 
         change_uniformtestDelay_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( (time_D @change_testDelay_1@) (Ksys_D (/ 1 time_D)) (Ksym_D (/ 1 time_D))  {temp_age_str} (Kr_m_D (/ 1 (- recovery_time_mild time_D ))) ))
+(time-event change_testDelay1 @change_testDelay_time1@ ( (time_D @change_testDelay_1@) (Ksys_D (/ 1 time_D)) (Ksym_D (/ 1 time_D))  {temp_age_str} (Kr_m_D (/ 1 (- recovery_time_mild time_D ))) ))
         """.format(temp_age_str=temp_age_str)
 
 
     ##### change_testDelay_Sym_str
 
         change_testDelay_Sym_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
         """.format("(time_D_Sym @change_testDelay_Sym_1@)",
                    "(Ksym_D (/ 1 time_D_Sym))",
                    "(Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))")
@@ -1110,19 +1110,19 @@ class covidModel:
         temp_age_str = ""
         for grp in self.grpList:
             temp_str =  """
-    (Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) 
-    (Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
-    (Kh3_D{grp} (/ fraction_dead_{grp} (- time_to_hospitalization time_D_Sys)))
+(Kh1_D{grp} (/ fraction_hospitalized_{grp} (- time_to_hospitalization time_D_Sys))) 
+(Kh2_D{grp} (/ fraction_critical_{grp} (- time_to_hospitalization time_D_Sys) ))
+(Kh3_D{grp} (/ fraction_dead_{grp} (- time_to_hospitalization time_D_Sys)))
     """.format(grp=grp)
             temp_age_str = temp_age_str + temp_str
 
         change_testDelay_Sys_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_Sys @change_testDelay_Sys_1@) (Ksys_D (/ 1 time_D_Sys)) {temp_age_str} ))
+(time-event change_testDelay1 @change_testDelay_time1@ ( (time_D_Sys @change_testDelay_Sys_1@) (Ksys_D (/ 1 time_D_Sys)) {temp_age_str} ))
         """.format(temp_age_str=temp_age_str)
 
 
         change_testDelay_As_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
+(time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
         """.format("(time_D_As @change_testDelay_As_1@)",
                    "(Kl_D (/ 1 time_D_As))",
                    "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")
