@@ -240,7 +240,7 @@ Note: this extension works for any sub-group as it duplicates the parameter name
 - python runScenarios.py --model "base" -r EMS_11 --scenario "baseline"  -n "<userinitials>"
 
 ##### Locale model
-- python runScenarios.py --model "base" -r IL --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "locale" -r IL --scenario "baseline"  -n "<userinitials>"
 
 
 ##### Age model
