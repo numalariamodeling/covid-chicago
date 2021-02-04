@@ -446,11 +446,11 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 def write_emodl(model,scenario="baseline",observeLevel="primary", expandModel="testDelay_AsSymSys", trigger_channel=None, emodl_name=None ):
     if model =='base':
         from emodl_generators.emodl_generator_base import covidModel
-    if model =='locale' or model =='spatial':
+    if model =='locale':
         from emodl_generators.emodl_generator_locale import covidModel
     if model =='age':
         from emodl_generators.emodl_generator_age import covidModel
-    if model == 'age_locale' or model == 'agelocale' or model == 'age-locale':
+    if model == 'agelocale':
         from emodl_generators.emodl_generator_age_locale import covidModel
 
     #covidModel.showOptions()
