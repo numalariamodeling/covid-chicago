@@ -52,14 +52,14 @@ def get_scenarioName(exp_suffix) :
     return(scenarioName)
 
 
-def plot_sim(dat,suffix,channels, first_plot_day, last_plot_day) :
+def plot_sim(dat,suffix,channels) :
 
         if suffix not in ["All","central","southern","northeast","northcentral"]:
             suffix_nr = str(suffix.split("-")[1])
         if suffix == "All":
             suffix_nr ="illinois"
         capacity = load_capacity(suffix_nr)
-        dat = dat[dat['date'].between(first_plot_day, last_plot_day)]
+
 
         fig = plt.figure(figsize=(18, 12))
         fig.subplots_adjust(right=0.97, wspace=0.2, left=0.07, hspace=0.15)
@@ -123,7 +123,7 @@ def load_and_plot_data(ems_region, savePlot=True) :
             adf = pd.merge(left=adf, right=mdf, on=['date', 'ems'])
 
     if savePlot :
-        plot_sim(adf, suffix=ems_region,first_plot_day=first_plot_day,last_plot_day=last_plot_day, channels=plotchannels)
+        plot_sim(adf, suffix=ems_region, channels=plotchannels)
 
     return adf
 
@@ -176,8 +176,6 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = pd.Timestamp('2020-03-01')
-    last_plot_day = pd.Timestamp.today() + pd.Timedelta(60,'days')
 
     regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
     
