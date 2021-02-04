@@ -465,7 +465,7 @@ def parse_args():
               "Example choices are shown below for a full list please visit the GitHub readme"),
         choices=["baseline", "rollback", "reopen_rollback", "rollbacktriggered_delay", "gradual_reopening",
                  "gradual_reopening2","interventionSTOP","contactTracing","improveHS","contactTracing_improveHS",
-                 "reopen_contactTracing_improveHS"],
+                 "reopen_contactTracing_improveHS","bvariant"],
         default="baseline"
     )
     parser.add_argument(
