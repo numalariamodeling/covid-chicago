@@ -1,8 +1,8 @@
 experiment_setup_parameters:
   'number_of_samples': 600
   'number_of_runs': 1
-  'duration': 504
-  'monitoring_samples': 504 # needs to be less than or equal to duration
+  'duration': 530
+  'monitoring_samples': 530 # needs to be less than or equal to duration
   'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
