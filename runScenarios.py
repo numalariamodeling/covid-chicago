@@ -427,6 +427,7 @@ def parse_args():
         "--region",
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
+        choices=['IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'],
         required=True
     )
     parser.add_argument(
@@ -493,6 +494,7 @@ def parse_args():
         default= f"_test_rn{str(today.microsecond)[-2:]}"
     )
     parser.add_argument(
+        "-p",
         "--post_process",
         type=str,
         help="Whether or not to run post-processing. Note default on NUCLUSTER vs Local varies (see README on GitHub).",
@@ -501,6 +503,7 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-csv",
         "--sample_csv",
         type=str,
         help="Name of sampled_parameters.csv, any input csv will be renamed per default to 'sampled_parameters.csv'",
