@@ -197,6 +197,21 @@ intervention_parameters:
   ### (only used if corresponding emodl is defined)   
   ###------------------------------------------------  
   ### ---- IMMEDIATE REOPENING ----------------------
+  ### Relative increase in transmission rate due to COVID-19 B variant  
+  'bvariant_infectivity':
+    np: linspace
+    function_kwargs: {'start':1.5, 'stop':1.5}
+  ### Fraction of the population infected with COVID-19 B variant  
+  'bvariant_fracinfect':
+    np: linspace
+    function_kwargs: {'start':0.25, 'stop':0.25}
+    #function_kwargs: {'start':0.5, 'stop':0.5}
+    #function_kwargs: {'start':0.75, 'stop':0.75}
+    #function_kwargs: {'start':0.25, 'stop':0.75, 'num' : 3}
+  ### Relative increase in fraction severe due to COVID-19 B variant  
+  'bvariant_severity':
+    np: linspace
+    function_kwargs: {'start':1.5, 'stop':1.5}
   ### Reset Ki to defined proporions of it's initial value  
   'backtonormal_multiplier':
     np.random: uniform
@@ -385,7 +400,7 @@ time_parameters:
   ### should be set to after reopening time events are completed
   'today' :
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-14}
+    function_kwargs: {'dates': 2021-02-04}
   ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
   'change_testDelay_time1':
     custom_function: DateToTimestep
