@@ -227,41 +227,41 @@ Note: this extension works for any sub-group as it duplicates the parameter name
 ####  Usage examples: 
 
 ##### Base model
-- python runScenarios.py --model "base" -r EMS_1  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_2  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_3  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_4  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_5  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_6  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_7  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_8  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_9  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_10 --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "base" -r EMS_11 --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_1  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_2  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_3  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_4  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_5  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_6  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_7  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_8  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_9  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_10 --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_11 --scenario "baseline"  -n "userinitials"
 
 ##### Locale model
-- python runScenarios.py --model "locale" -r IL --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "locale" -r IL --scenario "baseline"  -n "userinitials"
 
 
 
 ##### Age model
-- python runScenarios.py --model "age" -r EMS_1  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_2  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_3  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_4  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_5  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_6  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_7  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_8  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_9  --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_10 --scenario "baseline"  -n "<userinitials>"
-- python runScenarios.py --model "age" -r EMS_11 --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_1  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_2  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_3  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_4  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_5  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_6  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_7  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_8  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_9  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_10 --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_11 --scenario "baseline"  -n "userinitials"
 
 ##### Age-locale model
-- python runScenarios.py --model "agelocale" -r IL --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "agelocale" -r IL --scenario "baseline"  -n "userinitials"
  
 ##### NU model 
-- python runScenarios.py --model "nu" -r NU -c "nu_undergrad.yaml" -e "nu_undergrad.emodl"  -n "<userinitials>"
+- python runScenarios.py --model "nu" -r NU -c "nu_undergrad.yaml" -e "nu_undergrad.emodl"  -n "userinitials"
  
 </p>
 </details>
@@ -377,7 +377,7 @@ i.e. add a `set-covid-chicago` command in the `bash.profile` file in the home di
 ##### Submit job 
 On Quest jobs are submitted using the SLURM workload manager and syntax ([SLURM on quest](https://kb.northwestern.edu/page.php?id=89456))
 `cd /projects/p30781/covidproject/covid-chicago/`
-`- python runScenarios.py -rl NUCLUSTER --model "base" -r IL --scenario "baseline"  -n "<userinitials>"`
+`- python runScenarios.py -rl NUCLUSTER --model "base" -r IL --scenario "baseline"  -n "userinitials"`
 
 The experiments will go to the `_temp` folder on the quest gitrepository. 
 To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
