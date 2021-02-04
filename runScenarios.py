@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from load_paths import load_box_paths
-from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
+from simulation_helpers import (DateToTimestep, cleanup, write_emodl,
                                 generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
                                 runExp, runSamplePlot)
 
@@ -436,15 +436,38 @@ def parse_args():
         help=("Config file (in YAML) containing the parameters to override the default config. "
               "This file should have the same structure as the default config. "
               "example: ./experiment_configs/sample_experiment.yaml "),
-        required=True
+        default=None
     )
     parser.add_argument(
         "-e",
         "--emodl_template",
         type=str,
         help="Template emodl file to use",
-        default="extendedmodel.emodl"
+        default=None
     )
+    parser.add_argument(
+        "-m",
+        "--model",
+        type=str,
+        help="Model type",
+        choices=["base", "locale","age","age_locale"],
+        default="locale"
+    )
+    parser.add_argument(
+        "-s",
+        "--scenario",
+        type=str,
+        help="Intervention scenario to use",
+        default="baseline"
+    )
+    parser.add_argument(
+        "-dis",
+        "--paramdistribution",
+        type=str,
+        help="Use parameter ranges or means (could be extended to specify shape of distribution)",
+        default= "uniform_range"
+    )
+
     parser.add_argument(
         "-cfg",
         "--cfg_template",
@@ -452,7 +475,6 @@ def parse_args():
         help="Template cfg file to use",
         default="model_B.cfg"
     )
-
     parser.add_argument(
         "-n",
         "--name_suffix",
@@ -460,14 +482,6 @@ def parse_args():
         help="Adding custom suffix to the experiment name. Ignored if '--name' specified.",
         default= f"_test_rn{str(today.microsecond)[-2:]}"
     )
-
-    parser.add_argument(
-        "--exp-name",
-        type=str,
-        help="Experiment name; also the output directory name",
-        default=None,
-    )
-
     parser.add_argument(
         "--post_process",
         type=str,
@@ -482,14 +496,12 @@ def parse_args():
     )
 
     parser.add_argument(
-        "-s",
         "--load_sample_parameters",
         action='store_true',
         help="If specified reads samples from CSV instead regenerating from config yaml files"
     )
 
     parser.add_argument(
-        "-csv",
         "--sample_csv",
         type=str,
         help="Name of sampled_parameters.csv, only used if load_sample_parameters exists",
@@ -500,10 +512,14 @@ def parse_args():
 
 
 if __name__ == '__main__':
+
     logging.basicConfig(level="DEBUG")
     logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
 
     args = parse_args()
+    emodl_template = args.emodl_template
+    model = args.model
+    scenario = args.scenario
 
     _, _, wdir, exe_dir, git_dir = load_box_paths(Location=args.running_location)
     Location = os.getenv("LOCATION") or args.running_location
@@ -526,6 +542,28 @@ if __name__ == '__main__':
     log.debug(f"git_dir={git_dir}")
 
     # =============================================================
+    #   Model specifications
+    # =============================================================
+    if emodl_template is None:
+        log.debug(f"Running scenarios for {model} and {scenario}")
+        emodl_template = write_emodl(model, scenario)
+
+    if args.experiment_config is None:
+        if model =='base':
+            args.experiment_config = 'EMSspecific_sample_parameters.yaml'
+        if model == 'locale' or model == 'spatial':
+            if args.paramdistribution == 'means':
+                args.experiment_config = 'spatial_EMS_experiment.yaml'
+            else:
+                args.experiment_config = 'spatial_EMS_experiment_means.yaml'
+        if model == 'age':
+            args.experiment_config = 'age8grp_experiment.yaml'
+        if model == 'age_locale' or model == 'agelocale' or model == 'age-locale':
+            args.experiment_config = 'age_locale_experiment.yaml'
+
+    log.debug(f"experiment_config = {args.experiment_config}\n"
+              f"emodl_template = {emodl_template}\n")
+    # =============================================================
     #   Experiment design, fitting parameter and population
     # =============================================================
     experiment_config = get_experiment_config(args.experiment_config)
@@ -538,12 +576,12 @@ if __name__ == '__main__':
     start_dates = get_start_dates(fixed_parameters['startdate'])
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
-    exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
+    exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
 
     # Generate folders and copy required files
     # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, wdir=wdir,
+        exp_name, emodl_dir, emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
@@ -557,11 +595,11 @@ if __name__ == '__main__':
         sub_samples=experiment_setup_parameters['number_of_samples'],
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
-        modelname=args.emodl_template, start_dates=start_dates, Location=Location,
+        modelname=emodl_template, start_dates=start_dates, Location=Location,
         cfg_file=args.cfg_template,
         experiment_config=experiment_config,
         age_bins=experiment_setup_parameters.get('age_bins'),
-        region=region    )
+        region=region)
 
     if Location == 'NUCLUSTER':
         generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path)
