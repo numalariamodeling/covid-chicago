@@ -220,29 +220,74 @@ Note that the user-supplied configuration file is used to provide
 - `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
 Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
 
-The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
-<details><summary>Show examples</summary>
+<details><summary>Show runScenarios examples</summary>
 <p>  
 
+####  Usage examples: 
 
-####  Usage examples:  
-- Using the default emodl template: `python runScenarios.py
-  --running_location Local --region IL  --experiment_config sample_experiment.yaml`
-- Using a different emodl template: `python runScenarios.py
-  --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
-- Specifying experiment name suffix and changing running_location : `python runScenarios.py
-  --running_location NUCLUSTER --region IL --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
-- Specifiying cms configuration file and solver:`python runScenarios.py
-  --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
-- Specifiying master configuration file and using short form of arguments:`python runScenarios.py 
-  -mc config_param_delay7.yaml -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_criticaldet_triggeredrollbackdelay.emodl -cfg model_B.cfg
+##### Base model
+- python runScenarios.py --model "base" -r EMS_1  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_2  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_3  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_4  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_5  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_6  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_7  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_8  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_9  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_10 --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "base" -r EMS_11 --scenario "baseline"  -n "<userinitials>"
+
+##### Locale model
+- python runScenarios.py --model "base" -r IL --scenario "baseline"  -n "<userinitials>"
+
+
+##### Age model
+- python runScenarios.py --model "age" -r EMS_1  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_2  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_3  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_4  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_5  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_6  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_7  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_8  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_9  --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_10 --scenario "baseline"  -n "<userinitials>"
+- python runScenarios.py --model "age" -r EMS_11 --scenario "baseline"  -n "<userinitials>"
+
+##### Age-locale model
+- python runScenarios.py --model "agelocale" -r IL --scenario "baseline"  -n "<userinitials>"
+ 
+</p>
+</details>
+
+The examples above show an abbreviated version, accepting most defaults. The table below shows all available options and their defaults.
+
+<details><summary>Show all options</summary>
+<p>  
+
+| no 	| argument long       	| argument short 	| required 	| help                                                                                                                                                                                                                                                                                                 	| choices                                                                                                                        	| default                   	|
+|----	|---------------------	|----------------	|----------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|--------------------------------------------------------------------------------------------------------------------------------	|---------------------------	|
+| 1  	| --masterconfig      	| -mc            	| FALSE    	| Master yaml file that includes all model parameters.                                                                                                                                                                                                                                                 	|                                                                                                                                	| "extendedcobey_200428.yaml" 	|
+| 2  	| --running_location  	| -rl            	| FALSE    	| Location where the simulation is being run.  If None (not provided) the script tries to   determine running location based system variables                                                                                                                                                          	| "Local", "NUCLUSTER"                                                                                                           	| "None"                      	|
+| 3  	| --region            	| -r             	| TRUE     	| Region on which to run simulation. E.g. 'IL'                                                                                                                                                                                                                                                         	| 'IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7',   'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'                  	| /                         	|
+| 4  	| --experiment_config 	| -c             	| FALSE    	| Config file (in YAML) containing the parameters to override the default config. This file should have the same   structure as the default config. example: ./experiment_configs/sample_experiment.yaml If not provided, the default   experiment_config is selected based on model specification 	|                                                                                                                                	| "None"                      	|
+| 5  	| --emodl_template    	| -e             	| FALSE    	| Template emodl file to use. If not provided, the emodl_template is generated based on model AND scenario specification. If no scenario specification is given it uses the baseline scenario!                                                                                                   	|                                                                                                                                	| "None"                      	|
+| 6  	| --model             	| -m             	| TRUE     	| Model type                                                                                                                                                                                                                                                                                           	| "base",   "locale","age","agelocale","nu"                                                                                      	| /                          	|
+| 7  	| --scenario          	| -s             	| FALSE    	| Intervention scenario to use.                                                                                                                                                                                                                                                                        	| see emodl readme…                                                                                                              	| "baseline"                  	|
+| 8  	| --paramdistribution 	| -dis           	| FALSE    	| Use parameter ranges or means (could be extended to specify shape of   distribution)                                                                                                                                                                                                                 	| "uniform_range", "uniform_mean", "normal_range", "normal_mean"                                                                 	| "uniform_range"             	|
+| 9  	| --cfg_template      	| -cfg           	| FALSE    	| Template cfg file to use. For more details visit   https://docs.idmod.org/projects/cms/en/latest/solvers.html                                                                                                                                                                                        	| "model_B.cfg", "model_Tau.cfg", "model_RLeapingFast.cfg", "model_RLeaping.cfg","model_FD.cfg","model_DFSP.cfg","model_SSA.cfg" 	| "model_B.cfg"               	|
+| 10 	| --name_suffix       	| -n            	| FALSE    	| Adding custom suffix to the   experiment name. If not specified, a random number will be used                                                                                                                                                                                                        	|                                                                                                                                	| f"_test_rn{str(today.microsecond)[-2:]}"            	|
+| 11 	| --post_process      	| -p            	| FALSE    	| Whether or not to run post-processing. Note default on NUCLUSTER vs Local   varies                                                                                                                                                                                                                   	| "dataComparison", "processForCivis"                                                                                            	| "None"                      	|
+| 12 	| --sample_csv        	| -csv           	| FALSE    	| Name of sampled_parameters.csv, any   input csv will be renamed per default to 'sampled_parameters.csv'                                                                                                                                                                                              	|                                                                                                                                	| "None"                      	|
+
 </p>
 </details>
 
 ## 2.4 Sampled parameters 
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
-The [sample_parameters.py](sample_parameters.py) script handles only the sampled_parameters.csv, it allows to: 
+The [sample_parameters.py](sample_parameters.py) script allows to: 
 (1) generate csv file from configuration files without running simulations
 (2) load and modify an existing sampled_parameters.csv (change or add single or multiple parameter) (default location `experiment_configs\input_csv`)
 (3) replace single values for one or more parameter use python dictionary  `--param_dic  {\"capacity_multiplier\":\"0.5\"}`
@@ -261,16 +306,15 @@ Running examples:
    -(sampled_parameters_sm7.csv not under version control, but would for example include 10 values for social multiplier 7 for all 11 regions, the base sample parameters are repeated for each of the 10 rows of the additional csv)
 
 When running simulations with an pre-existing csv file, specify 
-- `--load_sample_parameters` (boolean) and 
 - `--sample_csv` (name of csv file in `experiment_configs\input_csv` ).
+Note: the specified csv will per default be renamed to "sampled_parameters.csv", hence the "sampled_parameters.csv" in input_csv is overwritten each time. A copy of the sample parameters can be retrieved from the simulation folder. 
 
-Note: except the loaded "sampled_parameters.csv" and "sampled_parameters_1000.csv", csv files should not be added to version control on git. 
 </p>
 </details>
 
 ## 2.6. Setup 
-Running simulation requires the CMS software and python. Additional software includes R and Rstudio for some of the postprocessing steps. 
-The model runs on Windows and Linux as well as the Northwestern high performance computing cluster (Quest). 
+Running simulation requires the CMS software and python. 
+The model runs on Windows and Linux and on the computing cluster at Northwestern University ('Quest'). 
 The detailes are described below. 
 
 <details><summary>Show setup description</summary>
@@ -314,14 +358,14 @@ i.e. add a `set-covid-chicago` command in the `bash.profile` file in the home di
 	mirror-box-covid(){
 		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Cleaned\ Data/ /projects/p30781/covidproject/data/covid_IDPH/Cleaned\ Data/; exit"
 		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Corona\ virus\ reports/ /projects/p30781/covidproject/data/covid_IDPH/Corona\ virus\ reports/; exit"
-		lftp -p 990 -u  <useremail> ftps://box.com -e "mirror -R /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/ NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/; exit"
+		lftp -p 990 -u <useremail> ftps://box.com -e "mirror -R /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/ NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/; exit"
 	}
  
 
 ##### Submit job 
 On Quest jobs are submitted using the SLURM workload manager and syntax ([SLURM on quest](https://kb.northwestern.edu/page.php?id=89456))
 `cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py -rl NUCLUSTER --r EMS_11 -c extendedcobey_200428.yaml --emodl_template extendedmodel.emodl -n "quest_run"`
+`- python runScenarios.py -rl NUCLUSTER --model "base" -r IL --scenario "baseline"  -n "<userinitials>"`
 
 The experiments will go to the `_temp` folder on the quest gitrepository. 
 To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
@@ -335,7 +379,6 @@ Further helpful examples are in the [readme in nucluster](https://github.com/num
 
 # 3 Postprocessing and visualization of simulation outputs
 Via the `--post_process` argument in the runScenarios command additional scripts will run directly after simulations finished.
-A sample plot (`master_sample_plot.png`) is generated for every simulation regardless of type (base, age, spatial) for all Illinois, which can be disabled via --noSamplePlot.
 Batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl regardless of the  `--post_process` argument.
 Batch files are only generated for the most important postprocessing files and additional batch files or postprocesses may be linked to runScenarios of needed. 
 To see all the available postprocessing scripts, go to the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) (see readme in folder for details).
@@ -364,7 +407,8 @@ The postprocessing includes the following steps below:
 - `9_runCopyDeliverables.bat` calls [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Note: the changelog.txt will need manual editing to reflect new changes per week. 
 - `10_runIterationComparison.bat` calls [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
 - `11_runCleanUpAndZip.bat` calls [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py) to clean up simulations (deletes per default single trajectories !! and optinally zips and/or deletes simulation folder
-Note: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
+
+ATTENTION: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
 
 
 </p>
@@ -393,7 +437,7 @@ Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulatio
 - `0_locale_age_postprocessing.sh`
 - `1_runTraceSelection.sh` 
 - `2_runDataComparison.sh` 
-- `3_runProcessTrajectories.sh
+- `3_runProcessTrajectories.sh`
 - `4_runRtEstimation.sh` 
 - `5_runOverflowProbabilities.sh` 
 - `6_runPrevalenceIFR.sh` 
@@ -426,6 +470,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
+- 20210204 workflow update: attached emodl generation to runScenarios.py (optional)
 - 20210203 updated parameter fit, recovery_As set to 9
 - 20210125 added ki_multiplier_12 and ki_multiplier_13 to emodl_generator_base, emodl_generator_age, emodl_generator_age_locale & ran 3 emodls
 - 20210120 updated parameter fit, added transmission multiplier 13, fixed bug in region populations, adjusted ki_multiplier_3a and ki_multiplier_3b to use means rather than range, adjusted region-specific recovery_time_crit_change1 and recovery_time_crit_change_time_1)
