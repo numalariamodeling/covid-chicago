@@ -499,7 +499,7 @@ def parse_args():
         type=str,
         help="Whether or not to run post-processing. Note default on NUCLUSTER vs Local varies (see README on GitHub).",
         choices=["dataComparison", "processForCivis"],
-        default=None,
+        default=None
     )
 
     parser.add_argument(
@@ -509,7 +509,30 @@ def parse_args():
         help="Name of sampled_parameters.csv, any input csv will be renamed per default to 'sampled_parameters.csv'",
         default=None
     )
-
+    parser.add_argument(
+        "-obs",
+        "--observeLevel",
+        type=str,
+        help="Specifies which outcome channels to simulate and return in trajectoriesDat.csv",
+        choices=["primary", "secondary", "tertiary"],
+        default='secondary'
+    )
+    parser.add_argument(
+        "-expand",
+        "--expandModel",
+        type=str,
+        help="Specific for test delay",
+        choices=["uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"],
+        default='testDelay_AsSymSys'
+    )
+    parser.add_argument(
+        "-trigger",
+        "--trigger_channel",
+        type=str,
+        help="Specific channel name of trigger to use",
+        choices=["None", "critical", "crit_det", "hospitalized", "hosp_det"],
+        default=None
+    )
     return parser.parse_args()
 
 
@@ -554,16 +577,23 @@ if __name__ == '__main__':
     # =============================================================
     if emodl_template is None:
         log.debug(f"Running scenarios for {model} and {scenario}")
-        emodl_template = write_emodl(model, scenario)
+        emodl_template = write_emodl(model,
+                                     scenario=scenario,
+                                     observeLevel=args.observeLevel,
+                                     expandModel=args.expandModel,
+                                     trigger_channel=args.trigger_channel,
+                                     emodl_name=None)
 
     if args.experiment_config is None:
         if model =='base':
             args.experiment_config = 'EMSspecific_sample_parameters.yaml'
         if model == 'locale':
-            if args.paramdistribution == 'means':
+            if args.paramdistribution == 'uniform_range':
                 args.experiment_config = 'spatial_EMS_experiment.yaml'
-            else:
+                args.masterconfig = 'extendedcobey_200428.yaml'
+            if args.paramdistribution == 'uniform_mean':
                 args.experiment_config = 'spatial_EMS_experiment_means.yaml'
+                args.masterconfig = 'extendedcobey_200428_means.yaml'
         if model == 'age':
             args.experiment_config = 'age8grp_experiment.yaml'
         if model == 'agelocale':
@@ -587,7 +617,10 @@ if __name__ == '__main__':
     if model =="nu":
         exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
     else:
-        exp_name = f"{today.strftime('%Y%m%d')}_{model}_{region}_{args.name_suffix}"
+        if model =='locale':
+            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.paramdistribution}_{args.name_suffix}_{scenario}"
+        else:
+            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(

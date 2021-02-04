@@ -443,7 +443,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     #file.close()
 
 
-def write_emodl(model,scenario="baseline",observeLevel="primary", expandModel="testDelay_AsSymSys", trigger_channel=None, emodl_name=None ):
+def write_emodl(model,scenario,observeLevel, expandModel, trigger_channel, emodl_name):
     if model =='base':
         from emodl_generators.emodl_generator_base import covidModel
     if model =='locale':
