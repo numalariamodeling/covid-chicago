@@ -243,6 +243,7 @@ Note: this extension works for any sub-group as it duplicates the parameter name
 - python runScenarios.py --model "locale" -r IL --scenario "baseline"  -n "<userinitials>"
 
 
+
 ##### Age model
 - python runScenarios.py --model "age" -r EMS_1  --scenario "baseline"  -n "<userinitials>"
 - python runScenarios.py --model "age" -r EMS_2  --scenario "baseline"  -n "<userinitials>"
@@ -258,6 +259,9 @@ Note: this extension works for any sub-group as it duplicates the parameter name
 
 ##### Age-locale model
 - python runScenarios.py --model "agelocale" -r IL --scenario "baseline"  -n "<userinitials>"
+ 
+##### NU model 
+- python runScenarios.py --model "nu" -r NU -c "nu_undergrad.yaml" -e "nu_undergrad.emodl"  -n "<userinitials>"
  
 </p>
 </details>
