@@ -559,7 +559,7 @@ class covidModel:
     def write_reactions(self, grp):
         grp = str(grp)
 
-    reaction_str_I = """
+        reaction_str_I = """
 (reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_symp_{grp} (* infectious_undet_As_{grp} reduced_infectious_As ) (* infectious_det_symp_{grp} reduced_inf_of_det_cases) (* infectious_det_AsP_{grp} reduced_inf_of_det_cases_ct)) N_{grp} )))
     """.format(grp=grp)
 
