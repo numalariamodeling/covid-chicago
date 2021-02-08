@@ -60,13 +60,14 @@ def plot_emresource(scale='') :
         'covid_non_icu' : 'non ICU'
     })
 
-    channels = ['ICU conf+susp', 'ICU conf', 'vents conf', 'deaths', 'non ICU']
+    # channels = ['ICU conf+susp', 'ICU conf', 'vents conf', 'deaths', 'non ICU']
+    channels = ['ICU conf', 'non ICU']
     ref_df = ref_df[['date', 'covid_region'] + channels]
 
     palette = load_color_palette('wes')
     formatter = mdates.DateFormatter("%m-%d")
 
-    fig_all = plt.figure(figsize=(10,8))
+    sns.set_style('whitegrid', {'axes.linewidth' : 0.5})
     fig = plt.figure(figsize=(14,10))
     fig.subplots_adjust(left=0.07, right=0.97, top=0.95, bottom=0.05, hspace=0.25)
 
@@ -77,44 +78,38 @@ def plot_emresource(scale='') :
         if scale == 'log' :
             ax.set_yscale('log')
 
-    for ri, (restore_region, ems_list) in enumerate(ems_regions.items()) :
-        ax_all = fig_all.add_subplot(2,2,ri+1)
-        ax = fig.add_subplot(4,6,6*ri+1)
+    for ri, (covid_region, pdf) in enumerate(ref_df.groupby('covid_region')) :
+        ax = fig.add_subplot(4,3,ri+1)
 
-        pdf = ref_df[ref_df['covid_region'].isin(ems_list)].groupby('date').agg(np.sum).reset_index()
         for (c,name) in enumerate(channels):
             if name == 'non ICU' :
                 df = pdf[pdf['date'] >= date(2020,5,6)]
             else :
                 df = pdf
             df['moving_ave'] = df[name].rolling(window = 7, center=True).mean()
-            ax_all.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
-            ax_all.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
             ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
             ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
-        ax_all.set_title(restore_region)
-        format_plot(ax_all)
-        if ri == 1 :
-            ax_all.legend()
 
+        ax.set_title('covid region %d' % covid_region)
         format_plot(ax)
-        ax.set_ylabel(restore_region)
-        ax.set_title('total')
 
-        for ei, ems in enumerate(ems_list) :
-            ax = fig.add_subplot(4,6,6*ri+1+ei+1)
-            df = ref_df[ref_df['covid_region'] == ems]
-            for (c,name) in enumerate(channels):
-                df['moving_ave'] = df[name].rolling(window=7, center=True).mean()
-                ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
-                ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
-            ax.set_title('covid region %d' % ems)
-            format_plot(ax)
-            if ems == 2 :
-                ax.legend(bbox_to_anchor=(1.5, 1))
+    il_df = ref_df.groupby('date')[channels].agg(np.sum).reset_index()
+    # print(il_df.tail(10))
+    ax = fig.add_subplot(4, 3, 12)
+    for (c, name) in enumerate(channels):
+        if name == 'non ICU':
+            df = il_df[il_df['date'] >= date(2020, 5, 6)]
+        else:
+            df = il_df
+        df['moving_ave'] = df[name].rolling(window=7, center=True).mean()
+        ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
+        ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
 
-    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.png' % scale))
-    fig_all.savefig(os.path.join(plotdir, 'EMResource_by_restore_region_%s.pdf' % scale), format='PDF')
+    ax.set_title('Illinois')
+    format_plot(ax)
+    ax.legend()
+    # ax.legend(bbox_to_anchor=(1.5, 1))
+
     fig.savefig(os.path.join(plotdir, 'EMResource_by_covid_region_%s.png' % scale))
     fig.savefig(os.path.join(plotdir, 'EMResource_by_covid_region_%s.pdf' % scale), format='PDF')
 
@@ -123,5 +118,5 @@ if __name__ == '__main__' :
 
     plot_emresource('nolog')
     plot_emresource('log')
-    emresource_by_ems()
+    # emresource_by_ems()
     # plt.show()
