@@ -654,7 +654,7 @@ if __name__ == '__main__':
     if Location == 'Local':
         generateSubmissionFile(
             nscen, exp_name, args.experiment_config,trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
-            exe_dir=exe_dir, docker_image=docker_image)
+            Location=Location,exe_dir=exe_dir, docker_image=docker_image)
 
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
