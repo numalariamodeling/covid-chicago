@@ -645,7 +645,7 @@ if __name__ == '__main__':
         region=region)
 
     if Location == 'NUCLUSTER':
-        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path)
+        generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path,model)
         submission_script=None
         if args.post_process == 'processForCivis':
             submission_script = 'submit_runSimulations_with_trace_selection.sh'
@@ -654,7 +654,7 @@ if __name__ == '__main__':
     if Location == 'Local':
         generateSubmissionFile(
             nscen, exp_name, args.experiment_config,trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
-            exe_dir=exe_dir, docker_image=docker_image)
+            model=model,exe_dir=exe_dir, docker_image=docker_image)
 
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 

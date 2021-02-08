@@ -17,7 +17,6 @@ mpl.use('Agg')
 import matplotlib.dates as mdates
 import seaborn as sns
 from processing_helpers import *
-from sample_parameters import make_identifier, gen_combos
 
 def parse_args():
 
@@ -150,57 +149,19 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,
     #Creation of plots
     if plot_trajectories:
         plot_path = os.path.join(output_path, '_plots')
-        df = pd.merge(rank_export_df[0:int(len(rank_export_df)/traces_to_keep_ratio)],df)
 
-        plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         region_label=region_label, first_day=first_day, last_day=last_day, plot_path=plot_path,
-                         plot_name_suffix =f'_best_fit_{str(1/traces_to_keep_ratio)}')
-
-def extract_sample_traces(traces_to_keep_ratio, traces_to_keep_min):
-
-    df_samples = pd.read_csv(os.path.join(output_path, 'sampled_parameters.csv'))
-    """Drop parameter columns that have equal values in all scenarios (rows) to assess fitted parameters"""
-    nunique = df_samples.apply(pd.Series.nunique)
-    cols_to_drop = nunique[nunique == 1].index
-    df_samples = df_samples.drop(cols_to_drop, axis=1)
-
-    df_traces = pd.DataFrame()
-    for ems_region in range(1,12):
-
-        rank_export_df = pd.read_csv(os.path.join(output_path, f'traces_ranked_region_{str(ems_region)}.csv'))
         n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
         if n_traces_to_keep < traces_to_keep_min and len(rank_export_df) >= traces_to_keep_min:
             n_traces_to_keep = traces_to_keep_min
         if len(rank_export_df) < traces_to_keep_min:
             n_traces_to_keep = len(rank_export_df)
 
-        df_samples_sub = pd.merge(how='left', left=rank_export_df[['scen_num','norm_rank']], left_on=['scen_num'],
-                                 right=df_samples, right_on=['scen_num'])
-        df_samples_sub = df_samples_sub.sort_values(by=['norm_rank']).reset_index(drop=True)
-        df_samples_sub.columns = df_samples_sub.columns + f'_EMS_{str(ems_region)}'
-        df_samples_sub['row_num'] = df_samples_sub.index
+        df = pd.merge(rank_export_df[0:int(n_traces_to_keep)],df)
 
-        if df_traces.empty:
-            df_traces = df_samples_sub
-        else:
-            df_traces = pd.merge(how='left', left=df_traces, left_on=['row_num'], right=df_samples_sub, right_on=['row_num'])
-        del df_samples_sub, rank_export_df
-    del df_samples
+        plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+                         region_label=region_label, first_day=first_day, last_day=last_day, plot_path=plot_path,
+                         plot_name_suffix =f'_best_fit_{str(1/traces_to_keep_ratio)}')
 
-    """Export fitted parameters"""
-    df_traces.to_csv(os.path.join(output_path, f'fitted_parameters_ntraces{n_traces_to_keep}.csv'), index=False)
-    df_traces.head(n=1).to_csv(os.path.join(output_path, f'fitted_parameters_besttrace.csv'), index=False)
-
-    """Export all parameter columns to be used as simulation input"""
-    df_samples = pd.read_csv(os.path.join(output_path, 'sampled_parameters.csv'))
-    df_samples = df_samples.loc[:n_traces_to_keep+1 , cols_to_drop]
-    df_samples['scen_num'] = df_samples.reset_index().index
-
-    """Generate combinations of samples (df_samples) and fitted parameters (df_traces)"""
-    df_traces_n = gen_combos(df_samples, df_traces)
-    df_traces_best = gen_combos(df_samples, df_traces.head(n=1))
-    df_traces_n.to_csv(os.path.join(output_path, f'sample_parameters_ntraces{n_traces_to_keep}.csv'), index=False)
-    df_traces_best.to_csv(os.path.join(output_path, f'sample_parameters_besttrace.csv'), index=False)
 
 if __name__ == '__main__':
 
@@ -209,7 +170,7 @@ if __name__ == '__main__':
     Location = args.Location
     weights_array = [args.deaths_weight, args.crit_weight, args.non_icu_weight, args.cli_weight]
 
-    """ For plotting and extracting best traces"""
+    """ For plotting"""
     traces_to_keep_ratio = args.traces_to_keep_ratio
     traces_to_keep_min = args.traces_to_keep_min
 
@@ -230,6 +191,5 @@ if __name__ == '__main__':
         for ems_nr in range(0,12):
             print("Start processing region " + str(ems_nr))
             compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,
-                        weights_array=weights_array, plot_trajectories=args.plot,
+                        weights_array=weights_array, plot_trajectories=True,
                         traces_to_keep_ratio=traces_to_keep_ratio,traces_to_keep_min=traces_to_keep_min)
-        extract_sample_traces(traces_to_keep_ratio=traces_to_keep_ratio,traces_to_keep_min=traces_to_keep_min)
