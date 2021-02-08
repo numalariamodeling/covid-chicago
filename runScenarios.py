@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from load_paths import load_box_paths
-from simulation_helpers import (DateToTimestep, cleanup, combineTrajectories,
+from simulation_helpers import (DateToTimestep, cleanup, write_emodl,
                                 generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
                                 runExp, runSamplePlot)
 
@@ -269,8 +269,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         result["scen_num"] = range(1, len(result) + 1)
         result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     else :
-        fname = args.sample_csv
-        result = pd.read_csv(os.path.join('./experiment_configs', "input_csv",fname))
+        result = pd.read_csv(os.path.join('./experiment_configs', "input_csv",args.sample_csv))
         result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
 
     return result
@@ -317,7 +316,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                       experiment_config, age_bins, region):
 
     generateNew = True
-    if args.load_sample_parameters :
+    if args.sample_csv is not None :
         generateNew = False
 
     dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
@@ -411,23 +410,25 @@ def parse_args():
         "--masterconfig",
         type=str,
         help="Master yaml file that includes all model parameters.",
-        default='extendedcobey_200428.yaml',
+        default='extendedcobey_200428.yaml'
     )
 
     parser.add_argument(
         "-rl",
         "--running_location",
         type=str,
-        help="Location where the simulation is being run.",
+        help="""Location where the simulation is being run. 
+                If not provided the script tries to determine running location based system variables""",
         choices=["Local", "NUCLUSTER"],
-        default="Local",
+        default=None
     )
     parser.add_argument(
         "-r",
         "--region",
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
-        default='IL',
+        choices=['IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'],
+        required=True
     )
     parser.add_argument(
         "-c",
@@ -435,75 +436,121 @@ def parse_args():
         type=str,
         help=("Config file (in YAML) containing the parameters to override the default config. "
               "This file should have the same structure as the default config. "
-              "example: ./experiment_configs/sample_experiment.yaml "),
-        default="spatial_EMS_experiment.yaml",
+              "example: ./experiment_configs/sample_experiment.yaml "
+              "If not provided, the default experiment_config is selected based on model specification"),
+        default=None
     )
     parser.add_argument(
         "-e",
         "--emodl_template",
         type=str,
-        help="Template emodl file to use",
-        default="extendedmodel_EMS.emodl"
+        help=("Template emodl file to use"
+              "If not provided, the emodl_template is generated based on model AND scenario specification"
+              "If no scenario specification is given it uses the baseline scenario!"),
+        default=None
     )
+    parser.add_argument(
+        "-m",
+        "--model",
+        type=str,
+        help="Model type",
+        choices=["base", "locale","age","agelocale","nu"],
+        required=True
+    )
+    parser.add_argument(
+        "-s",
+        "--scenario",
+        type=str,
+        help=("Intervention scenario to use, default = baseline"
+              "Example choices are shown below for a full list please visit the GitHub readme"),
+        choices=["baseline", "rollback", "reopen_rollback", "rollbacktriggered_delay", "gradual_reopening",
+                 "gradual_reopening2","interventionSTOP","contactTracing","improveHS","contactTracing_improveHS",
+                 "reopen_contactTracing_improveHS","bvariant"],
+        default="baseline"
+    )
+    parser.add_argument(
+        "-dis",
+        "--paramdistribution",
+        type=str,
+        help="Use parameter ranges or means (could be extended to specify shape of distribution)",
+        choices=["uniform_range", "uniform_mean", "normal_range", "normal_mean"],
+        default= "uniform_range"
+    )
+
     parser.add_argument(
         "-cfg",
         "--cfg_template",
         type=str,
-        help="Template cfg file to use",
+        help=("Template cfg file to use. Default solver: model_B.cfg."
+             " For more details visit https://docs.idmod.org/projects/cms/en/latest/solvers.html"),
+        choices=["model_B.cfg", "model_Tau.cfg", "model_RLeapingFast.cfg", "model_RLeaping.cfg","model_FD.cfg","model_DFSP.cfg","model_SSA.cfg"],
         default="model_B.cfg"
     )
-
     parser.add_argument(
         "-n",
         "--name_suffix",
         type=str,
-        help="Adding custom suffix to the experiment name. Ignored if '--name' specified.",
-        default= f"test_rn{str(today.microsecond)[-2:]}"
+        help="Adding custom suffix to the experiment name. If not specified, a random number will be used",
+        default= f"_test_rn{str(today.microsecond)[-2:]}"
     )
-
     parser.add_argument(
-        "--exp-name",
-        type=str,
-        help="Experiment name; also the output directory name",
-        default=None,
-    )
-
-    parser.add_argument(
+        "-p",
         "--post_process",
         type=str,
-        help="Whether or not to run post-processing functions current options are 'dataComparison'  'processForCivis' 'SamplePlot' ",
-        default=None,
-    )
-
-    parser.add_argument(
-        "--noSamplePlot",
-        action='store_true',
-        help="If specified, no sample plot with main trajectories will be generated",
-    )
-
-    parser.add_argument(
-        "-s",
-        "--load_sample_parameters",
-        action='store_true',
-        help="If specified reads samples from CSV instead regenerating from config yaml files"
+        help="Whether or not to run post-processing. Note default on NUCLUSTER vs Local varies (see README on GitHub).",
+        choices=["dataComparison", "processForCivis"],
+        default=None
     )
 
     parser.add_argument(
         "-csv",
         "--sample_csv",
         type=str,
-        help="Name of sampled_parameters.csv, only used if load_sample_parameters exists",
-        default='sampled_parameters.csv'
+        help="Name of sampled_parameters.csv, any input csv will be renamed per default to 'sampled_parameters.csv'",
+        default=None
     )
-
+    parser.add_argument(
+        "-obs",
+        "--observeLevel",
+        type=str,
+        help="Specifies which outcome channels to simulate and return in trajectoriesDat.csv",
+        choices=["primary", "secondary", "tertiary"],
+        default='secondary'
+    )
+    parser.add_argument(
+        "-expand",
+        "--expandModel",
+        type=str,
+        help="Specific for test delay",
+        choices=["uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"],
+        default='testDelay_AsSymSys'
+    )
+    parser.add_argument(
+        "-trigger",
+        "--trigger_channel",
+        type=str,
+        help="Specific channel name of trigger to use",
+        choices=["None", "critical", "crit_det", "hospitalized", "hosp_det"],
+        default=None
+    )
     return parser.parse_args()
 
 
 if __name__ == '__main__':
+
     logging.basicConfig(level="DEBUG")
     logging.getLogger("matplotlib").setLevel("INFO")  # Matplotlib has noisy debugs
 
     args = parse_args()
+    emodl_template = args.emodl_template
+    model = args.model
+    scenario = args.scenario
+
+    if args.running_location is None:
+        if os.name == "posix":
+            args.running_location = "NUCLUSTER"
+        else:
+            args.running_location = "Local"
 
     _, _, wdir, exe_dir, git_dir = load_box_paths(Location=args.running_location)
     Location = os.getenv("LOCATION") or args.running_location
@@ -526,6 +573,35 @@ if __name__ == '__main__':
     log.debug(f"git_dir={git_dir}")
 
     # =============================================================
+    #   Model specifications
+    # =============================================================
+    if emodl_template is None:
+        log.debug(f"Running scenarios for {model} and {scenario}")
+        emodl_template = write_emodl(model,
+                                     scenario=scenario,
+                                     observeLevel=args.observeLevel,
+                                     expandModel=args.expandModel,
+                                     trigger_channel=args.trigger_channel,
+                                     emodl_name=None)
+
+    if args.experiment_config is None:
+        if model =='base':
+            args.experiment_config = 'EMSspecific_sample_parameters.yaml'
+        if model == 'locale':
+            if args.paramdistribution == 'uniform_range':
+                args.experiment_config = 'spatial_EMS_experiment.yaml'
+                args.masterconfig = 'extendedcobey_200428.yaml'
+            if args.paramdistribution == 'uniform_mean':
+                args.experiment_config = 'spatial_EMS_experiment_means.yaml'
+                args.masterconfig = 'extendedcobey_200428_means.yaml'
+        if model == 'age':
+            args.experiment_config = 'age8grp_experiment.yaml'
+        if model == 'agelocale':
+            args.experiment_config = 'age_locale_experiment.yaml'
+
+    log.debug(f"experiment_config = {args.experiment_config}\n"
+              f"emodl_template = {emodl_template}\n")
+    # =============================================================
     #   Experiment design, fitting parameter and population
     # =============================================================
     experiment_config = get_experiment_config(args.experiment_config)
@@ -538,12 +614,17 @@ if __name__ == '__main__':
     start_dates = get_start_dates(fixed_parameters['startdate'])
     Kivalues = get_fitted_parameters(experiment_config, region)['Kis']
 
-    exp_name = args.exp_name or f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
+    if model =="nu":
+        exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
+    else:
+        if model =='locale':
+            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.paramdistribution}_{args.name_suffix}_{scenario}"
+        else:
+            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
 
     # Generate folders and copy required files
-    # GE 04/10/20 added exp_name,emodl_dir,emodlname,cfg_dir here to fix exp_name not defined error
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, args.emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, wdir=wdir,
+        exp_name, emodl_dir, emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
@@ -557,25 +638,25 @@ if __name__ == '__main__':
         sub_samples=experiment_setup_parameters['number_of_samples'],
         duration=experiment_setup_parameters['duration'],
         monitoring_samples=experiment_setup_parameters['monitoring_samples'],
-        modelname=args.emodl_template, start_dates=start_dates, Location=Location,
+        modelname=emodl_template, start_dates=start_dates, Location=Location,
         cfg_file=args.cfg_template,
         experiment_config=experiment_config,
         age_bins=experiment_setup_parameters.get('age_bins'),
-        region=region    )
+        region=region)
 
     if Location == 'NUCLUSTER':
         generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path)
         submission_script=None
         if args.post_process == 'processForCivis':
             submission_script = 'submit_runSimulations_with_trace_selection.sh'
-        runExp(trajectories_dir=temp_exp_dir, Location=Location,submission_script=submission_script )
+        runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER',submission_script=submission_script )
 
     if Location == 'Local':
         generateSubmissionFile(
             nscen, exp_name, args.experiment_config,trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
-            Location=Location, exe_dir=exe_dir, docker_image=docker_image)
+            exe_dir=exe_dir, docker_image=docker_image)
 
-        runExp(trajectories_dir=trajectories_dir, Location=Location)
+        runExp(trajectories_dir=trajectories_dir, Location='Local')
 
         #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
         #                    temp_exp_dir=temp_exp_dir, deleteFiles=False)
@@ -584,9 +665,12 @@ if __name__ == '__main__':
                 plot_path=plot_path, delete_temp_dir=True)
         log.info(f"Outputs are in {sim_output_path}")
 
-        if not args.noSamplePlot:
-            log.info("Sample plot")
+        log.info("Sample plot")
+        try:
             runSamplePlot(sim_output_path=sim_output_path, plot_path=plot_path,start_dates=start_dates,channel_list_name="master")
+            log.info("Sample plot generated")
+        except:
+            log.info("Sample plot not generated")
 
         if args.post_process == 'dataComparison':
             log.info("Compare to data")
