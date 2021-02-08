@@ -132,8 +132,8 @@ def write_submission_file(trace_selection,Location, r= 'IL'):
         file.write(
             f'copy {csv_from} {csv_to}\n'
             f'copy {emodl_from} {emodl_to}\n'
-            f'cd {git_dir} \n python runScenarios.py -rl {Location} -r {r} -c {str(yaml_file)} '
-            f'-e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str} \npause')
+            f'cd {git_dir} \n python runScenarios.py -r {r} -c {str(yaml_file)} '
+            f'-e {str(emodl_name)}_resim.emodl -n {new_exp_name} {input_csv_str} \npause')
         file.close()
     if Location =='NUCLUSTER':
         csv_from = csv_from.replace("\\","/")
@@ -143,8 +143,8 @@ def write_submission_file(trace_selection,Location, r= 'IL'):
         header = shell_header(job_name=jobname)
         commands = f'\ncp {csv_from} {csv_to}\n' \
                    f'\ncp {emodl_from} {emodl_to}\n' \
-                   f'\ncd {git_dir} \n python runScenarios.py -rl {Location} -r {r} -c {str(yaml_file)} ' \
-                   f'-e {str(emodl_name)}_resim.emodl --exp-name {new_exp_name} {input_csv_str}'
+                   f'\ncd {git_dir} \n python runScenarios.py -r {r} -c {str(yaml_file)} ' \
+                   f'-e {str(emodl_name)}_resim.emodl -n {new_exp_name} {input_csv_str}'
         file = open(os.path.join(output_path,'sh', f'00_runScenarios_{trace_selection}.sh'), 'w')
         file.write(header + commands)
         file.close()

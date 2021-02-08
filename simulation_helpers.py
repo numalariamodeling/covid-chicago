@@ -181,7 +181,7 @@ def get_process_dict():
 
 
 def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
-                           Location, exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
+                           model, exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
 
 
     process_dict = get_process_dict()
@@ -222,8 +222,8 @@ echo end""")
         file.write(f'copy {csv_from} {csv_to}\n'
                    f'copy {emodl_from} {emodl_to}\n'
                    f'cd {git_dir}\n'
-                   f'python runScenarios.py -rl {Location} -r IL -e {emodl_name}_resim.emodl '
-                   f'--exp-name {exp_name}_resim  --load_sample_parameters --sample_csv sampled_parameters.csv\n'
+                   f'python runScenarios.py -r IL -e {emodl_name}_resim.emodl '
+                   f'-n {exp_name}_resim  --model {model} --sample_csv sampled_parameters.csv\n'
                    'pause')
         file.close()
 
@@ -289,12 +289,12 @@ def shell_header(A='p30781',p='short',t='00:30:00',N=1,ntasks_per_node=1, memG=1
         out = '#SBATCH --output=log/arrayJob_%A_%a.out\n'
         header = header + array + err + out
     else:
-        err = f'#SBATCH --error={job_name}.%j.err\n'
-        out = f'#SBATCH --output={job_name}.%j.out\n'
+        err = f'#SBATCH --error=log/{job_name}.%j.err\n'
+        out = f'#SBATCH --output=log/{job_name}.%j.out\n'
         header = header + err + out
     return header
 
-def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir,sim_output_path) :
+def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir,sim_output_path,model) :
     # Generic shell submission script that should run for all having access to  projects/p30781
     # submit_runSimulations.sh
 
@@ -317,6 +317,22 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     plotters_dir = os.path.join(git_dir, "plotters")
     pymodule = '\n\nmodule purge all\nmodule load python/anaconda3.6\nsource activate /projects/p30781/anaconda3/envs/team-test-py37\n'
 
+    emodl_name = str([i for i in os.listdir(temp_exp_dir) if "emodl" in i][0]).replace('.emodl', '')
+    emodl_from = os.path.join(sim_output_path, emodl_name + ".emodl")
+    emodl_to = os.path.join(git_dir, "emodl", emodl_name + "_resim.emodl").replace("\\", "/")
+    csv_from = os.path.join(sim_output_path, 'sampled_parameters.csv').replace("\\", "/")
+    csv_to = os.path.join(git_dir, "experiment_configs", "input_csv").replace("\\", "/")
+    git_dir = git_dir.replace("\\", "/")
+
+    file = open(os.path.join(temp_exp_dir,'sh', '00_copySampleParam_rerunScenarios_test.sh'), 'w')
+    file.write(shell_header(job_name="resim") + pymodule )
+    file.write(f'cp {csv_from} {csv_to}\n'
+               f'cp {emodl_from} {emodl_to}\n'
+               f'cd {git_dir}\n'
+               f'python runScenarios.py -r IL -e {emodl_name}_resim.emodl '
+               f'-n {exp_name}_resim  --model {model} --sample_csv sampled_parameters.csv\n')
+    file.close()
+
     """
     Use this batch files for postprocessing multiple steps
     """
@@ -325,7 +341,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
         fname = 'data_comparison_spatial.py'
 
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
-    file = open(os.path.join(temp_exp_dir, f'run_postprocessing.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'run_postprocessing.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
