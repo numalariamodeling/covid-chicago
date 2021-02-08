@@ -12,6 +12,19 @@ except NameError:
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths(Location=Location)
 
 
+def get_grp_list(exp_name,  input_wdir=None, input_sim_output_path =None):
+    input_wdir = input_wdir or wdir
+    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
+    sim_output_path = input_sim_output_path or sim_output_path_base
+
+    df_samples = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
+    N_cols = [col for col in df_samples.columns if 'N_' in col]
+    if len(N_cols) != 0:
+        grp_list = [col.replace('N_', '') for col in N_cols]
+    else:
+        grp_list = None
+    return grp_list
+
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                   input_sim_output_path =None, column_list=None, add_incidence=True,
                   select_traces=True, traces_to_keep_ratio=4, traces_to_keep_min=100) :
@@ -33,6 +46,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
             if os.path.exists(os.path.join(sim_output_path, fname)) == False:
                 fname = 'trajectoriesDat.csv'
 
+        print(f'Using {fname}')
         df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
         df.columns = df.columns.str.replace(region_suffix, '')
 
@@ -50,6 +64,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                 df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
     else :
         fname = 'trajectoriesDat.csv'
+        if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+            fname = 'trajectoriesDat_trim.csv'
+        print(f'Using {fname}')
         df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
 
     df = df.dropna()
@@ -329,12 +346,19 @@ def load_capacity(ems):
     fname = 'capacity_weekday_average_' + str(latest_filedate) + '.csv'
     ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds/', fname)
     df = pd.read_csv(ems_fname)
+    df = df.drop_duplicates()
 
     df = df[df['overflow_threshold_percent'] == 1]
     df['ems'] = df['geography_modeled']
     df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
     df = df[['ems', 'resource_type', 'avg_resource_available']]
     df = df.drop_duplicates()
+
+    ## if conflicting numbers, take the lower ones!
+    dups = df.groupby(["ems", "resource_type"])["avg_resource_available"].nunique()
+    if int(dups.nunique()) >1 :
+        print(f'{ems_fname} contains multiple capacity values, selecting the lower ones.')
+        df= df.loc[df.groupby(["ems", "resource_type"])["avg_resource_available"].idxmax()]
 
     df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available')
     df.index.name = 'ems'

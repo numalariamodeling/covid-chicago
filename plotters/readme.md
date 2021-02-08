@@ -32,8 +32,8 @@ Generates a plot showing the trajectories for any group, either EMS or Age, sepa
 
 
 #### Process-for-civis scripts
-(see description in main reamde)
-- [trace_selection.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py) calculating the negative log-likelihood per simulated trajectory, used for thinning predictions and parameter estimation
+(see description in main readme)
+- [trace_selection.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py) calculating the negative log-likelihood per simulated trajectory, used for thinning predictions and parameter estimation (see paragraph below)
 - [data_comparison_spatial.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) comparing model predictions to data per region over time
 - [process_for_civis_EMSgrp.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
 - [estimate_Rt_forCivisOutputs.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/estimate_Rt_forCivisOutputs.py)  that  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
@@ -44,6 +44,11 @@ Generates a plot showing the trajectories for any group, either EMS or Age, sepa
 - [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Note: the changelog.txt will need manual editing to reflect new changes per week. 
 - [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
 
+#### Parameter fitting and selection of best fitting trajectories 
+Building on [trace_selection.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py), which ranks the simulated trajectories based on negative log-likelihood , the 
+ [simulate_traces.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/simulate_traces.py) script extracts the a) single best fitting parameter set or b) n best fitting parameter sets, 
+ and combines these now region specific fitted parameters with sample parameters. Next to the csv files the script generates bat/sh submission script to run a follow up simulation with fitted parameters. 
+The script also uses functions from [sample_parameters.py](https://github.com/numalariamodeling/covid-chicago/blob/master/sample_parameters.py).
 
 #### Further scripts 
 - [extract_sample_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/extract_sample_param.py) Extract and visualize sample parameters that successfully ran in a simulation. Can be used to generate csv files that can be used as inpput in another simulation.

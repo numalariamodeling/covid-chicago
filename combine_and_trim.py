@@ -237,7 +237,15 @@ if __name__ == '__main__':
     sample_param_to_keep = ['startdate', 'scen_num', 'sample_num'] + N_cols
     if isinstance(additional_sample_param, list): sample_param_to_keep = sample_param_to_keep + additional_sample_param
 
-    sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"), usecols= sample_param_to_keep)
+    try:
+        sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"), usecols= sample_param_to_keep)
+    except:
+        """when running from input csv sample_num might be missing"""
+        sample_param_to_keep = ['startdate', 'scen_num'] + N_cols
+        if isinstance(additional_sample_param, list): sample_param_to_keep = sample_param_to_keep + additional_sample_param
+        sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"), usecols= sample_param_to_keep)
+        sample_param_to_keep = sample_param_to_keep + ['sample_num']
+        sampledf['sample_num'] = 0
     Nscenario = max(sampledf['scen_num'])
 
     if Nscenario <= Scenario_save_limit:
