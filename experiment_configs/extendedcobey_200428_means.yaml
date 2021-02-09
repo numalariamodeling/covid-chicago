@@ -94,6 +94,9 @@ sampled_parameters:
   'recovery_time_crit':
     np.random: uniform
     function_kwargs: {'low':9.000, 'high':9.000}
+  'recovery_time_postcrit':
+    np.random: uniform
+    function_kwargs: {'low':2.510, 'high':2.510}   
   ### ---- FRACTIONS  ----------------------- 
   'fraction_symptomatic':
     np.random: uniform
@@ -104,9 +107,9 @@ sampled_parameters:
   'fraction_critical':
     np.random: uniform
     function_kwargs: {'low':0.271, 'high':0.271}
-  'cfr': 
+  'fraction_dead': 
     np.random: uniform
-    function_kwargs: {'low':0.019, 'high':0.019}
+    function_kwargs: {'low':0.192, 'high':0.192}
   ### ---- INFECTIOUSNESS  ----------------------
   'reduced_inf_of_det_cases':
     np.random: uniform
