@@ -116,7 +116,7 @@ sampled_parameters:
     function_kwargs: {'low':0.159, 'high':0.159}
   'reduced_infectious_As':
     np.random: uniform
-    function_kwargs: {'low':0.8, 'high':0.8}                                      
+    function_kwargs: {'low':1, 'high':1}                                      
   ### ----DETECTION RATES ----------------------
   ### In locale model, d_Sym is group specific
   'd_Sym':
