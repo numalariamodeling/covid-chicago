@@ -862,7 +862,7 @@ class covidModel:
 (time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_{grp} Ki_red12_{grp})))
 (time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki_{grp} Ki_red13_{grp})))
 """.format(grp=grp)
-        ki_multiplier_change_str = ki_multiplier_change_str + temp_str
+            ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 
         d_Sym_P_As_change_str = """
 (observe d_Sym_t d_Sym)
@@ -896,7 +896,7 @@ class covidModel:
 (observe recovery_time_crit_t_{grpout} recovery_time_crit_{grp})
 (time-event LOS_ICU_change_1 @recovery_time_crit_change_time_1_{grp}@ ((recovery_time_crit_{grp} @recovery_time_crit_change1_{grp}@) (Kr_c_{grp} (/ 1 @recovery_time_crit_change1_{grp}@))))
 """.format(grpout=grpout, grp=grp)
-        recovery_time_crit_change_str = recovery_time_crit_change_str + temp_str
+            recovery_time_crit_change_str = recovery_time_crit_change_str + temp_str
 
         recovery_time_hosp_change_str = ""
         for grp in self.grpList:
@@ -905,36 +905,20 @@ class covidModel:
 (param recovery_time_hosp_{grp} recovery_time_hosp)
 (param Kr_h_{grp} (/ 1 recovery_time_hosp_{grp}))
 (observe recovery_time_hosp_t_{grpout} recovery_time_hosp_{grp})
-(time-event LOS_ICU_change_1 @recovery_time_hosp_change_time_1_{grp}@ ((recovery_time_hosp_{grp} @recovery_time_hosp_change1_{grp}@) (Kr_h_{grp} (/ 1 @recovery_time_hosp_change1_{grp}@))))
-""".format(grpout=grpout, grp=grp)
-        recovery_time_hosp_change_str = recovery_time_hosp_change_str + temp_str
-
-        LOS_change_str = ""
-        for grp in self.grpList:
-            grpout = covidModel.sub(grp)
-            temp_str = """
-(param recovery_time_crit_{grp} recovery_time_crit)
-(param Kr_c_{grp} (/ 1 recovery_time_crit_{grp}))
-(observe recovery_time_crit_t_{grpout} recovery_time_crit_{grp})
-(time-event LOS_ICU_change_1 @recovery_time_crit_change_time_1_{grp}@ ((recovery_time_crit_{grp} @recovery_time_crit_change1_{grp}@) (Kr_c_{grp} (/ 1 @recovery_time_crit_change1_{grp}@))))
-
-(param recovery_time_hosp_{grp} recovery_time_hosp)
-(param Kr_h_{grp} (/ 1 recovery_time_hosp_{grp}))
-(observe recovery_time_hosp_t_{grpout} recovery_time_hosp_{grp})
 (time-event LOS_nonICU_change_1 @recovery_time_hosp_change_time_1_{grp}@ ((recovery_time_hosp_{grp} @recovery_time_hosp_change1_{grp}@) (Kr_h_{grp} (/ 1 @recovery_time_hosp_change1_{grp}@))))
-                """.format(grpout=grpout, grp=grp)
-        LOS_change_str = LOS_change_str + temp_str
+""".format(grpout=grpout, grp=grp)
+            recovery_time_hosp_change_str = recovery_time_hosp_change_str + temp_str
 
-        param_update_string = param_change_str + \
-                          '\n' + ki_multiplier_change_str + \
-                          '\n' + d_Sym_P_As_change_str + \
-                          '\n' + recovery_time_crit_change_str + \
-                          '\n' + recovery_time_hosp_change_str + \
-                          '\n' + LOS_change_str
+
+        param_update_string = param_change_str +\
+                              '\n' + ki_multiplier_change_str + \
+                              '\n' + d_Sym_P_As_change_str + \
+                              '\n' + recovery_time_crit_change_str + \
+                              '\n' + recovery_time_hosp_change_str
 
         total_string = total_string.replace(';[TIMEVARYING_PARAMETERS]', param_update_string)
 
-        return (total_string)
+        return total_string
 
     def write_interventions(self, total_string):
 
