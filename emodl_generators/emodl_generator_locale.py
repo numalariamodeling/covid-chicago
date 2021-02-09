@@ -863,6 +863,14 @@ class covidModel:
         return total_string
 
     def write_interventions(self, total_string):
+        """ Write interventions
+            Interventions defined in sub-functions:
+                - bvariant: `write_bvariant`
+                - intervention_stop: `write_intervention_stop`
+                - transmission_increase: `write_transmission_increase`
+                - rollback: `write_rollback`
+                - gradual_reopening: `write_gradual_reopening`
+        """
 
         def write_bvariant():
             bvariant_infectivity = ''
@@ -937,67 +945,85 @@ class covidModel:
 
             return gradual_reopening
 
-        change_uniformtestDelay_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
-        """.format("(time_D @change_testDelay_1@)",
-                   "(Ksys_D (/ 1 time_D))",
-                   "(Ksym_D (/ 1 time_D))",
-                   "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))",
-                   "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))",
-                   "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D)))",
-                   "(Kr_m_D (/ 1 (- recovery_time_mild time_D )))")
-
-        change_testDelay_Sym_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
-        """.format("(time_D_Sym @change_testDelay_Sym_1@)",
-                   "(Ksym_D (/ 1 time_D_Sym))",
-                   "(Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))")
-
-        change_testDelay_Sys_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} ))
-        """.format("(time_D_Sys @change_testDelay_Sys_1@)",
-                   "(Ksys_D (/ 1 time_D_Sys))",
-                   "(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))",
-                   "(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))",
-                   "(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))")
-
-        change_testDelay_As_str = """
-    (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} ))
-        """.format("(time_D_As @change_testDelay_As_1@)",
-                   "(Kl_D (/ 1 time_D_As))",
-                   "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")
-
         if self.add_interventions == "bvariant":
-            total_string = total_string.replace(';[INTERVENTIONS]', write_bvariant())
+            intervention_str = write_bvariant()
         if self.add_interventions == "interventionStop":
-            total_string = total_string.replace(';[INTERVENTIONS]', write_transmission_increase())
+            intervention_str = write_transmission_increase()
         if self.add_interventions == "interventionSTOP_adj":
-            total_string = total_string.replace(';[INTERVENTIONS]', write_intervention_stop())
+            intervention_str = write_intervention_stop()
         if self.add_interventions == "gradual_reopening":
-            total_string = total_string.replace(';[INTERVENTIONS]', write_gradual_reopening(nchanges=4))
+            intervention_str = write_gradual_reopening(nchanges=4)
         if self.add_interventions == "rollback":
-            total_string = total_string.replace(';[INTERVENTIONS]',  write_rollback())
+            intervention_str = write_rollback()
 
-        if self.change_testDelay != None:
-            if self.change_testDelay == "uniform":
-                total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_uniformtestDelay_str)
-            if self.change_testDelay == "As":
-                total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_As_str)
-            if self.change_testDelay == "Sym":
-                total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sym_str)
-            if self.change_testDelay == "Sys":
-                total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_testDelay_Sys_str)
-            if self.change_testDelay == "AsSym":
-                total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]',
-                                                    change_testDelay_As_str + '\n' + change_testDelay_Sym_str)
-            if self.change_testDelay == "SymSys":
-                total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]',
-                                                    change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
-            if self.change_testDelay == "AsSymSys":
-                total_string = total_string.replace(';[ADDITIONAL_TIMEEVENTS]',
-                                                    change_testDelay_As_str + '\n' + change_testDelay_Sym_str + '\n' + change_testDelay_Sys_str)
+        return total_string.replace(';[INTERVENTIONS]', intervention_str )
 
-        return total_string
+    def write_change_test_delay(self, total_string):
+        """ Write change in test delay (model extension)
+            Possible extensions defined in strings:
+                - uniform: `change_uniformtestDelay_str`
+                - As: `change_testDelay_As_str`
+                - Sym: `change_testDelay_Sym_str`
+                - Sys: `change_testDelay_Sys_str`
+                and combinations
+                - AsSym: `change_testDelay_As_str` & `change_testDelay_Sym_str`
+                - SymSys: `change_testDelay_Sym_str` & `change_testDelay_Sys_str`
+                - AsSymSys: `change_testDelay_As_str` &  `change_testDelay_Sym_str` & `change_testDelay_Sys_str`
+        """
+        change_uniformtestDelay_str = '(time-event change_testDelay1 @change_testDelay_time1@ ' \
+                                      '( ' \
+                                      '(time_D @change_testDelay_1@) ' \
+                                      '(Ksys_D (/ 1 time_D)) ' \
+                                      '(Ksym_D (/ 1 time_D)) ' \
+                                      '(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D))) ' \
+                                      '(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) )) ' \
+                                      '(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D))) ' \
+                                      '(Kr_m_D (/ 1 (- recovery_time_mild time_D )))' \
+                                      ')' \
+                                      ')\n'
+
+        change_testDelay_Sym_str = '(time-event change_testDelay1 @change_testDelay_time1@ ' \
+                                   '( ' \
+                                   '(time_D_Sym @change_testDelay_Sym_1@) ' \
+                                   '(Ksym_D (/ 1 time_D_Sym)) ' \
+                                   '(Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))' \
+                                   ')' \
+                                   ')\n'
+
+        change_testDelay_Sys_str = '(time-event change_testDelay1 @change_testDelay_time1@ ' \
+                                   '( ' \
+                                   '(time_D_Sys @change_testDelay_Sys_1@) ' \
+                                   '(Ksys_D (/ 1 time_D_Sys)) ' \
+                                   '(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) ' \
+                                   '(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ' \
+                                   '(Kh3_D (/ fraction_dead (- time_to_hospitalization time_D_Sys)))' \
+                                   ')' \
+                                   ')\n'
+
+        change_testDelay_As_str = '(time-event change_testDelay1 @change_testDelay_time1@ ' \
+                                  '( ' \
+                                  '(time_D_As @change_testDelay_As_1@) ' \
+                                  '(Kl_D (/ 1 time_D_As)) ' \
+                                  '(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))' \
+                                  ')' \
+                                  ')\n'
+
+        if self.change_testDelay == "uniform":
+            change_test_delay_str = change_uniformtestDelay_str
+        if self.change_testDelay == "As":
+            change_test_delay_str = change_testDelay_As_str
+        if self.change_testDelay == "Sym":
+            change_test_delay_str = change_testDelay_Sym_str
+        if self.change_testDelay == "Sys":
+            change_test_delay_str = change_testDelay_Sys_str
+        if self.change_testDelay == "AsSym":
+            change_test_delay_str = change_testDelay_As_str + change_testDelay_Sym_str
+        if self.change_testDelay == "SymSys":
+            change_test_delay_str = change_testDelay_Sym_str + change_testDelay_Sys_str
+        if self.change_testDelay == "AsSymSys":
+            change_test_delay_str = change_testDelay_As_str + change_testDelay_Sym_str + change_testDelay_Sys_str
+
+        return total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_test_delay_str)
 
     def generate_emodl(self):
 
@@ -1043,13 +1069,18 @@ class covidModel:
         intervention_string = "\n;[TIMEVARYING_PARAMETERS]\n;[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
         total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string + '\n\n' + reaction_string + '\n\n' + footer_str
 
-        ### Custom adjustments for EMS 6 (earliest start date)
+        """Custom adjustments for EMS 6 (earliest start date)"""
         total_string = total_string.replace('(species As::EMS_6 0)', '(species As::EMS_6 1)')
 
-        ### Add time-events for time-varying parameters
+        """Add time-events for time-varying parameters"""
         total_string = covidModel.write_time_varying_parameter(self, total_string)
 
-        ### Add interventions (optional)
+        """Define change in test delay (required)"""
+        total_string = covidModel.write_change_test_delay(self, total_string)
+
+        """Add interventions (optional)
+           Note, interventions added IN ADDITION to monthly fitted Ki's
+        """
         if self.add_interventions != None:
             total_string = covidModel.write_interventions(self, total_string)
 
@@ -1068,19 +1099,18 @@ class covidModel:
                          'observeLevel': ('primary', 'secondary', 'tertiary', 'all'),
                          'add_interventions': ("baseline",
                                                "bvariant",
-                                               "rollback",
-                                               "reopen_rollback",
-                                               "rollbacktriggered_delay",
-                                               "gradual_reopening",
-                                               "gradual_reopening2",
-                                               "interventionSTOP",
+                                               "interventionStop",
                                                "interventionSTOP_adj",
-                                               "rollbacktriggered",
-                                               "contactTracing",
-                                               "improveHS",
-                                               "reopen_improveHS",
-                                               "contactTracing_improveHS"
-                                               "reopen_contactTracing_improveHS"),
+                                               "gradual_reopening",
+                                               "rollback",
+                                               #"gradual_reopening2",
+                                               #"rollbacktriggered",
+                                               #"contactTracing",
+                                               #"improveHS",
+                                               #"reopen_improveHS",
+                                               #"contactTracing_improveHS"
+                                               #"reopen_contactTracing_improveHS"
+                                               ),
                          'change_testDelay': ("None", "Sym", "AsSym"),
                          'trigger_channel': ("None", "critical", "crit_det", "hospitalized", "hosp_det"),
                          'add_migration': ('True', 'False')}
