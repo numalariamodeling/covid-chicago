@@ -355,8 +355,6 @@ class covidModel:
         if self.expandModel == "AsSymSys":
             params_str = params_str + expand_testDelay_AsSymSys_str
 
-        params_str = params_str.replace("  ", " ")
-
         return params_str
 
     def write_migration_param(self):
@@ -367,8 +365,7 @@ class covidModel:
             param_str = param_str + "\n"
             for x2_i in x2:
                 # x1_i=1
-                param_str = param_str + """\n(param toEMS_{x1_i}_from_EMS_{x2_i} @toEMS_{x1_i}_from_EMS_{x2_i}@)""".format(
-                    x1_i=x1_i, x2_i=x2_i)
+                param_str = param_str + f'(param toEMS_{x1_i}_from_EMS_{x2_i} @toEMS_{x1_i}_from_EMS_{x2_i}@)\n'
         return param_str
 
     def write_travel_reaction(grp, travelspeciesList=None):
@@ -383,31 +380,37 @@ class covidModel:
             reaction_str = reaction_str + "\n"
             for x2_i in x2:
                 # x1_i=1
-                reaction_str = reaction_str + """\n(reaction {travelspecies}_travel_EMS_{x2_i}to{x1_i}  ({travelspecies}::EMS_{x2_i}) ({travelspecies}::EMS_{x1_i}) (* {travelspecies}::EMS_{x2_i} toEMS_{x1_i}_from_EMS_{x2_i} (/ N_EMS_{x2_i} (+ S::EMS_{x2_i} E::EMS_{x2_i} As::EMS_{x2_i} P::EMS_{x2_i} recovered_EMS_{x2_i}))))""".format(
-                    travelspecies=travelspecies, x1_i=x1_i, x2_i=x2_i)
+                reaction_str = reaction_str + f'\n(reaction {travelspecies}_travel_EMS_{x2_i}to{x1_i}  ' \
+                                              f'({travelspecies}::EMS_{x2_i}) ({travelspecies}::EMS_{x1_i}) ' \
+                                              f'(* {travelspecies}::EMS_{x2_i} toEMS_{x1_i}_from_EMS_{x2_i} ' \
+                                              f'(/ N_EMS_{x2_i} ' \
+                                              f'(+ S::EMS_{x2_i} E::EMS_{x2_i} As::EMS_{x2_i} P::EMS_{x2_i} recovered_EMS_{x2_i})' \
+                                              f')))\n'
 
         return reaction_str
 
     def write_Ki_timevents(grp):
         grp = str(grp)
         grpout = covidModel.sub(grp)
-        params_str = """
-(param Ki_{grp} @Ki_{grp}@)
-(observe Ki_t_{grpout} Ki_{grp})
-(time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
-    """.format(grpout=grpout, grp=grp)
-        params_str = params_str.replace("  ", " ")
+        params_str = f'(param Ki_{grp} @Ki_{grp}@)\n' \
+                     f'(observe Ki_t_{grpout} Ki_{grp})\n' \
+                     f'(time-event time_infection_import @time_infection_import_{grp}@ ' \
+                     f'(' \
+                     f'(As::{grp} @initialAs_{grp}@) ' \
+                     f'(S::{grp} (- S::{grp} @initialAs_{grp}@))' \
+                     f')' \
+                     f')\n'
 
         return params_str
 
     def write_N_population(self):
         stringAll = ""
-        for key in self.grpList:
-            string1 = """\n(param N_{grp} (+ @speciesS_{grp}@ @initialAs_{grp}@) )""".format(grp=key)
+        for grp in self.grpList:
+            string1 = f'(param N_{grp} (+ @speciesS_{grp}@ @initialAs_{grp}@))\n'
             stringAll = stringAll + string1
 
-        string2 = "\n(param N_All (+ " + covidModel.repeat_string_by_grp('N_', self.grpList) + "))"
-        string3 = "\n(observe N_All N_All)"
+        string2 = f'(param N_All (+ {covidModel.repeat_string_by_grp("N_", self.grpList)}))\n'
+        string3 = '(observe N_All N_All)\n'
         stringAll = stringAll + string2 + string3
 
         return stringAll
@@ -539,140 +542,117 @@ class covidModel:
     def write_reactions(self, grp):
         grp = str(grp)
 
-        reaction_str_I = """
-(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} (/  (+ infectious_undet_symp_{grp} (* infectious_undet_As_{grp} reduced_infectious_As ) (* infectious_det_symp_{grp} reduced_inf_of_det_cases) (* infectious_det_AsP_{grp} reduced_inf_of_det_cases_ct)) N_{grp} )))
-    """.format(grp=grp)
+        reaction_str_I = f'(reaction exposure_{grp}   ' \
+                         f'(S::{grp}) (E::{grp}) ' \
+                         f'(* Ki_{grp} S::{grp} ' \
+                         f'(/  ' \
+                         f'(+ infectious_undet_symp_{grp} ' \
+                         f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                         f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                         f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases_ct)' \
+                         f') N_{grp} )' \
+                         f'))\n'
 
-        reaction_str_III = """
-(reaction recovery_H1_{grp}   (H1::{grp})   (RH1::{grp})   (* Kr_h_{grp} H1::{grp}))
-(reaction recovery_C2_{grp}   (C2::{grp})   (H2post::{grp})   (* Kr_c_{grp} C2::{grp}))
-(reaction recovery_H2post_{grp}   (H2post::{grp})   (RC2::{grp})   (* Kr_hc H2post::{grp}))
-(reaction recovery_H1_det3_{grp}   (H1_det3::{grp})   (RH1_det3::{grp})   (* Kr_h_{grp} H1_det3::{grp}))
-(reaction recovery_C2_det3_{grp}   (C2_det3::{grp})   (H2post_det3::{grp})   (* Kr_c_{grp} C2_det3::{grp}))
-(reaction recovery_H2post_det3_{grp}   (H2post_det3::{grp})   (RC2_det3::{grp})   (* Kr_hc H2post_det3::{grp}))
-        """.format(grp=grp)
+        reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h_{grp} H1::{grp}))\n' \
+                           f'(reaction recovery_C2_{grp} (C2::{grp}) (H2post::{grp}) (* Kr_c_{grp} C2::{grp}))\n' \
+                           f'(reaction recovery_H2post_{grp} (H2post::{grp}) (RC2::{grp}) (* Kr_hc H2post::{grp}))\n' \
+                           f'(reaction recovery_H1_det3_{grp} (H1_det3::{grp}) (RH1_det3::{grp}) (* Kr_h_{grp} H1_det3::{grp}))\n' \
+                           f'(reaction recovery_C2_det3_{grp} (C2_det3::{grp}) (H2post_det3::{grp}) (* Kr_c_{grp} C2_det3::{grp}))\n' \
+                           f'(reaction recovery_H2post_det3_{grp} (H2post_det3::{grp}) (RC2_det3::{grp}) (* Kr_hc H2post_det3::{grp}))\n'
 
-        expand_base_str = """
-(reaction infection_asymp_undet_{grp}  (E::{grp})   (As::{grp})   (* Kl E::{grp} (- 1 d_As)))
-(reaction infection_asymp_det_{grp}  (E::{grp})   (As_det1::{grp})   (* Kl E::{grp} d_As))
-(reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks E::{grp} (- 1 d_P)))
-(reaction presymptomatic_{grp} (E::{grp})   (P_det::{grp})   (* Ks E::{grp} d_P))
+        expand_base_str = f'(reaction infection_asymp_undet_{grp} (E::{grp}) (As::{grp}) (* Kl E::{grp} (- 1 d_As)))\n' \
+                          f'(reaction infection_asymp_det_{grp} (E::{grp}) (As_det1::{grp}) (* Kl E::{grp} d_As))\n' \
+                          f'(reaction presymptomatic_{grp} (E::{grp}) (P::{grp}) (* Ks E::{grp} (- 1 d_P)))\n' \
+                          f'(reaction presymptomatic_{grp} (E::{grp}) (P_det::{grp}) (* Ks E::{grp} d_P))\n' \
+                          f'(reaction mild_symptomatic_undet_{grp} (P::{grp}) (Sym::{grp}) (* Ksym P::{grp} (- 1 d_Sym)))\n' \
+                          f'(reaction mild_symptomatic_det_{grp} (P::{grp}) (Sym_det2::{grp}) (* Ksym P::{grp} d_Sym))\n' \
+                          f'(reaction severe_symptomatic_undet_{grp} (P::{grp}) (Sys::{grp}) (* Ksys P::{grp} (- 1 d_Sys)))\n' \
+                          f'(reaction severe_symptomatic_det_{grp} (P::{grp}) (Sys_det3::{grp}) (* Ksys P::{grp} d_Sys))\n' \
+                          f'(reaction mild_symptomatic_det_{grp} (P_det::{grp}) (Sym_det2::{grp}) (* Ksym P_det::{grp}))\n' \
+                          f'(reaction severe_symptomatic_det_{grp} (P_det::{grp}) (Sys_det3::{grp}) (* Ksys P_det::{grp} ))\n' \
+                          f'(reaction hospitalization_1_{grp} (Sys::{grp}) (H1::{grp}) (* Kh1 Sys::{grp}))\n' \
+                          f'(reaction hospitalization_2_{grp} (Sys::{grp}) (H2pre::{grp}) (* Kh2 Sys::{grp}))\n' \
+                          f'(reaction hospitalization_3_{grp} (Sys::{grp}) (H3::{grp}) (* Kh3 Sys::{grp}))\n' \
+                          f'(reaction critical_2_{grp} (H2pre::{grp}) (C2::{grp}) (* Kc H2pre::{grp}))\n' \
+                          f'(reaction critical_3_{grp} (H3::{grp}) (C3::{grp}) (* Kc H3::{grp}))\n' \
+                          f'(reaction death_{grp} (C3::{grp}) (D3::{grp}) (* Km C3::{grp}))\n' \
+                          f'(reaction hospitalization_1_det_{grp} (Sys_det3::{grp}) (H1_det3::{grp}) (* Kh1 Sys_det3::{grp}))\n' \
+                          f'(reaction hospitalization_2_det_{grp} (Sys_det3::{grp}) (H2pre_det3::{grp}) (* Kh2 Sys_det3::{grp}))\n' \
+                          f'(reaction hospitalization_3_det_{grp} (Sys_det3::{grp}) (H3_det3::{grp}) (* Kh3 Sys_det3::{grp}))\n' \
+                          f'(reaction critical_2_det2_{grp} (H2pre_det3::{grp}) (C2_det3::{grp}) (* Kc H2pre_det3::{grp}))\n' \
+                          f'(reaction critical_3_det2_{grp} (H3_det3::{grp}) (C3_det3::{grp}) (* Kc H3_det3::{grp}))\n' \
+                          f'(reaction death_det3_{grp} (C3_det3::{grp}) (D3_det3::{grp}) (* Km C3_det3::{grp}))\n' \
+                          f'(reaction recovery_As_{grp} (As::{grp}) (RAs::{grp}) (* Kr_a As::{grp}))\n' \
+                          f'(reaction recovery_As_det_{grp} (As_det1::{grp}) (RAs_det1::{grp}) (* Kr_a As_det1::{grp}))\n' \
+                          f'(reaction recovery_Sym_{grp} (Sym::{grp}) (RSym::{grp}) (* Kr_m  Sym::{grp}))\n' \
+                          f'(reaction recovery_Sym_det2_{grp} (Sym_det2::{grp}) (RSym_det2::{grp}) (* Kr_m  Sym_det2::{grp}))\n'
 
-(reaction mild_symptomatic_undet_{grp} (P::{grp})  (Sym::{grp}) (* Ksym P::{grp} (- 1 d_Sym)))
-(reaction mild_symptomatic_det_{grp} (P::{grp})  (Sym_det2::{grp}) (* Ksym P::{grp} d_Sym))
-(reaction severe_symptomatic_undet_{grp} (P::{grp})  (Sys::{grp})  (* Ksys P::{grp} (- 1 d_Sys)))
-(reaction severe_symptomatic_det_{grp} (P::{grp})  (Sys_det3::{grp})  (* Ksys P::{grp} d_Sys))
+        expand_testDelay_SymSys_str = f'(reaction infection_asymp_undet_{grp} (E::{grp}) (As::{grp}) (* Kl E::{grp} (- 1 d_As)))\n' \
+                                      f'(reaction infection_asymp_det_{grp} (E::{grp}) (As_det1::{grp}) (* Kl E::{grp} d_As))\n' \
+                                      f'(reaction presymptomatic_{grp} (E::{grp}) (P::{grp}) (* Ks E::{grp}))\n' \
+                                      f'; developing symptoms - same time to symptoms as in master emodl\n' \
+                                      f'(reaction mild_symptomatic_{grp} (P::{grp}) (Sym_preD::{grp}) (* Ksym P::{grp}))\n' \
+                                      f'(reaction severe_symptomatic_{grp} (P::{grp}) (Sys_preD::{grp}) (* Ksys P::{grp}))\n' \
+                                      f'; never detected \n' \
+                                      f'(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp}) (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym)))\n' \
+                                      f'(reaction severe_symptomatic_undet_{grp} (Sys_preD::{grp}) (Sys::{grp}) (* Ksys_D Sys_preD::{grp} (- 1 d_Sys)))\n' \
+                                      f'; new detections  - time to detection is substracted from hospital time\n' \
+                                      f'(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp}) (Sym_det2::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))\n' \
+                                      f'(reaction severe_symptomatic_det_{grp} (Sys_preD::{grp}) (Sys_det3::{grp}) (* Ksys_D Sys_preD::{grp} d_Sys))\n' \
+                                      f'(reaction hospitalization_1_{grp} (Sys::{grp}) (H1::{grp}) (* Kh1_D Sys::{grp}))\n' \
+                                      f'(reaction hospitalization_2_{grp} (Sys::{grp}) (H2pre::{grp}) (* Kh2_D Sys::{grp}))\n' \
+                                      f'(reaction hospitalization_3_{grp} (Sys::{grp}) (H3::{grp}) (* Kh3_D Sys::{grp}))\n' \
+                                      f'(reaction critical_2_{grp} (H2pre::{grp}) (C2::{grp}) (* Kc H2pre::{grp}))\n' \
+                                      f'(reaction critical_3_{grp} (H3::{grp}) (C3::{grp}) (* Kc H3::{grp}))\n' \
+                                      f'(reaction death_{grp} (C3::{grp}) (D3::{grp}) (* Km C3::{grp}))\n' \
+                                      f'(reaction hospitalization_1_det_{grp} (Sys_det3::{grp}) (H1_det3::{grp}) (* Kh1_D Sys_det3::{grp}))\n' \
+                                      f'(reaction hospitalization_2_det_{grp} (Sys_det3::{grp}) (H2pre_det3::{grp}) (* Kh2_D Sys_det3::{grp}))\n' \
+                                      f'(reaction hospitalization_3_det_{grp} (Sys_det3::{grp}) (H3_det3::{grp}) (* Kh3_D Sys_det3::{grp}))\n' \
+                                      f'(reaction critical_2_det2_{grp} (H2pre_det3::{grp}) (C2_det3::{grp}) (* Kc H2pre_det3::{grp}))\n' \
+                                      f'(reaction critical_3_det2_{grp} (H3_det3::{grp}) (C3_det3::{grp}) (* Kc H3_det3::{grp}))\n' \
+                                      f'(reaction death_det3_{grp} (C3_det3::{grp}) (D3_det3::{grp}) (* Km C3_det3::{grp}))\n' \
+                                      f'(reaction recovery_As_{grp} (As::{grp}) (RAs::{grp}) (* Kr_a As::{grp}))\n' \
+                                      f'(reaction recovery_As_det_{grp} (As_det1::{grp}) (RAs_det1::{grp}) (* Kr_a As_det1::{grp}))\n' \
+                                      f'(reaction recovery_Sym_{grp} (Sym::{grp}) (RSym::{grp}) (* Kr_m_D Sym::{grp}))\n' \
+                                      f'(reaction recovery_Sym_det2_{grp} (Sym_det2::{grp}) (RSym_det2::{grp}) (* Kr_m_D  Sym_det2::{grp}))\n'
 
-(reaction mild_symptomatic_det_{grp} (P_det::{grp})  (Sym_det2::{grp}) (* Ksym P_det::{grp}))
-(reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3::{grp})  (* Ksys P_det::{grp} ))
-
-(reaction hospitalization_1_{grp}   (Sys::{grp})   (H1::{grp})   (* Kh1 Sys::{grp}))
-(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2pre::{grp})   (* Kh2 Sys::{grp}))
-(reaction hospitalization_3_{grp}   (Sys::{grp})   (H3::{grp})   (* Kh3 Sys::{grp}))
-(reaction critical_2_{grp}   (H2pre::{grp})   (C2::{grp})   (* Kc H2pre::{grp}))
-(reaction critical_3_{grp}   (H3::{grp})   (C3::{grp})   (* Kc H3::{grp}))
-(reaction death_{grp}   (C3::{grp})   (D3::{grp})   (* Km C3::{grp}))
-
-(reaction hospitalization_1_det_{grp}   (Sys_det3::{grp})   (H1_det3::{grp})   (* Kh1 Sys_det3::{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3::{grp})   (H2pre_det3::{grp})   (* Kh2 Sys_det3::{grp}))
-(reaction hospitalization_3_det_{grp}   (Sys_det3::{grp})   (H3_det3::{grp})   (* Kh3 Sys_det3::{grp}))
-(reaction critical_2_det2_{grp}   (H2pre_det3::{grp})   (C2_det3::{grp})   (* Kc H2pre_det3::{grp}))
-(reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
-(reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
-
-(reaction recovery_As_{grp}   (As::{grp})   (RAs::{grp})   (* Kr_a As::{grp}))
-(reaction recovery_As_det_{grp} (As_det1::{grp})   (RAs_det1::{grp})   (* Kr_a As_det1::{grp}))
-
-(reaction recovery_Sym_{grp}   (Sym::{grp})   (RSym::{grp})   (* Kr_m  Sym::{grp}))
-(reaction recovery_Sym_det2_{grp}   (Sym_det2::{grp})   (RSym_det2::{grp})   (* Kr_m  Sym_det2::{grp}))
-    """.format(grp=grp)
-
-        expand_testDelay_SymSys_str = """
-(reaction infection_asymp_undet_{grp}  (E::{grp})   (As::{grp})   (* Kl E::{grp} (- 1 d_As)))
-(reaction infection_asymp_det_{grp}  (E::{grp})   (As_det1::{grp})   (* Kl E::{grp} d_As))
-(reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks E::{grp}))
-
-; developing symptoms - same time to symptoms as in master emodl
-(reaction mild_symptomatic_{grp} (P::{grp})  (Sym_preD::{grp}) (* Ksym P::{grp}))
-(reaction severe_symptomatic_{grp} (P::{grp})  (Sys_preD::{grp})  (* Ksys P::{grp}))
-
-; never detected 
-(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp})  (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym)))
-(reaction severe_symptomatic_undet_{grp} (Sys_preD::{grp})  (Sys::{grp})  (* Ksys_D Sys_preD::{grp} (- 1 d_Sys)))
-
-; new detections  - time to detection is substracted from hospital time
-(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp})  (Sym_det2::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))
-(reaction severe_symptomatic_det_{grp} (Sys_preD::{grp})  (Sys_det3::{grp})  (* Ksys_D Sys_preD::{grp} d_Sys))
-
-(reaction hospitalization_1_{grp}   (Sys::{grp})   (H1::{grp})   (* Kh1_D Sys::{grp}))
-(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2pre::{grp})   (* Kh2_D Sys::{grp}))
-(reaction hospitalization_3_{grp}   (Sys::{grp})   (H3::{grp})   (* Kh3_D Sys::{grp}))
-(reaction critical_2_{grp}   (H2pre::{grp})   (C2::{grp})   (* Kc H2pre::{grp}))
-(reaction critical_3_{grp}   (H3::{grp})   (C3::{grp})   (* Kc H3::{grp}))
-(reaction death_{grp}   (C3::{grp})   (D3::{grp})   (* Km C3::{grp}))
-(reaction hospitalization_1_det_{grp}   (Sys_det3::{grp})   (H1_det3::{grp})   (* Kh1_D Sys_det3::{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3::{grp})   (H2pre_det3::{grp})   (* Kh2_D Sys_det3::{grp}))
-(reaction hospitalization_3_det_{grp}   (Sys_det3::{grp})   (H3_det3::{grp})   (* Kh3_D Sys_det3::{grp}))
-(reaction critical_2_det2_{grp}   (H2pre_det3::{grp})   (C2_det3::{grp})   (* Kc H2pre_det3::{grp}))
-(reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
-(reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
-
-(reaction recovery_As_{grp}   (As::{grp})   (RAs::{grp})   (* Kr_a As::{grp}))
-(reaction recovery_As_det_{grp} (As_det1::{grp})   (RAs_det1::{grp})   (* Kr_a As_det1::{grp}))
-(reaction recovery_Sym_{grp}   (Sym::{grp})   (RSym::{grp})   (* Kr_m_D  Sym::{grp}))
-(reaction recovery_Sym_det2_{grp}   (Sym_det2::{grp})   (RSym_det2::{grp})   (* Kr_m_D  Sym_det2::{grp}))
-    
-    """.format(grp=grp)
-
-        expand_testDelay_AsSymSys_str = """
-(reaction infection_asymp_det_{grp}  (E::{grp})   (As_preD::{grp})   (* Kl E::{grp}))
-(reaction infection_asymp_undet_{grp}  (As_preD::{grp})   (As::{grp})   (* Kl_D As_preD::{grp} (- 1 d_As)))
-(reaction infection_asymp_det_{grp}  (As_preD::{grp})   (As_det1::{grp})   (* Kl_D As_preD::{grp} d_As))
-
-(reaction presymptomatic_{grp} (E::{grp})   (P::{grp})   (* Ks  E::{grp} (- 1 d_P)))
-(reaction presymptomatic_{grp} (E::{grp})   (P_det::{grp})   (* Ks  E::{grp} d_P))
-
-; developing symptoms - same time to symptoms as in master emodl
-(reaction mild_symptomatic_{grp} (P::{grp})  (Sym_preD::{grp}) (* Ksym P::{grp}))
-(reaction severe_symptomatic_{grp} (P::{grp})  (Sys_preD::{grp})  (* Ksys P::{grp}))
-                                                                   
-; never detected 
-(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp})  (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym)))
-(reaction severe_symptomatic_undet_{grp} (Sys_preD::{grp})  (Sys::{grp})  (* Ksys_D Sys_preD::{grp} (- 1 d_Sys)))
-
-; new detections  - time to detection is subtracted from hospital time
-(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp})  (Sym_det2a::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))
-(reaction severe_symptomatic_det_{grp} (Sys_preD::{grp})  (Sys_det3a::{grp})  (* Ksys_D Sys_preD::{grp} d_Sys))
-
-; developing symptoms - already detected, same time to symptoms as in master emodl
-(reaction mild_symptomatic_det_{grp} (P_det::{grp})  (Sym_det2b::{grp}) (* Ksym  P_det::{grp}))
-(reaction severe_symptomatic_det_{grp} (P_det::{grp})  (Sys_det3b::{grp})  (* Ksys  P_det::{grp} ))
-
-(reaction hospitalization_1_{grp}  (Sys::{grp})   (H1::{grp})   (* Kh1_D Sys::{grp}))
-(reaction hospitalization_2_{grp}   (Sys::{grp})   (H2pre::{grp})   (* Kh2_D Sys::{grp}))
-(reaction hospitalization_3_{grp}   (Sys::{grp})   (H3::{grp})   (* Kh3_D Sys::{grp}))
-(reaction critical_2_{grp}  (H2pre::{grp})   (C2::{grp})   (* Kc H2pre::{grp}))
-(reaction critical_3_{grp}   (H3::{grp})   (C3::{grp})   (* Kc H3::{grp}))
-(reaction death_{grp}   (C3::{grp})   (D3::{grp})   (* Km C3::{grp}))
-
-(reaction hospitalization_1_det_{grp}   (Sys_det3a::{grp})   (H1_det3::{grp})   (* Kh1_D Sys_det3a::{grp}))
-(reaction hospitalization_2_det_{grp}   (Sys_det3a::{grp})   (H2pre_det3::{grp})   (* Kh2_D Sys_det3a::{grp}))
-(reaction hospitalization_3_det_{grp}   (Sys_det3a::{grp})   (H3_det3::{grp})   (* Kh3_D Sys_det3a::{grp}))
-(reaction hospitalization_1_det_{grp}   (Sys_det3b::{grp})   (H1_det3::{grp})   (* Kh1 Sys_det3b::{grp}))
-(reaction hospitalization_2pre_det_{grp}   (Sys_det3b::{grp})   (H2pre_det3::{grp})   (* Kh2 Sys_det3b::{grp}))
-(reaction hospitalization_3_det_{grp}   (Sys_det3b::{grp})   (H3_det3::{grp})   (* Kh3 Sys_det3b::{grp}))
-
-(reaction critical_2_det2_{grp}   (H2pre_det3::{grp})   (C2_det3::{grp})   (* Kc H2pre_det3::{grp}))
-(reaction critical_3_det2_{grp}   (H3_det3::{grp})   (C3_det3::{grp})   (* Kc H3_det3::{grp}))
-(reaction death_det3_{grp}   (C3_det3::{grp})   (D3_det3::{grp})   (* Km C3_det3::{grp}))
-
-(reaction recovery_As_{grp}   (As::{grp})   (RAs::{grp})   (* Kr_a_D As::{grp}))
-(reaction recovery_As_det_{grp} (As_det1::{grp})   (RAs_det1::{grp})   (* Kr_a_D As_det1::{grp}))
-
-(reaction recovery_Sym_{grp}   (Sym::{grp})   (RSym::{grp})   (* Kr_m_D  Sym::{grp}))
-(reaction recovery_Sym_det2a_{grp}   (Sym_det2a::{grp})   (RSym_det2::{grp})   (* Kr_m_D  Sym_det2a::{grp}))
-(reaction recovery_Sym_det2b_{grp}   (Sym_det2b::{grp})   (RSym_det2::{grp})   (* Kr_m  Sym_det2b::{grp}))
-     """.format(grp=grp)
+        expand_testDelay_AsSymSys_str = f'(reaction infection_asymp_det_{grp} (E::{grp}) (As_preD::{grp}) (* Kl E::{grp}))\n' \
+                                        f'(reaction infection_asymp_undet_{grp} (As_preD::{grp}) (As::{grp}) (* Kl_D As_preD::{grp} (- 1 d_As)))\n' \
+                                        f'(reaction infection_asymp_det_{grp} (As_preD::{grp}) (As_det1::{grp}) (* Kl_D As_preD::{grp} d_As))\n' \
+                                        f'(reaction presymptomatic_{grp} (E::{grp}) (P::{grp}) (* Ks E::{grp} (- 1 d_P)))\n' \
+                                        f'(reaction presymptomatic_{grp} (E::{grp}) (P_det::{grp}) (* Ks E::{grp} d_P))\n' \
+                                        f'; developing symptoms - same time to symptoms as in master emodl\n' \
+                                        f'(reaction mild_symptomatic_{grp} (P::{grp}) (Sym_preD::{grp}) (* Ksym P::{grp}))\n' \
+                                        f'(reaction severe_symptomatic_{grp} (P::{grp}) (Sys_preD::{grp}) (* Ksys P::{grp}))\n' \
+                                        f'; never detected\n' \
+                                        f'(reaction mild_symptomatic_undet_{grp} (Sym_preD::{grp}) (Sym::{grp}) (* Ksym_D Sym_preD::{grp} (- 1 d_Sym)))\n' \
+                                        f'(reaction severe_symptomatic_undet_{grp} (Sys_preD::{grp}) (Sys::{grp})  (* Ksys_D Sys_preD::{grp} (- 1 d_Sys)))\n' \
+                                        f'; new detections  - time to detection is subtracted from hospital time\n' \
+                                        f'(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp}) (Sym_det2a::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))\n' \
+                                        f'(reaction severe_symptomatic_det_{grp} (Sys_preD::{grp}) (Sys_det3a::{grp}) (* Ksys_D Sys_preD::{grp} d_Sys))\n' \
+                                        f'; developing symptoms - already detected, same time to symptoms as in master emodl\n' \
+                                        f'(reaction mild_symptomatic_det_{grp} (P_det::{grp}) (Sym_det2b::{grp}) (* Ksym  P_det::{grp}))\n' \
+                                        f'(reaction severe_symptomatic_det_{grp} (P_det::{grp}) (Sys_det3b::{grp}) (* Ksys  P_det::{grp} ))\n' \
+                                        f'(reaction hospitalization_1_{grp} (Sys::{grp}) (H1::{grp}) (* Kh1_D Sys::{grp}))\n' \
+                                        f'(reaction hospitalization_2_{grp} (Sys::{grp}) (H2pre::{grp}) (* Kh2_D Sys::{grp}))\n' \
+                                        f'(reaction hospitalization_3_{grp} (Sys::{grp}) (H3::{grp}) (* Kh3_D Sys::{grp}))\n' \
+                                        f'(reaction critical_2_{grp} (H2pre::{grp}) (C2::{grp}) (* Kc H2pre::{grp}))\n' \
+                                        f'(reaction critical_3_{grp} (H3::{grp}) (C3::{grp}) (* Kc H3::{grp}))\n' \
+                                        f'(reaction death_{grp} (C3::{grp}) (D3::{grp}) (* Km C3::{grp}))\n' \
+                                        f'(reaction hospitalization_1_det_{grp} (Sys_det3a::{grp}) (H1_det3::{grp}) (* Kh1_D Sys_det3a::{grp}))\n' \
+                                        f'(reaction hospitalization_2_det_{grp} (Sys_det3a::{grp}) (H2pre_det3::{grp}) (* Kh2_D Sys_det3a::{grp}))\n' \
+                                        f'(reaction hospitalization_3_det_{grp} (Sys_det3a::{grp}) (H3_det3::{grp}) (* Kh3_D Sys_det3a::{grp}))\n' \
+                                        f'(reaction hospitalization_1_det_{grp} (Sys_det3b::{grp}) (H1_det3::{grp}) (* Kh1 Sys_det3b::{grp}))\n' \
+                                        f'(reaction hospitalization_2pre_det_{grp} (Sys_det3b::{grp}) (H2pre_det3::{grp}) (* Kh2 Sys_det3b::{grp}))\n' \
+                                        f'(reaction hospitalization_3_det_{grp} (Sys_det3b::{grp}) (H3_det3::{grp}) (* Kh3 Sys_det3b::{grp}))\n' \
+                                        f'(reaction critical_2_det2_{grp} (H2pre_det3::{grp}) (C2_det3::{grp}) (* Kc H2pre_det3::{grp}))\n' \
+                                        f'(reaction critical_3_det2_{grp} (H3_det3::{grp}) (C3_det3::{grp}) (* Kc H3_det3::{grp}))\n' \
+                                        f'(reaction death_det3_{grp} (C3_det3::{grp}) (D3_det3::{grp}) (* Km C3_det3::{grp}))\n' \
+                                        f'(reaction recovery_As_{grp} (As::{grp}) (RAs::{grp}) (* Kr_a_D As::{grp}))\n' \
+                                        f'(reaction recovery_As_det_{grp} (As_det1::{grp}) (RAs_det1::{grp}) (* Kr_a_D As_det1::{grp}))\n' \
+                                        f'(reaction recovery_Sym_{grp} (Sym::{grp}) (RSym::{grp}) (* Kr_m_D  Sym::{grp}))\n' \
+                                        f'(reaction recovery_Sym_det2a_{grp} (Sym_det2a::{grp}) (RSym_det2::{grp}) (* Kr_m_D Sym_det2a::{grp}))\n' \
+                                        f'(reaction recovery_Sym_det2b_{grp} (Sym_det2b::{grp}) (RSym_det2::{grp}) (* Kr_m Sym_det2b::{grp}))\n'
 
         if self.expandModel == None:
             reaction_str = reaction_str_I + expand_base_str + reaction_str_III
@@ -680,8 +660,6 @@ class covidModel:
             reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III
         if self.expandModel == 'AsSymSys':
             reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III
-
-        reaction_str = reaction_str.replace("  ", " ")
 
         return reaction_str
 
@@ -714,7 +692,8 @@ class covidModel:
                                                   f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys)))'
                                                   f')'
                                                   f')'
-                                                  f'\n'.format(i=str(i)) for i in n_frac_crit_change])
+                                                  f'\n' for i in n_frac_crit_change])
+
             return frac_crit_change_observe + frac_crit_change_timeevent
 
         def write_fraction_dead_change(nchanges):
@@ -732,7 +711,8 @@ class covidModel:
                                                       f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys)))'
                                                       f')'
                                                       f')'
-                                                      f' \n'.format(i=str(i)) for i in n_fraction_dead_change])
+                                                      f' \n' for i in n_fraction_dead_change])
+
             return fraction_dead_change_observe + fraction_dead_change_timeevent
 
         def write_dSys_change(nchanges):
@@ -741,7 +721,7 @@ class covidModel:
             dSys_change_timeevent = ''.join([f'(time-event dSys_change{i} @d_Sys_change_time_{i}@ '
                                              f'((d_Sys @d_Sys_incr{i}@))'
                                              f')'
-                                             f'\n'.format(i=str(i)) for i in n_dSys_change])
+                                             f'\n' for i in n_dSys_change])
             return dSys_change_observe + dSys_change_timeevent
 
         def write_ki_multiplier_change(nchanges):
@@ -751,14 +731,12 @@ class covidModel:
                 temp_str_param = ''.join([f'(param Ki_red{i}_{grp} '
                                           f'(* Ki_{grp} @ki_multiplier_{i}_{grp}@)'
                                           f')'
-                                          f'\n'.format(grp=grp,i=str(i))
-                                          for i in n_ki_multiplier])
+                                          f'\n' for i in n_ki_multiplier])
 
                 temp_str_timeevent = ''.join([f'(time-event ki_multiplier_change_{i} @ki_multiplier_time_{i}@ '
                                               f'((Ki_{grp} Ki_red{i}_{grp}))'
                                               f')'
-                                              f'\n'.format(grp=grp,i=str(i))
-                                              for i in n_ki_multiplier])
+                                              f'\n' for i in n_ki_multiplier])
 
                 ki_multiplier_change_str = ki_multiplier_change_str + temp_str_param + temp_str_timeevent
 
@@ -769,11 +747,12 @@ class covidModel:
                                         '(observe d_P_t d_P)\n' \
                                         '(observe d_As_t d_As)\n' \
                                         '(param dSym_dAsP_ratio @dSym_dAsP_ratio@)\n'
+
             n_d_PAs_changes = range(1,nchanges+1)
             d_Sym_P_As_change_param = ''.join([f'(param d_PAs_change{i} '
                                                f'(/ @d_Sym_change{i}@ dSym_dAsP_ratio)'
                                                f')'
-                                               f'\n'.format(i=str(i)) for i in n_d_PAs_changes])
+                                               f'\n' for i in n_d_PAs_changes])
 
             d_Sym_P_As_change_timeevent = ''.join([f'(time-event d_Sym_change{i} @d_Sym_change_time_{i}@ '
                                                    f'('
@@ -781,7 +760,7 @@ class covidModel:
                                                    f'(d_P d_PAs_change1) ' \
                                                    f'(d_As d_PAs_change{i}))'
                                                    f')'
-                                                   f'\n'.format(i=str(i)) for i in n_d_PAs_changes])
+                                                   f'\n' for i in n_d_PAs_changes])
             return d_Sym_P_As_change_observe + d_Sym_P_As_change_param + d_Sym_P_As_change_timeevent
 
         def write_recovery_time_crit_change(nchanges):
@@ -792,7 +771,7 @@ class covidModel:
                 recovery_time_crit_change_param = f'(param recovery_time_crit_{grp} recovery_time_crit)\n' \
                                                   f'(param Kr_c_{grp} (/ 1 recovery_time_crit_{grp}))\n' \
                                                   f'(observe recovery_time_crit_t_{grpout} recovery_time_crit_{grp})' \
-                                                  f'\n'.format(grp=grp,grpout=grpout)
+                                                  f'\n'
 
                 recovery_time_crit_change_timeevent = ''.join([f'(time-event LOS_ICU_change_{i} @recovery_time_crit_change_time_{i}_{grp}@ '
                                                                f'('
@@ -801,9 +780,12 @@ class covidModel:
                                                                f'(/ 1 @recovery_time_crit_change{i}_{grp}@))'
                                                                f')'
                                                                f')'
-                                                               f'\n'.format(grp=grp,i=str(i)) for i in n_recovery_time_crit_change])
+                                                               f'\n' for i in n_recovery_time_crit_change])
 
-                recovery_time_crit_change = recovery_time_crit_change + recovery_time_crit_change_param + recovery_time_crit_change_timeevent
+                recovery_time_crit_change = recovery_time_crit_change + \
+                                            recovery_time_crit_change_param + \
+                                            recovery_time_crit_change_timeevent
+
             return recovery_time_crit_change
 
         def write_recovery_time_hosp_change(nchanges):
@@ -814,7 +796,7 @@ class covidModel:
                 recovery_time_hosp_change_param = f'(param recovery_time_hosp_{grp} recovery_time_hosp)\n' \
                                                   f'(param Kr_h_{grp} (/ 1 recovery_time_hosp_{grp}))\n' \
                                                   f'(observe recovery_time_hosp_t_{grpout} recovery_time_hosp_{grp})' \
-                                                  f'\n'.format(grp=grp, grpout=grpout)
+                                                  f'\n'
 
                 recovery_time_hosp_change_timeevent = ''.join(
                     [f'(time-event LOS_nonICU_change_{i} @recovery_time_hosp_change_time_{i}_{grp}@ '
@@ -823,7 +805,7 @@ class covidModel:
                      f'(Kr_h_{grp} (/ 1 @recovery_time_hosp_change{i}_{grp}@))'
                      f')'
                      f')'
-                     f'\n'.format(grp=grp, i=str(i)) for i in n_recovery_time_hosp_change])
+                     f'\n' for i in n_recovery_time_hosp_change])
 
                 recovery_time_hosp_change = recovery_time_hosp_change + recovery_time_hosp_change_param + recovery_time_hosp_change_timeevent
             return recovery_time_hosp_change
