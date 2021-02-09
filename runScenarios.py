@@ -522,8 +522,14 @@ def parse_args():
         "--expandModel",
         type=str,
         help="Specific for test delay",
-        choices=["uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"],
-        default='testDelay_AsSymSys'
+        choices=["None","uniform", "As", "Sym","Sys","AsSym","AsSymSys"],
+        default='AsSymSys'
+    )
+    parser.add_argument(
+        "-changeTD",
+        "--change_testDelay",
+        action='store_true',
+        help="If true adds and time event for change in test delay (i.e. reduced time to detection)"
     )
     parser.add_argument(
         "-trigger",
@@ -588,6 +594,7 @@ if __name__ == '__main__':
         log.debug(f"Running scenarios for {model} and {scenario}")
         emodl_template = write_emodl(model,
                                      scenario=scenario,
+                                     change_testDelay=args.change_testDelay,
                                      observeLevel=args.observeLevel,
                                      expandModel=args.expandModel,
                                      trigger_channel=args.trigger_channel,

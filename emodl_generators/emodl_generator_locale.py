@@ -19,8 +19,8 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 
 class covidModel:
 
-    def __init__(self, expandModel='testDelay_AsSymSys', observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=None, trigger_channel=None, add_migration=False, emodl_name=None,fit_params=None, git_dir=git_dir):
+    def __init__(self, expandModel='AsSymSys', observeLevel='primary', add_interventions='baseline',
+                 change_testDelay=False, trigger_channel=None, add_migration=False, emodl_name=None,fit_params=None, git_dir=git_dir):
         self.model = 'locale'
         self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
                         'EMS_11']
@@ -32,6 +32,7 @@ class covidModel:
         self.trigger_channel = trigger_channel
         self.emodl_name = emodl_name
         self.fit_params = fit_params
+        self.n_steps = 4
         self.emodl_dir = os.path.join(git_dir, 'emodl')
 
     def write_species(self, grp):
@@ -87,9 +88,9 @@ class covidModel:
 (species Sys_det3b::{grp} 0)
     """.format(grp=grp)
 
-        if self.expandModel == "testDelay_SymSys" or self.expandModel == "uniformtestDelay":
+        if self.expandModel == "SymSys" or self.expandModel == "uniform":
             species_str = species_str + expand_testDelay_SymSys_str
-        if self.expandModel == "testDelay_AsSymSys":
+        if self.expandModel == "AsSymSys":
             species_str = species_str + expand_testDelay_AsSymSys_str
 
         return species_str
@@ -261,9 +262,9 @@ class covidModel:
 
         if self.expandModel == None:
             functions_str = expand_base_str + functions_str
-        if self.expandModel == "testDelay_SymSys" or self.expandModel == "uniformtestDelay":
+        if self.expandModel == "SymSys" or self.expandModel == "uniform":
             functions_str = expand_testDelay_SymSys_str + functions_str
-        if self.expandModel == "testDelay_AsSymSys":
+        if self.expandModel == "AsSymSys":
             functions_str = expand_testDelay_AsSymSys_str + functions_str
 
         functions_str = functions_str.replace("  ", " ")
@@ -367,13 +368,11 @@ class covidModel:
 
         if self.expandModel == None:
             params_str = params_str + expand_base_str
-        if self.expandModel == "testDelay_SymSys":
+        if self.expandModel == "SymSys":
             params_str = params_str + expand_testDelay_SymSys_str
-        if self.expandModel == "uniformtestDelay":
+        if self.expandModel == "uniform":
             params_str = params_str + expand_uniformtestDelay_str
-        if self.expandModel == "contactTracing":
-            params_str = params_str + expand_base_str + expand_contactTracing_str
-        if self.expandModel == "testDelay_AsSymSys":
+        if self.expandModel == "AsSymSys":
             params_str = params_str + expand_testDelay_AsSymSys_str
 
         params_str = params_str.replace("  ", " ")
@@ -698,9 +697,9 @@ class covidModel:
 
         if self.expandModel == None:
             reaction_str = reaction_str_I + expand_base_str + reaction_str_III
-        if self.expandModel == "testDelay_SymSys" or self.expandModel == "uniformtestDelay":
+        if self.expandModel == "SymSys" or self.expandModel == "uniform":
             reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III
-        if self.expandModel == 'testDelay_AsSymSys':
+        if self.expandModel == 'AsSymSys':
             reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III
 
         reaction_str = reaction_str.replace("  ", " ")
@@ -927,7 +926,7 @@ class covidModel:
                                              f'(time-event ki_transmission_increase @today@ ((Ki_{grp} Ki_increased_{grp})))' for grp in self.grpList])
             return transmission_increase
 
-        def write_gradual_reopening(nchanges, region_specific=False):
+        def write_gradual_reopening(nchanges=self.n_steps, region_specific=False):
             n_gradual_reopening = range(1, nchanges+1)
             gradual_pct = 1/nchanges
             gradual_reopening = ''
@@ -952,7 +951,7 @@ class covidModel:
         if self.add_interventions == "interventionSTOP_adj":
             intervention_str = write_intervention_stop()
         if self.add_interventions == "gradual_reopening":
-            intervention_str = write_gradual_reopening(nchanges=4)
+            intervention_str = write_gradual_reopening(nchanges=nchanges)
         if self.add_interventions == "rollback":
             intervention_str = write_rollback()
 
@@ -1008,19 +1007,19 @@ class covidModel:
                                   ')' \
                                   ')\n'
 
-        if self.change_testDelay == "uniform":
+        if self.expandModel == "uniform":
             change_test_delay_str = change_uniformtestDelay_str
-        if self.change_testDelay == "As":
+        if self.expandModel == "As":
             change_test_delay_str = change_testDelay_As_str
-        if self.change_testDelay == "Sym":
+        if self.expandModel == "Sym":
             change_test_delay_str = change_testDelay_Sym_str
-        if self.change_testDelay == "Sys":
+        if self.expandModel == "Sys":
             change_test_delay_str = change_testDelay_Sys_str
-        if self.change_testDelay == "AsSym":
+        if self.expandModel == "AsSym":
             change_test_delay_str = change_testDelay_As_str + change_testDelay_Sym_str
-        if self.change_testDelay == "SymSys":
+        if self.expandModel == "SymSys":
             change_test_delay_str = change_testDelay_Sym_str + change_testDelay_Sys_str
-        if self.change_testDelay == "AsSymSys":
+        if self.expandModel == "AsSymSys":
             change_test_delay_str = change_testDelay_As_str + change_testDelay_Sym_str + change_testDelay_Sys_str
 
         return total_string.replace(';[ADDITIONAL_TIMEEVENTS]', change_test_delay_str)
@@ -1075,13 +1074,18 @@ class covidModel:
         """Add time-events for time-varying parameters"""
         total_string = covidModel.write_time_varying_parameter(self, total_string)
 
-        """Define change in test delay (required)"""
-        total_string = covidModel.write_change_test_delay(self, total_string)
+        """Add change in test delay (optional)
+            Note, per default assumes time to detection for the same populations as in expandModel changes 
+            i.e. As, Sym, Sys, AsSymSys,  default structure AsSymSys.
+            Initially expandModel and change_testDelay were separated
+        """
+        if self.change_testDelay:
+            total_string = covidModel.write_change_test_delay(self, total_string)
 
         """Add interventions (optional)
            Note, interventions added IN ADDITION to monthly fitted Ki's
         """
-        if self.add_interventions != None:
+        if self.add_interventions != None and self.add_interventions != 'baseline':
             total_string = covidModel.write_interventions(self, total_string)
 
         emodl = open(file_output, "w")
@@ -1095,7 +1099,7 @@ class covidModel:
         return emodl_name
 
     def showOptions():
-        model_options = {'expandModel': ("uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"),
+        model_options = {'expandModel': ("None","uniform", "As", "Sym","Sys","AsSym","AsSymSys"),
                          'observeLevel': ('primary', 'secondary', 'tertiary', 'all'),
                          'add_interventions': ("baseline",
                                                "bvariant",
@@ -1111,7 +1115,7 @@ class covidModel:
                                                #"contactTracing_improveHS"
                                                #"reopen_contactTracing_improveHS"
                                                ),
-                         'change_testDelay': ("None", "Sym", "AsSym"),
+                         'change_testDelay': ("True","False"),
                          'trigger_channel': ("None", "critical", "crit_det", "hospitalized", "hosp_det"),
                          'add_migration': ('True', 'False')}
         return print(json.dumps(model_options, indent=4, sort_keys=True))
