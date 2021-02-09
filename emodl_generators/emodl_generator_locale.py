@@ -35,63 +35,44 @@ class covidModel:
         self.emodl_dir = os.path.join(git_dir, 'emodl')
 
     def write_species(self, grp):
-        grp = str(grp)
-        species_str = """
-(species S::{grp} @speciesS_{grp}@)
-(species As::{grp} 0)
-(species E::{grp} 0)
-(species As_det1::{grp} 0)
-(species P::{grp} 0)
-(species P_det::{grp} 0)
-(species Sym::{grp} 0)
-(species Sym_det2::{grp} 0)
-(species Sys::{grp} 0)
-(species Sys_det3::{grp} 0)
-(species H1::{grp} 0)
-(species H2pre::{grp} 0)
-(species H2post::{grp} 0)   
-(species H3::{grp} 0)
-(species H1_det3::{grp} 0)
-(species H2pre_det3::{grp} 0)
-(species H2post_det3::{grp} 0) 							 
-(species H3_det3::{grp} 0)
-(species C2::{grp} 0)
-(species C3::{grp} 0)
-(species C2_det3::{grp} 0)
-(species C3_det3::{grp} 0)
-(species D3::{grp} 0)
-(species D3_det3::{grp} 0)
-(species RAs::{grp} 0)
-(species RAs_det1::{grp} 0)
-(species RSym::{grp} 0)
-(species RSym_det2::{grp} 0)
-(species RH1::{grp} 0)
-(species RH1_det3::{grp} 0)
-(species RC2::{grp} 0)
-(species RC2_det3::{grp} 0)
-    """.format(grp=grp)
-        species_str = species_str.replace("  ", " ")
-
-        expand_testDelay_SymSys_str = """
-(species Sym_preD::{grp} 0)
-(species Sys_preD::{grp} 0)
-    """.format(grp=grp)
-
-        expand_testDelay_AsSymSys_str = """
-(species As_preD::{grp} 0)
-(species Sym_preD::{grp} 0)
-(species Sym_det2a::{grp} 0)
-(species Sym_det2b::{grp} 0)
-(species Sys_preD::{grp} 0)
-(species Sys_det3a::{grp} 0)
-(species Sys_det3b::{grp} 0)
-    """.format(grp=grp)
+        state_SE = ('S', 'E')
+        state_nosymptoms = ('As', 'As_det1', 'P', 'P_det')
+        state_symptoms = ('Sym', 'Sym_det2', 'Sys', 'Sys_det3')
+        # state_hospitalized = ('H1', 'H2', 'H3', 'H1_det3', 'H2_det3', 'H3_det3')
+        state_hospitalized = ('H1', 'H2pre', 'H2post', 'H3', 'H1_det3', 'H2pre_det3', 'H2post_det3', 'H3_det3')
+        state_critical = ('C2', 'C3', 'C2_det3', 'C3_det3')
+        state_deaths = ('D3', 'D3_det3')
+        state_recoveries = ('RAs', 'RSym', 'RH1', 'RC2', 'RAs_det1', 'RSym_det2', 'RH1_det3', 'RC2_det3')
+        state_testDelay_SymSys = ('Sym_preD', 'Sys_preD')
+        state_testDelay_AsSymSys = (
+        'As_preD', 'Sym_preD', 'Sym_det2a', 'Sym_det2b', 'Sys_preD', 'Sys_det3a', 'Sys_det3b')
+        state_variables = state_SE + state_nosymptoms + state_symptoms + state_hospitalized + state_critical + state_deaths + state_recoveries
 
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
-            species_str = species_str + expand_testDelay_SymSys_str
+            state_variables = state_variables + state_testDelay_SymSys
         if self.expandModel == "AsSymSys":
-            species_str = species_str + expand_testDelay_AsSymSys_str
+            state_variables = state_variables + state_testDelay_AsSymSys
 
+        def write_species_emodl():
+            grp_suffix = "::{grp}"
+            grp_suffix2 = "_{grp}"
+
+            species_emodl = ""
+            for state in state_variables:
+                if state == "S":
+                    species_emodl = species_emodl + f'(species {state}{grp_suffix} @speciesS{grp_suffix2}@)\n'
+                else:
+                    species_emodl = species_emodl + f'(species {state}{grp_suffix} 0)\n'
+
+            return species_emodl
+
+        def write_species_str(species_emodl, grp):
+            grp = str(grp)
+            species_str = species_emodl.format(grp=grp)
+            return species_str
+
+        species_emodl = write_species_emodl()
+        species_str = write_species_str(species_emodl, grp)
         return species_str
 
     ## For postprocessing that splits by '_', it is easier if EMS are names EMS-1 not EMS_1
@@ -1056,7 +1037,7 @@ class covidModel:
                 reaction_string = reaction_string + covidModel.write_travel_reaction(grp)
             reaction_string = reaction_string + covidModel.write_reactions(self, grp)
             functions_string = functions_string + functions
-            param_string = param_string + covidModel.write_Ki_timevents(self,grp)
+            param_string = param_string + covidModel.write_Ki_timevents(grp)
 
         param_string = covidModel.write_params(self) + param_string + covidModel.write_N_population(self)
         if (self.add_migration):
