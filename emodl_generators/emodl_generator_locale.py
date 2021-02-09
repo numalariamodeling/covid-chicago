@@ -864,146 +864,78 @@ class covidModel:
 
     def write_interventions(self, total_string):
 
-        bvariant_str_I = ""
-        for grp in self.grpList:
-            temp_str = """
-;COVID-19 B variant scenario
-(param Ki_bvariant_1_{grp} (* Ki_{grp} @bvariant_infectivity@ @bvariant_fracinfect@))
-(time-event ki_bvariant_change1 @today@ ((Ki_{grp} Ki_bvariant_1_{grp})))
-                        """.format(grp=grp)
-            bvariant_str_I = bvariant_str_I + temp_str
+        def write_bvariant():
+            bvariant_infectivity = ''
+            for grp in self.grpList:
+                temp_str = f';COVID-19 B variant scenario\n' \
+                           f'(param Ki_bvariant_1_{grp} (* Ki_{grp} @bvariant_infectivity@ @bvariant_fracinfect@))\n' \
+                           f'(time-event ki_bvariant_change1 @today@ ((Ki_{grp} Ki_bvariant_1_{grp})))\n'.format(grp=grp)
+                bvariant_str_I = bvariant_str_I + temp_str
 
+            bvariant_severity = f'(param fracsevere_bvariant1 (* fraction_severe @bvariant_severity@))\n' \
+                                f'(time-event fracsevere_bvariant_change1 @today@ ' \
+                                f'(' \
+                                f'(fraction_severe fracsevere_bvariant1) ' \
+                                f'(fraction_dead (/ cfr fraction_severe)) ' \
+                                f'(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) ' \
+                                f'(Kh1 (/ fraction_hospitalized time_to_hospitalization)) ' \
+                                f'(Kh2 (/ fraction_critical time_to_hospitalization )) ' \
+                                f'(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) ' \
+                                f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))' \
+                                f')' \
+                                f')\n'
+            return bvariant_infectivity + bvariant_severity
 
-        bvariant_str_II = """
-(param fracsevere_bvariant1 (* fraction_severe @bvariant_severity@))
-(time-event fracsevere_bvariant_change1 @today@ ((fraction_severe fracsevere_bvariant1) (fraction_dead (/ cfr fraction_severe)) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-        """
-        bvariant_str = bvariant_str_I + bvariant_str_II
+        def write_rollback():
+            rollback = ''.join([f'(time-event rollback @rollback_time@ ((Ki_{grp} Ki_red4_{grp})))' for grp in self.grpList])
+            rollback_trigger = ''.join([f'(state-event rollbacktrigger_{grp} '
+                                          f'(and (> time @today@) (> {self.trigger_channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@))) '
+                                          f'((Ki_{grp} Ki_red7_{grp}))'
+                                          f')\n' for grp in self.grpList])
 
-        rollback_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki_{grp} Ki_red4_{grp})))
-                    """.format(grp=grp)
-            rollback_str = rollback_str + temp_str
+            rollback_trigger_delay = ''.join([f'(param time_of_trigger_{grp} 10000)\n'
+                                              f'(state-event rollbacktrigger_{grp} '
+                                              f'(and (> time @today@) (> crit_det_{grp} '
+                                              f'(* @trigger_{grp}@ @capacity_multiplier@)) ) '
+                                              f'((time_of_trigger_{grp} time))'
+                                              f')\n'
+                                              f'(func time_since_trigger_{grp} (- time time_of_trigger_{grp}))\n'
+                                              f'(state-event apply_rollback_{grp} '
+                                              f'(> (- time_since_trigger_{grp} @trigger_delay_days@) 0) '
+                                              f'((Ki_{grp} Ki_red7_{grp}))'
+                                              f')\n'
+                                              f'(observe triggertime_{covidModel.sub(grp)} time_of_trigger_{grp})\n' for grp in self.grpList])
+            return rollback_trigger_delay
 
-        rollbacktriggered_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(state-event rollbacktrigger_{grp} (and (> time @today@) (> {channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@)) ) ((Ki_{grp} Ki_red7_{grp})))
-                        """.format(channel=self.trigger_channel, grp=grp)
-            rollbacktriggered_str = rollbacktriggered_str + temp_str
+        def write_intervention_stop():
+            intervention_stop = ''.join(
+                [f'(param Ki_back_{grp} (+ Ki_red13_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red13_{grp}))))\n'
+                 f'(time-event intervention_stop @today@ ((Ki_{grp} Ki_back_{grp})))' for grp in self.grpList])
 
-        rollbacktriggered_delay_str = ""
-        for grp in self.grpList:
-            grpout = covidModel.sub(grp)
-            temp_str = """
-(param time_of_trigger_{grp} 10000)
-(state-event rollbacktrigger_{grp} (and (> time @today@) (> crit_det_{grp} (* @trigger_{grp}@ @capacity_multiplier@)) ) ((time_of_trigger_{grp} time)))
-(func time_since_trigger_{grp} (- time time_of_trigger_{grp}))
-(state-event apply_rollback_{grp} (> (- time_since_trigger_{grp} @trigger_delay_days@) 0) ((Ki_{grp} Ki_red7_{grp})))   
-(observe triggertime_{grpout} time_of_trigger_{grp})
-                       """.format(channel=self.trigger_channel, grpout=grpout, grp=grp)
-            rollbacktriggered_delay_str = rollbacktriggered_delay_str + temp_str
+            return intervention_stop
 
+        def write_transmission_increase():
+            transmission_increase = ''.join([f'(param Ki_increased_{grp} (* Ki_{grp} @ki_increase_multiplier@))\n'
+                                             f'(time-event ki_transmission_increase @today@ ((Ki_{grp} Ki_increased_{grp})))' for grp in self.grpList])
+            return transmission_increase
 
-        interventionSTOP_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(param Ki_back_{grp} (* Ki_{grp} @backtonormal_multiplier@))
-(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
-            """.format(grp=grp)
-            interventionSTOP_str = interventionSTOP_str + temp_str
+        def write_gradual_reopening(nchanges, region_specific=False):
+            n_gradual_reopening = range(1, nchanges+1)
+            gradual_pct = 1/nchanges
+            gradual_reopening = ''
+            reopening_multiplier = '@reopening_multiplier@'
+            if region_specific :
+                reopening_multiplier = '@reopening_multiplier_{grp}@'
+            for grp in self.grpList:
+                gradual_reopening_param = ''.join([f'(param Ki_back{i}_{grp} '
+                                                   f'(+ Ki_red13_{grp} (* {reopening_multiplier} {gradual_pct * i} (- Ki_{grp} Ki_red13_{grp})))'
+                                                   f')\n' for i in n_gradual_reopening])
 
-        # % change from lowest transmission level - immediate
-        # starting point is lowest level of transmission  Ki_red4
-        interventionSTOP_adj_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(param Ki_back_{grp} (+ Ki_red7_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red7_{grp}))))
-(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
-            """.format(grp=grp)
-            interventionSTOP_adj_str = interventionSTOP_adj_str + temp_str
+                gradual_reopening_timeevent = ''.join([f'(time-event gradual_reopening{i} @gradual_reopening_time{i}@ ((Ki_{grp} Ki_back{i}_{grp}))'
+                                                       f')\n' for i in n_gradual_reopening])
+                gradual_reopening = gradual_reopening_param + gradual_reopening_timeevent
 
-        # % change from current transmission level - immediate
-        # starting point is current level of transmission  Ki_red6
-        interventionSTOP_adj2_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(param Ki_back_{grp} (+ Ki_red7_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red7_{grp}))))
-(time-event stopInterventions @socialDistanceSTOP_time@ ((Ki_{grp} Ki_back_{grp})))
-            """.format(grp=grp)
-            interventionSTOP_adj2_str = interventionSTOP_adj2_str + temp_str
-
-        # gradual reopening from 'lowest' transmission level,  Ki_red6 == Ki_back1
-        gradual_reopening_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(param backtonormal_multiplier_1_adj_{grp}  (- @backtonormal_multiplier@ backtonormal_multiplier_1_{grp} ))
-(observe backtonormal_multiplier_1_adj_{grp}  backtonormal_multiplier_1_adj_{grp})
-
-(param Ki_back2_{grp} (+ Ki_red6_{grp} (* backtonormal_multiplier_1_adj_{grp} 0.3333 (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back3_{grp} (+ Ki_red6_{grp} (* backtonormal_multiplier_1_adj_{grp} 0.6666 (- Ki_{grp} Ki_red4_{grp}))))
-(param Ki_back4_{grp} (+ Ki_red6_{grp} (* backtonormal_multiplier_1_adj_{grp} 1.00 (- Ki_{grp} Ki_red4_{grp}))))
-(time-event gradual_reopening2 @gradual_reopening_time1@ ((Ki_{grp} Ki_back2_{grp})))
-(time-event gradual_reopening3 @gradual_reopening_time2@ ((Ki_{grp} Ki_back3_{grp})))
-(time-event gradual_reopening4 @gradual_reopening_time3@ ((Ki_{grp} Ki_back4_{grp})))
-            """.format(grp=grp)
-            gradual_reopening_str = gradual_reopening_str + temp_str
-
-        # gradual reopening from 'current' transmission level
-        gradual_reopening2_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(param Ki_back1_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4@ 0.25 (- Ki_{grp} Ki_red7_{grp}))))
-(param Ki_back2_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4@ 0.50 (- Ki_{grp} Ki_red7_{grp}))))
-(param Ki_back3_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4@ 0.75 (- Ki_{grp} Ki_red7_{grp}))))
-(param Ki_back4_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4@ 1.00 (- Ki_{grp} Ki_red7_{grp}))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_{grp} Ki_back4_{grp})))
-            """.format(grp=grp)
-            gradual_reopening2_str = gradual_reopening2_str + temp_str
-
-        # gradual reopening from 'current' transmission level with region-specific reopening
-        gradual_reopening3_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(param Ki_back1_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4_{grp}@ 0.25 (- Ki_{grp} Ki_red7_{grp}))))
-(param Ki_back2_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4_{grp}@ 0.50 (- Ki_{grp} Ki_red7_{grp}))))
-(param Ki_back3_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4_{grp}@ 0.75 (- Ki_{grp} Ki_red7_{grp}))))
-(param Ki_back4_{grp} (+ Ki_red7_{grp} (* @reopening_multiplier_4_{grp}@ 1.00 (- Ki_{grp} Ki_red7_{grp}))))
-(time-event gradual_reopening1 @gradual_reopening_time1@ ((Ki_{grp} Ki_back1_{grp})))
-(time-event gradual_reopening2 @gradual_reopening_time2@ ((Ki_{grp} Ki_back2_{grp})))
-(time-event gradual_reopening3 @gradual_reopening_time3@ ((Ki_{grp} Ki_back3_{grp})))
-(time-event gradual_reopening4 @gradual_reopening_time4@ ((Ki_{grp} Ki_back4_{grp})))
-            """.format(grp=grp)
-            gradual_reopening3_str = gradual_reopening3_str + temp_str
-
-        improveHS_str = covidModel.define_change_detection_and_isolation(self,
-                                                                         reduced_inf_of_det_cases=False,
-                                                                         d_As=False,
-                                                                         d_P=False,
-                                                                         d_Sym_ct=True,
-                                                                         d_Sym_grp=True,
-                                                                         d_Sym_grp_option='increase_to_common_target')
-
-        contactTracing_str = covidModel.define_change_detection_and_isolation(self,
-                                                                              reduced_inf_of_det_cases=True,
-                                                                              d_As=True,
-                                                                              d_P=True,
-                                                                              d_Sym_ct=False,
-                                                                              d_Sym_grp=False,
-                                                                              d_Sym_grp_option=None)
-
-        contactTracing_improveHS_str = covidModel.define_change_detection_and_isolation(self,
-                                                                                        reduced_inf_of_det_cases=True,
-                                                                                        d_As=True,
-                                                                                        d_P=True,
-                                                                                        d_Sym_ct=True,
-                                                                                        d_Sym_grp=True,
-                                                                                        d_Sym_grp_option='increase_to_common_target')
+            return gradual_reopening
 
         change_uniformtestDelay_str = """
     (time-event change_testDelay1 @change_testDelay_time1@ ( {} {} {} {} {} {} {} ))
@@ -1036,48 +968,15 @@ class covidModel:
                    "(Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))")
 
         if self.add_interventions == "bvariant":
-            total_string = total_string.replace(';[INTERVENTIONS]', bvariant_str)
+            total_string = total_string.replace(';[INTERVENTIONS]', write_bvariant())
         if self.add_interventions == "interventionStop":
-            total_string = total_string.replace(';[INTERVENTIONS]', interventionSTOP_str)
+            total_string = total_string.replace(';[INTERVENTIONS]', write_transmission_increase())
         if self.add_interventions == "interventionSTOP_adj":
-            total_string = total_string.replace(';[INTERVENTIONS]', interventionSTOP_adj_str)
-        if self.add_interventions == "interventionSTOP_adj2":
-            total_string = total_string.replace(';[INTERVENTIONS]', interventionSTOP_adj2_str)
+            total_string = total_string.replace(';[INTERVENTIONS]', write_intervention_stop())
         if self.add_interventions == "gradual_reopening":
-            total_string = total_string.replace(';[INTERVENTIONS]', gradual_reopening_str)
-        if self.add_interventions == "gradual_reopening2":
-            total_string = total_string.replace(';[INTERVENTIONS]', gradual_reopening2_str)
-        if self.add_interventions == "gradual_reopening3":
-            total_string = total_string.replace(';[INTERVENTIONS]', gradual_reopening3_str)
+            total_string = total_string.replace(';[INTERVENTIONS]', write_gradual_reopening(nchanges=4))
         if self.add_interventions == "rollback":
-            total_string = total_string.replace(';[INTERVENTIONS]', rollback_str)
-        if self.add_interventions == "reopen_rollback":
-            total_string = total_string.replace(';[INTERVENTIONS]',
-                                                interventionSTOP_adj2_str + rollback_str)
-        if self.add_interventions == "reopen_contactTracing":
-            total_string = total_string.replace(';[INTERVENTIONS]',
-                                                gradual_reopening2_str + contactTracing_str)
-        if self.add_interventions == "reopen_contactTracing_improveHS":
-            total_string = total_string.replace(';[INTERVENTIONS]',
-                                                gradual_reopening2_str + contactTracing_improveHS_str)
-        if self.add_interventions == "reopen_improveHS":
-            total_string = total_string.replace(';[INTERVENTIONS]',
-                                                gradual_reopening2_str + improveHS_str)
-        if self.add_interventions == "contactTracing":
-            total_string = total_string.replace(';[INTERVENTIONS]', contactTracing_str)
-        if self.add_interventions == "contactTracing_improveHS":
-            total_string = total_string.replace(';[INTERVENTIONS]', contactTracing_improveHS_str)
-        if self.add_interventions == "improveHS":
-            total_string = total_string.replace(';[INTERVENTIONS]', improveHS_str)
-        if self.add_interventions == "rollbacktriggered":
-            total_string = total_string.replace(';[INTERVENTIONS]',
-                                                gradual_reopening2_str + rollbacktriggered_str)
-        if self.add_interventions == "rollbacktriggered_delay":
-            total_string = total_string.replace(';[INTERVENTIONS]',
-                                                gradual_reopening3_str + rollbacktriggered_delay_str)
-
-        # if scenarioName == "gradual_contactTracing" :
-        #    total_string = total_string.replace(';[INTERVENTIONS]', fittedTimeEvents_str + gradual_reopening2_str + contactTracing_gradual_str)
+            total_string = total_string.replace(';[INTERVENTIONS]',  write_rollback())
 
         if self.change_testDelay != None:
             if self.change_testDelay == "uniform":
@@ -1134,7 +1033,7 @@ class covidModel:
                 reaction_string = reaction_string + covidModel.write_travel_reaction(grp)
             reaction_string = reaction_string + covidModel.write_reactions(self, grp)
             functions_string = functions_string + functions
-            param_string = param_string + covidModel.write_Ki_timevents(grp)
+            param_string = param_string + covidModel.write_Ki_timevents(self,grp)
 
         param_string = covidModel.write_params(self) + param_string + covidModel.write_N_population(self)
         if (self.add_migration):
