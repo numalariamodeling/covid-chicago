@@ -86,21 +86,8 @@ def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_gr
 
 if __name__ == '__main__' :
 
-    runInBatchMode = True
     first_plot_day = pd.to_datetime(date(2020, 10, 15))
     last_plot_day = pd.to_datetime(today)
 
-    if runInBatchMode:
-        args = parse_args()
-        datetoday = args.cdph_date
-        if datetoday == None:
-            datetoday = (str(today.year) + str(today.month) + str(today.day))
-        plot_path = os.path.join(projectpath, 'NU_cdph_outputs', datetoday)
-        if not os.path.exists(plot_path):
-            os.makedirs(plot_path)
-        plot_emresource(ems_list=[10, 11], scale='nolog')
-        plot_emresource(ems_list=[10, 11], scale='log')
-    else:
-        plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
-        plot_emresource(ems_list=range(1, 12), scale='nolog')
-        plot_emresource(ems_list=range(1, 12), scale='nolog', channels=['Confirmed cases (public)'], palette=["#D61B5A"])
+    plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
+    plot_emresource(ems_list=range(1, 12), scale='nolog')
