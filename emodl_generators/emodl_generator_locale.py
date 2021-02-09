@@ -85,117 +85,98 @@ class covidModel:
         grp = str(grp)
         grpout = covidModel.sub(grp)
 
-        observe_primary_channels_str = """
-(observe susceptible_{grpout} S::{grp})
-(observe infected_{grpout} infected_{grp})
-(observe infected_det_{grpout} infected_det_{grp})
-(observe recovered_{grpout} recovered_{grp})
-(observe infected_cumul_{grpout} infected_cumul_{grp})
-(observe infected_det_cumul_{grpout} infected_det_cumul_{grp})
+        """Channels to exclude from final list"""
+        channels_not_observe = ['asymp_det','asymp_cumul', 'asymp_det_cumul',
+                                'presymp_det','presymp_cumul','presymp_det_cumul',
+                                'symp_mild_cumul','symp_severe_cumul']
 
-(observe asymp_cumul_{grpout} asymp_cumul_{grp} )
-(observe asymp_det_cumul_{grpout} asymp_det_cumul_{grp})
-(observe symptomatic_mild_{grpout} symptomatic_mild_{grp})
-(observe symptomatic_severe_{grpout} symptomatic_severe_{grp})
-(observe symp_mild_cumul_{grpout} symp_mild_cumul_{grp})
-(observe symp_severe_cumul_{grpout} symp_severe_cumul_{grp})
-(observe symp_mild_det_cumul_{grpout} symp_mild_det_cumul_{grp})
-(observe symp_severe_det_cumul_{grpout} symp_severe_det_cumul_{grp})
+        """Define channels to observe """
+        primary_channels_notdet = ['susceptible','infected','recovered','symp_mild','symp_severe','hosp','crit','death']
+        secondary_channels_notdet = ['exposed','asymp','presymp','detected']
+        tertiary_channels = ['infectious_undet', 'infectious_det', 'infectious_det_symp', 'infectious_det_AsP']
 
-(observe hosp_det_cumul_{grpout} hosp_det_cumul_{grp} )
-(observe hosp_cumul_{grpout} hosp_cumul_{grp})
-(observe detected_cumul_{grpout} detected_cumul_{grp} )
+        channels_notdet = primary_channels_notdet
+        channels_aggr = ['hospitalized', 'critical']
+        if self.observeLevel != 'primary':
+            channels_notdet = channels_notdet + secondary_channels_notdet
+            channels_aggr = channels_aggr + tertiary_channels
 
-(observe crit_cumul_{grpout} crit_cumul_{grp})
-(observe crit_det_cumul_{grpout} crit_det_cumul_{grp})
-(observe death_det_cumul_{grpout} death_det_cumul_{grp} )
+        channels_det = [channel + '_det' for channel in channels_notdet if channel not in ['susceptible', 'exposed','detected']]
+        channels_cumul = [channel + '_cumul' for channel in channels_notdet + channels_det
+                          if channel not in ['susceptible','exposed', 'recovered', 'death',
+                                             'recovered_det', 'death_det']]
 
-(observe deaths_det_{grpout} D3_det3::{grp})
-(observe deaths_{grpout} deaths_{grp})
+        channels = channels_det + channels_cumul + channels_aggr
+        channels = [channel for channel in channels if channel not in channels_not_observe]
 
-(observe crit_det_{grpout} crit_det_{grp})
-(observe critical_{grpout} critical_{grp})
-(observe hosp_det_{grpout} hosp_det_{grp})
-(observe hospitalized_{grpout} hospitalized_{grp})
-    """.format(grpout=grpout, grp=grp)
+        def write_observe_emodl():
+            #grp_suffix = "::{grp}"
+            #grp_suffix2 = "_{grp}"
 
-        observe_secondary_channels_str = """
-(observe exposed_{grpout} E::{grp})
+            observe_emodl = ""
+            for channel in channels:
+                if channel == "susceptible":
+                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S::{grp})\n'
+                if channel == "exposed":
+                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E::{grp})\n'
+                if channel == "death_det":
+                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3::{grp})\n'
+                else:
+                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
 
-(observe asymptomatic_det_{grpout} As_det1::{grp})
-(observe asymptomatic_{grpout} asymptomatic_{grp})
+            return observe_emodl
 
-(observe presymptomatic_{grpout} presymptomatic_{grp})
-(observe presymptomatic_det{grpout} P_det::{grp} )
+        def write_observe_str(observe_emodl, grp):
+            grp = str(grp)
+            observe_str = observe_emodl.format(grp=grp)
+            return observe_str
 
-(observe detected_{grpout} detected_{grp})
-
-(observe symptomatic_mild_det_{grpout} symptomatic_mild_det_{grp})
-(observe symptomatic_severe_det_{grpout} symptomatic_severe_det_{grp})
-(observe recovered_det_{grpout} recovered_det_{grp})
-    """.format(grpout=grpout, grp=grp)
-
-        observe_tertiary_channels_str = """
-(observe infectious_undet_{grpout} infectious_undet_{grp})
-(observe infectious_det_{grpout} infectious_det_{grp})
-(observe infectious_det_symp_{grpout} infectious_det_symp_{grp})
-(observe infectious_det_AsP_{grpout} infectious_det_AsP_{grp})
-    """.format(grpout=grpout, grp=grp)
-
-        if self.observeLevel == 'primary':
-            observe_str = observe_primary_channels_str
-        if self.observeLevel == 'secondary':
-            observe_str = observe_primary_channels_str + observe_secondary_channels_str
-        if self.observeLevel == 'tertiary':
-            observe_str = observe_primary_channels_str + observe_tertiary_channels_str
-        if self.observeLevel == 'all':
-            observe_str = observe_primary_channels_str + observe_secondary_channels_str + observe_tertiary_channels_str
-
-        observe_str = observe_str.replace("  ", " ")
+        observe_emodl = write_observe_emodl()
+        observe_str = write_observe_str(observe_emodl, grp)
         return observe_str
 
     def write_functions(self, grp):
         grp = str(grp)
         functions_str = """
-(func presymptomatic_{grp}  (+ P::{grp} P_det::{grp}))
+(func presymp_{grp}  (+ P::{grp} P_det::{grp}))
 
 (func hospitalized_{grp}  (+ H1::{grp} H2pre::{grp} H2post::{grp} H3::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp}))
 (func hosp_det_{grp}  (+ H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp}))
 (func critical_{grp} (+ C2::{grp} C3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func crit_det_{grp} (+ C2_det3::{grp} C3_det3::{grp}))
-(func deaths_{grp} (+ D3::{grp} D3_det3::{grp}))
+(func death_{grp} (+ D3::{grp} D3_det3::{grp}))
 (func recovered_{grp} (+ RAs::{grp} RSym::{grp} RH1::{grp} RC2::{grp} RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
 (func recovered_det_{grp} (+ RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
 
-(func asymp_cumul_{grp} (+ asymptomatic_{grp} RAs::{grp} RAs_det1::{grp} ))
+(func asymp_cumul_{grp} (+ asymp_{grp} RAs::{grp} RAs_det1::{grp} ))
 (func asymp_det_cumul_{grp} (+ As_det1::{grp} RAs_det1::{grp}))
 
-(func symp_mild_cumul_{grp} (+ symptomatic_mild_{grp} RSym::{grp} RSym_det2::{grp}))
-(func symp_mild_det_cumul_{grp} (+ symptomatic_mild_det_{grp} RSym_det2::{grp} ))
+(func symp_mild_cumul_{grp} (+ symp_mild_{grp} RSym::{grp} RSym_det2::{grp}))
+(func symp_mild_det_cumul_{grp} (+ symp_mild_det_{grp} RSym_det2::{grp} ))
 
-(func symp_severe_cumul_{grp} (+ symptomatic_severe_{grp} hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
-(func symp_severe_det_cumul_{grp} (+ symptomatic_severe_det_{grp} hosp_det_{grp} crit_det_{grp} D3_det3::{grp}  RH1_det3::{grp} RC2_det3::{grp}))
+(func symp_severe_cumul_{grp} (+ symp_severe_{grp} hospitalized_{grp} critical_{grp} death_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(func symp_severe_det_cumul_{grp} (+ symp_severe_det_{grp} hosp_det_{grp} crit_det_{grp} D3_det3::{grp}  RH1_det3::{grp} RC2_det3::{grp}))
 
-(func hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} deaths_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
+(func hosp_cumul_{grp} (+ hospitalized_{grp} critical_{grp} death_{grp} RH1::{grp} RC2::{grp} RH1_det3::{grp} RC2_det3::{grp}))
 (func hosp_det_cumul_{grp} (+ H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp} C2_det3::{grp} C3_det3::{grp} D3_det3::{grp}  RH1_det3::{grp}  RC2_det3::{grp}))
-(func crit_cumul_{grp} (+ deaths_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
+(func crit_cumul_{grp} (+ death_{grp} critical_{grp} RC2::{grp} RC2_det3::{grp}))
 (func crit_det_cumul_{grp} (+ C2_det3::{grp} C3_det3::{grp} D3_det3::{grp} RC2_det3::{grp}))
 (func detected_cumul_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2pre_det3::{grp}  H2post_det3::{grp}  C2_det3::{grp} C3_det3::{grp} RAs_det1::{grp} RSym_det2::{grp} RH1_det3::{grp} RC2_det3::{grp} D3_det3::{grp}))
 (func death_det_cumul_{grp} D3_det3::{grp} )
 (func infected_{grp} (+ infectious_det_{grp} infectious_undet_{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infected_det_{grp} (+ infectious_det_{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
-(func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} deaths_{grp}))   
+(func infected_cumul_{grp} (+ infected_{grp} recovered_{grp} death_{grp}))   
 (func infected_det_cumul_{grp} (+ infected_det_{grp} recovered_det_{grp} D3_det3::{grp}))    
     """.format(grp=grp)
 
         expand_base_str = """
-(func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
+(func asymp_{grp}  (+ As::{grp} As_det1::{grp}))
 
-(func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
-(func symptomatic_mild_det_{grp}  ( Sym_det2::{grp}))
+(func symp_mild_{grp}  (+ Sym::{grp} Sym_det2::{grp}))
+(func symp_mild_det_{grp}  ( Sym_det2::{grp}))
 
-(func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
-(func symptomatic_severe_det_{grp}   ( Sys_det3::{grp}))
+(func symp_severe_{grp}  (+ Sys::{grp} Sys_det3::{grp}))
+(func symp_severe_det_{grp}   ( Sys_det3::{grp}))
 
 (func detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym::{grp} Sys::{grp} H1::{grp} H2pre::{grp} H2post::{grp}  H3::{grp} C2::{grp} C3::{grp}))
@@ -206,13 +187,13 @@ class covidModel:
     """.format(grp=grp)
 
         expand_testDelay_SymSys_str = """
-(func asymptomatic_{grp}  (+ As::{grp} As_det1::{grp}))
+(func asymp_{grp}  (+ As::{grp} As_det1::{grp}))
 
-(func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2::{grp}))
-(func symptomatic_mild_det_{grp}  (+  Sym_preD::{grp} Sym_det2::{grp}))
+(func symp_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2::{grp}))
+(func symp_mild_det_{grp}  (+  Sym_preD::{grp} Sym_det2::{grp}))
 
-(func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3::{grp}))
-(func symptomatic_severe_det_{grp}  (+ Sys_preD::{grp} Sys_det3::{grp}))
+(func symp_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3::{grp}))
+(func symp_severe_det_{grp}  (+ Sys_preD::{grp} Sys_det3::{grp}))
 
 (func detected_{grp} (+ As_det1::{grp} Sym_det2::{grp} Sys_det3::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp}  H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infectious_undet_{grp} (+ As::{grp} P::{grp} Sym_preD::{grp} Sym::{grp} Sys_preD::{grp} Sys::{grp} H1::{grp} H2pre::{grp}  H2post::{grp}  H3::{grp} C2::{grp} C3::{grp}))
@@ -223,13 +204,13 @@ class covidModel:
     """.format(grp=grp)
 
         expand_testDelay_AsSymSys_str = """
-(func asymptomatic_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
+(func asymp_{grp}  (+ As_preD::{grp} As::{grp} As_det1::{grp}))
 
-(func symptomatic_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
-(func symptomatic_mild_det_{grp}  (+ Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
+(func symp_mild_{grp}  (+ Sym::{grp} Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
+(func symp_mild_det_{grp}  (+ Sym_preD::{grp} Sym_det2a::{grp} Sym_det2b::{grp}))
 
-(func symptomatic_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
-(func symptomatic_severe_det_{grp}  (+ Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
+(func symp_severe_{grp}  (+ Sys::{grp} Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
+(func symp_severe_det_{grp}  (+ Sys_preD::{grp} Sys_det3a::{grp} Sys_det3b::{grp}))
 
 (func detected_{grp} (+ As_det1::{grp} Sym_det2a::{grp} Sym_det2b::{grp} Sys_det3a::{grp} Sys_det3b::{grp} H1_det3::{grp} H2pre_det3::{grp} H2post_det3::{grp} H3_det3::{grp} C2_det3::{grp} C3_det3::{grp}))
 (func infectious_undet_{grp} (+ As_preD::{grp} As::{grp} P::{grp} Sym::{grp} Sym_preD::{grp} Sys::{grp} Sys_preD::{grp} H1::{grp} H2pre::{grp} H2post::{grp} H3::{grp} C2::{grp} C3::{grp}))
@@ -448,10 +429,10 @@ class covidModel:
             'asymp_cumul_', grpList) + "))"
         obs_primary_All_str = obs_primary_All_str + "\n(observe asymp_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
             'asymp_det_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symptomatic_mild_All (+ " + covidModel.repeat_string_by_grp(
-            'symptomatic_mild_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symptomatic_severe_All (+ " + covidModel.repeat_string_by_grp(
-            'symptomatic_severe_', grpList) + "))"
+        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_mild_All (+ " + covidModel.repeat_string_by_grp(
+            'symp_mild_', grpList) + "))"
+        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_severe_All (+ " + covidModel.repeat_string_by_grp(
+            'symp_severe_', grpList) + "))"
         obs_primary_All_str = obs_primary_All_str + "\n(observe symp_mild_cumul_All (+ " + covidModel.repeat_string_by_grp(
             'symp_mild_cumul_', grpList) + "))"
         obs_primary_All_str = obs_primary_All_str + "\n(observe symp_severe_cumul_All (+ " + covidModel.repeat_string_by_grp(
@@ -475,11 +456,11 @@ class covidModel:
         obs_primary_All_str = obs_primary_All_str + "\n(observe death_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
             'death_det_cumul_', grpList) + "))"
 
-        obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_det_All (+ " + covidModel.repeat_string_by_grp(
+        obs_primary_All_str = obs_primary_All_str + "\n(observe death_det_All (+ " + covidModel.repeat_string_by_grp(
             'D3_det3::',
             grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_All (+ " + covidModel.repeat_string_by_grp(
-            'deaths_',
+        obs_primary_All_str = obs_primary_All_str + "\n(observe death_All (+ " + covidModel.repeat_string_by_grp(
+            'death_',
             grpList) + "))"
 
         obs_primary_All_str = obs_primary_All_str + "\n(observe crit_det_All (+ " + covidModel.repeat_string_by_grp(
@@ -499,23 +480,23 @@ class covidModel:
             'E::',
             grpList) + "))"
 
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_All (+ " + covidModel.repeat_string_by_grp(
-            'asymptomatic_', grpList) + "))"
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymptomatic_det_All (+ " + covidModel.repeat_string_by_grp(
+        obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymp_All (+ " + covidModel.repeat_string_by_grp(
+            'asymp_', grpList) + "))"
+        obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymp_det_All (+ " + covidModel.repeat_string_by_grp(
             'As_det1::', grpList) + "))"
 
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_All (+ " + covidModel.repeat_string_by_grp(
+        obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymp_All (+ " + covidModel.repeat_string_by_grp(
             'P::', grpList) + "))"
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymptomatic_det_All (+ " + covidModel.repeat_string_by_grp(
+        obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymp_det_All (+ " + covidModel.repeat_string_by_grp(
             'P_det::', grpList) + "))"
 
         obs_secondary_All_str = obs_secondary_All_str + "\n(observe detected_All (+ " + covidModel.repeat_string_by_grp(
             'detected_', grpList) + "))"
 
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_mild_det_All (+ " + covidModel.repeat_string_by_grp(
-            'symptomatic_mild_det_', grpList) + "))"
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe symptomatic_severe_det_All (+ " + covidModel.repeat_string_by_grp(
-            'symptomatic_severe_det_', grpList) + "))"
+        obs_secondary_All_str = obs_secondary_All_str + "\n(observe symp_mild_det_All (+ " + covidModel.repeat_string_by_grp(
+            'symp_mild_det_', grpList) + "))"
+        obs_secondary_All_str = obs_secondary_All_str + "\n(observe symp_severe_det_All (+ " + covidModel.repeat_string_by_grp(
+            'symp_severe_det_', grpList) + "))"
 
         obs_tertiary_All_str = ""
         obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_All (+ " + covidModel.repeat_string_by_grp(
