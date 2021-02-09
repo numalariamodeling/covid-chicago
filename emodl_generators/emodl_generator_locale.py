@@ -19,8 +19,8 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 
 class covidModel:
 
-    def __init__(self, expandModel='AsSymSys', observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=False, trigger_channel=None, add_migration=False, emodl_name=None,fit_params=None, git_dir=git_dir):
+    def __init__(self, expandModel='testDelay_AsSymSys', observeLevel='primary', add_interventions='baseline',
+                 change_testDelay=False, trigger_channel=None, add_migration=False, emodl_name=None, git_dir=git_dir):
         self.model = 'locale'
         self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
                         'EMS_11']
@@ -31,7 +31,6 @@ class covidModel:
         self.change_testDelay = change_testDelay
         self.trigger_channel = trigger_channel
         self.emodl_name = emodl_name
-        self.fit_params = fit_params
         self.n_steps = 4
         self.emodl_dir = os.path.join(git_dir, 'emodl')
 
@@ -408,12 +407,11 @@ class covidModel:
 
         return reaction_str
 
-    def write_Ki_timevents(self, grp):
+    def write_Ki_timevents(grp):
         grp = str(grp)
         grpout = covidModel.sub(grp)
-        if self.fit_params ==None: param_ki_str = "(param Ki_{grp} @Ki_{grp}@)".format(grpout=grpout, grp=grp)
-        if self.fit_params =='initialKi': param_ki_str = "(param Ki_{grp} (* @Ki_{grp}@ @ki_scale_factor@))".format(grpout=grpout, grp=grp)
-        params_str = param_ki_str + """
+        params_str = """
+(param Ki_{grp} @Ki_{grp}@)
 (observe Ki_t_{grpout} Ki_{grp})
 (time-event time_infection_import @time_infection_import_{grp}@ ((As::{grp} @initialAs_{grp}@) (S::{grp} (- S::{grp} @initialAs_{grp}@))))
     """.format(grpout=grpout, grp=grp)

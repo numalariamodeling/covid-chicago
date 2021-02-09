@@ -477,7 +477,9 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     #file.close()
 
 
-def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, trigger_channel, emodl_name,fit_params):
+
+def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, trigger_channel, emodl_name):
+
     if model =='base':
         from emodl_generators.emodl_generator_base import covidModel
     if model =='locale':
@@ -493,8 +495,7 @@ def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, trigg
                     observeLevel=observeLevel,
                     expandModel=expandModel,
                     trigger_channel=trigger_channel,
-                    emodl_name=emodl_name,
-                    fit_params=fit_params)
+                    emodl_name=emodl_name)
     emodl_name = ml.generate_emodl()
     return f'{emodl_name}.emodl'
 
