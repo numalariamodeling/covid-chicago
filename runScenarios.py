@@ -533,6 +533,15 @@ def parse_args():
         choices=["None", "critical", "crit_det", "hospitalized", "hosp_det"],
         default=None
     )
+    parser.add_argument(
+        "-fp",
+        "--fit_params",
+        type=str,
+        #nargs='+',
+        choices = ['initialKi',"None"],
+        help="parameter to fit per group",
+        default=None
+    )
     return parser.parse_args()
 
 
@@ -582,7 +591,8 @@ if __name__ == '__main__':
                                      observeLevel=args.observeLevel,
                                      expandModel=args.expandModel,
                                      trigger_channel=args.trigger_channel,
-                                     emodl_name=None)
+                                     emodl_name=None,
+                                     fit_params = args.fit_params)
 
     if args.experiment_config is None:
         if model =='base':
@@ -621,6 +631,7 @@ if __name__ == '__main__':
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.paramdistribution}_{args.name_suffix}_{scenario}"
         else:
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
+    if args.fit_params != None: exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_fitparams"
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
