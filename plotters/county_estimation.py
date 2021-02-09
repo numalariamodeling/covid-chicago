@@ -4,7 +4,6 @@ import numpy as np
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-from datetime import date, timedelta, datetime
 from processing_helpers import *
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
@@ -17,8 +16,8 @@ if __name__ == '__main__' :
 
     df = pd.read_csv(os.path.join(wdir,'simulation_output/_csv', filename))
     df['date'] = pd.to_datetime(df['date'])
-    first_day = date(2020,4,27)
-    last_day = date(2020,5,17)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
     df['symptomatic'] = df['output_symptomatic_mild'] + df['output_symptomatic_severe']
     df['new_symptomatic'] = df['output_new_symptomatic_mild'] + df['output_new_symptomatic_severe']

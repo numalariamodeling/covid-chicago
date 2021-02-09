@@ -5,20 +5,18 @@ Comparison for single regions, base or age model.
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
 
 mpl.rcParams['pdf.fonttype'] = 42
-today = datetime.today()
-datetoday = date(today.year, today.month, today.day)
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -36,12 +34,6 @@ def parse_args():
         type=str,
         help="Local or NUCLUSTER",
         default="Local"
-    )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
     )
     return parser.parse_args()
 
@@ -68,7 +60,7 @@ def compare_NMH(exp_name) :
 
 
 def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day, last_day,
-                     ymax=1000, plot_path=None, logscale=True, param="Ki"):
+                     ymax=1000, plot_path=None, logscale=False, param="Ki"):
 
     fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
@@ -108,7 +100,7 @@ def plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels, data_channel_names, 
 
 
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, first_day, last_day,
-                     ymax=1000, plot_path=None, logscale=True):
+                     ymax=1000, plot_path=None, logscale=False):
     fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
     k = 0
@@ -181,41 +173,31 @@ def compare_county(exp_name, county_name, first_day, last_day) :
 def compare_ems(exp_name, ems, first_day, last_day,param=None) :
 
     df = load_sim_data(exp_name)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = df[df['date'].between(first_day, last_day)]
     df['critical_with_suspected'] = df['critical']
 
     ref_df = load_ref_df(ems_nr=ems)
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
     if param == None :
-        plot_sim_and_ref(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=True)
         plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=False)
+                         plot_path=plot_path, first_day=first_day, last_day=last_day)
     else :
-        plot_sim_and_ref_by_param(df,ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path, first_day=first_day, last_day=last_day, logscale=True,param=param)
         plot_sim_and_ref_by_param(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                         plot_path=plot_path,first_day=first_day, last_day=last_day, logscale=False,param=param)
+                         plot_path=plot_path,first_day=first_day, last_day=last_day, param=param)
 
 
 if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = date(2020, 2, 13)
-    today = datetime.today() + timedelta(15)
-    last_plot_day = date(today.year, today.month, today.day)
+    first_plot_day = pd.Timestamp('2020-02-13')
+    today = pd.Timestamp.today()+ pd.Timedelta(15,'days')
+    last_plot_day = today
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names :

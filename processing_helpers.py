@@ -2,28 +2,76 @@ import numpy as np
 import os
 import pandas as pd
 from load_paths import load_box_paths
-from datetime import date, timedelta, datetime
 
-datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+try:
+    print(Location)
+except NameError:
+    if os.name == "posix": Location ="NUCLUSTER"
+    else: Location ="Local"
+
+datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths(Location=Location)
 
 
-def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='trajectoriesDat.csv',
-                  input_sim_output_path =None, column_list=None, add_incidence=True) :
+def get_grp_list(exp_name,  input_wdir=None, input_sim_output_path =None):
     input_wdir = input_wdir or wdir
     sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
     sim_output_path = input_sim_output_path or sim_output_path_base
 
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
-    df = df.dropna()
-    try:
-        first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    except:
-        first_day = datetime.strptime(df['startdate'].unique()[0], '%m/%d/%Y')
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df['date'] = pd.to_datetime(df['date']).dt.date
+    df_samples = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
+    N_cols = [col for col in df_samples.columns if 'N_' in col]
+    if len(N_cols) != 0:
+        grp_list = [col.replace('N_', '') for col in N_cols]
+    else:
+        grp_list = None
+    return grp_list
 
-    if region_suffix !=None :
+def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
+                  input_sim_output_path =None, column_list=None, add_incidence=True,
+                  select_traces=True, traces_to_keep_ratio=4, traces_to_keep_min=100) :
+    input_wdir = input_wdir or wdir
+    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
+    sim_output_path = input_sim_output_path or sim_output_path_base
+
+
+    if region_suffix is not None:
+        ems_nr = region_suffix.replace("_EMS-", "")
+        if region_suffix == "_All": ems_nr = 0
+
+        if fname is None:
+            fname = f'trajectoriesDat_region_{str(ems_nr)}.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = f'trajectoriesDat_region_{str(ems_nr)}_trim.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = 'trajectoriesDat_trim.csv'
+            if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+                fname = 'trajectoriesDat.csv'
+
+        print(f'Using {fname}')
+        df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
         df.columns = df.columns.str.replace(region_suffix, '')
+
+        if select_traces:
+            if os.path.exists(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv')):
+                rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv'))
+
+                n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
+                if n_traces_to_keep < traces_to_keep_min :
+                    n_traces_to_keep = traces_to_keep_min
+                if len(rank_export_df) < traces_to_keep_min :
+                    n_traces_to_keep = len(rank_export_df)
+
+                rank_export_df_sub = rank_export_df[0:n_traces_to_keep]
+                df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
+    else :
+        fname = 'trajectoriesDat.csv'
+        if os.path.exists(os.path.join(sim_output_path, fname)) == False:
+            fname = 'trajectoriesDat_trim.csv'
+        print(f'Using {fname}')
+        df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)  ## engine='python'
+
+    df = df.dropna()
+    first_day = pd.Timestamp(df['startdate'].unique()[0])
+    df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
 
     if add_incidence:
         if 'recovered' in df.columns:
@@ -31,24 +79,6 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname='traje
             df = calculate_incidence(df)
         else:
             df = calculate_incidence(df, trimmed =True)
-
-    return df
-
-def load_sim_data_age(exp_name,channel, age_suffix ='_All', input_wdir=None,fname='trajectoriesDat.csv', input_sim_output_path =None) :
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
-
-    column_list = ['scen_num',  'time', 'startdate']
-    for grp in ageGroup_list:
-        column_list.append(channel + str(grp))
-
-    df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
-    df = df.dropna()
-    first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
-    df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    df.columns = df.columns.str.replace(age_suffix, '')
 
     return df
 
@@ -203,32 +233,28 @@ def load_ref_df(ems_nr):
         ref_df[ref_df['covid_region'].isin(ems_nr)]
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
-    ref_df['date'] = pd.to_datetime(ref_df['date']).dt.date
-    ref_df = ref_df[(ref_df['date'] > pd.to_datetime(date(2020,1,1))) &
-                    (ref_df['date'] <= pd.to_datetime(date.today()))]
+    ref_df['date'] = pd.to_datetime(ref_df['date'])
+    ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp.today())]
 
     return ref_df
 
 
-def calculate_prevalence(df, ems=None):
-    if ems is None:
-        ems = ['EMS-%d' % x for x in range(1, 12)]
+def calculate_prevalence(df):
 
-    for ems_num in ems:
-            df[f'N_{ems_num}'] = df[f'N_{str(ems_num.replace("-","_"))}'] - df[f'deaths_{ems_num}']
-            df[f'IFR_{ems_num}'] = df[f'deaths_{ems_num}'] / (df[f'recovered_{ems_num}'] + df[f'deaths_{ems_num}'])
-            df[f'IFR_t_{ems_num}'] = df[f'new_deaths_{ems_num}'] / (df[f'new_recovered_{ems_num}'] + df[f'new_deaths_{ems_num}'])
-            df[f'prevalence_{ems_num}'] = df[f'infected_{ems_num}'] / df[f'N_{ems_num}']
-            df[f'seroprevalence_current_{ems_num}'] = df[f'recovered_{ems_num}'] / df[f'N_{ems_num}']
-            df[f'seroprevalence_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_{ems_num}'].transform('shift', 14)
+    df['N'] = df['N'] - df['deaths']
+    df['IFR'] = df['deaths'] / (df['recovered'] + df['deaths'])
+    df['IFR_t'] = df['new_deaths'] / (df['new_recovered'] + df['new_deaths'])
+    df['prevalence'] = df['infected'] / df['N']
+    df['seroprevalence_current'] = df['recovered'] / df['N']
+    df['seroprevalence'] = df.groupby(['scen_num', 'sample_num'])['seroprevalence_current'].transform('shift', 14)
 
-            if f'infected_det_{ems_num}' in df.columns:
-                df[f'N_det_{ems_num}'] = df[f'N_{str(ems_num.replace("-", "_"))}'] - df[f'deaths_det_{ems_num}']
-                df[f'IFR_det_{ems_num}'] = df[f'deaths_det_{ems_num}'] / (df[f'recovered_det_{ems_num}'] + df[f'deaths_det_{ems_num}'])
-                df[f'IFR_det_t_{ems_num}'] = df[f'new_deaths_det_{ems_num}'] / (df[f'new_recovered_det_{ems_num}'] + df[f'new_deaths_det_{ems_num}'])
-                df[f'prevalence_det_{ems_num}'] = df[f'infected_det_{ems_num}'] / df[f'N_det_{ems_num}']
-                df[f'seroprevalence_current_det_{ems_num}'] = df[f'recovered_det_{ems_num}'] / df[f'N_det_{ems_num}']
-                df[f'seroprevalence_det_{ems_num}'] = df.groupby(['scen_num', 'sample_num'])[f'seroprevalence_current_det_{ems_num}'].transform('shift', 14)
+    if 'infected_det' in df.columns:
+        df['N_det'] = df['N'] - df['deaths_det']
+        df['IFR_det'] = df['deaths_det'] / (df['recovered_det'] + df['deaths_det'])
+        df['IFR_det_t'] = df['new_deaths_det'] / (df['new_recovered_det'] + df['new_deaths_det'])
+        df['prevalence_det'] = df['infected_det'] / df['N_det']
+        df['seroprevalence_current_det'] = df['recovered_det'] / df['N_det']
+        df['seroprevalence_det'] = df.groupby(['scen_num', 'sample_num'])['seroprevalence_current_det'].transform('shift', 14)
     return df
 
 def calculate_incidence(adf, output_filename=None, trimmed=False) :
@@ -320,12 +346,19 @@ def load_capacity(ems):
     fname = 'capacity_weekday_average_' + str(latest_filedate) + '.csv'
     ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds/', fname)
     df = pd.read_csv(ems_fname)
+    df = df.drop_duplicates()
 
     df = df[df['overflow_threshold_percent'] == 1]
     df['ems'] = df['geography_modeled']
     df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
     df = df[['ems', 'resource_type', 'avg_resource_available']]
     df = df.drop_duplicates()
+
+    ## if conflicting numbers, take the lower ones!
+    dups = df.groupby(["ems", "resource_type"])["avg_resource_available"].nunique()
+    if int(dups.nunique()) >1 :
+        print(f'{ems_fname} contains multiple capacity values, selecting the lower ones.')
+        df= df.loc[df.groupby(["ems", "resource_type"])["avg_resource_available"].idxmax()]
 
     df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available')
     df.index.name = 'ems'
@@ -338,6 +371,7 @@ def load_capacity(ems):
         df = df[df['ems'] == str(ems)]
 
     capacity = {'hosp_det': int(df['hb_availforcovid']),
+                'total_hosp_census': int(df['hb_availforcovid']),
                 'crit_det': int(df['icu_availforcovid']),
                 'ventilators': int(df['vent_availforcovid'])}
     return capacity
@@ -382,6 +416,19 @@ def civis_colnames(reverse=False) :
     if reverse == True : colnames = {value: key for key, value in col_names.items()}
     return(colnames)
 
+
+def get_datacomparison_channels():
+    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
+                    'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
+                    'death_det_cumul', 'deaths']
+    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
+                'new_detected_hospitalized']
+    data_channel_names = ['deaths',
+                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
+    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
+              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
+    return outcome_channels, channels, data_channel_names, titles
+    
 def get_parameter_names(include_new=True):
 
     sample_params_core = ['time_to_infectious',

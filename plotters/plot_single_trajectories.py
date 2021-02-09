@@ -4,7 +4,6 @@ import numpy as np
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-from datetime import date, timedelta, datetime
 from processing_helpers import calculate_incidence
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -28,7 +27,7 @@ if __name__ == '__main__' :
     adf = adf[adf['ems'] == ems]
 
     adf = calculate_incidence(adf)
-    adf = adf[adf['date'] >= date(2020,10,1)]
+    adf = adf[adf['date'] >= pd.Timestamp('2020-10-01')]
     # print(adf.columns.values)
 
     channels = ['infected', 'new_detected_hospitalized']

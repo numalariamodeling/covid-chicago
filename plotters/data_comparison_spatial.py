@@ -5,14 +5,13 @@ Used for spatial - covidregion - model
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
-
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
@@ -36,16 +35,11 @@ def parse_args():
         help="Local or NUCLUSTER",
         default = "Local"
     )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
-    )
+
     return parser.parse_args()
     
 def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, region_label,
-                     first_day, last_day, ymax=10000, logscale=True):
+                     first_day, last_day,plot_path, ymax=10000, logscale=False,plot_name_suffix=None):
 
     fig = plt.figure(figsize=(13, 6))
     palette = sns.color_palette('husl', 8)
@@ -79,10 +73,12 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, r
     plot_name = 'compare_to_data_covidregion_' + str(ems_nr)
     if logscale == False :
         plot_name = plot_name + "_nolog"
+    if plot_name_suffix is not None:
+        plot_name= plot_name + plot_name_suffix
     plt.savefig(os.path.join(plot_path, plot_name + '.png'))
     plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
 
-def compare_ems(exp_name,fname, ems_nr,first_day,last_day):
+def compare_ems(exp_name, ems_nr,first_day,last_day,plot_path):
 
     if ems_nr == 0:
         region_suffix = "_All"
@@ -92,47 +88,39 @@ def compare_ems(exp_name,fname, ems_nr,first_day,last_day):
         region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
     column_list = ['time', 'startdate', 'scen_num', 'sample_num','run_num']
-    outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
-                        'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                        'death_det_cumul', 'deaths']
-
+    outcome_channels, channels, data_channel_names, titles = get_datacomparison_channels()
+    
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
 
-    df = load_sim_data(exp_name, region_suffix=region_suffix, fname=fname,column_list=column_list)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
+    df = df[df['date'].between(first_day, last_day)]
+
     df['critical_with_suspected'] = df['critical']
 
     ref_df = load_ref_df(ems_nr)
 
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
-                'new_detected_hospitalized']
-    data_channel_names = ['deaths',
-                          'confirmed_covid_icu', 'covid_non_icu', 'deaths','inpatient', 'admissions']
-    titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)', 'New Detected\nDeaths (LL)',
-              'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
-
+    #plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
+    #                 region_label=region_label,first_day= first_day, last_day= last_day,plot_path=plot_path, logscale=True)
     plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label,first_day= first_day, last_day= last_day, logscale=True)
-    plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
-                     region_label=region_label, first_day= first_day, last_day= last_day,  logscale=False)
+                     region_label=region_label, first_day= first_day, last_day= last_day,plot_path=plot_path)
 
 
 if __name__ == '__main__':
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    first_plot_day = date(2020, 2, 13)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp('2020-02-13')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
-        plot_path = os.path.join(wdir, 'simulation_output',exp_name, '_plots')
-        for ems_nr in range(0,12):
+        sim_output_path  = os.path.join(wdir, 'simulation_output',exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
+        for ems_nr in range(1,12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name,fname=trajectoriesName, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day)
+            compare_ems(exp_name, ems_nr=int(ems_nr),first_day=first_plot_day,last_day=last_plot_day,plot_path=plot_path)

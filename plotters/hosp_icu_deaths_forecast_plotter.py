@@ -1,14 +1,13 @@
 import argparse
 import os
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
-
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 
@@ -30,12 +29,6 @@ def parse_args():
         type=str,
         help="Local or NUCLUSTER",
         default="Local"
-    )
-    parser.add_argument(
-        "-t", "--trajectoriesName",
-        type=str,
-        help="Name of trajectoriesDat file, could be trajectoriesDat.csv or trajectoriesDat_trim.csv",
-        default='trajectoriesDat.csv',
     )
     return parser.parse_args()
 
@@ -95,7 +88,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, p
     plt.savefig(os.path.join(plot_path, plot_name_full + '.png'))
     plt.savefig(os.path.join(plot_path, 'pdf', plot_name_full + '.pdf'), format='PDF')
 
-def compare_ems(exp_name, fname, plot_name, ems_nr, first_day , last_day):
+def compare_ems(exp_name, plot_name, ems_nr, first_day , last_day):
 
     if ems_nr == 0:
         region_suffix = "_All"
@@ -114,11 +107,11 @@ def compare_ems(exp_name, fname, plot_name, ems_nr, first_day , last_day):
     for channel in outcome_channels:
         column_list.append(channel + region_suffix)
 
-    df = load_sim_data(exp_name, region_suffix=region_suffix, fname=fname, column_list=column_list)
-    df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
+    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
+    df = df[df['date'].between(first_day, last_day)]
 
     ref_df = load_ref_df(ems_nr)
-    ref_df = ref_df[(ref_df['date'] >= first_plot_day) & (ref_df['date'] <= last_plot_day)]
+    ref_df = ref_df[ref_df['date'].between(first_day, last_day)]
     channels = ['crit_det', 'hosp_det', 'new_deaths']
     data_channel_names = ['confirmed_covid_icu', 'covid_non_icu', 'deaths']
     titles = ['ICU census\n(EMR)', 'non-ICU inpatient census\n(EMR)','daily deaths\n(LL)']
@@ -135,11 +128,10 @@ if __name__ == '__main__':
 
     args = parse_args()
     stem = args.stem
-    trajectoriesName = args.trajectoriesName
     Location = args.Location
 
-    first_plot_day = date.today() - timedelta(60)
-    last_plot_day = date.today() + timedelta(15)
+    first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
@@ -148,5 +140,5 @@ if __name__ == '__main__':
         plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
         for ems_nr in range(0, 12):
             print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name, fname=trajectoriesName, ems_nr=int(ems_nr), plot_name='forward_projection',
+            compare_ems(exp_name, ems_nr=int(ems_nr), plot_name='forward_projection',
                         first_day=first_plot_day, last_day=last_plot_day)

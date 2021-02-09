@@ -4,15 +4,12 @@ import json
 import os
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta
 from load_paths import load_box_paths
 from simulation_helpers import *
 from runScenarios import *
 import itertools
 
 mpl.rcParams['pdf.fonttype'] = 42
-
-today = date.today()
 
 
 def parse_args():

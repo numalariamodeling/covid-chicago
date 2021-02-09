@@ -17,13 +17,13 @@ if __name__ == '__main__' :
     adf = pd.read_csv(os.path.join(output_dir, '%s.csv' % exp_name))
     suffix_names = [x.split('_')[1] for x in adf.columns.values if 'susceptible' in x and 'All' not in x]
     print(adf.columns.values)
-    first_day = datetime.strptime(adf['startdate'].unique()[0], '%Y-%m-%d')
+    first_day = pd.Timestamp(df['startdate'].unique()[0])
     df = append_data_byGroup(adf, suffix_names)
     df['date'] = df['time'].apply(lambda x: first_day + timedelta(days=int(x)))
     df['ems'] = df['ems'].apply(lambda x : int(x.split('-')[-1]))
 
     # adf['date'] = pd.to_datetime(adf['date'])
-    # adf = adf[adf['date'] == date(2020,5,7)]
+    # adf = adf[adf['date'] == pd.Timestamp('2020-05-07')]
     # adf = adf[['susceptible', 'exposed', 'infected', 'recovered', 'deaths', 'ems']]
     # df = adf.groupby('ems').agg(np.mean).reset_index()
     # print(np.sum(df['recovered']))

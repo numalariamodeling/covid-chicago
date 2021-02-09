@@ -220,29 +220,86 @@ Note that the user-supplied configuration file is used to provide
 - `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
 Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
 
-The [simulation_submission_template.txt](https://github.com/numalariamodeling/covid-chicago/blob/master/simulation_submission_template.txt) shows example command lines and scenarios that are currently being used. 
 
-<details><summary>Show examples</summary>
+<details><summary>Show runScenarios examples</summary>
 <p>  
 
+####  Usage examples: 
 
-####  Usage examples:  
-- Using the default emodl template: `python runScenarios.py
-  --running_location Local --region IL  --experiment_config sample_experiment.yaml`
-- Using a different emodl template: `python runScenarios.py
-  --running_location Local  --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl`
-- Specifying experiment name suffix and changing running_location : `python runScenarios.py
-  --running_location NUCLUSTER --region IL --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --name_suffix "testrun_userinitials"`
-- Specifiying cms configuration file and solver:`python runScenarios.py
-  --running_location Local --region IL  --experiment_config sample_experiment.yaml --emodl_template simplemodel_testing.emodl --cfg_template model_Tau.cfg`
-- Specifiying master configuration file and using short form of arguments:`python runScenarios.py 
-  -mc config_param_delay7.yaml -rl Local -r IL -c spatial_EMS_experiment.yaml -e extendedmodel_EMS_criticaldet_triggeredrollbackdelay.emodl -cfg model_B.cfg
+##### Base model
+- python runScenarios.py --model "base" -r EMS_1  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_2  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_3  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_4  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_5  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_6  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_7  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_8  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_9  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_10 --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "base" -r EMS_11 --scenario "baseline"  -n "userinitials"
+
+##### Locale model
+- python runScenarios.py --model "locale" -r IL --scenario "baseline"  -n "userinitials"
+
+
+
+##### Age model
+- python runScenarios.py --model "age" -r EMS_1  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_2  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_3  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_4  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_5  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_6  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_7  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_8  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_9  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_10 --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "age" -r EMS_11 --scenario "baseline"  -n "userinitials"
+
+##### Age-locale model
+- python runScenarios.py --model "agelocale" -r IL --scenario "baseline"  -n "userinitials"
+ 
+##### NU model 
+- python runScenarios.py --model "nu" -r NU -c "nu_undergrad.yaml" -e "nu_undergrad.emodl"  -n "userinitials"
+ 
+</p>
+</details>
+
+The examples above show an abbreviated version, accepting most defaults. The table below shows all available options and their defaults.
+
+<details><summary>Show all options</summary>
+<p>  
+
+| no 	| argument long       	| argument short | model specific | required 	| help                                                                                                                                                                                                                                                                                                 	| choices                                                                                                                        	| default                   	|
+|----	|---------------------	|----------------|----------|----------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|--------------------------------------------------------------------------------------------------------------------------------	|---------------------------	|
+| 1  	| --masterconfig      	| -mc            | FALSE    | FALSE    	| Master yaml file that includes all model parameters.                                                                                                                                                                                                                                                 	|                                                                                                                                	| "extendedcobey_200428.yaml" 	|
+| 2  	| --running_location  	| -rl            | FALSE    | FALSE    	| Location where the simulation is being run.  If None (not provided) the script tries to   determine running location based system variables                                                                                                                                                          	| "Local", "NUCLUSTER"                                                                                                           	| "None"                      	|
+| 3  	| --region            	| -r             | FALSE     | TRUE     	| Region on which to run simulation. E.g. 'IL'                                                                                                                                                                                                                                                         	| 'IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7',   'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'                  	| /                         	|
+| 4  	| --experiment_config 	| -c             | FALSE    | FALSE    	| Config file (in YAML) containing the parameters to override the default config. This file should have the same   structure as the default config. example: ./experiment_configs/sample_experiment.yaml If not provided, the default   experiment_config is selected based on model specification 	|                                                                                                                                		| "None"                      	|
+| 5  	| --emodl_template    	| -e             | FALSE    | FALSE    	| Template emodl file to use. If not provided, the emodl_template is generated based on model AND scenario specification. If no scenario specification is given it uses the baseline scenario!                                                                                                   	|                                                                                                                                		| "None"                      	|
+| 6  	| --model             	| -m             | TRUE     | TRUE     	| Model type (see choices)                                                                                                                                                                                                                                                                                          	| "base",   "locale","age","agelocale","nu"                                                                                      	| /                          	|
+| 7  	| --scenario          	| -s             | DEPENDS    | FALSE  	| Intervention scenario to use. Might differ for locale and other models.                                                                                                                                                                                                                                                                        	| see emodl readme…                                                                                                              	| "baseline"                  	|
+| 8  	| --paramdistribution 	| -dis           | TRUE    | FALSE    	| Use parameter ranges or means (could be extended to specify shape of distribution)  (used only for locale/spatial model)                                                                                                                                                                                                                      	| "uniform_range", "uniform_mean"                                                                 	| "uniform_range"             	|
+| 9  	| --cfg_template      	| -cfg           | FALSE    | FALSE    	| Template cfg file to use. For more details visit   https://docs.idmod.org/projects/cms/en/latest/solvers.html                                                                                                                                                                                        	| "model_B.cfg", "model_Tau.cfg", "model_RLeapingFast.cfg", "model_RLeaping.cfg","model_FD.cfg","model_DFSP.cfg","model_SSA.cfg" 	| "model_B.cfg"               	|
+| 10 	| --name_suffix       	| -n             | FALSE    | FALSE    	| Adding custom suffix to the   experiment name. If not specified, a random number will be used                                                                                                                                                                                                        	|                                                                                                                                	| f"_test_rn{str(today.microsecond)[-2:]}"            	|
+| 11 	| --post_process      	| -p             | DEPENDS    | FALSE    	| Whether or not to run post-processing. Note default on NUCLUSTER vs Local   varies                                                                                                                                                                                                                   	| "dataComparison", "processForCivis"                                                                                            	| "None"                      	|
+| 12 	| --sample_csv        	| -csv           | FALSE    | FALSE    	| Name of sampled_parameters.csv, any   input csv will be renamed per default to 'sampled_parameters.csv'                                                                                                                                                                                              	|                                                                                                                                	| "None"                      	|
+| 13 	| --observeLevel        | -obs           | FALSE    | FALSE    	| Specifies which outcome channels to simulate and return in trajectoriesDat.csv                                                                                                                                                                                              							| "primary", "secondary", "tertiary"                                                                                     	     	| "secondary"                  	|
+| 13 	| --expandModel         | -expand        | FALSE    | FALSE    	| Specific for test delay, defines where to allow test delay (As,Sym, Sys)                                                                                                                                                                                              							    | "uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"                                                                      | "testDelay_AsSymSys"                  	|
+| 13 	| --trigger_channel     | -trigger       | TRUE    | FALSE    	| Specific channel name of trigger to use (used only for locale/spatial model)                                                                                                                                                                                      																	        | "None", "critical", "crit_det", "hospitalized", "hosp_det"                                                                        | "None"                  	|
+
+Planned updates:
+- add "normal_range" and "normal_mean" to  --paramdistribution
+- add --fitting argument
+- add vaccine and  B variant scenarios
+
 </p>
 </details>
 
 ## 2.4 Sampled parameters 
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
-The [sample_parameters.py](sample_parameters.py) script handles only the sampled_parameters.csv, it allows to: 
+The [sample_parameters.py](sample_parameters.py) script allows to: 
 (1) generate csv file from configuration files without running simulations
 (2) load and modify an existing sampled_parameters.csv (change or add single or multiple parameter) (default location `experiment_configs\input_csv`)
 (3) replace single values for one or more parameter use python dictionary  `--param_dic  {\"capacity_multiplier\":\"0.5\"}`
@@ -261,20 +318,23 @@ Running examples:
    -(sampled_parameters_sm7.csv not under version control, but would for example include 10 values for social multiplier 7 for all 11 regions, the base sample parameters are repeated for each of the 10 rows of the additional csv)
 
 When running simulations with an pre-existing csv file, specify 
-- `--load_sample_parameters` (boolean) and 
 - `--sample_csv` (name of csv file in `experiment_configs\input_csv` ).
+Note: the specified csv will per default be renamed to "sampled_parameters.csv", hence the "sampled_parameters.csv" in input_csv is overwritten each time. A copy of the sample parameters can be retrieved from the simulation folder. 
 
-Note: except the loaded "sampled_parameters.csv" and "sampled_parameters_1000.csv", csv files should not be added to version control on git. 
 </p>
 </details>
 
 ## 2.6. Setup 
-Running simulation requires the CMS software and python. Additional software includes R and Rstudio for some of the postprocessing steps. 
-The model runs on Windows and Linux as well as the Northwestern high performance computing cluster (Quest). 
+Running simulation requires the CMS software and python. 
+The model runs on Windows and Linux and on the computing cluster at Northwestern University ('Quest'). 
 The detailes are described below. 
 
 <details><summary>Show setup description</summary>
 <p> 
+
+### Software requirements and packages
+The [`requirements.txt`](https://github.com/numalariamodeling/covid-chicago/blob/master/requirements.txt) includes name and version of required python modules.
+
   
 ### Local environment setup  
 Use a `.env` file in the same directory as your `runScenarios` script to define paths to directories and files on your own computer.
@@ -288,7 +348,7 @@ To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in 
 ### Running on Quest (NUCLUSTER) 
 A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
 
-#### Requirements on quest 
+Requirements:
 All the modules need to be installed on the personal quest environment 
 - use pip install ... in your terminal 
 - install `dotenv` and `yamlordereddictloader`
@@ -296,64 +356,109 @@ All the modules need to be installed on the personal quest environment
 `source activate dotenv-py37`
 `conda install -c conda-forge yamlordereddictloader`
 
-<!--- (The `source activate dotenv-py37` needs to be run before runnung the `runScenarios.py`)(not always?) -->
+Alternatively, a virtual environment can be activated using:
+i.e. add a `set-covid-chicago` command in the `bash.profile` file in the home directory
+
+	set-covid-chicago(){
+		module purge all
+		module load python/anaconda3.6
+		source activate /projects/p30781/anaconda3/envs/team-test-py37
+	}
+  
+[Box syncing](https://kb.northwestern.edu/page.php?id=70521):
+
+	mirror-box-covid(){
+		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Cleaned\ Data/ /projects/p30781/covidproject/data/covid_IDPH/Cleaned\ Data/; exit"
+		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Corona\ virus\ reports/ /projects/p30781/covidproject/data/covid_IDPH/Corona\ virus\ reports/; exit"
+		lftp -p 990 -u <useremail> ftps://box.com -e "mirror -R /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/ NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/; exit"
+	}
+ 
 
 ##### Submit job 
+On Quest jobs are submitted using the SLURM workload manager and syntax ([SLURM on quest](https://kb.northwestern.edu/page.php?id=89456))
 `cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py --running_location NUCLUSTER --region EMS_11 --experiment_config extendedcobey_200428.yaml --emodl_template extendedmodel.emodl --name_suffix "quest_run_<your initial>"`
+`- python runScenarios.py -rl NUCLUSTER --model "base" -r IL --scenario "baseline"  -n "userinitials"`
 
-The experiments will go to the _temp folder on the quest gitrepository. To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
+The experiments will go to the `_temp` folder on the quest gitrepository. 
+To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
 
-Next step copy the content of the submit_runSimulations.sh (should be a simple txt file) to the terminal to run:
-- `cd /projects/p30781/covidproject/covid-chicago/_temp/<exp_name>/trajectories/`
-- `dos2unix runSimulations.sh`  # converts windows format to linux format
-- `sbatch runSimulations.sh`  # submits the simulations as an array job, note maximum array <5000 scenarios. 
+The status of the job submission can be called via `squeue -u <username>`
 
-### Software requirements and packages
-The [`requirements.txt`](https://github.com/numalariamodeling/covid-chicago/blob/master/requirements.txt) includes name and version of required python and R modules.
+Further helpful examples are in the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
 
 </p>
 </details>
 
-# 3 Postprocess and analyse simulation outputs
-Via the `--post_process` argument in the runScenarios command plotting processes can be directly attached to after simulations finished.
-A sample plot is produced automatically, can be disabled via --noSamplePlot.
-Even if no postprocess is specified, default batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl).
-Additional batch files or postprocesses can be linked to runScenarios of needed, otherwise the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) provides a range of python files that do different visualizations (see readme in folder for details).
+# 3 Postprocessing and visualization of simulation outputs
+Via the `--post_process` argument in the runScenarios command additional scripts will run directly after simulations finished.
+Batch files are generated for data comparison, process for civis steps and basic plotter (age, locale emodl regardless of the  `--post_process` argument.
+Batch files are only generated for the most important postprocessing files and additional batch files or postprocesses may be linked to runScenarios of needed. 
+To see all the available postprocessing scripts, go to the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) (see readme in folder for details).
+When adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the batch files related to the weekly deliverables are automatically executed. 
 
-## Sample plot and additional plots 
-Per default a `master_sample_plot.png` is generated for every simulation regardless of type (base, age, spatial) for all Illinois. 
-- `locale_age_postprocessing.bat` - generates trajectories for pre-specified outcome channels per age group using [locale_age_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/locale_age_postprocessing.py).
+## Postprocessing on local machine
+Locally, there are two main batch files:
+- `run_postprocess.bat` is a wrapper batch file that runs postprocessing files from the list below (general postprocessing not for weekly deliverables)
+- `run_postprocess_for_civis.bat` is a wrapper batch file that runs postprocessing from the list below (postprocessing for weekly deliverables)
 
-## Data comparison 
-- `0_runDataComparison.bat` comparing model predictions to data per region over time
+The postprocessing includes the following steps below:
 
-## Fitting
-- runFittingProcess.bat
-In the experiment folder is per default a `0_runFittingProcess.bat` file created, which run the [fitting script](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/fitting/fit_to_data_spatial.R).
-Note, currently hardcoded for the spatial model.
-The fitting script estimates the effect size multiplier and effect size change time event as parameters to estimate and write out in csv files. 
-Per default the social multiplier and time event number from the exoeriment name suffix is taken, which needs to be in the form of `fitki9` (fitki is removed and 9 is used in the parameter name).
-Example experiment name: `20201006_IL_mr_local_fitki9` , example submission command:
-`python runScenarios.py -rl Local -r IL -mc masterconfig_forFitting.yaml -c spatial_EMS_forFitting.yaml -e extendedmodel_EMS_forFitting.emodl -n "mr_local_fitki9"`
-
-## Postprocessing scripts for weekly deliverables
-Several batch files are automatically generated when running the spatial model using the `spatial_EMS_experiment.yaml` in the runScenario submission command. 
-When adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the files are automatically executed. 
-The postprocessing steps include 1) aggregation of the model predictions 2) probability of exceeding capacities, 3) estimate time varying reproductive number, and additional desciptove plots.
-
-<details><summary>Show batch file description</summary>
+<details><summary>Show postprocessing scripts</summary>
 <p> 
 
-- `0_runTrimTrajectories.bat` calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trim_trajectoriesDat.py) trims the trajectories and per default keeps only dates after 2020-06-12 (timesteps >120) and selected outcome measures. 
-- `0_createAdditionalPlots.bat` calls two Python scripts [I](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_by_param_ICU_nonICU.py) and [II](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/hosp_icu_deaths_forecast_plotter.py), requires to run 0_runTrimTrajectories.bat before (or change name of trajectories.csv). It generates additional plots, such as recent + nearest predictions on hospitalizations, ICU and deaths per region. Could be extended to include for example the [prevalence plotter](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_prevalence.py) or other plots.
-- `0_runDataComparison.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) comparing model predictions to data per region over time
-- `1_runProcessForCivis.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
-- `2_runProcessForCivis.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_probabilities.py) calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv), also adds total number of beds [additional script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_numbers.py)
-- `3_runProcessForCivis.bat`  calls a [Rscript](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/estimate_Rt/get_Rt_forCivisOutputs.R)  that  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
-- `4_runProcessForCivis.bat`  calls a [Python script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Only the changelog.txt will need manual editing to reflect the new changes every week. 
-- `5_runProcessFor_CDPH.bat`  calls a [Rscript](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/estimate_Rt/covidregion_Rt_timelines.R) that generates region Rt timelines for current and previous week and copies selected plots from `0_createAdditionalPlots.bat` to the cdph folder
-- `5_runProcessForCivis_optional.bat` calls a [Rscript](https://github.com/numalariamodeling/covid-chicago/blob/master/Rfiles/simulation_plotter/compare_simulation_iterations.R) that  generates the iteration comparison plot (last 3 weeks)
+- `0_runCombineAndTrimTrajectories.bat` calls  [combine_and_trim.py](https://github.com/numalariamodeling/covid-chicago/blob/master/combine_and_trim.py) combines and trims the simulation output csv files (trajectories.csv files) 
+- `0_locale_age_postprocessing.bat` calls  [locale_age_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/locale_age_postprocessing.py) to plot trajectories for pre-specified outcome channels per age group.
+- `1_runTraceSelection.bat`  calls [trace_selection.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py) calculating the negative log-likelihood per simulated trajectory, used for thinning predictions and parameter estimation
+- `2_runDataComparison.bat`  calls [data_comparison_spatial.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) comparing model predictions to data per region over time
+- `3_runProcessTrajectories.bat`  calls [process_for_civis_EMSgrp.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
+- `4_runRtEstimation.bat`  calls [estimate_Rt_forCivisOutputs.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/estimate_Rt_forCivisOutputs.py)  that  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
+- `5_runOverflowProbabilities.bat`  calls [overflow_probabilities.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_probabilities.py) calculates the probability of hospital overflow and produces the  (i.e. nu_hospitaloverflow_20201005.csv), also adds total number of beds [additional script](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/overflow_numbers.py)
+- `6_runPrevalenceIFR.bat`  calls [plot_prevalence.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_prevalence.py)
+- `7_runICUnonICU.bat`  calls [plot_by_param_ICU_nonICU.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_by_param_ICU_nonICU.py)
+- `8_runHospICUDeathsForecast.bat`  calls  [hosp_icu_deaths_forecast_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/hosp_icu_deaths_forecast_plotter.py)
+- `9_runCopyDeliverables.bat` calls [NUcivis_filecopy.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/NUcivis_filecopy.py) that generates the NU_civis_outputs subfolder and copies all relevant files and adds the changelog.txt. Note: the changelog.txt will need manual editing to reflect new changes per week. 
+- `10_runIterationComparison.bat` calls [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
+- `11_runCleanUpAndZip.bat` calls [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py) to clean up simulations (deletes per default single trajectories !! and optinally zips and/or deletes simulation folder
+
+ATTENTION: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
+
+
+</p>
+</details>
+
+## Postprocessing on the NU cluster 'Quest'
+On Quest shell instead of batch files are generated for the same python files as shown above.
+For a detailed descripton of the shell files and processing steps, expand below:
+
+<details><summary>Detailed processing steps</summary>
+<p> 
+
+The time limit for each single simulation was set to 30 min per default.
+Simulation run in the `_temp` folder (`/projects/p30781/covidproject/covid-chicago/_temp/`) in the git repository.
+After all simulations ran, they are automatically combined and moved to the Box folder on Quest, located in 
+`simulation_output` (`/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/`)
+
+Wrapper shell script:
+- `run_postprocessing.sh` runs automatically after simulation finish, it includes scripts from the list below.
+
+Run from `/projects/p30781/covidproject/covid-chicago/_temp/<exp_name>`
+- `0_runCombineAndTrimTrajectories.sh` 
+- `0_cleanupSimulations.sh`  calls  [cleanup.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup.py) and transfers files from temp to Box (on Quest)
+
+Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>`
+- `0_locale_age_postprocessing.sh`
+- `1_runTraceSelection.sh` 
+- `2_runDataComparison.sh` 
+- `3_runProcessTrajectories.sh`
+- `4_runRtEstimation.sh` 
+- `5_runOverflowProbabilities.sh` 
+- `6_runPrevalenceIFR.sh` 
+- `7_runICUnonICU.sh` 
+- `8_runHospICUDeathsForecast.sh` 
+- `9_runCopyDeliverables.sh`
+- `10_runIterationComparison.sh` 
+- `11_runCleanUpAndZip.sh` 
+
 </p>
 </details>
 
@@ -377,10 +482,14 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
-- 20210114 updated parameter fit, activated transmission multiplier 12 for Dec, updated region populations, reduced recovery time As
+- 20210204 workflow update: attached emodl generation to runScenarios.py (optional)
+- 20210203 updated parameter fit, recovery_As set to 9
+- 20210125 added ki_multiplier_12 and ki_multiplier_13 to emodl_generator_base, emodl_generator_age, emodl_generator_age_locale & ran 3 emodls
+- 20210120 updated parameter fit, added transmission multiplier 13, fixed bug in region populations, adjusted ki_multiplier_3a and ki_multiplier_3b to use means rather than range, adjusted region-specific recovery_time_crit_change1 and recovery_time_crit_change_time_1)
+- 20210114 updated parameter fit, activated transmission multiplier 12 for Dec, updated region populations
 - 20210106 added region specific recovery time critical
 - 20201216 updated parameter fit
-- 20201204 updated parameter fit, use muliplier 11 for decrease in trend
+- 20201204 updated parameter fit, use multiplier 11 for decrease in trend
 - 20201201 updated parameter fit
 - 20201130 added transmission multiplier 12
 - 20201124 updated parameter fit
@@ -425,8 +534,9 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 </p>
 </details>
 
-# 6. Resources 
-- CMS software [publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [online documentation](https://idmod.org/docs/cms/index.html)
+# 6. Resources and publications
+- [Illinois COVID-19 Modeling Website](https://illinoiscovid.org/)
+- [CMS software publication](https://link.springer.com/chapter/10.1007/978-3-030-31304-3_18); [CMS online documentation](https://idmod.org/docs/cms/index.html)
 - [Chicago Covid Coalition website](https://sites.google.com/view/nu-covid19-landing-page/home?authuser=0)
 - [Modeling COVID 19 Transmission and Containment in Illinois (IPHAM Webinar)](https://www.youtube.com/watch?v=DV1l7RDOCEc&feature=youtu.be) by Dr Jaline Gerardin.
 - [Modeling COVID-19 Transmission and Containment Efforts at Northwestern](https://news.feinberg.northwestern.edu/2020/05/modeling-covid-19-transmission-and-containment-efforts/)

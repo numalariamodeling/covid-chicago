@@ -1,8 +1,8 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
+  'number_of_samples': 600
   'number_of_runs': 1
-  'duration': 504
-  'monitoring_samples': 504 # needs to be less than or equal to duration
+  'duration': 530
+  'monitoring_samples': 530 # needs to be less than or equal to duration
   'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -106,6 +106,7 @@ sampled_parameters:
     function_kwargs: {'low':0.06, 'high':0.1}
   'fraction_critical':
     np.random: uniform
+    #function_kwargs: {'low':0.20, 'high':0.35}
     function_kwargs: {'low':0.455, 'high':0.65}
   'fraction_dead': 
     np.random: uniform
@@ -264,13 +265,28 @@ sampled_parameters:
     function_kwargs: {'low':0.091 , 'high':0.169}
   'fraction_dead_change9':
     np.random: uniform
-    function_kwargs: {'low':0.0280, 'high':0.052}
+    function_kwargs: {'low':0.0280, 'high':0.052}                                           
 intervention_parameters:
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - EFFECT SIZE
   ### (only used if corresponding emodl is defined)   
   ###------------------------------------------------  
   ### ---- IMMEDIATE REOPENING ----------------------
+  ### Relative increase in transmission rate due to COVID-19 B variant  
+  'bvariant_infectivity':
+    np: linspace
+    function_kwargs: {'start':1.5, 'stop':1.5}
+  ### Fraction of the population infected with COVID-19 B variant  
+  'bvariant_fracinfect':
+    np: linspace
+    function_kwargs: {'start':0.25, 'stop':0.25}
+    #function_kwargs: {'start':0.5, 'stop':0.5}
+    #function_kwargs: {'start':0.75, 'stop':0.75}
+    #function_kwargs: {'start':0.25, 'stop':0.75, 'num' : 3}
+  ### Relative increase in fraction severe due to COVID-19 B variant  
+  'bvariant_severity':
+    np: linspace
+    function_kwargs: {'start':1.5, 'stop':1.5}
   ### Reset Ki to defined proporions of it's initial value  
   'backtonormal_multiplier':
     np.random: uniform
@@ -364,10 +380,12 @@ time_parameters:
   'ki_multiplier_time_11':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-11-11}
-   ### ki_multiplier_time_12 'inactivated' for later use
   'ki_multiplier_time_12':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-12-20}
+  'ki_multiplier_time_13':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-01-20}
   ### ---- Increased detections ---- 
   ### Change in d_Sys
   'd_Sys_change_time_1':
@@ -420,7 +438,7 @@ time_parameters:
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-11-01}
   ### Change in d_P and d_As
-  ### Same as for d_Sym_change_times
+  ### Same as for d_Sym_change_times                              
   ### ---- Better case/ decreased mortality ---- 
   ###  Change in fraction_critical 
   'crit_time_1':
@@ -452,7 +470,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-11-01} 
   'crit_time_10':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-12-20}
+    function_kwargs: {'dates': 2020-12-20}                                   
   ### Change in fraction dead
   'fraction_dead_time_1':
     custom_function: DateToTimestep
@@ -461,6 +479,11 @@ time_parameters:
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}   
   'fraction_dead_time_3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-01}                     
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01}   
+  'cfr_time_2':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}   
   'fraction_dead_time_4':
@@ -480,7 +503,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-12-01}      
   'fraction_dead_time_9':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-01-01}      
+    function_kwargs: {'dates': 2021-01-01}                                           
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - DATES
   ### (only used with corresponding emodl)
@@ -513,7 +536,7 @@ time_parameters:
   ### should be set to after reopening time events are completed
   'today' :
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-14}
+    function_kwargs: {'dates': 2021-02-04}
   ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
   'change_testDelay_time1':
     custom_function: DateToTimestep

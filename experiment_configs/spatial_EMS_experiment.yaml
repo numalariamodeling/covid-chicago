@@ -58,7 +58,7 @@ sampled_parameters:
         - {'low': 0.2, 'high': 0.5}
         - {'low': 0.2, 'high': 0.5}
         - {'low': 0.2, 'high': 0.5}
-        - {'low': 0.1, 'high': 0.4} 
+        - {'low': 0.1, 'high': 0.4}
   ki_multiplier_3c:
     IL:
       expand_by_age: True
@@ -144,7 +144,7 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.192, 'high': 0.192}
+        - {'low': 0.175, 'high': 0.175}
         - {'low': 0.162, 'high': 0.162}
         - {'low': 0.205, 'high': 0.205}
         - {'low': 0.180, 'high': 0.180}
@@ -153,92 +153,132 @@ sampled_parameters:
         - {'low': 0.170, 'high': 0.170}
         - {'low': 0.120, 'high': 0.120}
         - {'low': 0.110, 'high': 0.110}
-        - {'low': 0.150, 'high': 0.150}
+        - {'low': 0.140, 'high': 0.140}
         - {'low': 0.110, 'high': 0.110}
   ki_multiplier_9:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.275, 'high': 0.275}
+        - {'low': 0.225, 'high': 0.225}
         - {'low': 0.172, 'high': 0.172}
         - {'low': 0.393, 'high': 0.393}
         - {'low': 0.162, 'high': 0.162}
-        - {'low': 0.210, 'high': 0.210}
-        - {'low': 0.160, 'high': 0.160}
+        - {'low': 0.220, 'high': 0.220}
+        - {'low': 0.200, 'high': 0.200}
         - {'low': 0.170, 'high': 0.170}
         - {'low': 0.175, 'high': 0.175}
         - {'low': 0.175, 'high': 0.175}
-        - {'low': 0.186, 'high': 0.186}
+        - {'low': 0.178, 'high': 0.178}
         - {'low': 0.130, 'high': 0.130}
   ki_multiplier_10:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.231, 'high': 0.231}
-        - {'low': 0.255, 'high': 0.255}
-        - {'low': 0.420, 'high': 0.420}
-        - {'low': 0.283, 'high': 0.283}
-        - {'low': 0.330, 'high': 0.330}
-        - {'low': 0.340, 'high': 0.340}
+        - {'low': 0.275, 'high': 0.275}
+        - {'low': 0.263, 'high': 0.263}
+        - {'low': 0.425, 'high': 0.425}
+        - {'low': 0.287, 'high': 0.287}
+        - {'low': 0.335, 'high': 0.335}
+        - {'low': 0.335, 'high': 0.335}
         - {'low': 0.260, 'high': 0.260}
-        - {'low': 0.189, 'high': 0.189}
+        - {'low': 0.191, 'high': 0.191}
         - {'low': 0.240, 'high': 0.240}
         - {'low': 0.255, 'high': 0.255}
-        - {'low': 0.190, 'high': 0.190}
+        - {'low': 0.200, 'high': 0.200}
   ki_multiplier_11:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.250, 'high': 0.250}
+        - {'low': 0.145, 'high': 0.145}
+        - {'low': 0.143, 'high': 0.143}
+        - {'low': 0.257, 'high': 0.257}
         - {'low': 0.198, 'high': 0.198}
         - {'low': 0.210, 'high': 0.210}
         - {'low': 0.185, 'high': 0.185}
         - {'low': 0.120, 'high': 0.120}
-        - {'low': 0.110, 'high': 0.110}
-        - {'low': 0.115, 'high': 0.115}
-        - {'low': 0.155, 'high': 0.155}
+        - {'low': 0.113, 'high': 0.113}
+        - {'low': 0.118, 'high': 0.118}
+        - {'low': 0.145, 'high': 0.145}
         - {'low': 0.110, 'high': 0.110}
   ki_multiplier_12:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.180, 'high': 0.180}
-        - {'low': 0.131, 'high': 0.131}
-        - {'low': 0.315, 'high': 0.315}
-        - {'low': 0.205, 'high': 0.205}
-        - {'low': 0.180, 'high': 0.180}
+        - {'low': 0.155, 'high': 0.155}
+        - {'low': 0.125, 'high': 0.125}
+        - {'low': 0.295, 'high': 0.295}
+        - {'low': 0.190, 'high': 0.190}
+        - {'low': 0.190, 'high': 0.190}
         - {'low': 0.220, 'high': 0.220}
         - {'low': 0.140, 'high': 0.140}
-        - {'low': 0.120, 'high': 0.120}
-        - {'low': 0.140, 'high': 0.140}
-        - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.095, 'high': 0.095}
+        - {'low': 0.113, 'high': 0.113}
+        - {'low': 0.125, 'high': 0.125}
+        - {'low': 0.145, 'high': 0.145}
+        - {'low': 0.110, 'high': 0.110}
+  ki_multiplier_13:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 0.105, 'high': 0.105}
+        - {'low': 0.110, 'high': 0.110}
+        - {'low': 0.105, 'high': 0.105}
+        - {'low': 0.177, 'high': 0.177}
+        - {'low': 0.220, 'high': 0.220}
+        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.060, 'high': 0.060}
+        - {'low': 0.090, 'high': 0.090}
+        - {'low': 0.100, 'high': 0.100}
+        - {'low': 0.100, 'high': 0.100}
+        - {'low': 0.110, 'high': 0.110}
   ###------------------------------------------------
-  ### REGION SPECIFIC LOS
+  ### REGION-SPECIFIC PARAMETER UPDATE
   ###------------------------------------------------
-  ### Change relative of previous value, which is in range 8-10
+  ###------------------------------------------------
+  ### REGION SPECIFIC LOS IN ICU
+  ###------------------------------------------------
   recovery_time_crit_change1:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
         - {'low': 9, 'high': 9}
-        - {'low': 9, 'high': 9}
-        - {'low': 8, 'high': 8}
-        - {'low': 3.25, 'high': 3.25}
-        - {'low': 6, 'high': 6}
-        - {'low': 4.5, 'high': 4.5}
-        - {'low': 3.5, 'high': 3.5}
-        - {'low': 3.5, 'high': 3.5}
+        - {'low': 11, 'high': 11}
         - {'low': 3, 'high': 3}
-        - {'low': 5, 'high': 5}
+        - {'low': 4, 'high': 4}
+        - {'low': 3, 'high': 3}
+        - {'low': 6, 'high': 6}
+        - {'low': 2, 'high': 2}
+        - {'low': 4, 'high': 4}
+        - {'low': 3, 'high': 3}
         - {'low': 9, 'high': 9}
+        - {'low': 15, 'high': 15}
+  ### --------- Time in timesteps since startdate ---------
+  ### (Note: introduces an error when using a different startdate!)
+  recovery_time_crit_change_time_1:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 184, 'high': 184}
+        - {'low': 262, 'high': 262}
+        - {'low': 302, 'high': 302}
+        - {'low': 164, 'high': 164}
+        - {'low': 292, 'high': 292}
+        - {'low': 104, 'high': 104}
+        - {'low': 201, 'high': 201}
+        - {'low': 184, 'high': 184}
+        - {'low': 154, 'high': 154}
+        - {'low': 242, 'high': 242}
+        - {'low': 274, 'high': 274}
+  ###------------------------------------------------
+  ### REGION SPECIFIC LOS IN NON-ICU 
+  ### (DEACTIVATED USING TIMESTEP BEYOND SIMULATION TIMEFRAME AS DEFAULT)
+  ###------------------------------------------------
   recovery_time_hosp_change1:
     IL:
       expand_by_age: True
@@ -255,40 +295,22 @@ sampled_parameters:
         - {'low':4, 'high':6}
         - {'low':4, 'high':6}
         - {'low':4, 'high':6}
-  ### --------- Time in timesteps since startdate ---------
-  ### (Note: introduces an error when using a different startdate!)
-  recovery_time_crit_change_time_1:
-    IL:
-      expand_by_age: True
-      np.random: uniform
-      function_kwargs:
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 311, 'high': 311}
-        - {'low': 292, 'high': 292}
-        - {'low': 262, 'high': 262}
-        - {'low': 231, 'high': 231}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 184, 'high': 184}
   recovery_time_hosp_change_time_1:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 311, 'high': 311}
-        - {'low': 292, 'high': 292}
-        - {'low': 262, 'high': 262}
-        - {'low': 231, 'high': 231}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 262, 'high': 262}
-        - {'low': 184, 'high': 184}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
+        - {'low': 1000, 'high': 1000}
   ###------------------------------------------------
   ### REGION SPECIFIC INTERVENTION PARAMETERS
   ###------------------------------------------------

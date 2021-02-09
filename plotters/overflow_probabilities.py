@@ -1,53 +1,50 @@
 import os
+import argparse
 import sys
+
 sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
-
 import pandas as pd
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import datetime as dt
 import seaborn as sns
 import numpy as np
-import matplotlib.dates as mdates
-import datetime
-#sns.set(color_codes=True)
-import matplotlib as mpl
+
+
 mpl.rcParams['pdf.fonttype'] = 42
-import statistics as st
-sns.set_style('whitegrid', {'axes.linewidth' : 0.5})
-from statsmodels.distributions.empirical_distribution import ECDF
-import scipy
-import gc
-import sys
-import re
+sns.set_style('whitegrid', {'axes.linewidth': 0.5})
 
 
-datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+def parse_args():
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
 
-def load_sim_data(exp_name, input_wdir=None, input_sim_output_path=None, column_list=None):
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
+    parser.add_argument(
+        "-s",
+        "--stem",
+        type=str,
+        help="Name of simulation experiment"
+    )
+    parser.add_argument(
+        "-loc",
+        "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default="Local"
+    )
+    parser.add_argument(
+        "-perc",
+        "--overflow_threshold_percents",
+        type=float,
+        nargs='+',
+        help="Calculate probability for specified percent of capacity limit",
+        default=99
+    )
+    return parser.parse_args()
 
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), usecols=column_list)
-    return df
-
-
-def exceeds(trajectory, metric, lower_limit, upper_limit, maximum):
-    return (trajectory[metric].values[lower_limit:upper_limit] > maximum).any()
-
-def when_exceeds(trajectory, metric, lower_limit, upper_limit, maximum):
-    ii = lower_limit
-    while trajectory[metric].values[ii] <= maximum:
-        ii += 1
-    return ii
-
-column_list = ['scen_num',  'hosp_det_All', 'crit_det_All']  #'reopening_multiplier_4'
-for ems_region in range(1,12):
-    column_list.append('hosp_det_EMS-' + str(ems_region))
-    column_list.append('crit_det_EMS-' + str(ems_region))
-    #column_list.append('death_det_cumul_EMS-' + str(ems_region))
 
 def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona virus reports',
                                                'hospital_capacity_thresholds'), extraThresholds=False):
@@ -55,97 +52,224 @@ def get_latest_filedate(file_path=os.path.join(datapath, 'covid_IDPH', 'Corona v
     files = sorted(files, key=len)
     if extraThresholds == False:
         files = [name for name in files if not 'extra_thresholds' in name]
-    if extraThresholds ==True:
+    if extraThresholds == True:
         files = [name for name in files if 'extra_thresholds' in name]
 
     filedates = [item.replace('capacity_weekday_average_', '') for item in files]
     filedates = [item.replace('.csv', '') for item in filedates]
-    latest_filedate = max( [int(x) for x in filedates])
+    latest_filedate = max([int(x) for x in filedates])
     fname = f'capacity_weekday_average_{latest_filedate}.csv'
-    if extraThresholds == True :
+    if extraThresholds == True:
         fname = f'capacity_weekday_average_{latest_filedate}__extra_thresholds.csv'
     return fname
 
 
-def get_probs(exp_name):    
-    trajectories = load_sim_data(exp_name, column_list=column_list) #pd.read_csv('trajectoriesDat_200814_1.csv', usecols=column_list)
-    trajectories = trajectories.dropna()
-    fname = get_latest_filedate()
-    civis_template = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname))
-    civis_template = civis_template.drop_duplicates()
+def get_probs(ems_nr, channels=['total_hosp_census', 'crit_det', 'ventilators'], overflow_threshold_percents=[1, 0.8],
+              param=None, save_csv=False, plot=True):
+    """Define columns and labels"""
+    if ems_nr == 0:
+        region_suffix = "_All"
+        region_label = 'Illinois'
+    else:
+        region_suffix = "_EMS-" + str(ems_nr)
+        region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
-    civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
-    
-    for ems_region in range(1,12):
-        trajectories['total_hosp_census_EMS-' + str(ems_region)] = trajectories['hosp_det_EMS-'+str(ems_region)]+trajectories['crit_det_EMS-'+str(ems_region)]
+    column_list = ['scen_num', 'sample_num', 'time', 'startdate']
+    grp_channels = ['date']
+    if param is not None:
+        column_list = column_list + param
+        grp_channels = ['date'] + param
+
+    column_list_t = column_list
+    for channel in ['hosp_det', 'crit_det']:
+        column_list_t.append(channel + region_suffix)
+
+    """ Load dataframes"""
+    df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list, add_incidence=False)
+    df['total_hosp_census'] = df['hosp_det'] + df['crit_det']
+    df['ventilators'] = get_vents(df['crit_det'])
+
+    capacity_df = load_capacity(ems_nr)
+    len(df['scen_num'].unique())
+    df['N_scen_num'] = df.groupby(grp_channels)['scen_num'].transform('count')
+
+    df_all = pd.DataFrame()
+    for channel in channels:
+        if channel == "crit_det": channel_label = 'icu_availforcovid'
+        if channel == "hosp_det": channel_label = 'hb_availforcovid'
+        if channel == "total_hosp_census": channel_label = 'hb_availforcovid'
+        if channel == "ventilators": channel_label = 'vent_availforcovid'
+
+        for overflow_threshold_percent in overflow_threshold_percents:
+            thresh = capacity_df[f'{channel}'] * overflow_threshold_percent
+
+            mdf = df.copy()
+            mdf.loc[df[f'{channel}'] < thresh, 'above_yn'] = 0
+            mdf.loc[df[f'{channel}'] >= thresh, 'above_yn'] = 1
+
+            mdf = mdf.groupby(grp_channels)['above_yn'].agg(['sum', 'count', 'nunique']).rename_axis(None, axis=0)
+            mdf = mdf.reset_index()
+            mdf['prob'] = mdf['sum'] / mdf['count']
+
+            mdf = mdf.rename(columns={'sum': 'n_above', 'count': 'N_scen_num', 'index': 'date'})
+            mdf['overflow_threshold_percent'] = overflow_threshold_percent
+            mdf['capacity_channel'] = channel_label
+            mdf['availforcovid'] = capacity_df[f'{channel}']
+            mdf['region'] = ems_nr
+            del thresh
+
+            if df_all.empty:
+                df_all = mdf
+            else:
+                df_all = pd.concat([df_all, mdf])
+            del mdf
+    if plot:
+        plot_probs(df=df_all, region_label=region_label)
+
+    if save_csv:
+        filename = f'overflow_probabilities_over_time_region_{ems_nr}.csv'
+        df_all.to_csv(os.path.join(sim_output_path, filename), index=False, date_format='%Y-%m-%d')
+    return df_all
 
 
-    lower_limit = 170
-    unique_scen = np.array(list(set(trajectories['scen_num'].values)))
-    
-    for index, row in civis_template.iterrows():
-        upper_limit = (row['date_window_upper_bound'] - dt.datetime(month=2, day=13, year=2020)).days
-        if row['resource_type'] == 'hb_availforcovid':
-            metric_root = 'total_hosp_census_EMS-'
-        if row['resource_type'] == 'icu_availforcovid':
-            metric_root = 'crit_det_EMS-'
-        elif row['resource_type'] == 'vent_availforcovid':
-            metric_root = 'vent_EMS-'
-        thresh = row['avg_resource_available']
-        region = int(re.sub('[^0-9]','', row['geography_modeled']))
-        prob = 0
-        for scen in unique_scen:
-            new = trajectories[(trajectories['scen_num'] == scen)].reset_index()
-            if row['resource_type'] == 'vent_availforcovid':
-                new[metric_root + str(region)] = get_vents(new['crit_det_EMS-' + str(region)])
-            if exceeds(new, metric_root + str(region), lower_limit, upper_limit, thresh):
-                prob += 1/len(unique_scen)
-        civis_template.loc[index, 'percent_of_simulations_that_exceed'] = prob
-        
-    civis_template['scenario_name'] = 'baseline'
-    file_str = 'nu_hospitaloverflow_' + str(exp_name[:8]) + '.csv'
-    civis_template.to_csv(os.path.join(wdir, 'simulation_output', exp_name, file_str), index=False)
+def plot_probs(df, region_label):
+    fig = plt.figure(figsize=(12, 4))
+    fig.suptitle(region_label, y=0.97, fontsize=14)
+    fig.subplots_adjust(right=0.98, wspace=0.2, left=0.05, hspace=0.4, top=0.84, bottom=0.13)
+    palette = sns.color_palette('Set1', 12)
+    axes = [fig.add_subplot(1, 3, x + 1) for x in range(3)]
 
-def plot_probs(exp_name, show_75=True) :
-    simdate = str(exp_name[:8])
-    file_str = 'nu_hospitaloverflow_' + simdate + '.csv'
-    df = pd.read_csv(os.path.join(wdir, 'simulation_output', exp_name, file_str))
-    df['date'] = pd.to_datetime(df['date_window_upper_bound'])
-    df['date_md'] = df['date'].dt.strftime('%m-%d\n%Y')
+    linestyles = ['solid', 'dashed']
+    for c, channel in enumerate(df.capacity_channel.unique()):
 
-    covidregionlist = list(df.geography_modeled.unique())
-
-    fig = plt.figure(figsize=(14, 12))
-    fig.subplots_adjust(right=0.98, wspace=0.4, left=0.1, hspace=0.4, top=0.88, bottom=0.07)
-    palette = sns.color_palette('Set1', len(df.resource_type.unique()))
-    axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(covidregionlist))]
-
-    for c, region_suffix in enumerate(covidregionlist) :
-        region_label = region_suffix.replace('_', ' ')
-        mdf = df[df['geography_modeled'] == region_suffix]
+        mdf = df[df['capacity_channel'] == channel]
         ax = axes[c]
         ax.set_ylim(0, 1)
-        ax.set_title(region_label)
+        ax.set_title(channel)
         ax.set_ylabel(f'Probability of overflow')
 
-        for e, t in enumerate(list(df.resource_type.unique())) :
-            adf = mdf[mdf['resource_type'] == t]
-            adf1 = adf[adf['overflow_threshold_percent']== 1]
-            adf2 = adf[adf['overflow_threshold_percent']!= 1]
-            ax.plot(adf1['date_md'], adf1['percent_of_simulations_that_exceed'], linestyle='-', color=palette[e], label=t)
-            if show_75 :
-                ax.plot(adf2['date_md'], adf2['percent_of_simulations_that_exceed'], linestyle='--', color=palette[e], label='', alpha=0.5)
+        for e, t in enumerate(list(df.overflow_threshold_percent.unique())):
+            line_label = f'{channel} ({t * 100})%'
+            adf = mdf[mdf['overflow_threshold_percent'] == t]
+            ax.plot(adf['date'], adf['prob'], linestyle=linestyles[e], color=palette[c], label=line_label)
+
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b\n%Y'))
 
     axes[-1].legend()
 
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, '_plots','overflow_probabilities.png'))
-    plt.savefig(os.path.join(wdir, 'simulation_output', exp_name, '_plots', 'pdf', 'overflow_probabilities.pdf'))
+    plotname = f'overflow_probabilities_{region_label}'
+    plt.savefig(os.path.join(plot_path, f'{plotname}.png'))
+    plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'))
+
+
+def write_probs_to_template(df, plot=True):
+    fname_capacity = get_latest_filedate()
+    civis_template = pd.read_csv(
+        os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds', fname_capacity))
+    civis_template = civis_template.drop_duplicates()
+    civis_template['date_window_upper_bound'] = pd.to_datetime(civis_template['date_window_upper_bound'])
+
+    civis_template_all = pd.DataFrame()
+    for index, row in civis_template.iterrows():
+        upper_limit = row['date_window_upper_bound']
+        lower_limit = upper_limit - pd.Timedelta(7, 'days')
+
+        df_sub = df[df['date'].between(lower_limit, upper_limit)]
+        df_sub = df_sub[df_sub['region'] == int(row['geography_modeled'].replace("covidregion_", ""))]
+        df_sub = df_sub[df_sub['capacity_channel'] == row['resource_type']]
+        df_sub = df_sub[df_sub['overflow_threshold_percent'] == row['overflow_threshold_percent']]
+
+        """Take maximum of previous 7 days"""
+        civis_template.loc[index, 'percent_of_simulations_that_exceed'] = df_sub['prob'].max()
+
+    if civis_template_all.empty:
+        civis_template_all = civis_template
+    else:
+        civis_template_all = pd.concat([civis_template_all, civis_template])
+
+    """Replace NAs with zero """
+    civis_template_all['percent_of_simulations_that_exceed'] = civis_template_all[
+        'percent_of_simulations_that_exceed'].fillna(0)
+    """Scenario name of simulation - here hardcoded to baseline!!"""
+    civis_template_all['scenario_name'] = 'baseline'
+    file_str = 'nu_hospitaloverflow_' + str(exp_name[:8]) + '.csv'
+    civis_template_all.to_csv(os.path.join(sim_output_path, file_str), index=False)
+
+    if plot:
+        plot_probs_from_template(df=civis_template_all)
+
+
+def plot_probs_from_template(df=None, show_75=True):
+    if df is None:
+        file_str = 'nu_hospitaloverflow_' + str(exp_name[:8]) + '.csv'
+        df = pd.read_csv(os.path.join(sim_output_path, file_str))
+
+    regionlist = df['geography_modeled'].unique()
+    df['date_md'] = df['date_window_upper_bound'].dt.strftime('%m-%d\n%Y')
+    df['region'] = df['geography_modeled'].str.replace('covidregion_', '')
+
+    fig = plt.figure(figsize=(14, 12))
+    fig.suptitle('Overflow probability per week dates by COVID-19 Region', y=0.97, fontsize=14)
+    fig.subplots_adjust(right=0.98, wspace=0.4, left=0.05, hspace=0.4, top=0.90, bottom=0.07)
+    palette = sns.color_palette('Set1', len(df.resource_type.unique()))
+    axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(regionlist))]
+
+    for c, reg_nr in enumerate(regionlist):
+        reg_label = reg_nr.replace('covidregion_', 'COVID-19 Region ')
+        mdf = df[df['geography_modeled'] == reg_nr]
+        ax = axes[c]
+        ax.set_ylim(0, 1)
+        ax.set_title(reg_label)
+        ax.set_ylabel(f'Probability of overflow')
+
+        for e, t in enumerate(list(df.resource_type.unique())):
+            adf = mdf[mdf['resource_type'] == t]
+            adf1 = adf[adf['overflow_threshold_percent'] == 1]
+            adf2 = adf[adf['overflow_threshold_percent'] != 1]
+            ax.plot(adf1['date_md'], adf1['percent_of_simulations_that_exceed'], color=palette[e], label=t)
+            if show_75:
+                ax.plot(adf2['date_md'], adf2['percent_of_simulations_that_exceed'], color=palette[e], label='',
+                        alpha=0.5)
+
+    axes[-1].legend()
+
+    plt.savefig(os.path.join(plot_path, 'overflow_probabilities.png'))
+    plt.savefig(os.path.join(plot_path, 'pdf', 'overflow_probabilities.pdf'))
 
 
 if __name__ == '__main__':
-    stem = sys.argv[1]
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
+    args = parse_args()
+    stem = args.stem
+    Location = args.Location
+    overflow_threshold_percents = args.overflow_threshold_percents
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
+
+    first_plot_day = pd.Timestamp.today() - pd.Timedelta(14, 'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(90, 'days')
+
+    if overflow_threshold_percents == 99:
+        fname_capacity = get_latest_filedate()
+        civis_template = pd.read_csv(
+            os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds',
+                         fname_capacity))
+        overflow_threshold_percents = civis_template.overflow_threshold_percent.unique()
+    print(overflow_threshold_percents)
+
+    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
-        get_probs(exp_name)
-        plot_probs(exp_name)
+        print(exp_name)
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
+
+        df_all = pd.DataFrame()
+        for ems_nr in range(1, 12):
+            print("Start processing region " + str(ems_nr))
+            df = get_probs(ems_nr, overflow_threshold_percents=overflow_threshold_percents, save_csv=False, plot=False)
+            df = df[df['date'].between(first_plot_day, last_plot_day)]
+            if df_all.empty:
+                df_all = df
+            else:
+                df_all = pd.concat([df_all, df])
+        df_all.to_csv(os.path.join(sim_output_path, 'overflow_probabilities.csv'), index=False)
+        write_probs_to_template(df=df_all)
