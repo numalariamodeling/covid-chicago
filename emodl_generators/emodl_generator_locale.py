@@ -707,216 +707,156 @@ class covidModel:
 
         return reaction_str
 
-    def define_change_detection_and_isolation(self,
-                                              reduced_inf_of_det_cases=True,
-                                              d_As=True,
-                                              d_P=True,
-                                              d_Sym_ct=True,
-                                              d_Sym_grp=False,
-                                              d_Sym_grp_option=None):
-
-        """ Write the emodl chunk for changing detection rates and reduced infectiousness
-        to approximate contact tracing or improved health system interventions.
-        Helper function called by write_interventions
-
-        Parameters
-        ----------
-        grpList: list
-            List that contains the groupnames for which parameters are repeated
-        reduced_inf_of_det_cases : boolean
-            Boolean to add a change in infectiousness of As and P detected cases if set to True
-        d_As : boolean
-            Boolean to add a change in detection of asymptomatic cases if set to True
-        d_P : boolean
-            Boolean to add a change in detection of presymptomatic cases if set to True
-        d_Sym_ct : boolean
-            Boolean to add a change in detection of symptomatic cases if set to True
-        d_Sym_grp : boolean
-            Boolean to denote whether dSym is group specific or generic
-        d_Sym_grp_option : character
-            Chracter used to flag which increase option to select, possible characters are:
-            increase_to_grp_target (select for each group a specific target to reach),
-            increase_to_common_target (use same target for all groups),
-            common_increase (rather than replacing the old detection level, increase by a specified percentage),
-            grp_specific_increase (define a group specific increase, i.e. group 1 by 10%, group 2 by 50%).
-            Default is increase_to_common_target
-        """
-
-        observe_str = """
-(observe d_As_t d_As)
-(observe d_P_t d_P)
-    """
-
-        reduced_inf_of_det_cases_str = ""
-        d_As_str = ""
-        d_P_str = ""
-        d_Sym_ct_param_str = ""
-        d_Sym_ct_str = ""
-
-        if reduced_inf_of_det_cases:
-            reduced_inf_of_det_cases_str = """(reduced_inf_of_det_cases_ct @reduced_inf_of_det_cases_ct1@ )"""
-        if d_As:
-            d_As_str = """(d_As @d_AsP_ct1@)"""
-        if d_P:
-            d_P_str = """(d_P @d_AsP_ct1@)"""
-
-        if d_Sym_ct:
-
-            ### Simple, not group specific
-            if d_Sym_ct and not d_Sym_grp:
-                d_Sym_ct_str = """(d_Sym @d_Sym_ct1@)"""
-
-            ### Group specific
-            if d_Sym_grp:
-
-                for grp in self.grpList:
-
-                    if d_Sym_grp_option == 'increase_to_grp_target':
-                        d_Sym_ct_param_str = d_Sym_ct_param_str + """(param d_Sym_ct1_{grp} @d_Sym_ct1_{grp}@)""".format(
-                            grp=grp)
-
-                    if d_Sym_grp_option == 'increase_to_common_target':
-                        d_Sym_ct_param_str = d_Sym_ct_param_str + "\n" + """(param d_Sym_ct1_{grp} @d_Sym_ct1@)""".format(
-                            grp=grp)
-
-                    if d_Sym_grp_option == 'common_increase':
-                        d_Sym_ct_param_str = d_Sym_ct_param_str + "\n" + """(param d_Sym_ct1_{grp} (+ @d_Sym_change5_{grp}@ (* @d_Sym_change5_{grp}@ @d_Sym_ct1@ )))""".format(
-                            grp=grp)
-
-                    if d_Sym_grp_option == 'grp_specific_increase':
-                        d_Sym_ct_param_str = d_Sym_ct_param_str + "\n" + """(param d_Sym_ct1_{grp} (+ @d_Sym_change5_{grp}@ (* @d_Sym_change5_{grp}@ @d_Sym_ct1_{grp}@ )))""".format(
-                            grp=grp)
-
-                    d_Sym_ct_str = d_Sym_ct_str + """(d_Sym_{grp} d_Sym_ct1_{grp})""".format(grp=grp)
-
-        observe_str = observe_str + "\n" + d_Sym_ct_param_str
-        change_param_str = reduced_inf_of_det_cases_str + d_As_str + d_P_str + d_Sym_ct_str
-        time_event_str = """(time-event contact_tracing_start @contact_tracing_start_1@ ( {change_param} ))""".format(
-            change_param=change_param_str)
-
-        contactTracing_str = observe_str + "\n" + time_event_str
-
-        return contactTracing_str
 
     def write_time_varying_parameter(self, total_string):
+        """Time varying parameter that have been fitted to data, or informed by local data.
+            Parameters and corresponding sub-functions:
+                - fraction_critical:  `write_frac_crit_change`
+                - fraction_dead:  `write_fraction_dead_change`
+                - dSys:  `write_dSys_change`
+                - d_Sym:  `write_d_Sym_P_As_change`
+                - dP_As:  `write_d_Sym_P_As_change`
+                - Ki (monthly multipliers):  `write_ki_multiplier_change`
+                - recovery_time_crit:  `write_recovery_time_crit_change`
+                - recovery_time_hosp:  `write_recovery_time_hosp_change`
+            All functions take required argument: nchanges, that defines number of updates.
+            The default has been set within the function and currently would need to be edited manually.
+        """
 
-        param_change_str = """
-(observe d_Sys_t d_Sys)
-(time-event dSys_change1 @d_Sys_change_time_1@ ((d_Sys @d_Sys_incr1@)))
-(time-event dSys_change2 @d_Sys_change_time_2@ ((d_Sys @d_Sys_incr2@)))
-(time-event dSys_change3 @d_Sys_change_time_3@ ((d_Sys @d_Sys_incr3@)))
-(time-event dSys_change4 @d_Sys_change_time_4@ ((d_Sys @d_Sys_incr4@)))
-(time-event dSys_change5 @d_Sys_change_time_5@ ((d_Sys @d_Sys_incr5@)))
-(time-event dSys_change6 @d_Sys_change_time_6@ ((d_Sys @d_Sys_incr6@)))
-(time-event dSys_change7 @d_Sys_change_time_7@ ((d_Sys @d_Sys_incr7@)))
-(time-event dSys_change8 @d_Sys_change_time_8@ ((d_Sys @d_Sys_incr8@)))
-(observe frac_crit_t fraction_critical)
-(observe fraction_hospitalized_t fraction_hospitalized)
-(observe fraction_dead_t fraction_dead)
-(time-event frac_crit_adjust1 @crit_time_1@ ((fraction_critical @fraction_critical_change1@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))  
-(time-event frac_crit_adjust2 @crit_time_2@ ((fraction_critical @fraction_critical_change2@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) ))
-(time-event frac_crit_adjust3 @crit_time_3@ ((fraction_critical @fraction_critical_change3@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event frac_crit_adjust4 @crit_time_4@ ((fraction_critical @fraction_critical_change4@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event frac_crit_adjust5 @crit_time_5@ ((fraction_critical @fraction_critical_change5@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event frac_crit_adjust6 @crit_time_6@ ((fraction_critical @fraction_critical_change6@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event frac_crit_adjust7 @crit_time_7@ ((fraction_critical @fraction_critical_change7@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event frac_crit_adjust8 @crit_time_8@ ((fraction_critical @fraction_critical_change8@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event frac_crit_adjust9 @crit_time_9@ ((fraction_critical @fraction_critical_change8@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event frac_crit_adjust10 @crit_time_10@ ((fraction_critical @fraction_critical_change8@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust1 @fraction_dead_time_1@ ((fraction_dead @fraction_dead_change1@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_2@ ((fraction_dead @fraction_dead_change2@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_3@ ((fraction_dead @fraction_dead_change3@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_4@ ((fraction_dead @fraction_dead_change4@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_5@ ((fraction_dead @fraction_dead_change5@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_6@ ((fraction_dead @fraction_dead_change6@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_7@ ((fraction_dead @fraction_dead_change7@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_8@ ((fraction_dead @fraction_dead_change8@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
-(time-event fraction_dead_adjust2 @fraction_dead_time_9@ ((fraction_dead @fraction_dead_change9@) (fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) (Kh1 (/ fraction_hospitalized time_to_hospitalization)) (Kh2 (/ fraction_critical time_to_hospitalization )) (Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) (Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) )) )) 
- """
+        def write_frac_crit_change(nchanges):
+            n_frac_crit_change = range(1, nchanges+1)
+            frac_crit_change_observe = '(observe frac_crit_t fraction_critical)'
+            frac_crit_change_timeevent = ''.join([f'(time-event frac_crit_adjust{i} @crit_time_{i}@ '
+                                                  f'('
+                                                  f'(fraction_critical @fraction_critical_change{i}@) '
+                                                  f'(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) '
+                                                  f'(Kh1 (/ fraction_hospitalized time_to_hospitalization)) '
+                                                  f'(Kh2 (/ fraction_critical time_to_hospitalization )) '
+                                                  f'(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) '
+                                                  f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys)))'
+                                                  f')'
+                                                  f')'
+                                                  f'\n'.format(i=str(i)) for i in n_frac_crit_change])
+            return frac_crit_change_observe + frac_crit_change_timeevent
 
-        ki_multiplier_change_str = ""
-        for grp in self.grpList:
-            temp_str = """
-(param Ki_red3a_{grp} (* Ki_{grp} @ki_multiplier_3a_{grp}@))
-(param Ki_red3b_{grp} (* Ki_{grp} @ki_multiplier_3b_{grp}@))
-(param Ki_red3c_{grp} (* Ki_{grp} @ki_multiplier_3c_{grp}@))
-(param Ki_red4_{grp} (* Ki_{grp} @ki_multiplier_4_{grp}@))
-(param Ki_red5_{grp} (* Ki_{grp} @ki_multiplier_5_{grp}@))
-(param Ki_red6_{grp} (* Ki_{grp} @ki_multiplier_6_{grp}@))
-(param Ki_red7_{grp} (* Ki_{grp} @ki_multiplier_7_{grp}@))
-(param Ki_red8_{grp} (* Ki_{grp} @ki_multiplier_8_{grp}@))
-(param Ki_red9_{grp} (* Ki_{grp} @ki_multiplier_9_{grp}@))
-(param Ki_red10_{grp} (* Ki_{grp} @ki_multiplier_10_{grp}@))
-(param Ki_red11_{grp} (* Ki_{grp} @ki_multiplier_11_{grp}@))
-(param Ki_red12_{grp} (* Ki_{grp} @ki_multiplier_12_{grp}@))
-(param Ki_red13_{grp} (* Ki_{grp} @ki_multiplier_13_{grp}@))
-(time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki_{grp} Ki_red3a_{grp})))
-(time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki_{grp} Ki_red3b_{grp})))
-(time-event ki_multiplier_change_3c @ki_multiplier_time_3c@ ((Ki_{grp} Ki_red3c_{grp})))
-(time-event ki_multiplier_change_4 @ki_multiplier_time_4@ ((Ki_{grp} Ki_red4_{grp})))
-(time-event ki_multiplier_change_5 @ki_multiplier_time_5@ ((Ki_{grp} Ki_red5_{grp})))
-(time-event ki_multiplier_change_6 @ki_multiplier_time_6@ ((Ki_{grp} Ki_red6_{grp})))
-(time-event ki_multiplier_change_7 @ki_multiplier_time_7@ ((Ki_{grp} Ki_red7_{grp})))
-(time-event ki_multiplier_change_8 @ki_multiplier_time_8@ ((Ki_{grp} Ki_red8_{grp})))
-(time-event ki_multiplier_change_9 @ki_multiplier_time_9@ ((Ki_{grp} Ki_red9_{grp})))
-(time-event ki_multiplier_change_10 @ki_multiplier_time_10@ ((Ki_{grp} Ki_red10_{grp})))
-(time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_{grp} Ki_red11_{grp})))
-(time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_{grp} Ki_red12_{grp})))
-(time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki_{grp} Ki_red13_{grp})))
-""".format(grp=grp)
-            ki_multiplier_change_str = ki_multiplier_change_str + temp_str
+        def write_fraction_dead_change(nchanges):
+            n_fraction_dead_change = range(1, nchanges+1)
+            fraction_dead_change_observe = '(observe fraction_dead_t fraction_dead)\n' \
+                                           '(observe fraction_hospitalized_t fraction_hospitalized)'
 
-        d_Sym_P_As_change_str = """
-(observe d_Sym_t d_Sym)
-(observe d_P_t d_P)                           
-(observe d_As_t d_As)                         
-(param dSym_dAsP_ratio @dSym_dAsP_ratio@)                                          
-(param d_PAs_change1 (/ @d_Sym_change1@ dSym_dAsP_ratio))   
-(param d_PAs_change2 (/ @d_Sym_change2@ dSym_dAsP_ratio))   
-(param d_PAs_change3 (/ @d_Sym_change3@ dSym_dAsP_ratio))   
-(param d_PAs_change4 (/ @d_Sym_change4@ dSym_dAsP_ratio))   
-(param d_PAs_change5 (/ @d_Sym_change5@ dSym_dAsP_ratio))   
-(param d_PAs_change6 (/ @d_Sym_change6@ dSym_dAsP_ratio))   
-(param d_PAs_change7 (/ @d_Sym_change7@ dSym_dAsP_ratio))   
-(param d_PAs_change8 (/ @d_Sym_change8@ dSym_dAsP_ratio))   
-(time-event d_Sym_change1 @d_Sym_change_time_1@ ((d_Sym @d_Sym_change1@) (d_P d_PAs_change1) (d_As d_PAs_change1) ))
-(time-event d_Sym_change2 @d_Sym_change_time_2@ ((d_Sym @d_Sym_change2@) (d_P d_PAs_change2) (d_As d_PAs_change2) ))
-(time-event d_Sym_change3 @d_Sym_change_time_3@ ((d_Sym @d_Sym_change3@) (d_P d_PAs_change3) (d_As d_PAs_change3) ))
-(time-event d_Sym_change4 @d_Sym_change_time_4@ ((d_Sym @d_Sym_change4@) (d_P d_PAs_change4) (d_As d_PAs_change4) ))
-(time-event d_Sym_change5 @d_Sym_change_time_5@ ((d_Sym @d_Sym_change5@) (d_P d_PAs_change5) (d_As d_PAs_change5) ))
-(time-event d_Sym_change6 @d_Sym_change_time_6@ ((d_Sym @d_Sym_change6@) (d_P d_PAs_change6) (d_As d_PAs_change6) ))
-(time-event d_Sym_change7 @d_Sym_change_time_7@ ((d_Sym @d_Sym_change7@) (d_P d_PAs_change7) (d_As d_PAs_change7) ))
-(time-event d_Sym_change8 @d_Sym_change_time_8@ ((d_Sym @d_Sym_change8@) (d_P d_PAs_change8) (d_As d_PAs_change8) ))
-"""
+            fraction_dead_change_timeevent = ''.join([f'(time-event fraction_dead_adjust2 @fraction_dead_time_{i}@ '
+                                                      f'('
+                                                      f'(fraction_dead @fraction_dead_change{i}@) '
+                                                      f'(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) '
+                                                      f'(Kh1 (/ fraction_hospitalized time_to_hospitalization)) '
+                                                      f'(Kh2 (/ fraction_critical time_to_hospitalization )) '
+                                                      f'(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) '
+                                                      f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys)))'
+                                                      f')'
+                                                      f')'
+                                                      f' \n'.format(i=str(i)) for i in n_fraction_dead_change])
+            return fraction_dead_change_observe + fraction_dead_change_timeevent
 
-        recovery_time_crit_change_str = ""
-        for grp in self.grpList:
-            grpout = covidModel.sub(grp)
-            temp_str = """
-(param recovery_time_crit_{grp} recovery_time_crit)
-(param Kr_c_{grp} (/ 1 recovery_time_crit_{grp}))
-(observe recovery_time_crit_t_{grpout} recovery_time_crit_{grp})
-(time-event LOS_ICU_change_1 @recovery_time_crit_change_time_1_{grp}@ ((recovery_time_crit_{grp} @recovery_time_crit_change1_{grp}@) (Kr_c_{grp} (/ 1 @recovery_time_crit_change1_{grp}@))))
-""".format(grpout=grpout, grp=grp)
-            recovery_time_crit_change_str = recovery_time_crit_change_str + temp_str
+        def write_dSys_change(nchanges):
+            n_dSys_change = range(1, nchanges+1)
+            dSys_change_observe = '(observe d_Sys_t d_Sys)'
+            dSys_change_timeevent = ''.join([f'(time-event dSys_change{i} @d_Sys_change_time_{i}@ '
+                                             f'((d_Sys @d_Sys_incr{i}@))'
+                                             f')'
+                                             f'\n'.format(i=str(i)) for i in n_dSys_change])
+            return dSys_change_observe + dSys_change_timeevent
 
-        recovery_time_hosp_change_str = ""
-        for grp in self.grpList:
-            grpout = covidModel.sub(grp)
-            temp_str = """
-(param recovery_time_hosp_{grp} recovery_time_hosp)
-(param Kr_h_{grp} (/ 1 recovery_time_hosp_{grp}))
-(observe recovery_time_hosp_t_{grpout} recovery_time_hosp_{grp})
-(time-event LOS_nonICU_change_1 @recovery_time_hosp_change_time_1_{grp}@ ((recovery_time_hosp_{grp} @recovery_time_hosp_change1_{grp}@) (Kr_h_{grp} (/ 1 @recovery_time_hosp_change1_{grp}@))))
-""".format(grpout=grpout, grp=grp)
-            recovery_time_hosp_change_str = recovery_time_hosp_change_str + temp_str
+        def write_ki_multiplier_change(nchanges):
+            n_ki_multiplier = ['3a','3b','3c'] + list(range(4, nchanges+1))
+            ki_multiplier_change_str = ''
+            for grp in self.grpList:
+                temp_str_param = ''.join([f'(param Ki_red{i}_{grp} '
+                                          f'(* Ki_{grp} @ki_multiplier_{i}_{grp}@)'
+                                          f')'
+                                          f'\n'.format(grp=grp,i=str(i))
+                                          for i in n_ki_multiplier])
 
+                temp_str_timeevent = ''.join([f'(time-event ki_multiplier_change_{i} @ki_multiplier_time_{i}@ '
+                                              f'((Ki_{grp} Ki_red{i}_{grp}))'
+                                              f')'
+                                              f'\n'.format(grp=grp,i=str(i))
+                                              for i in n_ki_multiplier])
 
-        param_update_string = param_change_str +\
-                              '\n' + ki_multiplier_change_str + \
-                              '\n' + d_Sym_P_As_change_str + \
-                              '\n' + recovery_time_crit_change_str + \
-                              '\n' + recovery_time_hosp_change_str
+                ki_multiplier_change_str = ki_multiplier_change_str + temp_str_param + temp_str_timeevent
+
+            return ki_multiplier_change_str
+
+        def write_d_Sym_P_As_change(nchanges):
+            d_Sym_P_As_change_observe = '(observe d_Sym_t d_Sym)\n' \
+                                        '(observe d_P_t d_P)\n' \
+                                        '(observe d_As_t d_As)\n' \
+                                        '(param dSym_dAsP_ratio @dSym_dAsP_ratio@)\n'
+            n_d_PAs_changes = range(1,nchanges+1)
+            d_Sym_P_As_change_param = ''.join([f'(param d_PAs_change{i} '
+                                               f'(/ @d_Sym_change{i}@ dSym_dAsP_ratio)'
+                                               f')'
+                                               f'\n'.format(i=str(i)) for i in n_d_PAs_changes])
+
+            d_Sym_P_As_change_timeevent = ''.join([f'(time-event d_Sym_change{i} @d_Sym_change_time_{i}@ '
+                                                   f'('
+                                                   f'(d_Sym @d_Sym_change{i}@) ' \
+                                                   f'(d_P d_PAs_change1) ' \
+                                                   f'(d_As d_PAs_change{i}))'
+                                                   f')'
+                                                   f'\n'.format(i=str(i)) for i in n_d_PAs_changes])
+            return d_Sym_P_As_change_observe + d_Sym_P_As_change_param + d_Sym_P_As_change_timeevent
+
+        def write_recovery_time_crit_change(nchanges):
+            n_recovery_time_crit_change = range(1,nchanges+1)
+            recovery_time_crit_change = ''
+            for grp in self.grpList:
+                grpout = covidModel.sub(grp)
+                recovery_time_crit_change_param = f'(param recovery_time_crit_{grp} recovery_time_crit)\n' \
+                                                  f'(param Kr_c_{grp} (/ 1 recovery_time_crit_{grp}))\n' \
+                                                  f'(observe recovery_time_crit_t_{grpout} recovery_time_crit_{grp})' \
+                                                  f'\n'.format(grp=grp,grpout=grpout)
+
+                recovery_time_crit_change_timeevent = ''.join([f'(time-event LOS_ICU_change_{i} @recovery_time_crit_change_time_{i}_{grp}@ '
+                                                               f'('
+                                                               f'(recovery_time_crit_{grp} @recovery_time_crit_change{i}_{grp}@) '
+                                                               f'(Kr_c_{grp} '
+                                                               f'(/ 1 @recovery_time_crit_change{i}_{grp}@))'
+                                                               f')'
+                                                               f')'
+                                                               f'\n'.format(grp=grp,i=str(i)) for i in n_recovery_time_crit_change])
+
+                recovery_time_crit_change = recovery_time_crit_change + recovery_time_crit_change_param + recovery_time_crit_change_timeevent
+            return recovery_time_crit_change
+
+        def write_recovery_time_hosp_change(nchanges):
+            n_recovery_time_hosp_change = range(1, nchanges + 1)
+            recovery_time_hosp_change = ''
+            for grp in self.grpList:
+                grpout = covidModel.sub(grp)
+                recovery_time_hosp_change_param = f'(param recovery_time_hosp_{grp} recovery_time_hosp)\n' \
+                                                  f'(param Kr_h_{grp} (/ 1 recovery_time_hosp_{grp}))\n' \
+                                                  f'(observe recovery_time_hosp_t_{grpout} recovery_time_hosp_{grp})' \
+                                                  f'\n'.format(grp=grp, grpout=grpout)
+
+                recovery_time_hosp_change_timeevent = ''.join(
+                    [f'(time-event LOS_nonICU_change_{i} @recovery_time_hosp_change_time_{i}_{grp}@ '
+                     f'('
+                     f'(recovery_time_hosp_{grp} @recovery_time_hosp_change{i}_{grp}@) '
+                     f'(Kr_h_{grp} (/ 1 @recovery_time_hosp_change{i}_{grp}@))'
+                     f')'
+                     f')'
+                     f'\n'.format(grp=grp, i=str(i)) for i in n_recovery_time_hosp_change])
+
+                recovery_time_hosp_change = recovery_time_hosp_change + recovery_time_hosp_change_param + recovery_time_hosp_change_timeevent
+            return recovery_time_hosp_change
+
+        param_update_string = write_ki_multiplier_change(nchanges=13) + \
+                              write_dSys_change(nchanges=8) + \
+                              write_d_Sym_P_As_change(nchanges=8) + \
+                              write_frac_crit_change(nchanges=10) + \
+                              write_fraction_dead_change(nchanges=9) + \
+                              write_recovery_time_crit_change(nchanges=1) + \
+                              write_recovery_time_hosp_change(nchanges=1)
 
         total_string = total_string.replace(';[TIMEVARYING_PARAMETERS]', param_update_string)
 
