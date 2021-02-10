@@ -477,7 +477,9 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     #file.close()
 
 
-def write_emodl(model,scenario,observeLevel, expandModel, trigger_channel, emodl_name):
+
+def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, trigger_channel, emodl_name):
+
     if model =='base':
         from emodl_generators.emodl_generator_base import covidModel
     if model =='locale':
@@ -489,6 +491,7 @@ def write_emodl(model,scenario,observeLevel, expandModel, trigger_channel, emodl
 
     #covidModel.showOptions()
     ml = covidModel(add_interventions=scenario,
+                    change_testDelay=change_testDelay,
                     observeLevel=observeLevel,
                     expandModel=expandModel,
                     trigger_channel=trigger_channel,
@@ -538,7 +541,7 @@ def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list_name = "mas
     df.columns = df.columns.str.replace('_All', '')
 
     if channel_list_name =="master" :
-        channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+        channel_list = ['susceptible', 'exposed', 'asymp', 'symp_mild',
                         'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
     if channel_list_name == "detection":
         channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']

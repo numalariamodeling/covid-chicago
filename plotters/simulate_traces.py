@@ -112,15 +112,15 @@ def modify_emodl_and_save(exp_name,output_path):
     fin.close()
 
 
-def write_submission_file(trace_selection,Location, r= 'IL'):
+def write_submission_file(trace_selection,Location, r= 'IL',model='locale'):
     """Writes batch file that copies required input csvs and emodl to the corresponding location in git_dir
        Assumptions:
        Running location fixed to IL for spatial model (momentarily)
     """
     emodl_name = [file for file in os.listdir(output_path) if 'emodl' in file][0].replace('.emodl','')
-    yaml_file = [file for file in os.listdir(output_path) if 'yaml' in file][-1]  # placeholder
     sample_csv = f'sample_parameters_{trace_selection}.csv'
-    input_csv_str = f'--load_sample_parameters --sample_csv {sample_csv}'
+    input_csv_str = f' --sample_csv {sample_csv}'
+    model_str = f' --model {model}'
     new_exp_name = f'{exp_name}_resim_{trace_selection}'
 
     csv_from = os.path.join(output_path, sample_csv ).replace("/","\\")
@@ -132,8 +132,8 @@ def write_submission_file(trace_selection,Location, r= 'IL'):
         file.write(
             f'copy {csv_from} {csv_to}\n'
             f'copy {emodl_from} {emodl_to}\n'
-            f'cd {git_dir} \n python runScenarios.py -r {r} -c {str(yaml_file)} '
-            f'-e {str(emodl_name)}_resim.emodl -n {new_exp_name} {input_csv_str} \npause')
+            f'cd {git_dir} \n python runScenarios.py -r {r} '
+            f'-e {str(emodl_name)}_resim.emodl -n {new_exp_name} {model_str} {input_csv_str} \npause')
         file.close()
     if Location =='NUCLUSTER':
         csv_from = csv_from.replace("\\","/")
@@ -143,8 +143,8 @@ def write_submission_file(trace_selection,Location, r= 'IL'):
         header = shell_header(job_name=jobname)
         commands = f'\ncp {csv_from} {csv_to}\n' \
                    f'\ncp {emodl_from} {emodl_to}\n' \
-                   f'\ncd {git_dir} \n python runScenarios.py -r {r} -c {str(yaml_file)} ' \
-                   f'-e {str(emodl_name)}_resim.emodl -n {new_exp_name} {input_csv_str}'
+                   f'\ncd {git_dir} \n python runScenarios.py -r {r}  ' \
+                   f'-e {str(emodl_name)}_resim.emodl -n {new_exp_name} {model_str} {input_csv_str}'
         file = open(os.path.join(output_path,'sh', f'00_runScenarios_{trace_selection}.sh'), 'w')
         file.write(header + commands)
         file.close()

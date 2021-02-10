@@ -84,7 +84,7 @@ sampled_parameters:
   ### ---- RECOVERY TIMES  ----------------------- 
   'recovery_time_asymp':
     np.random: uniform
-    function_kwargs: {'low':8.481, 'high':8.481}
+    function_kwargs: {'low':9, 'high':9}
   'recovery_time_mild':
     np.random: uniform
     function_kwargs: {'low':9, 'high':9}
@@ -94,6 +94,9 @@ sampled_parameters:
   'recovery_time_crit':
     np.random: uniform
     function_kwargs: {'low':8, 'high':10}
+  'recovery_time_postcrit':
+    np.random: uniform
+    function_kwargs: {'low':1, 'high':4}    
   ### ---- FRACTIONS  ----------------------- 
   'fraction_symptomatic':
     np.random: uniform
@@ -103,10 +106,11 @@ sampled_parameters:
     function_kwargs: {'low':0.06, 'high':0.1}
   'fraction_critical':
     np.random: uniform
-    function_kwargs: {'low':0.20, 'high':0.35}
-  'cfr': 
+    #function_kwargs: {'low':0.20, 'high':0.35}
+    function_kwargs: {'low':0.455, 'high':0.65}
+  'fraction_dead': 
     np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.03}
+    function_kwargs: {'low':0.133, 'high':0.247}
   ### ---- INFECTIOUSNESS  ----------------------
   'reduced_inf_of_det_cases':
     np.random: uniform
@@ -118,7 +122,7 @@ sampled_parameters:
   ### In locale model, d_Sym is group specific
   'd_Sym':
     np.random: uniform
-    function_kwargs: {'low':0.00, 'high':0.01}
+    function_kwargs: {'low':0.00, 'high':0.02}
   'd_Sys':
     np.random: uniform
     function_kwargs: {'low':0.00, 'high':0.0185} 
@@ -144,53 +148,124 @@ sampled_parameters:
   ### Increased testing - increased detectioon of severe symptomatic infections
   'd_Sys_incr1':
     np.random: uniform
-    function_kwargs: {'low':0.029, 'high':0.090}
+    function_kwargs: {'low':0.131, 'high':0.177}
   'd_Sys_incr2':
     np.random: uniform
-    function_kwargs: {'low':0.090, 'high':0.192}
+    function_kwargs: {'low':0.433, 'high':0.585}
   'd_Sys_incr3':
     np.random: uniform
-    function_kwargs: {'low':0.192, 'high':0.330}
+    function_kwargs: {'low':0.672, 'high':0.910}
   'd_Sys_incr4':
     np.random: uniform
-    function_kwargs: {'low':0.330, 'high':0.450}
+    function_kwargs: {'low':0.746, 'high':1.000}
   'd_Sys_incr5':
     np.random: uniform
-    function_kwargs: {'low':0.450, 'high':0.600}
+    function_kwargs: {'low':0.478, 'high':0.646}
   'd_Sys_incr6':
     np.random: uniform
-    function_kwargs: {'low':0.600, 'high':0.800}
+    function_kwargs: {'low':0.435 , 'high':0.589}
   'd_Sys_incr7':
     np.random: uniform
-    function_kwargs: {'low':0.800, 'high':1.000}
-  ### Increase in d_Sym  
+    function_kwargs: {'low':0.592, 'high':0.800}
+  'd_Sys_incr8':
+    np.random: uniform
+    function_kwargs: {'low':0.746, 'high':1.000}
+  ###-------- Increase in d_Sym  ---------------
   ### In locale model, d_Sym  increase is group specific
   ### However when using this yaml for running single groups or non locale models it would be needed here
   'd_Sym_change1':
     np.random: uniform
-    function_kwargs: {'low':0.01, 'high':0.08}
+    function_kwargs: {'low':0.000, 'high':0.05}
   'd_Sym_change2':
     np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.10}
+    function_kwargs: {'low':0.062, 'high':0.094}
   'd_Sym_change3':
     np.random: uniform
-    function_kwargs: {'low':0.10, 'high':0.20}
+    function_kwargs: {'low': 0.108, 'high':0.162}
   'd_Sym_change4':
     np.random: uniform
-    function_kwargs: {'low':0.10, 'high':0.30}
+    function_kwargs: {'low':0.13 , 'high':0.194}
   'd_Sym_change5':
     np.random: uniform
-    function_kwargs: {'low':0.10, 'high':0.40}
-  ## fraction_critical
-  'fraction_critical_incr1':
+    function_kwargs: {'low':0.097, 'high':0.145}
+  'd_Sym_change6':
     np.random: uniform
-    function_kwargs: {'low':0.13, 'high':0.23}
-  'fraction_critical_incr2':
+    function_kwargs: {'low':0.139 , 'high':0.209}
+  'd_Sym_change6':
     np.random: uniform
-    function_kwargs: {'low':0.07, 'high':0.12}
-  'fraction_critical_incr3':
+    function_kwargs: {'low':0.131 , 'high':0.197}
+  'd_Sym_change7':
     np.random: uniform
-    function_kwargs: {'low':0.05, 'high':0.09}
+    function_kwargs: {'low':0.16 , 'high':0.24}
+  'd_Sym_change8':
+    np.random: uniform
+    function_kwargs: {'low':0.376 , 'high':0.564}
+  ### --------- Change in d_P and d_As -------------
+  ### Separate parameter but same value as in practice not distinguishible
+  ###'d_PAs_change1'  - d_PAs_change98 relative to d_Sym
+  ### set dSym_dAsP_ratio to be 2 for half, 3 a third etc, to disable set ratio to very large number i.e. 10000
+  'dSym_dAsP_ratio':
+    np.random: uniform
+    function_kwargs: {'low':6 , 'high':6}  
+  ### ----- fraction_critical ----------
+  'fraction_critical_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.378, 'high':0.702}
+  'fraction_critical_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.217, 'high':0.403}
+  'fraction_critical_change3':
+    np.random: uniform
+    function_kwargs: {'low':0.154, 'high':0.286}
+  'fraction_critical_change4':
+    np.random: uniform
+    function_kwargs: {'low':0.126, 'high':0.234}
+  'fraction_critical_change5':
+    np.random: uniform
+    function_kwargs: {'low':0.119, 'high':0.221}
+  'fraction_critical_change6':
+    np.random: uniform
+    function_kwargs: {'low':0.112, 'high':0.208}
+  'fraction_critical_change7':
+    np.random: uniform
+    function_kwargs: {'low':0.105, 'high':0.195}
+  'fraction_critical_change8':
+    np.random: uniform
+    function_kwargs: {'low':0.091, 'high':0.169}
+  'fraction_critical_change9':
+    np.random: uniform
+    function_kwargs: {'low':0.070, 'high':0.13}
+  'fraction_critical_change10':
+    np.random: uniform
+    function_kwargs: {'low':0.042, 'high':0.078}
+  ### ----- fraction_dead ----------
+  'fraction_dead_change1':
+    np.random: uniform
+    function_kwargs: {'low':0.154, 'high':0.286}
+  'fraction_dead_change2':
+    np.random: uniform
+    function_kwargs: {'low':0.126, 'high':0.234}
+  'fraction_dead_change3':
+    np.random: uniform
+    function_kwargs: {'low':0.0840, 'high':0.156}
+  'fraction_dead_change4':
+    np.random: uniform
+    function_kwargs: {'low':0.063 , 'high':0.117}
+  'fraction_dead_change5':
+    np.random: uniform
+    function_kwargs: {'low':0.0700, 'high':0.13}
+  'fraction_dead_change6':
+    np.random: uniform
+    function_kwargs: {'low':0.105, 'high':0.195}
+  'fraction_dead_change7':
+    np.random: uniform
+    function_kwargs: {'low':0.105, 'high':0.195}
+  'fraction_dead_change8':
+    np.random: uniform
+    function_kwargs: {'low':0.091 , 'high':0.169}
+  'fraction_dead_change9':
+    np.random: uniform
+    function_kwargs: {'low':0.0280, 'high':0.052}                                           
 intervention_parameters:
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - EFFECT SIZE
@@ -313,43 +388,57 @@ time_parameters:
     function_kwargs: {'dates': 2021-01-20}
   ### ---- Increased detections ---- 
   ### Change in d_Sys
-  'detection_time_1':
+  'd_Sys_change_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-07}
-  'detection_time_2':
+    function_kwargs: {'dates': 2020-03-15}
+  'd_Sys_change_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-14}
-  'detection_time_3':
+    function_kwargs: {'dates': 2020-04-01}
+  'd_Sys_change_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-21} 
-  'detection_time_4':
+    function_kwargs: {'dates': 2020-05-01}
+  'd_Sys_change_time_4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-28} 
-  'detection_time_5':
+    function_kwargs: {'dates': 2020-06-01} 
+  'd_Sys_change_time_5':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-04}
-  'detection_time_6':
+    function_kwargs: {'dates': 2020-07-01} 
+  'd_Sys_change_time_6':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-18}
-  'detection_time_7':
+    function_kwargs: {'dates': 2020-08-01}
+  'd_Sys_change_time_7':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-09-01}
+  'd_Sys_change_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01}
   ### Change in d_Sym
   'd_Sym_change_time_1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-03-15}
+    function_kwargs: {'dates': 2020-04-01}
   'd_Sym_change_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-04-15}
+    function_kwargs: {'dates': 2020-05-01}
   'd_Sym_change_time_3':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-01}
+    function_kwargs: {'dates': 2020-06-01}
   'd_Sym_change_time_4':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}
+    function_kwargs: {'dates': 2020-07-01}
   'd_Sym_change_time_5':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}
+    function_kwargs: {'dates': 2020-08-01}
+  'd_Sym_change_time_6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-01}
+  'd_Sym_change_time_7':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01}
+  'd_Sym_change_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-11-01}
+  ### Change in d_P and d_As
+  ### Same as for d_Sym_change_times                              
   ### ---- Better case/ decreased mortality ---- 
   ###  Change in fraction_critical 
   'crit_time_1':
@@ -357,17 +446,64 @@ time_parameters:
     function_kwargs: {'dates': 2020-04-01} 
   'crit_time_2':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-05-01} 
+    function_kwargs: {'dates': 2020-04-15} 
   'crit_time_3':
     custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-01} 
+  'crit_time_4':
+    custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}
-  ### Change in CFR
-  'cfr_time_1':
+  'crit_time_5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-01} 
+  'crit_time_6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-01} 
+  'crit_time_7':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-01}
+  'crit_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01} 
+  'crit_time_9':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-11-01} 
+  'crit_time_10':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-12-20}                                   
+  ### Change in fraction dead
+  'fraction_dead_time_1':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-05-01}   
+  'fraction_dead_time_2':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-06-01}   
+  'fraction_dead_time_3':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-07-01}                     
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-06-01}   
   'cfr_time_2':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}   
+  'fraction_dead_time_4':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-08-01}   
+  'fraction_dead_time_5':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-09-01}   
+  'fraction_dead_time_6':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-10-01}   
+  'fraction_dead_time_7':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-11-01} 
+  'fraction_dead_time_8':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-12-01}      
+  'fraction_dead_time_9':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-01-01}                                           
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - DATES
   ### (only used with corresponding emodl)
