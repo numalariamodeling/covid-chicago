@@ -118,64 +118,19 @@ In spatial model (running for all EMS in one simulation using separate compartme
 ### [expand_by_age](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age8grp_experiment.yaml#L13)
 The expand_by_age option means repeating compartments and parameters per sub-groups, either age or EMS, or any other group that seems relevant (i.e. residents and staff within a long-term health care facility).
 
-
 # 2. Config files and related scenario files
-
 - extendedcobey_200428.yaml (current master file) 
 
-## 1.1. Base model scenario emodl files:
-- [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
-- [extendedmodel_cobey_interventionStop.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_interventionStop.emodl)  
-- [extendedmodel_cobey_noSIP.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_noSIP.emodl)
-- [extendedmodel_cobey_gradual_reopening.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_gradual_reopening.emodl)
-
-Note the scenario emodl are [generated](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/locale_emodl_generator_extendedModel.py#L586) using emodl-generators.
-
 ## 1.2. Model extensions (in addition to master yaml file)
-
 - [sample_age4grp_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml)
 includes description on how to specifiy age and region specific sample parameters 
-
-### 1.2.1. [EMSspecific_sample_parameters.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml) 
-Adds EMS specific sample parameters, such as effect of social distancing multipler (using base, non spatial model)
-- [extendedmodel_cobey.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey.emodl)
-
-
-### 1.2.2. [spatial_EMS_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/spatial_EMS_experiment.yaml)
-Adds EMS specific sample parameters, such as effect of social distancing multipler (EMS separate emodl)
-- [extendedmodel_EMS.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_EMS.emodl)
-- ...
-- and all other intervention specific emodis 
-
-### 1.2.3. [age8grp_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age8grp_experiment.yaml) 
-Adds age specific parameter and contact matrix.
-Runs with these emodl files:
-- [extendedmodel_age8.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age8.emodl)
-- [extendedmodel_age8_ChangeTD.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_age8_ChangeTD.emodl)
-- ...
-- and all other intervention specific emodis 
-
-### 1.2.4. [age_locale_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age_locale_experiment.yaml) 
-Adds age and spatial specific parameter, contact matrix and migration.
-Runs with these emodl files:
-- [extendedmodel_agelocale_migration_scen3.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_agelocale_migration_scen3.emodl)
-- ...
+- [age_locale_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age_locale_experiment.yaml) 
 
 ## 1.3 Long-term-care-facility (LTCF) simulations  
 - [ltcf_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/ltcf_experiment.yaml)
 - [extendedmodel_ltcf_homogeneous.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_ltcf_homogeneous.emodl)
-
 - [ltcf_experiment_age.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/ltcf_experiment_age.yaml)
 - [extendedmodel_ltcf_age.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_ltcf_age.emodl)
 - [extendedmodel_ltcf_age_testDelay.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_ltcf_age_testDelay.emodl)
-
-
-## 1.4. Customized yaml + emodls  (replacing master yaml file)
-### Fiting simulations
-- [extendedcobey_forFitting.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_forFitting.yaml)
-- [extendedmodel_cobey_forFitting.emodl](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_cobey_forFitting.emodl)(not used anymore)
-Note the emodl file is outdated and the 'forFitting' yaml file can be run with a [base EMS emodl file](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl/extendedmodel_EMS.emodl), since the startdate can be directly varied. 
-
-
 
 
