@@ -34,31 +34,6 @@ def _get_full_factorial_df(df, column_name, values):
     result = pd.concat(dfs, ignore_index=True)
     return result
 
-def _get_sample_means_df(df, config, keep_range_params='ki'):
-
-    grp_list = config['experiment_setup_parameters']['age_bins']
-    grp_param = []
-    for parameter, parameter_function in config['sampled_parameters'].items():
-        if parameter=='time_to_infectious':
-            parameter_function1 = parameter_function
-        try:
-            list(parameter_function.values())[0]['expand_by_age']
-            grp_param = grp_param + [parameter]
-        except:
-            continue
-
-    selected_columns = list(config['sampled_parameters'].keys())
-    selected_columns_notgrp = [col for col in selected_columns if not col in grp_param]
-    selected_columns_grp = [f'{col}_{grp}' for col in grp_param for grp in  grp_list]
-    selected_columns = [col for col in selected_columns_notgrp + selected_columns_grp  if not 'ki' in col.lower()]
-
-    df_means = df.groupby('speciesS')[selected_columns].agg(np.mean).reset_index()
-    for index, row in df.iterrows():
-        print(index)
-        df_copy[column_name] = value
-        dfs.append(df_copy)
-    result = pd.concat(dfs, ignore_index=True)
-    return result
 
 def _parse_config_parameter(df, parameter, parameter_function, column_name, full_factorial,use_means):
     if isinstance(parameter_function, (int, float)):
