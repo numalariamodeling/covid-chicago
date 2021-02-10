@@ -278,7 +278,7 @@ def calculate_incidence(adf, output_filename=None, trimmed=False) :
                                 'new_detected' : count_new(df, 'detected_cumul'),
                                 'new_critical' : count_new(df, 'crit_cumul'),
                                 'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'deaths_det_cumul'),
                                 'new_deaths' : count_new(df, 'deaths')
                                 })
         if trimmed == True:
@@ -287,7 +287,7 @@ def calculate_incidence(adf, output_filename=None, trimmed=False) :
                                 'new_hospitalized' : count_new(df, 'hosp_cumul'),
                                 'new_critical' : count_new(df, 'crit_cumul'),
                                 'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'deaths_det_cumul'),
                                 'new_deaths' : count_new(df, 'deaths')
                                 })
 
@@ -320,7 +320,7 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
                               'new_detected_%s' % age_group : count_new(df, 'detected_cumul_%s' % age_group),
                               'new_critical_%s' % age_group : count_new(df, 'crit_cumul_%s' % age_group),
                               'new_detected_critical_%s' % age_group : count_new(df, 'crit_det_cumul_%s' % age_group),
-                              'new_detected_deaths_%s' % age_group : count_new(df, 'death_det_cumul_%s' % age_group),
+                              'new_detected_deaths_%s' % age_group : count_new(df, 'deaths_det_cumul_%s' % age_group),
                               'new_deaths_%s' % age_group : count_new(df, 'deaths_%s' % age_group)
                               })
         sdf['run_num'] = run
@@ -420,7 +420,7 @@ def civis_colnames(reverse=False) :
 def get_datacomparison_channels():
     outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
                     'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                    'death_det_cumul', 'deaths']
+                    'deaths_det_cumul', 'deaths']
     channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
     data_channel_names = ['deaths',
@@ -447,7 +447,6 @@ def get_parameter_names(include_new=True):
                           'fraction_symptomatic',
                           'fraction_severe',
                           'fraction_critical',
-                          'cfr',
                           'reduced_inf_of_det_cases',
                           'd_Sys',
                           'd_As',
@@ -460,33 +459,40 @@ def get_parameter_names(include_new=True):
                          'd_Sys_incr5',
                          'd_Sys_incr6',
                          'd_Sys_incr7',
-                         'fraction_critical_incr1',
-                         'fraction_critical_incr2',
-                         'fraction_critical_incr3',
-                         'detection_time_1',
-                         'detection_time_2',
-                         'detection_time_3',
-                         'detection_time_4',
-                         'detection_time_5',
-                         'detection_time_6',
-                         'detection_time_7',
-                         'crit_time_1',
-                         'crit_time_2',
-                         'crit_time_3',
-                         'd_Sym_change_time_1',
-                         'd_Sym_change_time_2',
-                         'd_Sym_change_time_3',
-                         'd_Sym_change_time_4',
-                         'd_Sym_change_time_5',
-                         'cfr_time_1',
-                         'cfr_time_2']
+                         'd_Sys_incr8',
+                         'd_Sym_change1',
+                         'd_Sym_change2',
+                         'd_Sym_change3',
+                         'd_Sym_change4',
+                         'd_Sym_change5',
+                         'd_Sym_change6',
+                         'd_Sym_change7',
+                         'd_Sym_change8',
+                         'fraction_dead_change1',
+                         'fraction_dead_change2',
+                         'fraction_dead_change3',
+                         'fraction_dead_change4',
+                         'fraction_dead_change5',
+                         'fraction_dead_change6',
+                         'fraction_dead_change7',
+                         'fraction_dead_change8',
+                         'fraction_dead_change9',
+                         'fraction_critical_change1',
+                         'fraction_critical_change2',
+                         'fraction_critical_change3',
+                         'fraction_critical_change4',
+                         'fraction_critical_change5',
+                         'fraction_critical_change6',
+                         'fraction_critical_change7',
+                         'fraction_critical_change8',
+                         'fraction_critical_change9',
+                         'fraction_critical_change10']
 
     IL_locale_param_stem = ['ki_multiplier_3a','ki_multiplier_3b','ki_multiplier_3c',
                             'ki_multiplier_4','ki_multiplier_5','ki_multiplier_6',
                             'ki_multiplier_7','ki_multiplier_8','ki_multiplier_9',
                             'ki_multiplier_10','ki_multiplier_11','ki_multiplier_12',
-                            'd_Sym','d_Sym_change1','d_Sym_change2','d_Sym_change3',
-                            'd_Sym_change4','d_Sym_change5','Ki','time_infection_import']
+                            'ki_multiplier_13','Ki','time_infection_import']
 
     sample_params = sample_params_core + IL_specific_param
 

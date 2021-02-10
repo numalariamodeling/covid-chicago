@@ -95,12 +95,11 @@ def trim_trajectories(df, fname,sample_param_to_keep, time_start=1, time_stop=10
     """
 
     channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'detected_cumul',
-                'asymp_cumul', 'asymp_det_cumul',
-                'symp_mild_cumul', 'symptomatic_mild', 'symp_mild_det_cumul',
-                'symp_severe_cumul','symptomatic_severe', 'symp_severe_det_cumul',
+                'symp_mild_cumul', 'symp_mild', 'symp_mild_det_cumul',
+                'symp_severe_cumul','symp_severe', 'symp_severe_det_cumul',
                 'hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
                 'crit_cumul','crit_det_cumul', 'crit_det',  'critical',
-                'death_det_cumul', 'deaths']
+                'deaths_det_cumul', 'deaths']
 
     if time_varying_params == None:
         time_varying_params = ['Ki_t']
