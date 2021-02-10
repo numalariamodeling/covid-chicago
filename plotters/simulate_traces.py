@@ -40,7 +40,7 @@ def parse_args():
         "--traces_to_keep_ratio",
         type=int,
         help="Ratio of traces to keep out of all trajectories",
-        default=2
+        default=10
     )
     parser.add_argument(
         "--traces_to_keep_min",

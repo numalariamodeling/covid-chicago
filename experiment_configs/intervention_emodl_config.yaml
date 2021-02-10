@@ -1,0 +1,12 @@
+time_varying_parameter:
+  'n_ki_multiplier': 13
+  'n_dSys_change': 8
+  'n_d_Sym_P_As_change': 8
+  'n_frac_crit_change': 10
+  'n_fraction_dead_change': 9
+  'n_recovery_time_crit_change': 1
+  'n_recovery_time_hosp_change': 1
+interventions:
+  'n_gradual_steps': 1
+  #'n_gradual_intervals': 4
+  #'start_today': True

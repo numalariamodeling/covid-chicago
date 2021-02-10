@@ -22,7 +22,7 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 class covidModel:
 
     def __init__(self, expandModel, observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=False, trigger_channel=None, add_migration=False, emodl_name=None, git_dir=git_dir):
+                 change_testDelay=False, trigger_channel=None, add_migration=False, fit_params=None,emodl_name=None, git_dir=git_dir):
         self.model = 'locale'
         self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
                         'EMS_11']
@@ -33,8 +33,9 @@ class covidModel:
         self.change_testDelay = change_testDelay
         self.trigger_channel = trigger_channel
         self.emodl_name = emodl_name
-        self.n_steps = 4
+        self.startdate = pd.Timestamp('2020-02-13')
         self.emodl_dir = os.path.join(git_dir, 'emodl')
+        self.fit_param = fit_params  # Currenly support single parameter only
 
     def get_configs(key, config_file='intervention_emodl_config.yaml'):
         yaml_file = open(os.path.join('./experiment_configs', config_file))
@@ -96,7 +97,7 @@ class covidModel:
 
     def get_channels(self):
         """Channels to exclude from final list"""
-        channels_not_observe = ['asymp_det','presymp_det','presymp_cumul','presymp_det_cumul']
+        channels_not_observe = ['presymp_det','presymp_cumul','presymp_det_cumul']
 
         """Define channels to observe """
         primary_channels_notdet = ['susceptible','infected','recovered','symp_mild','symp_severe','hosp','crit','deaths']
@@ -601,7 +602,7 @@ class covidModel:
                                              f'\n' for i in n_dSys_change])
             return dSys_change_observe + dSys_change_timeevent
 
-        def write_ki_multiplier_change(nchanges):
+        def write_ki_multiplier_change(nchanges,fit_param):
             n_ki_multiplier = ['3a','3b','3c'] + list(range(4, nchanges+1))
             ki_multiplier_change_str = ''
             for grp in self.grpList:
@@ -615,6 +616,9 @@ class covidModel:
                                               f')'
                                               f'\n' for i in n_ki_multiplier])
 
+                if 'ki_multiplier' in fit_param:
+                    i = fit_param.split('_')[-1]
+                    temp_str_param = temp_str_param.replace(f'@ki_multiplier_{i}_{grp}@', f'(* @ki_multiplier_{i}_{grp}@ @scalingfactor@)')
                 ki_multiplier_change_str = ki_multiplier_change_str + temp_str_param + temp_str_timeevent
 
             return ki_multiplier_change_str
@@ -686,13 +690,14 @@ class covidModel:
                 recovery_time_hosp_change = recovery_time_hosp_change + recovery_time_hosp_change_param + recovery_time_hosp_change_timeevent
             return recovery_time_hosp_change
 
-        param_update_string = write_ki_multiplier_change(nchanges=13) + \
-                              write_dSys_change(nchanges=8) + \
-                              write_d_Sym_P_As_change(nchanges=8) + \
-                              write_frac_crit_change(nchanges=10) + \
-                              write_fraction_dead_change(nchanges=9) + \
-                              write_recovery_time_crit_change(nchanges=1) + \
-                              write_recovery_time_hosp_change(nchanges=1)
+        config_dic = covidModel.get_configs(key ='time_varying_parameter', config_file='intervention_emodl_config.yaml')
+        param_update_string = write_ki_multiplier_change(nchanges=config_dic['n_ki_multiplier'], fit_param = self.fit_param) + \
+                              write_dSys_change(nchanges=config_dic['n_dSys_change']) + \
+                              write_d_Sym_P_As_change(nchanges=config_dic['n_d_Sym_P_As_change']) + \
+                              write_frac_crit_change(nchanges=config_dic['n_frac_crit_change']) + \
+                              write_fraction_dead_change(nchanges=config_dic['n_fraction_dead_change']) + \
+                              write_recovery_time_crit_change(nchanges=config_dic['n_recovery_time_crit_change']) + \
+                              write_recovery_time_hosp_change(nchanges=config_dic['n_recovery_time_hosp_change'])
 
         total_string = total_string.replace(';[TIMEVARYING_PARAMETERS]', param_update_string)
 
@@ -708,27 +713,57 @@ class covidModel:
                 - gradual_reopening: `write_gradual_reopening`
         """
 
+        """ Per default assumes immediate or gradual step-wise intervention scale up"""
+        intervention_param = covidModel.get_configs(key ='interventions', config_file='intervention_emodl_config.yaml')
+        n_gradual_steps = intervention_param['n_gradual_steps']
+        config_dic_dates = covidModel.get_configs(key ='time_parameters', config_file='extendedcobey_200428.yaml')
+        #for i in range(1,len(scenario))
+        intervention_start = pd.to_datetime(config_dic_dates['intervention1_start']['function_kwargs']['dates'])
+        intervention_scaleupend = pd.to_datetime(config_dic_dates['intervention1_scaleupend']['function_kwargs']['dates'])
+        #intervention_end = pd.to_datetime(config_dic_dates['intervention1_end']['function_kwargs']['dates'])
+        if n_gradual_steps > 1:
+            date_freq = (intervention_scaleupend - intervention_start) /(n_gradual_steps-1)
+            intervention_dates = pd.date_range(start=intervention_start,end=intervention_scaleupend, freq=date_freq).tolist()
+        else:
+            intervention_dates = [intervention_start]
+
         def write_bvariant():
-            bvariant_infectivity = ''
+            bvariant_str = ';COVID-19 B variant scenario\n'
+            bvariant_infectivity_param = ''
+            bvariant_infectivity_timeevent = ''
             for grp in self.grpList:
-                temp_str = f';COVID-19 B variant scenario\n' \
-                           f'(param Ki_bvariant_1_{grp} (* Ki_{grp} @bvariant_infectivity@ @bvariant_fracinfect@))\n' \
-                           f'(time-event ki_bvariant_change1 @today@ ((Ki_{grp} Ki_bvariant_1_{grp})))\n'.format(grp=grp)
-                bvariant_str_I = bvariant_str_I + temp_str
+                temp_str_param = ''.join([f'(param Ki_bvariant_{i}_{grp} ' \
+                                          f'(* Ki_{grp} @bvariant_infectivity@ ' \
+                                          f'(* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)}))' \
+                                          f')\n' for i, date in
+                                          enumerate(intervention_dates, 1)])
+
+                temp_str_timeevent = ''.join([f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(date, self.startdate)} ' \
+                                              f'((Ki_{grp} Ki_bvariant_{i}_{grp}))' \
+                                              f')\n' for i, date in
+                                              enumerate(intervention_dates, 1)])
+                bvariant_infectivity_param = bvariant_infectivity_param + temp_str_param
+                bvariant_infectivity_timeevent = bvariant_infectivity_timeevent + temp_str_timeevent
+            bvariant_infectivity = bvariant_infectivity_param + bvariant_infectivity_timeevent
+
+            """bvariant_severity Needs to be changed only once"""
+            # FIXME: Affects total pop, regardless of bvariant prevalence
+            # FIXME: Adjust fraction dead and critical? i.e. go back using cfr?
+            #        f'(fraction_dead (/ cfr fraction_severe)) '
 
             bvariant_severity = f'(param fracsevere_bvariant1 (* fraction_severe @bvariant_severity@))\n' \
-                                f'(time-event fracsevere_bvariant_change1 @today@ ' \
+                                f'(time-event fracsevere_bvariant_change1 {covidModel.DateToTimestep(intervention_dates[0],self.startdate)} ' \
                                 f'(' \
                                 f'(fraction_severe fracsevere_bvariant1) ' \
-                                f'(fraction_dead (/ cfr fraction_severe)) ' \
                                 f'(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) ' \
                                 f'(Kh1 (/ fraction_hospitalized time_to_hospitalization)) ' \
                                 f'(Kh2 (/ fraction_critical time_to_hospitalization )) ' \
                                 f'(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) ' \
                                 f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))' \
-                                f')' \
-                                f')\n'
-            return bvariant_infectivity + bvariant_severity
+                                f'))\n'
+
+            bvariant_str = bvariant_str + bvariant_infectivity + bvariant_severity
+            return bvariant_str
 
         def write_rollback():
             rollback = ''.join([f'(time-event rollback @rollback_time@ ((Ki_{grp} Ki_red4_{grp})))' for grp in self.grpList])
@@ -763,7 +798,7 @@ class covidModel:
                                              f'(time-event ki_transmission_increase @today@ ((Ki_{grp} Ki_increased_{grp})))' for grp in self.grpList])
             return transmission_increase
 
-        def write_gradual_reopening(nchanges=self.n_steps, region_specific=False):
+        def write_gradual_reopening(nchanges, region_specific=False):
             n_gradual_reopening = range(1, nchanges+1)
             gradual_pct = 1/nchanges
             gradual_reopening = ''
@@ -788,7 +823,7 @@ class covidModel:
         if self.add_interventions == "interventionSTOP_adj":
             intervention_str = write_intervention_stop()
         if self.add_interventions == "gradual_reopening":
-            intervention_str = write_gradual_reopening(nchanges=nchanges)
+            intervention_str = write_gradual_reopening(nchanges=n_gradual_steps)
         if self.add_interventions == "rollback":
             intervention_str = write_rollback()
 

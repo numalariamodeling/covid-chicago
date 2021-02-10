@@ -289,7 +289,8 @@ The examples above show an abbreviated version, accepting most defaults. The tab
 | 12 	| --sample_csv        	| -csv           | FALSE    | FALSE    	| Name of sampled_parameters.csv, any   input csv will be renamed per default to 'sampled_parameters.csv'                                                                                                                                                                                              	|                                                                                                                                	| "None"                      	|
 | 13 	| --observeLevel        | -obs           | FALSE    | FALSE    	| Specifies which outcome channels to simulate and return in trajectoriesDat.csv                                                                                                                                                                                              							| "primary", "secondary", "tertiary"                                                                                     	     	| "secondary"                  	|
 | 13 	| --expandModel         | -expand        | FALSE    | FALSE    	| Specific for test delay, defines where to allow test delay (As,Sym, Sys)                                                                                                                                                                                              							    | "uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"                                                                      | "testDelay_AsSymSys"                  	|
-| 13 	| --trigger_channel     | -trigger       | TRUE    | FALSE    	| Specific channel name of trigger to use (used only for locale/spatial model)                                                                                                                                                                                      																	        | "None", "critical", "crit_det", "hospitalized", "hosp_det"                                                                        | "None"                  	|
+| 13 	| --trigger_channel     | -trigger       | TRUE    | FALSE    	| Specific channel name of trigger to use (used only for locale/spatial model)                                                                                                                                                                                      									| "None", "critical", "crit_det", "hospitalized", "hosp_det"                                                                        | "None"                  	|
+| 13 	| --fit_params          | -fit           | TRUE    | FALSE    	| Name of parameters to fit (testing stage, currently supports only single ki multipliers),                                                                                                                                                                                     						| ki_multiplier_4 to ki_multiplier_13 (currently supports only 1 at a time)                                                         | "None"                  	|
 
 Planned updates:
 - add "normal_range" and "normal_mean" to  --paramdistribution
@@ -411,6 +412,7 @@ The postprocessing includes the following steps below:
 - `0_runCombineAndTrimTrajectories.bat` calls  [combine_and_trim.py](https://github.com/numalariamodeling/covid-chicago/blob/master/combine_and_trim.py) combines and trims the simulation output csv files (trajectories.csv files) 
 - `0_locale_age_postprocessing.bat` calls  [locale_age_postprocessing.py](https://github.com/numalariamodeling/covid-chicago/blob/master/locale_age_postprocessing.py) to plot trajectories for pre-specified outcome channels per age group.
 - `1_runTraceSelection.bat`  calls [trace_selection.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/trace_selection.py) calculating the negative log-likelihood per simulated trajectory, used for thinning predictions and parameter estimation
+(- `1_runSimulateTraces.bat`  calls [simulate_traces.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/simulate_traces) extracts fitting parameters,identified as parameters that vary (needs sample parameters to be fixed), and produces besttrace.csv and best_ntraces.csv, optionally starts a follow up simulations.)
 - `2_runDataComparison.bat`  calls [data_comparison_spatial.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/data_comparison_spatial.py) comparing model predictions to data per region over time
 - `3_runProcessTrajectories.bat`  calls [process_for_civis_EMSgrp.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/process_for_civis_EMSgrp.py) generates the result csv dataframe (i.e. nu_20201005.csv) and generates descriptive trajectories per channel and region
 - `4_runRtEstimation.bat`  calls [estimate_Rt_forCivisOutputs.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/estimate_Rt_forCivisOutputs.py)  that  runs the Rt estimation, the Rt columns are added to the result csv dataframe (i.e. nu_20201005.csv), produces descriptive plots
@@ -422,8 +424,8 @@ The postprocessing includes the following steps below:
 - `10_runIterationComparison.bat` calls [iteration_comparison.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/iteration_comparison.py) that  generates the iteration comparison plot (last 3 weeks)
 - `11_runCleanUpAndZip.bat` calls [cleanup_and_zip_simFiles.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup_and_zip_simFiles.py) to clean up simulations (deletes per default single trajectories !! and optinally zips and/or deletes simulation folder
 
-ATTENTION: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
-
+ATTENTION-1: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
+ATTENTION-2: 1_runSimulateTraces.bat only needed for parameter estimation!
 
 </p>
 </details>
@@ -450,6 +452,7 @@ Run from `/projects/p30781/covidproject/covid-chicago/_temp/<exp_name>`
 Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>`
 - `0_locale_age_postprocessing.sh`
 - `1_runTraceSelection.sh` 
+- (`1_runSimulateTraces.sh` )
 - `2_runDataComparison.sh` 
 - `3_runProcessTrajectories.sh`
 - `4_runRtEstimation.sh` 

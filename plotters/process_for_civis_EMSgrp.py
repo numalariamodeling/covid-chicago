@@ -92,7 +92,7 @@ def load_and_plot_data(ems_region, savePlot=True) :
     region_suffix = f'_{str(ems_region)}'
     column_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
     outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
-        'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'death_det_cumul',
+        'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'deaths_det_cumul',
         'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
 
     for channel in outcome_channels:
