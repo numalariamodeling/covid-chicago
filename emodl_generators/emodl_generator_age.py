@@ -17,7 +17,7 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 class covidModel:
 
     def __init__(self,expandModel='testDelay_AsSymSys',observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=None,homogeneous=False,add_ageShift_2ndWave=False,trigger_channel=None,emodl_name=None,git_dir=git_dir):
+                 change_testDelay=None,homogeneous=False,add_ageShift_2ndWave=False,trigger_channel=None,fit_params=None,emodl_name=None,git_dir=git_dir):
         self.model = 'age'
         self.grpList = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
         self.expandModel = expandModel

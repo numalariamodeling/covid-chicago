@@ -564,6 +564,16 @@ def parse_args():
         choices=["None", "critical", "crit_det", "hospitalized", "hosp_det"],
         default=None
     )
+    parser.add_argument(
+        "-fit",
+        "--fit_params",
+        type=str,
+        help=("Name of parameters to fit (testing stage, currently supports only single ki multipliers),"
+              "to be etxtended using nargs='+' when ready. It adds a scaling factor to the region specific ki_multipliers"),
+        #choices=["ki_multiplier_4", "ki_multiplier_5", "ki_multiplier_6", "ki_multiplier_7", "ki_multiplier_8",
+        #         "ki_multiplier_9", "ki_multiplier_10", "ki_multiplier_11", "ki_multiplier_12", "ki_multiplier_13"],
+        default=None
+    )
     return parser.parse_args()
 
 
@@ -614,6 +624,7 @@ if __name__ == '__main__':
                                      observeLevel=args.observeLevel,
                                      expandModel=args.expandModel,
                                      trigger_channel=args.trigger_channel,
+                                     fit_params = args.fit_params,
                                      emodl_name=None)
 
     if args.experiment_config is None:
@@ -650,6 +661,8 @@ if __name__ == '__main__':
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.paramdistribution}_{args.name_suffix}_{scenario}"
         else:
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
+        if args.fit_params != None:
+            exp_name = exp_name.replace(scenario,'fitting')
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(

@@ -22,7 +22,7 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 class covidModel:
 
     def __init__(self, expandModel, observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=False, trigger_channel=None, add_migration=False, emodl_name=None, git_dir=git_dir):
+                 change_testDelay=False, trigger_channel=None, add_migration=False, fit_params=None,emodl_name=None, git_dir=git_dir):
         self.model = 'locale'
         self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
                         'EMS_11']
@@ -35,6 +35,7 @@ class covidModel:
         self.emodl_name = emodl_name
         self.startdate = pd.Timestamp('2020-02-13')
         self.emodl_dir = os.path.join(git_dir, 'emodl')
+        self.fit_param = fit_params #Currenly support single parameter only
 
     def get_configs(key, config_file='intervention_emodl_config.yaml'):
         yaml_file = open(os.path.join('./experiment_configs', config_file))
@@ -601,7 +602,7 @@ class covidModel:
                                              f'\n' for i in n_dSys_change])
             return dSys_change_observe + dSys_change_timeevent
 
-        def write_ki_multiplier_change(nchanges):
+        def write_ki_multiplier_change(nchanges,fit_param):
             n_ki_multiplier = ['3a','3b','3c'] + list(range(4, nchanges+1))
             ki_multiplier_change_str = ''
             for grp in self.grpList:
@@ -615,6 +616,9 @@ class covidModel:
                                               f')'
                                               f'\n' for i in n_ki_multiplier])
 
+                if 'ki_multiplier' in fit_param:
+                    i = fit_param.split('_')[-1]
+                    temp_str_param = temp_str_param.replace(f'@ki_multiplier_{i}_{grp}@', f'(* @ki_multiplier_{i}_{grp}@ @scalingfactor@)')
                 ki_multiplier_change_str = ki_multiplier_change_str + temp_str_param + temp_str_timeevent
 
             return ki_multiplier_change_str
@@ -687,7 +691,7 @@ class covidModel:
             return recovery_time_hosp_change
 
         config_dic = covidModel.get_configs(key ='time_varying_parameter', config_file='intervention_emodl_config.yaml')
-        param_update_string = write_ki_multiplier_change(nchanges=config_dic['n_ki_multiplier']) + \
+        param_update_string = write_ki_multiplier_change(nchanges=config_dic['n_ki_multiplier'], fit_param = self.fit_param) + \
                               write_dSys_change(nchanges=config_dic['n_dSys_change']) + \
                               write_d_Sym_P_As_change(nchanges=config_dic['n_d_Sym_P_As_change']) + \
                               write_frac_crit_change(nchanges=config_dic['n_frac_crit_change']) + \
