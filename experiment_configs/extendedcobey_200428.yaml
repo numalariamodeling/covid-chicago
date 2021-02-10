@@ -508,40 +508,33 @@ time_parameters:
   ### INTERVENTION PARAMETERS  - DATES
   ### (only used with corresponding emodl)
   ###------------------------------------------------
-  ### ---- IMMEDIATE REOPENING ---
-  'socialDistance_rollback_time':
+  ### ---- intervention1 ---
+  'intervention1_start':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-11-14}
-    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01, 2020-08-15, 2020-08-30, 2020-09-15]}
-  ### Reset Ki to defined proporions of it's initial value  
-  ### (only used if corresponding emodl is defined)    
-  'socialDistanceSTOP_time':
+    function_kwargs: {'dates': 2021-01-10}
+    #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
+  'intervention1_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
-  ### ---- GRADUAL REOPENING ---
-  'gradual_reopening_time1':
+    function_kwargs: {'dates': 2021-03-10}
+  'intervention1_end':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
-  'gradual_reopening_time2':
+    function_kwargs: {'dates': 2099-01-01} #no end
+  ### ---- intervention2 ---
+  'intervention2_start':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-03}        
-  'gradual_reopening_time3':
+    function_kwargs: {'dates': 2021-02-10}
+    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01]}
+  'intervention2_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-08}    
-  'gradual_reopening_time4':
+    function_kwargs: {'dates': 2021-03-10}
+  'intervention2_end':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-09-13}  
-  ### ---- TRIGGERED 'LOCKDOWN' ---
-  ### 'today' parameter used to constrain after when state events can be activated
-  ### should be set to after reopening time events are completed
-  'today' :
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-02-04}
+    function_kwargs: {'dates': 2099-01-01} #no end                                  
   ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
   'change_testDelay_time1':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-08-30}
-    #function_kwargs: {'dates': [2020-04-15, 2020-05-15, 2020-06-15, 2020-07-15, 2020-08-15, 2020-09-15]}
+    function_kwargs: {'dates': 2021-02-10}
+    #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
   ### ---- CONTACT TRACING ---
   ### Contact tracing - increase detectioon of asymptomatic, presymptomatic and mild infections
   ### Note detection of asymptomatic and presymptomatic assumed to be the same
