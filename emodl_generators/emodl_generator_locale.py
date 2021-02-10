@@ -97,7 +97,7 @@ class covidModel:
 
     def get_channels(self):
         """Channels to exclude from final list"""
-        channels_not_observe = ['asymp_det','presymp_det','presymp_cumul','presymp_det_cumul']
+        channels_not_observe = ['presymp_det','presymp_cumul','presymp_det_cumul']
 
         """Define channels to observe """
         primary_channels_notdet = ['susceptible','infected','recovered','symp_mild','symp_severe','hosp','crit','deaths']
