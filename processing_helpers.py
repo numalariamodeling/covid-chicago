@@ -278,7 +278,7 @@ def calculate_incidence(adf, output_filename=None, trimmed=False) :
                                 'new_detected' : count_new(df, 'detected_cumul'),
                                 'new_critical' : count_new(df, 'crit_cumul'),
                                 'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'deaths_det_cumul'),
                                 'new_deaths' : count_new(df, 'deaths')
                                 })
         if trimmed == True:
@@ -287,7 +287,7 @@ def calculate_incidence(adf, output_filename=None, trimmed=False) :
                                 'new_hospitalized' : count_new(df, 'hosp_cumul'),
                                 'new_critical' : count_new(df, 'crit_cumul'),
                                 'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                                'new_detected_deaths' : count_new(df, 'death_det_cumul'),
+                                'new_detected_deaths' : count_new(df, 'deaths_det_cumul'),
                                 'new_deaths' : count_new(df, 'deaths')
                                 })
 
@@ -320,7 +320,7 @@ def calculate_incidence_by_age(adf, age_group, output_filename=None) :
                               'new_detected_%s' % age_group : count_new(df, 'detected_cumul_%s' % age_group),
                               'new_critical_%s' % age_group : count_new(df, 'crit_cumul_%s' % age_group),
                               'new_detected_critical_%s' % age_group : count_new(df, 'crit_det_cumul_%s' % age_group),
-                              'new_detected_deaths_%s' % age_group : count_new(df, 'death_det_cumul_%s' % age_group),
+                              'new_detected_deaths_%s' % age_group : count_new(df, 'deaths_det_cumul_%s' % age_group),
                               'new_deaths_%s' % age_group : count_new(df, 'deaths_%s' % age_group)
                               })
         sdf['run_num'] = run
@@ -420,7 +420,7 @@ def civis_colnames(reverse=False) :
 def get_datacomparison_channels():
     outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
                     'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                    'death_det_cumul', 'deaths']
+                    'deaths_det_cumul', 'deaths']
     channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_deaths','new_detected_hospitalized',
                 'new_detected_hospitalized']
     data_channel_names = ['deaths',

@@ -541,7 +541,7 @@ def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list_name = "mas
     df.columns = df.columns.str.replace('_All', '')
 
     if channel_list_name =="master" :
-        channel_list = ['susceptible', 'exposed', 'asymptomatic', 'symptomatic_mild',
+        channel_list = ['susceptible', 'exposed', 'asymp', 'symp_mild',
                         'hospitalized', 'detected', 'critical', 'deaths', 'recovered']
     if channel_list_name == "detection":
         channel_list = ['detected', 'detected_cumul', 'asymp_det_cumul', 'hosp_det_cumul']
