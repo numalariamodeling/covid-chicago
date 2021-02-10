@@ -2,6 +2,8 @@ import os
 import sys
 import re
 import json
+import yaml
+import pandas as pd
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -33,6 +35,23 @@ class covidModel:
         self.emodl_name = emodl_name
         self.n_steps = 4
         self.emodl_dir = os.path.join(git_dir, 'emodl')
+
+    def get_configs(key, config_file='intervention_emodl_config.yaml'):
+        yaml_file = open(os.path.join('./experiment_configs', config_file))
+        config_dic = yaml.safe_load(yaml_file)
+        config_dic = config_dic[key]
+        return config_dic
+
+    ## For postprocessing that splits by '_', it is easier if EMS are names EMS-1 not EMS_1
+    ## This might change depending on the postprocessing
+    def sub(x):
+        xout = re.sub('_', '-', str(x), count=1)
+        return xout
+
+    def DateToTimestep(date, startdate):
+        datediff = date - startdate
+        timestep = datediff.days
+        return timestep
 
     def write_species(self, grp):
         state_SE = ('S', 'E')
@@ -75,16 +94,7 @@ class covidModel:
         species_str = write_species_str(species_emodl, grp)
         return species_str
 
-    ## For postprocessing that splits by '_', it is easier if EMS are names EMS-1 not EMS_1
-    ## This might change depending on the postprocessing
-    def sub(x):
-        xout = re.sub('_', '-', str(x), count=1)
-        return xout
-
-    def write_observe(self, grp):
-        grp = str(grp)
-        grpout = covidModel.sub(grp)
-
+    def get_channels(self):
         """Channels to exclude from final list"""
         channels_not_observe = ['asymp_det','presymp_det','presymp_cumul','presymp_det_cumul']
 
@@ -106,7 +116,14 @@ class covidModel:
             channels = channels + tertiary_channels
 
         channels = [channel for channel in channels if channel not in channels_not_observe]
-        channels = list(set(channels))
+
+        return  list(set(channels))
+
+    def write_observe(self, grp):
+        grp = str(grp)
+        grpout = covidModel.sub(grp)
+
+        channels = covidModel.get_channels(self)
 
         def write_observe_emodl():
             #grp_suffix = "::{grp}"
@@ -118,13 +135,14 @@ class covidModel:
                     channel = 'critical'
                 if channel == 'hosp':
                     channel = 'hospitalized'
+
                 if channel == "susceptible":
                     observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S::{grp})\n'
-                if channel == "exposed":
+                elif channel == "exposed":
                     observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E::{grp})\n'
-                if channel == "deaths_det":
+                elif channel == "deaths_det":
                     observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3::{grp})\n'
-                if channel not in ["susceptible", "exposed","deaths_det"]:
+                else:
                     observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
 
             return observe_emodl
@@ -206,12 +224,12 @@ class covidModel:
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
             func_dic_SymSys.update(func_dic)
             func_dic_all = func_dic_SymSys
-        if self.expandModel == "AsSymSys":
+        elif self.expandModel == "AsSymSys":
             func_dic_AsSymSys.update(func_dic)
             func_dic_all = func_dic_AsSymSys
         else:
-            func_str = func_str +  f'(func symp_mild_det_{grp}  Sym_det2::{grp})\n' \
-                                   f'(func symp_severe_det_{grp}  Sys_det3::{grp})\n'
+            func_str = func_str + f'(func symp_mild_det_{grp}  Sym_det2::{grp})\n' \
+                                  f'(func symp_severe_det_{grp}  Sys_det3::{grp})\n'
             func_dic_base.update(func_dic)
             func_dic_all = func_dic_base
 
@@ -222,108 +240,83 @@ class covidModel:
 
     ###
     def write_params(self):
-        params_str = """
-(param time_to_infectious @time_to_infectious@)
-(param time_to_symptoms @time_to_symptoms@)
-(param time_to_hospitalization @time_to_hospitalization@)
-(param time_to_critical @time_to_critical@)
-(param time_to_death @time_to_death@)
-(param recovery_time_asymp @recovery_time_asymp@)
-(param recovery_time_mild @recovery_time_mild@)
-(param recovery_time_hosp @recovery_time_hosp@)
-(param recovery_time_crit @recovery_time_crit@)
-(param recovery_time_postcrit @recovery_time_postcrit@)													   
-(param fraction_symptomatic @fraction_symptomatic@)
-(param fraction_severe @fraction_severe@)
-(param fraction_critical @fraction_critical@ )
+        yaml_sampled_param = list(covidModel.get_configs(key ='sampled_parameters', config_file='extendedcobey_200428.yaml').keys())
+        yaml_sampled_param_str = ''.join([f'(param {param} @{param}@)\n' for param in yaml_sampled_param])
 
-;(param fraction_dead (/ cfr fraction_severe))
-(param fraction_dead @fraction_dead@ )
-(param fraction_hospitalized (- 1 (+ fraction_critical fraction_dead)))
+        """calculated parameters"""
+        param_dic = {'fraction_hospitalized' : '(- 1 (+ fraction_critical fraction_dead))',
+                     'Kr_a' : '(/ 1 recovery_time_asymp)',
+                     'Kr_m' : '(/ 1 recovery_time_mild)',
+                     'Kl' : '(/ (- 1 fraction_symptomatic ) time_to_infectious)',
+                     'Ks' :'(/ fraction_symptomatic  time_to_infectious)',
+                     'Ksys' :'(* fraction_severe (/ 1 time_to_symptoms))',
+                     'Ksym' :'(* (- 1 fraction_severe) (/ 1 time_to_symptoms))',
+                     'Km' :'(/ 1 time_to_death)',
+                     'Kc' :'(/ 1 time_to_critical)',
+                     'Kr_hc' :'(/ 1 recovery_time_postcrit)',
+                     'Kr_h' :'(/ 1 recovery_time_hosp)',
+                     'Kr_c' :'(/ 1 recovery_time_crit)'
+                     }
 
-(param reduced_inf_of_det_cases @reduced_inf_of_det_cases@)
-(param reduced_infectious_As @reduced_infectious_As@)													 
-(param reduced_inf_of_det_cases_ct 0)
+        param_dic_base = {'Kh1':'(/ fraction_hospitalized time_to_hospitalization)',
+                          'Kh2':'(/ fraction_critical time_to_hospitalization )',
+                          'Kh3':'(/ fraction_dead  time_to_hospitalization)'
+                          }
 
-(param d_As @d_As@)
-(param d_P @d_P@)
-(param d_Sys @d_Sys@)
-(param d_Sym @d_Sym@)					 
-(param Kr_a (/ 1 recovery_time_asymp))
-(param Kr_m (/ 1 recovery_time_mild))
-(param Kl (/ (- 1 fraction_symptomatic ) time_to_infectious))
-(param Ks (/ fraction_symptomatic  time_to_infectious))
-(param Ksys (* fraction_severe (/ 1 time_to_symptoms)))
-(param Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))
-(param Km (/ 1 time_to_death))
-(param Kc (/ 1 time_to_critical))
-(param Kr_hc (/ 1 recovery_time_postcrit))
-; region specific
-;(param Kr_h (/ 1 recovery_time_hosp))
-;(param Kr_c (/ 1 recovery_time_crit))
-    """
+        param_dic_uniform = {'time_D':'@time_to_detection@',
+                             'Ksym_D':'(/ 1 time_D)',
+                             'Ksys_D':'(/ 1 time_D)',
+                             'Kh1':'(/ fraction_hospitalized time_to_hospitalization)',
+                             'Kh2':'(/ fraction_critical time_to_hospitalization )',
+                             'Kh3':'(/ fraction_dead  time_to_hospitalization)',
+                             'Kh1_D':'(/ fraction_hospitalized (- time_to_hospitalization time_D))',
+                             'Kh2_D':'(/ fraction_critical (- time_to_hospitalization time_D) )',
+                             'Kh3_D':'(/ fraction_dead  (- time_to_hospitalization time_D))',
+                             'Kr_m_D':'(/ 1 (- recovery_time_mild time_D ))'
+                             }
 
-        expand_base_str = """
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization ))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-    """
+        param_dic_SymSys = {'time_D_Sym':'@time_to_detection_Sym@',
+                            'time_D_Sys':'@time_to_detection_Sys@',
+                            'Ksym_D':'(/ 1 time_D_Sym)',
+                            'Ksys_D':'(/ 1 time_D_Sys)',
+                            'Kh1':'(/ fraction_hospitalized time_to_hospitalization)',
+                            'Kh2':'(/ fraction_critical time_to_hospitalization )',
+                            'Kh3':'(/ fraction_dead  time_to_hospitalization)',
+                            'Kh1_D':'(/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))',
+                            'Kh2_D':'(/ fraction_critical (- time_to_hospitalization time_D_Sys) )',
+                            'Kh3_D':'(/ fraction_dead  (- time_to_hospitalization time_D_Sys))',
+                            'Kr_m_D':'(/ 1 (- recovery_time_mild time_D_Sym ))'
+                            }
 
-        expand_uniformtestDelay_str = """
-(param time_D @time_to_detection@)
-(param Ksym_D (/ 1 time_D))
-(param Ksys_D (/ 1 time_D))
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization ))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D) ))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D)))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D )))
-    """
+        param_dic_AsSymSys = {'Kh1':'(/ fraction_hospitalized time_to_hospitalization)',
+                              'Kh2':'(/ fraction_critical time_to_hospitalization )',
+                              'Kh3':'(/ fraction_dead  time_to_hospitalization)',
+                              'time_D_Sys':'@time_to_detection_Sys@',
+                              'Ksys_D':'(/ 1 time_D_Sys)',
+                              'Kh1_D':'(/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))',
+                              'Kh2_D':'(/ fraction_critical (- time_to_hospitalization time_D_Sys) )',
+                              'Kh3_D':'(/ fraction_dead  (- time_to_hospitalization time_D_Sys))',
+                              'time_D_Sym':'@time_to_detection_Sym@',
+                              'Ksym_D':'(/ 1 time_D_Sym)',
+                              'Kr_m_D':'(/ 1 (- recovery_time_mild time_D_Sym ))',
+                              'time_D_As':'@time_to_detection_As@',
+                              'Kl_D':'(/ 1 time_D_As)',
+                              'Kr_a_D':'(/ 1 (- recovery_time_asymp time_D_As ))'
+                              }
 
-        expand_testDelay_SymSys_str = """
-(param time_D_Sym @time_to_detection_Sym@)
-(param time_D_Sys @time_to_detection_Sys@)
-(param Ksym_D (/ 1 time_D_Sym))
-(param Ksys_D (/ 1 time_D_Sys))
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization ))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D_Sys)))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
-    """
-
-        expand_testDelay_AsSymSys_str = """
-(param Kh1 (/ fraction_hospitalized time_to_hospitalization))
-(param Kh2 (/ fraction_critical time_to_hospitalization ))
-(param Kh3 (/ fraction_dead  time_to_hospitalization))
-
-(param time_D_Sys @time_to_detection_Sys@)
-(param Ksys_D (/ 1 time_D_Sys))
-(param Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys)))
-(param Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))
-(param Kh3_D (/ fraction_dead  (- time_to_hospitalization time_D_Sys)))
-
-(param time_D_Sym @time_to_detection_Sym@)
-(param Ksym_D (/ 1 time_D_Sym))
-(param Kr_m_D (/ 1 (- recovery_time_mild time_D_Sym )))
-
-(param time_D_As @time_to_detection_As@)
-(param Kl_D (/ 1 time_D_As))
-(param Kr_a_D (/ 1 (- recovery_time_asymp time_D_As )))
-    """
-
-        if self.expandModel == None:
-            params_str = params_str + expand_base_str
         if self.expandModel == "SymSys":
-            params_str = params_str + expand_testDelay_SymSys_str
-        if self.expandModel == "uniform":
-            params_str = params_str + expand_uniformtestDelay_str
-        if self.expandModel == "AsSymSys":
-            params_str = params_str + expand_testDelay_AsSymSys_str
+            param_dic_expand = param_dic_SymSys
+        elif self.expandModel == "uniform":
+            param_dic_expand = param_dic_uniform
+        elif self.expandModel == "AsSymSys":
+            param_dic_expand = param_dic_AsSymSys
+        else:
+            param_dic_expand = param_dic_base
+
+        calculated_params_str =  ''.join([f'(param {key} {param_dic[key]})\n' for key in list(param_dic.keys())])
+        calculated_params_expand_str =  ''.join([f'(param {key} {param_dic_expand[key]})\n' for key in list(param_dic_expand.keys())])
+
+        params_str = yaml_sampled_param_str + calculated_params_str + calculated_params_expand_str
 
         return params_str
 
@@ -396,118 +389,32 @@ class covidModel:
     def write_All(self):
 
         grpList = self.grpList
-        obs_primary_All_str = ""
+        observe_channels_All_str = ""
+        channels = covidModel.get_channels(self)
+        for channel in channels :
+            if channel == 'crit':
+                channel = 'critical'
+            if channel == 'hosp':
+                channel = 'hospitalized'
 
-        obs_primary_All_str = ""
-        obs_primary_All_str = obs_primary_All_str + "\n(observe susceptible_All (+ " + covidModel.repeat_string_by_grp(
-            'S::', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe infected_All (+ " + covidModel.repeat_string_by_grp(
-            'infected_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe infected_det_All (+ " + covidModel.repeat_string_by_grp(
-            'infected_det_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe recovered_All (+ " + covidModel.repeat_string_by_grp(
-            'recovered_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe recovered_det_All (+ " + covidModel.repeat_string_by_grp(
-            'recovered_det_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe infected_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'infected_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe infected_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'infected_det_cumul_', grpList) + "))"
+            if channel == "susceptible":
+                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S::', grpList) + "))\n"
+            elif channel == "deaths_det":
+                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3::', grpList) + "))\n"
+            elif channel == "exposed":
+                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E::', grpList) + "))\n"
+            elif channel == "asymp_det":
+                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1::', grpList) + "))\n"
+            elif channel == "presymp":
+                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P::',grpList) + "))\n"
+            elif channel == "presymp_det":
+                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det::', grpList) + "))\n"
+            else:
+                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp(f'{channel}_', grpList) + "))\n"
+            observe_channels_All_str = observe_channels_All_str + temp_str
+            del temp_str
 
-        obs_primary_All_str = obs_primary_All_str + "\n(observe asymp_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'asymp_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe asymp_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'asymp_det_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_mild_All (+ " + covidModel.repeat_string_by_grp(
-            'symp_mild_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_severe_All (+ " + covidModel.repeat_string_by_grp(
-            'symp_severe_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_mild_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'symp_mild_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_severe_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'symp_severe_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_mild_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'symp_mild_det_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe symp_severe_det_cumul_All  (+ " + covidModel.repeat_string_by_grp(
-            'symp_severe_det_cumul_', grpList) + "))"
-
-        obs_primary_All_str = obs_primary_All_str + "\n(observe hosp_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'hosp_det_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe hosp_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'hosp_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe detected_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'detected_cumul_', grpList) + "))"
-
-        obs_primary_All_str = obs_primary_All_str + "\n(observe crit_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'crit_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe crit_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'crit_det_cumul_', grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_det_cumul_All (+ " + covidModel.repeat_string_by_grp(
-            'deaths_det_cumul_', grpList) + "))"
-
-        obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_det_All (+ " + covidModel.repeat_string_by_grp(
-            'D3_det3::',
-            grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe deaths_All (+ " + covidModel.repeat_string_by_grp(
-            'deaths_',
-            grpList) + "))"
-
-        obs_primary_All_str = obs_primary_All_str + "\n(observe crit_det_All (+ " + covidModel.repeat_string_by_grp(
-            'crit_det_',
-            grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe critical_All (+ " + covidModel.repeat_string_by_grp(
-            'critical_',
-            grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe hosp_det_All (+ " + covidModel.repeat_string_by_grp(
-            'hosp_det_',
-            grpList) + "))"
-        obs_primary_All_str = obs_primary_All_str + "\n(observe hospitalized_All (+ " + covidModel.repeat_string_by_grp(
-            'hospitalized_', grpList) + "))"
-
-        obs_secondary_All_str = ""
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe exposed_All (+ " + covidModel.repeat_string_by_grp(
-            'E::',
-            grpList) + "))"
-
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymp_All (+ " + covidModel.repeat_string_by_grp(
-            'asymp_', grpList) + "))"
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe asymp_det_All (+ " + covidModel.repeat_string_by_grp(
-            'As_det1::', grpList) + "))"
-
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymp_All (+ " + covidModel.repeat_string_by_grp(
-            'P::', grpList) + "))"
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe presymp_det_All (+ " + covidModel.repeat_string_by_grp(
-            'P_det::', grpList) + "))"
-
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe detected_All (+ " + covidModel.repeat_string_by_grp(
-            'detected_', grpList) + "))"
-
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe symp_mild_det_All (+ " + covidModel.repeat_string_by_grp(
-            'symp_mild_det_', grpList) + "))"
-        obs_secondary_All_str = obs_secondary_All_str + "\n(observe symp_severe_det_All (+ " + covidModel.repeat_string_by_grp(
-            'symp_severe_det_', grpList) + "))"
-
-        obs_tertiary_All_str = ""
-        obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_All (+ " + covidModel.repeat_string_by_grp(
-            'infectious_det_', grpList) + "))"
-        obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_undet_All (+ " + covidModel.repeat_string_by_grp(
-            'infectious_undet_', grpList) + "))"
-        obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_symp_All (+ " + covidModel.repeat_string_by_grp(
-            'infectious_det_symp_', grpList) + "))"
-        obs_tertiary_All_str = obs_tertiary_All_str + "\n(observe infectious_det_AsP_All (+ " + covidModel.repeat_string_by_grp(
-            'infectious_det_AsP_', grpList) + "))"
-
-        if self.observeLevel == 'primary':
-            obs_All_str = obs_primary_All_str
-        if self.observeLevel == 'secondary':
-            obs_All_str = obs_primary_All_str + obs_secondary_All_str
-        if self.observeLevel == 'tertiary':
-            obs_All_str = obs_primary_All_str + obs_tertiary_All_str
-        if self.observeLevel == 'all':
-            obs_All_str = obs_primary_All_str + obs_secondary_All_str + obs_tertiary_All_str
-
-        obs_All_str = obs_All_str.replace("  ", " ")
-        return obs_All_str
+        return observe_channels_All_str
 
     def write_reactions(self, grp):
         grp = str(grp)
@@ -519,7 +426,7 @@ class covidModel:
                          f'(+ infectious_undet_symp_{grp} ' \
                          f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                         f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases_ct)' \
+                         f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
                          f') N_{grp} )' \
                          f'))\n'
 
@@ -715,8 +622,7 @@ class covidModel:
         def write_d_Sym_P_As_change(nchanges):
             d_Sym_P_As_change_observe = '(observe d_Sym_t d_Sym)\n' \
                                         '(observe d_P_t d_P)\n' \
-                                        '(observe d_As_t d_As)\n' \
-                                        '(param dSym_dAsP_ratio @dSym_dAsP_ratio@)\n'
+                                        '(observe d_As_t d_As)\n'
 
             n_d_PAs_changes = range(1,nchanges+1)
             d_Sym_P_As_change_param = ''.join([f'(param d_PAs_change{i} '
