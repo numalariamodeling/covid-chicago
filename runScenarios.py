@@ -35,21 +35,33 @@ def _get_full_factorial_df(df, column_name, values):
     return result
 
 
-def _parse_config_parameter(df, parameter, parameter_function, column_name, full_factorial):
+def _parse_config_parameter(df, parameter, parameter_function, column_name, full_factorial,use_means):
     if isinstance(parameter_function, (int, float)):
         df[column_name] = parameter_function
         return df
     elif 'np.random' in parameter_function:
-        function_kwargs = parameter_function['function_kwargs']
-        func = getattr(np.random, parameter_function['np.random'])
-        if full_factorial:
-            params = func(**{"size": 1, **function_kwargs})
-            result = _get_full_factorial_df(df, column_name, params)
+        if use_means:
+            function_kwargs = parameter_function['function_kwargs']
+            func = getattr(np.random, parameter_function['np.random'])
+            if full_factorial:
+                params = np.array(list(function_kwargs.values())).mean()
+                result = _get_full_factorial_df(df, column_name, params)
+            else:
+                params = [np.array(list(function_kwargs.values())).mean()
+                          for _ in range(len(df))]
+                result = df
+                result[column_name] = params
         else:
-            params = [func(**function_kwargs, size=1)[0]
-                      for _ in range(len(df))]
-            result = df
-            result[column_name] = params
+            function_kwargs = parameter_function['function_kwargs']
+            func = getattr(np.random, parameter_function['np.random'])
+            if full_factorial:
+                params = func(**{"size": 1, **function_kwargs})
+                result = _get_full_factorial_df(df, column_name, params)
+            else:
+                params = [func(**function_kwargs, size=1)[0]
+                          for _ in range(len(df))]
+                result = df
+                result[column_name] = params
         return result
     elif 'np' in parameter_function:
         function_kwargs = parameter_function['function_kwargs']
@@ -137,7 +149,7 @@ def _parse_age_specific_distribution(df, parameter, parameter_function, age_bins
     return df
 
 
-def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, full_factorial=True):
+def add_config_parameter_column(df, parameter, parameter_function, age_bins=None, full_factorial=True, use_means=False):
     """ Applies the described function and adds the column to the dataframe
 
     The input DataFrame will be modified in place.
@@ -181,7 +193,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                 raise ValueError(f"{parameter} has a list with {n_list} elements, "
                                  f"but there are {len(age_bins)} age bins.")
             for bin, val in zip(age_bins, parameter_function['list']):
-                df = _parse_config_parameter(df, parameter, val, f'{parameter}_{bin}', full_factorial)
+                df = _parse_config_parameter(df, parameter, val, f'{parameter}_{bin}', full_factorial,use_means)
         elif 'custom_function' in parameter_function:
             function_name = parameter_function['custom_function']
             if function_name == 'subtract':
@@ -192,7 +204,7 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
                          'function_kwargs': {'x1': f'{parameter_function["function_kwargs"]["x1"]}_{bin}',
                                              'x2': f'{parameter_function["function_kwargs"]["x2"]}_{bin}'}},
                         f'{parameter}_{bin}',
-                        full_factorial,
+                        full_factorial,use_means
                     )
             else:
                 raise ValueError(f"Unknown custom function: {function_name}")
@@ -205,13 +217,13 @@ def add_config_parameter_column(df, parameter, parameter_function, age_bins=None
             m = parameter_function['matrix']
             for i, row in enumerate(m):
                 for j, item in enumerate(row):
-                    df = _parse_config_parameter(df, parameter, item, f'{parameter}{i+1}_{j+1}', full_factorial)
+                    df = _parse_config_parameter(df, parameter, item, f'{parameter}{i+1}_{j+1}', full_factorial,use_means)
         else:
-            df = _parse_config_parameter(df, parameter, parameter_function, parameter, full_factorial)
+            df = _parse_config_parameter(df, parameter, parameter_function, parameter, full_factorial,use_means)
     return df
 
 
-def add_fixed_parameters_region_specific(df, config, region, age_bins):
+def add_fixed_parameters_region_specific(df, config, region, age_bins,use_means):
     """ For each of the region-specific parameters, iteratively add them to the parameters dataframe
     """
     for parameter, parameter_function in config['fixed_parameters_region_specific'].items():
@@ -219,13 +231,13 @@ def add_fixed_parameters_region_specific(df, config, region, age_bins):
             continue
         param_func_with_age = {'expand_by_age': parameter_function.get('expand_by_age'),
                                'list': parameter_function[region]}
-        df = add_config_parameter_column(df, parameter, param_func_with_age, age_bins)
+        df = add_config_parameter_column(df, parameter, param_func_with_age, age_bins, use_means)
 
     return df
 
 
 
-def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=True):
+def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=True, use_means=False):
     """Append parameters to the DataFrame"""
     if parameter_type not in ("time_parameters", "intervention_parameters",
                               "sampled_parameters", "fixed_parameters_global"):
@@ -234,23 +246,24 @@ def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=
         if region in parameter_function:
             # Check for a distribution specific to this region
             parameter_function = parameter_function[region]
-        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, full_factorial)
+        df = add_config_parameter_column(df, parameter, parameter_function, age_bins, full_factorial, use_means)
     return df
 
 
-def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region, generateNew):
+def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region, generateNew,use_means):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
     """
+
     if generateNew :
         # Time-independent parameters. No full factorial across parameters.
         df = pd.DataFrame()
         df['sample_num'] = range(samples)
         df['speciesS'] = pop
         df['initialAs'] = config['experiment_setup_parameters']['initialAs']
-        df = add_fixed_parameters_region_specific(df, config, region, age_bins)
-        df = add_parameters(df, "sampled_parameters", config, region, age_bins, full_factorial=False)
+        df = add_fixed_parameters_region_specific(df, config, region, age_bins, use_means)
+        df = add_parameters(df, "sampled_parameters", config, region, age_bins, full_factorial=False, use_means=use_means)
 
         # Time-independent parameters. Create full factorial.
         df = add_parameters(df, "intervention_parameters", config, region, age_bins)
@@ -313,14 +326,26 @@ def replaceParameters(df, row_i, Ki_i, emodl_template, scen_num):
 
 def generateScenarios(simulation_population, Kivalues, duration, monitoring_samples,
                       nruns, sub_samples, modelname, cfg_file, start_dates, Location,
-                      experiment_config, age_bins, region):
+                      experiment_config, age_bins, region, paramdistribution):
+
+    # If specific calculate means
+    use_means = False
+    if 'mean' in paramdistribution:
+        use_means = True
 
     generateNew = True
     if args.sample_csv is not None :
         generateNew = False
 
-    dfparam = generateParameterSamples(samples=sub_samples, pop=simulation_population, start_dates=start_dates,
-                                       config=experiment_config, age_bins=age_bins, Kivalues=Kivalues, region=region, generateNew=generateNew)
+    dfparam = generateParameterSamples(samples=sub_samples,
+                                       pop=simulation_population,
+                                       start_dates=start_dates,
+                                       config=experiment_config,
+                                       age_bins=age_bins,
+                                       Kivalues=Kivalues,
+                                       region=region,
+                                       generateNew=generateNew,
+                                       use_means=use_means)
 
     for row_i, row in dfparam.iterrows():
         Ki = row['Ki']
@@ -336,7 +361,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
         data_cfg = data_cfg.replace('@nruns@', str(nruns))
 
         if 'prng_seed' in data_cfg:
-            data_cfg = data_cfg.replace('@prng_seed@', str(np.random.randint(100000000)))     
+            data_cfg = data_cfg.replace('@prng_seed@', str(np.random.randint(100000000)))
         if not Location == 'Local':
             data_cfg = data_cfg.replace('trajectories', f'trajectories_scen{scen_num}')
         elif sys.platform not in ["win32", "cygwin"]:
@@ -539,6 +564,16 @@ def parse_args():
         choices=["None", "critical", "crit_det", "hospitalized", "hosp_det"],
         default=None
     )
+    parser.add_argument(
+        "-fit",
+        "--fit_params",
+        type=str,
+        help=("Name of parameters to fit (testing stage, currently supports only single ki multipliers),"
+              "to be etxtended using nargs='+' when ready. It adds a scaling factor to the region specific ki_multipliers"),
+        #choices=["ki_multiplier_4", "ki_multiplier_5", "ki_multiplier_6", "ki_multiplier_7", "ki_multiplier_8",
+        #         "ki_multiplier_9", "ki_multiplier_10", "ki_multiplier_11", "ki_multiplier_12", "ki_multiplier_13"],
+        default=None
+    )
     return parser.parse_args()
 
 
@@ -589,22 +624,20 @@ if __name__ == '__main__':
                                      observeLevel=args.observeLevel,
                                      expandModel=args.expandModel,
                                      trigger_channel=args.trigger_channel,
+                                     fit_params = args.fit_params,
                                      emodl_name=None)
 
     if args.experiment_config is None:
         if model =='base':
             args.experiment_config = 'EMSspecific_sample_parameters.yaml'
         if model == 'locale':
-            if args.paramdistribution == 'uniform_range':
-                args.experiment_config = 'spatial_EMS_experiment.yaml'
-                args.masterconfig = 'extendedcobey_200428.yaml'
-            if args.paramdistribution == 'uniform_mean':
-                args.experiment_config = 'spatial_EMS_experiment_means.yaml'
-                args.masterconfig = 'extendedcobey_200428_means.yaml'
+            args.experiment_config = 'spatial_EMS_experiment.yaml'
+            args.masterconfig = 'extendedcobey_200428.yaml'
         if model == 'age':
             args.experiment_config = 'age8grp_experiment.yaml'
         if model == 'agelocale':
             args.experiment_config = 'age_locale_experiment.yaml'
+
 
     log.debug(f"experiment_config = {args.experiment_config}\n"
               f"emodl_template = {emodl_template}\n")
@@ -628,6 +661,8 @@ if __name__ == '__main__':
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.paramdistribution}_{args.name_suffix}_{scenario}"
         else:
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
+        if args.fit_params != None:
+            exp_name = exp_name.replace(scenario,'fitting')
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
@@ -649,7 +684,8 @@ if __name__ == '__main__':
         cfg_file=args.cfg_template,
         experiment_config=experiment_config,
         age_bins=experiment_setup_parameters.get('age_bins'),
-        region=region)
+        region=region,
+        paramdistribution=args.paramdistribution)
 
     if Location == 'NUCLUSTER':
         generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path,model)
