@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 600
+  'number_of_samples': 10
   'number_of_runs': 1
   'duration': 530
   'monitoring_samples': 530 # needs to be less than or equal to duration
@@ -268,7 +268,8 @@ sampled_parameters:
     function_kwargs: {'low':0.0280, 'high':0.052}                                           
 intervention_parameters:
   ###------------------------------------------------
-  ### PARAMETER SCALING FACTORS ONLY USED IN FITTING
+  ### ---- Parameter scalingfactor ------------------
+  ### parameter scaling factors only used in fitting
   ### (currenlty only applies to fitting ki_multipliers in locale model)
   ### i.e. when specifying --fit_params "ki_multiplier_13"
   'scalingfactor':
@@ -279,8 +280,8 @@ intervention_parameters:
   ### INTERVENTION PARAMETERS  - EFFECT SIZE
   ### (only used if corresponding emodl is defined)   
   ###------------------------------------------------  
-  ### ---- IMMEDIATE REOPENING ----------------------
-  ### Relative increase in transmission rate due to COVID-19 B variant  
+  ### ---- B.1.1.7 Variant  ----------------------
+  ### Relative increase in transmission and severity due to COVID-19 B variant
   'bvariant_infectivity':
     np: linspace
     function_kwargs: {'start':1.5, 'stop':1.5}
@@ -295,26 +296,16 @@ intervention_parameters:
   'bvariant_severity':
     np: linspace
     function_kwargs: {'start':1.5, 'stop':1.5}
-  ### Reset Ki to defined proporions of it's initial value  
-  'backtonormal_multiplier':
-    np.random: uniform
-    # Add 'size' in function_kwargs to have multiple values instead of just one
-    function_kwargs: {'low':0.10, 'high':0.10}
-  ### ---- GRADUAL REOPENING ----------------------
-  ### Reset Ki to defined proporions of it's initial value using multiple time-events
-  ### Default in the yaml is a linear increase, scaling  reopening_multiplier_4 by 0.25, 0.5, 0.75 and 1
-  #'reopening_multiplier_1':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.02, 'high':0.02}
-  #'reopening_multiplier_2':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.04, 'high':0.04}
-  #'reopening_multiplier_3':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.06, 'high':0.06}
-  'reopening_multiplier_4':
+  ### ---- ROLLBACK ----------------------
+  ### Decrease Ki due to more intense mitigation measures
+  'rollback_multiplier':
     np: linspace
-    function_kwargs: {'start':0, 'stop':0.20, 'num' : 1}
+    function_kwargs: {'start':0.1, 'stop':0.20, 'num' : 1}
+  ### ---- REOPENING ----------------------
+  ### Reset Ki to defined proporions of it's initial value using multiple time-events
+  'reopen_multiplier':
+    np: linspace
+    function_kwargs: {'start':0.20, 'stop':0.20, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
@@ -519,7 +510,7 @@ time_parameters:
   ### ---- intervention1 ---
   'intervention1_start':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-01-10}
+    function_kwargs: {'dates': 2021-02-10}
     #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
   'intervention1_scaleupend':
     custom_function: DateToTimestep

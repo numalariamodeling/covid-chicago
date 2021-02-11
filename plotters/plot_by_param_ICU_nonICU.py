@@ -127,8 +127,8 @@ def plot_covidregions(channel,subgroups, plot_path,first_day, last_day) :
         for d, exp_name in enumerate(exp_names) :
             df = load_sim_data(exp_name, region_suffix=region_suffix)
             df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
-            exp_name_label = int(exp_name.split('_')[0])
-            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems_nr, panel_heading = region_label, label="")
+            exp_name_label = str(exp_name.split('_')[-2]) + str(exp_name.split('_')[-1])
+            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems_nr, panel_heading = region_label, label=exp_name_label)
 
         axes[-1].legend()
         #fig.suptitle(x=0.5, y=0.999,t=channel)

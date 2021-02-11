@@ -488,9 +488,8 @@ def parse_args():
         type=str,
         help=("Intervention scenario to use, default = baseline"
               "Example choices are shown below for a full list please visit the GitHub readme"),
-        choices=["baseline", "rollback", "reopen_rollback", "rollbacktriggered_delay", "gradual_reopening",
-                 "gradual_reopening2","interventionSTOP","contactTracing","improveHS","contactTracing_improveHS",
-                 "reopen_contactTracing_improveHS","bvariant"],
+        choices=["baseline","bvariant", "rollback","triggeredrollback", "reopen"],
+                 #"reopen_rollback","interventionSTOP","contactTracing","improveHS","contactTracing_improveHS","reopen_contactTracing_improveHS"],
         default="baseline"
     )
     parser.add_argument(
@@ -557,12 +556,11 @@ def parse_args():
         help="If true adds and time event for change in test delay (i.e. reduced time to detection)"
     )
     parser.add_argument(
-        "-trigger",
-        "--trigger_channel",
+        "-ic",
+        "--intervention_config",
         type=str,
-        help="Specific channel name of trigger to use",
-        choices=["None", "critical", "crit_det", "hospitalized", "hosp_det"],
-        default=None
+        help="Name of intervention configurations for emodl structure (i.e. number of time-events, or read in csv)",
+        default='intervention_emodl_config.yaml'
     )
     parser.add_argument(
         "-fit",
@@ -572,7 +570,7 @@ def parse_args():
               "to be etxtended using nargs='+' when ready. It adds a scaling factor to the region specific ki_multipliers"),
         #choices=["ki_multiplier_4", "ki_multiplier_5", "ki_multiplier_6", "ki_multiplier_7", "ki_multiplier_8",
         #         "ki_multiplier_9", "ki_multiplier_10", "ki_multiplier_11", "ki_multiplier_12", "ki_multiplier_13"],
-        default=None
+        default= [None]
     )
     return parser.parse_args()
 
@@ -623,7 +621,7 @@ if __name__ == '__main__':
                                      change_testDelay=args.change_testDelay,
                                      observeLevel=args.observeLevel,
                                      expandModel=args.expandModel,
-                                     trigger_channel=args.trigger_channel,
+                                     intervention_config=args.intervention_config,
                                      fit_params = args.fit_params,
                                      emodl_name=None)
 
@@ -661,7 +659,7 @@ if __name__ == '__main__':
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.paramdistribution}_{args.name_suffix}_{scenario}"
         else:
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
-        if args.fit_params != None:
+        if args.fit_params[0] != None:
             exp_name = exp_name.replace(scenario,'fitting')
 
     # Generate folders and copy required files

@@ -17,7 +17,8 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 class covidModel:
 
     def __init__(self,expandModel='testDelay_AsSymSys',observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=None,homogeneous=False,add_ageShift_2ndWave=False,trigger_channel=None,fit_params=None,emodl_name=None,git_dir=git_dir):
+                 change_testDelay=None,homogeneous=False,add_ageShift_2ndWave=False,intervention_config='intervention_emodl_config.yaml',
+                 fit_params=None,emodl_name=None,git_dir=git_dir):
         self.model = 'age'
         self.grpList = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
         self.expandModel = expandModel
@@ -26,7 +27,7 @@ class covidModel:
         self.change_testDelay = change_testDelay
         self.homogeneous = homogeneous
         self.add_ageShift_2ndWave = add_ageShift_2ndWave
-        self.trigger_channel = trigger_channel
+        self.intervention_config = intervention_config
         self.emodl_name = emodl_name
         self.emodl_dir = os.path.join(git_dir, 'emodl')
 
