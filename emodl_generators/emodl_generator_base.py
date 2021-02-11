@@ -20,13 +20,13 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 class covidModel:
 
     def __init__(self, expandModel='testDelay_AsSymSys', observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=None, trigger_channel=None, fit_params=None,emodl_name=None, git_dir=git_dir):
+                 change_testDelay=None, intervention_config='intervention_emodl_config.yaml', fit_params=None,emodl_name=None, git_dir=git_dir):
         self.model = 'base'
         self.expandModel = expandModel
         self.observeLevel = observeLevel
         self.add_interventions = add_interventions
         self.change_testDelay = change_testDelay
-        self.trigger_channel = trigger_channel
+        self.intervention_config = intervention_config
         self.emodl_name = emodl_name
         self.emodl_dir = os.path.join(git_dir, 'emodl')
 

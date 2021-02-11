@@ -22,7 +22,8 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 class covidModel:
 
     def __init__(self, expandModel, observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=False, trigger_channel=None, add_migration=False, fit_params=None,emodl_name=None, git_dir=git_dir):
+                 change_testDelay=False, intervention_config='intervention_emodl_config.yaml',
+                 add_migration=False, fit_params=None,emodl_name=None, git_dir=git_dir):
         self.model = 'locale'
         self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
                         'EMS_11']
@@ -31,7 +32,7 @@ class covidModel:
         self.observeLevel = observeLevel
         self.add_interventions = add_interventions
         self.change_testDelay = change_testDelay
-        self.trigger_channel = trigger_channel
+        self.intervention_config = intervention_config
         self.emodl_name = emodl_name
         self.startdate = pd.Timestamp('2020-02-13')
         self.emodl_dir = os.path.join(git_dir, 'emodl')
@@ -117,7 +118,7 @@ class covidModel:
             channels = channels + tertiary_channels
 
         channels = [channel for channel in channels if channel not in channels_not_observe]
-
+        channels = channels + ['asymp_cumul','asymp_det_cumul'] #workarund for channel error message
         return  list(set(channels))
 
     def write_observe(self, grp):
@@ -221,7 +222,7 @@ class covidModel:
                              'infectious_det_AsP_{grp}': ['As_det1::{grp}', 'P_det::{grp}']
                              }
 
-        func_str = f'(func deaths_det_cumul_{grp}  D3_det3::{grp})\n'
+        func_str = f'(func deaths_det_cumul_{grp}  D3_det3::{grp})\n(func asymp_det_{grp}  As_det1::{grp} )'
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
             func_dic_SymSys.update(func_dic)
             func_dic_all = func_dic_SymSys
@@ -541,7 +542,6 @@ class covidModel:
 
         return reaction_str
 
-
     def write_time_varying_parameter(self, total_string):
         """Time varying parameter that have been fitted to data, or informed by local data.
             Parameters and corresponding sub-functions:
@@ -703,18 +703,8 @@ class covidModel:
 
         return total_string
 
-    def write_interventions(self, total_string):
-        """ Write interventions
-            Interventions defined in sub-functions:
-                - bvariant: `write_bvariant`
-                - intervention_stop: `write_intervention_stop`
-                - transmission_increase: `write_transmission_increase`
-                - rollback: `write_rollback`
-                - gradual_reopening: `write_gradual_reopening`
-        """
-
-        """ Per default assumes immediate or gradual step-wise intervention scale up"""
-        intervention_param = covidModel.get_configs(key ='interventions', config_file='intervention_emodl_config.yaml')
+    def get_intervention_dates(intervention_param):
+        """intervention dates"""
         n_gradual_steps = intervention_param['n_gradual_steps']
         config_dic_dates = covidModel.get_configs(key ='time_parameters', config_file='extendedcobey_200428.yaml')
         #for i in range(1,len(scenario))
@@ -727,24 +717,50 @@ class covidModel:
         else:
             intervention_dates = [intervention_start]
 
-        def write_bvariant():
-            bvariant_str = ';COVID-19 B variant scenario\n'
-            bvariant_infectivity_param = ''
-            bvariant_infectivity_timeevent = ''
-            for grp in self.grpList:
-                temp_str_param = ''.join([f'(param Ki_bvariant_{i}_{grp} ' \
-                                          f'(* Ki_{grp} @bvariant_infectivity@ ' \
-                                          f'(* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)}))' \
-                                          f')\n' for i, date in
-                                          enumerate(intervention_dates, 1)])
+        return n_gradual_steps, intervention_dates
 
-                temp_str_timeevent = ''.join([f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(date, self.startdate)} ' \
-                                              f'((Ki_{grp} Ki_bvariant_{i}_{grp}))' \
-                                              f')\n' for i, date in
-                                              enumerate(intervention_dates, 1)])
-                bvariant_infectivity_param = bvariant_infectivity_param + temp_str_param
-                bvariant_infectivity_timeevent = bvariant_infectivity_timeevent + temp_str_timeevent
-            bvariant_infectivity = bvariant_infectivity_param + bvariant_infectivity_timeevent
+    def write_interventions(self, total_string):
+        """ Write interventions
+            Interventions defined in sub-functions:
+                - bvariant: `write_bvariant`
+                - intervention_stop: `write_intervention_stop`
+                - transmission_increase: `write_transmission_increase`
+                - rollback: `write_rollback`
+                - gradual_reopening: `write_gradual_reopening`
+        """
+
+        """ Get intervention configurations """
+        intervention_param = covidModel.get_configs(key ='interventions', config_file=self.intervention_config)
+
+
+        def write_bvariant():
+            emodl_str = ';COVID-19 bvariant scenario\n'
+
+            read_from_csv = intervention_param['read_from_csv']
+            if read_from_csv:
+                csvfile = intervention_param['bvariant_csv']
+                df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
+                intervention_dates = list(df['Date'].values)
+                fracinfect = list(df['variant_freq'].values)
+                emodl_param = ''.join([f'(param Ki_bvariant_{i}_{grp} '
+                                       f'(* Ki_{grp} @bvariant_infectivity@ ' \
+                                       f'{fracinfect[i - 1]}' \
+                                       f'))\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList])
+            else:
+                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param)
+                #fracinfect = ['@bvariant_fracinfect@' for _ in range(len(intervention_dates))]
+                emodl_param = ''.join([f'(param Ki_bvariant_{i}_{grp} '
+                                       f'(* Ki_{grp} @bvariant_infectivity@ ' \
+                                       f'(* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)}))' \
+                                       f')\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList ])
+
+            emodl_timeevents = ''
+            for i, date in enumerate(intervention_dates, 1):
+                temp_str = f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
+                temp_str = temp_str + ''.join([f' (Ki_{grp} Ki_bvariant_{i}_{grp})' for grp in self.grpList ])
+                temp_str = temp_str + f'))\n'
+                emodl_timeevents = emodl_timeevents + temp_str
+            bvariant_infectivity = emodl_param + emodl_timeevents
 
             """bvariant_severity Needs to be changed only once"""
             # FIXME: Affects total pop, regardless of bvariant prevalence
@@ -752,7 +768,7 @@ class covidModel:
             #        f'(fraction_dead (/ cfr fraction_severe)) '
 
             bvariant_severity = f'(param fracsevere_bvariant1 (* fraction_severe @bvariant_severity@))\n' \
-                                f'(time-event fracsevere_bvariant_change1 {covidModel.DateToTimestep(intervention_dates[0],self.startdate)} ' \
+                                f'(time-event fracsevere_bvariant_change1 {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0]),self.startdate)} ' \
                                 f'(' \
                                 f'(fraction_severe fracsevere_bvariant1) ' \
                                 f'(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) ' \
@@ -762,72 +778,113 @@ class covidModel:
                                 f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))' \
                                 f'))\n'
 
-            bvariant_str = bvariant_str + bvariant_infectivity + bvariant_severity
-            return bvariant_str
+            emodl_str = emodl_str + bvariant_infectivity + bvariant_severity
+
+            return emodl_str
 
         def write_rollback():
-            rollback = ''.join([f'(time-event rollback @rollback_time@ ((Ki_{grp} Ki_red4_{grp})))' for grp in self.grpList])
-            rollback_trigger = ''.join([f'(state-event rollbacktrigger_{grp} '
-                                          f'(and (> time @today@) (> {self.trigger_channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@))) '
-                                          f'((Ki_{grp} Ki_red7_{grp}))'
-                                          f')\n' for grp in self.grpList])
+            emodl_str = ';COVID-19 rollback scenario\n'
+            n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param)
+            rollback_relative_to_initial = intervention_param['rollback_relative_to_initial']
 
-            rollback_trigger_delay = ''.join([f'(param time_of_trigger_{grp} 10000)\n'
-                                              f'(state-event rollbacktrigger_{grp} '
-                                              f'(and (> time @today@) (> crit_det_{grp} '
-                                              f'(* @trigger_{grp}@ @capacity_multiplier@)) ) '
-                                              f'((time_of_trigger_{grp} time))'
-                                              f')\n'
-                                              f'(func time_since_trigger_{grp} (- time time_of_trigger_{grp}))\n'
-                                              f'(state-event apply_rollback_{grp} '
-                                              f'(> (- time_since_trigger_{grp} @trigger_delay_days@) 0) '
-                                              f'((Ki_{grp} Ki_red7_{grp}))'
-                                              f')\n'
-                                              f'(observe triggertime_{covidModel.sub(grp)} time_of_trigger_{grp})\n' for grp in self.grpList])
-            return rollback_trigger_delay
+            if rollback_relative_to_initial:
+                emodl_param = ''.join([f'(param ki_rollback_{i}_{grp} '
+                                       f'(- Ki_{grp}  (* (* @rollback_multiplier@ {(1 / (len(intervention_dates)) * i)}) (- @Ki_{grp}@  Ki_{grp})))' \
+                                       f')\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList ])
 
-        def write_intervention_stop():
-            intervention_stop = ''.join(
-                [f'(param Ki_back_{grp} (+ Ki_red13_{grp} (* @backtonormal_multiplier@ (- Ki_{grp} Ki_red13_{grp}))))\n'
-                 f'(time-event intervention_stop @today@ ((Ki_{grp} Ki_back_{grp})))' for grp in self.grpList])
+            else:
+                emodl_param = ''.join([f'(param ki_rollback_{i}_{grp} '
+                                       f'(* Ki_{grp}  (* @rollback_multiplier@ {(1 / (len(intervention_dates)) * i)}))' \
+                                       f')\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList ])
 
-            return intervention_stop
+            emodl_timeevents = ''
+            for i, date in enumerate(intervention_dates, 1):
+                temp_str = f'(time-event ki_rollback_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
+                temp_str = temp_str + ''.join([f' (Ki_{grp} ki_rollback_{i}_{grp})' for grp in self.grpList ])
+                temp_str = temp_str + f'))\n'
+                emodl_timeevents = emodl_timeevents + temp_str
+            emodl_str = emodl_str + emodl_param + emodl_timeevents
 
-        def write_transmission_increase():
-            transmission_increase = ''.join([f'(param Ki_increased_{grp} (* Ki_{grp} @ki_increase_multiplier@))\n'
-                                             f'(time-event ki_transmission_increase @today@ ((Ki_{grp} Ki_increased_{grp})))' for grp in self.grpList])
-            return transmission_increase
+            return emodl_str
 
-        def write_gradual_reopening(nchanges, region_specific=False):
-            n_gradual_reopening = range(1, nchanges+1)
-            gradual_pct = 1/nchanges
-            gradual_reopening = ''
-            reopening_multiplier = '@reopening_multiplier@'
-            if region_specific :
-                reopening_multiplier = '@reopening_multiplier_{grp}@'
-            for grp in self.grpList:
-                gradual_reopening_param = ''.join([f'(param Ki_back{i}_{grp} '
-                                                   f'(+ Ki_red13_{grp} (* {reopening_multiplier} {gradual_pct * i} (- Ki_{grp} Ki_red13_{grp})))'
-                                                   f')\n' for i in n_gradual_reopening])
+        def write_triggeredrollback():
+            emodl_str = ';COVID-19 triggeredrollback scenario\n'
+            trigger_channel = intervention_param['trigger_channel']
+            rollback_relative_to_initial = intervention_param['rollback_relative_to_initial']
+            n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param)
 
-                gradual_reopening_timeevent = ''.join([f'(time-event gradual_reopening{i} @gradual_reopening_time{i}@ ((Ki_{grp} Ki_back{i}_{grp}))'
-                                                       f')\n' for i in n_gradual_reopening])
-                gradual_reopening = gradual_reopening_param + gradual_reopening_timeevent
+            if rollback_relative_to_initial:
+                ki_change_str = ''.join([f'(- Ki_{grp}  (* @rollback_multiplier@ (- @Ki_{grp}@  Ki_{grp})))' for grp in self.grpList ])
+            else:
+                ki_change_str = ''.join([f'(Ki_{grp} (* Ki_{grp} @rollback_multiplier@)) ' for grp in self.grpList])
 
-            return gradual_reopening
+            emodl_timeevents = ''.join([f'(param time_of_trigger_{grp} 10000)\n'
+                                        f'(state-event rollbacktrigger_{grp} '
+                                        f'(and (> time {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0]),self.startdate)}) (> {trigger_channel}_{grp} '
+                                        f'(* @trigger_{grp}@ @capacity_multiplier@)) ) '
+                                        f'((time_of_trigger_{grp} time))'
+                                        f')\n'
+                                        f'(func time_since_trigger_{grp} (- time time_of_trigger_{grp}))\n'
+                                        f'(state-event apply_rollback_{grp} '
+                                        f'(> (- time_since_trigger_{grp} @trigger_delay_days@) 0) ('
+                                        f'{ki_change_str}'
+                                        f'))\n'
+                                        f'(observe triggertime_{covidModel.sub(grp)} time_of_trigger_{grp})\n' for grp in self.grpList])
+            emodl_str = emodl_str + emodl_timeevents
+            return emodl_str
 
+        def write_reopen():
+            emodl_str = ';COVID-19 reopen scenario\n'
+            n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param)
+            reopen_regionspecific = intervention_param['reopen_regionspecific']
+            reopen_relative_to_initial = intervention_param['reopen_relative_to_initial']
+            read_from_csv = intervention_param['read_from_csv']
+
+            if read_from_csv:
+                csvfile = intervention_param['reopen_csv']
+                df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
+                intervention_dates = list(df['Date'].values)
+                perc_reopen = list(df['perc_reopen'].values)
+            else:
+                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param)
+                perc_reopen = ['@reopen_multiplier@' for _ in range(len(intervention_dates))]
+
+            if reopen_relative_to_initial:
+                emodl_param = ''.join([f'(param Ki_reopen_{i}_{grp} '
+                                       f'(+ Ki_{grp} '
+                                       f'(* {perc_reopen[i - 1]} '
+                                       f'(- @Ki_{grp}@ Ki_{grp} )'
+                                       f')))\n'
+                                       for i, date in enumerate(intervention_dates, 1) for grp in self.grpList])
+            else:
+                emodl_param = ''.join([f'(param Ki_reopen_{i}_{grp} (+ Ki_{grp} (* {perc_reopen[i - 1]}  Ki_{grp})))\n'
+                                       for i, date in enumerate(intervention_dates, 1) for grp in self.grpList])
+
+            emodl_timeevents = ''
+            for i, date in enumerate(intervention_dates, 1):
+                temp_str = f'(time-event ki_reopen_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
+                temp_str = temp_str + ''.join([f' (Ki_{grp} Ki_reopen_{i}_{grp})' for grp in self.grpList ])
+                temp_str = temp_str + f'))\n'
+                emodl_timeevents = emodl_timeevents + temp_str
+            emodl_str = emodl_param + emodl_timeevents
+
+            return emodl_str
+
+
+        """Select intervention to add to emodl"""
         if self.add_interventions == "bvariant":
             intervention_str = write_bvariant()
-        if self.add_interventions == "interventionStop":
-            intervention_str = write_transmission_increase()
-        if self.add_interventions == "interventionSTOP_adj":
-            intervention_str = write_intervention_stop()
-        if self.add_interventions == "gradual_reopening":
-            intervention_str = write_gradual_reopening(nchanges=n_gradual_steps)
         if self.add_interventions == "rollback":
             intervention_str = write_rollback()
+        if self.add_interventions == "triggeredrollback":
+            intervention_str = write_triggeredrollback()
+        if self.add_interventions == "reopen":
+            intervention_str = write_reopen()
+        #if self.add_interventions == "vaccine":
+        #    intervention_str = write_vaccine()
 
         return total_string.replace(';[INTERVENTIONS]', intervention_str )
+
 
     def write_change_test_delay(self, total_string):
         """ Write change in test delay (model extension)

@@ -8,5 +8,13 @@ time_varying_parameter:
   'n_recovery_time_hosp_change': 1
 interventions:
   'n_gradual_steps': 1
+  'rollback_relative_to_initial': True
+  'reopen_relative_to_initial': False
+  'reopen_regionspecific': False
+  'trigger_channel': 'crit_det'
+  'read_from_csv': False
+  'bvariant_csv': "bvariant_frequency_scenario.csv"
+  #'reopen_csv': "ki_increase_scenario.csv"
+  #'vaccine_csv': "vaccine_rollout_scenario.csv"
   #'n_gradual_intervals': 4
   #'start_today': True

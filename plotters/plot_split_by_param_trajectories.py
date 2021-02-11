@@ -72,12 +72,12 @@ def plot_main(nscen=None, showLegend =True, channels=None) :
 
     for d, exp_name in enumerate(exp_names) :
         df = load_sim_data(exp_name)
-        df = df[df['date'].between(first_day, last_day)]
+        df = df[df['date'].between(first_plot_day, last_plot_day)]
 
         if nscen != None :
             df = df[df['scen_num'].isin(nscen)]
 
-        df['symptomatic_census'] = df['symptomatic_mild'] + df['symptomatic_severe']
+        df['symptomatic_census'] = df['symp_mild'] + df['symp_severe']
         df['ventilators'] = get_vents(df['crit_det'].values)
 
         plot_on_fig(df, channels, axes, color=palette[d], label=exp_name)
@@ -175,12 +175,12 @@ if __name__ == '__main__' :
         showLegend = True
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
-    plot_main(nscen=None, showLegend=showLegend, channels=['cfr_t','frac_crit_t','fraction_hospitalized_t',
-                                                           'fraction_dead_t','fraction_symptomatic','fraction_severe'])
+    #plot_main(nscen=None, showLegend=showLegend, channels=['frac_crit_t','fraction_hospitalized_t',
+    #                                                       'fraction_dead_t','fraction_symptomatic','fraction_severe'])
     #plot_main(nscen=None, showLegend=showLegend)
     #plot_covidregions(nscen=None, showLegend=showLegend)
     plot_covidregions_inone(channel='Ki_t', nscen=None, showLegend=showLegend, ymax=1.5)
-    plot_covidregions_inone(channel='d_Sym_t', nscen=None, showLegend=showLegend, ymax=1)
+    #plot_covidregions_inone(channel='d_Sym_t', nscen=None, showLegend=showLegend, ymax=1)
     #plot_covidregions_inone(channel='Ki_t', nscen=None, showLegend=showLegend, ymax=1.5)
     #plot_covidregions_inone(channel='cfr_t', nscen=None, showLegend=showLegend)
     #plot_covidregions_inone(channel='frac_crit_t', nscen=None, showLegend=showLegend)

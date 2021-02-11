@@ -77,7 +77,7 @@ def plot_main() :
     for d, exp_name in enumerate(exp_names) :
         df = load_sim_data(exp_name)
         df = df[df['date'].between(first_plot_day, last_plot_day)]
-        df['symptomatic_census'] = df['symptomatic_mild'] + df['symptomatic_severe']
+        df['symptomatic_census'] = df['symp_mild'] + df['symp_severe']
         df['ventilators'] = get_vents(df['crit_det'].values)
 
         plot_on_fig(df, channels, axes, color=palette[d], label=exp_name)
