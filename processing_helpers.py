@@ -229,12 +229,19 @@ def load_ref_df(ems_nr):
     ref_df = pd.merge(how='outer', left=ref_df, right=ref_df_cli, on=merge_keys)
     ref_df = pd.merge(how='outer', left=ref_df, right=ref_df_public, on=merge_keys)
 
-    if isinstance(ems_nr, list):
-        ref_df[ref_df['covid_region'].isin(ems_nr)]
 
     ref_df = ref_df.sort_values(['covid_region', 'date'])
     ref_df['date'] = pd.to_datetime(ref_df['date'])
     ref_df = ref_df[ref_df['date'].between(pd.Timestamp('2020-01-01'), pd.Timestamp.today())]
+
+    if isinstance(ems_nr, list):
+        ref_df[ref_df['covid_region'].isin(ems_nr)]
+        if 0 in ems_nr:
+            ref_df_IL = ref_df.copy()
+            ref_df_IL['covid_region'] = 0
+            ref_df_IL = ref_df_IL.groupby(['date']).agg(np.nansum).reset_index()
+            ref_df = ref_df_IL.append(ref_df)
+            #ref_df.covid_region.unique()
 
     return ref_df
 

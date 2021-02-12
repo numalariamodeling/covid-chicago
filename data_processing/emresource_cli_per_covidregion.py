@@ -90,4 +90,4 @@ if __name__ == '__main__' :
     last_plot_day = pd.to_datetime(today)
 
     plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
-    plot_emresource(ems_list=range(1, 12), scale='nolog')
+    plot_emresource(ems_list=range(0, 12), scale='nolog')
