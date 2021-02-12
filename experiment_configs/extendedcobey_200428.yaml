@@ -1,5 +1,5 @@
 experiment_setup_parameters:
-  'number_of_samples': 10
+  'number_of_samples': 600
   'number_of_runs': 1
   'duration': 530
   'monitoring_samples': 530 # needs to be less than or equal to duration
@@ -296,7 +296,7 @@ intervention_parameters:
   'bvariant_severity':
     np: linspace
     function_kwargs: {'start':1.5, 'stop':1.5}
-  ### ---- ROLLBACK ----------------------
+  ### ---- ROLLBACK OR TRIGGEREDROLLBACK ----------------------
   ### Decrease Ki due to more intense mitigation measures
   'rollback_multiplier':
     np: linspace
@@ -507,26 +507,48 @@ time_parameters:
   ### INTERVENTION PARAMETERS  - DATES
   ### (only used with corresponding emodl)
   ###------------------------------------------------
-  ### ---- intervention1 ---
-  'intervention1_start':
+  ### ---- Bvariant ---
+  'bvariant_start':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2021-02-10}
     #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
-  'intervention1_scaleupend':
+  'bvariant_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-10}
-  'intervention1_end':
+    function_kwargs: {'dates': 2021-03-10} #if gradual change
+  'bvariant_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #no end
-  ### ---- intervention2 ---
-  'intervention2_start':
+  ### ---- Reopen---
+  'reopen_start':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2021-02-10}
-    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01]}
-  'intervention2_scaleupend':
+  'reopen_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-10}
-  'intervention2_end':
+    function_kwargs: {'dates': 2021-03-01} #if gradual change
+  'reopen_end':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #no end
+  ### ---- Rollback---
+  'rollback_start':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-04-10}
+  'rollback_scaleupend':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-04-10} #if gradual change
+  'rollback_end':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #no end
+  ### ---- TRIGGEREDROLLBACK ----------------------
+  ### Decrease Ki due to more intense mitigation measures
+  ### Start = date after which trigger can be activated
+  ### scaleup dates and end are dummies (end could be useful, not added yet)
+  'triggeredrollback_start':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-03-01}
+  'triggeredrollback_scaleupend':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #dummy
+  'triggeredrollback_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #no end
   ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
