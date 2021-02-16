@@ -118,7 +118,6 @@ class covidModel:
             channels = channels + tertiary_channels
 
         channels = [channel for channel in channels if channel not in channels_not_observe]
-        channels = channels + ['asymp_cumul','asymp_det_cumul'] #workarund for channel error message
         return  list(set(channels))
 
     def write_observe(self, grp):
