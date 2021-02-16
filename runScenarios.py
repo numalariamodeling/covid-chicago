@@ -498,7 +498,7 @@ def parse_args():
         "--paramdistribution",
         type=str,
         help="Use parameter ranges or means (could be extended to specify shape of distribution)",
-        choices=["uniform_range", "uniform_mean", "normal_range", "normal_mean"],
+        choices=["uniform_range", "uniform_mean"], #, "normal_range", "normal_mean"],
         default= "uniform_range"
     )
 
@@ -538,8 +538,10 @@ def parse_args():
         "-obs",
         "--observeLevel",
         type=str,
-        help="Specifies which outcome channels to simulate and return in trajectoriesDat.csv",
-        choices=["primary", "secondary", "tertiary"],
+        help=("Specifies which group of outcome channels to simulate and return in trajectoriesDat.csv."
+              "The number of outcome channels affects file size and may slow down speed of postprocessing."
+              "When specifying 'all', the channels include each single state variable"),
+        choices=["primary", "secondary", "tertiary",'all'],
         default='secondary'
     )
     parser.add_argument(
@@ -567,8 +569,9 @@ def parse_args():
         "-fit",
         "--fit_params",
         type=str,
-        help=("Name of parameters to fit (testing stage, currently supports only single ki multipliers),"
-              "to be etxtended using nargs='+' when ready. It adds a scaling factor to the region specific ki_multipliers"),
+        help=("Name of parameters to fit (testing stage, currently supports only single ki multipliers)"
+              "to be etxtended using nargs='+' when ready. It adds a scaling factor to the region specific ki_multipliers"
+              "For simplicity should be used with -dis 'uniform_mean'"),
         #choices=["ki_multiplier_4", "ki_multiplier_5", "ki_multiplier_6", "ki_multiplier_7", "ki_multiplier_8",
         #         "ki_multiplier_9", "ki_multiplier_10", "ki_multiplier_11", "ki_multiplier_12", "ki_multiplier_13"],
         default= [None]

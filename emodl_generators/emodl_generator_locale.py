@@ -118,7 +118,6 @@ class covidModel:
             channels = channels + tertiary_channels
 
         channels = [channel for channel in channels if channel not in channels_not_observe]
-        channels = channels + ['asymp_cumul','asymp_det_cumul'] #workarund for channel error message
         return  list(set(channels))
 
     def write_observe(self, grp):
@@ -146,6 +145,12 @@ class covidModel:
                     observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3::{grp})\n'
                 else:
                     observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
+
+            """Observe all state variables over time"""
+            if self.observeLevel=='all':
+                state_variables = covidModel.get_species(self)
+                for state in state_variables:
+                    observe_emodl = observe_emodl + f'(observe {state}_{grp} {state}::{grp})\n'
 
             return observe_emodl
 
