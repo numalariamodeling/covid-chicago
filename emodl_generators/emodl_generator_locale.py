@@ -55,7 +55,7 @@ class covidModel:
         timestep = datediff.days
         return timestep
 
-    def write_species(self, grp):
+    def get_species(self):
         state_SE = ('S', 'E')
         state_nosymptoms = ('As', 'As_det1', 'P', 'P_det')
         state_symptoms = ('Sym', 'Sym_det2', 'Sys', 'Sys_det3')
@@ -65,14 +65,17 @@ class covidModel:
         state_deaths = ('D3', 'D3_det3')
         state_recoveries = ('RAs', 'RSym', 'RH1', 'RC2', 'RAs_det1', 'RSym_det2', 'RH1_det3', 'RC2_det3')
         state_testDelay_SymSys = ('Sym_preD', 'Sys_preD')
-        state_testDelay_AsSymSys = (
-        'As_preD', 'Sym_preD', 'Sym_det2a', 'Sym_det2b', 'Sys_preD', 'Sys_det3a', 'Sys_det3b')
+        state_testDelay_AsSymSys = ('As_preD', 'Sym_preD', 'Sym_det2a', 'Sym_det2b', 'Sys_preD', 'Sys_det3a', 'Sys_det3b')
         state_variables = state_SE + state_nosymptoms + state_symptoms + state_hospitalized + state_critical + state_deaths + state_recoveries
 
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
             state_variables = state_variables + state_testDelay_SymSys
         if self.expandModel == "AsSymSys":
             state_variables = state_variables + state_testDelay_AsSymSys
+        return state_variables
+
+    def write_species(self, grp):
+        state_variables = covidModel.get_species(self)
 
         def write_species_emodl():
             grp_suffix = "::{grp}"
