@@ -147,6 +147,12 @@ class covidModel:
                 else:
                     observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
 
+            """Observe all state variables over time"""
+            if self.observeLevel=='all':
+                state_variables = covidModel.get_species(self)
+                for state in state_variables:
+                    observe_emodl = observe_emodl + f'(observe {state}_{grp} {state}::{grp})\n'
+
             return observe_emodl
 
         def write_observe_str(observe_emodl, grp):

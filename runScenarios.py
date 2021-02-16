@@ -538,8 +538,10 @@ def parse_args():
         "-obs",
         "--observeLevel",
         type=str,
-        help="Specifies which outcome channels to simulate and return in trajectoriesDat.csv",
-        choices=["primary", "secondary", "tertiary"],
+        help=("Specifies which group of outcome channels to simulate and return in trajectoriesDat.csv."
+              "The number of outcome channels affects file size and may slow down speed of postprocessing."
+              "When specifying 'all', the channels include each single state variable"),
+        choices=["primary", "secondary", "tertiary",'all'],
         default='secondary'
     )
     parser.add_argument(
