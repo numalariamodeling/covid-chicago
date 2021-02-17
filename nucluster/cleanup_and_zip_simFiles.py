@@ -59,13 +59,15 @@ def make_archive(source, destination):
     shutil.move('%s.%s' % (name, format), destination)
 
 
-def cleanup_and_zip_simFiles(sim_output_path, del_trajectories, zip_dir, del_dir):
+def cleanup_and_zip_simFiles(sim_output_path, exp_name, del_trajectories, zip_dir, del_dir):
     """Delete single trajectories and simulation files"""
     if del_trajectories:
         shutil.rmtree(os.path.join(sim_output_path,'trajectories'), ignore_errors=True)
         shutil.rmtree(os.path.join(sim_output_path,'simulations'), ignore_errors=True)
     if zip_dir:
-        make_archive(sim_output_path, os.path.join(wdir, 'simulation_output', f'{exp_name}_zip.zip'))
+        zip_folder_name = f'{exp_name[0:8]}_zip_{exp_name[9:]}.zip'
+        shutil.rmtree(os.path.join(sim_output_path,zip_folder_name), ignore_errors=True)
+        make_archive(sim_output_path, os.path.join(wdir,'simulation_output',zip_folder_name))
     if del_dir:
         shutil.rmtree(os.path.join(sim_output_path), ignore_errors=True)
 
@@ -82,5 +84,6 @@ if __name__ == '__main__':
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         cleanup_and_zip_simFiles(sim_output_path,
                                  del_trajectories=args.del_trajectories,
+                                 exp_name = exp_name,
                                  zip_dir=args.zip_dir,
                                  del_dir=args.del_dir)
