@@ -80,6 +80,11 @@ def parse_args():
     return parser.parse_args()
 
 def sum_nll(df_values, ref_df_values):
+    """remove NAs in data from both arrays"""
+    na_pos = np.argwhere(np.isnan(ref_df_values))
+    if len(na_pos) != 0 :
+        df_values = np.delete(df_values, na_pos)
+        ref_df_values = np.delete(ref_df_values, na_pos)
     try:
         x = -np.log10(scipy.stats.poisson(mu=df_values).pmf(k=ref_df_values))
     except ValueError:
@@ -139,7 +144,6 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,
 
     ref_df = load_ref_df(ems_nr)
     ref_df = ref_df[ref_df['date'].between(first_day, last_day)]
-    ref_df = ref_df.dropna()
 
     df = load_sim_data(exp_name, region_suffix=region_suffix, column_list=column_list)
     df = df[df['date'].between(first_day, ref_df['date'].max())]
