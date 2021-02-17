@@ -991,33 +991,17 @@ class covidModel:
 
 
         """Select intervention to add to emodl"""
-        if self.add_interventions == "bvariant":
-            intervention_str = write_bvariant()
-        if self.add_interventions == "bvariant_rollback":
-            intervention_str = write_bvariant() + write_rollback()
-        if self.add_interventions == "bvariant_triggeredrollback":
-            intervention_str = write_bvariant() + write_triggeredrollback()
-
-        if self.add_interventions == "rollback":
-            intervention_str = write_rollback()
-        if self.add_interventions == "triggeredrollback":
-            intervention_str = write_triggeredrollback()
-
-        if self.add_interventions == "reopen":
-            intervention_str = write_reopen()
-        #if self.add_interventions == "reopen_bvariant":
-        #    intervention_str = write_reopen()
-        if self.add_interventions == "reopen_rollback":
-            intervention_str = write_reopen() +  write_rollback()
-        if self.add_interventions == "reopen_triggeredrollback":
-            intervention_str = write_reopen() +  write_triggeredrollback()
-
-        if self.add_interventions == "vaccine":
-            intervention_str = write_vaccine()
-        #if self.add_interventions == "vaccine_bvariant":
-        #    intervention_str = write_vaccine() + write_bvariant()
-        #if self.add_interventions == "vaccine_reopen_rollback":
-        #    intervention_str = write_vaccine() + write_bvariant()
+        intervention_str = ""
+        if "bvariant" in self.add_interventions:
+            intervention_str = intervention_str + write_bvariant()
+        if "rollback" in self.add_interventions:
+            intervention_str = intervention_str + write_rollback()
+        if "triggeredrollback" in self.add_interventions:
+            intervention_str = intervention_str + write_triggeredrollback()
+        if "reopen" in self.add_interventions:
+            intervention_str = intervention_str + write_reopen()
+        if "vaccine" in self.add_interventions:
+            intervention_str = intervention_str + write_vaccine()
 
         return total_string.replace(';[INTERVENTIONS]', intervention_str )
 
@@ -1172,7 +1156,7 @@ class covidModel:
                                                "interventionSTOP_adj",
                                                "gradual_reopening",
                                                "rollback",
-                                               #"gradual_reopening2",
+                                               "vaccine",
                                                #"rollbacktriggered",
                                                #"contactTracing",
                                                #"improveHS",
