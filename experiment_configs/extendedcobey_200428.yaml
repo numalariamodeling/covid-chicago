@@ -309,6 +309,11 @@ intervention_parameters:
   'reopen_multiplier':
     np: linspace
     function_kwargs: {'start':0.20, 'stop':0.20, 'num' : 1}
+  ### ---- VACCINE ----------------------
+  ### Reset Ki to defined proporions of it's initial value using multiple time-events
+  'vacc_daily_cov':
+    np: linspace
+    function_kwargs: {'start':0.003, 'stop':0.003, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
@@ -557,6 +562,16 @@ time_parameters:
   'triggeredrollback_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #no end
+  ### ---- Vaccine---
+  'vaccine_start':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-12-15}
+  'vaccine_scaleupend':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-06-01} #not used
+  'vaccine_end':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #not used
   ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
   'change_testDelay_time1':
     custom_function: DateToTimestep
