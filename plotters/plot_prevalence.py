@@ -110,7 +110,7 @@ def plot_prevalences(df, first_day, last_day, channels):
         if ems_num == 0:
             plotsubtitle = 'Illinois'
         ax.set_title(plotsubtitle)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
         ax.set_xlim(first_day, last_day)
         ax.axvline(x=pd.Timestamp.today(), color='#666666', linestyle='--')
 

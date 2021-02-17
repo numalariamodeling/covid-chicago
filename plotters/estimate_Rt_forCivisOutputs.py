@@ -86,7 +86,7 @@ def rt_plot(df, plotname,first_day=None, last_day=None):
         if reg == 'illinois':
             plotsubtitle = 'Illinois'
         ax.set_title(plotsubtitle)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
         if first_day != None:
             ax.set_xlim(first_day, last_day)
         ax.axvline(x=pd.Timestamp.today(), color='#737373', linestyle='--')
