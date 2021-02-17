@@ -488,7 +488,7 @@ def parse_args():
         type=str,
         help=("Intervention scenario to use, default = baseline"
               "Example choices are shown below for a full list please visit the GitHub readme"),
-        choices=["baseline","bvariant", "rollback","triggeredrollback", "reopen",
+        choices=["baseline","bvariant", "rollback","triggeredrollback", "reopen",'vaccine',
                  "bvariant_rollback", "bvariant_triggeredrollback", "reopen_rollback","reopen_triggeredrollback"],
                  #"reopen_rollback","interventionSTOP","contactTracing","improveHS","contactTracing_improveHS","reopen_contactTracing_improveHS"],
         default="baseline"
