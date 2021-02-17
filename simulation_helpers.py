@@ -243,7 +243,7 @@ echo end""")
 
         """Simulate traces"""
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[13]}.bat'), 'w')
-        file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[13]} --stem "{exp_name}" --plot >> "{sim_output_path}/log/{list(process_dict.keys())[13]}.txt" \n')
+        file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[13]} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[13]}.txt" \n')
 
 
         fname = list(process_dict.values())[3]
