@@ -56,7 +56,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names, titles, r
 
         ax.set_title(titles[c], y=0.8, fontsize=12)
 
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
         ax.set_xlim(first_day, last_day)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         if logscale :

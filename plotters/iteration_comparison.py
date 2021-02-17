@@ -65,7 +65,7 @@ def comparison_plot(reg_nr=0, channels=None, n_iter=3):
                         [capacity[channel], capacity[channel]], '--', linewidth=1, color='black')
 
             ax.set_title(channel_labels[c], y=0.978)
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
     axes[-1].legend(loc='upper right')
     plotname = f'iteration_comparison_{region}'
 
