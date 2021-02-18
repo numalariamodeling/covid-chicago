@@ -296,7 +296,8 @@ class covidModel:
             func_dic_all_V = {}
             for key, value in func_dic_all.items():
                 key_V = key.replace('_{grp}','_V_{grp}')
-                func_dic_all_V[key_V] = [item.replace('_{grp}','_V_{grp}')  if '_{grp}' in item else item.replace('::{grp}','_V::{grp}') for item in func_dic_all[key]]
+                func_dic_all_V[key_V] = [item.replace('_{grp}','_V_{grp}')  if '_{grp}' in item
+                                         else item.replace('::{grp}','_V::{grp}') for item in func_dic_all[key]]
             func_dic_all.update(func_dic_all_V)
 
         for key in func_dic_all.keys():
@@ -381,8 +382,20 @@ class covidModel:
 
         calculated_params_str =  ''.join([f'(param {key} {param_dic[key]})\n' for key in list(param_dic.keys())])
         calculated_params_expand_str =  ''.join([f'(param {key} {param_dic_expand[key]})\n' for key in list(param_dic_expand.keys())])
-
         params_str = yaml_sampled_param_str + calculated_params_str + calculated_params_expand_str
+
+        if 'vaccine' in self.add_interventions:
+            #custom_param_vacc = ['fraction_symptomatic_V', 'fraction_severe_V']
+            custom_param_vacc_str = '(param fraction_symptomatic_V (* fraction_symptomatic @reduced_fraction_Sym@))\n' \
+                                    '(param fraction_severe_V (* fraction_severe @reduced_fraction_Sys@))\n'
+            param_symptoms_dic_V = {'KlV ': '(/ (- 1 fraction_symptomatic_V  ) time_to_infectious)',
+                                    'KsV ': '(/ fraction_symptomatic_V   time_to_infectious)',
+                                    'KsysV ': '(* fraction_severe_V (/ 1 time_to_symptoms))',
+                                    'KsymV ': '(* (- 1 fraction_severe_V ) (/ 1 time_to_symptoms))'
+                                    }
+
+            param_symptoms_str_V = ''.join([f'(param {key} {param_symptoms_dic_V[key]})\n' for key in list(param_symptoms_dic_V.keys())])
+            params_str = params_str + custom_param_vacc_str + param_symptoms_str_V
 
         return params_str
 
@@ -715,9 +728,17 @@ class covidModel:
             reaction_str_V = reaction_str.replace(f'_{grp}',f'_V_{grp}')
             reaction_str_V = reaction_str_V.replace(f'::{grp}', f'_V::{grp}')
             reaction_str = reaction_str + reaction_str_V
-            reaction_str = reaction_str.replace(f'_V_V', f'_V')
-            reaction_str = reaction_str.replace(f'Ki_V', f'Ki')
-            reaction_str = reaction_str.replace(f'N_V', f'N')
+
+            """Custom adjustments - not automated/integrated yet"""
+            reaction_str = reaction_str.replace('_V_V', '_V')
+            reaction_str = reaction_str.replace('Ki_V', 'Ki')
+            reaction_str = reaction_str.replace('N_V', 'N')
+            """Vaccinated-population specific parameters"""
+            reaction_str = reaction_str.replace('Kl E_V::', 'KlV E_V::')
+            reaction_str = reaction_str.replace('Ks E_V::', 'Ks E_V::')
+            reaction_str = reaction_str.replace('Ksym P_V::', 'KsymV P_V::')
+            reaction_str = reaction_str.replace('Ksys P_V::', 'KsysV P_V::')
+
 
         return reaction_str
 
