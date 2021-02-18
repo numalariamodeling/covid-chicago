@@ -487,6 +487,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
+- 20210217 added transmission multiplier 14 for February, added range for initial transmission rate
 - 20210210 model update: added pre-/post ICU compartments, added reduced infectiousness for asymptomatic infections, updated time-varying IL specific parameters
 - 20210204 workflow update: attached emodl generation to runScenarios.py (optional)
 - 20210203 updated parameter fit, recovery_As set to 9
