@@ -137,37 +137,62 @@ class covidModel:
         grp = str(grp)
         grpout = covidModel.sub(grp)
 
-        channels = covidModel.get_channels(self)
-
         def write_observe_emodl():
             #grp_suffix = "::{grp}"
             #grp_suffix2 = "_{grp}"
 
-            observe_emodl = ""
-            for channel in channels:
-                if channel == 'crit':
-                    channel = 'critical'
-                if channel == 'hosp':
-                    channel = 'hospitalized'
-                if channel == 'crit_V':
-                    channel = 'critical_V'
-                if channel == 'hosp_V':
-                    channel = 'hospitalized_V'
+            if 'vaccine' in self.add_interventions:
+                channels = covidModel.get_channels(self)
+                channels = channels[int(len(channels) / 2):]
+                observe_emodl = ""
+                for channel in channels:
+                    if channel == 'crit_V':
+                        channel = 'critical_V'
+                    if channel == 'hosp_V':
+                        channel = 'hospitalized_V'
 
-                if channel == "susceptible":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S::{grp})\n'
-                elif channel == "exposed":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E::{grp})\n'
-                elif channel == "deaths_det":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3::{grp})\n'
-                elif channel == "susceptible_V":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S_V::{grp})\n'
-                elif channel == "exposed_V":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E_V::{grp})\n'
-                elif channel == "deaths_det_V":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3_V::{grp})\n'
-                else:
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
+                    elif channel == "susceptible_V":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S_V::{grp})\n'
+                    elif channel == "exposed_V":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E_V::{grp})\n'
+                    elif channel == "deaths_det_V":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3_V::{grp})\n'
+                    else:
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
+
+                channels = covidModel.get_channels(self)
+                channels = channels[:int(len(channels) / 2)]
+                for channel in channels:
+                    if channel == 'crit':
+                        channel = 'critical'
+                    if channel == 'hosp':
+                        channel = 'hospitalized'
+
+                    if channel == "susceptible":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} (+ S::{grp}  S_V::{grp}))\n'
+                    elif channel == "exposed":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} (+ E::{grp} E_V::{grp}))\n'
+                    elif channel == "deaths_det":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} (+ D3_det3::{grp} D3_det3_V::{grp}))\n'
+                    else:
+                        observe_emodl= observe_emodl + f'(observe {channel}_{grpout} (+ {channel}_{grp} {channel}_V_{grp}))\n'
+            else:
+                channels = covidModel.get_channels(self)
+                observe_emodl = ""
+                for channel in channels:
+                    if channel == 'crit':
+                        channel = 'critical'
+                    if channel == 'hosp':
+                        channel = 'hospitalized'
+
+                    if channel == "susceptible":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S::{grp})\n'
+                    elif channel == "exposed":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E::{grp})\n'
+                    elif channel == "deaths_det":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3::{grp})\n'
+                    else:
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
 
             """Observe all state variables over time"""
             if self.observeLevel=='all':
@@ -427,50 +452,108 @@ class covidModel:
 
         return stringAll
 
-    def write_All(self):
+    def write_observe_All(self):
 
         grpList = self.grpList
-        observe_channels_All_str = ""
-        channels = covidModel.get_channels(self)
-        for channel in channels :
-            if channel == 'crit':
-                channel = 'critical'
-            if channel == 'hosp':
-                channel = 'hospitalized'
-            if channel == 'crit_V':
-                channel = 'critical_V'
-            if channel == 'hosp_V':
-                channel = 'hospitalized_V'
+        if "vaccine" in self.add_interventions:
+            observe_channels_All_str = ""
+            channels = covidModel.get_channels(self)
+            channels = channels[:int(len(channels) / 2)]
+            for channel in channels:
+                if channel == 'crit':
+                    channel = 'critical'
+                if channel == 'hosp':
+                    channel = 'hospitalized'
 
+                if channel == "susceptible":
+                    temp_str = f"(observe {channel}_All " \
+                               f"(+ " +\
+                               covidModel.repeat_string_by_grp('S::', grpList) + \
+                               covidModel.repeat_string_by_grp('S_V::', grpList) + \
+                               "))\n"
+                elif channel == "deaths_det":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('D3_det3::', grpList) + \
+                               covidModel.repeat_string_by_grp('D3_det3_V::', grpList) + \
+                               "))\n"
+                elif channel == "exposed":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('E::', grpList) + \
+                               covidModel.repeat_string_by_grp('E_V::', grpList) + \
+                               "))\n"
+                elif channel == "asymp_det":
+                    temp_str = f"(observe {channel}_All (+ " +\
+                               covidModel.repeat_string_by_grp('As_det1::', grpList) + \
+                               covidModel.repeat_string_by_grp('As_det1_V::', grpList) + \
+                               "))\n"
+                elif channel == "presymp":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('P::', grpList) + \
+                               covidModel.repeat_string_by_grp('P_V::', grpList) + \
+                               "))\n"
+                elif channel == "presymp_det":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('P_det::',grpList) + \
+                               covidModel.repeat_string_by_grp('P_det_V::', grpList) + \
+                               "))\n"
+                else:
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp(f'{channel}_', grpList) + \
+                               covidModel.repeat_string_by_grp(f'{channel}_V_', grpList) + \
+                               "))\n"
+                observe_channels_All_str = observe_channels_All_str + temp_str
+                del temp_str
 
-            if channel == "susceptible":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S::', grpList) + "))\n"
-            elif channel == "susceptible_V":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S_V::', grpList) + "))\n"
-            elif channel == "deaths_det":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3::', grpList) + "))\n"
-            elif channel == "deaths_det_V":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3_V::', grpList) + "))\n"
-            elif channel == "exposed":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E::', grpList) + "))\n"
-            elif channel == "exposed_V":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E_V::', grpList) + "))\n"
-            elif channel == "asymp_det":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1::', grpList) + "))\n"
-            elif channel == "asymp_det_V":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1_V::',                                                                           grpList) + "))\n"
-            elif channel == "presymp":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P::',grpList) + "))\n"
-            elif channel == "presymp_V":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_V::', grpList) + "))\n"
-            elif channel == "presymp_det":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det::', grpList) + "))\n"
-            elif channel == "presymp_det_V":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det_V::', grpList) + "))\n"
-            else:
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp(f'{channel}_', grpList) + "))\n"
-            observe_channels_All_str = observe_channels_All_str + temp_str
-            del temp_str
+            channels = covidModel.get_channels(self)
+            channels = channels[int(len(channels) / 2):]
+            for channel in channels:
+                if channel == 'crit_V':
+                    channel = 'critical_V'
+                if channel == 'hosp_V':
+                    channel = 'hospitalized_V'
+
+                if channel == "susceptible_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S_V::',grpList) + "))\n"
+                elif channel == "deaths_det_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3_V::', grpList) + "))\n"
+                elif channel == "exposed_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E_V::',grpList) + "))\n"
+                elif channel == "asymp_det_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1_V::', grpList) + "))\n"
+                elif channel == "presymp_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_V::', grpList) + "))\n"
+                elif channel == "presymp_det_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det_V::', grpList) + "))\n"
+                else:
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp(f'{channel}_', grpList) + "))\n"
+                observe_channels_All_str = observe_channels_All_str + temp_str
+                del temp_str
+
+        else:
+            observe_channels_All_str = ""
+            channels = covidModel.get_channels(self)
+            for channel in channels :
+                if channel == 'crit':
+                    channel = 'critical'
+                if channel == 'hosp':
+                    channel = 'hospitalized'
+
+                if channel == "susceptible":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S::', grpList) + "))\n"
+                elif channel == "deaths_det":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3::', grpList) + "))\n"
+                elif channel == "exposed":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E::', grpList) + "))\n"
+                elif channel == "asymp_det":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1::', grpList) + "))\n"
+                elif channel == "presymp":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P::',grpList) + "))\n"
+                elif channel == "presymp_det":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det::', grpList) + "))\n"
+                else:
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp(f'{channel}_', grpList) + "))\n"
+                observe_channels_All_str = observe_channels_All_str + temp_str
+                del temp_str
 
         return observe_channels_All_str
 
@@ -1112,7 +1195,7 @@ class covidModel:
         param_string = covidModel.write_params(self) + param_string + covidModel.write_N_population(self)
         if (self.add_migration):
             param_string = param_string + covidModel.write_migration_param(self)
-        functions_string = functions_string + covidModel.write_All(self)
+        functions_string = functions_string + covidModel.write_observe_All(self)
 
         intervention_string = "\n;[TIMEVARYING_PARAMETERS]\n;[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
         total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string + '\n\n' + reaction_string + '\n\n' + footer_str
