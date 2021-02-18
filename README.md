@@ -16,6 +16,20 @@ A basic SEIR model was extended to include symptom status (asymptomatic, presymp
 ![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure.png)
 Simulations run per [Emergency Medical Service Area (EMS)](https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf) and are aggregated for [restore regions](https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard), and for Illinois. As of the 22nd of July, the ['covid regions'](http://dph.illinois.gov/regionmetrics?regionID=1) are used. For simplicity, the term 'EMS' is kept in the modelling files. 
 
+<details><summary>Show SEIR structure with vaccinations</summary>
+<p>
+
+When specying 'vaccine' as one of the intervention scenarios, the whole compartmental structure is mirrored for the vaccinated population.
+The vaccinated population is assumed to be less infectious and fewer infections are symptomatic (reducted fraction mild and severe symptoms).
+Whereas for the fraction of the vaccinated population that develops severe symptoms, the transition through the hospital stages is the same as for not-vaccinated population.
+Per default the fraction_severe is reduced by 100-95% (see parameter table).
+
+![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_vaccine.png)
+(Note, the post-ICU compartment not shown in flowshart but included in the emodl file)
+
+</p>
+</details>
+
 ## 1.2. Model parameters
 Most of the parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. [UChicago](https://github.com/cobeylab/covid_IL/tree/master/Parameters)).
 The starting date, intervention effect size, and the transmission parameter "Ki"are fitted to death data.
@@ -46,7 +60,7 @@ All the parameters are sampled from a uniform distribution as specified in the [
 | Kr_hc     | Recovery rate of critical cases in med/surg after ICU stay                   |  
 | Kc        | Progression to critical                                                      |  
 | Km        | Deaths                                                                       |   
-
+| Kv_l      | Vaccinations (S -> S_V) for vaccine intervention model only                   |   
 
 ### 1.2.2  Transmission and disease parameters 
 
@@ -67,10 +81,14 @@ All the parameters are sampled from a uniform distribution as specified in the [
 | Recovery   time critical   (time varying)                               | Time until   critical cases (severe symptomatic) recover and return to H before discharge                                                                                                     | (8,10)            |                                                                                | [Bi et al 2020](https://www.thelancet.com/journals/laninf/article/PIIS1473-3099(20)30287-5/fulltext)                                                                             |
 | Recovery   time postcrit                                                | Time until   critical cases that stayed in med/surg after ICU stay are discharged                                                                                                             | (1,4)            |                                                                                 | Assumed, informed by NMH data                                                                             |
 | Fraction   symptomatic                                                  | Fraction of infections that   develop either mild or severe symptoms                                                                                                                          | (0.5,   0.7)      |                                                                                | [Oran and Topol et al 2020](https://www.scripps.edu/science-and-medicine/translational-institute/about/news/sarc-cov-2-infection/)                                                                              |
+| Reduced fraction   symptomatic                                          | Lower fraction of infections that   develop either mild or severe symptoms   (reduced for vaccinated population)                                                                              | (0.8,   1)      |                                                                                | Assumed                                                                            |
 | Fraction   severe symptomatic                                           | Fraction of symptomatic that   develop severe symptoms                                                                                                                                        | (0.02,   0.1)     |                                                                                | [Salje et al 2020](https://www.medrxiv.org/content/10.1101/2020.04.20.20072413v2)                                                                             |
+| Reduced  fraction severe symptomatic                                    | Lower fraction of symptomatic that   develop severe symptoms    (reduced for vaccinated population)                                                                                           | (0,   0.05)     |                                                                                | Assumed                                                                             |
 | Fraction critical     (time varying)                                    | Fraction   of severe symptomatic infections that require intensive care                                                                                                                       | (0.2, 0.35)       |                                                                                | [Lewnard et al 2020](https://pubmed.ncbi.nlm.nih.gov/32444358/)                                                                             |
 | CFR       (time varying)                                                | Case fatality rate                                                                                                                                                                            | (0.01, 0.04)      |                                                                                | [Wang et al 2020](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7042881/)                                                                              |
 | Reduced   infectiousness of detected cases                              | Fraction of detected cases that   isolate and are removed from the infectious population                                                                                                      | (0,   0.3)        |                                                                                | Assumed                                                                       |
+| Reduced   infectiousness of asymptomatic cases                          | Fraction of asymptomatic cases that are less infectious (currently disabled/not used)                                                                                                         | (1,  1)        |                                                                                | /                                                                      |
+| Reduced   infectiousness of vaccinated cases                            | Fraction of vaccinated cases that  are less infectious (only used in vaccine intervention model)                                                                                            | (0.1,   0.2)        |                                                                                | Assumed                                                                       |
 | Detection   probability of asymptomatic case                            | Used for contact tracing   simulations, per default asymtomatic cases are not detected                                                                                                        | (0,   0)          |                                                                                | Assumed   initial value, increase informed from Illinois specific data                                                                       |
 | Detection   probability of mild symptomatic case   (time varying)       | Initial value of the detection   rate, which is increasing over time                                                                                                                          | (0.05,   0.2)     |                                                                                | Assumed   initial value, increase informed from Illinois specific data        |
 | Detection   probability of severe symptomatic case  (time varying)      | Initial value of the detection   rate, which is increasing over time                                                                                                                          | (0.2,   0.5)      |                                                                                | Calculated from IL data                                        |
@@ -83,13 +101,13 @@ The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-even
 Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
 The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
 
-Current scenarios include:
-- No stay-at-home 
-- Continued stay-at-home
-- Stop stay-at-home order - immediately
-- Stop stay-at-home order - step-wise 
-- Contact tracing - immediately
-- Contact tracing - step-wise
+Current scenarios include any combination of those listed below:
+- Baseline (continued mitigation)
+- Reopen (discontinued mitigation)
+- Rollback  (itensified mitigation)
+- Triggered rollback (itensified mitigation based on threshold i.e. in critical cases)
+- Bvariant (increase in transmission rate and disease severity)
+- Vaccinations (splitting compartments into not-vaccinated vs vaccinated with substantially reduced infectiousness and severity for vaccinated population)
 
 For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
@@ -148,6 +166,7 @@ A ranking 'observeLevel' was introduced to select subsets of the outcomes. The p
 | 41             | symptomatic_mild_det   | Number of detected mild infections in the population                                   | secondary    | symptomatic_mild_det                                                                                                   |
 | 42             | symptomatic_severe     | Number of severe symptomatic infections                                                | secondary    | Sys, Sys_det3; Sys, Sys_preD, Sys_det3 ; Sys, Sys_preD, Sys_det3a,   Sys_det3b                                         |
 | 43             | symptomatic_severe_det | Number of detected severe symptomatic infections                                       | secondary    | symptomatic_severe_det                                                                                                 |
+Note, when using the vaccination scenario, these outcome channels include both vaccinated and not vaccinated compartments, whereas additional (same) outcomes are generated for the vaccinated population, denoted with suffix _V.
  
 </p>
 </details>

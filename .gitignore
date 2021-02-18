@@ -15,7 +15,6 @@ emodl/
 !emodl/README.md
 !emodl/nu_undergrad_ct.emodl
 !emodl/nu_undergrad.emodl
-*.png
 .Rproj.user
 testrun/log.txt
 testrun/trajectories.csv
