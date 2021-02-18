@@ -573,7 +573,7 @@ class covidModel:
     def write_reactions(self, grp):
         grp = str(grp)
 
-        reaction_str_I = f'(reaction exposure_{grp}   ' \
+        reaction_str_I = f'\n(reaction exposure_{grp}   ' \
                          f'(S::{grp}) (E::{grp}) ' \
                          f'(* Ki_{grp} S::{grp} ' \
                          f'(/  ' \
@@ -584,7 +584,7 @@ class covidModel:
                          f') N_{grp} )' \
                          f'))\n'
 
-        reaction_str_V_Ia = f'(reaction exposure_{grp}   ' \
+        reaction_str_V_Ia = f'\n(reaction exposure_{grp}   ' \
                             f'(S::{grp}) (E::{grp}) ' \
                             f'(* Ki_{grp} S::{grp} ' \
                             f'(/  ' \
@@ -598,7 +598,7 @@ class covidModel:
                             f') N_{grp} )' \
                             f'))\n'
 
-        reaction_str_V_Ib = f'(reaction exposure_{grp}   ' \
+        reaction_str_V_Ib = f'\n(reaction exposure_{grp}   ' \
                             f'(S_V::{grp}) (E_V::{grp}) ' \
                             f'(* Ki_{grp} S_V::{grp} ' \
                             f'(/  ' \
@@ -613,7 +613,7 @@ class covidModel:
                             f'))\n'
 
         if 'vaccine' in self.add_interventions:
-            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_1 S::{grp}))'
+            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_1 S::{grp}))\n'
             reaction_str_I = reaction_str_I + reaction_str_V_Ia + reaction_str_V_Ib
 
         reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h{grp} H1::{grp}))\n' \
@@ -937,10 +937,27 @@ class covidModel:
 
         def write_vaccine():
             emodl_str = ';COVID-19 vaccine scenario\n'
-            emodl_param_initial = '(param Kv_1 0)'
-            #emodl_param
-            emodl_timeevents = f'(time-event vaccination_start_time @vaccine_start@ ((Kv_1 @vacc_daily_cov@)))'
-            emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
+            emodl_param_initial = '(param Kv_1 0)\n(observe daily_vaccinated  Kv_1)\n'
+
+            read_from_csv = intervention_param['read_from_csv']
+            if read_from_csv:
+                csvfile = intervention_param['vaccination.csv']
+                df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
+                intervention_dates = list(df['Date'].values)
+                intervention_effectsizes =  list(df['daily_cov'].values)
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i]})))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+            else:
+                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+                emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
+
+            #emodl_timeevents = f'(time-event vaccination_start_time @vaccine_start@ ((Kv_1 @vacc_daily_cov@)))'
             return emodl_str
 
         def write_bvariant():
