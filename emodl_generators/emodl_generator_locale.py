@@ -56,22 +56,26 @@ class covidModel:
         return timestep
 
     def get_species(self):
-        state_SE = ('S', 'E')
-        state_nosymptoms = ('As', 'As_det1', 'P', 'P_det')
-        state_symptoms = ('Sym', 'Sym_det2', 'Sys', 'Sys_det3')
-        # state_hospitalized = ('H1', 'H2', 'H3', 'H1_det3', 'H2_det3', 'H3_det3')
-        state_hospitalized = ('H1', 'H2pre', 'H2post', 'H3', 'H1_det3', 'H2pre_det3', 'H2post_det3', 'H3_det3')
-        state_critical = ('C2', 'C3', 'C2_det3', 'C3_det3')
-        state_deaths = ('D3', 'D3_det3')
-        state_recoveries = ('RAs', 'RSym', 'RH1', 'RC2', 'RAs_det1', 'RSym_det2', 'RH1_det3', 'RC2_det3')
-        state_testDelay_SymSys = ('Sym_preD', 'Sys_preD')
-        state_testDelay_AsSymSys = ('As_preD', 'Sym_preD', 'Sym_det2a', 'Sym_det2b', 'Sys_preD', 'Sys_det3a', 'Sys_det3b')
+        state_SE = ['S', 'E']
+        state_nosymptoms = ['As', 'As_det1', 'P', 'P_det']
+        state_symptoms = ['Sym', 'Sym_det2', 'Sys', 'Sys_det3']
+        # state_hospitalized = ['H1', 'H2', 'H3', 'H1_det3', 'H2_det3', 'H3_det3']
+        state_hospitalized = ['H1', 'H2pre', 'H2post', 'H3', 'H1_det3', 'H2pre_det3', 'H2post_det3', 'H3_det3']
+        state_critical = ['C2', 'C3', 'C2_det3', 'C3_det3']
+        state_deaths = ['D3', 'D3_det3']
+        state_recoveries = ['RAs', 'RSym', 'RH1', 'RC2', 'RAs_det1', 'RSym_det2', 'RH1_det3', 'RC2_det3']
+        state_testDelay_SymSys = ['Sym_preD', 'Sys_preD']
+        state_testDelay_AsSymSys = ['As_preD', 'Sym_preD', 'Sym_det2a', 'Sym_det2b', 'Sys_preD', 'Sys_det3a', 'Sys_det3b']
         state_variables = state_SE + state_nosymptoms + state_symptoms + state_hospitalized + state_critical + state_deaths + state_recoveries
 
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
             state_variables = state_variables + state_testDelay_SymSys
         if self.expandModel == "AsSymSys":
             state_variables = state_variables + state_testDelay_AsSymSys
+
+        if 'vaccine' in self.add_interventions:
+            state_variables_vaccine = [f'{state}_V' for state in state_variables ]
+            state_variables = state_variables  + state_variables_vaccine
         return state_variables
 
     def write_species(self, grp):
@@ -121,33 +125,74 @@ class covidModel:
             channels = channels + tertiary_channels
 
         channels = [channel for channel in channels if channel not in channels_not_observe]
-        return  list(set(channels))
+        channels = list(set(channels))
+
+        if 'vaccine' in self.add_interventions:
+            channels_vaccine = [f'{channel}_V' for channel in channels]
+            channels = channels + channels_vaccine
+
+        return channels
 
     def write_observe(self, grp):
         grp = str(grp)
         grpout = covidModel.sub(grp)
 
-        channels = covidModel.get_channels(self)
-
         def write_observe_emodl():
             #grp_suffix = "::{grp}"
             #grp_suffix2 = "_{grp}"
 
-            observe_emodl = ""
-            for channel in channels:
-                if channel == 'crit':
-                    channel = 'critical'
-                if channel == 'hosp':
-                    channel = 'hospitalized'
+            if 'vaccine' in self.add_interventions:
+                channels = covidModel.get_channels(self)
+                channels = channels[int(len(channels) / 2):]
+                observe_emodl = ""
+                for channel in channels:
+                    if channel == 'crit_V':
+                        channel = 'critical_V'
+                    if channel == 'hosp_V':
+                        channel = 'hospitalized_V'
 
-                if channel == "susceptible":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S::{grp})\n'
-                elif channel == "exposed":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E::{grp})\n'
-                elif channel == "deaths_det":
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3::{grp})\n'
-                else:
-                    observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
+                    elif channel == "susceptible_V":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S_V::{grp})\n'
+                    elif channel == "exposed_V":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E_V::{grp})\n'
+                    elif channel == "deaths_det_V":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3_V::{grp})\n'
+                    else:
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
+
+                channels = covidModel.get_channels(self)
+                channels = channels[:int(len(channels) / 2)]
+                for channel in channels:
+                    if channel == 'crit':
+                        channel = 'critical'
+                    if channel == 'hosp':
+                        channel = 'hospitalized'
+
+                    if channel == "susceptible":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} (+ S::{grp}  S_V::{grp}))\n'
+                    elif channel == "exposed":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} (+ E::{grp} E_V::{grp}))\n'
+                    elif channel == "deaths_det":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} (+ D3_det3::{grp} D3_det3_V::{grp}))\n'
+                    else:
+                        observe_emodl= observe_emodl + f'(observe {channel}_{grpout} (+ {channel}_{grp} {channel}_V_{grp}))\n'
+            else:
+                channels = covidModel.get_channels(self)
+                observe_emodl = ""
+                for channel in channels:
+                    if channel == 'crit':
+                        channel = 'critical'
+                    if channel == 'hosp':
+                        channel = 'hospitalized'
+
+                    if channel == "susceptible":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S::{grp})\n'
+                    elif channel == "exposed":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E::{grp})\n'
+                    elif channel == "deaths_det":
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} D3_det3::{grp})\n'
+                    else:
+                        observe_emodl = observe_emodl + f'(observe {channel}_{grpout} {channel}_{grp})\n'
 
             """Observe all state variables over time"""
             if self.observeLevel=='all':
@@ -230,7 +275,8 @@ class covidModel:
                              'infectious_det_AsP_{grp}': ['As_det1::{grp}', 'P_det::{grp}']
                              }
 
-        func_str = f'(func deaths_det_cumul_{grp}  D3_det3::{grp})\n(func asymp_det_{grp}  As_det1::{grp} )'
+
+        func_str = f'(func deaths_det_cumul_{grp}  D3_det3::{grp})\n(func asymp_det_{grp}  As_det1::{grp})\n'
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
             func_dic_SymSys.update(func_dic)
             func_dic_all = func_dic_SymSys
@@ -242,6 +288,17 @@ class covidModel:
                                   f'(func symp_severe_det_{grp}  Sys_det3::{grp})\n'
             func_dic_base.update(func_dic)
             func_dic_all = func_dic_base
+
+        if 'vaccine' in self.add_interventions:
+            func_str_V = func_str.replace(f'_{grp}',f'_V_{grp}')
+            func_str_V = func_str_V.replace(f'::{grp}',f'_V::{grp}')
+            func_str = func_str + func_str_V
+            func_dic_all_V = {}
+            for key, value in func_dic_all.items():
+                key_V = key.replace('_{grp}','_V_{grp}')
+                func_dic_all_V[key_V] = [item.replace('_{grp}','_V_{grp}')  if '_{grp}' in item
+                                         else item.replace('::{grp}','_V::{grp}') for item in func_dic_all[key]]
+            func_dic_all.update(func_dic_all_V)
 
         for key in func_dic_all.keys():
             func_str = func_str + f"(func {key} (+ {' '.join(func_dic_all[key])}))\n".format(grp=grp)
@@ -325,8 +382,20 @@ class covidModel:
 
         calculated_params_str =  ''.join([f'(param {key} {param_dic[key]})\n' for key in list(param_dic.keys())])
         calculated_params_expand_str =  ''.join([f'(param {key} {param_dic_expand[key]})\n' for key in list(param_dic_expand.keys())])
-
         params_str = yaml_sampled_param_str + calculated_params_str + calculated_params_expand_str
+
+        if 'vaccine' in self.add_interventions:
+            #custom_param_vacc = ['fraction_symptomatic_V', 'fraction_severe_V']
+            custom_param_vacc_str = '(param fraction_symptomatic_V (* fraction_symptomatic @reduced_fraction_Sym@))\n' \
+                                    '(param fraction_severe_V (* fraction_severe @reduced_fraction_Sys@))\n'
+            param_symptoms_dic_V = {'KlV ': '(/ (- 1 fraction_symptomatic_V  ) time_to_infectious)',
+                                    'KsV ': '(/ fraction_symptomatic_V   time_to_infectious)',
+                                    'KsysV ': '(* fraction_severe_V (/ 1 time_to_symptoms))',
+                                    'KsymV ': '(* (- 1 fraction_severe_V ) (/ 1 time_to_symptoms))'
+                                    }
+
+            param_symptoms_str_V = ''.join([f'(param {key} {param_symptoms_dic_V[key]})\n' for key in list(param_symptoms_dic_V.keys())])
+            params_str = params_str + custom_param_vacc_str + param_symptoms_str_V
 
         return params_str
 
@@ -396,40 +465,115 @@ class covidModel:
 
         return stringAll
 
-    def write_All(self):
+    def write_observe_All(self):
 
         grpList = self.grpList
-        observe_channels_All_str = ""
-        channels = covidModel.get_channels(self)
-        for channel in channels :
-            if channel == 'crit':
-                channel = 'critical'
-            if channel == 'hosp':
-                channel = 'hospitalized'
+        if "vaccine" in self.add_interventions:
+            observe_channels_All_str = ""
+            channels = covidModel.get_channels(self)
+            channels = channels[:int(len(channels) / 2)]
+            for channel in channels:
+                if channel == 'crit':
+                    channel = 'critical'
+                if channel == 'hosp':
+                    channel = 'hospitalized'
 
-            if channel == "susceptible":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S::', grpList) + "))\n"
-            elif channel == "deaths_det":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3::', grpList) + "))\n"
-            elif channel == "exposed":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E::', grpList) + "))\n"
-            elif channel == "asymp_det":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1::', grpList) + "))\n"
-            elif channel == "presymp":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P::',grpList) + "))\n"
-            elif channel == "presymp_det":
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det::', grpList) + "))\n"
-            else:
-                temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp(f'{channel}_', grpList) + "))\n"
-            observe_channels_All_str = observe_channels_All_str + temp_str
-            del temp_str
+                if channel == "susceptible":
+                    temp_str = f"(observe {channel}_All " \
+                               f"(+ " +\
+                               covidModel.repeat_string_by_grp('S::', grpList) + \
+                               covidModel.repeat_string_by_grp('S_V::', grpList) + \
+                               "))\n"
+                elif channel == "deaths_det":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('D3_det3::', grpList) + \
+                               covidModel.repeat_string_by_grp('D3_det3_V::', grpList) + \
+                               "))\n"
+                elif channel == "exposed":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('E::', grpList) + \
+                               covidModel.repeat_string_by_grp('E_V::', grpList) + \
+                               "))\n"
+                elif channel == "asymp_det":
+                    temp_str = f"(observe {channel}_All (+ " +\
+                               covidModel.repeat_string_by_grp('As_det1::', grpList) + \
+                               covidModel.repeat_string_by_grp('As_det1_V::', grpList) + \
+                               "))\n"
+                elif channel == "presymp":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('P::', grpList) + \
+                               covidModel.repeat_string_by_grp('P_V::', grpList) + \
+                               "))\n"
+                elif channel == "presymp_det":
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp('P_det::',grpList) + \
+                               covidModel.repeat_string_by_grp('P_det_V::', grpList) + \
+                               "))\n"
+                else:
+                    temp_str = f"(observe {channel}_All (+ " + \
+                               covidModel.repeat_string_by_grp(f'{channel}_', grpList) + \
+                               covidModel.repeat_string_by_grp(f'{channel}_V_', grpList) + \
+                               "))\n"
+                observe_channels_All_str = observe_channels_All_str + temp_str
+                del temp_str
+
+            channels = covidModel.get_channels(self)
+            channels = channels[int(len(channels) / 2):]
+            for channel in channels:
+                if channel == 'crit_V':
+                    channel = 'critical_V'
+                if channel == 'hosp_V':
+                    channel = 'hospitalized_V'
+
+                if channel == "susceptible_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S_V::',grpList) + "))\n"
+                elif channel == "deaths_det_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3_V::', grpList) + "))\n"
+                elif channel == "exposed_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E_V::',grpList) + "))\n"
+                elif channel == "asymp_det_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1_V::', grpList) + "))\n"
+                elif channel == "presymp_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_V::', grpList) + "))\n"
+                elif channel == "presymp_det_V":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det_V::', grpList) + "))\n"
+                else:
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp(f'{channel}_', grpList) + "))\n"
+                observe_channels_All_str = observe_channels_All_str + temp_str
+                del temp_str
+
+        else:
+            observe_channels_All_str = ""
+            channels = covidModel.get_channels(self)
+            for channel in channels :
+                if channel == 'crit':
+                    channel = 'critical'
+                if channel == 'hosp':
+                    channel = 'hospitalized'
+
+                if channel == "susceptible":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('S::', grpList) + "))\n"
+                elif channel == "deaths_det":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('D3_det3::', grpList) + "))\n"
+                elif channel == "exposed":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('E::', grpList) + "))\n"
+                elif channel == "asymp_det":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('As_det1::', grpList) + "))\n"
+                elif channel == "presymp":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P::',grpList) + "))\n"
+                elif channel == "presymp_det":
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp('P_det::', grpList) + "))\n"
+                else:
+                    temp_str = f"(observe {channel}_All (+ " + covidModel.repeat_string_by_grp(f'{channel}_', grpList) + "))\n"
+                observe_channels_All_str = observe_channels_All_str + temp_str
+                del temp_str
 
         return observe_channels_All_str
 
     def write_reactions(self, grp):
         grp = str(grp)
 
-        reaction_str_I = f'(reaction exposure_{grp}   ' \
+        reaction_str_I = f'\n(reaction exposure_{grp}   ' \
                          f'(S::{grp}) (E::{grp}) ' \
                          f'(* Ki_{grp} S::{grp} ' \
                          f'(/  ' \
@@ -440,11 +584,43 @@ class covidModel:
                          f') N_{grp} )' \
                          f'))\n'
 
-        reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h_{grp} H1::{grp}))\n' \
-                           f'(reaction recovery_C2_{grp} (C2::{grp}) (H2post::{grp}) (* Kr_c_{grp} C2::{grp}))\n' \
+        reaction_str_V_Ia = f'\n(reaction exposure_{grp}   ' \
+                            f'(S::{grp}) (E::{grp}) ' \
+                            f'(* Ki_{grp} S::{grp} ' \
+                            f'(/  ' \
+                            f'(+ infectious_undet_symp_{grp}' \
+                            f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                            f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                            f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                            f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                            f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                            f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                            f') N_{grp} )' \
+                            f'))\n'
+
+        reaction_str_V_Ib = f'\n(reaction exposure_{grp}   ' \
+                            f'(S_V::{grp}) (E_V::{grp}) ' \
+                            f'(* Ki_{grp} S_V::{grp} ' \
+                            f'(/  ' \
+                            f'(+ infectious_undet_symp_{grp}' \
+                            f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                            f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                            f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                            f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                            f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                            f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                            f') N_{grp} )' \
+                            f'))\n'
+
+        if 'vaccine' in self.add_interventions:
+            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_1 S::{grp}))\n'
+            reaction_str_I = reaction_str_I + reaction_str_V_Ia + reaction_str_V_Ib
+
+        reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h{grp} H1::{grp}))\n' \
+                           f'(reaction recovery_C2_{grp} (C2::{grp}) (H2post::{grp}) (* Kr_c{grp} C2::{grp}))\n' \
                            f'(reaction recovery_H2post_{grp} (H2post::{grp}) (RC2::{grp}) (* Kr_hc H2post::{grp}))\n' \
-                           f'(reaction recovery_H1_det3_{grp} (H1_det3::{grp}) (RH1_det3::{grp}) (* Kr_h_{grp} H1_det3::{grp}))\n' \
-                           f'(reaction recovery_C2_det3_{grp} (C2_det3::{grp}) (H2post_det3::{grp}) (* Kr_c_{grp} C2_det3::{grp}))\n' \
+                           f'(reaction recovery_H1_det3_{grp} (H1_det3::{grp}) (RH1_det3::{grp}) (* Kr_h{grp} H1_det3::{grp}))\n' \
+                           f'(reaction recovery_C2_det3_{grp} (C2_det3::{grp}) (H2post_det3::{grp}) (* Kr_c{grp} C2_det3::{grp}))\n' \
                            f'(reaction recovery_H2post_det3_{grp} (H2post_det3::{grp}) (RC2_det3::{grp}) (* Kr_hc H2post_det3::{grp}))\n'
 
         expand_base_str = f'(reaction infection_asymp_undet_{grp} (E::{grp}) (As::{grp}) (* Kl E::{grp} (- 1 d_As)))\n' \
@@ -547,6 +723,22 @@ class covidModel:
             reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III
         if self.expandModel == 'AsSymSys':
             reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III
+
+        if 'vaccine' in self.add_interventions:
+            reaction_str_V = reaction_str.replace(f'_{grp}',f'_V_{grp}')
+            reaction_str_V = reaction_str_V.replace(f'::{grp}', f'_V::{grp}')
+            reaction_str = reaction_str + reaction_str_V
+
+            """Custom adjustments - not automated/integrated yet"""
+            reaction_str = reaction_str.replace('_V_V', '_V')
+            reaction_str = reaction_str.replace('Ki_V', 'Ki')
+            reaction_str = reaction_str.replace('N_V', 'N')
+            """Vaccinated-population specific parameters"""
+            reaction_str = reaction_str.replace('Kl E_V::', 'KlV E_V::')
+            reaction_str = reaction_str.replace('Ks E_V::', 'Ks E_V::')
+            reaction_str = reaction_str.replace('Ksym P_V::', 'KsymV P_V::')
+            reaction_str = reaction_str.replace('Ksys P_V::', 'KsysV P_V::')
+
 
         return reaction_str
 
@@ -657,14 +849,14 @@ class covidModel:
             for grp in self.grpList:
                 grpout = covidModel.sub(grp)
                 recovery_time_crit_change_param = f'(param recovery_time_crit_{grp} recovery_time_crit)\n' \
-                                                  f'(param Kr_c_{grp} (/ 1 recovery_time_crit_{grp}))\n' \
+                                                  f'(param Kr_c{grp} (/ 1 recovery_time_crit_{grp}))\n' \
                                                   f'(observe recovery_time_crit_t_{grpout} recovery_time_crit_{grp})' \
                                                   f'\n'
 
                 recovery_time_crit_change_timeevent = ''.join([f'(time-event LOS_ICU_change_{i} @recovery_time_crit_change_time_{i}_{grp}@ '
                                                                f'('
                                                                f'(recovery_time_crit_{grp} @recovery_time_crit_change{i}_{grp}@) '
-                                                               f'(Kr_c_{grp} '
+                                                               f'(Kr_c{grp} '
                                                                f'(/ 1 @recovery_time_crit_change{i}_{grp}@))'
                                                                f')'
                                                                f')'
@@ -682,7 +874,7 @@ class covidModel:
             for grp in self.grpList:
                 grpout = covidModel.sub(grp)
                 recovery_time_hosp_change_param = f'(param recovery_time_hosp_{grp} recovery_time_hosp)\n' \
-                                                  f'(param Kr_h_{grp} (/ 1 recovery_time_hosp_{grp}))\n' \
+                                                  f'(param Kr_h{grp} (/ 1 recovery_time_hosp_{grp}))\n' \
                                                   f'(observe recovery_time_hosp_t_{grpout} recovery_time_hosp_{grp})' \
                                                   f'\n'
 
@@ -690,7 +882,7 @@ class covidModel:
                     [f'(time-event LOS_nonICU_change_{i} @recovery_time_hosp_change_time_{i}_{grp}@ '
                      f'('
                      f'(recovery_time_hosp_{grp} @recovery_time_hosp_change{i}_{grp}@) '
-                     f'(Kr_h_{grp} (/ 1 @recovery_time_hosp_change{i}_{grp}@))'
+                     f'(Kr_h{grp} (/ 1 @recovery_time_hosp_change{i}_{grp}@))'
                      f')'
                      f')'
                      f'\n' for i in n_recovery_time_hosp_change])
@@ -743,13 +935,37 @@ class covidModel:
         """ Get intervention configurations """
         intervention_param = covidModel.get_configs(key ='interventions', config_file=self.intervention_config)
 
+        def write_vaccine():
+            emodl_str = ';COVID-19 vaccine scenario\n'
+            emodl_param_initial = '(param Kv_1 0)\n(observe daily_vaccinated  Kv_1)\n'
+
+            read_from_csv = intervention_param['read_from_csv']
+            if read_from_csv:
+                csvfile = intervention_param['vaccination.csv']
+                df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
+                intervention_dates = list(df['Date'].values)
+                intervention_effectsizes =  list(df['daily_cov'].values)
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i]})))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+            else:
+                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+                emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
+
+            #emodl_timeevents = f'(time-event vaccination_start_time @vaccine_start@ ((Kv_1 @vacc_daily_cov@)))'
+            return emodl_str
 
         def write_bvariant():
             emodl_str = ';COVID-19 bvariant scenario\n'
 
             read_from_csv = intervention_param['read_from_csv']
             if read_from_csv:
-                csvfile = intervention_param['bvariant_csv']
+                csvfile = intervention_param['bvariant.csv']
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 fracinfect = list(df['variant_freq'].values)
@@ -890,35 +1106,24 @@ class covidModel:
                 temp_str = temp_str + ''.join([f' (Ki_{grp} Ki_reopen_{i}_{grp})' for grp in self.grpList ])
                 temp_str = temp_str + f'))\n'
                 emodl_timeevents = emodl_timeevents + temp_str
-            emodl_str = emodl_param + emodl_timeevents
+            emodl_str = emodl_str + emodl_param + emodl_timeevents
 
             return emodl_str
 
 
         """Select intervention to add to emodl"""
-        if self.add_interventions == "bvariant":
-            intervention_str = write_bvariant()
-        if self.add_interventions == "bvariant_rollback":
-            intervention_str = write_bvariant() + write_rollback()
-        if self.add_interventions == "bvariant_triggeredrollback":
-            intervention_str = write_bvariant() + write_triggeredrollback()
+        intervention_str = ""
+        if "bvariant" in self.add_interventions:
+            intervention_str = intervention_str + write_bvariant()
+        if "rollback" in self.add_interventions:
+            intervention_str = intervention_str + write_rollback()
+        if "triggeredrollback" in self.add_interventions:
+            intervention_str = intervention_str + write_triggeredrollback()
+        if "reopen" in self.add_interventions:
+            intervention_str = intervention_str + write_reopen()
+        if "vaccine" in self.add_interventions:
+            intervention_str = intervention_str + write_vaccine()
 
-        if self.add_interventions == "rollback":
-            intervention_str = write_rollback()
-        if self.add_interventions == "triggeredrollback":
-            intervention_str = write_triggeredrollback()
-
-        if self.add_interventions == "reopen":
-            intervention_str = write_reopen()
-        #if self.add_interventions == "reopen_bvariant":
-        #    intervention_str = write_reopen()
-        if self.add_interventions == "reopen_rollback":
-            intervention_str = write_reopen() +  write_rollback()
-        if self.add_interventions == "reopen_triggeredrollback":
-            intervention_str = write_reopen() +  write_triggeredrollback()
-
-        #if self.add_interventions == "vaccine":
-        #    intervention_str = write_vaccine()
         return total_string.replace(';[INTERVENTIONS]', intervention_str )
 
 
@@ -1028,7 +1233,7 @@ class covidModel:
         param_string = covidModel.write_params(self) + param_string + covidModel.write_N_population(self)
         if (self.add_migration):
             param_string = param_string + covidModel.write_migration_param(self)
-        functions_string = functions_string + covidModel.write_All(self)
+        functions_string = functions_string + covidModel.write_observe_All(self)
 
         intervention_string = "\n;[TIMEVARYING_PARAMETERS]\n;[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
         total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string + '\n\n' + reaction_string + '\n\n' + footer_str
@@ -1072,7 +1277,7 @@ class covidModel:
                                                "interventionSTOP_adj",
                                                "gradual_reopening",
                                                "rollback",
-                                               #"gradual_reopening2",
+                                               "vaccine",
                                                #"rollbacktriggered",
                                                #"contactTracing",
                                                #"improveHS",
