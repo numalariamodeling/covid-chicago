@@ -281,7 +281,7 @@ echo end""")
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[12]}.bat'), 'w')
             file.write(f'cd { os.path.join(git_dir, "nucluster")} \n python {list(process_dict.values())[12]}  --stem "{exp_name}" --del_trajectories --zip_dir  >> "{sim_output_path}/log/{list(process_dict.keys())[12]}.txt" \n')
 
-def shell_header(A='p30781',p='short',t='00:30:00',N=1,ntasks_per_node=1, memG=18,job_name='myjob', arrayJob=None):
+def shell_header(A='p30781',p='short',t='02:00:00',N=1,ntasks_per_node=1, memG=18,job_name='myjob', arrayJob=None):
     header = f'#!/bin/bash\n' \
              f'#SBATCH -A {A}\n' \
              f'#SBATCH -p {p}\n' \
