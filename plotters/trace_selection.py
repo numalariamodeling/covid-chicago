@@ -75,7 +75,7 @@ def parse_args():
         "--traces_to_keep_min",
         type=int,
         help="Minimum number of traces to keep, might overwrite traces_to_keep_ratio for small simulations",
-        default=5
+        default=100
     )
     return parser.parse_args()
 
