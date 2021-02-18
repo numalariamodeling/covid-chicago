@@ -386,17 +386,17 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.628, 'high': 0.628}
-        - {'low': 0.654, 'high': 0.654}
-        - {'low': 0.381, 'high': 0.381}
-        - {'low': 0.571, 'high': 0.571}
-        - {'low': 0.498, 'high': 0.498}
-        - {'low': 0.501, 'high': 0.501}
-        - {'low': 0.716, 'high': 0.716}
-        - {'low': 0.897, 'high': 0.897}
-        - {'low': 0.807, 'high': 0.807}
-        - {'low': 0.754, 'high': 0.754}
-        - {'low': 1.020, 'high': 1.020} 
+        - {'low': 0.5966, 'high': 0.6908}
+        - {'low': 0.6213, 'high': 0.7194}
+        - {'low': 0.36195, 'high': 0.4191}
+        - {'low': 0.54245, 'high': 0.6281}
+        - {'low': 0.4731, 'high': 0.5478}
+        - {'low': 0.47595, 'high': 0.5511}
+        - {'low': 0.6802, 'high': 0.7876}
+        - {'low': 0.85215, 'high': 0.9867}
+        - {'low': 0.76665, 'high': 0.8877}
+        - {'low': 0.7163, 'high': 0.8294}
+        - {'low': 0.969, 'high': 1.122}
   time_infection_import:  # Relative to generic startdate set for IL 
     IL:
       expand_by_age: True
@@ -421,33 +421,33 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low':    85 , 'high':    85}
-        - {'low':    93 , 'high':    93}
-        - {'low':    61 , 'high':     61}
-        - {'low':    48 , 'high':     48}
-        - {'low':    33 , 'high':     33}
-        - {'low':    77 , 'high':     77}
-        - {'low':    68 , 'high':     68}
-        - {'low':    141  , 'high':    141}
-        - {'low':    96 , 'high':    96}
-        - {'low':    333 , 'high':    333}
-        - {'low':    336 , 'high':    336}     
+        - {'low':64, 'high':64}
+        - {'low':101, 'high':101}
+        - {'low':53, 'high':53}
+        - {'low':46, 'high':46}
+        - {'low':29, 'high':29}
+        - {'low':88, 'high':88}
+        - {'low':67, 'high':67}
+        - {'low':141 , 'high':141}
+        - {'low':92, 'high':92}
+        - {'low':287 , 'high':287}
+        - {'low':377 , 'high':377}
   trigger_notused:   # medsurg_total 
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low':  749 , 'high':  749}
-        - {'low':  1173  , 'high': 1173}
-        - {'low':  841 , 'high':  841}
-        - {'low':  524 , 'high':  524}
-        - {'low':  564 , 'high':  564}
-        - {'low':  920  , 'high': 920}
-        - {'low':  691 , 'high':  691}
-        - {'low':  1286  , 'high': 1286}
-        - {'low':  766 , 'high':  766}
-        - {'low':  2502  , 'high': 2502}
-        - {'low':  2348  , 'high': 2348}       
+        - {'low':671, 'high':671}
+        - {'low':1320,  'high':1320}
+        - {'low':796, 'high':796}
+        - {'low':528, 'high':528}
+        - {'low':551, 'high':551}
+        - {'low':911, 'high':911}
+        - {'low':660, 'high':660}
+        - {'low':1203,  'high':1203}
+        - {'low':709, 'high':709}
+        - {'low':2223, 'high':2223}
+        - {'low':2575, 'high':2575}
 ### If using setting specific increase in symptomatic infections in future scenarios (i.e. contact tracing)
 #d_Sym_ct1:
 #    IL:

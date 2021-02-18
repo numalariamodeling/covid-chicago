@@ -50,12 +50,12 @@ def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=Non
     if A3 == None :A3 = "- updated fitting "
     if A4 == None :A4 = "..."
     if os.path.exists(os.path.join(exp_dir, f'traces_ranked_region_11.csv')):
-        A4 = A4 + "\n Note: using the 50% if the simulation trajectories that best fit the data"
+        A4 = A4 + "\n Note: using the 25% if the simulation trajectories that best fit the data"
     if A5 == None :  A5 = "- Reduction in transmission rate due to 'shelter in place policies': " \
                           "2020-03-12, 2020-03-17, 2020-03-21, 2020-04-21" \
                           "\n- Change in transmission rate during reopening period : " \
-                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-19 "\
-                          "\n- Decrease in cfr : 2020-06-01 , 2020-07-01"
+                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20 "\
+                          "\n- Increase in detection rates/ decrease in fraction dead: monthly between March to Oct/Dec 2020"
     if A6 == None : A6 = "- No additional scenarios"
 
     file = open(os.path.join(output_dir, 'changelog.txt'), 'w')
