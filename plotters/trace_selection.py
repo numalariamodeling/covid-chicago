@@ -75,7 +75,7 @@ def parse_args():
         "--traces_to_keep_min",
         type=int,
         help="Minimum number of traces to keep, might overwrite traces_to_keep_ratio for small simulations",
-        default=5
+        default=100
     )
     return parser.parse_args()
 
@@ -164,7 +164,7 @@ def compare_ems(exp_name, ems_nr,first_day,last_day,weights_array,
 
         plot_sim_and_ref(df, ems_nr, ref_df, channels=channels, data_channel_names=data_channel_names, titles=titles,
                          region_label=region_label, first_day=first_day, last_day=last_day, plot_path=plot_path,
-                         plot_name_suffix =f'_best_fit_{str(1/traces_to_keep_ratio)}')
+                         plot_name_suffix =f'_best_fit_{str(1/traces_to_keep_ratio)}_n{str(n_traces_to_keep)}')
 
 
 if __name__ == '__main__':
