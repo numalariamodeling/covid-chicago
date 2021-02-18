@@ -118,9 +118,6 @@ sampled_parameters:
   'reduced_infectious_As':
     np.random: uniform
     function_kwargs: {'low':0.8, 'high':0.8}
-  'reduced_infectious_V':
-    np.random: uniform
-    function_kwargs: {'low':0.1, 'high':0.3}
   ### ----DETECTION RATES ----------------------
   ### In locale model, d_Sym is group specific
   'd_Sym':
@@ -268,7 +265,17 @@ sampled_parameters:
     function_kwargs: {'low':0.091 , 'high':0.169}
   'fraction_dead_change9':
     np.random: uniform
-    function_kwargs: {'low':0.0280, 'high':0.052}                                           
+    function_kwargs: {'low':0.0280, 'high':0.052}
+  ### ---- For vaccine model ------------------
+  'reduced_fraction_Sym':
+    np.random: uniform
+    function_kwargs: { 'low': 0.8, 'high': 1 }
+  'reduced_fraction_Sys':
+    np.random: uniform
+    function_kwargs: { 'low': 0, 'high': 0.05 }
+  'reduced_infectious_V':
+    np.random: uniform
+    function_kwargs: { 'low': 0.1, 'high': 0.2 }
 intervention_parameters:
   ###------------------------------------------------
   ### ---- Parameter scalingfactor ------------------
@@ -310,10 +317,10 @@ intervention_parameters:
     np: linspace
     function_kwargs: {'start':0.20, 'stop':0.20, 'num' : 1}
   ### ---- VACCINE ----------------------
-  ### Reset Ki to defined proporions of it's initial value using multiple time-events
   'vacc_daily_cov':
     np: linspace
     function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
+    #function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
@@ -568,7 +575,7 @@ time_parameters:
     function_kwargs: {'dates': 2020-12-15}
   'vaccine_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-06-01} #not used
+    function_kwargs: {'dates': 2021-06-01} #used if n_gradual_steps >1 in intervention_emodl_config.yaml
   'vaccine_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #not used
