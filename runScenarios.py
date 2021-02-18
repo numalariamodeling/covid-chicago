@@ -347,6 +347,14 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                                        generateNew=generateNew,
                                        use_means=use_means)
 
+    if Location == 'NUCLUSTER' and cfg_file =="model_B.cfg":
+        fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
+        cfg_txt = fin.read()
+        cfg_txt = cfg_txt.replace('"Tau"  : 0.001', '"Tau"  : 0.0001')
+        fin.close()
+        fin = open(os.path.join(temp_exp_dir, cfg_file), "wt")
+        fin.write(cfg_txt)
+
     for row_i, row in dfparam.iterrows():
         Ki = row['Ki']
         scen_num = row['scen_num']
