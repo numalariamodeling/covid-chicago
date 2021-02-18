@@ -313,7 +313,7 @@ intervention_parameters:
   ### Reset Ki to defined proporions of it's initial value using multiple time-events
   'vacc_daily_cov':
     np: linspace
-    function_kwargs: {'start':0.003, 'stop':0.003, 'num' : 1}
+    function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
