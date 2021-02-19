@@ -941,13 +941,13 @@ class covidModel:
 
             read_from_csv = intervention_param['read_from_csv']
             if read_from_csv:
-                csvfile = intervention_param['vaccination.csv']
+                csvfile = intervention_param['vaccination_csv']
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 intervention_effectsizes =  list(df['daily_cov'].values)
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i]})))\n'
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i-1]})))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
             else:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
@@ -955,9 +955,8 @@ class covidModel:
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
-                emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
 
-            #emodl_timeevents = f'(time-event vaccination_start_time @vaccine_start@ ((Kv_1 @vacc_daily_cov@)))'
+            emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
             return emodl_str
 
         def write_bvariant():
@@ -965,7 +964,7 @@ class covidModel:
 
             read_from_csv = intervention_param['read_from_csv']
             if read_from_csv:
-                csvfile = intervention_param['bvariant.csv']
+                csvfile = intervention_param['bvariant_csv']
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 fracinfect = list(df['variant_freq'].values)
