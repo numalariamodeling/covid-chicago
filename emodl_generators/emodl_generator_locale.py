@@ -940,8 +940,8 @@ class covidModel:
             emodl_param_initial = '(param Kv_1 0)\n(observe daily_vaccinated  Kv_1)\n'
 
             read_from_csv = intervention_param['read_from_csv']
-            if read_from_csv:
-                csvfile = intervention_param['vaccination_csv']
+            csvfile = intervention_param['vaccination_csv']
+            if read_from_csv and csvfile != "":
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 intervention_effectsizes =  list(df['daily_cov'].values)
@@ -963,8 +963,8 @@ class covidModel:
             emodl_str = ';COVID-19 bvariant scenario\n'
 
             read_from_csv = intervention_param['read_from_csv']
-            if read_from_csv:
-                csvfile = intervention_param['bvariant_csv']
+            csvfile = intervention_param['bvariant_csv']
+            if read_from_csv and csvfile != "":
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 fracinfect = list(df['variant_freq'].values)
