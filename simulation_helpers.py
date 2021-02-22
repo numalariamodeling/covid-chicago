@@ -352,6 +352,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header_post + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[3]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -362,7 +363,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
 
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
-    file = open(os.path.join(temp_exp_dir, f'run_postprocessing_with_trace_selection.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, f'run_postprocessing_for_civis.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -477,15 +478,15 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     """
     submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
     submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing.sh'
-    submit_combineSimulations_trace = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing_with_trace_selection.sh'
+    submit_combineSimulations_civis = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing_for_civis.sh'
     file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
     file.write(submit_runSimulations)
     file.write(submit_combineSimulations)
     file.close()
 
-    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations_with_trace_selection.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations_for_civis.sh'), 'w')
     file.write(submit_runSimulations)
-    file.write(submit_combineSimulations_trace)
+    file.write(submit_combineSimulations_civis)
     file.close()
 
 

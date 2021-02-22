@@ -700,7 +700,7 @@ if __name__ == '__main__':
         generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path,model)
         submission_script=None
         if args.post_process == 'processForCivis':
-            submission_script = 'submit_runSimulations_with_trace_selection.sh'
+            submission_script = 'submit_runSimulations_for_civis.sh'
         runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER',submission_script=submission_script )
 
     if Location == 'Local':
