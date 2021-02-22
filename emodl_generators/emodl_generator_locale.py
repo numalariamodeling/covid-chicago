@@ -144,14 +144,14 @@ class covidModel:
             if 'vaccine' in self.add_interventions:
                 channels = covidModel.get_channels(self)
                 channels = channels[int(len(channels) / 2):]
-                observe_emodl = ""
+                observe_emodl = f"(observe vaccinated_cumul_{grpout} vaccinated_cumul_{grp})\n"
                 for channel in channels:
                     if channel == 'crit_V':
                         channel = 'critical_V'
                     if channel == 'hosp_V':
                         channel = 'hospitalized_V'
 
-                    elif channel == "susceptible_V":
+                    if channel == "susceptible_V":
                         observe_emodl = observe_emodl + f'(observe {channel}_{grpout} S_V::{grp})\n'
                     elif channel == "exposed_V":
                         observe_emodl = observe_emodl + f'(observe {channel}_{grpout} E_V::{grp})\n'
@@ -290,6 +290,7 @@ class covidModel:
             func_dic_all = func_dic_base
 
         if 'vaccine' in self.add_interventions:
+            vacc_cumul = f'(func vaccinated_cumul_{grp} (+ S_V::{grp}  infected_V_{grp} recovered_V_{grp}  deaths_V_{grp} ))\n'
             func_str_V = func_str.replace(f'_{grp}',f'_V_{grp}')
             func_str_V = func_str_V.replace(f'::{grp}',f'_V::{grp}')
             func_str = func_str + func_str_V
@@ -302,7 +303,8 @@ class covidModel:
 
         for key in func_dic_all.keys():
             func_str = func_str + f"(func {key} (+ {' '.join(func_dic_all[key])}))\n".format(grp=grp)
-
+        if 'vaccine' in self.add_interventions:
+            func_str = func_str + vacc_cumul
         return func_str
 
     ###
@@ -469,7 +471,7 @@ class covidModel:
 
         grpList = self.grpList
         if "vaccine" in self.add_interventions:
-            observe_channels_All_str = ""
+            observe_channels_All_str =  f"(observe vaccinated_cumul_All (+ " + covidModel.repeat_string_by_grp('vaccinated_cumul_',grpList) + "))\n"
             channels = covidModel.get_channels(self)
             channels = channels[:int(len(channels) / 2)]
             for channel in channels:
@@ -940,14 +942,14 @@ class covidModel:
             emodl_param_initial = '(param Kv_1 0)\n(observe daily_vaccinated  Kv_1)\n'
 
             read_from_csv = intervention_param['read_from_csv']
-            if read_from_csv:
-                csvfile = intervention_param['vaccination.csv']
+            csvfile = intervention_param['vaccination_csv']
+            if read_from_csv and csvfile != "":
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 intervention_effectsizes =  list(df['daily_cov'].values)
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i]})))\n'
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i-1]})))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
             else:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
@@ -955,17 +957,16 @@ class covidModel:
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
-                emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
 
-            #emodl_timeevents = f'(time-event vaccination_start_time @vaccine_start@ ((Kv_1 @vacc_daily_cov@)))'
+            emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
             return emodl_str
 
         def write_bvariant():
             emodl_str = ';COVID-19 bvariant scenario\n'
 
             read_from_csv = intervention_param['read_from_csv']
-            if read_from_csv:
-                csvfile = intervention_param['bvariant.csv']
+            csvfile = intervention_param['bvariant_csv']
+            if read_from_csv and csvfile != "":
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 fracinfect = list(df['variant_freq'].values)

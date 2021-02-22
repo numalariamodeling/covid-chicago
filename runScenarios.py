@@ -675,7 +675,7 @@ if __name__ == '__main__':
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, wdir=wdir,
+        exp_name, emodl_dir, emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, args.intervention_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
@@ -700,7 +700,7 @@ if __name__ == '__main__':
         generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path,model)
         submission_script=None
         if args.post_process == 'processForCivis':
-            submission_script = 'submit_runSimulations_with_trace_selection.sh'
+            submission_script = 'submit_runSimulations_for_civis.sh'
         runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER',submission_script=submission_script )
 
     if Location == 'Local':

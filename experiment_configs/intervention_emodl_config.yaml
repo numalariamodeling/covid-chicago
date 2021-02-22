@@ -14,7 +14,7 @@ interventions:
   'trigger_channel': 'crit_det'
   'read_from_csv': False
   'bvariant_csv': "bvariant_frequency_scenario.csv"
+  'vaccination_csv': "vaccination_medium.csv" #"vaccination_low.csv" # "vaccination_medium.csv" #  "vaccination_high.csv"
   #'reopen_csv': "ki_increase_scenario.csv"
-  #'vaccine_csv': "vaccine_rollout_scenario.csv"
   #'n_gradual_intervals': 4
   #'start_today': True
