@@ -46,14 +46,14 @@ def plot_on_fig(df, channels, axes, color, label) :
         ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                         color=color, linewidth=0, alpha=0.4)
         ax.set_title(' '.join(channeltitle.split('_')), y=0.85)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
 
-def compare_channels(channelGrp):
+def compare_channels(channelGrp,grp="All"):
     nchannels_symp = {'channels1': ['symp_severe_cumul', 'symp_mild_cumul', 'symptomatic_severe', 'symptomatic_mild'],
                       'channels2': ['symp_severe_det_cumul', 'symp_mild_det_cumul', 'symptomatic_severe_det',
                                     'symptomatic_mild_det']}
 
-    nchannels_infect = {'channels1': ['infected', 'presymptomatic', 'infectious_undet', 'asymptomatic', 'asymp_cumul'],
+    nchannels_infect = {'channels1': ['infected', 'presymptomatic', 'infectious_undet', 'asymp', 'asymp_cumul'],
                         'channels2': ['infected_det', 'presymptomatic_det', 'infectious_det', 'asymptomatic_det',
                                       'asymp_det_cumul']}
 
@@ -62,15 +62,20 @@ def compare_channels(channelGrp):
         'channels2': ['hosp_det', 'new_detected_hospitalized', 'hosp_det_cumul', 'crit_det', 'new_detected_critical',
                       'crit_det_cumul']}
 
+    nchannels_Vacc = {
+        'channels1': ['vaccinated_cumul', 'asymp_det', 'hosp_det', 'crit_det', 'deaths_det', 'recovered_det'],
+        'channels2': ['vaccinated_cumul', 'asymp_det_V', 'hosp_det_V', 'crit_det_V', 'deaths_det_V', 'recovered_det_V']}
+
     if channelGrp == "symp":
         nchannels = nchannels_symp
     if channelGrp == "infect":
         nchannels = nchannels_infect
     if channelGrp == "hospCrit":
         nchannels = nchannels_hospCrit
+    if channelGrp == "Vaccinated":
+        nchannels = nchannels_Vacc
 
     palette = sns.color_palette('Set1', len(nchannels))
-
     fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
 
@@ -78,14 +83,21 @@ def compare_channels(channelGrp):
 
     for d, key in enumerate(nchannels.keys()):
 
-        df = load_sim_data(exp_name)
-        df = df[df['date'].between(first_plot_day, last_plot_day)]
+        column_list = ['startdate', 'time']
+        for channel in nchannels[key]:
+            column_list.append(channel + f'_{grp}')
+
+        df = load_sim_data(exp_name, region_suffix=f'_{grp}',  fname = 'trajectoriesDat.csv')
+        df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
+
 
         channels = nchannels[key]
         if d == 0:
             label = "all"
         if d == 1:
             label = "detected"
+            if channelGrp == "Vaccinated":
+                label = "vaccinated"
 
         plot_on_fig(df, channels, axes, color=palette[d], label=label)
     axes[-1].legend()
@@ -101,10 +113,10 @@ if __name__ == '__main__' :
     stem = args.stem
     Location = args.Location
 
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
+    first_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
+    last_day = pd.Timestamp.today()+ pd.Timedelta(210,'days')
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
@@ -113,5 +125,5 @@ if __name__ == '__main__' :
         #compare_channels(channelGrp= "symp")
         #compare_channels(channelGrp= "infect")
         compare_channels(channelGrp= "hospCrit")
-
+        compare_channels(channelGrp= "Vaccinated")
 
