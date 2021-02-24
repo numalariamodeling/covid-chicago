@@ -402,74 +402,74 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"' \
                 ' --delete_simsfiles "True"'
     file = open(os.path.join(temp_exp_dir,'sh', '0_cleanupSimulations.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[1]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[1]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     """Trace selection"""
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[2]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     """Simulate traces"""
-    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER" --plot'
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[13]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir,'sh', f'{list(process_dict.keys())[3]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[4]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir,  'sh',f'{list(process_dict.keys())[5]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[6]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[7]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[8]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[8]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[9]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[10]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[11]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[12]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     """
