@@ -417,7 +417,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.close()
 
     """Simulate traces"""
-    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER" --plot'
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[13]}.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
     file.close()
