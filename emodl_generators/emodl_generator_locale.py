@@ -975,39 +975,52 @@ class covidModel:
                                        f'(* Ki_{grp} @bvariant_infectivity@ ' \
                                        f'{fracinfect[i - 1]}' \
                                        f'))\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList])
+
+                fracinfect_timevent = ''.join([f'(time-event bvariant_fracinfect {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
+                                               f'((bvariant_fracinfect {fracinfect[i - 1]})))\n'
+                                               for i, date in enumerate(intervention_dates, 1)])
+
             else:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
-                #fracinfect = ['@bvariant_fracinfect@' for _ in range(len(intervention_dates))]
+
                 emodl_param = ''.join([f'(param Ki_bvariant_{i}_{grp} '
                                        f'(* Ki_{grp} @bvariant_infectivity@ ' \
                                        f'(* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)}))' \
-                                       f')\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList ])
+                                       f')\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList])
+
+                fracinfect_timevent = ''.join([f'(time-event bvariant_fracinfect {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)}'
+                                               f' ((bvariant_fracinfect (* @bvariant_fracinfect@ '
+                                               f'{(1 / (len(intervention_dates)) * i)})))'
+                                               f')\n' for i, date in enumerate(intervention_dates, 1)])
 
             emodl_timeevents = ''
             for i, date in enumerate(intervention_dates, 1):
                 temp_str = f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                temp_str = temp_str + ''.join([f' (Ki_{grp} Ki_bvariant_{i}_{grp})' for grp in self.grpList ])
+                temp_str = temp_str + ''.join([f' (Ki_{grp} Ki_bvariant_{i}_{grp})' for grp in self.grpList])
                 temp_str = temp_str + f'))\n'
                 emodl_timeevents = emodl_timeevents + temp_str
             bvariant_infectivity = emodl_param + emodl_timeevents
 
-            """bvariant_severity Needs to be changed only once"""
-            # FIXME: Affects total pop, regardless of bvariant prevalence
-            # FIXME: Adjust fraction dead and critical? i.e. go back using cfr?
-            #        f'(fraction_dead (/ cfr fraction_severe)) '
+            """keep track of fracinfect, and use for update symptom development reactions"""
+            fracinfect_str = '(param bvariant_fracinfect 0)\n' \
+                             '(observe bvariant_fracinfect_t bvariant_fracinfect)\n' \
+                             '(observe fraction_severe_t fraction_severe)\n' + fracinfect_timevent
 
-            bvariant_severity = f'(param fracsevere_bvariant1 (* fraction_severe @bvariant_severity@))\n' \
-                                f'(time-event fracsevere_bvariant_change1 {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0]),self.startdate)} ' \
-                                f'(' \
-                                f'(fraction_severe fracsevere_bvariant1) ' \
-                                f'(fraction_hospitalized (- 1 (+ fraction_critical fraction_dead))) ' \
-                                f'(Kh1 (/ fraction_hospitalized time_to_hospitalization)) ' \
-                                f'(Kh2 (/ fraction_critical time_to_hospitalization )) ' \
-                                f'(Kh1_D (/ fraction_hospitalized (- time_to_hospitalization time_D_Sys))) ' \
-                                f'(Kh2_D (/ fraction_critical (- time_to_hospitalization time_D_Sys) ))' \
-                                f'))\n'
+            """fraction severe adjustment over time"""
+            frac_severe_timevent = ''.join([f'(time-event fraction_severe_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
+                                            f'('
+                                            f'(fraction_severe (+ '
+                                            f'(* @fraction_severe@ (- 1 bvariant_fracinfect)) '
+                                            f'(* fraction_severeB  bvariant_fracinfect )  '
+                                            f')) '
+                                            f'(Ksys ( * fraction_severe (/ 1 time_to_symptoms))) '
+                                            f'(Ksym ( * (- 1 fraction_severe)(/ 1 time_to_symptoms)))'
+                                            f')'
+                                            f')\n' for i, date in enumerate(intervention_dates, 1)])
 
-            emodl_str = emodl_str + bvariant_infectivity + bvariant_severity
+            frac_severe_str = '(param fraction_severeB (* @fraction_severe@ @bvariant_severity@))\n' + frac_severe_timevent
+
+            emodl_str = emodl_str + bvariant_infectivity + fracinfect_str + frac_severe_str
 
             return emodl_str
 
