@@ -275,7 +275,7 @@ sampled_parameters:
     function_kwargs: { 'low': 0, 'high': 0.05 }
   'reduced_infectious_V':
     np.random: uniform
-    function_kwargs: { 'low': 0.1, 'high': 0.2 }
+    function_kwargs: { 'low': 0.1, 'high': 0.1}
 intervention_parameters:
   ###------------------------------------------------
   ### ---- Parameter scalingfactor ------------------
