@@ -1020,6 +1020,23 @@ class covidModel:
 
             frac_severe_str = '(param fraction_severeB (* @fraction_severe@ @bvariant_severity@))\n' + frac_severe_timevent
 
+            if 'vaccine' in self.add_interventions:
+                """fraction severe adjustment over time"""
+                frac_severeV_timevent = ''.join([f'(time-event fraction_severe_V_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
+                                                 f'('
+                                                 f'(fraction_severe_V (+ '
+                                                 f'(* @fraction_severe@ @reduced_fraction_Sys@ (- 1 bvariant_fracinfect)) '
+                                                 f'(* fraction_severeB @reduced_fraction_Sys@ bvariant_fracinfect )  '
+                                                 f')) '
+                                                 f'(KsysV ( * fraction_severe_V (/ 1 time_to_symptoms))) '
+                                                 f'(KsymV ( * (- 1 fraction_severe_V)(/ 1 time_to_symptoms)))'
+                                                 f')'
+                                                 f')\n' for i, date in enumerate(intervention_dates, 1)])
+
+                frac_severeV_str = '(observe fraction_severe_V_t fraction_severe_V)\n' + frac_severeV_timevent
+                frac_severe_str = frac_severe_str + frac_severeV_str
+
+
             emodl_str = emodl_str + bvariant_infectivity + fracinfect_str + frac_severe_str
 
             return emodl_str
