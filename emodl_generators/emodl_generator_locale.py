@@ -740,7 +740,8 @@ class covidModel:
             reaction_str = reaction_str.replace('Ks E_V::', 'Ks E_V::')
             reaction_str = reaction_str.replace('Ksym P_V::', 'KsymV P_V::')
             reaction_str = reaction_str.replace('Ksys P_V::', 'KsysV P_V::')
-
+            reaction_str = reaction_str.replace('Ksym P_det_V::', 'KsymV P_det_V::')
+            reaction_str = reaction_str.replace('Ksys P_det_V::', 'KsysV P_det_V::')
 
         return reaction_str
 
