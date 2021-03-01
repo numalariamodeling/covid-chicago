@@ -82,18 +82,24 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
 
     return df
 
-def merge_county_covidregions(df_x, key_x='region', key_y='County'):
-    """ Add covidregions (new_restore_regions from covidregion_population_by_county.csv)
+def merge_county_covidregions(df_x, key_x='region', key_y='County', add_pop =True):
+    """ Add COVID-19 regions to counties
     to a file that only includes counties. Country names are changes to lowercase before the merge.
     Keeps all rows from df_x and only those that match from df_y (left join).
     """
 
-    df_y = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'EMS Population','covidregion_population_by_county.csv'))
-
+    df_y = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'EMS Population','covidregion_county.csv'))
     df_x[key_x] = df_x[key_x] .str.lower()
     df_y[key_y] = df_y[key_y] .str.lower()
-
     df = pd.merge(how='left', left=df_x, left_on=key_x, right=df_y, right_on=key_y)
+
+    if add_pop:
+        del df_y
+        df_y = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'population', 'co-est2019-annres-17.csv'))
+        df_y['population'] = df_y['2019_adj'] # adjusted including Chicago as subset from Cook County
+        df_y[key_y] = df_y[key_y].str.lower()
+        df_y = df_y[[key_y,'population']]
+        df = pd.merge(how='left', left=df, left_on=key_y, right=df_y, right_on=key_y)
 
     return df
 
