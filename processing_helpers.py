@@ -188,15 +188,13 @@ def load_ref_df(ems_nr):
     ref_df_ll['date'] = pd.to_datetime(ref_df_ll['date'])
 
     ref_df_cli = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'CLI_admissions.csv'))
-    ref_df_cli = merge_county_covidregions(df_x=ref_df_cli, key_x='region', key_y='County')
-    ref_df_cli = ref_df_cli.groupby(['date','new_restore_region'])['inpatient'].agg(np.sum).reset_index()
-    ref_df_cli = ref_df_cli.rename(columns={'new_restore_region': 'covid_region'})
+    ref_df_cli = merge_county_covidregions(df_x=ref_df_cli, key_x='region', key_y='County', add_pop=False)
+    ref_df_cli = ref_df_cli.groupby(['date','covid_region'])['inpatient'].agg(np.sum).reset_index()
     ref_df_cli['date'] = pd.to_datetime(ref_df_cli['date'])
 
     ref_df_public = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'IDPH_public_county.csv'))
-    ref_df_public = merge_county_covidregions(df_x=ref_df_public, key_x='county', key_y='County')
-    ref_df_public = ref_df_public.groupby(['test_date','new_restore_region'])['confirmed_cases'].agg(np.sum).reset_index()
-    ref_df_public = ref_df_public.rename(columns={'new_restore_region': 'covid_region'})
+    ref_df_public = merge_county_covidregions(df_x=ref_df_public, key_x='county', key_y='County', add_pop=False)
+    ref_df_public = ref_df_public.groupby(['test_date','covid_region'])['confirmed_cases'].agg(np.sum).reset_index()
     ref_df_public['test_date'] = pd.to_datetime(ref_df_public['test_date'])
     ref_df_public.rename(columns={"test_date" : "date"}, inplace=True)
 
