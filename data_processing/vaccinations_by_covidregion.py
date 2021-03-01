@@ -69,16 +69,16 @@ def plot_vaccinations_compare(adf, channels):
     for c, channel in enumerate(channels):
         ax = fig.add_subplot(1, len(channels), c+1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
-        ax.set_title(f'{channel} (%)')
-
-        yvalues = adf.groupby(['date'])[channel].agg(np.sum).reset_index()[channel].values
+        ax.set_title(channel)
+        yvalues = adf.groupby(['date'])['daily_full_vaccinated'].agg(np.sum).reset_index()['daily_full_vaccinated'].values
         for e, ems_num in enumerate(adf['region'].unique()):
             mdf = adf[adf['region'] == ems_num]
-            if channel =='daily_perc_vacc':
+            if channel =='daily_full_vaccinated':
                 if e >0 :
-                    yvalues = yvalues - mdf[channel].values
-                ax.bar(mdf['date'], yvalues*100, color=palette[e], label=f'Region {str(int(ems_num))}')
-                ax.set_ylabel('Stacked daily region vaccinations (%)')
+                    yvalues = yvalues - mdf['daily_full_vaccinated'].values
+                ax.bar(mdf['date'], yvalues, color=palette[e], label=f'Region {str(int(ems_num))}')
+                ax.set_ylabel('daily_full_vaccinated')
+
             else:
                 ax.plot(mdf['date'], mdf[channel]*100, color=palette[e], label=f'Region {str(int(ems_num))}')
                 ax.set_ylabel('Persons fully vaccinated per region (%)')
@@ -137,5 +137,5 @@ if __name__ == '__main__':
     plot_vaccinations(adf=inc_df, channel = 'persons_fully_vaccinated')
 
     """Comparing COVID-19 region"""
-    plot_vaccinations_compare(adf=inc_df, channels = ['daily_perc_vacc','persons_fully_vaccinated_perc'])
+    plot_vaccinations_compare(adf=inc_df, channels = ['daily_full_vaccinated','persons_fully_vaccinated_perc'])
 
