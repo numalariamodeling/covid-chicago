@@ -75,7 +75,7 @@ class covidModel:
 
         if 'vaccine' in self.add_interventions:
             state_variables_vaccine = [f'{state}_V' for state in state_variables ]
-            state_variables = state_variables  + state_variables_vaccine
+            state_variables = state_variables + state_variables_vaccine
         return state_variables
 
     def write_species(self, grp):
@@ -615,7 +615,9 @@ class covidModel:
                             f'))\n'
 
         if 'vaccine' in self.add_interventions:
-            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_1 S::{grp}))\n'
+            #reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv S::{grp}))\n'
+            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) n_past_daily_vaccinated_{grp})\n'
+            #reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_past_daily_vaccinated_{grp} (* Kv S::{grp}) ))\n'
             reaction_str_I = reaction_str_I + reaction_str_V_Ia + reaction_str_V_Ib
 
         reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h{grp} H1::{grp}))\n' \
@@ -940,26 +942,48 @@ class covidModel:
 
         def write_vaccine():
             emodl_str = ';COVID-19 vaccine scenario\n'
-            emodl_param_initial = '(param Kv_1 0)\n(observe daily_vaccinated  Kv_1)\n'
+            emodl_param_initial = '(param Kv 0)\n(observe daily_vaccinated  Kv)\n'
 
             read_from_csv = intervention_param['read_from_csv']
             csvfile = intervention_param['vaccination_csv']
             if read_from_csv and csvfile != "":
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
-                intervention_effectsizes =  list(df['daily_cov'].values)
+                intervention_effectsizes = list(df['daily_cov'].values)
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i-1]})))\n'
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv {intervention_effectsizes[i-1]})))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
             else:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='vaccine')
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
 
             emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
+            return emodl_str
+
+
+        def write_vaccine_history():
+            emodl_str = ';COVID-19 vaccine scenario\n'
+            df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', 'vaccination_history_by_covidregion.csv'))
+            df['Date'] = pd.to_datetime(df['Date'])
+            emodl_str_grp = ""
+            for grp in self.grpList:
+                grp_num = grp.replace('EMS_','')
+                df_grp = df[df['region']==int(grp_num)]
+                emodl_param_initial = f'(param n_past_daily_vaccinated_{grp} 0)\n(observe n_past_daily_vaccinated_{grp}  n_past_daily_vaccinated_{grp})\n'
+                intervention_dates = list(df_grp['Date'].values)
+                intervention_effectsizes = list(df_grp['daily_first_vacc'].values)
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event past_daily_vaccinations_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((n_past_daily_vaccinated_{grp} {intervention_effectsizes[i-1]})))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+                emodl_str_grp = emodl_str_grp + emodl_param_initial + emodl_timeevents
+                del df_grp
+
+            emodl_str = emodl_str + emodl_str_grp
             return emodl_str
 
         def write_bvariant():
@@ -1145,6 +1169,7 @@ class covidModel:
 
         """Select intervention to add to emodl"""
         intervention_str = ""
+        intervention_str = intervention_str + write_vaccine_history()
         if "bvariant" in self.add_interventions:
             intervention_str = intervention_str + write_bvariant()
         if "rollback" in self.add_interventions:
@@ -1153,8 +1178,8 @@ class covidModel:
             intervention_str = intervention_str + write_triggeredrollback()
         if "reopen" in self.add_interventions:
             intervention_str = intervention_str + write_reopen()
-        if "vaccine" in self.add_interventions:
-            intervention_str = intervention_str + write_vaccine()
+        #if "vaccine" in self.add_interventions:
+        #    intervention_str = intervention_str + write_vaccine()
 
         return total_string.replace(';[INTERVENTIONS]', intervention_str )
 

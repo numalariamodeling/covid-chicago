@@ -317,10 +317,10 @@ intervention_parameters:
     np: linspace
     function_kwargs: {'start':0.20, 'stop':0.20, 'num' : 1}
   ### ---- VACCINE ----------------------
+  ### Used if no intervention csv is specified in intervention_emodl_config.yaml
   'vacc_daily_cov':
     np: linspace
     function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
-    #function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
