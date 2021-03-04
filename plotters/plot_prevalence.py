@@ -131,8 +131,8 @@ if __name__ == '__main__':
     stem = args.stem
     Location = args.Location
 
-    first_plot_day = pd.Timestamp.today()- pd.Timedelta(300,'days')
-    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
+    first_plot_day = pd.Timestamp('2020-02-13')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(30,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

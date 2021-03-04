@@ -498,7 +498,6 @@ time_parameters:
   'fraction_dead_time_3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}                     
-    custom_function: DateToTimestep
   'fraction_dead_time_4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-01}   
