@@ -617,7 +617,7 @@ class covidModel:
 
         if 'vaccine' in self.add_interventions:
             """Keep option to specify actual numbers for past vaccinations and fraction vaccinated for future scenarios, if not used, set to 0"""
-            reaction_str_exposure = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_past_daily_vaccinated_{grp} (* Kv S::{grp}) ))\n'
+            reaction_str_exposure = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_past_daily_vaccinated_{grp} (* Kv_{grp} S::{grp}) ))\n'
             reaction_str_exposure = reaction_str_exposure + reaction_str_exposure_Va + reaction_str_exposure_Vb
 
         reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h{grp} H1::{grp}))\n' \
@@ -970,20 +970,16 @@ class covidModel:
             emodl_str = ';COVID-19 vaccine scenario\n'
             df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', 'vaccination_history_by_covidregion.csv'))
             df['Date'] = pd.to_datetime(df['Date'])
-            emodl_str_grp = "(param Kv 0)\n"
+            emodl_str_grp = ""
             for grp in self.grpList:
                 grp_num = grp.replace('EMS_','')
                 df_grp = df[df['region']==int(grp_num)]
-                emodl_param_initial = f'(param n_past_daily_vaccinated_{grp} 0)\n(observe n_past_daily_vaccinated_{grp}  n_past_daily_vaccinated_{grp})\n'
+                emodl_param_initial = f'(param n_past_daily_vaccinated_{grp} 0)\n' \
+                                      f'(param Kv_{grp} 0)\n' \
+                                      f'(observe n_daily_vaccinated_{grp}  (+ n_past_daily_vaccinated_{grp} Kv_{grp}))\n'
 
-                """ Per default assume that vaccinations would continue on average rate if future vaccine scenario not specified"""
-                intervention_dates_past = list(df_grp['Date'].values)
-                intervention_dates_future = [max(df_grp['Date']) + pd.Timedelta(1,'days')]
-                intervention_dates = intervention_dates_past + intervention_dates_future
-
-                intervention_effectsizes_past = list(df_grp['daily_first_vacc'].values)
-                intervention_effectsizes_future = [np.mean(df_grp['daily_first_vacc'])]
-                intervention_effectsizes = intervention_effectsizes_past + intervention_effectsizes_future
+                intervention_dates = list(df_grp['Date'].values)
+                intervention_effectsizes = list(df_grp['daily_first_vacc'].values)
 
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
@@ -991,8 +987,27 @@ class covidModel:
                     emodl_timeevents = emodl_timeevents + temp_str
                 emodl_str_grp = emodl_str_grp + emodl_param_initial + emodl_timeevents
                 del df_grp
+            emodl_str_past = emodl_str + emodl_str_grp
 
-            emodl_str = emodl_str + emodl_str_grp
+            """Future scenario - vaccination continuation"""
+            emodl_str_grp = ""
+            for grp in self.grpList:
+                grp_num = grp.replace('EMS_', '')
+                df_grp = df[df['region'] == int(grp_num)]
+
+                """ Per default assume that vaccinations would continue on average rate of last 14 days if future vaccine scenario not specified"""
+                intervention_dates = [max(df_grp['Date']) + pd.Timedelta(1, 'days')]
+                intervention_effectsizes = [np.mean(df_grp['daily_first_vacc_perc'][-14:])]
+
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event future_daily_vaccinations_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_{grp} {intervention_effectsizes[i - 1]})))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+                emodl_str_grp = emodl_str_grp + emodl_timeevents
+                del df_grp
+            emodl_str_future = emodl_str + emodl_str_grp
+            emodl_str = emodl_str_past + emodl_str_future
+
             return emodl_str
 
         def write_bvariant():
