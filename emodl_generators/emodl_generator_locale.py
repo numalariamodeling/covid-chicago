@@ -765,7 +765,7 @@ class covidModel:
 
         def write_frac_crit_change(nchanges):
             n_frac_crit_change = range(1, nchanges+1)
-            frac_crit_change_observe = '(observe frac_crit_t fraction_critical)'
+            frac_crit_change_observe = '(observe frac_crit_t fraction_critical)\n'
             frac_crit_change_timeevent = ''.join([f'(time-event frac_crit_adjust{i} @crit_time_{i}@ '
                                                   f'('
                                                   f'(fraction_critical @fraction_critical_change{i}@) '
@@ -783,7 +783,7 @@ class covidModel:
         def write_fraction_dead_change(nchanges):
             n_fraction_dead_change = range(1, nchanges+1)
             fraction_dead_change_observe = '(observe fraction_dead_t fraction_dead)\n' \
-                                           '(observe fraction_hospitalized_t fraction_hospitalized)'
+                                           '(observe fraction_hospitalized_t fraction_hospitalized)\n'
 
             fraction_dead_change_timeevent = ''.join([f'(time-event fraction_dead_adjust2 @fraction_dead_time_{i}@ '
                                                       f'('
@@ -801,7 +801,7 @@ class covidModel:
 
         def write_dSys_change(nchanges):
             n_dSys_change = range(1, nchanges+1)
-            dSys_change_observe = '(observe d_Sys_t d_Sys)'
+            dSys_change_observe = '(observe d_Sys_t d_Sys)\n'
             dSys_change_timeevent = ''.join([f'(time-event dSys_change{i} @d_Sys_change_time_{i}@ '
                                              f'((d_Sys @d_Sys_incr{i}@))'
                                              f')'
