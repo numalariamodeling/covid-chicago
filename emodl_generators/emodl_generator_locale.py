@@ -953,7 +953,7 @@ class covidModel:
                     temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i-1]})))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
             else:
-                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
+                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='vaccine')
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
