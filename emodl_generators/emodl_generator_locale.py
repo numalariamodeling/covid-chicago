@@ -744,9 +744,8 @@ class covidModel:
             reaction_str = reaction_str.replace('Ksys P_V::', 'KsysV P_V::')
             reaction_str = reaction_str.replace('Ksym P_det_V::', 'KsymV P_det_V::')
             reaction_str = reaction_str.replace('Ksys P_det_V::', 'KsysV P_det_V::')
-        reaction_str = reaction_str + reaction_str_exposure
 
-        reaction_str = reaction_str_I + reaction_str
+        reaction_str = reaction_str_exposure + reaction_str
         return reaction_str
 
     def write_time_varying_parameter(self, total_string):
