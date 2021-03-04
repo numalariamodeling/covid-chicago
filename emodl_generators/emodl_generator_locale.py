@@ -575,50 +575,49 @@ class covidModel:
     def write_reactions(self, grp):
         grp = str(grp)
 
-        reaction_str_I = f'\n(reaction exposure_{grp}   ' \
-                         f'(S::{grp}) (E::{grp}) ' \
-                         f'(* Ki_{grp} S::{grp} ' \
-                         f'(/  ' \
-                         f'(+ infectious_undet_symp_{grp} ' \
-                         f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                         f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                         f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                         f') N_{grp} )' \
-                         f'))\n'
+        reaction_str_exposure = f'\n(reaction exposure_{grp}   ' \
+                                f'(S::{grp}) (E::{grp}) ' \
+                                f'(* Ki_{grp} S::{grp} ' \
+                                f'(/  ' \
+                                f'(+ infectious_undet_symp_{grp} ' \
+                                f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                                f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                                f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                                f') N_{grp} )' \
+                                f'))\n'
 
-        reaction_str_V_Ia = f'\n(reaction exposure_{grp}   ' \
-                            f'(S::{grp}) (E::{grp}) ' \
-                            f'(* Ki_{grp} S::{grp} ' \
-                            f'(/  ' \
-                            f'(+ infectious_undet_symp_{grp}' \
-                            f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
-                            f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                            f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                            f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
-                            f') N_{grp} )' \
-                            f'))\n'
+        reaction_str_exposure_Va = f'\n(reaction exposure_{grp}   ' \
+                                   f'(S::{grp}) (E::{grp}) ' \
+                                   f'(* Ki_{grp} S::{grp} ' \
+                                   f'(/  ' \
+                                   f'(+ infectious_undet_symp_{grp}' \
+                                   f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                                   f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                                   f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                                   f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                                   f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                                   f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                                   f') N_{grp} )' \
+                                   f'))\n'
 
-        reaction_str_V_Ib = f'\n(reaction exposure_{grp}   ' \
-                            f'(S_V::{grp}) (E_V::{grp}) ' \
-                            f'(* Ki_{grp} S_V::{grp} ' \
-                            f'(/  ' \
-                            f'(+ infectious_undet_symp_{grp}' \
-                            f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
-                            f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                            f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                            f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
-                            f') N_{grp} )' \
-                            f'))\n'
+        reaction_str_exposure_Vb = f'\n(reaction exposure_{grp}   ' \
+                                   f'(S_V::{grp}) (E_V::{grp}) ' \
+                                   f'(* Ki_{grp} S_V::{grp} ' \
+                                   f'(/  ' \
+                                   f'(+ infectious_undet_symp_{grp}' \
+                                   f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                                   f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                                   f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                                   f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                                   f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                                   f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                                   f') N_{grp} )' \
+                                   f'))\n'
 
         if 'vaccine' in self.add_interventions:
-            #reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv S::{grp}))\n'
-            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) n_past_daily_vaccinated_{grp})\n'
-            #reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_past_daily_vaccinated_{grp} (* Kv S::{grp}) ))\n'
-            reaction_str_I = reaction_str_I + reaction_str_V_Ia + reaction_str_V_Ib
+            """Keep option to specify actual numbers for past vaccinations and fraction vaccinated for future scenarios, if not used, set to 0"""
+            reaction_str_exposure = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_past_daily_vaccinated_{grp} (* Kv S::{grp}) ))\n'
+            reaction_str_exposure = reaction_str_exposure + reaction_str_exposure_Va + reaction_str_exposure_Vb
 
         reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h{grp} H1::{grp}))\n' \
                            f'(reaction recovery_C2_{grp} (C2::{grp}) (H2post::{grp}) (* Kr_c{grp} C2::{grp}))\n' \
@@ -722,11 +721,11 @@ class covidModel:
                                         f'(reaction recovery_Sym_det2b_{grp} (Sym_det2b::{grp}) (RSym_det2::{grp}) (* Kr_m Sym_det2b::{grp}))\n'
 
         if self.expandModel == None:
-            reaction_str = reaction_str_I + expand_base_str + reaction_str_III
+            reaction_str = expand_base_str + reaction_str_III
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
-            reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III
+            reaction_str = expand_testDelay_SymSys_str + reaction_str_III
         if self.expandModel == 'AsSymSys':
-            reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III
+            reaction_str = expand_testDelay_AsSymSys_str + reaction_str_III
 
         if 'vaccine' in self.add_interventions:
             reaction_str_V = reaction_str.replace(f'_{grp}',f'_V_{grp}')
@@ -744,6 +743,7 @@ class covidModel:
             reaction_str = reaction_str.replace('Ksys P_V::', 'KsysV P_V::')
             reaction_str = reaction_str.replace('Ksym P_det_V::', 'KsymV P_det_V::')
             reaction_str = reaction_str.replace('Ksys P_det_V::', 'KsysV P_det_V::')
+        reaction_str = reaction_str + reaction_str_exposure
 
         return reaction_str
 
