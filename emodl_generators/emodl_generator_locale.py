@@ -720,11 +720,11 @@ class covidModel:
                                         f'(reaction recovery_Sym_det2b_{grp} (Sym_det2b::{grp}) (RSym_det2::{grp}) (* Kr_m Sym_det2b::{grp}))\n'
 
         if self.expandModel == None:
-            reaction_str = reaction_str_I + expand_base_str + reaction_str_III
+            reaction_str = expand_base_str + reaction_str_III
         if self.expandModel == "SymSys" or self.expandModel == "uniform":
-            reaction_str = reaction_str_I + expand_testDelay_SymSys_str + reaction_str_III
+            reaction_str = expand_testDelay_SymSys_str + reaction_str_III
         if self.expandModel == 'AsSymSys':
-            reaction_str = reaction_str_I + expand_testDelay_AsSymSys_str + reaction_str_III
+            reaction_str = expand_testDelay_AsSymSys_str + reaction_str_III
 
         if 'vaccine' in self.add_interventions:
             reaction_str_V = reaction_str.replace(f'_{grp}',f'_V_{grp}')
@@ -743,6 +743,7 @@ class covidModel:
             reaction_str = reaction_str.replace('Ksym P_det_V::', 'KsymV P_det_V::')
             reaction_str = reaction_str.replace('Ksys P_det_V::', 'KsysV P_det_V::')
 
+        reaction_str = reaction_str_I + reaction_str
         return reaction_str
 
     def write_time_varying_parameter(self, total_string):
