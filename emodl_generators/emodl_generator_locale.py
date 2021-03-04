@@ -4,6 +4,7 @@ import re
 import json
 import yaml
 import pandas as pd
+import numpy as np
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -940,7 +941,7 @@ class covidModel:
         """ Get intervention configurations """
         intervention_param = covidModel.get_configs(key ='interventions', config_file=self.intervention_config)
 
-        def write_vaccine():
+        def write_vaccine_generic():
             emodl_str = ';COVID-19 vaccine scenario\n'
             emodl_param_initial = '(param Kv 0)\n(observe daily_vaccinated  Kv)\n'
 
@@ -965,17 +966,25 @@ class covidModel:
             return emodl_str
 
 
-        def write_vaccine_history():
+        def write_vaccine():
             emodl_str = ';COVID-19 vaccine scenario\n'
             df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', 'vaccination_history_by_covidregion.csv'))
             df['Date'] = pd.to_datetime(df['Date'])
-            emodl_str_grp = ""
+            emodl_str_grp = "(param Kv 0)\n"
             for grp in self.grpList:
                 grp_num = grp.replace('EMS_','')
                 df_grp = df[df['region']==int(grp_num)]
                 emodl_param_initial = f'(param n_past_daily_vaccinated_{grp} 0)\n(observe n_past_daily_vaccinated_{grp}  n_past_daily_vaccinated_{grp})\n'
-                intervention_dates = list(df_grp['Date'].values)
-                intervention_effectsizes = list(df_grp['daily_first_vacc'].values)
+
+                """ Per default assume that vaccinations would continue on average rate if future vaccine scenario not specified"""
+                intervention_dates_past = list(df_grp['Date'].values)
+                intervention_dates_future = [max(df_grp['Date']) + pd.Timedelta(1,'days')]
+                intervention_dates = intervention_dates_past + intervention_dates_future
+
+                intervention_effectsizes_past = list(df_grp['daily_first_vacc'].values)
+                intervention_effectsizes_future = [np.mean(df_grp['daily_first_vacc'])]
+                intervention_effectsizes = intervention_effectsizes_past + intervention_effectsizes_future
+
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event past_daily_vaccinations_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((n_past_daily_vaccinated_{grp} {intervention_effectsizes[i-1]})))\n'
@@ -1169,7 +1178,6 @@ class covidModel:
 
         """Select intervention to add to emodl"""
         intervention_str = ""
-        intervention_str = intervention_str + write_vaccine_history()
         if "bvariant" in self.add_interventions:
             intervention_str = intervention_str + write_bvariant()
         if "rollback" in self.add_interventions:
@@ -1178,8 +1186,8 @@ class covidModel:
             intervention_str = intervention_str + write_triggeredrollback()
         if "reopen" in self.add_interventions:
             intervention_str = intervention_str + write_reopen()
-        #if "vaccine" in self.add_interventions:
-        #    intervention_str = intervention_str + write_vaccine()
+        if "vaccine" in self.add_interventions:
+            intervention_str = intervention_str + write_vaccine()
 
         return total_string.replace(';[INTERVENTIONS]', intervention_str )
 
