@@ -73,7 +73,7 @@ def comparison_plot(reg_nr=0, channels=None, n_iter=3):
     # plt.savefig(os.path.join(NU_civis_path, simdate, 'pdf', plotname + '.pdf'), format='PDF')
 
 
-def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
+def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2, useylimits=False):
     if reg_nr == 0:
         region = "illinois"
         region_label = "Illinois"
@@ -108,7 +108,7 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
         ax.fill_between(df['date'], df['rt_lower'], df['rt_upper'], color=palette[i], linewidth=0, alpha=0.2)
 
         if i + 1 == len(exp_simdates):
-            df_today = df[df['date'] == pd.Timestamp.today()]
+            df_today = df[df['date'] == pd.to_datetime(pd.Timestamp.today().date())]
             df_initial = df[df['date'] == df['date'].min()]
             rt_median_today = df_today.iloc[0]['rt_median'].round(decimals=3)
             rt_lower_today = df_today.iloc[0]['rt_lower'].round(decimals=3)
@@ -120,7 +120,8 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
     ax.axvline(x=pd.Timestamp.today(), color='#737373', linestyle='--')
     ax.axhline(y=1, color='black', linestyle='-')
-    ax.set_ylim(rt_min, rt_max)
+    if useylimits:
+        ax.set_ylim(rt_min, rt_max)
     ax.set_ylabel('Rt')
     ax.legend()
 
@@ -137,10 +138,7 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2):
     fig.text(0.07, 0.02, caption_text, wrap=True, horizontalalignment='left', fontsize=8)
 
     plotname = f'{exp_simdates[-1]}_Rt_{region}'
-
     plt.savefig(os.path.join(NU_civis_path, simdate, 'plots', plotname + '.png'))
-    if reg_nr == 10 or reg_nr ==11:
-        plt.savefig(os.path.join(projectpath, 'NU_cdph_outputs', simdate, plotname + '.png'))
 
 
 if __name__ == '__main__':
@@ -151,6 +149,6 @@ if __name__ == '__main__':
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
     comparison_plot()
-    for reg_nr in [0,10,11]:
+    for reg_nr in range(0,12):
         region_rt_plot(reg_nr=reg_nr)
 
