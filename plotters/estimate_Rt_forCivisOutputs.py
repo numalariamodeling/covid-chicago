@@ -160,7 +160,7 @@ def run_Rt_estimation(smoothing_window, r_window_size):
 
 if __name__ == '__main__':
 
-    test_mode = True
+    test_mode = False
     if test_mode:
         stem = "20210203_IL_quest_baseline"
         Location = 'Local'
