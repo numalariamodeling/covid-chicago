@@ -57,9 +57,6 @@ def cumulative_barplot(exp_names,channel,labels, first_day,last_day,  region="Al
     fig = plt.figure(figsize=(6, 4))
     fig.subplots_adjust(left=0.2)
     ax = fig.gca()
-    #p = load_color_palette('wes')
-    #palette = [p[x] for x in [8, 4, 2, 1, 3]]
-    palette = ('#913058', "#F6851F", "#00A08A", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
     first_md = first_day.strftime('%b %d')
     last_md = last_day.strftime('%b %d')
 
@@ -85,9 +82,6 @@ def timeline_plot(exp_names,channel,labels, first_day,last_day,  region="All"):
     fig = plt.figure(figsize=(6, 4))
     fig.subplots_adjust(left=0.2)
     ax = fig.gca()
-    #p = load_color_palette('wes')
-    #palette = [p[x] for x in [8, 4, 2, 1, 3]]
-    palette = ('#913058', "#F6851F", "#00A08A", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
 
     for s, exp_name in enumerate(exp_names):
         simpath = os.path.join(projectpath, 'cms_sim', 'simulation_output', exp_name)
@@ -99,7 +93,7 @@ def timeline_plot(exp_names,channel,labels, first_day,last_day,  region="All"):
         df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
         ax.plot(df['date'], df['%s_median' % channel], color=palette[s], label=labels[s])
         ax.fill_between(df['date'], df['%s_lower' % channel], df['%s_upper' % channel], color=palette[s], linewidth=0, alpha=0.4)
-
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
     ax.legend()
     ax.set_ylabel(f'{channel}')
     plt.savefig(os.path.join(plot_path, f'{channel}_timelineplot.png'))
@@ -107,6 +101,11 @@ def timeline_plot(exp_names,channel,labels, first_day,last_day,  region="All"):
     #plt.show()
 
 if __name__ == '__main__':
+
+    #p = load_color_palette('wes')
+    #palette = [p[x] for x in [8, 4, 2, 1, 3]]
+    #palette = ('#65213d', "#9c4468", "#b26e8a", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
+    palette = ('#65213d', "#9c4468", "#b26e8a",  "#007060", "#00a08a", "#66c6b8")
 
     args = parse_args()
     exp_names = args.exp_names
@@ -120,7 +119,7 @@ if __name__ == '__main__':
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
-    first_day = pd.Timestamp('2020-02-01')
+    first_day = pd.Timestamp('2021-03-01')
     last_day = pd.Timestamp('2021-06-01')
 
     cumulative_barplot(exp_names,channel,labels, first_day,last_day, region="All")
