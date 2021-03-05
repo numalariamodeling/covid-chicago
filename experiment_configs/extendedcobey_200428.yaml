@@ -523,11 +523,11 @@ time_parameters:
   ### ---- Bvariant ---
   'bvariant_start':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-02-10}
+    function_kwargs: {'dates': 2021-02-20}
     #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
   'bvariant_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-10} #if gradual change
+    function_kwargs: {'dates': 2021-06-01} #if gradual change
   'bvariant_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #no end
