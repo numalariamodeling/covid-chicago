@@ -576,49 +576,50 @@ class covidModel:
     def write_reactions(self, grp):
         grp = str(grp)
 
-        reaction_str_exposure = f'\n(reaction exposure_{grp}   ' \
-                                f'(S::{grp}) (E::{grp}) ' \
-                                f'(* Ki_{grp} S::{grp} ' \
-                                f'(/  ' \
-                                f'(+ infectious_undet_symp_{grp} ' \
-                                f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                                f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                                f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                                f') N_{grp} )' \
-                                f'))\n'
+        reaction_str_I = f'\n(reaction exposure_{grp}   ' \
+                         f'(S::{grp}) (E::{grp}) ' \
+                         f'(* Ki_{grp} S::{grp} ' \
+                         f'(/  ' \
+                         f'(+ infectious_undet_symp_{grp} ' \
+                         f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                         f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                         f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                         f') N_{grp} )' \
+                         f'))\n'
 
-        reaction_str_exposure_Va = f'\n(reaction exposure_{grp}   ' \
-                                   f'(S::{grp}) (E::{grp}) ' \
-                                   f'(* Ki_{grp} S::{grp} ' \
-                                   f'(/  ' \
-                                   f'(+ infectious_undet_symp_{grp}' \
-                                   f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
-                                   f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                                   f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                                   f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                                   f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
-                                   f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
-                                   f') N_{grp} )' \
-                                   f'))\n'
+        reaction_str_Ia = f'\n(reaction exposure_{grp}   ' \
+                          f'(S::{grp}) (E::{grp}) ' \
+                          f'(* Ki_{grp} S::{grp} ' \
+                          f'(/  ' \
+                          f'(+ infectious_undet_symp_{grp}' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                          f') N_{grp} )' \
+                          f'))\n'
 
-        reaction_str_exposure_Vb = f'\n(reaction exposure_{grp}   ' \
-                                   f'(S_V::{grp}) (E_V::{grp}) ' \
-                                   f'(* Ki_{grp} S_V::{grp} ' \
-                                   f'(/  ' \
-                                   f'(+ infectious_undet_symp_{grp}' \
-                                   f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
-                                   f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                                   f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                                   f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                                   f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
-                                   f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
-                                   f') N_{grp} )' \
-                                   f'))\n'
+        reaction_str_Ib = f'\n(reaction exposure_{grp}   ' \
+                          f'(S_V::{grp}) (E_V::{grp}) ' \
+                          f'(* Ki_{grp} S_V::{grp} ' \
+                          f'(/  ' \
+                          f'(+ infectious_undet_symp_{grp}' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                          f') N_{grp} )' \
+                          f'))\n'
 
         if 'vaccine' in self.add_interventions:
             """Keep option to specify actual numbers for past vaccinations and fraction vaccinated for future scenarios, if not used, set to 0"""
-            reaction_str_exposure = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_past_daily_vaccinated_{grp} (* Kv_{grp} S::{grp}) ))\n'
-            reaction_str_exposure = reaction_str_exposure + reaction_str_exposure_Va + reaction_str_exposure_Vb
+            #reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_daily_vaccinated_{grp} (* Kv_{grp} S::{grp}) ))\n'
+            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_{grp} S::{grp}))\n'
+            reaction_str_I = reaction_str_I + reaction_str_Ia + reaction_str_Ib
 
         reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h{grp} H1::{grp}))\n' \
                            f'(reaction recovery_C2_{grp} (C2::{grp}) (H2post::{grp}) (* Kr_c{grp} C2::{grp}))\n' \
@@ -745,7 +746,7 @@ class covidModel:
             reaction_str = reaction_str.replace('Ksym P_det_V::', 'KsymV P_det_V::')
             reaction_str = reaction_str.replace('Ksys P_det_V::', 'KsysV P_det_V::')
 
-        reaction_str = reaction_str_exposure + reaction_str
+        reaction_str = reaction_str_I + reaction_str
         return reaction_str
 
     def write_time_varying_parameter(self, total_string):
@@ -968,46 +969,27 @@ class covidModel:
 
         def write_vaccine():
             emodl_str = ';COVID-19 vaccine scenario\n'
-            df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', 'vaccination_history_by_covidregion.csv'))
-            df['Date'] = pd.to_datetime(df['Date'])
+            read_from_csv = intervention_param['read_from_csv']
+            csvfile = intervention_param['vaccination_csv']
+            df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
+            df['Date'] = pd.to_datetime(df['date'])
             emodl_str_grp = ""
             for grp in self.grpList:
                 grp_num = grp.replace('EMS_','')
                 df_grp = df[df['region']==int(grp_num)]
-                emodl_param_initial = f'(param n_past_daily_vaccinated_{grp} 0)\n' \
-                                      f'(param Kv_{grp} 0)\n' \
-                                      f'(observe n_daily_vaccinated_{grp}  (+ n_past_daily_vaccinated_{grp} Kv_{grp}))\n'
-
-                intervention_dates = list(df_grp['Date'].values)
-                intervention_effectsizes = list(df_grp['daily_first_vacc'].values)
+                emodl_param_initial = f'(param Kv_{grp} 0)\n' \
+                                      f'(observe n_daily_vaccinated_{grp}  (* Kv_{grp}  S::{grp} ))\n'
+                intervention_dates = list(df_grp['Date'].values) + [max(df_grp['Date']) + pd.Timedelta(1,'days')]
+                intervention_effectsizes = list(df_grp['daily_first_vacc_perc'].values) + [0]
+                #intervention_effectsizes = list(df_grp['daily_first_vacc'].values) + [0]
 
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event past_daily_vaccinations_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((n_past_daily_vaccinated_{grp} {intervention_effectsizes[i-1]})))\n'
+                    temp_str = f'(time-event daily_vaccinations_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_{grp} {intervention_effectsizes[i-1]})))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
                 emodl_str_grp = emodl_str_grp + emodl_param_initial + emodl_timeevents
                 del df_grp
-            emodl_str_past = emodl_str + emodl_str_grp
-
-            """Future scenario - vaccination continuation"""
-            emodl_str_grp = ""
-            for grp in self.grpList:
-                grp_num = grp.replace('EMS_', '')
-                df_grp = df[df['region'] == int(grp_num)]
-
-                """ Per default assume that vaccinations would continue on average rate of last 14 days if future vaccine scenario not specified"""
-                intervention_dates = [max(df_grp['Date']) + pd.Timedelta(1, 'days')]
-                intervention_effectsizes = [np.mean(df_grp['daily_first_vacc_perc'][-14:])]
-
-                emodl_timeevents = ''
-                for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event future_daily_vaccinations_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_{grp} {intervention_effectsizes[i - 1]})))\n'
-                    emodl_timeevents = emodl_timeevents + temp_str
-                emodl_str_grp = emodl_str_grp + emodl_timeevents
-                del df_grp
-            emodl_str_future = emodl_str + emodl_str_grp
-            emodl_str = emodl_str_past + emodl_str_future
-
+            emodl_str = emodl_str + emodl_str_grp
             return emodl_str
 
         def write_bvariant():
