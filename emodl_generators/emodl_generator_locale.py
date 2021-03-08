@@ -616,8 +616,6 @@ class covidModel:
                           f'))\n'
 
         if 'vaccine' in self.add_interventions:
-            """Keep option to specify actual numbers for past vaccinations and fraction vaccinated for future scenarios, if not used, set to 0"""
-            #reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (+ n_daily_vaccinated_{grp} (* Kv_{grp} S::{grp}) ))\n'
             reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_{grp} S::{grp}))\n'
             reaction_str_I = reaction_str_I + reaction_str_Ia + reaction_str_Ib
 
