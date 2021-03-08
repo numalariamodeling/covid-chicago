@@ -4,6 +4,7 @@ import re
 import json
 import yaml
 import pandas as pd
+import numpy as np
 
 sys.path.append('../')
 from load_paths import load_box_paths
@@ -75,7 +76,7 @@ class covidModel:
 
         if 'vaccine' in self.add_interventions:
             state_variables_vaccine = [f'{state}_V' for state in state_variables ]
-            state_variables = state_variables  + state_variables_vaccine
+            state_variables = state_variables + state_variables_vaccine
         return state_variables
 
     def write_species(self, grp):
@@ -586,37 +587,37 @@ class covidModel:
                          f') N_{grp} )' \
                          f'))\n'
 
-        reaction_str_V_Ia = f'\n(reaction exposure_{grp}   ' \
-                            f'(S::{grp}) (E::{grp}) ' \
-                            f'(* Ki_{grp} S::{grp} ' \
-                            f'(/  ' \
-                            f'(+ infectious_undet_symp_{grp}' \
-                            f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
-                            f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                            f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                            f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
-                            f') N_{grp} )' \
-                            f'))\n'
+        reaction_str_Ia = f'\n(reaction exposure_{grp}   ' \
+                          f'(S::{grp}) (E::{grp}) ' \
+                          f'(* Ki_{grp} S::{grp} ' \
+                          f'(/  ' \
+                          f'(+ infectious_undet_symp_{grp}' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                          f') N_{grp} )' \
+                          f'))\n'
 
-        reaction_str_V_Ib = f'\n(reaction exposure_{grp}   ' \
-                            f'(S_V::{grp}) (E_V::{grp}) ' \
-                            f'(* Ki_{grp} S_V::{grp} ' \
-                            f'(/  ' \
-                            f'(+ infectious_undet_symp_{grp}' \
-                            f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
-                            f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
-                            f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
-                            f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
-                            f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
-                            f') N_{grp} )' \
-                            f'))\n'
+        reaction_str_Ib = f'\n(reaction exposure_{grp}   ' \
+                          f'(S_V::{grp}) (E_V::{grp}) ' \
+                          f'(* Ki_{grp} S_V::{grp} ' \
+                          f'(/  ' \
+                          f'(+ infectious_undet_symp_{grp}' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases)' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases)' \
+                          f') N_{grp} )' \
+                          f'))\n'
 
         if 'vaccine' in self.add_interventions:
-            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_1 S::{grp}))\n'
-            reaction_str_I = reaction_str_I + reaction_str_V_Ia + reaction_str_V_Ib
+            reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_{grp} S::{grp}))\n'
+            reaction_str_I = reaction_str_I + reaction_str_Ia + reaction_str_Ib
 
         reaction_str_III = f'(reaction recovery_H1_{grp} (H1::{grp}) (RH1::{grp}) (* Kr_h{grp} H1::{grp}))\n' \
                            f'(reaction recovery_C2_{grp} (C2::{grp}) (H2post::{grp}) (* Kr_c{grp} C2::{grp}))\n' \
@@ -763,7 +764,7 @@ class covidModel:
 
         def write_frac_crit_change(nchanges):
             n_frac_crit_change = range(1, nchanges+1)
-            frac_crit_change_observe = '(observe frac_crit_t fraction_critical)'
+            frac_crit_change_observe = '(observe frac_crit_t fraction_critical)\n'
             frac_crit_change_timeevent = ''.join([f'(time-event frac_crit_adjust{i} @crit_time_{i}@ '
                                                   f'('
                                                   f'(fraction_critical @fraction_critical_change{i}@) '
@@ -781,7 +782,7 @@ class covidModel:
         def write_fraction_dead_change(nchanges):
             n_fraction_dead_change = range(1, nchanges+1)
             fraction_dead_change_observe = '(observe fraction_dead_t fraction_dead)\n' \
-                                           '(observe fraction_hospitalized_t fraction_hospitalized)'
+                                           '(observe fraction_hospitalized_t fraction_hospitalized)\n'
 
             fraction_dead_change_timeevent = ''.join([f'(time-event fraction_dead_adjust2 @fraction_dead_time_{i}@ '
                                                       f'('
@@ -799,7 +800,7 @@ class covidModel:
 
         def write_dSys_change(nchanges):
             n_dSys_change = range(1, nchanges+1)
-            dSys_change_observe = '(observe d_Sys_t d_Sys)'
+            dSys_change_observe = '(observe d_Sys_t d_Sys)\n'
             dSys_change_timeevent = ''.join([f'(time-event dSys_change{i} @d_Sys_change_time_{i}@ '
                                              f'((d_Sys @d_Sys_incr{i}@))'
                                              f')'
@@ -939,28 +940,54 @@ class covidModel:
         """ Get intervention configurations """
         intervention_param = covidModel.get_configs(key ='interventions', config_file=self.intervention_config)
 
-        def write_vaccine():
+        def write_vaccine_generic():
             emodl_str = ';COVID-19 vaccine scenario\n'
-            emodl_param_initial = '(param Kv_1 0)\n(observe daily_vaccinated  Kv_1)\n'
+            emodl_param_initial = '(param Kv 0)\n(observe daily_vaccinated  Kv)\n'
 
             read_from_csv = intervention_param['read_from_csv']
             csvfile = intervention_param['vaccination_csv']
             if read_from_csv and csvfile != "":
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
-                intervention_effectsizes =  list(df['daily_cov'].values)
+                intervention_effectsizes = list(df['daily_cov'].values)
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 {intervention_effectsizes[i-1]})))\n'
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv {intervention_effectsizes[i-1]})))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
             else:
-                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
+                n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='vaccine')
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
-                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_1 (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
+                    temp_str = f'(time-event vaccination_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv (*  @vacc_daily_cov@ {(1 / (len(intervention_dates)) * i)}) )))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
 
             emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
+            return emodl_str
+
+
+        def write_vaccine():
+            emodl_str = ';COVID-19 vaccine scenario\n'
+            read_from_csv = intervention_param['read_from_csv']
+            csvfile = intervention_param['vaccination_csv']
+            df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
+            df['Date'] = pd.to_datetime(df['date'])
+            emodl_str_grp = ""
+            for grp in self.grpList:
+                grp_num = grp.replace('EMS_','')
+                df_grp = df[df['region']==int(grp_num)]
+                emodl_param_initial = f'(param Kv_{grp} 0)\n' \
+                                      f'(observe n_daily_vaccinated_{grp}  (* Kv_{grp}  S::{grp} ))\n'
+                intervention_dates = list(df_grp['Date'].values) + [max(df_grp['Date']) + pd.Timedelta(1,'days')]
+                intervention_effectsizes = list(df_grp['daily_first_vacc_perc'].values) + [0]
+                #intervention_effectsizes = list(df_grp['daily_first_vacc'].values) + [0]
+
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event daily_vaccinations_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ((Kv_{grp} {intervention_effectsizes[i-1]})))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+                emodl_str_grp = emodl_str_grp + emodl_param_initial + emodl_timeevents
+                del df_grp
+            emodl_str = emodl_str + emodl_str_grp
             return emodl_str
 
         def write_bvariant():
