@@ -317,10 +317,10 @@ intervention_parameters:
     np: linspace
     function_kwargs: {'start':0.20, 'stop':0.20, 'num' : 1}
   ### ---- VACCINE ----------------------
+  ### Used if no intervention csv is specified in intervention_emodl_config.yaml
   'vacc_daily_cov':
     np: linspace
     function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
-    #function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
@@ -523,11 +523,11 @@ time_parameters:
   ### ---- Bvariant ---
   'bvariant_start':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-02-10}
+    function_kwargs: {'dates': 2021-02-20}
     #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
   'bvariant_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-10} #if gradual change
+    function_kwargs: {'dates': 2021-06-01} #if gradual change
   'bvariant_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #no end

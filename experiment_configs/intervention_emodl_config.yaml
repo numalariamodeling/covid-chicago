@@ -7,14 +7,14 @@ time_varying_parameter:
   'n_recovery_time_crit_change': 1
   'n_recovery_time_hosp_change': 1
 interventions:
-  'n_gradual_steps': 1
+  'n_gradual_steps': 8
   'rollback_relative_to_initial': True
   'reopen_relative_to_initial': False
   'reopen_regionspecific': False
   'trigger_channel': 'crit_det'
   'read_from_csv': False
-  'bvariant_csv': "bvariant_frequency_scenario.csv"
-  'vaccination_csv': "vaccination_medium.csv" #"vaccination_low.csv" # "vaccination_medium.csv" #  "vaccination_high.csv"
+  'bvariant_csv': ""
+  'vaccination_csv': "vaccination_linear.csv" #"vaccination_linear_doubled.csv" 
   #'reopen_csv': "ki_increase_scenario.csv"
   #'n_gradual_intervals': 4
   #'start_today': True
