@@ -51,6 +51,31 @@ def parse_args():
     )
     return parser.parse_args()
 
+def write_combined_csv(exp_names,channel,labels, first_day,last_day,  region="All"):
+    first_md = first_day.strftime('%b%d')
+    last_md = last_day.strftime('%b%d')
+    df = pd.DataFrame()
+    for s, exp_name in enumerate(exp_names):
+        simpath = os.path.join(projectpath, 'cms_sim', 'simulation_output', exp_name)
+        exp_date = exp_name.split("_")[0]
+        fname = f'nu_{exp_date}_{region}.csv'
+
+        df_i = pd.read_csv(os.path.join(simpath, fname))
+        df_i['date'] = pd.to_datetime(df_i['date'])
+        df_i = df_i[df_i['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
+        df_i[f'{channel}_cum_median'] = df_i[f'{channel}_median'].cumsum()
+        df_i[f'{channel}_cum_lower'] = df_i[f'{channel}_lower'].cumsum()
+        df_i[f'{channel}_cum_upper'] = df_i[f'{channel}_upper'].cumsum()
+        df_i = df_i[['date',f'{channel}_cum_median']]
+        df_i['exp_name'] = exp_name
+        df_i['scenario'] = labels[s]
+
+        if df.empty:
+            df= df_i
+        else:
+            df = pd.concat([df,df_i])
+        df[df['date']==max(df['date'])].to_csv(os.path.join(plot_path, f'combined_{channel}_{first_md}to{last_md}_{region}.csv'))
+
 
 def cumulative_barplot(exp_names,channel,labels, first_day,last_day,  region="All"):
 
@@ -122,5 +147,6 @@ if __name__ == '__main__':
     first_day = pd.Timestamp('2021-03-01')
     last_day = pd.Timestamp('2021-06-01')
 
+    write_combined_csv(exp_names,channel,labels, first_day,last_day, region="All")
     cumulative_barplot(exp_names,channel,labels, first_day,last_day, region="All")
     timeline_plot(exp_names,channel,labels, first_day,last_day, region="All")
