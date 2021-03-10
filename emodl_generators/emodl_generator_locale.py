@@ -697,8 +697,8 @@ class covidModel:
                                         f'(reaction mild_symptomatic_det_{grp} (Sym_preD::{grp}) (Sym_det2a::{grp}) (* Ksym_D Sym_preD::{grp} d_Sym))\n' \
                                         f'(reaction severe_symptomatic_det_{grp} (Sys_preD::{grp}) (Sys_det3a::{grp}) (* Ksys_D Sys_preD::{grp} d_Sys))\n' \
                                         f'; developing symptoms - already detected, same time to symptoms as in master emodl\n' \
-                                        f'(reaction mild_symptomatic_det_{grp} (P_det::{grp}) (Sym_det2b::{grp}) (* Ksym  P_det::{grp}))\n' \
-                                        f'(reaction severe_symptomatic_det_{grp} (P_det::{grp}) (Sys_det3b::{grp}) (* Ksys  P_det::{grp} ))\n' \
+                                        f'(reaction mild_symptomatic_det_{grp} (P_det::{grp}) (Sym_det2b::{grp}) (* Ksym P_det::{grp}))\n' \
+                                        f'(reaction severe_symptomatic_det_{grp} (P_det::{grp}) (Sys_det3b::{grp}) (* Ksys P_det::{grp} ))\n' \
                                         f'(reaction hospitalization_1_{grp} (Sys::{grp}) (H1::{grp}) (* Kh1_D Sys::{grp}))\n' \
                                         f'(reaction hospitalization_2_{grp} (Sys::{grp}) (H2pre::{grp}) (* Kh2_D Sys::{grp}))\n' \
                                         f'(reaction hospitalization_3_{grp} (Sys::{grp}) (H3::{grp}) (* Kh3_D Sys::{grp}))\n' \
@@ -738,7 +738,7 @@ class covidModel:
             reaction_str = reaction_str.replace('N_V', 'N')
             """Vaccinated-population specific parameters"""
             reaction_str = reaction_str.replace('Kl E_V::', 'KlV E_V::')
-            reaction_str = reaction_str.replace('Ks E_V::', 'Ks E_V::')
+            reaction_str = reaction_str.replace('Ks E_V::', 'KsV E_V::')
             reaction_str = reaction_str.replace('Ksym P_V::', 'KsymV P_V::')
             reaction_str = reaction_str.replace('Ksys P_V::', 'KsysV P_V::')
             reaction_str = reaction_str.replace('Ksym P_det_V::', 'KsymV P_det_V::')

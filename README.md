@@ -368,45 +368,7 @@ If you do not have `wine` installed on your system, you can use the provided [Do
 To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in your environment or your `.env` file to use it.
 
 ### Running on Quest (NUCLUSTER) 
-A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
-
-Requirements:
-All the modules need to be installed on the personal quest environment 
-- use pip install ... in your terminal 
-- install `dotenv` and `yamlordereddictloader`
-`conda create --name dotenv-py37 -c conda-forge python-yamlordereddictloader python=3.7 --yes`
-`source activate dotenv-py37`
-`conda install -c conda-forge yamlordereddictloader`
-
-Alternatively, a virtual environment can be activated using:
-i.e. add a `set-covid-chicago` command in the `bash.profile` file in the home directory
-
-	set-covid-chicago(){
-		module purge all
-		module load python/anaconda3.6
-		source activate /projects/p30781/anaconda3/envs/team-test-py37
-	}
-  
-[Box syncing](https://kb.northwestern.edu/page.php?id=70521):
-
-	mirror-box-covid(){
-		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Cleaned\ Data/ /projects/p30781/covidproject/data/covid_IDPH/Cleaned\ Data/; exit"
-		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Corona\ virus\ reports/ /projects/p30781/covidproject/data/covid_IDPH/Corona\ virus\ reports/; exit"
-		lftp -p 990 -u <useremail> ftps://box.com -e "mirror -R /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/ NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/; exit"
-	}
- 
-
-##### Submit job 
-On Quest jobs are submitted using the SLURM workload manager and syntax ([SLURM on quest](https://kb.northwestern.edu/page.php?id=89456))
-`cd /projects/p30781/covidproject/covid-chicago/`
-`- python runScenarios.py -rl NUCLUSTER --model "base" -r IL --scenario "baseline"  -n "userinitials"`
-
-The experiments will go to the `_temp` folder on the quest gitrepository. 
-To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
-
-The status of the job submission can be called via `squeue -u <username>`
-
-Further helpful examples are in the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
+Information related to running on quest can be found in the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
 
 </p>
 </details>
@@ -418,10 +380,12 @@ Batch files are only generated for the most important postprocessing files and a
 To see all the available postprocessing scripts, go to the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) (see readme in folder for details).
 When adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the batch files related to the weekly deliverables are automatically executed. 
 
-## Postprocessing on local machine
+## Postprocessing
 Locally, there are two main batch files:
 - `run_postprocess.bat` is a wrapper batch file that runs postprocessing files from the list below (general postprocessing not for weekly deliverables)
 - `run_postprocess_for_civis.bat` is a wrapper batch file that runs postprocessing from the list below (postprocessing for weekly deliverables)
+
+For postprocessing on Quest, please read the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
 
 The postprocessing includes the following steps below:
 
@@ -445,43 +409,6 @@ The postprocessing includes the following steps below:
 
 ATTENTION-1: if `1_runTraceSelection.bat` was run and the output csv files are located in the experiment folder, all subsequent scripts and plotting scripts will per default filter the simulated trajectories, if not explicily set to False in the `load_sim_data` function call.
 ATTENTION-2: 1_runSimulateTraces.bat only needed for parameter estimation!
-
-</p>
-</details>
-
-## Postprocessing on the NU cluster 'Quest'
-On Quest shell instead of batch files are generated for the same python files as shown above.
-For a detailed descripton of the shell files and processing steps, expand below:
-
-<details><summary>Detailed processing steps</summary>
-<p> 
-
-The time limit for each single simulation was set to 30 min per default.
-Simulation run in the `_temp` folder (`/projects/p30781/covidproject/covid-chicago/_temp/`) in the git repository.
-After all simulations ran, they are automatically combined and moved to the Box folder on Quest, located in 
-`simulation_output` (`/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/`)
-
-Wrapper shell script:
-- `run_postprocessing.sh` runs automatically after simulation finish, it includes scripts from the list below.
-
-Run from `/projects/p30781/covidproject/covid-chicago/_temp/<exp_name>`
-- `0_runCombineAndTrimTrajectories.sh` 
-- `0_cleanupSimulations.sh`  calls  [cleanup.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup.py) and transfers files from temp to Box (on Quest)
-
-Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>`
-- `0_locale_age_postprocessing.sh`
-- `1_runTraceSelection.sh` 
-- (`1_runSimulateTraces.sh` )
-- `2_runDataComparison.sh` 
-- `3_runProcessTrajectories.sh`
-- `4_runRtEstimation.sh` 
-- `5_runOverflowProbabilities.sh` 
-- `6_runPrevalenceIFR.sh` 
-- `7_runICUnonICU.sh` 
-- `8_runHospICUDeathsForecast.sh` 
-- `9_runCopyDeliverables.sh`
-- `10_runIterationComparison.sh` 
-- `11_runCleanUpAndZip.sh` 
 
 </p>
 </details>
