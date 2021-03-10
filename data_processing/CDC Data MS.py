@@ -35,7 +35,7 @@ def LOS_descriptive_tables(groupList, channel='hosp_length', sortByList=None, fn
         df_summary = df_summary.sort_values(by=sortByList)
 
     if fname is not None:
-        df_summary.to_csv(os.path.join(plot_path,f'summary_{channel}_{fname}.csv'))
+        df_summary.to_csv(os.path.join(plot_path,f'summary_{"_".join(groupList)}_{channel}_{fname}.csv'))
     return df_summary
 
 ### Simple histogram, not age structured\
@@ -139,12 +139,17 @@ if __name__ == '__main__':
     plot_hist_by_grp_2(df, channel='hosp_length',color_channel = "icu_yn", truncate_at=20)
 
     """Compare by region"""
-    df = load_data()
+    df = load_data(remove_nas=True)
     df = df.dropna(subset=["res_county"])
-    adf = merge_county_covidregions(df_x=df, key_x='res_county', key_y='County')
-    adf['region'] = np.int64(adf['new_restore_region'])
-    mylist = list(adf.res_county.unique())
-    mylist.sort(reverse=False)
-    mylist2 = list(adf.County.unique())
-    mylist2.sort(reverse=False)
-    plot_hist_by_grp(df=adf, grp_name='region', groups=list(range(1,12)))
+    df = merge_county_covidregions(df_x=df, key_x='res_county', key_y='County')
+
+    pd.crosstab(index=df['covid_region'], columns='count')
+    LOS_descriptive_tables(channel='hosp_length',groupList=['covid_region', 'death_yn'])
+    LOS_descriptive_tables(channel='hosp_length',groupList=['covid_region', 'icu_yn'], sortByList=['icu_yn','covid_region'])
+    df = df[df['hosp_length'] !=0 ]
+    LOS_descriptive_tables(groupList=['covid_region', 'death_yn'])
+    LOS_descriptive_tables(groupList=['covid_region', 'death_yn'], sortByList=['death_yn','covid_region'],fname='_by_death_yn')
+    LOS_descriptive_tables(groupList=['covid_region', 'icu_yn'], sortByList=['icu_yn','covid_region'],fname='icu_yn')
+
+    plot_hist_by_grp(df=df, grp_name='covid_region', groups=list(range(1,12)))
+    plot_hist_by_grp_2(df=df, grp_name='covid_region', groups=list(range(1,12)))
