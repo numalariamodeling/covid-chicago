@@ -128,7 +128,7 @@ if __name__ == '__main__':
     df=load_data(remove_nas=True)
     pd.crosstab(index=df['age_group'], columns='count')
     LOS_descriptive_tables(channel='hosp_length',groupList=['age_group', 'death_yn'])
-    LOS_descriptive_tables(channel='hosp_length',groupList=['region', 'icu_yn'], sortByList=['icu_yn','region'])
+    LOS_descriptive_tables(channel='hosp_length',groupList=['age_group', 'icu_yn'], sortByList=['icu_yn','age_group'])
     df = df[df['hosp_length'] !=0 ]
     LOS_descriptive_tables(groupList=['age_group', 'death_yn'])
     LOS_descriptive_tables(groupList=['age_group', 'death_yn'], sortByList=['death_yn','age_group'],fname='_by_death_yn')
