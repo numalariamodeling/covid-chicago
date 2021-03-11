@@ -47,9 +47,7 @@ def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
         ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                         color=color, linewidth=0, alpha=0.4)
         ax.set_title(' '.join(channel.split('_')), y=0.85)
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
         ax.set_ylim(0, max(mdf['CI_75']))
 
 
@@ -62,20 +60,21 @@ def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True) 
     ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                 color=color, linewidth=0, alpha=0.4)
     ax.set_title(panel_heading, y=0.85)
-    formatter = mdates.DateFormatter("%m-%d")
-    ax.xaxis.set_major_formatter(formatter)
-    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
     ax.set_ylim(0, max(mdf['CI_75']))
 
-def plot_main() :
-    fig = plt.figure(figsize=(8, 8))
-    fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
+def plot_main(channels=None) :
+
+    if channels is None:
+        channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+
+    fig = plt.figure(figsize=(14, 8))
+    fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('Set1', len(exp_names))
-    channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
     axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
     for d, exp_name in enumerate(exp_names) :
-        df = load_sim_data(exp_name)
+        df = load_sim_data(exp_name, fname='trajectoriesDat.csv')
         df = df[df['date'].between(first_plot_day, last_plot_day)]
         df['symptomatic_census'] = df['symp_mild'] + df['symp_severe']
         df['ventilators'] = get_vents(df['crit_det'].values)
@@ -87,10 +86,13 @@ def plot_main() :
     plt.savefig(os.path.join(plot_path,'pdf', 'iteration_comparison_IL.pdf'), format='PDF')
     #plt.show()
 
-def plot_covidregions() :
+def plot_covidregions(subgroups=None,channels=None) :
 
-    subgroups = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9',
-                 '_EMS-10', '_EMS-11']
+    if subgroups is None:
+        subgroups = ['_EMS-1', '_EMS-2', '_EMS-3', '_EMS-4', '_EMS-5', '_EMS-6', '_EMS-7', '_EMS-8', '_EMS-9',
+                     '_EMS-10', '_EMS-11']
+    if channels is None:
+        channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
 
     for region_suffix in subgroups :
 
@@ -100,7 +102,7 @@ def plot_covidregions() :
         fig = plt.figure(figsize=(16, 8))
         fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
         palette = sns.color_palette('Set1', len(exp_names))
-        channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
+
         axes = [fig.add_subplot(3, 2, x + 1) for x in range(len(channels))]
 
         for d, exp_name in enumerate(exp_names) :
@@ -126,11 +128,11 @@ def plot_covidregions_inone(channel='hospitalized') :
     fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('Set1', len(exp_names))
-    axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
+    axes = [fig.add_subplot(3,4, x + 1) for x in range(len(subgroups))]
 
     for c, region_suffix in enumerate(subgroups) :
 
-        region_label= region_suffix.replace('_EMS-', 'covid region ')
+        region_label= region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
         for d, exp_name in enumerate(exp_names) :
             df = load_sim_data(exp_name, region_suffix=region_suffix)
@@ -153,16 +155,16 @@ def plot_covidregions_inone2(channels=None):
 
     for channel in channels :
         fig = plt.figure(figsize=(12, 8))
-        fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.25, top=0.95, bottom=0.07)
+        fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
         palette = sns.color_palette('Set1', len(exp_names))
-        axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
+        axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(subgroups))]
 
         for c, region_suffix in enumerate(subgroups) :
 
             region_label= region_suffix.replace('_EMS-', 'covid region ')
 
             for d, exp_name in enumerate(exp_names) :
-                df = load_sim_data(exp_name, region_suffix=region_suffix)
+                df = load_sim_data(exp_name, region_suffix=region_suffix, fname='trajectoriesDat.csv')
                 df = df[df['date'].between(first_plot_day, last_plot_day)]
                 plot_on_fig2(df, c, axes, channel=channel, color=palette[d],panel_heading = region_label,  label="")
 
@@ -204,12 +206,12 @@ def plot_restoreregions_inone(channel='hospitalized') :
 if __name__ == '__main__' :
 
     args = parse_args()
-    stem = args.stem
+    stem = "20210310_IL_locale_uniform_mean_mr_testB010_binfect"
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
 
-    first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    first_plot_day = pd.Timestamp('2020-01-01') #pd.Timestamp.today()- pd.Timedelta(60,'days')
     last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
 
@@ -219,10 +221,13 @@ if __name__ == '__main__' :
 
         plot_main()
         #plot_covidregions()
+        plot_covidregions_inone(channel='Ki_t')
         #plot_covidregions_inone(channel='hospitalized')
         #plot_restoreregions_inone(channel='hospitalized')
         #plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths'])
         #plot_covidregions_inone2(channels=['prevalence','recoverged','symptomatic_mild','symptomatic_severe'])
-        plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild',
-                                           'hosp_det','deaths_det','infectious_det'])
+        #plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild',
+        #                                   'hosp_det','deaths_det','infectious_det'])
+        #plot_covidregions_inone2(channels=['infected_cumul','exposed',  'hospitalized', 'recovered', 'deaths',
+        #                                   'Binfect_cumul','exposed_B',  'hospitalized_B',  'recovered_B','deaths_B'])
 
