@@ -47,7 +47,14 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                 fname = 'trajectoriesDat.csv'
 
         print(f'Using {fname}')
+        column_list = list(set(['run_num', 'sample_num', 'scen_num','startdate', 'time'] + column_list))
         df = pd.read_csv(os.path.join(sim_output_path, fname), usecols=column_list)
+        reg_cols = [col for col in df.columns if region_suffix in col]
+        reg_cols = list(set(reg_cols + [col for col in df.columns if region_suffix.replace('-','_') in col]))
+        if region_suffix =='_EMS-1':
+            reg_cols = [col for col in reg_cols if not 'EMS-10' in col]
+            reg_cols = [col for col in reg_cols if not 'EMS-11' in col]
+        df = df[['run_num', 'sample_num', 'scen_num','startdate', 'time']+reg_cols]
         df.columns = df.columns.str.replace(region_suffix, '')
 
         if select_traces:
