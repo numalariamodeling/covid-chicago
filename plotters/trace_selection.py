@@ -128,9 +128,9 @@ def rank_traces_nll(df, ems_nr, ref_df, weights_array=[1.0,1.0,1.0,1.0],wt=False
         total_nll = 0
         (run_num, sample_num, scen_num) = x
         df_trunc_slice = df_trunc[(df_trunc['run_num'] == run_num) & (df_trunc['sample_num'] == sample_num) & (df_trunc['scen_num'] == scen_num)]
-        total_nll += deaths_weight*sum_nll(df_trunc_slice['new_detected_deaths'].values[:-timelag_days], ref_df_trunc['deaths'].values[:-timelag_days], wt,wt_past=True)
+        total_nll += deaths_weight*sum_nll(df_trunc_slice['new_deaths_det'].values[:-timelag_days], ref_df_trunc['deaths'].values[:-timelag_days], wt,wt_past=True)
         total_nll += crit_weight*sum_nll(df_trunc_slice['crit_det'].values, ref_df_trunc['confirmed_covid_icu'].values, wt)
-        total_nll += cli_weight*sum_nll(df_trunc_slice['new_detected_hospitalized'].values, ref_df_trunc['inpatient'].values, wt)
+        total_nll += cli_weight*sum_nll(df_trunc_slice['new_hosp_det'].values, ref_df_trunc['inpatient'].values, wt)
         total_nll += non_icu_weight*sum_nll(df_trunc_slice['hosp_det'].values, ref_df_trunc['covid_non_icu'].values, wt)
         rank_export_df = rank_export_df.append(pd.DataFrame({'run_num':[run_num], 'sample_num':[sample_num], 'scen_num':[scen_num], 'nll':[total_nll]}))
     rank_export_df = rank_export_df.dropna()

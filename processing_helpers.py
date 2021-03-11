@@ -81,12 +81,9 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
     df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
 
     if add_incidence:
-        if 'recovered' in df.columns:
-            df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
-            df = calculate_incidence(df)
-        else:
-            df = calculate_incidence(df, trimmed =True)
-
+        #if 'recovered' in df.columns:
+        #    df['infected_cumul'] = df['infected'] + df['recovered'] + df['deaths']
+        df = calculate_incidence(df)
     return df
 
 def merge_county_covidregions(df_x, key_x='region', key_y='County', add_pop =True):
@@ -275,39 +272,26 @@ def calculate_prevalence(df):
         df['seroprevalence_det'] = df.groupby(['scen_num', 'sample_num'])['seroprevalence_current_det'].transform('shift', 14)
     return df
 
-def calculate_incidence(adf, output_filename=None, trimmed=False) :
+def calculate_incidence(adf, output_filename=None) :
 
     inc_df = pd.DataFrame()
+    channel_cumul = [col for col in adf.columns if 'cumul' in col]
+    channel_cumul = channel_cumul + [col for col in adf.columns if 'deaths' in col]
+    channel_cumul = channel_cumul + [col for col in adf.columns if 'recovered' in col]
+    channel_cumul_new = ['new_'+ col.replace('_cumul','') for col in channel_cumul]
+
+    if 'susceptible' in adf.columns:
+        channel_cumul = channel_cumul + ['susceptible']
+        channel_cumul_new = channel_cumul_new + ['new_exposures']
+
     for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
 
-        if trimmed == False:
-            sdf = pd.DataFrame({'time' : df['time'],
-                                'new_exposures' : [-1*x for x in count_new(df, 'susceptible')],
-                                'new_infected': count_new(df, 'infected_cumul'),
-                                #'new_infected_detected': count_new(df, 'infected_det_cumul'),
-                                'new_asymptomatic' : count_new(df, 'asymp_cumul'),
-                                'new_asymptomatic_detected' : count_new(df, 'asymp_det_cumul'),
-                                'new_symptomatic_mild' : count_new(df, 'symp_mild_cumul'),
-                                'new_symptomatic_severe': count_new(df, 'symp_severe_cumul'),
-                                'new_detected_symptomatic_mild': count_new(df, 'symp_mild_det_cumul'),
-                                'new_detected_symptomatic_severe': count_new(df, 'symp_severe_det_cumul'),
-                                'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
-                                'new_hospitalized' : count_new(df, 'hosp_cumul'),
-                                'new_detected' : count_new(df, 'detected_cumul'),
-                                'new_critical' : count_new(df, 'crit_cumul'),
-                                'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                                'new_detected_deaths' : count_new(df, 'deaths_det_cumul'),
-                                'new_deaths' : count_new(df, 'deaths')
-                                })
-        if trimmed == True:
-            sdf = pd.DataFrame({'time': df['time'],
-                                'new_detected_hospitalized' : count_new(df, 'hosp_det_cumul'),
-                                'new_hospitalized' : count_new(df, 'hosp_cumul'),
-                                'new_critical' : count_new(df, 'crit_cumul'),
-                                'new_detected_critical' : count_new(df, 'crit_det_cumul'),
-                                'new_detected_deaths' : count_new(df, 'deaths_det_cumul'),
-                                'new_deaths' : count_new(df, 'deaths')
-                                })
+        sdf = pd.DataFrame({'time' : df['time']})
+        for i, ch in enumerate(channel_cumul):
+            if ch =='susceptible':
+                sdf[channel_cumul_new[i]] = [-1 * x for x in count_new(df, 'susceptible')]
+            else:
+                sdf[channel_cumul_new[i]] = count_new(df, ch)
 
         sdf['run_num'] = run
         sdf['sample_num'] = samp
@@ -315,37 +299,6 @@ def calculate_incidence(adf, output_filename=None, trimmed=False) :
         inc_df = pd.concat([inc_df, sdf])
 
     adf = pd.merge(left=adf, right=inc_df, on=['run_num','sample_num', 'scen_num', 'time'])
-    if output_filename :
-        adf.to_csv(output_filename, index=False)
-    return adf
-
-
-def calculate_incidence_by_age(adf, age_group, output_filename=None) :
-
-    inc_df = pd.DataFrame()
-    for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
-
-        sdf = pd.DataFrame( { 'time' : df['time'],
-                              'new_exposures_%s' % age_group : [-1*x for x in count_new(df, 'susceptible_%s' % age_group)],
-                              'new_asymptomatic_%s' % age_group : count_new(df, 'asymp_cumul_%s' % age_group),
-                              'new_asymptomatic_detected_%s' % age_group : count_new(df, 'asymp_det_cumul_%s' % age_group),
-                              'new_symptomatic_mild_%s' % age_group : count_new(df, 'symp_mild_cumul_%s' % age_group),
-                              'new_symptomatic_severe_%s' % age_group: count_new(df, 'symp_severe_cumul_%s' % age_group),
-                              'new_detected_symptomatic_mild_%s' % age_group: count_new(df, 'symp_mild_det_cumul_%s' % age_group),
-                              'new_detected_symptomatic_severe_%s' % age_group: count_new(df, 'symp_severe_det_cumul_%s' % age_group),
-                              'new_detected_hospitalized_%s' % age_group : count_new(df, 'hosp_det_cumul_%s' % age_group),
-                              'new_hospitalized_%s' % age_group : count_new(df, 'hosp_cumul_%s' % age_group),
-                              'new_detected_%s' % age_group : count_new(df, 'detected_cumul_%s' % age_group),
-                              'new_critical_%s' % age_group : count_new(df, 'crit_cumul_%s' % age_group),
-                              'new_detected_critical_%s' % age_group : count_new(df, 'crit_det_cumul_%s' % age_group),
-                              'new_detected_deaths_%s' % age_group : count_new(df, 'deaths_det_cumul_%s' % age_group),
-                              'new_deaths_%s' % age_group : count_new(df, 'deaths_%s' % age_group)
-                              })
-        sdf['run_num'] = run
-        sdf['sample_num'] = samp
-        sdf['scen_num'] = scen
-        inc_df = pd.concat([inc_df, sdf])
-    adf = pd.merge(left=adf, right=inc_df, on=['run_num', 'sample_num', 'scen_num', 'time'])
     if output_filename :
         adf.to_csv(output_filename, index=False)
     return adf
@@ -409,9 +362,9 @@ def civis_colnames(reverse=False) :
                  "new_deaths_median": "deaths_median",
                  "new_deaths_95CI_lower": "deaths_lower",
                  "new_deaths_95CI_upper": "deaths_upper",
-                 "new_detected_deaths_median": "deaths_det_median",
-                 "new_detected_deaths_95CI_lower": "deaths_det_lower",
-                 "new_detected_deaths_95CI_upper": "deaths_det_upper",
+                 "new_deaths_det_median": "deaths_det_median",
+                 "new_deaths_det_95CI_lower": "deaths_det_lower",
+                 "new_deaths_det_95CI_upper": "deaths_det_upper",
                  "hospitalized_median": "hosp_bed_median",
                  "hospitalized_95CI_lower": "hosp_bed_lower",
                  "hospitalized_95CI_upper": "hosp_bed_upper",
@@ -439,8 +392,7 @@ def get_datacomparison_channels():
     outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
                     'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
                     'deaths_det_cumul', 'deaths']
-    channels = ['new_detected_deaths', 'crit_det', 'hosp_det', 'new_detected_hospitalized',
-                'new_detected_hospitalized']
+    channels = ['new_deaths_det', 'crit_det', 'hosp_det', 'new_hosp_det', 'new_hosp_det']
     data_channel_names = ['deaths','confirmed_covid_icu', 'covid_non_icu', 'inpatient', 'admissions']
     titles = ['New Detected\nDeaths (LL)', 'Critical Detected (EMR)', 'Inpatient non-ICU\nCensus (EMR)',
               'Covid-like illness\nadmissions (IDPH)', 'New Detected\nHospitalizations (LL)']
@@ -518,3 +470,18 @@ def get_parameter_names(include_new=True):
         sample_params = sample_params.append(sample_params_new)
 
     return sample_params, sample_params_core, IL_specific_param, IL_locale_param_stem
+
+
+def get_group_names(exp_path, uniquechannel ='Ki_t', fname="trajectoriesDat.csv"):
+    trajectories_cols = pd.read_csv(os.path.join(exp_path, fname), index_col=0,
+                                    nrows=0).columns.tolist()
+    cols = [col for col in trajectories_cols if uniquechannel in col]
+    if len(cols) != 0:
+        grp_list = [col.replace(f'{uniquechannel}_', '') for col in cols]
+        grp_suffix = grp_list[0][:3]
+        if len(cols) > 1:
+            grp_list = grp_list + ['All']
+    else:
+        grp_list = None
+        grp_suffix=None
+    return grp_list, grp_suffix

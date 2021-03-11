@@ -103,10 +103,10 @@ def load_and_plot_data(ems_region, savePlot=True) :
 
 
     df['ventilators'] = get_vents(df['crit_det'].values)
-    df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
+    df['new_symptomatic'] = df['new_symp_severe'] + df['new_symp_mild'] + df['new_symp_severe_det'] + df['new_symp_mild_det']
 
-    channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
-    plotchannels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
+    channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_deaths_det', 'hospitalized', 'critical', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
+    plotchannels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_deaths_det', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
 
     adf = pd.DataFrame()
     for c, channel in enumerate(channels):
