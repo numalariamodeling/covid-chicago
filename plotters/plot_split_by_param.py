@@ -206,7 +206,7 @@ def plot_restoreregions_inone(channel='hospitalized') :
 if __name__ == '__main__' :
 
     args = parse_args()
-    stem = "20210310_IL_locale_uniform_mean_mr_testB010_binfect"
+    stem = args.stem
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths()
