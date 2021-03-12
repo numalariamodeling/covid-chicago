@@ -2,10 +2,11 @@ import argparse
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+mpl.use('Agg')
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
-import matplotlib as mpl
 import matplotlib.dates as mdates
 import seaborn as sns
 from processing_helpers import *
@@ -75,8 +76,8 @@ def get_channels(channelGrp):
         'channels2': ['vaccinated_cumul', 'asymp_det_V', 'hosp_det_V', 'crit_det_V', 'deaths_det_V', 'recovered_det_V']}
 
     nchannels_B = {
-        'channels1': ['new_infected', 'exposed', 'new_hosp',  'new_crit', 'new_deaths', 'new_recovered'],
-        'channels2': ['new_Binfect', 'exposed_B', 'new_hosp_B', 'new_crit_B', 'new_deaths_B', 'new_recovered_B']}
+        'channels1': ['B_prev','new_infected',  'new_hosp',  'new_crit', 'new_deaths', 'new_recovered'],
+        'channels2': ['B_prev','new_Binfect',  'new_hosp_B', 'new_crit_B', 'new_deaths_B', 'new_recovered_B']}
 
     if channelGrp == "symp":
         nchannels = nchannels_symp
@@ -108,6 +109,8 @@ def compare_channels(channelGrp,grp="All",logscale=False):
 
     df = load_sim_data(exp_name, region_suffix=f'_{grp}', fname='trajectoriesDat.csv', add_incidence=True)
     df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
+    if channelGrp =='bvariant':
+        df['B_prev'] = df['infected_B'] / df['infected']
 
     palette = sns.color_palette('Set1', len(nchannels))
     fig = plt.figure(figsize=(14, 7))
@@ -151,8 +154,14 @@ if __name__ == '__main__' :
     for exp_name in exp_names:
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
+        grp_list, grp_suffix = get_group_names(exp_path = sim_output_path)
+
         #compare_channels(channelGrp= "symp")
         #compare_channels(channelGrp= "infect")
         #compare_channels(channelGrp= "hospCrit")
         #compare_channels(channelGrp= "Vaccinated")
 
+        for grp in grp_list:
+            print(f'Process started for {grp}')
+            compare_channels(channelGrp= "bvariant",grp=grp)
+            #compare_channels(channelGrp="bvariant", grp=grp,logscale=True)

@@ -53,6 +53,7 @@ def plot_on_fig(df, channels, axes, color, label, addgrid=True) :
 
 def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True) :
     ax = axes[c]
+
     mdf = df.groupby('date')[channel].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
     if addgrid:
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
@@ -61,7 +62,11 @@ def plot_on_fig2(df, c, axes,channel, color,panel_heading, label, addgrid=True) 
                 color=color, linewidth=0, alpha=0.4)
     ax.set_title(panel_heading, y=0.85)
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
-    ax.set_ylim(0, max(mdf['CI_75']))
+    if channel=='B_prev':
+        ax.set_ylim(0, 1)
+        ax.axhline(y=0.5, color='#737373', linestyle='--')
+    else:
+        ax.set_ylim(0, max(mdf['CI_75']))
 
 def plot_main(channels=None) :
 
@@ -135,8 +140,11 @@ def plot_covidregions_inone(channel='hospitalized') :
         region_label= region_suffix.replace('_EMS-', 'COVID-19 Region ')
 
         for d, exp_name in enumerate(exp_names) :
-            df = load_sim_data(exp_name, region_suffix=region_suffix)
+            df = load_sim_data(exp_name, region_suffix=region_suffix, fname='trajectoriesDat.csv')
             df = df[(df['date'] >= first_plot_day) & (df['date'] <= last_plot_day)]
+            if channel=='B_prev':
+                df['B_prev'] = df['infected_B'] / df['infected']
+                df = df.dropna(subset=["B_prev"])
             plot_on_fig2(df, c, axes, channel=channel, color=palette[d], panel_heading= region_label, label=exp_name)
 
         axes[-1].legend()
@@ -219,15 +227,13 @@ if __name__ == '__main__' :
     for exp_name in exp_names:
         plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
 
-        plot_main()
+        #plot_main()
         #plot_covidregions()
         plot_covidregions_inone(channel='Ki_t')
+        #plot_covidregions_inone(channel='B_prev')
         #plot_covidregions_inone(channel='hospitalized')
         #plot_restoreregions_inone(channel='hospitalized')
         #plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths'])
         #plot_covidregions_inone2(channels=['prevalence','recoverged','symptomatic_mild','symptomatic_severe'])
         #plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild',
         #                                   'hosp_det','deaths_det','infectious_det'])
-        #plot_covidregions_inone2(channels=['infected_cumul','exposed',  'hospitalized', 'recovered', 'deaths',
-        #                                   'Binfect_cumul','exposed_B',  'hospitalized_B',  'recovered_B','deaths_B'])
-
