@@ -12,19 +12,6 @@ except NameError:
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths(Location=Location)
 
 
-def get_grp_list(exp_name,  input_wdir=None, input_sim_output_path =None):
-    input_wdir = input_wdir or wdir
-    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
-    sim_output_path = input_sim_output_path or sim_output_path_base
-
-    df_samples = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
-    N_cols = [col for col in df_samples.columns if 'N_' in col]
-    if len(N_cols) != 0:
-        grp_list = [col.replace('N_', '') for col in N_cols]
-    else:
-        grp_list = None
-    return grp_list
-
 def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                   input_sim_output_path =None, column_list=None, add_incidence=True,
                   select_traces=True, traces_to_keep_ratio=4, traces_to_keep_min=100) :
@@ -287,7 +274,7 @@ def calculate_incidence(adf, output_filename=None) :
 
     for (run, samp, scen), df in adf.groupby(['run_num','sample_num', 'scen_num']) :
 
-        sdf = pd.DataFrame({'time' : df['time']})
+        sdf = pd.DataFrame({'date' : df['date']})
         for i, ch in enumerate(channel_cumul):
             if ch =='susceptible':
                 sdf[channel_cumul_new[i]] = [-1 * x for x in count_new(df, 'susceptible')]
@@ -299,7 +286,7 @@ def calculate_incidence(adf, output_filename=None) :
         sdf['scen_num'] = scen
         inc_df = pd.concat([inc_df, sdf])
 
-    adf = pd.merge(left=adf, right=inc_df, on=['run_num','sample_num', 'scen_num', 'time'])
+    adf = pd.merge(left=adf, right=inc_df, on=['run_num','sample_num', 'scen_num', 'date'])
     if output_filename :
         adf.to_csv(output_filename, index=False)
     return adf
@@ -472,8 +459,24 @@ def get_parameter_names(include_new=True):
 
     return sample_params, sample_params_core, IL_specific_param, IL_locale_param_stem
 
+def get_grp_list(exp_name,  input_wdir=None, input_sim_output_path =None):
+    """Note, the N parameter in the sampled_parameters might also include regions that were not run,
+     when specyfing fewer regions in the emodl file (i.e. in testing)"""
+    input_wdir = input_wdir or wdir
+    sim_output_path_base = os.path.join(input_wdir, 'simulation_output', exp_name)
+    sim_output_path = input_sim_output_path or sim_output_path_base
+
+    df_samples = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
+    N_cols = [col for col in df_samples.columns if 'N_' in col]
+    if len(N_cols) != 0:
+        grp_list = [col.replace('N_', '') for col in N_cols]
+    else:
+        grp_list = None
+    return grp_list
+
 
 def get_group_names(exp_path, uniquechannel ='Ki_t', fname="trajectoriesDat.csv"):
+    """Similar to get_grp_list, but uses trajectoriesDat column names"""
     trajectories_cols = pd.read_csv(os.path.join(exp_path, fname), index_col=0,
                                     nrows=0).columns.tolist()
     cols = [col for col in trajectories_cols if uniquechannel in col]
