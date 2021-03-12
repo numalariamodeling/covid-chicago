@@ -19,6 +19,8 @@ Takes two experiment simulations and compares generates a plot comparing the tra
 Plots the most recent trend in EMresource data for ICU and non-ICU and compares the next 2-3 weeks forward predictions, either with one or two exp_names
 - [plot_exp_by_varying_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_exp_by_varying_param.py)
 Plot to show trends by varying sample parameter (i.e. for intervention scenarios) within one simulation.
+- [bar_timeline_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_timeline_plotter.py)
+Often used for civis slides, generates timeline comparing outcome channelf across multiple simulation experiments and cumulative barplot
 
 ### Compare parameter or channels within one simulation experiment
 - [aggregate_by_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/aggregate_by_param.py)
@@ -60,5 +62,10 @@ The script also uses functions from [sample_parameters.py](https://github.com/nu
 - [extract_sample_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/extract_sample_param.py) 
 Extract and visualize sample parameters that successfully ran in a simulation. Can be used to generate csv files that can be used as inpput in another simulation.
 - [emresource_cli_per_covidregion.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/emresource_cli_per_covidregion.py) (data_plotters folder)
+- [bar_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_plotter.py)
+Note extended version in [bar_timeline_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_timeline_plotter.py)
+
+
+
 
 
