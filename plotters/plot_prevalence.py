@@ -36,10 +36,8 @@ def parse_args():
     )
     return parser.parse_args()
 
-def get_prev_df(df, channels, fname='trajectoriesDat.csv'):
+def get_prev_df(exp_name, channels):
 
-    sort_channels = ['scen_num', 'sample_num', 'run_num', 'time']
-    group_channels = ['scen_num', 'sample_num', 'run_num']
     region_list = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
 
     df = pd.DataFrame()
@@ -63,14 +61,9 @@ def get_prev_df(df, channels, fname='trajectoriesDat.csv'):
             column_list.append('recovered_det_' + str(ems_region))
             column_list.append('deaths_det_' + str(ems_region))
 
-        df_i = load_sim_data(exp_name, region_suffix=f'_{ems_region}', column_list=column_list, add_incidence=False)
+        df_i = load_sim_data(exp_name, region_suffix=f'_{ems_region}', column_list=column_list, add_incidence=True)
         if ems_region !="All" :
             df_i['N'] = df_i['N_' + str(ems_region.replace("-", "_"))]
-        df_i[f'new_deaths'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'deaths'].diff()
-        df_i[f'new_recovered'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'recovered'].diff()
-        if get_det > 0:
-            df_i[f'new_deaths_det'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'deaths_det'].diff()
-            df_i[f'new_recovered_det'] = df_i.sort_values(sort_channels).groupby(group_channels)[f'recovered_det'].diff()
 
         df_i = calculate_prevalence(df_i)
         df_i['region'] = ems_nr

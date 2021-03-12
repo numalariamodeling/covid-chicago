@@ -101,7 +101,7 @@ def compare_ems(exp_name, plot_name, ems_nr, first_day , last_day):
 
     outcome_channels = ['hosp_det_cumul', 'hosp_cumul', 'hosp_det', 'hospitalized',
                         'crit_det_cumul', 'crit_cumul', 'crit_det', 'critical',
-                        'death_det_cumul', 'deaths']
+                        'deaths_det_cumul', 'deaths']
 
 
     for channel in outcome_channels:

@@ -82,7 +82,7 @@ if __name__ == '__main__' :
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
 
-        df = load_sim_data(exp_name, region_suffix=None, add_incidence=False)
+        df = load_sim_data(exp_name, region_suffix=None, add_incidence=True)
         suffix_names = [x.split('_')[1] for x in df.columns.values if 'susceptible' in x]
         base_names = [x.split('_%s' % suffix_names[0])[0] for x in df.columns.values if suffix_names[0] in x]
 
@@ -105,9 +105,7 @@ if __name__ == '__main__' :
             df['infected_%s' % grp] = df['asymptomatic_%s' % grp] + df['presymptomatic_%s' % grp] + \
                                             df['symptomatic_mild_%s' % grp] + df['symptomatic_severe_%s' % grp] + \
                                             df['hospitalized_%s' % grp] + df['critical_%s' % grp]
-            df = calculate_incidence_by_age(df, grp,
-                                            output_filename=os.path.join(sim_output_path,
-                                                                         'trajectoriesDat_withIncidence_%s.csv' % grp))
+
             df['infections_cumul_%s' % grp] = df['asymp_cumul_%s' % grp] + \
                                                     df['symp_mild_cumul_%s' % grp] + \
                                                     df['symp_severe_cumul_%s' % grp]

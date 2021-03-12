@@ -45,7 +45,7 @@ def compare_NMH(exp_name) :
     df = load_sim_data(exp_name)
     first_day = datetime.strptime(df['startdate'].unique()[0], '%Y-%m-%d')
 
-    channels = ['new_detected_hospitalized', 'hosp_det_cumul', 'hospitalized', 'critical']
+    channels = ['new_hosp_det', 'hosp_det_cumul', 'hospitalized', 'critical']
     data_channel_names = ['covid pos admissions', 'cumulative admissions', 'inpatient census', 'ICU census']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data_NMH_v1')
@@ -146,7 +146,7 @@ def compare_county(exp_name, county_name, first_day, last_day) :
     df['critical_with_suspected'] = df['critical']
 
 
-    channels = ['new_detected', 'new_detected_hospitalized', 'detected_cumul', 'hosp_det_cumul']
+    channels = ['new_detected', 'new_hosp_det', 'detected_cumul', 'hosp_det_cumul']
     data_channel_names = ['new_case', 'new_hospitalizations', 'total_case', 'total_hospitalizations']
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_name, 'compare_to_data')

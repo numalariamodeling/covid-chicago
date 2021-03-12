@@ -23,9 +23,7 @@ def plot_on_fig(df, c, axes,channel, color,panel_heading, label=None, addgrid=Tr
     ax.fill_between(mdf['date'].values, mdf['CI_25'], mdf['CI_75'],
                 color=color, linewidth=0, alpha=0.4)
     ax.set_title(panel_heading, y=0.85)
-    formatter = mdates.DateFormatter("%m-%d")
-    ax.xaxis.set_major_formatter(formatter)
-    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b'))
 
    # ref_df  = compare_ems(ems=ems, channel=channel)
 
@@ -44,13 +42,13 @@ def plot_on_fig(df, c, axes,channel, color,panel_heading, label=None, addgrid=Tr
 
 def plot_covidregions(exp_names,channel,subgroups, psuffix) :
 
-    fig = plt.figure(figsize=(14, 10))
+    fig = plt.figure(figsize=(14, 8))
     fig.suptitle(f' {channel}', y=1, fontsize=14)
     plt.tight_layout(rect=[0, 0, 0, .95])
     fig.subplots_adjust(top=0.88)
-    fig.subplots_adjust(right=0.97, wspace=0.20, left=0.05, hspace=0.4, top=0.85, bottom=0.00)
+    fig.subplots_adjust(right=0.97, wspace=0.20, left=0.05, hspace=0.4, top=0.95, bottom=0.01)
     palette = sns.color_palette('Set1', len(exp_names))
-    axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(subgroups))]
+    axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(subgroups))]
 
     for c, age_suffix in enumerate(subgroups) :
 
@@ -58,7 +56,7 @@ def plot_covidregions(exp_names,channel,subgroups, psuffix) :
         region_label= region_label.replace('_All', 'all ')
 
         for d, exp_name in enumerate(exp_names) :
-            df = load_sim_data(exp_name, region_suffix=age_suffix, add_incidence=False)
+            df = load_sim_data(exp_name, region_suffix=age_suffix, add_incidence=True)
             df = df[df['date'].between(first_plot_day, last_plot_day)]
             
             version = exp_name.split("_")[-1]
@@ -86,13 +84,13 @@ if __name__ == '__main__' :
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
     ageGroup_list = ['_All',"_age0to9", "_age10to19", "_age20to29", "_age30to39", "_age40to49", "_age50to59", "_age60to69", "_age70to100"]
-    first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
-    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
+    first_plot_day = pd.Timestamp('2020-02-13')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(30, 'days')
     
-    psuffix = '_MarchOct_log'
-    #plot_covidregions(exp_names,channel='crit_det', subgroups = ageGroup_list, psuffix ='_MarchOct')
-    #plot_covidregions(exp_names,channel='hosp_det', subgroups = ageGroup_list,  psuffix ='_MarchOct')
-    #plot_covidregions(exp_names,channel='hospitalized', subgroups = ageGroup_list,  psuffix ='_MarchOct')
-    #plot_covidregions(exp_names,channel='death_det_cumul', subgroups = ageGroup_list,  psuffix ='_MarchOct')
-    plot_covidregions(exp_names,channel='infected', subgroups = ageGroup_list,  psuffix ='_JulyOct')
-    #plot_covidregions(exp_names,channel='asymptomatic', subgroups = ageGroup_list,  psuffix ='_MarchOct')
+    psuffix = 'FebToToday'
+    #plot_covidregions(exp_names,channel='crit_det', subgroups = ageGroup_list, psuffix =psuffix)
+    #plot_covidregions(exp_names,channel='hosp_det', subgroups = ageGroup_list,  psuffix =psuffix)
+    #plot_covidregions(exp_names,channel='hospitalized', subgroups = ageGroup_list,  psuffix =psuffix)
+    #plot_covidregions(exp_names,channel='deaths_det_cumul', subgroups = ageGroup_list,  psuffix =psuffix)
+    plot_covidregions(exp_names,channel='infected', subgroups = ageGroup_list,  psuffix =psuffix)
+    #plot_covidregions(exp_names,channel='asymptomatic', subgroups = ageGroup_list,  psuffix =psuffix)
