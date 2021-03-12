@@ -222,18 +222,15 @@ if __name__ == '__main__' :
     first_plot_day = pd.Timestamp('2020-01-01') #pd.Timestamp.today()- pd.Timedelta(60,'days')
     last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
+    plot_path = os.path.join(wdir, 'simulation_output', exp_names[-1], '_plots')
 
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    for exp_name in exp_names:
-        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
-
-        #plot_main()
-        #plot_covidregions()
-        plot_covidregions_inone(channel='Ki_t')
-        #plot_covidregions_inone(channel='B_prev')
-        #plot_covidregions_inone(channel='hospitalized')
-        #plot_restoreregions_inone(channel='hospitalized')
-        #plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths'])
-        #plot_covidregions_inone2(channels=['prevalence','recoverged','symptomatic_mild','symptomatic_severe'])
-        #plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild',
-        #                                   'hosp_det','deaths_det','infectious_det'])
+    #plot_main()
+    #plot_covidregions()
+    plot_covidregions_inone(channel='Ki_t')
+    #plot_covidregions_inone(channel='B_prev')
+    #plot_covidregions_inone(channel='hospitalized')
+    #plot_restoreregions_inone(channel='hospitalized')
+    #plot_covidregions_inone2(channels=['infected','new_detected','hospitalized', 'critical', 'deaths'])
+    #plot_covidregions_inone2(channels=['prevalence','recoverged','symptomatic_mild','symptomatic_severe'])
+    #plot_covidregions_inone2(channels=['symp_severe_det_cumul','symp_mild_det_cumul','symptomatic_mild',
+    #                                   'hosp_det','deaths_det','infectious_det'])
