@@ -974,7 +974,7 @@ class covidModel:
             emodl_str_grp = ""
             for grp in self.grpList:
                 grp_num = grp.replace('EMS_','')
-                df_grp = df[df['region']==int(grp_num)]
+                df_grp = df[df['covid_region']==int(grp_num)]
                 emodl_param_initial = f'(param Kv_{grp} 0)\n' \
                                       f'(observe n_daily_vaccinated_{grp}  (* Kv_{grp}  S::{grp} ))\n'
                 intervention_dates = list(df_grp['Date'].values) + [max(df_grp['Date']) + pd.Timedelta(1,'days')]
