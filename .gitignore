@@ -26,3 +26,6 @@ python
 Rfiles/.RData
 experiment_configs/input_csv/
 !experiment_configs/input_csv/sampled_parameters_means.csv
+!experiment_configs/input_csv/vaccination_linear.csv
+!experiment_configs/input_csv/vaccination_linear_doubled.csv
+
