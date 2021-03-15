@@ -12,7 +12,7 @@ from processing_helpers import *
 from load_paths import load_box_paths
 
 
-def plot_vaccinations(adf, channels,channel_title):
+def plot_vaccinations(adf, channels,channel_title, plot_name=None):
 
     fig = plt.figure(figsize=(14, 8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.5, wspace=0.3, top=0.91, bottom=0.08)
@@ -20,14 +20,14 @@ def plot_vaccinations(adf, channels,channel_title):
     # sns.color_palette('husl', len(channels))
     fig.suptitle(x=0.5, y=0.98, t=channel_title, size=14)
 
-    for e, ems_num in enumerate(adf['region'].unique()):
+    for e, ems_num in enumerate(adf['covid_region'].unique()):
         plotsubtitle = f'COVID-19 Region {str(int(ems_num))}'
         if ems_num == 0:
             plotsubtitle = 'Illinois'
 
         ax = fig.add_subplot(3, 4, e + 1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
-        mdf = adf[adf['region'] == ems_num]
+        mdf = adf[adf['covid_region'] == ems_num]
         for c, channel in enumerate(channels):
             if 'daily' in channel :
                 ax.bar(mdf['date'], mdf[channel], color=palette[c], label=channel, alpha=0.6)
@@ -35,11 +35,16 @@ def plot_vaccinations(adf, channels,channel_title):
                 ax.plot(mdf['date'], mdf[channel], color=palette[c], label=channel)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%d'))
         ax.set_title(plotsubtitle)
+        if 'perc' in channels[0]:
+            ax.set_ylim(0, 0.5)
 
     ax.legend()
 
-    plt.savefig(os.path.join(plot_path, f'{channels[0]}_by_covidregion.png'))
-    plt.savefig(os.path.join(plot_path, 'pdf', f'{channels[0]}_by_covidregion.pdf'), format='PDF')
+    if plot_name is None:
+        plot_name = f'{channels[0]}_by_covidregion'
+
+    plt.savefig(os.path.join(plot_path, f'{plot_name}.png'))
+    plt.savefig(os.path.join(plot_path, 'pdf', f'{plot_name}.pdf'), format='PDF')
 
 def plot_vaccinations_compare(adf, channels):
 
@@ -54,14 +59,14 @@ def plot_vaccinations_compare(adf, channels):
     fig = plt.figure(figsize=(14, 6))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.5, wspace=0.3, top=0.90, bottom=0.08)
     fig.suptitle(x=0.5, y=0.98, t=f'Fully vaccinated in IL by {maxdate} {IL_fully_vaccinated_perc} % (n={IL_fully_vaccinated})', size=14)
-    palette = sns.color_palette('coolwarm', len(adf['region'].unique()))
+    palette = sns.color_palette('coolwarm', len(adf['covid_region'].unique()))
     for c, channel in enumerate(channels):
         ax = fig.add_subplot(1, len(channels), c+1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         ax.set_title(channel)
         yvalues = adf.groupby(['date'])['daily_full_vaccinated'].agg(np.sum).reset_index()['daily_full_vaccinated'].values
-        for e, ems_num in enumerate(adf['region'].unique()):
-            mdf = adf[adf['region'] == ems_num]
+        for e, ems_num in enumerate(adf['covid_region'].unique()):
+            mdf = adf[adf['covid_region'] == ems_num]
             if channel =='daily_full_vaccinated':
                 ax.bar(mdf['date'], yvalues, color=palette[e], label=f'Region {str(int(ems_num))}')
                 yvalues = yvalues - mdf['daily_full_vaccinated'].values
@@ -79,27 +84,23 @@ if __name__ == '__main__':
     datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
     plot_path = os.path.join(projectpath, 'Plots + Graphs', 'vaccinations')
 
-    df = pd.read_csv(os.path.join(datapath, 'covid_IDPH','Corona virus reports','vaccinations.csv'))
+    fname = 'vaccinations_historical.csv' #'vaccinations.csv'
+    df = pd.read_csv(os.path.join(datapath, 'covid_IDPH','Corona virus reports',fname))
     df.columns
     df['date'] = pd.to_datetime(df['report_date'])
-    df['breakout_type'].unique()
-    df['breakout_group'].unique()
-    df = df[df['breakout_type']=='gender']
-    ## Aggregate per county
-    df = df.groupby(['date','geography_name','breakout_type'])[['persons_fully_vaccinated','administered_count','allocated_doses']].agg(np.sum).reset_index()
+    min( df['date'])
 
     df = merge_county_covidregions(df,key_x= 'geography_name')
     df.columns
-    df['region'] = df['covid_region']
-    df['region'].unique()
-    df = df.dropna(subset=["region"])
+    df['covid_region'].unique()
+    df = df.dropna(subset=["covid_region"])
 
     ## Aggregate per region
-    adf = df.groupby(['date','region'])[['persons_fully_vaccinated','population','administered_count','allocated_doses']].agg(np.nansum).reset_index()
-    adf.groupby('region')['population'].agg(np.max).reset_index()
+    adf = df.groupby(['date','covid_region'])[['persons_fully_vaccinated','population','administered_count','allocated_doses']].agg(np.nansum).reset_index()
+    adf.groupby('covid_region')['population'].agg(np.max).reset_index()
 
     inc_df = pd.DataFrame()
-    for region, df in adf.groupby('region'):
+    for region, df in adf.groupby('covid_region'):
         print(region)
         df = df.sort_values('date')
         sdf = pd.DataFrame({'date': df['date'],
@@ -108,7 +109,7 @@ if __name__ == '__main__':
                             'administered_count': df['administered_count'],
                             'daily_full_vaccinated': count_new(df, 'persons_fully_vaccinated'),
                             'daily_new_administered_count': count_new(df, 'administered_count')})
-        sdf['region'] = region
+        sdf['covid_region'] = region
 
         """Replace first entry (backlog)"""
         sdf.loc[sdf['date'] == min(sdf['date']),'daily_full_vaccinated'] = sdf.loc[sdf['date'] == min(sdf['date']),'persons_fully_vaccinated']
@@ -123,12 +124,8 @@ if __name__ == '__main__':
 
     inc_df['daily_first_vacc'] = inc_df['daily_new_administered_count'] - inc_df['daily_full_vaccinated']
     inc_df['daily_first_vacc_perc'] = inc_df['daily_first_vacc'] / inc_df['population']
-
+    #inc_df.groupby('covid_region')['population'].agg(np.max).reset_index()
     inc_df.to_csv(os.path.join(datapath, 'covid_IDPH','Corona virus reports','vaccinations_by_covidregion.csv'), index=False)
-
-    ## Daily vaccinations
-
-
 
     ## Daily vaccinations
     """Plots per COVID-19 region"""
@@ -142,11 +139,13 @@ if __name__ == '__main__':
 
     plot_vaccinations(adf=inc_df,
                       channels = ['persons_first_vaccinated_perc','persons_fully_vaccinated_perc'],
-                      channel_title="Total vaccinated population (proportion)")
+                      channel_title="Total vaccinated population (proportion)",
+                      plot_name='fraction_vaccinated_by_covidregion')
 
     plot_vaccinations(adf=inc_df,
-                      channels = ['persons_fully_vaccinated','persons_first_vaccinated'],
-                      channel_title="Total vaccinated population")
+                      channels = ['persons_first_vaccinated','persons_fully_vaccinated'],
+                      channel_title="Total vaccinated population",
+                      plot_name = 'population_vaccinated_by_covidregion')
 
     """Comparing COVID-19 region"""
     plot_vaccinations_compare(adf=inc_df, channels = ['daily_full_vaccinated','persons_fully_vaccinated_perc'])
