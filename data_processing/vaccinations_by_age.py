@@ -113,7 +113,7 @@ def plot_by_age_region(df, channel,plot_title='',plot_name=None):
         ax = fig.add_subplot(3, 4, e + 1)
         ax.grid(b=True, which='major', axis='y',color='#999999', linestyle='-', alpha=0.3)
         mdf = df[df['covid_region'] == ems_num]
-        ax.bar(mdf['agegrp'], mdf[channel], color=palette[c], label=age)
+        ax.bar(mdf['agegrp'], mdf[channel], color=palette[0])
         ax.set_title(plotsubtitle)
         ax.set_ylim(0, 0.8)
     ax.legend()
@@ -159,6 +159,7 @@ if __name__ == '__main__':
     adf['persons_first_vaccinated'] = adf['administered_count'] - adf['persons_fully_vaccinated']
     adf['persons_first_vaccinated_perc'] = adf['persons_first_vaccinated'] / adf['population']
     adf['fully_vaccinated_perc'] = adf['persons_fully_vaccinated'] / adf['population']
+    adf.to_csv(os.path.join(datapath, 'covid_IDPH','Corona virus reports','vaccinations_by_age_covidregion.csv'), index=False)
 
     dfmax = adf[adf['date']==max(adf['date'])]
     maxdate = max(adf['date']).strftime('%b-%d-%Y')
