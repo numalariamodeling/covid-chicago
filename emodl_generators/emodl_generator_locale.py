@@ -996,7 +996,7 @@ class covidModel:
             fraction_severe_notV = ''
             for i, date in enumerate(intervention_dates, 1):
                 temp_str = f"(time-event fraction_severe_changeV_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)}  (" \
-                                   f"(fraction_severe (* @fraction_severe@ reduced_fraction_Sys_notV {df['persons_above65_first_vaccinated_perc'][i-1]})) " \
+                                   f"(fraction_severe (- @fraction_severe@ (* (- @fraction_severe@ (*  @fraction_severe@ reduced_fraction_Sys_notV)) {df['persons_above65_first_vaccinated_perc'][i-1]}))) " \
                                    "(Ksys (* fraction_severe (/ 1 time_to_symptoms))) " \
                                    "(Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))))\n"
                 fraction_severe_notV = fraction_severe_notV + temp_str
