@@ -266,16 +266,24 @@ sampled_parameters:
   'fraction_dead_change9':
     np.random: uniform
     function_kwargs: {'low':0.0280, 'high':0.052}
-  ### ---- For vaccine model ------------------
+  ### ---- VACCINE ----------------------
+  #'vacc_daily_cov':
+  #  np: linspace
+  #  function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1} ## not used per default
+  ### if trace selection would allow group by parameter, to keep uncertainity in intervention parameters
+  ### currenly all traces are ranked regardless of groupings
   'reduced_fraction_Sym':
     np.random: uniform
-    function_kwargs: { 'low': 0.8, 'high': 1 }
+    function_kwargs: { 'low': 0.8, 'high': 0.8 }
   'reduced_fraction_Sys':
     np.random: uniform
-    function_kwargs: { 'low': 0, 'high': 0.05 }
+    function_kwargs: { 'low': 0.05, 'high': 0.05 }
   'reduced_infectious_V':
     np.random: uniform
     function_kwargs: { 'low': 0.1, 'high': 0.1}
+  'reduced_fraction_Sys_notV':
+    np.random: uniform
+    function_kwargs: { 'low': 0.15, 'high': 0.15}
 intervention_parameters:
   ###------------------------------------------------
   ### ---- Parameter scalingfactor ------------------
@@ -316,11 +324,6 @@ intervention_parameters:
   'reopen_multiplier':
     np: linspace
     function_kwargs: {'start':0.20, 'stop':0.20, 'num' : 1}
-  ### ---- VACCINE ----------------------
-  ### Used if no intervention csv is specified in intervention_emodl_config.yaml
-  'vacc_daily_cov':
-    np: linspace
-    function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
@@ -574,6 +577,11 @@ time_parameters:
   'vaccine_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #not used
+    ### assume that after Feb most of the high risk populations are vaccinated and remaining population less severe
+    ### simplified date informed by vaccine scale up  (i.e. not time varying age distribution of not vaccinated pop)
+  'fraction_severe_changeV_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-02-01}
   ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
   'change_testDelay_time1':
     custom_function: DateToTimestep
