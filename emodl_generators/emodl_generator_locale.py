@@ -988,10 +988,19 @@ class covidModel:
                 emodl_str_grp = emodl_str_grp + emodl_param_initial + emodl_timeevents
                 del df_grp
 
-            fraction_severe_notV = "(time-event fraction_severe_changeV @fraction_severe_changeV_time@ (" \
-                                   "(fraction_severe (* fraction_severe reduced_fraction_Sys_notV)) " \
+            """Adjust fraction severe"""
+            df = pd.read_csv(os.path.join(git_dir,"experiment_configs", 'input_csv', 'vaccination_fractionSevere_adjustment_IL.csv'))
+            df['Date'] = pd.to_datetime(df['date'])
+            intervention_dates = df['Date'].unique()
+
+            fraction_severe_notV = ''
+            for i, date in enumerate(intervention_dates, 1):
+                temp_str = f"(time-event fraction_severe_changeV_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)}  (" \
+                                   f"(fraction_severe (* @fraction_severe@ reduced_fraction_Sys_notV {df['persons_above65_first_vaccinated_perc'][i-1]})) " \
                                    "(Ksys (* fraction_severe (/ 1 time_to_symptoms))) " \
                                    "(Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))))\n"
+                fraction_severe_notV = fraction_severe_notV + temp_str
+
 
             emodl_str = fraction_severe_notV + emodl_str + emodl_str_grp
             return emodl_str
