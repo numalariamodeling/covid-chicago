@@ -764,7 +764,7 @@ class covidModel:
 
         def write_frac_crit_change(nchanges):
             n_frac_crit_change = range(1, nchanges+1)
-            frac_crit_change_observe = '(observe frac_crit_t fraction_critical)\n'
+            frac_crit_change_observe = '(observe fraction_severe_t fraction_severe)\n(observe frac_crit_t fraction_critical)\n'
             frac_crit_change_timeevent = ''.join([f'(time-event frac_crit_adjust{i} @crit_time_{i}@ '
                                                   f'('
                                                   f'(fraction_critical @fraction_critical_change{i}@) '
@@ -987,7 +987,22 @@ class covidModel:
                     emodl_timeevents = emodl_timeevents + temp_str
                 emodl_str_grp = emodl_str_grp + emodl_param_initial + emodl_timeevents
                 del df_grp
-            emodl_str = emodl_str + emodl_str_grp
+
+            """Adjust fraction severe"""
+            df = pd.read_csv(os.path.join(git_dir,"experiment_configs", 'input_csv', 'vaccination_fractionSevere_adjustment_IL.csv'))
+            df['Date'] = pd.to_datetime(df['date'])
+            intervention_dates = df['Date'].unique()
+
+            fraction_severe_notV = ''
+            for i, date in enumerate(intervention_dates, 1):
+                temp_str = f"(time-event fraction_severe_changeV_{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)}  (" \
+                                   f"(fraction_severe (- @fraction_severe@ (* (- @fraction_severe@ (*  @fraction_severe@ reduced_fraction_Sys_notV)) {df['persons_above65_first_vaccinated_perc'][i-1]}))) " \
+                                   "(Ksys (* fraction_severe (/ 1 time_to_symptoms))) " \
+                                   "(Ksym (* (- 1 fraction_severe) (/ 1 time_to_symptoms)))))\n"
+                fraction_severe_notV = fraction_severe_notV + temp_str
+
+
+            emodl_str = fraction_severe_notV + emodl_str + emodl_str_grp
             return emodl_str
 
         def write_bvariant():
@@ -1031,8 +1046,7 @@ class covidModel:
 
             """keep track of fracinfect, and use for update symptom development reactions"""
             fracinfect_str = '(param bvariant_fracinfect 0)\n' \
-                             '(observe bvariant_fracinfect_t bvariant_fracinfect)\n' \
-                             '(observe fraction_severe_t fraction_severe)\n' + fracinfect_timevent
+                             '(observe bvariant_fracinfect_t bvariant_fracinfect)\n' + fracinfect_timevent
 
             """fraction severe adjustment over time"""
             frac_severe_timevent = ''.join([f'(time-event fraction_severe_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
