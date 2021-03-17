@@ -957,6 +957,8 @@ class covidModel:
 (param Ki_red11 (* Ki @ki_multiplier_11@))
 (param Ki_red12 (* Ki @ki_multiplier_12@))
 (param Ki_red13 (* Ki @ki_multiplier_13@))
+(param Ki_red14 (* Ki @ki_multiplier_14@))
+(param Ki_red15 (* Ki @ki_multiplier_15@))
 
 (param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
 (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
@@ -973,6 +975,8 @@ class covidModel:
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki Ki_red11)))
 (time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki Ki_red12)))
 (time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki Ki_red13)))
+(time-event ki_multiplier_change_14 @ki_multiplier_time_14@ ((Ki Ki_red14)))
+(time-event ki_multiplier_change_15 @ki_multiplier_time_15@ ((Ki Ki_red15)))
     """
 
         rollback_str = """

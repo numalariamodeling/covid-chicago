@@ -1064,6 +1064,8 @@ class covidModel:
 (param Ki_red11_{region} (* Ki_{region} @ki_multiplier_11_{region}@))
 (param Ki_red12_{region} (* Ki_{region} @ki_multiplier_12_{region}@))
 (param Ki_red13_{region} (* Ki_{region} @ki_multiplier_13_{region}@))
+(param Ki_red14_{region} (* Ki_{region} @ki_multiplier_14_{region}@))
+(param Ki_red15_{region} (* Ki_{region} @ki_multiplier_15_{region}@))
 
 (param backtonormal_multiplier_1_{region}  (/ (- Ki_red6_{region}  Ki_red4_{region} ) (- Ki_{region} Ki_red4_{region} ) ) )  
 (observe backtonormal_multiplier_1_{region} backtonormal_multiplier_1_{region})
@@ -1081,6 +1083,8 @@ class covidModel:
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki_{region} Ki_red11_{region})))
 (time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki_{region} Ki_red12_{region})))
 (time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki_{region} Ki_red13_{region})))
+(time-event ki_multiplier_change_14 @ki_multiplier_time_14@ ((Ki_{region} Ki_red14_{region})))
+(time-event ki_multiplier_change_15 @ki_multiplier_time_15@ ((Ki_{region} Ki_red15_{region})))
                 """.format(region=region)
             ki_multiplier_change_str = ki_multiplier_change_str + temp_str
 

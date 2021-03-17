@@ -613,6 +613,8 @@ class covidModel:
 (param Ki_red11 (* Ki @ki_multiplier_11@))
 (param Ki_red12 (* Ki @ki_multiplier_12@))
 (param Ki_red13 (* Ki @ki_multiplier_13@))
+(param Ki_red14 (* Ki @ki_multiplier_14@))
+(param Ki_red15 (* Ki @ki_multiplier_15@))
 
 (time-event ki_multiplier_change_3a @ki_multiplier_time_3a@ ((Ki Ki_red3a)))
 (time-event ki_multiplier_change_3b @ki_multiplier_time_3b@ ((Ki Ki_red3b)))
@@ -627,6 +629,8 @@ class covidModel:
 (time-event ki_multiplier_change11 @ki_multiplier_time_11@ ((Ki Ki_red11)))
 (time-event ki_multiplier_change12 @ki_multiplier_time_12@ ((Ki Ki_red12)))
 (time-event ki_multiplier_change13 @ki_multiplier_time_13@ ((Ki Ki_red13)))
+(time-event ki_multiplier_change14 @ki_multiplier_time_14@ ((Ki Ki_red14)))
+(time-event ki_multiplier_change15 @ki_multiplier_time_15@ ((Ki Ki_red15)))
                 """
         rollback_str = """
 (time-event ki_multiplier_change_rollback @socialDistance_rollback_time@ ((Ki Ki_red4)))
