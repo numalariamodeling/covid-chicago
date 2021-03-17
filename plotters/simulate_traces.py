@@ -77,7 +77,7 @@ def modify_emodl_and_save(exp_name,output_path):
         param_cols_unique = [col.replace(f'_{grp}', '') for col in param_cols_unique]
     param_cols_unique = list(set(param_cols_unique))
 
-    emodl_name = [file for file in os.listdir(output_path) if 'emodl' in file][0].replace('.emodl','')
+    emodl_name = [file for file in os.listdir(output_path) if '.emodl' in file][0].replace('.emodl','')
     emodl_name_new = f'{emodl_name}_resim'
 
     fin = open(os.path.join(output_path, f'{emodl_name}.emodl'), "rt")
@@ -179,6 +179,7 @@ def extract_sample_traces(exp_name,traces_to_keep_ratio, traces_to_keep_min):
         grp_channels = [i for i in df_samples.columns if grp_suffix in i]
         grp_cols_to_drop = [i for i in grp_channels if grp_nr != i.split('_')[-1]]
         df_samples_sub = df_samples.drop(grp_cols_to_drop, axis=1)
+        df_samples_sub = df_samples_sub.loc[df_samples_sub.groupby(['sample_num']).scen_num.idxmin()]
 
         rank_export_df = pd.read_csv(os.path.join(output_path, f'traces_ranked_region_{str(grp_nr)}.csv'))
         n_traces_to_keep = int(len(rank_export_df) / traces_to_keep_ratio)
@@ -187,12 +188,9 @@ def extract_sample_traces(exp_name,traces_to_keep_ratio, traces_to_keep_min):
         if len(rank_export_df) < traces_to_keep_min:
             n_traces_to_keep = len(rank_export_df)
 
-        df_samples_sub = pd.merge(how='left', left=rank_export_df[['scen_num','norm_rank']], left_on=['scen_num'], right=df_samples_sub, right_on=['scen_num'])
+        df_samples_sub = pd.merge(how='left', left=rank_export_df[['sample_num','norm_rank']], left_on=['sample_num'], right=df_samples_sub, right_on=['sample_num'])
         df_samples_sub = df_samples_sub.sort_values(by=['norm_rank']).reset_index(drop=True)
-        try:
-            df_samples_sub = df_samples_sub.drop(['scen_num', 'sample_num', 'norm_rank'], axis=1)
-        except:
-            df_samples_sub = df_samples_sub.drop(['scen_num', 'norm_rank'], axis=1)
+        df_samples_sub = df_samples_sub.drop(['scen_num', 'sample_num', 'norm_rank'], axis=1)
         df_samples_sub.columns = df_samples_sub.columns + f'_{str(grp)}'
         df_samples_sub.columns = [col.replace( f'_{str(grp)}_{str(grp)}', f'_{str(grp)}') for col in df_samples_sub.columns ]
         df_samples_sub['row_num'] = df_samples_sub.index
@@ -213,7 +211,7 @@ def extract_sample_traces(exp_name,traces_to_keep_ratio, traces_to_keep_min):
     """Export all parameter columns to be used as simulation input"""
     df_samples = pd.read_csv(os.path.join(output_path, 'sampled_parameters.csv'))
     df_samples = df_samples.loc[:n_traces_to_keep+1 , cols_to_drop]
-    df_samples['scen_num'] = df_samples.reset_index().index
+    df_samples['sample_num'] = df_samples.reset_index().index
 
     """Generate combinations of samples (df_samples) and fitted parameters (df_traces)"""
     df_traces_n = gen_combos(df_samples, df_traces)

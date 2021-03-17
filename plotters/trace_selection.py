@@ -122,17 +122,20 @@ def rank_traces_nll(df, ems_nr, ref_df, weights_array=[1.0,1.0,1.0,1.0],wt=False
     df_trunc = df[df['date'].isin(common_dates)]
     ref_df_trunc = ref_df[ref_df['date'].isin(common_dates)]
 
-    run_sample_scen_list = list(df_trunc.groupby(['run_num','sample_num','scen_num']).size().index)
-    rank_export_df = pd.DataFrame({'run_num':[], 'sample_num':[], 'scen_num':[], 'nll':[]})
+    """select unique samples, usually sample_num==scen_num, except if varying intervention_samples are defined"""
+    """hence use WITHIN sampe_num to match trajectories later on"""
+    df_trunc = df_trunc.loc[df_trunc.groupby(['run_num','sample_num','date','time']).scen_num.idxmin()]
+    run_sample_scen_list = list(df_trunc.groupby(['run_num','sample_num']).size().index)
+    rank_export_df = pd.DataFrame({'run_num':[], 'sample_num':[], 'nll':[]})
     for x in run_sample_scen_list:
         total_nll = 0
-        (run_num, sample_num, scen_num) = x
-        df_trunc_slice = df_trunc[(df_trunc['run_num'] == run_num) & (df_trunc['sample_num'] == sample_num) & (df_trunc['scen_num'] == scen_num)]
+        (run_num, sample_num) = x
+        df_trunc_slice = df_trunc[(df_trunc['run_num'] == run_num) & (df_trunc['sample_num'] == sample_num)]
         total_nll += deaths_weight*sum_nll(df_trunc_slice['new_deaths_det'].values[:-timelag_days], ref_df_trunc['deaths'].values[:-timelag_days], wt,wt_past=True)
         total_nll += crit_weight*sum_nll(df_trunc_slice['crit_det'].values, ref_df_trunc['confirmed_covid_icu'].values, wt)
         total_nll += cli_weight*sum_nll(df_trunc_slice['new_hosp_det'].values, ref_df_trunc['inpatient'].values, wt)
         total_nll += non_icu_weight*sum_nll(df_trunc_slice['hosp_det'].values, ref_df_trunc['covid_non_icu'].values, wt)
-        rank_export_df = rank_export_df.append(pd.DataFrame({'run_num':[run_num], 'sample_num':[sample_num], 'scen_num':[scen_num], 'nll':[total_nll]}))
+        rank_export_df = rank_export_df.append(pd.DataFrame({'run_num':[run_num], 'sample_num':[sample_num],  'nll':[total_nll]}))
     rank_export_df = rank_export_df.dropna()
     rank_export_df['norm_rank'] = (rank_export_df['nll'].rank()-1)/(len(rank_export_df)-1)
     rank_export_df = rank_export_df.sort_values(by=['norm_rank']).reset_index(drop=True)
