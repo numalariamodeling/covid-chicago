@@ -433,7 +433,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
-- 20210317 adding new time-event (ki_multiplier_15) for 2021-03-15 to intervention emodl yaml 
+- 20210317 adding ki multiplier 15 to intervention emodl yaml, set bvariant_start to begin after ki multiplier 15
 - 20210316 added transmission multiplier 15 for March, included bvariant, included vaccinations, updated parameter fit
 - 20210303 updated parameter fit 
 - 20210217 added transmission multiplier 14 for February, added range for initial transmission rate
