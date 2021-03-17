@@ -1,18 +1,19 @@
 
 ## Emodl generators
-The python files in this sub-directory allow to create .emodl files using python!
-To avoid having to edit the experiment_config (yaml) files, different emodl files are generated per simulation scenario. 
-Currently the emodl files are generated independently of the runScenarios and emodls exist for all scenarios in the emodl-sub-directory.
+The python files in this sub-directory allow to create .emodl files using python.
+The emodl_generators are linked to the runScenarios.py and new emodl files are generated each time when running a simulation.
+However it is also possible to define an excisting emodl to use via the --emodl flag in runScenarios.py, in which case no new emodl file will be generated.
+Although several emodl generators and model types exist, currently only the locale emodl (model for 11 COVID-19 regions in Illinois) is maintained.
 
-#### emodl_generator_base.py
+#### emodl_generator_base.py (not maintained)
 - Generates emodl files without any age groups 
 
-#### emodl_generator_cobey_age.py
-- Generates emodl files for different age groups, currently "4grp" and "8grp" with age specific transmission and disease parameter
-- Eventually could be combined with  emodl_generator_cobey_contact_mix.py and having an option "age_specific=T"
+#### emodl_generator_age.py  (not maintained)
+- Generates emodl files for different age groups, "8grp" with age specific transmission and disease parameter
 
-#### emodl_generator_locale.py
+#### emodl_generator_locale.py (main model in active use)
 - Generates emodl files without 'locales' per EMS , referred to as spatial model or 'EMS locale'
+- Structure might be extended to allow generating base or age models (outlook).
 
 #### emodl_generator_age_locale.py (testing)
 - Generates emodl files with age groups per EMS (testing, not up to date) 

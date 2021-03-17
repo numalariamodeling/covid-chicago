@@ -138,7 +138,7 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         dfs.append(df_copy)
 
     result = pd.concat(dfs, ignore_index=True)
-    result["scen_num"] = range(1, len(result) + 1)
+    result["sample_num"] = range(1, len(result) + 1)
 
     return result
 
@@ -270,9 +270,9 @@ def gen_combos(csv_base, csv_add):
     csv_base.drop(list(csv_add.columns), axis=1, inplace=True, errors='ignore')
 
     ## Rename unique scenario identifier
-    csv_base = csv_base.rename(columns={"scen_num": "scen_num1"})
+    csv_base = csv_base.rename(columns={"sample_num": "sample_num1"})
     ## Add unique scenario identifier
-    csv_add['scen_num2'] = csv_add.reset_index().index
+    csv_add['sample_num2'] = csv_add.reset_index().index
 
     dfs_list = [''] * (2)
     dfs_list[0] = csv_base.copy()
@@ -300,8 +300,8 @@ def gen_combos(csv_base, csv_add):
         [c for c in master_df if c in index_columns] + [c for c in master_df if c not in index_columns]]
 
     ### Generate new unique scen_num
-    master_df['scen_num'] = make_identifier(master_df[['scen_num1', 'scen_num2']])
-
+    master_df['sample_num'] = make_identifier(master_df[['sample_num1', 'sample_num2']])
+    master_df['scen_num'] = master_df['sample_num']
     return master_df
 
 
