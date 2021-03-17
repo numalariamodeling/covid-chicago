@@ -56,7 +56,7 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
                     n_traces_to_keep = len(rank_export_df)
 
                 rank_export_df_sub = rank_export_df[0:n_traces_to_keep]
-                df = df[df['scen_num'].isin(rank_export_df_sub.scen_num.unique())]
+                df = df[df['sample_num'].isin(rank_export_df_sub.sample_num.unique())]
     else :
         fname = 'trajectoriesDat.csv'
         if os.path.exists(os.path.join(sim_output_path, fname)) == False:
