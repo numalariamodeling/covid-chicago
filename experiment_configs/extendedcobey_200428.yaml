@@ -292,7 +292,7 @@ intervention_parameters:
   ### i.e. when specifying --fit_params "ki_multiplier_13"
   'scalingfactor':
     np: linspace
-    function_kwargs: {'start':1, 'stop':2. 'num' :1}
+    function_kwargs: {'start':1, 'stop':2, 'num' :1}
     #function_kwargs: {'start':0.95, 'stop':1.1, 'num' : 5}
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - EFFECT SIZE
