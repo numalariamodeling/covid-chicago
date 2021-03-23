@@ -56,6 +56,45 @@ class covidModel:
         timestep = datediff.days
         return timestep
 
+    def get_trigger(grp, channel):
+        grp_nr = grp.replace('EMS_','')
+
+        file_path = os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'hospital_capacity_thresholds')
+        files = os.listdir(file_path)
+        files = [name for name in files if not 'extra_thresholds' in name]
+        filedates = [item.replace('capacity_weekday_average_', '') for item in files]
+        filedates = [item.replace('.csv', '') for item in filedates]
+        latest_filedate = max([int(x) for x in filedates])
+
+        fname = 'capacity_weekday_average_' + str(latest_filedate) + '.csv'
+        ems_fname = os.path.join(datapath, 'covid_IDPH/Corona virus reports/hospital_capacity_thresholds/', fname)
+        df = pd.read_csv(ems_fname)
+        df = df.drop_duplicates()
+        df = df[df['geography_modeled'] == f'covidregion_{grp_nr}']
+
+        df = df[df['overflow_threshold_percent'] == 1]
+        df['ems'] = df['geography_modeled']
+        df['ems'] = df['geography_modeled'].replace("covidregion_", "", regex=True)
+        df = df[['ems', 'resource_type', 'avg_resource_available']]
+        df = df.drop_duplicates()
+
+        ## if conflicting numbers, take the lower ones!
+        dups = df.groupby(["ems", "resource_type"])["avg_resource_available"].nunique()
+        if int(dups.nunique()) > 1:
+            print(f'{ems_fname} contains multiple capacity values, selecting the lower ones.')
+            df = df.loc[df.groupby(["ems", "resource_type"])["avg_resource_available"].idxmax()]
+
+        df = df.pivot(index='ems', columns='resource_type', values='avg_resource_available')
+        df.index.name = 'ems'
+        df.reset_index(inplace=True)
+
+        df = df.rename(columns={ 'hb_availforcovid':'hosp_det',
+                            'hb_availforcovid':'total_hosp_census',
+                           'icu_availforcovid': 'crit_det',
+                            'vent_availforcovid':'ventilators'})
+
+        return int(df[channel])
+
     def get_species(self):
         state_SE = ['S', 'E']
         state_nosymptoms = ['As', 'As_det1', 'P', 'P_det']
@@ -1118,7 +1157,7 @@ class covidModel:
                 emodl_timeevents = ''.join([f'(param time_of_trigger_{grp} 10000)\n'
                                             f'(state-event rollbacktrigger_{grp} '
                                             f'(and (> time {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0]), self.startdate)}) '
-                                            f'(> {trigger_channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@))'
+                                            f'(> {trigger_channel}_{grp} (* {covidModel.get_trigger(grp,trigger_channel)} @capacity_multiplier@))'
                                             f') '
                                             f'((time_of_trigger_{grp} time))'
                                             f')\n'
@@ -1133,7 +1172,7 @@ class covidModel:
                 emodl_timeevents = ''.join([f'(param time_of_trigger_{grp} 10000)\n'
                                             f'(state-event rollbacktrigger_{grp} '
                                             f'(and (> time {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0]),self.startdate)}) '
-                                            f'(> {trigger_channel}_{grp} (* @trigger_{grp}@ @capacity_multiplier@))'
+                                            f'(> {trigger_channel}_{grp} (* {covidModel.get_trigger(grp,trigger_channel)} @capacity_multiplier@))'
                                             f') '
                                             f'((time_of_trigger_{grp} time))'
                                             f')\n'
