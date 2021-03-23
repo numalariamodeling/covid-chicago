@@ -956,12 +956,13 @@ class covidModel:
 
         intervention_start = pd.to_datetime(config_dic_dates[f'{scen}_start']['function_kwargs']['dates'])
         intervention_scaleupend = pd.to_datetime(config_dic_dates[f'{scen}_scaleupend']['function_kwargs']['dates'])
-        intervention_end = pd.to_datetime(config_dic_dates[f'{scen}_end']['function_kwargs']['dates'])
+        #intervention_end = pd.to_datetime(config_dic_dates[f'{scen}_end']['function_kwargs']['dates'])
 
-        if n_gradual_steps > 1:
+        if n_gradual_steps > 1 and intervention_scaleupend < pd.Timestamp('2090-01-01') :
             date_freq = (intervention_scaleupend - intervention_start) /(n_gradual_steps-1)
             intervention_dates = pd.date_range(start=intervention_start,end=intervention_scaleupend, freq=date_freq).tolist()
         else:
+            n_gradual_steps = 1
             intervention_dates = [intervention_start]
 
         return n_gradual_steps, intervention_dates
@@ -1164,7 +1165,7 @@ class covidModel:
                                             f'(func time_since_trigger_{grp} (- time time_of_trigger_{grp}))\n'
                                             f'(state-event apply_rollback_{grp} '
                                             f'(> (- time_since_trigger_{grp} @trigger_delay_days@) 0) ('
-                                            f'(- Ki_{grp}  (* @rollback_multiplier@ (- @Ki_{grp}@  Ki_{grp})))'
+                                            f'(Ki_{grp} (- Ki_{grp} (* @rollback_multiplier@ (- @Ki_{grp}@  Ki_{grp})))) '
                                             f'))\n'
                                             f'(observe triggertime_{covidModel.sub(grp)} time_of_trigger_{grp})\n' for
                                             grp in self.grpList])
@@ -1228,7 +1229,7 @@ class covidModel:
         intervention_str = ""
         if "bvariant" in self.add_interventions:
             intervention_str = intervention_str + write_bvariant()
-        if "rollback" in self.add_interventions:
+        if "rollback" in self.add_interventions and not "triggeredrollback" in self.add_interventions:
             intervention_str = intervention_str + write_rollback()
         if "triggeredrollback" in self.add_interventions:
             intervention_str = intervention_str + write_triggeredrollback()
