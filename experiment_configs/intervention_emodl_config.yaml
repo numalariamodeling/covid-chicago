@@ -16,5 +16,3 @@ interventions:
   'bvariant_csv': ""
   'vaccination_csv': "vaccination_linear.csv" #"vaccination_linear_doubled.csv" 
   #'reopen_csv': "ki_increase_scenario.csv"
-  #'n_gradual_intervals': 4
-  #'start_today': True
