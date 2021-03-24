@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 sys.path.append('../')
@@ -5,8 +6,29 @@ from load_paths import load_box_paths
 import shutil
 import pandas as pd
 
-def createFolder(output_dir) :
 
+def parse_args():
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-exp_name",
+        "--exp_name",
+        type=str,
+        help="Name of simulation experiment"
+    )
+
+    parser.add_argument(
+        "-loc",
+        "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default="Local"
+    )
+    return parser.parse_args()
+
+
+def createFolder(output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     if not os.path.exists(os.path.join(output_dir, "plots")):
@@ -63,10 +85,11 @@ def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=Non
                f'{Q1} \n {A1} \n \n {Q2} \n {A2} \n \n {Q3} \n {A3} \n \n {Q4} \n {A4} \n \n {Q5} \n {A5}  \n \n {Q6} \n {A6}')
     file.close()
 
-if __name__ == '__main__' :
 
-    exp_name = sys.argv[1]
-    datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
+if __name__ == '__main__':
+    args = parse_args()
+    exp_name = args.exp_name
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
     expsplit = exp_name.split('_')
     simdate = expsplit[0]
     exp_scenario = expsplit[len(expsplit)-1]

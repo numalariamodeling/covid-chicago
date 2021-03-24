@@ -2,6 +2,7 @@
 Compare COVID-19 simulation outputs to data.
 Estimate Rt using epyestim
 """
+import argparse
 import os
 import pandas as pd
 import matplotlib as mpl
@@ -17,6 +18,18 @@ from processing_helpers import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
+def parse_args():
+    description = "Simulation run for modeling Covid-19"
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-loc",
+        "--Location",
+        type=str,
+        help="Local or NUCLUSTER",
+        default="Local"
+    )
+    return parser.parse_args()
 
 def comparison_plot(reg_nr=0, channels=None, n_iter=3):
     if reg_nr == 0:
@@ -143,11 +156,12 @@ def region_rt_plot(reg_nr=0, n_iter=2, rt_min=0.8, rt_max=2, useylimits=False):
 
 if __name__ == '__main__':
     
-    Location = 'Local'
+    args = parse_args()
+    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=args.Location)
+
     first_plot_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
     last_plot_day = pd.Timestamp.today()+ pd.Timedelta(30,'days')
 
-    datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
     comparison_plot()
     for reg_nr in range(0,12):
         region_rt_plot(reg_nr=reg_nr)

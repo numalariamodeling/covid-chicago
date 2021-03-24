@@ -273,10 +273,10 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[9]} --stem "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[9]}.txt" \n')
 
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[10]}.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[10]}  "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[10]}.txt" \n')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[10]}  --exp_name "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[10]}.txt" \n')
 
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[11]}.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[11]}  "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[11]}.txt" \n')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[11]}   >> "{sim_output_path}/log/{list(process_dict.keys())[11]}.txt" \n')
 
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[12]}.bat'), 'w')
             file.write(f'cd { os.path.join(git_dir, "nucluster")} \n python {list(process_dict.values())[12]}  --stem "{exp_name}" --del_trajectories --zip_dir  >> "{sim_output_path}/log/{list(process_dict.keys())[12]}.txt" \n')
@@ -375,8 +375,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[8]} --exp_names "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"')
-    #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}"')
-    #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[10]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[11]} --Location "NUCLUSTER"')
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir --Location "NUCLUSTER"')
     file.close()
 
@@ -457,12 +457,12 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header_post + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}" --Location "NUCLUSTER"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[10]} --exp_name "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[10]}.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}" --Location "NUCLUSTER"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[11]}  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[11]}.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
     file.close()
