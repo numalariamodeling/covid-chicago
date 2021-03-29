@@ -4,11 +4,13 @@ cd ..
 cd ..
 echo %CD%
 
+cd data_processing
+python vaccinations_by_age.py
+python vaccinations_by_covidregion.py
 
-python data_processing/vaccinations_by_age.py
-python data_processing/vaccinations_by_covidregion.py
-
-R --vanilla -f  "Rfiles/vaccine_scenarios.R"
-R --vanilla -f  "Rfiles/vaccine_scenario_fracSevere.R"
+cd ..
+cd Rfiles
+R --vanilla -f  "vaccine_scenarios.R"
+R --vanilla -f  "vaccine_scenario_fracSevere.R"
 
 pause
