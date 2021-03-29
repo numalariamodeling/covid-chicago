@@ -31,3 +31,5 @@ experiment_configs/input_csv/*
 !experiment_configs/input_csv/readme.md
 !experiment_configs/input_csv/vaccination_fractionSevere_adjustment.csv
 !experiment_configs/input_csv/vaccination_fractionSevere_adjustment_IL.csv
+!experiment_configs/input_csv/update_vaccine_scenarios.bat
+!experiment_configs/input_csv/update_vaccine_scenarios.sh
