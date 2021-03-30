@@ -428,7 +428,42 @@ sampled_parameters:
         - {'low': 12.0, 'high':  12.0}
         - {'low': 12.0, 'high': 12.0}
         - {'low': 5.0, 'high':  5.0}
-        - {'low': 9.0, 'high':  9.0}
+        - {'low': 9.0, 'high':  9.0}  
+  ##Set threshold value for triggering a state event
+  ## Default set to ICU census from 30 July 2020
+  ## to switch between thresholds, remove or add the '_notused'
+  trigger:   # icu_total 
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low':64, 'high':64}
+        - {'low':101, 'high':101}
+        - {'low':53, 'high':53}
+        - {'low':46, 'high':46}
+        - {'low':29, 'high':29}
+        - {'low':88, 'high':88}
+        - {'low':67, 'high':67}
+        - {'low':141 , 'high':141}
+        - {'low':92, 'high':92}
+        - {'low':287 , 'high':287}
+        - {'low':377 , 'high':377}
+  trigger_notused:   # medsurg_total 
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low':671, 'high':671}
+        - {'low':1320,  'high':1320}
+        - {'low':796, 'high':796}
+        - {'low':528, 'high':528}
+        - {'low':551, 'high':551}
+        - {'low':911, 'high':911}
+        - {'low':660, 'high':660}
+        - {'low':1203,  'high':1203}
+        - {'low':709, 'high':709}
+        - {'low':2223, 'high':2223}
+        - {'low':2575, 'high':2575}
 ### If using setting specific increase in symptomatic infections in future scenarios (i.e. contact tracing)
 #d_Sym_ct1:
 #    IL:
