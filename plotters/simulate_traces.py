@@ -67,8 +67,8 @@ def modify_emodl_and_save(exp_name,output_path):
         2 - if parameters occur twice for each group, they do that in repeated order (i.e. EMS-1, EMS-1, EMS-2, EMS-2 ...)
         3 - duplicated group names are not wanted and removed if accidentally added (i.e. EMS-1_EMS-1)
     """
-    grp_list = get_grp_list(exp_name)
-    grp_suffix = grp_list[-1].split('_')[0]
+    """Get group names"""
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_path)
     param_cols = pd.read_csv(os.path.join(output_path, f'fitted_parameters_besttrace.csv')).columns
     param_cols = [i for i in param_cols if grp_suffix in i]
 

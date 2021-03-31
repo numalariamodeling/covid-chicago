@@ -154,7 +154,7 @@ if __name__ == '__main__' :
     for exp_name in exp_names:
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
-        grp_list, grp_suffix = get_group_names(exp_path = sim_output_path)
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path = sim_output_path)
 
         #compare_channels(channelGrp= "symp")
         #compare_channels(channelGrp= "infect")

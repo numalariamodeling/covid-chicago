@@ -1,7 +1,8 @@
 #  experiment_config
-The yaml file contains all input parameter and simulation settings.
+The yaml file specifies model parameters that are replaced in the emodl file to allow creating multiple simulation scenarios.
 
-# 1. Config files and related scenario files
+# 1. Master yaml file 
+The current master yaml file is 'extendedcobey_200428.yaml'.
 
 ## [experiment_setup_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L1)
 Takes single integer values. 
@@ -87,13 +88,15 @@ In contrast to the startdate, the dates here are taken ony by one and not as a r
 
 - Ki (transmission parameter)
 
+### base model 
 In base model (running for specified EMS alone)
 
     'EMS_1':
       np: linspace
       function_kwargs: {'start': 0.589, 'stop': 0.589, 'num': 1}
      ...
-	  
+	 
+### spatial model [spatial_EMS_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/spatial_EMS_experiment.yaml)	  
 In spatial model (running for all EMS in one simulation using separate compartments)
 
     sampled_parameters:

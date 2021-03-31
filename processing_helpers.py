@@ -483,9 +483,12 @@ def get_group_names(exp_path, uniquechannel ='Ki_t', fname="trajectoriesDat.csv"
     if len(cols) != 0:
         grp_list = [col.replace(f'{uniquechannel}_', '') for col in cols]
         grp_suffix = grp_list[0][:3]
+        grp_numbers =  [int(grp.replace('EMS-', '')) for grp in grp_list]
         if len(cols) > 1:
             grp_list = grp_list + ['All']
+            grp_numbers = grp_numbers + [0]
     else:
         grp_list = None
         grp_suffix=None
-    return grp_list, grp_suffix
+        grp_numbers = None
+    return grp_list, grp_suffix, grp_numbers
