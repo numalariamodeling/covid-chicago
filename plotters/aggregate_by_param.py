@@ -36,7 +36,7 @@ def parse_args():
         type=str,
         #nargs='+',
         help="Name of parameter to keep when aggregating simulations. I.e. intervention coverage parameter",
-        default='recovery_time_crit'
+        default='time_to_detection_Sym'
     )
     parser.add_argument(
         "-plot",
