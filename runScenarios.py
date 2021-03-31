@@ -468,8 +468,8 @@ def parse_args():
         "--subregion",
         type=str,
         help="For locale model only, optionally select single region(s) within IL 'EMS_1'",
-        choices=['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11'],
-        default='all',
+        nargs='+',
+        default=['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11'],
         required=False
     )
     parser.add_argument(
@@ -634,10 +634,20 @@ if __name__ == '__main__':
     # =============================================================
     #   Model specifications
     # =============================================================
+    if len(args.subregion) == 1:
+        subregion = [args.subregion]
+        subregion_label = args.subregion
+    else:
+        subregion = args.subregion
+        if len(subregion) == 11:
+            subregion_label = 'all'
+        if len(subregion) > 1 & len(subregion) < 11:
+            subregion_label = 'sub'
+
     if emodl_template is None:
         log.debug(f"Running scenarios for {model} and {scenario}")
         emodl_template = write_emodl(model=model,
-                                     subregion=args.subregion,
+                                     subregion=subregion,
                                      scenario=scenario,
                                      change_testDelay=args.change_testDelay,
                                      observeLevel=args.observeLevel,
@@ -677,9 +687,6 @@ if __name__ == '__main__':
         exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
     else:
         if model =='locale':
-            subregion_label = args.subregion
-            if len(subregion) >1:
-                subregion_label = 'sub'
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{subregion_label}_{args.name_suffix}_{scenario}"
         else:
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"

@@ -22,10 +22,11 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 
 class covidModel:
 
-    def __init__(self, subgroups, expandModel, observeLevel='primary', add_interventions='baseline',
+    def __init__(self,subgroups, expandModel, observeLevel='primary', add_interventions='baseline',
                  change_testDelay=False, intervention_config='intervention_emodl_config.yaml',
                  add_migration=False, fit_params=None,emodl_name=None, git_dir=git_dir):
         self.model = 'locale'
+        self.grpList = subgroups
         self.expandModel = expandModel
         self.add_migration = add_migration
         self.observeLevel = observeLevel
@@ -36,12 +37,6 @@ class covidModel:
         self.startdate = pd.Timestamp('2020-02-13')
         self.emodl_dir = os.path.join(git_dir, 'emodl')
         self.fit_param = fit_params  # Currenly support single parameter only
-
-        if subgroups=='all':
-            self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6',
-                            'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
-        else:
-            self.grpList = [subgroups]
 
     def get_configs(key, config_file='intervention_emodl_config.yaml'):
         yaml_file = open(os.path.join('./experiment_configs', config_file))
