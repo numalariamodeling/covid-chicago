@@ -503,7 +503,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
 
 
-def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, intervention_config,fit_params, emodl_name):
+def write_emodl(model,subregion,scenario,observeLevel,change_testDelay, expandModel, intervention_config,fit_params, emodl_name):
 
     if model =='base':
         from emodl_generators.emodl_generator_base import covidModel
@@ -515,7 +515,8 @@ def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, inter
         from emodl_generators.emodl_generator_age_locale import covidModel
 
     #covidModel.showOptions()
-    ml = covidModel(add_interventions=scenario,
+    ml = covidModel(subgroups=subregion,
+                    add_interventions=scenario,
                     change_testDelay=change_testDelay,
                     observeLevel=observeLevel,
                     expandModel=expandModel,

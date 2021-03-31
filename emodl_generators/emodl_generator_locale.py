@@ -22,12 +22,10 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 
 class covidModel:
 
-    def __init__(self, expandModel, observeLevel='primary', add_interventions='baseline',
+    def __init__(self, subgroups, expandModel, observeLevel='primary', add_interventions='baseline',
                  change_testDelay=False, intervention_config='intervention_emodl_config.yaml',
                  add_migration=False, fit_params=None,emodl_name=None, git_dir=git_dir):
         self.model = 'locale'
-        self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10',
-                        'EMS_11']
         self.expandModel = expandModel
         self.add_migration = add_migration
         self.observeLevel = observeLevel
@@ -38,6 +36,12 @@ class covidModel:
         self.startdate = pd.Timestamp('2020-02-13')
         self.emodl_dir = os.path.join(git_dir, 'emodl')
         self.fit_param = fit_params  # Currenly support single parameter only
+
+        if subgroups=='all':
+            self.grpList = ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6',
+                            'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11']
+        else:
+            self.grpList = [subgroups]
 
     def get_configs(key, config_file='intervention_emodl_config.yaml'):
         yaml_file = open(os.path.join('./experiment_configs', config_file))
@@ -347,7 +351,6 @@ class covidModel:
             func_str = func_str + vacc_cumul
         return func_str
 
-    ###
     def write_params(self):
         yaml_sampled_param = list(covidModel.get_configs(key ='sampled_parameters', config_file='extendedcobey_200428.yaml').keys())
         yaml_sampled_param_str = ''.join([f'(param {param} @{param}@)\n' for param in yaml_sampled_param])
@@ -1240,7 +1243,6 @@ class covidModel:
 
         return total_string.replace(';[INTERVENTIONS]', intervention_str )
 
-
     def write_change_test_delay(self, total_string):
         """ Write change in test delay (model extension)
             Possible extensions defined in strings:
@@ -1347,7 +1349,9 @@ class covidModel:
         param_string = covidModel.write_params(self) + param_string + covidModel.write_N_population(self)
         if (self.add_migration):
             param_string = param_string + covidModel.write_migration_param(self)
-        functions_string = functions_string + covidModel.write_observe_All(self)
+
+        if len(self.grpList) > 1:
+            functions_string = functions_string + covidModel.write_observe_All(self)
 
         intervention_string = "\n;[TIMEVARYING_PARAMETERS]\n;[INTERVENTIONS]\n;[ADDITIONAL_TIMEEVENTS]"
         total_string = total_string + '\n\n' + species_string + '\n\n' + functions_string + '\n\n' + observe_string + '\n\n' + param_string + '\n\n' + intervention_string + '\n\n' + reaction_string + '\n\n' + footer_str
