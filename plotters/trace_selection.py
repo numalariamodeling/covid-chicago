@@ -215,7 +215,10 @@ if __name__ == '__main__':
     for exp_name in exp_names:
         print(exp_name)
         output_path = os.path.join(wdir, 'simulation_output',exp_name)
-        for ems_nr in range(0,12):
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=output_path)
+        
+        for ems_nr in grp_numbers:
             print("Start processing region " + str(ems_nr))
             compare_ems(exp_name,
                         ems_nr=int(ems_nr),

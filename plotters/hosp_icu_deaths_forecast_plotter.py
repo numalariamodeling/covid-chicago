@@ -137,8 +137,12 @@ if __name__ == '__main__':
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
-        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
-        for ems_nr in range(0, 12):
-            print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name, ems_nr=int(ems_nr), plot_name='forward_projection',
+        sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+        
+        for grp_nr in grp_numbers:
+            print("Start processing region " + str(grp_nr))
+            compare_ems(exp_name, ems_nr=int(grp_nr), plot_name='forward_projection',
                         first_day=first_plot_day, last_day=last_plot_day)

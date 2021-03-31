@@ -148,10 +148,11 @@ if __name__ == '__main__' :
     first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
     last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
-    covidregionlist = range(0, 12)
+    """Get group names"""
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=os.path.join(wdir, 'simulation_output', exp_names[0]))
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
-    plot_covidregions(channel='crit_det', subgroups=covidregionlist,
+    plot_covidregions(channel='crit_det', subgroups=grp_numbers,
                       plot_path=plot_path, first_day= first_plot_day, last_day=last_plot_day)
-    plot_covidregions(channel='hosp_det', subgroups=covidregionlist,
+    plot_covidregions(channel='hosp_det', subgroups=grp_numbers,
                       plot_path=plot_path, first_day= first_plot_day, last_day=last_plot_day)

@@ -148,7 +148,7 @@ def aggregate_trajectories(grp, param=None, channels=None):
 if __name__ == '__main__':
 
     args = parse_args()
-    exp_name = "20210310_IL_locale_uniform_mean_mr_testB004_binfect"
+    exp_name = args.exp_name
     Location = args.Location
     param = args.param
     plot_only = args.plot_only
@@ -160,7 +160,7 @@ if __name__ == '__main__':
     plot_path = os.path.join(exp_path, '_plots')
 
     """Get group names"""
-    grp_list, grp_suffix = get_group_names(exp_path=exp_path)
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_path)
 
     if not plot_only:
         """Channels to keep (might change depending on simulation and focus"""
@@ -181,7 +181,7 @@ if __name__ == '__main__':
                 del df
             dfAll.to_csv(os.path.join(exp_path, 'trajectoriesDat_aggr.csv'), index=False)
         else:
-            df = aggregate_trajectories(grp=None, param=param,channels=outcome_channels)
+            df = aggregate_trajectories(grp=grp_list[0], param=param,channels=outcome_channels)
             df['scenario_name'] = exp_name.split("_")[-1]
             df['simdate'] = exp_name.split("_")[0]
             df['processdate'] = pd.Timestamp.today()

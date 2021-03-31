@@ -37,13 +37,22 @@ def parse_args():
     return parser.parse_args()
 
 
-def plot_param_by_channel(sample_df, param_list, param_class, plot_path, region_suffix='All', channel=None,
+def plot_param_by_channel(sample_df, param_list, param_class, plot_path, channel=None,
                           time_step=None):
     if time_step is None:
         time_step = 262
     if channel is None:
         channel = 'crit_det'
-    channel_name = f'{channel}_{region_suffix}'
+
+    ems_nr = grp_numbers[0]
+    if ems_nr == 0:
+        region_suffix = "_All"
+        region_label = 'Illinois'
+    else:
+        region_suffix = "_EMS-" + str(ems_nr)
+        region_label = region_suffix.replace('_EMS-', 'COVID-19 Region ')
+
+    channel_name = f'{channel}{region_suffix}'
     df = load_sim_data(exp_name, region_suffix=None, column_list=['time', 'startdate', 'scen_num', 'sample_num', 'run_num', channel_name], add_incidence=False)
     df['time'] = df['time'].astype('int64')
     df = df[df['time'] == time_step]
@@ -90,13 +99,13 @@ def plot_param_distributions(df, param_list, param_class, plot_path):
     plt.savefig(os.path.join(plot_path, 'pdf', plot_name + '.pdf'))
 
 
-def extract_samples(nsamples=100, seed_nr=751, save_dir=None, save_all_successfull=False, plot_dists=False,
+def extract_samples(grp_numbers,nsamples=100, seed_nr=751, save_dir=None, save_all_successfull=False, plot_dists=False,
                     include_grp_param=True):
     sample_params, sample_params_core, IL_specific_param, IL_locale_param_stem = get_parameter_names(include_new=False)
 
     if include_grp_param:
         IL_locale_param = []
-        for reg_nr in range(1, 12):
+        for reg_nr in grp_numbers:
             for param in IL_locale_param_stem:
                 IL_locale_param = IL_locale_param + [f'{param}_EMS_{reg_nr}']
         sample_params = sample_params + IL_locale_param
@@ -138,12 +147,12 @@ def extract_samples(nsamples=100, seed_nr=751, save_dir=None, save_all_successfu
                               plot_path=plot_path)
 
 
-def extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True, fname=None):
+def extract_mean_of_samples(grp_numbers,save_dir=None, plot_dists=False, include_grp_param=True, fname=None):
     sample_params, sample_params_core, IL_specific_param, IL_locale_param_stem = get_parameter_names(include_new=False)
 
     if include_grp_param:
         IL_locale_param = []
-        for reg_nr in range(1, 12):
+        for reg_nr in grp_numbers:
             for param in IL_locale_param_stem:
                 IL_locale_param = IL_locale_param + [f'{param}_EMS_{reg_nr}']
         sample_params = sample_params + IL_locale_param
@@ -206,6 +215,9 @@ if __name__ == '__main__':
         
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
-
-        extract_samples(save_dir=None, plot_dists=True, include_grp_param=True)
-        extract_mean_of_samples(save_dir=None, plot_dists=False, include_grp_param=True)
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+        #grp_numbers = [x for x in grp_numbers if x !=0]
+        
+        extract_samples(grp_numbers,save_dir=None, plot_dists=True, include_grp_param=True)
+        extract_mean_of_samples(grp_numbers, save_dir=None, plot_dists=False, include_grp_param=True)
