@@ -282,6 +282,12 @@ echo end""")
             file.write(f'cd { os.path.join(git_dir, "nucluster")} \n python {list(process_dict.values())[12]}  --stem "{exp_name}" --del_trajectories --zip_dir  >> "{sim_output_path}/log/{list(process_dict.keys())[12]}.txt" \n')
 
 def shell_header(A='p30781',p='short',t='02:00:00',N=1,ntasks_per_node=1, memG=18,job_name='myjob', arrayJob=None):
+
+    if 'b1139' in os.getcwd():
+      A = 'b1139'
+      p = 'b1139'
+      t = '00:45:00'
+
     header = f'#!/bin/bash\n' \
              f'#SBATCH -A {A}\n' \
              f'#SBATCH -p {p}\n' \
@@ -302,7 +308,7 @@ def shell_header(A='p30781',p='short',t='02:00:00',N=1,ntasks_per_node=1, memG=1
     return header
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir,sim_output_path,model) :
-    # Generic shell submission script that should run for all having access to  projects/p30781
+    # Generic shell submission script that should run for all having access to NU cluster allocation
     # submit_runSimulations.sh
 
     process_dict = get_process_dict()
@@ -323,6 +329,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
     plotters_dir = os.path.join(git_dir, "plotters")
     pymodule = '\n\nmodule purge all\nmodule load python/anaconda3.6\nsource activate /projects/p30781/anaconda3/envs/team-test-py37\n'
+    if 'b1139' in os.getcwd():
+        pymodule = '\n\nmodule purge all\nmodule load python/anaconda3.6\nsource activate /projects/b1139/anaconda3/envs/team-test-py37\n'
 
     emodl_name = str([i for i in os.listdir(temp_exp_dir) if "emodl" in i][0]).replace('.emodl', '')
     emodl_from = os.path.join(sim_output_path, emodl_name + ".emodl")
