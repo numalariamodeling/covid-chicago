@@ -88,7 +88,7 @@ def plot_by_age_region_time(df, channel,plot_title='',plot_name=None):
         for c, age in enumerate(df['agegrp'].unique()):
             pdf = mdf[mdf['agegrp']==age]
             ax.plot(pdf['date'], pdf[channel], color=palette[c], label=age)
-        ax.set_ylim(0, 0.8)
+        ax.set_ylim(0, 1)
     ax.legend()
 
     if plot_name is None:
@@ -115,7 +115,7 @@ def plot_by_age_region(df, channel,plot_title='',plot_name=None):
         mdf = df[df['covid_region'] == ems_num]
         ax.bar(mdf['agegrp'], mdf[channel], color=palette[0])
         ax.set_title(plotsubtitle)
-        ax.set_ylim(0, 0.8)
+        ax.set_ylim(0, 1)
     ax.legend()
 
     if plot_name is None:

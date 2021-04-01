@@ -635,8 +635,8 @@ if __name__ == '__main__':
     #   Model specifications
     # =============================================================
     if len(args.subregion) == 1:
-        subregion = [args.subregion]
-        subregion_label = args.subregion
+        subregion = args.subregion
+        subregion_label = args.subregion[0]
     else:
         subregion = args.subregion
         if len(subregion) == 11:
