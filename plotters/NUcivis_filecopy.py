@@ -53,7 +53,7 @@ def copyFiles(output_dir):
     """Scenario needs to be 'baseline' for fname 1 and 2"""
     for fname in [fname1,fname2]:
         df = pd.read_csv(os.path.join(output_dir,'csv', fname))
-        df['scenario'] = 'baseline'
+        df['scenario_name'] = 'baseline_test'
         df.to_csv(os.path.join(output_dir,'csv', fname), index=False, date_format='%Y-%m-%d')
 
 def subset_df(fname, regions_to_keep, output_dir,save_dir=None):
