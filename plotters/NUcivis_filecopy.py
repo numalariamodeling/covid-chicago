@@ -50,6 +50,12 @@ def copyFiles(output_dir):
     for file in filelist :
         shutil.copyfile(os.path.join(os.path.join(exp_dir, '_plots'), file), os.path.join(output_dir,'plots', file))
 
+    """Scenario needs to be 'baseline' for fname 1 and 2"""
+    for fname in [fname1,fname2]:
+        df = pd.read_csv(os.path.join(output_dir,'csv', fname))
+        df['scenario'] = 'baseline'
+        df.to_csv(os.path.join(output_dir,'csv', fname), index=False, date_format='%Y-%m-%d')
+
 def subset_df(fname, regions_to_keep, output_dir,save_dir=None):
     df = pd.read_csv(os.path.join(exp_dir, fname))
     df = df[df.geography_modeled.isin(regions_to_keep)]
@@ -76,7 +82,8 @@ def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=Non
     if A5 == None :  A5 = "- Reduction in transmission rate due to 'shelter in place policies': " \
                           "2020-03-12, 2020-03-17, 2020-03-21, 2020-04-21" \
                           "\n- Change in transmission rate during reopening period : " \
-                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20 "\
+                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20," \
+                          "2021-02-15 ,2021-03-15  "\
                           "\n- Increase in detection rates/ decrease in fraction dead: monthly between March to Oct/Dec 2020"
     if A6 == None : A6 = "- No additional scenarios"
 
