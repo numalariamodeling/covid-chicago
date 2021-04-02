@@ -639,10 +639,9 @@ if __name__ == '__main__':
         subregion_label = args.subregion[0]
     else:
         subregion = args.subregion
-        if len(subregion) == 11:
-            subregion_label = 'all'
-        if len(subregion) > 1 & len(subregion) < 11:
-            subregion_label = 'sub'
+        subregion_label = ''
+        if len(subregion) < 11:
+            subregion_label = '_sub'
 
     if emodl_template is None:
         log.debug(f"Running scenarios for {model} and {scenario}")
@@ -687,7 +686,7 @@ if __name__ == '__main__':
         exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
     else:
         if model =='locale':
-            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{subregion_label}_{args.name_suffix}_{scenario}"
+            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}{subregion_label}_{args.name_suffix}_{scenario}"
         else:
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
         if args.fit_params[0] != None:
