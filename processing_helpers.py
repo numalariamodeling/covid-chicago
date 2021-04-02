@@ -167,6 +167,29 @@ def CI_50(x) :
 
     return np.percentile(x, 50)
 
+def load_vacc_df(ems_nr):
+    fname = 'vaccinations_historical.csv'  # 'vaccinations.csv'
+    adf = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', fname))
+    adf['date'] = pd.to_datetime(adf['report_date']) + pd.Timedelta(21, 'days')
+    adf = merge_county_covidregions(adf, key_x='geography_name')
+    adf = adf.dropna(subset=["covid_region"])
+
+    if not isinstance(ems_nr, list):
+        if ems_nr > 0:
+            """Aggregate per selected region"""
+            adf = adf[adf['covid_region'] == ems_nr]
+        if ems_nr == 0:
+            """Aggregate for all Illinois"""
+            adf['covid_region'] =0
+    if isinstance(ems_nr, list):
+        adf = adf[adf.covid_region.isin(ems_nr)]
+
+    adf = adf.groupby(['date', 'covid_region'])[
+        ['persons_fully_vaccinated', 'population', 'administered_count', 'allocated_doses']].agg(
+        np.nansum).reset_index()
+    adf['persons_first_vaccinated'] = adf['administered_count'] - adf['persons_fully_vaccinated']
+
+    return adf
 
 def load_ref_df(ems_nr):
     ref_df_emr = pd.read_csv(os.path.join(datapath, 'covid_IDPH', 'Corona virus reports', 'emresource_by_region.csv'))
