@@ -164,7 +164,7 @@ def compare_channels(channelGrp,grp="All",logscale=False):
 if __name__ == '__main__' :
 
     args = parse_args()
-    stem = args.stem
+    stem = '20210401_IL_locale_sub_mr_158_v0_bvariant_vaccine'
     channelGrp = args.channelGrp
     Location = args.Location
 
@@ -172,6 +172,8 @@ if __name__ == '__main__' :
 
     first_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
     last_day = pd.Timestamp.today()+ pd.Timedelta(150,'days')
+    if channelGrp == 'Vaccinated':
+        first_day = pd.Timestamp('2021-01-01')
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
