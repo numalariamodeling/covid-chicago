@@ -54,7 +54,7 @@ def plot_main(param, channel, first_day, last_day,time_param=False) :
 
     capacitychannel = channel
 
-    for c, ems_nr in enumerate(range(0,12)):
+    for c, ems_nr in enumerate(grp_numbers):
 
         if ems_nr == 0:
             region_suffix = "_All"
@@ -121,6 +121,8 @@ if __name__ == '__main__' :
     for exp_name in exp_names:
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
         #channels = ['infected', 'new_detected', 'new_deaths', 'hospitalized', 'critical', 'ventilators']
         #channels = ['crit_det', 'hosp_det']
-        plot_main(channel=channel, param=param, time_param=True, first_day=first_plot_day, last_day=last_plot_day)
+        plot_main(grp_numbers,channel=channel, param=param, time_param=True, first_day=first_plot_day, last_day=last_plot_day)

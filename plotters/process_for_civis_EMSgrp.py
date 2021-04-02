@@ -176,9 +176,6 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-
-    regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
-    
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
         simdate = exp_name.split("_")[0]
@@ -187,24 +184,26 @@ if __name__ == '__main__' :
     
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
+
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
     
         if processStep == 'generate_outputs' :
             dfAll = pd.DataFrame()
-            for reg in regions :
+            for reg in grp_list :
                 print( f'Start processing {reg}')
                 tdf = load_and_plot_data(reg, savePlot=True)
                 adf = process_and_save(tdf, reg, SAVE=True)
                 dfAll = pd.concat([dfAll, adf])
                 del tdf
+
+            filename = f'nu_{simdate}.csv'
+            rename_geography_and_save(dfAll,filename=filename)
     
-            if len(regions) == 12 :
-                filename = f'nu_{simdate}.csv'
-                rename_geography_and_save(dfAll,filename=filename)
-    
-        ### Optional
+        ### Optional (might be needed for larger simulations)
         if processStep == 'combine_outputs' :
-    
-            for reg in regions :
+
+            for reg in grp_list :
                 print("Start processing" + reg)
                 filename = "nu_" + simdate + "_" + reg + ".csv"
                 adf = pd.read_csv(os.path.join(sim_output_path, filename))

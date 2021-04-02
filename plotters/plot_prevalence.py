@@ -36,9 +36,7 @@ def parse_args():
     )
     return parser.parse_args()
 
-def get_prev_df(exp_name, channels):
-
-    region_list = ['All'] + ['EMS-%d' % x for x in range(1, 12)]
+def get_prev_df(exp_name, channels, region_list):
 
     df = pd.DataFrame()
     for ems_region in region_list:
@@ -134,10 +132,12 @@ if __name__ == '__main__':
         print(exp_name)
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
-
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+        
         channels = ['prevalence','seroprevalence','IFR','IFR_t']
         #channels = ['prevalence','prevalence_det' ,'seroprevalence','seroprevalence_det' ,'IFR','IFR_t','IFR_det']
-        df = get_prev_df(exp_name, channels=channels)
+        df = get_prev_df(exp_name, channels=channels, region_list = grp_list)
         plot_prevalences(df, channels=['prevalence'], first_day=first_plot_day, last_day=last_plot_day)
         plot_prevalences(df, channels=['seroprevalence'], first_day=first_plot_day,last_day=last_plot_day)
         plot_prevalences(df, channels=['IFR'],first_day=first_plot_day,last_day=last_plot_day)

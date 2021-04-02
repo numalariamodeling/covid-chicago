@@ -2,7 +2,7 @@ import os
 
 def load_box_paths(user_path=None, Location='Local'):
     if Location == 'NUCLUSTER':
-        user_path = '/projects/p30781/'
+        user_path = os.getcwd()[:16]  #'/projects/p30781/'
         home_path = os.path.join(user_path, 'covidproject', 'projects')
         data_path = os.path.join(user_path, 'covidproject', 'data')
         git_dir = os.path.join(user_path, 'covidproject', 'covid-chicago')

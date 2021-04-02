@@ -261,11 +261,13 @@ if __name__ == '__main__':
         print(exp_name)
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
 
         df_all = pd.DataFrame()
-        for ems_nr in range(1, 12):
-            print("Start processing region " + str(ems_nr))
-            df = get_probs(ems_nr, overflow_threshold_percents=overflow_threshold_percents, save_csv=False, plot=False)
+        for grp_nr in grp_numbers:
+            print("Start processing region " + str(grp_nr))
+            df = get_probs(grp_nr, overflow_threshold_percents=overflow_threshold_percents, save_csv=False, plot=False)
             df = df[df['date'].between(first_plot_day, last_plot_day)]
             if df_all.empty:
                 df_all = df

@@ -98,7 +98,7 @@ def rt_plot(df, plotname,first_day=None, last_day=None):
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def run_Rt_estimation(smoothing_window, r_window_size):
+def run_Rt_estimation(grp_numbers,smoothing_window, r_window_size):
     """Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
     smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
@@ -108,9 +108,9 @@ def run_Rt_estimation(smoothing_window, r_window_size):
     df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'))
     df['date'] = pd.to_datetime(df['date'])
     df = df[(df['date'] > pd.Timestamp('2020-03-01'))]
-
+    
     df_rt_all = pd.DataFrame()
-    for ems_nr in range(0, 12):
+    for ems_nr in grp_numbers:
 
         if ems_nr == 0:
             region_suffix = "illinois"
@@ -139,7 +139,7 @@ def run_Rt_estimation(smoothing_window, r_window_size):
         df_rt_all = df_rt_all.append(df_rt)
 
     df_rt_all.to_csv(os.path.join(exp_dir, 'rtNU.csv'), index=False)
-    rt_plot(df=df_rt_all, first_day=last_plot_day - pd.Timedelta(60,'days'), last_day=last_plot_day, plotname='rt_by_covidregion_truncated')
+    rt_plot(df=df_rt_all, first_day= pd.Timestamp.today() - pd.Timedelta(90,'days'), last_day=last_plot_day, plotname='rt_by_covidregion_truncated')
 
     if not 'rt_median' in df.columns:
         df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
@@ -170,7 +170,7 @@ if __name__ == '__main__':
         Location = args.Location
 
     first_plot_day = pd.Timestamp('2020-03-01')
-    last_plot_day = pd.Timestamp.today() + pd.Timedelta(60,'days')
+    last_plot_day = pd.Timestamp.today() + pd.Timedelta(90,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
@@ -179,5 +179,7 @@ if __name__ == '__main__':
         print(exp_name)
         exp_dir = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(exp_dir, '_plots')
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_dir)
         # run_Rt_estimation(smoothing_window=14,r_window_size=7)
-        run_Rt_estimation(smoothing_window=28, r_window_size=3)
+        run_Rt_estimation(grp_numbers,smoothing_window=28, r_window_size=3)

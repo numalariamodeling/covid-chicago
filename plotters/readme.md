@@ -28,7 +28,7 @@ Aggregate custom specified channels by defined parameter and generate plot for 1
 - [plot_split_by_param_trajectories](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param_trajectories.py)
 Simple plot per outcome channel for one experiment, instead of aggregating trajectories, show single trajectories
 - [plot_split_by_channel](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_channel.py)
-Comparison plotter for 2 channels in one panel (i.e. all vs detected for infected, symptomatic, hospitalized ...)
+Plotter for comparing 2 channels in one panel for example used to plot vaccinations or detections (i.e. all vs detected, all vs vaccinated ...)
 - [plot_single_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_single_trajectories.py)
 
 
@@ -63,9 +63,8 @@ The script also uses functions from [sample_parameters.py](https://github.com/nu
 Extract and visualize sample parameters that successfully ran in a simulation. Can be used to generate csv files that can be used as inpput in another simulation.
 - [emresource_cli_per_covidregion.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/emresource_cli_per_covidregion.py) (data_plotters folder)
 - [bar_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_plotter.py)
-Note extended version in [bar_timeline_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_timeline_plotter.py)
-
-
+Note: extended version in [bar_timeline_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_timeline_plotter.py)
+- [Ki_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/Ki_plotter.py)
 
 
 
