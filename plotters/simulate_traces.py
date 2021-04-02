@@ -68,7 +68,7 @@ def modify_emodl_and_save(exp_name,output_path):
         3 - duplicated group names are not wanted and removed if accidentally added (i.e. EMS-1_EMS-1)
     """
     """Get group names"""
-    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_path)
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=output_path)
     param_cols = pd.read_csv(os.path.join(output_path, f'fitted_parameters_besttrace.csv')).columns
     param_cols = [i for i in param_cols if grp_suffix in i]
 
