@@ -112,7 +112,7 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.180, 'high': 0.180}
         - {'low': 0.230, 'high': 0.230}
         - {'low': 0.450, 'high': 0.450}
         - {'low': 0.245, 'high': 0.245}
@@ -128,7 +128,7 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.180, 'high': 0.180}
         - {'low': 0.167, 'high': 0.167}
         - {'low': 0.300, 'high': 0.300}
         - {'low': 0.195, 'high': 0.195}
@@ -144,7 +144,7 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.175, 'high': 0.175}
+        - {'low': 0.200, 'high': 0.200}
         - {'low': 0.162, 'high': 0.162}
         - {'low': 0.205, 'high': 0.205}
         - {'low': 0.180, 'high': 0.180}
@@ -160,15 +160,15 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.260, 'high': 0.260}
+        - {'low': 0.230, 'high': 0.230}
         - {'low': 0.172, 'high': 0.172}
         - {'low': 0.393, 'high': 0.393}
         - {'low': 0.162, 'high': 0.162}
-        - {'low': 0.210, 'high': 0.210}
-        - {'low': 0.195, 'high': 0.195}
-        - {'low': 0.170, 'high': 0.170}
+        - {'low': 0.280, 'high': 0.280}
+        - {'low': 0.195, 'high': 0.235}
+        - {'low': 0.170, 'high': 0.200}
         - {'low': 0.175, 'high': 0.175}
-        - {'low': 0.175, 'high': 0.175}
+        - {'low': 0.175, 'high': 0.215}
         - {'low': 0.178, 'high': 0.178}
         - {'low': 0.130, 'high': 0.130}
   ki_multiplier_10:
@@ -176,15 +176,15 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.290, 'high': 0.290}
+        - {'low': 0.250, 'high': 0.250}
         - {'low': 0.260, 'high': 0.260}
         - {'low': 0.403, 'high': 0.403}
-        - {'low': 0.295, 'high': 0.295}
-        - {'low': 0.365, 'high': 0.365}
-        - {'low': 0.320, 'high': 0.320}
+        - {'low': 0.274, 'high': 0.274}
+        - {'low': 0.317, 'high': 0.317}
+        - {'low': 0.320, 'high': 0.350}
         - {'low': 0.255, 'high': 0.255}
         - {'low': 0.186, 'high': 0.186}
-        - {'low': 0.240, 'high': 0.240}
+        - {'low': 0.240, 'high': 0.260}
         - {'low': 0.245, 'high': 0.245}
         - {'low': 0.198, 'high': 0.198}
   ki_multiplier_11:
@@ -194,15 +194,15 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.162, 'high': 0.162}
         - {'low': 0.153, 'high': 0.153}
-        - {'low': 0.255, 'high': 0.255}
-        - {'low': 0.218, 'high': 0.218}
+        - {'low': 0.2790, 'high': 0.2790}
+        - {'low': 0.204, 'high': 0.204}
         - {'low': 0.230, 'high': 0.230}
         - {'low': 0.195, 'high': 0.195}
         - {'low': 0.130, 'high': 0.130}
         - {'low': 0.118, 'high': 0.118}
         - {'low': 0.125, 'high': 0.125}
         - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.118, 'high': 0.118}
+        - {'low': 0.108, 'high': 0.118}
   ki_multiplier_12:
     IL:
       expand_by_age: True
@@ -210,63 +210,63 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.145, 'high': 0.145}
         - {'low': 0.125, 'high': 0.125}
-        - {'low': 0.325, 'high': 0.325}
-        - {'low': 0.190, 'high': 0.190}
+        - {'low': 0.3319, 'high': 0.3319}
+        - {'low': 0.205, 'high': 0.205}
         - {'low': 0.190, 'high': 0.190}
         - {'low': 0.230, 'high': 0.230}
         - {'low': 0.150, 'high': 0.150}
         - {'low': 0.118, 'high': 0.118}
         - {'low': 0.135, 'high': 0.135}
         - {'low': 0.150, 'high': 0.150}
-        - {'low': 0.118, 'high': 0.118}
+        - {'low': 0.108, 'high': 0.118}
   ki_multiplier_13:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.1039, 'high': 0.1950}
-        - {'low': 0.1281, 'high': 0.2081}
-        - {'low': 0.1039, 'high': 0.1239}
-        - {'low': 0.1900, 'high': 0.2400}
-        - {'low': 0.1777, 'high': 0.2777}
-        - {'low': 0.1018, 'high': 0.1518}
-        - {'low': 0.1094, 'high': 0.1794}
-        - {'low': 0.0889, 'high': 0.1866}
-        - {'low': 0.0900, 'high': 0.1350}
-        - {'low': 0.1211, 'high': 0.1411}
-        - {'low': 0.1000, 'high': 0.1550}
+        - {'low': 0.1725, 'high': 0.1725}
+        - {'low': 0.1696, 'high': 0.1696}
+        - {'low': 0.1194, 'high': 0.1194}
+        - {'low': 0.1912, 'high': 0.1912}
+        - {'low': 0.1860, 'high': 0.1860}
+        - {'low': 0.1321, 'high': 0.1321}
+        - {'low': 0.1379, 'high': 0.1379}
+        - {'low': 0.1198, 'high': 0.1198}
+        - {'low': 0.0930, 'high': 0.1330}
+        - {'low': 0.1381, 'high': 0.1381}
+        - {'low': 0.108, 'high': 0.118}
   ki_multiplier_14:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.0939, 'high': 0.1839}
-        - {'low': 0.1381, 'high': 0.2381}
-        - {'low': 0.3539, 'high': 0.4539}
-        - {'low': 0.2000, 'high': 0.2550}
-        - {'low': 0.1777, 'high': 0.2777}
-        - {'low': 0.1018, 'high': 0.2018}
-        - {'low': 0.0594, 'high': 0.1094}
-        - {'low': 0.1566, 'high': 0.2566}
-        - {'low': 0.0989, 'high': 0.1900}
-        - {'low': 0.2011, 'high': 0.2911}
-        - {'low': 0.1011, 'high': 0.2311}
+        - {'low': 0.1788, 'high': 0.1788}
+        - {'low': 0.1338, 'high': 0.1538}
+        - {'low': 0.3775, 'high': 0.3975}
+        - {'low': 0.1233, 'high': 0.2233}
+        - {'low': 0.1122, 'high': 0.1827}
+        - {'low': 0.1826, 'high': 0.1826}
+        - {'low': 0.0796, 'high': 0.0796}
+        - {'low': 0.1181, 'high': 0.1231}
+        - {'low': 0.0665, 'high': 0.1065}
+        - {'low': 0.1181, 'high': 0.1874}
+        - {'low': 0.108, 'high': 0.118}
   ki_multiplier_15:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.2939, 'high': 0.3139}
-        - {'low': 0.1681, 'high': 0.2681}
-        - {'low': 0.3539, 'high': 0.4539}
-        - {'low': 0.2200, 'high': 0.3250}
-        - {'low': 0.1577, 'high': 0.2577}
-        - {'low': 0.1835, 'high': 0.2850}
-        - {'low': 0.2094, 'high': 0.3094}
-        - {'low': 0.1766, 'high': 0.2766}
-        - {'low': 0.1489, 'high': 0.2400}
-        - {'low': 0.2211, 'high': 0.3211}
-        - {'low': 0.1011, 'high': 0.2311}
+        - {'low': 0.3064, 'high': 0.4064}
+        - {'low': 0.1862, 'high': 0.2862}
+        - {'low': 0.4662, 'high': 0.4811}
+        - {'low': 0.2268, 'high': 0.3068}
+        - {'low': 0.3997, 'high': 0.4270}
+        - {'low': 0.3673, 'high': 0.4654}
+        - {'low': 0.3549, 'high': 0.4549}
+        - {'low': 0.1614, 'high': 0.2614}
+        - {'low': 0.2071, 'high': 0.2571}
+        - {'low': 0.3202, 'high': 0.4002}
+        - {'low': 0.2011, 'high': 0.3011}
   ###------------------------------------------------
   ### REGION-SPECIFIC PARAMETER UPDATE
   ###------------------------------------------------
@@ -278,17 +278,17 @@ sampled_parameters:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 9.3,  'high': 11.3}
-        - {'low': 8.4,  'high': 10.4}
-        - {'low': 6.7,  'high': 8.7}
+        - {'low': 10,  'high': 10}
+        - {'low': 9.9,  'high': 9.9}
+        - {'low': 7.5,  'high': 7.5}
         - {'low': 4.1,  'high': 4.1}
-        - {'low': 0.8,  'high': 2.8}
-        - {'low': 4.1,  'high': 6.1}
-        - {'low': 3.1,  'high': 5.1}
-        - {'low': 2.8,  'high': 4.8}
-        - {'low': 2.4,  'high': 3.4}
-        - {'low': 9.2,  'high': 11.2}
-        - {'low': 10.9, 'high': 12.9}
+        - {'low': 6.7,  'high':8.7}
+        - {'low': 5.2,  'high': 5.2}
+        - {'low': 3.8,  'high': 3.8}
+        - {'low': 4.8,  'high': 4.8}
+        - {'low': 3.1,  'high': 3.1}
+        - {'low': 7.8,  'high': 9.8}
+        - {'low': 8.0, 'high': 10.0}
   ### --------- Time in timesteps since startdate ---------
   ### (Note: introduces an error when using a different startdate!)
   recovery_time_crit_change_time_1:
