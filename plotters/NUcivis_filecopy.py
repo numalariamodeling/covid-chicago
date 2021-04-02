@@ -71,7 +71,9 @@ def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=Non
     Q4 = "4) Which of these changes do you think are most important in driving differences between previous " \
          "forecasts and current forecasts?"
     Q5 = "5) Relevant time events in the simulations"
-    Q6 = "Scenarios"
+    Q6 = "6) Bvariant: "
+    Q7 = "7) Vaccinations: "
+    Q7 = "8) Future scenarios: "
 
     if A1 == None :A1 = "- another week of EMResource and LL data"
     if A2 == None :A2 = "- same as last week, also using CLI admissions for validation"
@@ -82,16 +84,20 @@ def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=Non
     if A5 == None :  A5 = "- Reduction in transmission rate due to 'shelter in place policies': " \
                           "2020-03-12, 2020-03-17, 2020-03-21, 2020-04-21" \
                           "\n- Change in transmission rate during reopening period : " \
-                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20," \
-                          "2021-02-15 ,2021-03-15  "\
+                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20 " \
+                           "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20," \
+                            "2021-02-15 ,2021-03-15  "\
                           "\n- Increase in detection rates/ decrease in fraction dead: monthly between March to Oct/Dec 2020"
-    if A6 == None : A6 = "- No additional scenarios"
+    if A6 == None : A6 = \ "- bvariant not included in historical fit but in future projections with higher infectiousness and severity for a fraction of the population, reaching 25% by May"
+    if A7 == None : A7 = \ "- added vaccination, assuming current trend in daily vaccinations to continue until end of 2021 " \
+                          "\n- assume that vaccinations reduce mild infections by 20% severe symptoms by 95%, and infectiousness by 90% for the vaccinated population (all ages)" \
+                          "\n- added a 85% reduction in severe infections for those not vaccinated,  time-varying and depending on the fraction of pop aged > 65 vaccinated (1st dose)" \
+    if A8 == None : A8 = "- No additional scenarios"
 
     file = open(os.path.join(output_dir, 'changelog.txt'), 'w')
     file.write(f'Northwestern University COVID-19 Modelling Team \n\n Date: {simdate} \n\n '
-               f'{Q1} \n {A1} \n \n {Q2} \n {A2} \n \n {Q3} \n {A3} \n \n {Q4} \n {A4} \n \n {Q5} \n {A5}  \n \n {Q6} \n {A6}')
+               f'{Q1} \n {A1} \n \n {Q2} \n {A2} \n \n {Q3} \n {A3} \n \n {Q4} \n {A4} \n \n {Q5} \n {A5}  \n \n {Q6} \n {A6}  \n \n {Q7} \n {A7}  \n \n {Q8} \n {A8}')
     file.close()
-
 
 if __name__ == '__main__':
     args = parse_args()
@@ -103,7 +109,7 @@ if __name__ == '__main__':
 
     fname = f"nu_{simdate}.csv"
     exp_dir = os.path.join(wdir,"simulation_output", exp_name)
-    NUcivis_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate)
+    NUcivis_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate,'_test')
 
     """ Deliverables for CIVIS"""
     createFolder(output_dir=NUcivis_dir)
