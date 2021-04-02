@@ -107,6 +107,7 @@ def timeline_plot(exp_names,channel,labels, first_day,last_day,  region="All"):
     fig = plt.figure(figsize=(6, 4))
     fig.subplots_adjust(left=0.2)
     ax = fig.gca()
+    ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
 
     for s, exp_name in enumerate(exp_names):
         simpath = os.path.join(projectpath, 'cms_sim', 'simulation_output', exp_name)
