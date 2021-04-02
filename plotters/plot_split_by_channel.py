@@ -25,6 +25,14 @@ def parse_args():
         help="Name of simulation experiment"
     )
     parser.add_argument(
+        "-g",
+        "--channelGrp",
+        type=str,
+        choices=['symp','infect','hospCrit','Vaccinated'], #'bvariant'
+        help="Name of channels to compare",
+        default="Vaccinated"
+    )
+    parser.add_argument(
         "-loc",
         "--Location",
         type=str,
@@ -107,7 +115,7 @@ def compare_channels(channelGrp,grp="All",logscale=False):
 
     nchannels, label0, label1 = get_channels(channelGrp)
 
-    df = load_sim_data(exp_name, region_suffix=f'_{grp}', fname='trajectoriesDat.csv', add_incidence=True)
+    df = load_sim_data(exp_name, region_suffix=f'_{grp}', add_incidence=True)
     df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
     if channelGrp =='bvariant':
         df['B_prev'] = df['infected_B'] / df['infected']
@@ -127,8 +135,8 @@ def compare_channels(channelGrp,grp="All",logscale=False):
                 label = label0
             if d == 1:
                 label = label1
-
         plot_on_fig(df, channels, axes, color=palette[d], label=label,logscale=logscale)
+
     axes[-1].legend()
 
     plot_name = f'{channelGrp}_comparison_{grp}'
@@ -136,19 +144,20 @@ def compare_channels(channelGrp,grp="All",logscale=False):
         plot_name = plot_name + "_log"
 
     plt.savefig(os.path.join(plot_path, plot_name + '.png'))
-    # plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
+    plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
     plt.show()
 
 if __name__ == '__main__' :
 
     args = parse_args()
     stem = args.stem
+    channelGrp = args.channelGrp
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_day = pd.Timestamp.today()- pd.Timedelta(30,'days')
-    last_day = pd.Timestamp.today()+ pd.Timedelta(210,'days')
+    first_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    last_day = pd.Timestamp.today()+ pd.Timedelta(240,'days')
 
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
@@ -156,12 +165,7 @@ if __name__ == '__main__' :
         plot_path = os.path.join(sim_output_path, '_plots')
         grp_list, grp_suffix, grp_numbers = get_group_names(exp_path = sim_output_path)
 
-        #compare_channels(channelGrp= "symp")
-        #compare_channels(channelGrp= "infect")
-        #compare_channels(channelGrp= "hospCrit")
-        #compare_channels(channelGrp= "Vaccinated")
-
         for grp in grp_list:
             print(f'Process started for {grp}')
-            compare_channels(channelGrp= "bvariant",grp=grp)
-            #compare_channels(channelGrp="bvariant", grp=grp,logscale=True)
+            compare_channels(channelGrp=channelGrp, grp=grp)
+            #compare_channels(channelGrp=channelGrp, grp=grp,logscale=True)
