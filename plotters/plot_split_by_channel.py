@@ -164,7 +164,7 @@ def compare_channels(channelGrp,grp="All",logscale=False):
 if __name__ == '__main__' :
 
     args = parse_args()
-    stem = '20210401_IL_locale_sub_mr_158_v0_bvariant_vaccine'
+    stem = args.stem
     channelGrp = args.channelGrp
     Location = args.Location
 

@@ -139,7 +139,7 @@ def run_Rt_estimation(grp_numbers,smoothing_window, r_window_size):
         df_rt_all = df_rt_all.append(df_rt)
 
     df_rt_all.to_csv(os.path.join(exp_dir, 'rtNU.csv'), index=False)
-    rt_plot(df=df_rt_all, first_day=last_plot_day - pd.Timedelta(160,'days'), last_day=last_plot_day, plotname='rt_by_covidregion_truncated')
+    rt_plot(df=df_rt_all, first_day= pd.Timestamp.today() - pd.Timedelta(90,'days'), last_day=last_plot_day, plotname='rt_by_covidregion_truncated')
 
     if not 'rt_median' in df.columns:
         df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
