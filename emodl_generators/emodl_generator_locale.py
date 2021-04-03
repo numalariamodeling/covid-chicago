@@ -1002,7 +1002,6 @@ class covidModel:
             emodl_str = emodl_str + emodl_param_initial + emodl_timeevents
             return emodl_str
 
-
         def write_vaccine():
             emodl_str = ';COVID-19 vaccine scenario\n'
             read_from_csv = intervention_param['read_from_csv']
@@ -1052,35 +1051,40 @@ class covidModel:
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
                 intervention_dates = list(df['Date'].values)
                 fracinfect = list(df['variant_freq'].values)
-                emodl_param = ''.join([f'(param Ki_bvariant_{i}_{grp} '
-                                       f'(* Ki_{grp} @bvariant_infectivity@ ' \
-                                       f'{fracinfect[i - 1]}' \
-                                       f'))\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList])
 
                 fracinfect_timevent = ''.join([f'(time-event bvariant_fracinfect {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
                                                f'((bvariant_fracinfect {fracinfect[i - 1]})))\n'
                                                for i, date in enumerate(intervention_dates, 1)])
 
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
+                    temp_str = temp_str + ''.join([f' (Ki_{grp} ( + Ki_{grp}  (* (* Ki_{grp} 0.5)  (* @bvariant_fracinfect@ {fracinfect[i - 1]} ))))' for grp in self.grpList])
+                    temp_str = temp_str + f'))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+
             else:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
-
-                emodl_param = ''.join([f'(param Ki_bvariant_{i}_{grp} '
-                                       f'(* Ki_{grp} @bvariant_infectivity@ ' \
-                                       f'(* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)}))' \
-                                       f')\n' for i, date in enumerate(intervention_dates, 1) for grp in self.grpList])
 
                 fracinfect_timevent = ''.join([f'(time-event bvariant_fracinfect {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)}'
                                                f' ((bvariant_fracinfect (* @bvariant_fracinfect@ '
                                                f'{(1 / (len(intervention_dates)) * i)})))'
                                                f')\n' for i, date in enumerate(intervention_dates, 1)])
 
-            emodl_timeevents = ''
-            for i, date in enumerate(intervention_dates, 1):
-                temp_str = f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                temp_str = temp_str + ''.join([f' (Ki_{grp} Ki_bvariant_{i}_{grp})' for grp in self.grpList])
-                temp_str = temp_str + f'))\n'
-                emodl_timeevents = emodl_timeevents + temp_str
-            bvariant_infectivity = emodl_param + emodl_timeevents
+
+                emodl_param = ''.join([ f'(param Ki_bvariant_initial_{grp} 0)\n'
+                                        f'(time-event ki_bvariant_initial {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0])-pd.Timedelta(2,"days"), self.startdate)} ('
+                                        f'(Ki_bvariant_initial_{grp} Ki_{grp})'
+                                        f'))\n ' for grp in self.grpList])
+
+                emodl_timeevents = ''
+                for i, date in enumerate(intervention_dates, 1):
+                    temp_str = f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
+                    temp_str = temp_str + ''.join([f' (Ki_{grp} ( + Ki_bvariant_initial_{grp}  (* (* Ki_bvariant_initial_{grp} 0.5)  (* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)} ))))' for grp in self.grpList])
+                    temp_str = temp_str + f'))\n'
+                    emodl_timeevents = emodl_timeevents + temp_str
+
+            bvariant_infectivity =  emodl_param + emodl_timeevents
 
             """keep track of fracinfect, and use for update symptom development reactions"""
             fracinfect_str = '(param bvariant_fracinfect 0)\n' \
@@ -1136,11 +1140,16 @@ class covidModel:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='rollback')
                 perc_rollback = ['@rollback_multiplier@' for _ in range(len(intervention_dates))]
 
+            emodl_param = ''.join([ f'(param Ki_rollback_initial_{grp} 0)\n'
+                                    f'(time-event ki_rollback_initial_ {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0])-pd.Timedelta(2,"days"), self.startdate)} ('
+                                    f'(Ki_rollback_initial_{grp} Ki_{grp})'
+                                    f'))\n ' for grp in self.grpList])
+
             if rollback_relative_to_initial:
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event ki_rollback_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                    temp_str = temp_str + ''.join([f' (Ki_{grp} (- Ki_{grp} (* {perc_rollback[i - 1]} (- @Ki_{grp}@ Ki_{grp} ))))' for grp in self.grpList ])
+                    temp_str = temp_str + ''.join([f' (Ki_{grp} (- Ki_rollback_initial_{grp} (* {perc_rollback[i - 1]} (- @Ki_{grp}@ Ki_rollback_initial_{grp} ))))' for grp in self.grpList ])
                     temp_str = temp_str + f'))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
 
@@ -1148,11 +1157,11 @@ class covidModel:
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event ki_rollback_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                    temp_str = temp_str + ''.join([f' (Ki_{grp} (- Ki_{grp} (* {perc_rollback[i - 1]}  Ki_{grp})))' for grp in self.grpList ])
+                    temp_str = temp_str + ''.join([f' (Ki_{grp} (- Ki_rollback_initial_{grp} (* {perc_rollback[i - 1]}  Ki_rollback_initial_{grp})))' for grp in self.grpList ])
                     temp_str = temp_str + f'))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
 
-            emodl_str = emodl_str + emodl_timeevents
+            emodl_str = emodl_str + emodl_param + emodl_timeevents
 
             return emodl_str
 
@@ -1211,11 +1220,17 @@ class covidModel:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='reopen')
                 perc_reopen = ['@reopen_multiplier@' for _ in range(len(intervention_dates))]
 
+            emodl_param = ''.join([ f'(param Ki_reopen_initial_{grp} 0)\n'
+                                    f'(time-event ki_reopen_initial_ {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0])-pd.Timedelta(2,"days"), self.startdate)} ('
+                                    f'(Ki_reopen_initial_{grp} Ki_{grp})'
+                                    f'))\n ' for grp in self.grpList])
+
+
             if reopen_relative_to_initial:
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event ki_reopen_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                    temp_str = temp_str + ''.join([f' (Ki_{grp} (+ Ki_{grp} (* {perc_reopen[i - 1]} (- @Ki_{grp}@ Ki_{grp} ))))' for grp in self.grpList ])
+                    temp_str = temp_str + ''.join([f' (Ki_{grp} (+ Ki_reopen_initial_{grp} (* {perc_reopen[i - 1]} (- @Ki_{grp}@ Ki_reopen_initial_{grp}))))' for grp in self.grpList ])
                     temp_str = temp_str + f'))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
 
@@ -1223,11 +1238,11 @@ class covidModel:
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event ki_reopen_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                    temp_str = temp_str + ''.join([f' (Ki_{grp} (+ Ki_{grp} (* {perc_reopen[i - 1]}  Ki_{grp})))' for grp in self.grpList ])
+                    temp_str = temp_str + ''.join([f' (Ki_{grp} (+ Ki_reopen_initial_{grp} (* {perc_reopen[i - 1]}  Ki_reopen_initial_{grp})))' for grp in self.grpList ])
                     temp_str = temp_str + f'))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
 
-            emodl_str = emodl_str + emodl_timeevents
+            emodl_str = emodl_str + emodl_param + emodl_timeevents
 
             return emodl_str
 
