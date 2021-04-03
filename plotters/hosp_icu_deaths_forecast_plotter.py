@@ -131,7 +131,7 @@ if __name__ == '__main__':
     Location = args.Location
 
     first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
-    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
+    last_plot_day = pd.Timestamp.today()+ pd.Timedelta(150,'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 

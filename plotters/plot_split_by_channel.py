@@ -67,7 +67,7 @@ def plot_on_fig(df, channels, axes, color, label,logscale=False, ymax=10000) :
             ax.plot(adf['date'], adf['persons_first_vaccinated'], 'o', color='#303030', linewidth=0, ms=1.1)
 
         ax.set_title(' '.join(channeltitle.split('_')), y=0.985)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
         if logscale :
             ax.set_ylim(0.1, ymax)
             ax.set_yscale('log')
@@ -89,8 +89,8 @@ def get_channels(channelGrp):
                       'crit_det_cumul']}
 
     nchannels_Vacc = {
-        'channels1': ['vaccinated_cumul', 'asymp_det', 'hosp_det', 'crit_det', 'deaths_det', 'recovered_det'],
-        'channels2': ['vaccinated_cumul', 'asymp_det_V', 'hosp_det_V', 'crit_det_V', 'deaths_det_V', 'recovered_det_V']}
+        'channels1': ['vaccinated_cumul', 'new_infected', 'new_asymp_det', 'crit_det', 'new_deaths', 'new_recovered'],
+        'channels2': ['vaccinated_cumul', 'new_infected_V', 'new_asymp_det_V', 'crit_det_V', 'new_deaths_V', 'new_recovered_V']}
 
     nchannels_B = {
         'channels1': ['B_prev','new_infected',  'new_hosp',  'new_crit', 'new_deaths', 'new_recovered'],
@@ -123,10 +123,14 @@ def get_channels(channelGrp):
 def compare_channels(channelGrp,grp="All",logscale=False):
 
     nchannels, label0, label1 = get_channels(channelGrp)
-    column_list = list(set([ch.replace('new_','') for ch in nchannels['channels1']+nchannels['channels2']]))
-    column_list = [f'{ch}_{grp}' for ch in column_list]
 
-    df = load_sim_data(exp_name, region_suffix=f'_{grp}', column_list=column_list,add_incidence=True)
+    trajectories_cols = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), index_col=0, nrows=0).columns.tolist()
+    cols = list(set([ch.replace('new_','').replace('_V','') for ch in nchannels['channels1']+nchannels['channels2']]))
+    column_list=[]
+    for col in cols:
+        column_list = column_list + [x for x in trajectories_cols if x.startswith(col)]
+
+    df = load_sim_data(exp_name, region_suffix=f'_{grp}',fname='trajectoriesDat.csv',column_list=column_list, add_incidence=True)
     df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
     if channelGrp =='bvariant':
         df['B_prev'] = df['infected_B'] / df['infected']

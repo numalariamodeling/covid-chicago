@@ -10,6 +10,7 @@ import shutil
 import sys
 sys.path.append('../')
 from load_paths import load_box_paths
+from processing_helpers import *
 
 def parse_args():
     description = "Simulation run for modeling Covid-19"
@@ -258,6 +259,8 @@ if __name__ == '__main__':
         else:
             dfc = pd.read_csv(os.path.join(exp_path, fname))
 
+        """Update group names"""
+        grp_list, grp_suffix,grp_numbers = get_group_names(exp_path=exp_path)
         trim_trajectories(df=dfc,
                           sample_param_to_keep = sample_param_to_keep,
                           time_start=time_start,
