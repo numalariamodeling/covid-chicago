@@ -433,7 +433,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
-- 20210401 deactivated bvariant due to bug, updated parameter fit, updated plotter/nuciviscopy to include vaccine and bvariant descriptions,   
+- 20210402 deactivated bvariant due to bug, updated parameter fit, updated plotter/nuciviscopy to include vaccine and bvariant descriptions,   
 - 20210317 added ki multiplier 15 to intervention emodl yaml, set bvariant_start date after ki multiplier 15, updated scaling factor 
 - 20210316 added transmission multiplier 15 for March, included bvariant, included vaccinations, updated parameter fit
 - 20210303 updated parameter fit 
