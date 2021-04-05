@@ -1080,7 +1080,7 @@ class covidModel:
                 emodl_timeevents = ''
                 for i, date in enumerate(intervention_dates, 1):
                     temp_str = f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                    temp_str = temp_str + ''.join([f' (Ki_{grp} ( + Ki_bvariant_initial_{grp}  (* (* Ki_bvariant_initial_{grp} 0.5)  (* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)} ))))' for grp in self.grpList])
+                    temp_str = temp_str + ''.join([f' (Ki_{grp} ( + Ki_bvariant_initial_{grp}  (* (* Ki_bvariant_initial_{grp} @bvariant_infectivity@)  (* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)} ))))' for grp in self.grpList])
                     temp_str = temp_str + f'))\n'
                     emodl_timeevents = emodl_timeevents + temp_str
 
