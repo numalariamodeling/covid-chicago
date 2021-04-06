@@ -300,9 +300,10 @@ intervention_parameters:
   ###------------------------------------------------  
   ### ---- B.1.1.7 Variant  ----------------------
   ### Relative increase in transmission and severity due to COVID-19 B variant
+  ### here i.e. 50% increase = 0.5, not 1.5
   'bvariant_infectivity':
     np: linspace
-    function_kwargs: {'start':1.5, 'stop':1.5}
+    function_kwargs: {'start':0.5, 'stop':0.5}
   ### Fraction of the population infected with COVID-19 B variant  
   'bvariant_fracinfect':
     np: linspace
@@ -310,7 +311,8 @@ intervention_parameters:
     #function_kwargs: {'start':0.5, 'stop':0.5}
     #function_kwargs: {'start':0.75, 'stop':0.75}
     #function_kwargs: {'start':0.25, 'stop':0.75, 'num' : 3}
-  ### Relative increase in fraction severe due to COVID-19 B variant  
+  ### Relative increase in fraction severe due to COVID-19 B variant
+  ### Here 50% increase = 1.5
   'bvariant_severity':
     np: linspace
     function_kwargs: {'start':1.5, 'stop':1.5}
