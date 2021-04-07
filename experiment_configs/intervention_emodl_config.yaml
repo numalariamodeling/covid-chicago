@@ -8,7 +8,8 @@ time_varying_parameter:
   'n_recovery_time_hosp_change': 1
 interventions:
   'n_gradual_steps': 8
-  'rollback_relative_to_initial': True
+  'rollback_relative_to_initial': False
+  'rollback_regionspecific': False
   'reopen_relative_to_initial': False
   'reopen_regionspecific': False
   'trigger_channel': 'crit_det'
