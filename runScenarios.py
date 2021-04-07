@@ -9,10 +9,7 @@ import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import yaml
-import yamlordereddictloader
 
-from dotenv import load_dotenv
-load_dotenv()
 
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, cleanup, write_emodl,
@@ -391,7 +388,11 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 
 def get_experiment_config(experiment_config_file):
-    config = yaml.load(open(os.path.join('./experiment_configs', args.masterconfig)), Loader=yamlordereddictloader.Loader)
+    try:
+        import yamlordereddictloader
+        config = yaml.load(open(os.path.join('./experiment_configs', args.masterconfig)), Loader=yamlordereddictloader.Loader)
+    except:
+        config = yaml.load(open(os.path.join('./experiment_configs', args.masterconfig)))
     yaml_file = open(os.path.join('./experiment_configs',experiment_config_file))
     expt_config = yaml.safe_load(yaml_file)
     for param_type, updated_params in expt_config.items():
@@ -400,7 +401,6 @@ def get_experiment_config(experiment_config_file):
         if updated_params:
             config[param_type].update(updated_params)
     return config
-
 
 def get_experiment_setup_parameters(experiment_config):
     return experiment_config['experiment_setup_parameters']
