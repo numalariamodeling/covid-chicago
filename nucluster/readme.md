@@ -53,7 +53,7 @@ The single steps are:
   
   
 3. Submit runScenarios.py : 
-	`python runScenarios.py -rl NUCLUSTER -r EMS_1 -c EMSspecific_sample_parameters.yaml -e extendedmodel.emodl  -n "testrun"`
+	`python runScenarios.py -r IL  --scenario "baseline" --model "locale" -n "testrun"`
 	
 4. Submit postprocessing jobs
 	`cd /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>/sh"`
