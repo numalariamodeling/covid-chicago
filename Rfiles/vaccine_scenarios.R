@@ -170,12 +170,13 @@ f_custom_plot <- function(channel='persons_first_vaccinated',SAVE=TRUE){
   pplot <- pplot_pop +
   geom_line(data=subset(lmdat, date < vaccine_fut_end),
             aes(x=date, y=channel,col=scenario, group=scenario),size=1.3)+
-  geom_point(data=dat,aes(x=date_gotvacc, y=channel),col='black',size=0.8)+
+  geom_point(data=dat,aes(x=date_gotvacc+21, y=channel),col='black',size=0.8,alpha=0.8)+
+  geom_point(data=dat,aes(x=date_gotvacc, y=channel),fill=NA,shape=21,size=0.8,alpha=0.5)+
   theme_cowplot()+
   background_grid()+
   facet_wrap(~covid_region, scales="free")+
   scale_y_continuous(labels=comma)+
-  scale_x_date(date_labels = "%b", date_breaks = "1 month")+
+  scale_x_date(date_labels = "%b", date_breaks = "2 month")+
   scale_color_manual(values=c('#add2c8','#00a08a'))+
   labs(title="",
        subtitle='Assumed future vaccination scenarios per COVID-19 Region in Illinois\n',
@@ -189,11 +190,11 @@ f_custom_plot <- function(channel='persons_first_vaccinated',SAVE=TRUE){
 if(SAVE){
   ggsave(paste0(channel,".png"),
        plot = pplot,
-       path = file.path(wdir, "parameters","vaccinations"), width = 18, height = 10, device = "png"
+       path = file.path(wdir, "parameters","vaccinations"), width = 21, height = 10, device = "png"
 )
 ggsave(paste0(channel,".pdf"),
        plot = pplot,
-       path = file.path(wdir,  "parameters","vaccinations","pdf"), width = 18, height = 10, device = "pdf"
+       path = file.path(wdir,  "parameters","vaccinations","pdf"), width = 21, height = 10, device = "pdf"
 )
 }
 return(pplot)
@@ -218,7 +219,8 @@ pplot <- ggplot(data=lmdatAggr)+
   geom_hline(aes(yintercept=pop*0.5), linetype="dashed")+
   geom_label(aes(y=pop, x=as.Date('2021-02-01'), label='total population'))+
   geom_line(data=subset(lmdatAggr,  date>vaccine_past_start & date<vaccine_fut_end),aes(x=date, y=persons_first_vaccinated,col=scenario, group=scenario),size=1.3)+
-  geom_point(data=datAggr,aes(x=date_gotvacc, y=persons_first_vaccinated),col='black',size=0.8)+
+  geom_point(data=datAggr,aes(x=date_gotvacc+21, y=persons_first_vaccinated),col='black',size=1,alpha=0.8)+
+  geom_point(data=datAggr,aes(x=date_gotvacc, y=persons_first_vaccinated),fill=NA,shape=21,size=1,alpha=0.5)+
   theme_cowplot()+
   background_grid()+
   scale_y_continuous(labels=comma)+
