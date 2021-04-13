@@ -140,7 +140,7 @@ f_custom_plot <- function(channel='persons_first_vaccinated',SAVE=TRUE){
   background_grid()+
   facet_wrap(~covid_region, scales="free")+
   scale_y_continuous(labels=comma)+
-  scale_x_date(date_labels = "%b")+
+  scale_x_date(date_labels = "%b", date_breaks="2 month")+
   scale_color_manual(values=c('#add2c8','#00a08a'))+
   labs(title="",
        subtitle='Assumed future vaccination scenarios per COVID-19 Region in Illinois\nFor population ABOVE 65 years',
@@ -154,11 +154,11 @@ f_custom_plot <- function(channel='persons_first_vaccinated',SAVE=TRUE){
 if(SAVE){
   ggsave(paste0(channel,"_above65.png"),
        plot = pplot,
-       path = file.path(wdir, "parameters","vaccinations"), width = 18, height = 10, device = "png"
+       path = file.path(wdir, "parameters","vaccinations"), width = 21, height = 10, device = "png"
 )
 ggsave(paste0(channel,"_above65.pdf"),
        plot = pplot,
-       path = file.path(wdir,  "parameters","vaccinations","pdf"), width = 18, height = 10, device = "pdf"
+       path = file.path(wdir,  "parameters","vaccinations","pdf"), width = 21, height = 10, device = "pdf"
 )
 }
 return(pplot)
