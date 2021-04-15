@@ -13,7 +13,7 @@ import matplotlib.dates as mdates
 import seaborn as sns
 
 mpl.rcParams['pdf.fonttype'] = 42
-from processing_helpers import CI_50, CI_25, CI_75,CI_2pt5, CI_97pt5
+from processing_helpers import CI_50, CI_25, CI_75,CI_2pt5, CI_97pt5, load_sim_data,get_group_names
 
 from load_paths import load_box_paths
 datapath, projectpath, WDIR, EXE_DIR, GIT_DIR = load_box_paths()
@@ -581,11 +581,12 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
     return temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path
 
 
-def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list_name = "master" ):
+def runSamplePlot(exp_name,sim_output_path,plot_path,channel_list_name = "master" ):
     # Once the simulations are done
     # number_of_samples*len(Kivalues) == nscen ### to check
-    df = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'))
-    df.columns = df.columns.str.replace('_All', '')
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+    sample_grp = grp_list[-1]
+    df = load_sim_data(exp_name,region_suffix =f'_{sample_grp}', fname='trajectoriesDat.csv')
 
     if channel_list_name =="master" :
         channel_list = ['susceptible', 'exposed', 'asymp', 'symp_mild',
@@ -596,37 +597,30 @@ def runSamplePlot(sim_output_path,plot_path,start_dates,channel_list_name = "mas
         channel_list = ['detected_cumul', 'symp_severe_cumul', 'asymp_det_cumul', 'hosp_det_cumul',
                         'symp_mild_cumul', 'asymp_cumul', 'hosp_cumul', 'crit_cumul']
 
-    # FIXME: Timesteps shouldn't be all relative to start_dates[0],
-    #    especially when we have multiple first days.
-    sampleplot(df, allchannels=channel_list, start_date=start_dates[0],
-               plot_fname=os.path.join(plot_path, f'{channel_list_name}_sample_plot.png'))
+    sampleplot(df,sample_grp, allchannels=channel_list, plot_fname=os.path.join(plot_path, f'{channel_list_name}_sample_plot.png'))
 
 
 
-def sampleplot(adf, allchannels, start_date, plot_fname=None):
+def sampleplot(df,sample_grp, allchannels, plot_fname=None):
     fig = plt.figure(figsize=(18, 8))
+    fig.suptitle(sample_grp)
     palette = sns.color_palette('Set1', 10)
 
     axes = [fig.add_subplot(3, 3, x + 1) for x in range(len(allchannels))]
-    fig.subplots_adjust(bottom=0.05, hspace=0.25, right=0.95, left=0.1)
+    fig.subplots_adjust(bottom=0.05, hspace=0.25,wspace=0.2, right=0.95, left=0.1)
     for c, channel in enumerate(allchannels):
-        mdf = adf.groupby('time')[channel].agg([np.min, CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75, np.max]).reset_index()
+        mdf = df.groupby('date')[channel].agg([np.min, CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75, np.max]).reset_index()
         ax = axes[c]
-        dates = [start_date + pd.Timedelta(int(x),'days') for x in mdf['time']]
-        ax.plot(dates, mdf['CI_50'], label=channel, color=palette[c])
-        ax.fill_between(dates, mdf['CI_2pt5'], mdf['CI_97pt5'],
+        ax.plot(mdf['date'], mdf['CI_50'], label=channel, color=palette[c])
+        ax.fill_between(mdf['date'], mdf['CI_2pt5'], mdf['CI_97pt5'],
                         color=palette[c], linewidth=0, alpha=0.2)
-        ax.fill_between(dates, mdf['CI_25'], mdf['CI_75'],
+        ax.fill_between(mdf['date'], mdf['CI_25'], mdf['CI_75'],
                         color=palette[c], linewidth=0, alpha=0.4)
-        ax.fill_between(dates, mdf['amin'], mdf['amax'],
+        ax.fill_between(mdf['date'], mdf['amin'], mdf['amax'],
                         color=palette[c], linewidth=0, alpha=0.1)
 
         ax.set_title(channel, y=0.8)
-
-        formatter = mdates.DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(formatter)
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.set_xlim(start_date, )
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
 
     if plot_fname:
         log.info(f"Writing plot to {plot_fname}")

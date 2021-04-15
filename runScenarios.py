@@ -738,8 +738,10 @@ if __name__ == '__main__':
         log.info(f"Outputs are in {sim_output_path}" )
 
         log.info("Sample plot")
+        ## FIXME: check dates when running with multiple startdates per single region!
+        ## Also applies to load_sim_data function in processing_helpers
         try:
-            runSamplePlot(sim_output_path=sim_output_path, plot_path=plot_path,start_dates=start_dates,channel_list_name="master")
+            runSamplePlot(exp_name,sim_output_path=sim_output_path, plot_path=plot_path,channel_list_name="master")
             log.info("Sample plot generated")
         except:
             log.info("Sample plot not generated")
