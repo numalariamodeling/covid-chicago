@@ -141,23 +141,6 @@ def combineTrajectories(Nscenarios,trajectories_dir, temp_exp_dir, deleteFiles=F
     return dfc
 
 
-def cleanup(temp_dir, temp_exp_dir, sim_output_path,plot_path, delete_temp_dir=True) :
-    # Delete simulation model and emodl files
-    # But keeps per default the trajectories, better solution, zip folders and copy
-    if delete_temp_dir:
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print('temp_dir folder deleted')
-    if not os.path.exists(sim_output_path):
-        shutil.copytree(temp_exp_dir, sim_output_path)
-        if not os.path.exists(plot_path):
-            os.makedirs(plot_path)
-        # Delete files after being copied to the project folder
-        if os.path.exists(sim_output_path):
-            shutil.rmtree(temp_exp_dir, ignore_errors=True)
-        elif not os.path.exists(sim_output_path):
-            print('Sim_output_path does not exists')
-
-
 def writeTxt(txtdir, filename, textstring) :
     file = open(os.path.join(txtdir, filename), 'w')
     file.write(textstring)
@@ -235,6 +218,9 @@ echo end""")
 
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[0]}.bat'), 'w')
         file.write(f'cd {git_dir} \n python {list(process_dict.values())[0]} --exp_name "{exp_name}" \n')
+
+        file = open(os.path.join(temp_exp_dir, 'bat', f'0_cleanupSimulations.bat'), 'w')
+        file.write(f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --Location "Local" \n')
 
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[1]}.bat'), 'w')
         file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[1]} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[1]}.txt" \n')
@@ -366,7 +352,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, 'run_postprocessing.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
-    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
+    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[3]} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -383,7 +369,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'run_postprocessing_for_civis.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
-    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
+    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[3]} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -403,7 +389,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
     file = open(os.path.join(temp_exp_dir, f'run_postprocessing_for_fitting.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
-    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
+    file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -420,8 +406,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header_post + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"' \
-                ' --delete_simsfiles "True"'
+    pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"'
     file = open(os.path.join(temp_exp_dir,'sh', '0_cleanupSimulations.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
     file.close()

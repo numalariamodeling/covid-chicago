@@ -12,7 +12,7 @@ import yaml
 
 
 from load_paths import load_box_paths
-from simulation_helpers import (DateToTimestep, cleanup, write_emodl,
+from simulation_helpers import (DateToTimestep, write_emodl,
                                 generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
                                 runExp, runSamplePlot)
 
@@ -729,12 +729,13 @@ if __name__ == '__main__':
 
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-        #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-        #                    temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        log.info(f"Combine trajectories")
         subprocess.call(os.path.join(temp_exp_dir,'bat', '0_runCombineAndTrimTrajectories.bat'))
-        cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                plot_path=plot_path, delete_temp_dir=True)
-        log.info(f"Outputs are in {sim_output_path}")
+
+        log.info(f"Folder cleanup")
+        subprocess.call(os.path.join(temp_exp_dir,'bat', '0_cleanupSimulations.bat'))
+
+        log.info(f"Outputs are in {sim_output_path}" )
 
         log.info("Sample plot")
         try:
