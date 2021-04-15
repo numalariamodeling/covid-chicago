@@ -93,7 +93,8 @@ To check whether CMS runs on quest run a single simulation via:
 ### Full workflow 
 In the full workflow multiple simulations submitted as array job to Quest via:
 `cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py -rl NUCLUSTER --model "locale" -r IL -sr EMS_11 --scenario "baseline"  -n "userinitials"`
+`python runScenarios.py -r IL -sr EMS_11 --model "locale" --scenario "baseline"  -n "userinitials"`
+The running location does not need to be specified (optionally via -rl 'NUCLUSTER') as identified automatically based on the system environment.
 
 The experiments will go to the `_temp` folder on the quest gitrepository. 
 To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument.
@@ -110,7 +111,7 @@ The single steps are:
   - relevant files to edit are the yaml files.
   
 3. Submit runScenarios.py : 
-	`python runScenarios.py -rl NUCLUSTER --model "locale" -r IL -sr EMS_11 --scenario "baseline"  -n "userinitials"`
+	`python runScenarios.py -r IL -sr EMS_11 --model "locale" --scenario "baseline"  -n "userinitials"`
 	
 4. Submit postprocessing jobs (most run automatically, if not single sbatch files can be submitted as below)
 	`cd /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>/sh"`
