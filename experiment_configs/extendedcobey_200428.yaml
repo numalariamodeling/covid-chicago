@@ -410,7 +410,10 @@ time_parameters:
     function_kwargs: {'dates': 2021-02-15}
   'ki_multiplier_time_15':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-15}    
+    function_kwargs: {'dates': 2021-03-07}    
+  'ki_multiplier_time_16':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-04-07
   ### ---- Increased detections ---- 
   ### Change in d_Sys
   'd_Sys_change_time_1':
@@ -531,7 +534,7 @@ time_parameters:
   ### ---- Bvariant ---
   'bvariant_start':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-20}
+    function_kwargs: {'dates': 2021-04-10}
     #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
   'bvariant_scaleupend':
     custom_function: DateToTimestep
