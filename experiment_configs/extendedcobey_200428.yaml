@@ -413,7 +413,7 @@ time_parameters:
     function_kwargs: {'dates': 2021-03-07}    
   'ki_multiplier_time_16':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-04-07
+    function_kwargs: {'dates': 2021-04-07}
   ### ---- Increased detections ---- 
   ### Change in d_Sys
   'd_Sys_change_time_1':
