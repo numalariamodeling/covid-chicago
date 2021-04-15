@@ -461,7 +461,7 @@ def parse_args():
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
         choices=['IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'],
-        required=True
+        default="IL"
     )
     parser.add_argument(
         "-sr",
@@ -497,7 +497,7 @@ def parse_args():
         type=str,
         help="Model type",
         choices=["base", "locale","age","agelocale","nu"],
-        required=True
+        default="locale"
     )
     parser.add_argument(
         "-s",
