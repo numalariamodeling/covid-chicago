@@ -12,7 +12,7 @@ import yaml
 
 
 from load_paths import load_box_paths
-from simulation_helpers import (DateToTimestep, cleanup, write_emodl,
+from simulation_helpers import (DateToTimestep, write_emodl,
                                 generateSubmissionFile, generateSubmissionFile_quest, makeExperimentFolder,
                                 runExp, runSamplePlot)
 
@@ -461,7 +461,7 @@ def parse_args():
         type=str,
         help="Region on which to run simulation. E.g. 'IL'",
         choices=['IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'],
-        required=True
+        default="IL"
     )
     parser.add_argument(
         "-sr",
@@ -497,7 +497,7 @@ def parse_args():
         type=str,
         help="Model type",
         choices=["base", "locale","age","agelocale","nu"],
-        required=True
+        default="locale"
     )
     parser.add_argument(
         "-s",
@@ -507,6 +507,10 @@ def parse_args():
               'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant", "vaccine"'
               'Separated by underscore, example: reopen_rollback '
               "For a full list please visit the GitHub readme"),
+        choices=['baseline', 'rollback', 'reopen', 'triggeredrollback','rollback_reopen', 'triggeredrollback_reopen'
+                 'vaccine', 'rollback_vaccine', 'reopen_vaccine', 'triggeredrollback_vaccine','rollback_reopen_vaccine', 'triggeredrollback_reopen_vaccine',
+                 'bvariant', 'rollback_bvariant', 'reopen_bvariant', 'triggeredrollback_bvariant','rollback_reopen_bvariant', 'triggeredrollback_reopen_bvariant',
+                 'bvariant_vaccine', 'rollback_bvariant_vaccine', 'reopen_bvariant_vaccine', 'triggeredrollback_bvariant_vaccine','rollback_reopen_bvariant_vaccine', 'triggeredrollback_reopen_bvariant_vaccine'],
         default="baseline"
     )
     parser.add_argument(
@@ -729,16 +733,19 @@ if __name__ == '__main__':
 
         runExp(trajectories_dir=trajectories_dir, Location='Local')
 
-        #combineTrajectories(Nscenarios=nscen, trajectories_dir=trajectories_dir,
-        #                    temp_exp_dir=temp_exp_dir, deleteFiles=False)
+        log.info(f"Combine trajectories")
         subprocess.call(os.path.join(temp_exp_dir,'bat', '0_runCombineAndTrimTrajectories.bat'))
-        cleanup(temp_dir=temp_dir, temp_exp_dir=temp_exp_dir, sim_output_path=sim_output_path,
-                plot_path=plot_path, delete_temp_dir=True)
-        log.info(f"Outputs are in {sim_output_path}")
+
+        log.info(f"Folder cleanup")
+        subprocess.call(os.path.join(temp_exp_dir,'bat', '0_cleanupSimulations.bat'))
+
+        log.info(f"Outputs are in {sim_output_path}" )
 
         log.info("Sample plot")
+        ## FIXME: check dates when running with multiple startdates per single region!
+        ## Also applies to load_sim_data function in processing_helpers
         try:
-            runSamplePlot(sim_output_path=sim_output_path, plot_path=plot_path,start_dates=start_dates,channel_list_name="master")
+            runSamplePlot(exp_name,sim_output_path=sim_output_path, plot_path=plot_path,channel_list_name="master")
             log.info("Sample plot generated")
         except:
             log.info("Sample plot not generated")

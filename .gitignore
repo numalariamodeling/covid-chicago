@@ -6,7 +6,8 @@ venv
 data/*
 .idea/
 
-_temp/
+_temp/*
+!_temp/README.md
 Rfiles/.Rproj.user/
 nucluster/errors/
 nucluster/outputs/
@@ -33,3 +34,4 @@ experiment_configs/input_csv/*
 !experiment_configs/input_csv/vaccination_fractionSevere_adjustment_IL.csv
 !experiment_configs/input_csv/update_vaccine_scenarios.bat
 !experiment_configs/input_csv/update_vaccine_scenarios.sh
+*.zip

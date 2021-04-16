@@ -1,10 +1,17 @@
 #  experiment_config
 The yaml file specifies model parameters that are replaced in the emodl file to allow creating multiple simulation scenarios.
 
-# 1. Master yaml file 
-The current master yaml file is 'extendedcobey_200428.yaml'.
+[1. master yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/#1-master-yaml)  
+[2. spatial yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/#2-spatial-yaml)  
+[3. intervention config yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/#3-intervention-config-yaml)  
+[4. other config files](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/#4-other-config-files)  
 
-## [experiment_setup_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L1)
+
+## 1. master yaml
+The current master yaml file is 'extendedcobey_200428.yaml', it defines all the parameters that are written into the emodl files.
+
+### experiment_setup_parameters
+[experiment_setup_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L1)
 Takes single integer values. 
 
 - number_of_samples: specifies the number of random samples drawn for 'sampled_parameters'
@@ -18,11 +25,11 @@ Of these values number_of_runs, duration, and monitoring_samples are replaced in
 The number_of_samples and random_seed are used in the runScenarios.py when generating the sampling parameters to be replaced in the emodl files.
 The initialAs is added to the sample dataset and replaced in the emodl file. 
 
-## [fixed_parameters_region_specific](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L8)
+### [fixed_parameters_region_specific](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L8)
 - populations: population size 
 - startdate: startdate of the simulation, defins the date at which the first infections occur. 
 
-## [fixed_parameters_global](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L42)
+### [fixed_parameters_global](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L42)
 
 ### [sampled_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L43)
 - time_to_infectious
@@ -84,20 +91,29 @@ It is also possible to define multiple dates
 
 In contrast to the startdate, the dates here are taken ony by one and not as a range including all days inbetween. 	
 	
-## [fitted_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L227)
+### [fitted_parameters](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/extendedcobey_200428.yaml#L227)
 
-- Ki (transmission parameter)
-
-### base model 
-In base model (running for specified EMS alone)
+NOT USED  -  Defined in the [spatial yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/spatial_EMS_experiment.yaml#L414) instead!
+- Ki (transmission rate parameter = probability of infection x contact rate)
 
     'EMS_1':
       np: linspace
       function_kwargs: {'start': 0.589, 'stop': 0.589, 'num': 1}
      ...
 	 
-### spatial model [spatial_EMS_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/spatial_EMS_experiment.yaml)	  
-In spatial model (running for all EMS in one simulation using separate compartments)
+
+## 2. spatial (locale) yaml
+[spatial_EMS_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/spatial_EMS_experiment.yaml)	  
+Additional parameters that complement the parameters in the master yaml
+Note, if a parameter is specified in both files, it will be overwrited using the one from the spatial yaml file. 
+
+- experiment_setup_parameters
+- fixed_parameters_region_specific
+- fixed_parameters_global
+- sampled_parameters
+
+The expand_by_age option means repeating compartments and parameters per sub-groups, either age or EMS, or any other group that seems relevant (i.e. residents and staff within a long-term health care facility).
+Example: 
 
     sampled_parameters:
       Ki:  
@@ -117,12 +133,32 @@ In spatial model (running for all EMS in one simulation using separate compartme
             - {'low': 0.754, 'high': 0.754}
             - {'low': 1.01, 'high': 1.01} 
 
+## 3. intervention config yaml
+This file is read by the emodl generator to inform number of time-events and effect size parameter.
 
-### [expand_by_age](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/age8grp_experiment.yaml#L13)
-The expand_by_age option means repeating compartments and parameters per sub-groups, either age or EMS, or any other group that seems relevant (i.e. residents and staff within a long-term health care facility).
+### time_varying_parameter
 
-# 2. Config files and related scenario files
-- extendedcobey_200428.yaml (current master file) 
+  'n_ki_multiplier': 16
+  'n_dSys_change': 8
+  'n_d_Sym_P_As_change': 8
+  'n_frac_crit_change': 10
+  'n_fraction_dead_change': 9
+  'n_recovery_time_crit_change': 1
+  'n_recovery_time_hosp_change': 1
+
+### interventions
+
+  'n_gradual_steps': 8
+  'rollback_relative_to_initial': False
+  'rollback_regionspecific': False
+  'reopen_relative_to_initial': False
+  'reopen_regionspecific': False
+  'trigger_channel': 'crit_det'
+  'read_from_csv': False
+  'bvariant_csv': ""
+  'vaccination_csv': "vaccination_linear.csv" 
+
+## 4. other config files and related scenario files 
 
 ## 1.2. Model extensions (in addition to master yaml file)
 - [sample_age4grp_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml)
