@@ -206,46 +206,8 @@ a default configuration file [extendedcobey.yaml](https://github.com/numalariamo
 and substitutes parameters with the values/functions in the
 user-provided configuration file using the `@param@` placeholder. Multiple trajectories.csv that are produced per single simulation are combined into a trajectoriesDat.csv, used for postprocessing and plotting.
 
-## 2.2 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
-The configuration file is in [YAML](https://yaml.org/) format and is divided into 5
-blocks: `experiment_setup_parameters`,
-`fixed_parameters_region_specific`, `fixed_parameters_global`,
-`sampled_parameters`, `fitted_parameters`. The sampled parameters need
-the sampling function as well as the arguments to pass into that
-function (`function_kwargs`). Currently, only a few
-sampling/calculation functions are supported. More can be added by
-allowing for more libraries in `generateParameterSamples` of [runScenarios.py](runScenarios.py).
-
-Note that the user-supplied configuration file is used to provide
-*additional* or *updated* parameters from the base configuration file.
-
-## 2.3 Inputs:
-- Master configuration: YAML file that defines the parameter input values for the model (if not specified uses the default `extendedcobey_200428.yaml`)
-- Running location: Where the simulation is being run (either `Local`
-  or `NUCLUSTER`)
-- Region: The region of interest. (e.g. `EMS_1`, or `IL` for all EMS 1-11 inclued in the same model)
-- Configuration file: The configuration file with the parameters to
-  use for the simulation. If a parameter is not provided, the value in
-  the default configuration will be used. (e.g. [sample_experiment.yaml](sample_experiment.yaml))
-- Emodl template (optional): The template emodl file to substitute in
-  parameter values. The default is [extendedmodel.emodl](extendedmodel.emodl). emodl
-  files are in the `./emodl` directory.
-- cfg template (optional): The default cfg file uses the [Tau leaping](https://idmod.org/docs/cms/tau-leaping.html) solver (recommended B solver).
-- Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
-  parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
-
-### Region specific sample parameters (i.e. using estimates parameters per regions)
-- [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
-
-###  Age extension and age specific parameters 
-- `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
-Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
-
-
 <details><summary>Show runScenarios examples</summary>
 <p>  
-
-####  Usage examples: 
 
 ##### Base model
 - python runScenarios.py --model "base" -r EMS_1  --scenario "baseline"  -n "userinitials"
@@ -292,7 +254,12 @@ Note: This model is not maintained and will be integrated into the locale model.
 
 The examples above show an abbreviated version, accepting most defaults. The table below shows all available options and their defaults.
 
-<details><summary>Show all options</summary>
+### runScenarios options
+The minimum command is [python runScenarios.py](https://github.com/numalariamodeling/covid-chicago/blob/master/runScenarios.py). 
+If no arguments are specified, per default a 'baseline' simulation runs for all 11 regions in Illinois and the file name will include a random number for unique identification. 
+The table below shows an overview of all arguments currently enabled. 
+
+<details><summary>Show runScenarios options</summary>
 <p>  
 
 | no 	| argument long       	| argument short | model specific | required 	| help                                                                                                                                                                                                                                                                                                 	| choices                                                                                                                        	| default                   	|
@@ -319,7 +286,43 @@ The examples above show an abbreviated version, accepting most defaults. The tab
 </p>
 </details>
 
-## 2.4 Sampled parameters 
+## 2.2 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
+The configuration file is in [YAML](https://yaml.org/) format and is divided into 5
+blocks: `experiment_setup_parameters`,
+`fixed_parameters_region_specific`, `fixed_parameters_global`,
+`sampled_parameters`, `fitted_parameters`. The sampled parameters need
+the sampling function as well as the arguments to pass into that
+function (`function_kwargs`). Currently, only a few
+sampling/calculation functions are supported. More can be added by
+allowing for more libraries in `generateParameterSamples` of [runScenarios.py](runScenarios.py).
+
+Note that the user-supplied configuration file is used to provide
+*additional* or *updated* parameters from the base configuration file.
+
+## 2.3 Inputs:
+- Master configuration: YAML file that defines the parameter input values for the model (if not specified uses the default `extendedcobey_200428.yaml`)
+- Running location: Where the simulation is being run (either `Local`
+  or `NUCLUSTER`)
+- Region: The region of interest. (e.g. `EMS_1`, or `IL` for all EMS 1-11 inclued in the same model)
+- Configuration file: The configuration file with the parameters to
+  use for the simulation. If a parameter is not provided, the value in
+  the default configuration will be used. (e.g. [sample_experiment.yaml](sample_experiment.yaml))
+- Emodl template (optional): The template emodl file to substitute in
+  parameter values. The default is [extendedmodel.emodl](extendedmodel.emodl). emodl
+  files are in the `./emodl` directory.
+- cfg template (optional): The default cfg file uses the [Tau leaping](https://idmod.org/docs/cms/tau-leaping.html) solver (recommended B solver).
+- Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
+  parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
+
+### Region specific sample parameters (i.e. using estimates parameters per regions)
+- [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
+
+###  Age extension and age specific parameters 
+- `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
+Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
+
+
+### Sampled parameters 
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
 The [sample_parameters.py](sample_parameters.py) script allows to: 
 (1) generate csv file from configuration files without running simulations
