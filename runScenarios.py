@@ -507,7 +507,7 @@ def parse_args():
               'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant", "vaccine"'
               'Separated by underscore, example: reopen_rollback '
               "For a full list please visit the GitHub readme"),
-        choices=['baseline', 'rollback', 'reopen', 'triggeredrollback','rollback_reopen', 'triggeredrollback_reopen'
+        choices=['baseline', 'rollback', 'reopen', 'triggeredrollback','rollback_reopen', 'triggeredrollback_reopen',
                  'vaccine', 'rollback_vaccine', 'reopen_vaccine', 'triggeredrollback_vaccine','rollback_reopen_vaccine', 'triggeredrollback_reopen_vaccine',
                  'bvariant', 'rollback_bvariant', 'reopen_bvariant', 'triggeredrollback_bvariant','rollback_reopen_bvariant', 'triggeredrollback_reopen_bvariant',
                  'bvariant_vaccine', 'rollback_bvariant_vaccine', 'reopen_bvariant_vaccine', 'triggeredrollback_bvariant_vaccine','rollback_reopen_bvariant_vaccine', 'triggeredrollback_reopen_bvariant_vaccine'],
