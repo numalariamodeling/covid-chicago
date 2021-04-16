@@ -24,8 +24,7 @@ If the 'Wine Mono not installed' error appears run
 `rm -rf ~/.wine`
 `singularity shell -B /projects:/projects /software/singularity/images/singwine-v1.img winecfg`
 
-And click *ok* on the configuration window that pops up. 
-![model](https://github.com/numalariamodeling/covid-chicago/blob/nucluster/wine_installation.png)
+And click *ok* on the configuration window that pops up (see wine_installation.png)
 
 
 ##### Using other ways to connect
@@ -156,7 +155,8 @@ Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulatio
 
 
 # Files in this folder
-- cleanup.py: moves simulation folder from  `/projects/p30781/covidproject/covid-chicago/_temp/<exp_name>` to Box on quest (`/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>`), runs automatically after runScenarios.py
+- cleanup.py: moves simulation folder from GitHub repository `_temp/<exp_name>` to Box `covid_chicago/cms_sim/simulation_output/<exp_name>`, runs automatically after runScenarios.py. On quest, it moves it to the 'Box' equivalent folder, but an additional syncying step is needed to transfer the files to Box.
+
 - cleanup_and_zip_simFiles.py zips and optionally deletes simulation folder in Box on quest (i.e. before transferring) and per default (!) deletes single trajectories and simulation files.
 
 Example shell job submission files (experiment specific shell files generated in simulation folder)
