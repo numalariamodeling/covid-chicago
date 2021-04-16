@@ -75,9 +75,8 @@ def plot_on_fig(df, channels, axes, color, label,logscale=False, ymax=10000) :
 
 
 def get_channels(channelGrp):
-    nchannels_symp = {'channels1': ['symp_severe_cumul', 'symp_mild_cumul', 'symptomatic_severe', 'symptomatic_mild'],
-                      'channels2': ['symp_severe_det_cumul', 'symp_mild_det_cumul', 'symptomatic_severe_det',
-                                    'symptomatic_mild_det']}
+    nchannels_symp = {'channels1': ['symp_severe_cumul', 'symp_mild_cumul', 'symp_severe', 'symp_mild'],
+                      'channels2': ['symp_severe_det_cumul', 'symp_mild_det_cumul', 'symp_severe_det', 'symp_mild_det']}
 
     nchannels_infect = {'channels1': ['infected', 'presymptomatic', 'infectious_undet', 'asymp', 'asymp_cumul'],
                         'channels2': ['infected_det', 'presymptomatic_det', 'infectious_det', 'asymptomatic_det',

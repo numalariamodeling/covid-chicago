@@ -210,16 +210,23 @@ if __name__ == '__main__':
     last_plot_day = pd.Timestamp.today()
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
+    sim_output_path = os.path.join(wdir, 'simulation_output')
 
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+    exp_names = [x for x in os.listdir(sim_output_path) if stem in x]
     for exp_name in exp_names:
         print(exp_name)
-        output_path = os.path.join(wdir, 'simulation_output',exp_name)
+        output_path = os.path.join(sim_output_path,exp_name)
         """Get group names"""
         grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=output_path)
         
         for ems_nr in grp_numbers:
             print("Start processing region " + str(ems_nr))
+
+            fname = 'traces_ranked_region_' + str(ems_nr) + '.csv'
+            if os.path.exists(os.path.join(sim_output_path,exp_name, fname)):
+                print(f'\nWARNING:{fname} exists and will be deleted to replace with new trace selection\n')
+                os.remove(os.path.join(sim_output_path,exp_name, fname))
+
             compare_ems(exp_name,
                         ems_nr=int(ems_nr),
                         first_day=first_plot_day,
