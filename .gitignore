@@ -6,7 +6,8 @@ venv
 data/*
 .idea/
 
-_temp/
+_temp/*
+!_temp/README.md
 Rfiles/.Rproj.user/
 nucluster/errors/
 nucluster/outputs/
