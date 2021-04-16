@@ -30,16 +30,27 @@
 ### Running single region
 
 `python runScenarios.py -sr EMS_1 --scenario "baseline" -n 'test_reg1'`
+
 `python runScenarios.py -sr EMS_2 --scenario "baseline" -n 'test_reg2'`
+
 `python runScenarios.py -sr EMS_3 --scenario "baseline" -n 'test_reg3'`
+
 `python runScenarios.py -sr EMS_4 --scenario "baseline" -n 'test_reg4'`
+
 `python runScenarios.py -sr EMS_5 --scenario "baseline" -n 'test_reg5'`
+
 `python runScenarios.py -sr EMS_6 --scenario "baseline" -n 'test_reg6'`
+
 `python runScenarios.py -sr EMS_7 --scenario "baseline" -n 'test_reg7'`
+
 `python runScenarios.py -sr EMS_8 --scenario "baseline" -n 'test_reg8'`
+
 `python runScenarios.py -sr EMS_9 --scenario "baseline" -n 'test_reg9'`
+
 `python runScenarios.py -sr EMS_10 --scenario "baseline" -n 'test_reg10'`
+
 `python runScenarios.py -sr EMS_11 --scenario "baseline" -n 'test_reg11'`
+
 
 
 ### Running multiple region 
