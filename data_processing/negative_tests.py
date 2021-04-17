@@ -9,10 +9,12 @@ import seaborn as sns
 import geopandas as gpd
 import matplotlib.colors as colors
 from shapely.geometry import mapping, Point, Polygon
+import copy
+from statsmodels.stats.proportion import proportion_confint
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-LL_date = '201006'
+LL_date = '210413'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 line_list_fname = os.path.join(idph_data_path,
@@ -70,8 +72,8 @@ def plot_tests_per_pop_covid_region() :
 
     adf = pd.read_csv(line_list_fname)
     adf = adf[adf['covid_region'].isin(range(1,12))]
-    adf = adf[adf['county'] != 'Champaign']
-    channel = 'positive_specs'
+    # adf = adf[adf['county'] != 'Champaign']
+    channel = 'total_specs'
 
     county_pop = pd.read_csv(os.path.join(box_data_path, 'EMS Population', 'covidregion_population_by_county.csv'))
     # county_pop = county_pop[county_pop['County'] != 'CHAMPAIGN']
@@ -95,14 +97,14 @@ def plot_tests_per_pop_covid_region() :
         ax.plot(cdf['date'], cdf['moving_ave'], '-', color=rr_colors[region-1], linewidth=1)
         ax.fill_between(cdf['date'].values, [0] * len(cdf['moving_ave']), cdf['moving_ave'],
                         linewidth=0, color=rr_colors[region-1], alpha=0.3)
-        # ax.set_ylim(0, 5)
-        ax.set_ylim(0, 0.45)
-        ax.set_xlim(date(2020, 3, 1), date(2020, 10, 6))
+        ax.set_ylim(0, 25)
+        # ax.set_ylim(0, 11)
+        ax.set_xlim(date(2020, 3, 1), date(2021, 1, 1))
         ax.set_title('Covid Region %d' % region)
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-    fig.savefig(os.path.join(plot_dir, 'pos_per_1000_pop_covid_region_LL%s.pdf' % LL_date), format='PDF')
+    fig.savefig(os.path.join(plot_dir, 'tests_per_1000_pop_covid_region_LL%s.pdf' % LL_date), format='PDF')
 
 
 def plot_test_per_pos() :
@@ -148,17 +150,18 @@ def plot_tpr() :
 
     adf = pd.read_csv(line_list_fname)
     adf = adf[adf['covid_region'].isin(range(1,12))]
-    adf = adf[adf['county'] != 'Champaign']
+    # adf = adf[adf['county'] != 'Champaign']
 
     adf['date'] = pd.to_datetime(adf['date'])
     adf = adf.groupby(['date', 'covid_region']).agg(np.sum).reset_index()
-    firstday = np.min(adf['date'])
-    adf['week'] = adf['date'].apply(lambda x : int((x - firstday).days/7))
-    adf = adf.groupby(['week', 'covid_region']).agg({'total_specs' : np.sum,
-                                                     'positive_specs' : np.sum}).reset_index()
-    adf['date'] = adf['week'].apply(lambda x : firstday + timedelta(days=x*7))
-    adf['covid_region'] = adf['covid_region'].astype(int)
-    adf = adf.sort_values(by=['covid_region', 'week'])
+    # firstday = np.min(adf['date'])
+    # adf['week'] = adf['date'].apply(lambda x : int((x - firstday).days/7))
+    # adf = adf.groupby(['week', 'covid_region']).agg({'total_specs' : np.sum,
+    #                                                  'positive_specs' : np.sum}).reset_index()
+    # adf['date'] = adf['week'].apply(lambda x : firstday + timedelta(days=x*7))
+    # adf['covid_region'] = adf['covid_region'].astype(int)
+    # adf = adf.sort_values(by=['covid_region', 'week'])
+    adf = adf.sort_values(by=['covid_region', 'date'])
     adf = adf[adf['total_specs'] > 0]
     adf['tpr'] = adf['positive_specs']/adf['total_specs']
 
@@ -171,16 +174,30 @@ def plot_tpr() :
 
     for i, (region, cdf) in enumerate(adf.groupby('covid_region')) :
         ax = fig.add_subplot(3,4,i+1)
-        ax.plot(cdf['date'], cdf['tpr'], '-', color=rr_colors[region-1], linewidth=1)
-        ax.fill_between(cdf['date'].values, [0] * len(cdf['tpr']), cdf['tpr'],
-                        linewidth=0, color=rr_colors[region-1], alpha=0.3)
-        ax.set_ylim(0, 0.32)
-        ax.set_xlim(firstday, date(2020, 10, 6))
+        cdf = copy.copy(cdf)
+
+        cdf['moving_ave_frac'] = cdf['tpr'].rolling(window=7, center=True).mean()
+        ax.plot(cdf['date'], cdf['moving_ave_frac'], '-')
+        cdf['moving_ave_test'] = cdf['total_specs'].rolling(window=7, center=True).sum()
+        cdf['moving_ave_pos'] = cdf['positive_specs'].rolling(window=7, center=True).sum()
+        lows, highs = [], []
+        for r, row in cdf.iterrows():
+            low, high = proportion_confint(row['moving_ave_pos'], row['moving_ave_test'])
+            lows.append(low)
+            highs.append(high)
+
+        ax.fill_between(cdf['date'].values, lows, highs, linewidth=0, alpha=0.3)
+
+        # ax.fill_between(cdf['date'].values, [0] * len(cdf['tpr']), cdf['tpr'],
+        #                 linewidth=0, color=rr_colors[region-1], alpha=0.3)
+        ax.set_ylim(0, 0.18)
+        ax.set_xlim(date(2020,6,10), date(2021, 1, 15))
         ax.set_title('Covid Region %d' % region)
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(mdates.MonthLocator())
 
-    fig.savefig(os.path.join(plot_dir, 'tpr_covid_region_noChampaign_LL%s.pdf' % LL_date), format='PDF')
+    fig.savefig(os.path.join(plot_dir, 'tpr_covid_region_LL%s.png' % LL_date))
+    fig.savefig(os.path.join(plot_dir, 'tpr_covid_region_LL%s.pdf' % LL_date), format='PDF')
 
 
 def plot_tests_by_county_map() :
@@ -199,8 +216,11 @@ def plot_tests_by_county_map() :
         df = adf[(adf['date'] > mindate) & (adf['date'] <= maxdate)].groupby('county').agg(np.mean).reset_index()
 
         df['per pop'] = df[channel] / df['pop'] * 1000
-        df.loc[df['per pop'] > 20, 'per pop'] = 8.5
+        print(max(df['per pop']))
+        df.loc[df['per pop'] > 20, 'per pop'] = 11
         ds_shp = pd.merge(left=county_shp, right=df, left_on='COUNTY_NAM', right_on='county')
+        ds_shp.crs = {'init': 'epsg:4326'}
+        ds_shp = ds_shp.to_crs({'init': 'epsg:3395'})
         ds_shp.plot(ax=ax, column='per pop',
                     cmap=colormap, edgecolor='0.8',
                     linewidth=0.8, legend=False, norm=norm)
@@ -226,7 +246,7 @@ def plot_tests_by_county_map() :
     # chunks = np.linspace(0, 0.4, 20)
     chunks = np.linspace(0.2, 5, 20)
 
-    maxdate = date(2020,10,5)
+    maxdate = date(2020,10,26)
     mindate = maxdate - timedelta(days=7)
     ax = fig.add_subplot(1,2,1)
     plot_subset(adf, 'positive_specs', county_shp, maxdate, mindate, ax, chunks)
@@ -242,6 +262,6 @@ def plot_tests_by_county_map() :
 if __name__ == '__main__' :
 
     # plot_weekly_share_by_age()
-    plot_tests_per_pop_covid_region()
-    # plot_tpr()
+    # plot_tests_per_pop_covid_region()
+    plot_tpr()
     # plot_tests_by_county_map()

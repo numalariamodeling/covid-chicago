@@ -11,7 +11,7 @@ from shapely.geometry import mapping, Point, Polygon
 
 mpl.rcParams['pdf.fonttype'] = 42
 
-LL_date = '201020'
+LL_date = '210412'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 line_list_fname = os.path.join(idph_data_path,
@@ -332,11 +332,11 @@ if __name__ == '__main__' :
     # exit()
 
     # assign_covid_region()
-    df = load_cleaned_line_list()
+    # df = load_cleaned_line_list()
     # df = df[df['covid_region'] < 1]
     # print(df[['patient_home_zip', 'county_at_onset', 'EMS', 'covid_region']].to_string())
 
-    # df = load_line_list()
+    df = load_line_list()
     del df['race']
     del df['ethnicity']
     df = df.drop_duplicates()

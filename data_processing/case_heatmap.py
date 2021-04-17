@@ -1,4 +1,5 @@
 import os
+import copy
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -13,7 +14,7 @@ from plotting.colors import load_color_palette
 mpl.rcParams['pdf.fonttype'] = 42
 
 
-LL_date = '201020'
+LL_date = '210412'
 
 idph_data_path = '/Volumes/fsmresfiles/PrevMed/Covid-19-Modeling/IDPH line list'
 cleaned_line_list_fname = os.path.join(idph_data_path,
@@ -93,8 +94,10 @@ def plot_EMS_by_line(colname) :
     df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_covidregion.csv' % LL_date))
     df = df[df['covid_region'].isin(range(1,12))]
     df['date'] = pd.to_datetime(df['date'])
+    # df = df[(df['date'] > date(2020, 2, 29)) & (df['date'] < date(2021, 1, 1))]
     col = 'moving_ave'
 
+    sns.set_style('whitegrid', {'axes.linewidth' : 0.5})
     fig = plt.figure(figsize=(11,6))
     fig.subplots_adjust(left=0.07, right=0.97, bottom=0.05, top=0.95, hspace=0.3, wspace=0.25)
     palette = sns.color_palette('Set1')
@@ -115,6 +118,7 @@ def plot_EMS_by_line(colname) :
             ax.set_ylabel(colname)
     fig.suptitle(colname)
     plt.savefig(os.path.join(plot_path, 'covid_region_%s_%sLL.png' % (colname, LL_date)))
+    # plt.savefig(os.path.join(plot_path, 'covid_region_%s_%sLL_2020.pdf' % (colname, LL_date)), format='PDF')
 
 
 def format_ax(ax, name) :
@@ -286,16 +290,51 @@ def combo_LL_emr() :
     df[df['EMS'] == 11].to_csv(os.path.join(box_data_path, 'Cleaned Data', 'LL_EMR_%s_EMS11.csv' % LL_date), index=False)
 
 
+def weekly_deaths() :
+
+    df = pd.read_csv(os.path.join(box_data_path, 'Cleaned Data', '%s_jg_aggregated_covidregion.csv' % LL_date))
+    df['date'] = pd.to_datetime(df['date'])
+    df = df[df['date'] >= date(2020, 3, 1)]
+    df = df[df['deaths'] > 0]
+    firstday = np.min(df['date'])
+    df['week'] = df['date'].apply(lambda x : int((x - firstday).days/7))
+
+    df = df.groupby('week')[['deaths']].agg(np.sum).reset_index()
+    df = df.sort_values(by='week')
+    df['date'] = df['week'].apply(lambda x : firstday + timedelta(days=7*x))
+    df2 = copy.copy(df[['week', 'deaths']])
+    df2['date'] = df2['week'].apply(lambda x : firstday + timedelta(days=7*x+6))
+    df = pd.concat([df, df2])
+    df = df.sort_values(by='date')
+
+    palette = load_color_palette('wes')
+    formatter = mdates.DateFormatter("%m-%d")
+    sns.set_style('whitegrid', {'axes.linewidth' : 0.5})
+    fig = plt.figure()
+    ax = fig.gca()
+    ax.plot()
+
+    ax.plot(df['date'], df['deaths'], '-', color=palette[0])
+    ax.set_ylabel('deaths')
+    ax.xaxis.set_major_formatter(formatter)
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+
+    fig.savefig(os.path.join(plot_path, 'IL_weekly_deaths_LL%s.png' % LL_date))
+    fig.savefig(os.path.join(plot_path, 'IL_weekly_deaths_LL%s.pdf' % LL_date), format='PDF')
+
+
 if __name__ == '__main__' :
 
     # aggregate_to_date_spec_collection()
     # combo_LL_emr()
     # heatmap()
+    # plot_ratio_ems()
+    # plot_ratio_county()
     plot_EMS_by_line('cases')
     plot_EMS_by_line('admissions')
     plot_EMS_by_line('deaths')
-    # plot_ratio_ems()
-    # plot_ratio_county()
     plot_LL_all_IL()
+
+    # weekly_deaths()
     # plt.show()
 
