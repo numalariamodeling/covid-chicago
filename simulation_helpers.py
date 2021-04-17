@@ -177,9 +177,11 @@ def get_process_dict():
                     '9_runCopyDeliverables': 'NUcivis_filecopy.py',
                     '10_runIterationComparison': 'iteration_comparison.py',
                     '11_runCleanUpAndZip': 'cleanup_and_zip_simFiles.py',
-                    '1_runSimulateTraces': 'simulate_traces.py',}
+                    '1_runSimulateTraces': 'simulate_traces.py',
+                    '3_runKiplotter': 'Ki_plotter.py',
+                    '3_runVaccineplotter': 'plot_split_by_channel.py',
+                    }
     return process_dict
-
 
 def generateSubmissionFile(scen_num, exp_name, experiment_config, trajectories_dir, temp_dir, temp_exp_dir,sim_output_path,
                            model, exe_dir=EXE_DIR, docker_image="cms", git_dir=GIT_DIR, wdir=WDIR):
@@ -243,7 +245,7 @@ echo end""")
 
         """Simulate traces"""
         file = open(os.path.join(temp_exp_dir, 'bat', f'{list(process_dict.keys())[13]}.bat'), 'w')
-        file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[13]} --stem "{exp_name}" --plot >> "{sim_output_path}/log/{list(process_dict.keys())[13]}.txt" \n')
+        file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[13]} --stem "{exp_name}" >> "{sim_output_path}/log/{list(process_dict.keys())[13]}.txt" \n')
 
 
         fname = list(process_dict.values())[3]
@@ -273,15 +275,27 @@ echo end""")
             file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[9]} --stem "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[9]}.txt" \n')
 
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[10]}.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[10]}  "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[10]}.txt" \n')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[10]}  --exp_name "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[10]}.txt" \n')
 
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[11]}.bat'), 'w')
-            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[11]}  "{exp_name}"  >> "{sim_output_path}/log/{list(process_dict.keys())[11]}.txt" \n')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[11]}   >> "{sim_output_path}/log/{list(process_dict.keys())[11]}.txt" \n')
 
             file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[12]}.bat'), 'w')
             file.write(f'cd { os.path.join(git_dir, "nucluster")} \n python {list(process_dict.values())[12]}  --stem "{exp_name}" --del_trajectories --zip_dir  >> "{sim_output_path}/log/{list(process_dict.keys())[12]}.txt" \n')
 
-def shell_header(A='p30781',p='short',t='00:30:00',N=1,ntasks_per_node=1, memG=18,job_name='myjob', arrayJob=None):
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[14]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[14]}   --stem "{exp_name}"   >> "{sim_output_path}/log/{list(process_dict.keys())[14]}.txt" \n')
+
+            file = open(os.path.join(temp_exp_dir,'bat', f'{list(process_dict.keys())[15]}.bat'), 'w')
+            file.write(f'cd {plotters_dir} \n python {list(process_dict.values())[15]}   --stem "{exp_name}"  --channelGrp "Vaccinated"  >> "{sim_output_path}/log/{list(process_dict.keys())[15]}.txt" \n')
+
+def shell_header(A='p30781',p='short',t='02:00:00',N=1,ntasks_per_node=1, memG=18,job_name='myjob', arrayJob=None):
+
+    if 'b1139' in os.getcwd():
+      A = 'b1139'
+      p = 'b1139'
+      t = '00:45:00'
+
     header = f'#!/bin/bash\n' \
              f'#SBATCH -A {A}\n' \
              f'#SBATCH -p {p}\n' \
@@ -302,7 +316,7 @@ def shell_header(A='p30781',p='short',t='00:30:00',N=1,ntasks_per_node=1, memG=1
     return header
 
 def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajectories_dir, git_dir, temp_exp_dir,exe_dir,sim_output_path,model) :
-    # Generic shell submission script that should run for all having access to  projects/p30781
+    # Generic shell submission script that should run for all having access to NU cluster allocation
     # submit_runSimulations.sh
 
     process_dict = get_process_dict()
@@ -323,6 +337,8 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
     plotters_dir = os.path.join(git_dir, "plotters")
     pymodule = '\n\nmodule purge all\nmodule load python/anaconda3.6\nsource activate /projects/p30781/anaconda3/envs/team-test-py37\n'
+    if 'b1139' in os.getcwd():
+        pymodule = '\n\nmodule purge all\nmodule load python/anaconda3.6\nsource activate /projects/b1139/anaconda3/envs/team-test-py37\n'
 
     emodl_name = str([i for i in os.listdir(temp_exp_dir) if "emodl" in i][0]).replace('.emodl', '')
     emodl_from = os.path.join(sim_output_path, emodl_name + ".emodl")
@@ -352,17 +368,20 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(header_post + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[3]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[14]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[15]} --stem "{exp_name}" --channelGrp "Vaccinated" --Location "NUCLUSTER"')
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir --Location "NUCLUSTER"')
     file.close()
 
 
     pycommand = f'\ncd {git_dir}\npython {list(process_dict.values())[0]}  --exp_name "{exp_name}" --Location "NUCLUSTER" '
-    file = open(os.path.join(temp_exp_dir, f'run_postprocessing_with_trace_selection.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, f'run_postprocessing_for_civis.sh'), 'w')
     file.write(header_post + pymodule + pycommand)
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}" --delete_simsfiles "True"')
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
@@ -374,8 +393,10 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[8]} --exp_names "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"')
-    #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}"')
-    #file.write(f'\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[10]} --exp_name "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[11]} --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[14]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[15]} --stem "{exp_name}" --channelGrp "Vaccinated" --Location "NUCLUSTER"')
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir --Location "NUCLUSTER"')
     file.close()
 
@@ -386,6 +407,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(f'\n\ncd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot')
     file.write(f'\npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER"')
+    file.write(f'\npython {plotters_dir}/{list(process_dict.values())[14]} --stem "{exp_name}" --Location "NUCLUSTER"')
     file.write(f'\n\ncd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir --Location "NUCLUSTER"')
     file.close()
 
@@ -401,75 +423,88 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/cleanup.py --stem "{exp_name}"' \
                 ' --delete_simsfiles "True"'
     file = open(os.path.join(temp_exp_dir,'sh', '0_cleanupSimulations.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[1]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[1]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     """Trace selection"""
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[2]} --stem "{exp_name}" --Location "NUCLUSTER" --plot'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[2]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
-    file.close()
-
-    """Simulate traces"""
-    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER" --plot'
-    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[13]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{fname} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir,'sh', f'{list(process_dict.keys())[3]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[4]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[4]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[5]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir,  'sh',f'{list(process_dict.keys())[5]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[6]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[6]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[7]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[7]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[8]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[8]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[9]} --stem "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[9]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[10]} "{exp_name}" --Location "NUCLUSTER"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[10]} --exp_name "{exp_name}" --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[10]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
-    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[11]} "{exp_name}" --Location "NUCLUSTER"'
+    pycommand = f'cd {plotters_dir}\npython {plotters_dir}/{list(process_dict.values())[11]}  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[11]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
 
     pycommand = f'cd {git_dir}/nucluster \npython {git_dir}/nucluster/{list(process_dict.values())[12]} --stem "{exp_name}" --zip_dir  --Location "NUCLUSTER"'
     file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[12]}.sh'), 'w')
-    file.write(header + pymodule + pycommand)
+    file.write(header_post + pymodule + pycommand)
     file.close()
+
+    """Simulate traces"""
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[13]} --stem "{exp_name}" --Location "NUCLUSTER" '
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[13]}.sh'), 'w')
+    file.write(header_post + pymodule + pycommand)
+    file.close()
+
+    """Ki plotter"""
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[14]} --stem "{exp_name}" --Location "NUCLUSTER" '
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[14]}.sh'), 'w')
+    file.write(header_post + pymodule + pycommand)
+    file.close()
+
+    """Vaccine (or other channels) plotter"""
+    pycommand = f'cd {plotters_dir} \npython {plotters_dir}/{list(process_dict.values())[15]} --stem "{exp_name}" --channelGrp "Vaccinated" --Location "NUCLUSTER" '
+    file = open(os.path.join(temp_exp_dir, 'sh', f'{list(process_dict.keys())[14]}.sh'), 'w')
+    file.write(header_post + pymodule + pycommand)
+    file.close()
+
 
     """
     Submit run simultation 
@@ -477,15 +512,15 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     """
     submit_runSimulations = f'cd {temp_exp_dir}/trajectories/\ndos2unix runSimulations.sh\nsbatch runSimulations.sh\n'
     submit_combineSimulations = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing.sh'
-    submit_combineSimulations_trace = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing_with_trace_selection.sh'
+    submit_combineSimulations_civis = f'cd {temp_exp_dir}/\nsbatch --dependency=singleton run_postprocessing_for_civis.sh'
     file = open(os.path.join(temp_exp_dir, 'submit_runSimulations.sh'), 'w')
     file.write(submit_runSimulations)
     file.write(submit_combineSimulations)
     file.close()
 
-    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations_with_trace_selection.sh'), 'w')
+    file = open(os.path.join(temp_exp_dir, 'submit_runSimulations_for_civis.sh'), 'w')
     file.write(submit_runSimulations)
-    file.write(submit_combineSimulations_trace)
+    file.write(submit_combineSimulations_civis)
     file.close()
 
 
@@ -502,7 +537,7 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
 
 
 
-def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, trigger_channel,fit_params, emodl_name):
+def write_emodl(model,subregion,scenario,observeLevel,change_testDelay, expandModel, intervention_config,fit_params, emodl_name):
 
     if model =='base':
         from emodl_generators.emodl_generator_base import covidModel
@@ -514,18 +549,19 @@ def write_emodl(model,scenario,observeLevel,change_testDelay, expandModel, trigg
         from emodl_generators.emodl_generator_age_locale import covidModel
 
     #covidModel.showOptions()
-    ml = covidModel(add_interventions=scenario,
+    ml = covidModel(subgroups=subregion,
+                    add_interventions=scenario,
                     change_testDelay=change_testDelay,
                     observeLevel=observeLevel,
                     expandModel=expandModel,
-                    trigger_channel=trigger_channel,
+                    intervention_config=intervention_config,
                     fit_params=fit_params,
                     emodl_name=emodl_name)
     emodl_name = ml.generate_emodl()
     return f'{emodl_name}.emodl'
 
 
-def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml_dir, DEFAULT_CONFIG, experiment_config, temp_exp_dir=None,
+def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml_dir, DEFAULT_CONFIG, experiment_config, intervention_config, temp_exp_dir=None,
                          wdir=WDIR, git_dir=GIT_DIR):
     sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
     plot_path = sim_output_path
@@ -553,6 +589,7 @@ def makeExperimentFolder(exp_name, emodl_dir, emodlname, cfg_dir, cfg_file, yaml
     shutil.copyfile(os.path.join(emodl_dir, emodlname), os.path.join(temp_exp_dir, emodlname))
     shutil.copyfile(os.path.join(cfg_dir, cfg_file), os.path.join(temp_exp_dir, cfg_file))
     shutil.copyfile(os.path.join(yaml_dir, experiment_config), os.path.join(temp_exp_dir, experiment_config))
+    shutil.copyfile(os.path.join(yaml_dir, intervention_config), os.path.join(temp_exp_dir, intervention_config))
     if DEFAULT_CONFIG != experiment_config :
         shutil.copyfile(os.path.join(yaml_dir, DEFAULT_CONFIG), os.path.join(temp_exp_dir, DEFAULT_CONFIG))
 

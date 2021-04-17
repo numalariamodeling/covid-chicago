@@ -79,7 +79,7 @@ def plot_sim(dat,suffix,channels) :
                       [capacity[channel], capacity[channel]], '--', linewidth=2, color=palette[c])
 
             ax.set_title(channel, y=0.85)
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
 
         plotname = f'{scenarioName}_{suffix}'
         plotname = plotname.replace('EMS-','covidregion_')
@@ -91,7 +91,7 @@ def plot_sim(dat,suffix,channels) :
 def load_and_plot_data(ems_region, savePlot=True) :
     region_suffix = f'_{str(ems_region)}'
     column_list = ['startdate', 'time', 'scen_num', 'sample_num', 'run_num']
-    outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul', 'asymp_cumul', 'asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
+    outcome_channels = ['susceptible', 'infected', 'recovered', 'infected_cumul','asymp_cumul','asymp_det_cumul', 'symp_mild_cumul', 'symp_severe_cumul', 'symp_mild_det_cumul',
         'symp_severe_det_cumul', 'hosp_det_cumul', 'hosp_cumul', 'detected_cumul', 'crit_cumul', 'crit_det_cumul', 'deaths_det_cumul',
         'deaths', 'crit_det',  'critical', 'hosp_det', 'hospitalized']
 
@@ -103,10 +103,10 @@ def load_and_plot_data(ems_region, savePlot=True) :
 
 
     df['ventilators'] = get_vents(df['crit_det'].values)
-    df['new_symptomatic'] = df['new_symptomatic_severe'] + df['new_symptomatic_mild'] + df['new_detected_symptomatic_severe'] + df['new_detected_symptomatic_mild']
+    df['new_symptomatic'] = df['new_symp_severe'] + df['new_symp_mild'] + df['new_symp_severe_det'] + df['new_symp_mild_det']
 
-    channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hospitalized', 'critical', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
-    plotchannels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_detected_deaths', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
+    channels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_deaths_det', 'hospitalized', 'critical', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
+    plotchannels = ['infected', 'new_infected', 'new_symptomatic', 'new_deaths', 'new_deaths_det', 'hosp_det', 'crit_det', 'ventilators', 'recovered']
 
     adf = pd.DataFrame()
     for c, channel in enumerate(channels):
@@ -176,9 +176,6 @@ if __name__ == '__main__' :
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-
-    regions = ['All', 'EMS-1', 'EMS-2', 'EMS-3', 'EMS-4', 'EMS-5', 'EMS-6', 'EMS-7', 'EMS-8', 'EMS-9', 'EMS-10','EMS-11']
-    
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
     for exp_name in exp_names:
         simdate = exp_name.split("_")[0]
@@ -187,24 +184,26 @@ if __name__ == '__main__' :
     
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
+
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
     
         if processStep == 'generate_outputs' :
             dfAll = pd.DataFrame()
-            for reg in regions :
+            for reg in grp_list :
                 print( f'Start processing {reg}')
                 tdf = load_and_plot_data(reg, savePlot=True)
                 adf = process_and_save(tdf, reg, SAVE=True)
                 dfAll = pd.concat([dfAll, adf])
                 del tdf
+
+            filename = f'nu_{simdate}.csv'
+            rename_geography_and_save(dfAll,filename=filename)
     
-            if len(regions) == 12 :
-                filename = f'nu_{simdate}.csv'
-                rename_geography_and_save(dfAll,filename=filename)
-    
-        ### Optional
+        ### Optional (might be needed for larger simulations)
         if processStep == 'combine_outputs' :
-    
-            for reg in regions :
+
+            for reg in grp_list :
                 print("Start processing" + reg)
                 filename = "nu_" + simdate + "_" + reg + ".csv"
                 adf = pd.read_csv(os.path.join(sim_output_path, filename))

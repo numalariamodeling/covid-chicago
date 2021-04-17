@@ -59,7 +59,7 @@ def plot_sim_and_ref(df, ems_nr, ref_df, channels, data_channel_names,region_lab
         ax.set_title(titles[c], y=0.8, fontsize=12)
         #ax.legend()
 
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
         ax.set_xlim(first_day, last_day)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         if logscale:
@@ -125,8 +125,11 @@ if __name__ == '__main__':
     exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
 
     for exp_name in exp_names:
-        plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
-        for ems_nr in range(1, 12):
-            print("Start processing region " + str(ems_nr))
-            compare_ems(exp_name,  ems_nr=int(ems_nr), param="Ki",
+        sim_output_path  = os.path.join(wdir, 'simulation_output',exp_name)
+        plot_path = os.path.join(sim_output_path, '_plots')
+        """Get group names"""
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+        for grp_nr in grp_numbers:
+            print("Start processing region " + str(grp_nr))
+            compare_ems(exp_name,  ems_nr=int(grp_nr), param="Ki",
                         first_day=first_plot_day, last_day=last_plot_day)

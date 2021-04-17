@@ -17,7 +17,8 @@ datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location
 class covidModel:
 
     def __init__(self,expandModel='testDelay_AsSymSys',observeLevel='primary', add_interventions='baseline',
-                 change_testDelay=None,homogeneous=False,add_ageShift_2ndWave=False,trigger_channel=None,fit_params=None,emodl_name=None,git_dir=git_dir):
+                 change_testDelay=None,homogeneous=False,add_ageShift_2ndWave=False,intervention_config='intervention_emodl_config.yaml',
+                 fit_params=None,emodl_name=None,git_dir=git_dir):
         self.model = 'age'
         self.grpList = ["age0to9", "age10to19", "age20to29", "age30to39", "age40to49", "age50to59", "age60to69", "age70to100"]
         self.expandModel = expandModel
@@ -26,7 +27,7 @@ class covidModel:
         self.change_testDelay = change_testDelay
         self.homogeneous = homogeneous
         self.add_ageShift_2ndWave = add_ageShift_2ndWave
-        self.trigger_channel = trigger_channel
+        self.intervention_config = intervention_config
         self.emodl_name = emodl_name
         self.emodl_dir = os.path.join(git_dir, 'emodl')
 
@@ -956,6 +957,8 @@ class covidModel:
 (param Ki_red11 (* Ki @ki_multiplier_11@))
 (param Ki_red12 (* Ki @ki_multiplier_12@))
 (param Ki_red13 (* Ki @ki_multiplier_13@))
+(param Ki_red14 (* Ki @ki_multiplier_14@))
+(param Ki_red15 (* Ki @ki_multiplier_15@))
 
 (param backtonormal_multiplier_1  (/ (- Ki_red6  Ki_red4 ) (- Ki Ki_red4 ) ) )  
 (observe backtonormal_multiplier_1 backtonormal_multiplier_1)
@@ -972,6 +975,8 @@ class covidModel:
 (time-event ki_multiplier_change_11 @ki_multiplier_time_11@ ((Ki Ki_red11)))
 (time-event ki_multiplier_change_12 @ki_multiplier_time_12@ ((Ki Ki_red12)))
 (time-event ki_multiplier_change_13 @ki_multiplier_time_13@ ((Ki Ki_red13)))
+(time-event ki_multiplier_change_14 @ki_multiplier_time_14@ ((Ki Ki_red14)))
+(time-event ki_multiplier_change_15 @ki_multiplier_time_15@ ((Ki Ki_red15)))
     """
 
         rollback_str = """

@@ -1,18 +1,24 @@
 
 ## Emodl generators
-The python files in this sub-directory allow to create .emodl files using python!
-To avoid having to edit the experiment_config (yaml) files, different emodl files are generated per simulation scenario. 
-Currently the emodl files are generated independently of the runScenarios and emodls exist for all scenarios in the emodl-sub-directory.
+The python files in this sub-directory create the model structure in the format of `emodl` files.
+When running the `runScenarios.py` a new `emodl` file is generated, if no `emodl` file is specified via the `--emodl flag`.
+Using the  `--emodl flag` allows to run custom model structures for which no emodl generator exists.
 
-#### emodl_generator_base.py
-- Generates emodl files without any age groups 
+#### emodl_generator_locale.py (main model in active use)
+- Generates emodl using the `locales` syntax in `CMS`, referred to as spatial or locale model. 
+- The locale model is customized for the eleven COVID-19 regions in Illinois and combines separate compartments for each region.
+- via `python runScenarios.py -r IL`  all 11 regions are run 
+- via `python runScenarios.py -r IL -sr EMS_1 EMS_2 ` selected sub-regions or single regions can be run
+- additional parameters are specified (required) in a separate yaml file using the format as in [spatial_EMS_experiment.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/spatial_EMS_experiment.yaml)
 
-#### emodl_generator_cobey_age.py
-- Generates emodl files for different age groups, currently "4grp" and "8grp" with age specific transmission and disease parameter
-- Eventually could be combined with  emodl_generator_cobey_contact_mix.py and having an option "age_specific=T"
 
-#### emodl_generator_locale.py
-- Generates emodl files without 'locales' per EMS , referred to as spatial model or 'EMS locale'
+#### emodl_generator_base.py (not maintained)
+- Generates emodl files without any groups 
+- previously used to run single regions, however as of March 31st, single regions are run using the locale model
+- additional parameters can (optional depending on emodl) be specified in a separate yaml file using the format as in [EMSspecific_sample_parameters.yaml](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
+
+#### emodl_generator_age.py  (not maintained)
+- Generates emodl files for different age groups, "8grp" with age specific transmission and disease parameter
 
 #### emodl_generator_age_locale.py (testing)
 - Generates emodl files with age groups per EMS (testing, not up to date) 
@@ -60,7 +66,7 @@ A complete list of the available channels to observe is included in the main rea
 ##### Selection of channels to observe
 With
 
- observeLevel='primary'
+ `observeLevel='primary'`
 
 in the emodl generator function is it possible to select between three priority levels to observe.
 Primary are the essential outcomes required for the weekly deliverables and standard plots.
@@ -233,32 +239,4 @@ Arguments
 
 Note [migration](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_locale.py#L339) is optional in the spatial model, whereas contact matrix in the age model is integrated per default.
 
-
-## Interventions 
-Currently added interventions: 
-- neverSIP  
-	- `add_interventions = 'None'`
-- continuedSIP 
-	- `add_interventions = 'continuedSIP'`
-- interventionStop 
-	- `add_interventions = 'interventionSTOP_adj'`
-- gradual_reopen
-	- `add_interventions = 'gradual_reopening3'`
-- increased testing of mild symptomatic infections
-	- `add_interventions = 'improveHS'` 
-- increased testing of a-, pre- and mild symptomatic infections
-	- `add_interventions = 'contactTracing'` 
-- reduced test delays
-	- `change_testDelay = "AsSym"`
-- increased testing of a-, pre- and mild symptomatic infections and reduced test delays
-	- `add_interventions = 'contactTracing'` 
-	- `change_testDelay = 'AsSym'`
-- gradual reopening and increased testing of a-, pre- and mild symptomatic infections 
-	- `add_interventions = 'reopen_contactTracing'` 
-- triggered rollback
-	- `add_interventions = 'rollbacktriggered'` 
-	- `trigger_channel = 'crit_det'` 
-- triggered rollback with region specific reopening and generic delay
-	- `add_interventions = 'rollbacktriggered_delay'` 
-	- `trigger_channel = 'crit_det'` 
 

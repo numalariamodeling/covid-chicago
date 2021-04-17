@@ -17,12 +17,20 @@ same as data_comparison_spatial.py, for plotting trends by a specified paramter
 Takes two experiment simulations and compares generates a plot comparing the trajectories of both
 - [plot_by_param_ICU_nonICU](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_by_param_ICU_nonICU.py)
 Plots the most recent trend in EMresource data for ICU and non-ICU and compares the next 2-3 weeks forward predictions, either with one or two exp_names
-- [plot_split_by_channel](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_channel.py)
-Comparison plotter for 2 channels in one panel (i.e. all vs detected for infected, symptomatic, hospitalized ...)
-- [plot_split_by_param_trajectories](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param_trajectories.py)
-Simple plot per outcome channel for one experiment, instead of aggregating trajectories, show single trajectories
 - [plot_exp_by_varying_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_exp_by_varying_param.py)
 Plot to show trends by varying sample parameter (i.e. for intervention scenarios) within one simulation.
+- [bar_timeline_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_timeline_plotter.py)
+Often used for civis slides, generates timeline comparing outcome channelf across multiple simulation experiments and cumulative barplot
+
+### Compare parameter or channels within one simulation experiment
+- [aggregate_by_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/aggregate_by_param.py)
+Aggregate custom specified channels by defined parameter and generate plot for 1 channel across all groups compared by that parameter. Saved a csv with aggregated trajectores (large if too many channels selected!)
+- [plot_split_by_param_trajectories](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param_trajectories.py)
+Simple plot per outcome channel for one experiment, instead of aggregating trajectories, show single trajectories
+- [plot_split_by_channel](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_channel.py)
+Plotter for comparing 2 channels in one panel for example used to plot vaccinations or detections (i.e. all vs detected, all vs vaccinated ...)
+- [plot_single_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_single_trajectories.py)
+
 
 #### Stacked and grouped timeline plots
 - [EMS_combo_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/EMS_combo_plotter.py)
@@ -51,10 +59,12 @@ Building on [trace_selection.py](https://github.com/numalariamodeling/covid-chic
 The script also uses functions from [sample_parameters.py](https://github.com/numalariamodeling/covid-chicago/blob/master/sample_parameters.py).
 
 #### Further scripts 
-- [extract_sample_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/extract_sample_param.py) Extract and visualize sample parameters that successfully ran in a simulation. Can be used to generate csv files that can be used as inpput in another simulation.
-- [plot_exp_by_varying_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_exp_by_varying_param.py)
+- [extract_sample_param.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/extract_sample_param.py) 
+Extract and visualize sample parameters that successfully ran in a simulation. Can be used to generate csv files that can be used as inpput in another simulation.
 - [emresource_cli_per_covidregion.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/emresource_cli_per_covidregion.py) (data_plotters folder)
-- [plot_split_by_channel.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_channel.py)
-- [plot_split_by_param_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_split_by_param_trajectories.py)
-- [plot_single_trajectories.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_single_trajectories.py)
+- [bar_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_plotter.py)
+Note: extended version in [bar_timeline_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/data_plotters/bar_timeline_plotter.py)
+- [Ki_plotter.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/Ki_plotter.py)
+
+
 

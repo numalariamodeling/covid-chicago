@@ -16,6 +16,20 @@ A basic SEIR model was extended to include symptom status (asymptomatic, presymp
 ![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_base_model_structure.png)
 Simulations run per [Emergency Medical Service Area (EMS)](https://www.dph.illinois.gov/sites/default/files/publications/emsjuly2016small.pdf) and are aggregated for [restore regions](https://coronavirus.illinois.gov/s/restore-illinois-regional-dashboard), and for Illinois. As of the 22nd of July, the ['covid regions'](http://dph.illinois.gov/regionmetrics?regionID=1) are used. For simplicity, the term 'EMS' is kept in the modelling files. 
 
+<details><summary>Show SEIR structure with vaccinations</summary>
+<p>
+
+When specying 'vaccine' as one of the intervention scenarios, the whole compartmental structure is mirrored for the vaccinated population.
+The vaccinated population is assumed to be less infectious and fewer infections are symptomatic (reducted fraction mild and severe symptoms).
+Whereas for the fraction of the vaccinated population that develops severe symptoms, the transition through the hospital stages is the same as for not-vaccinated population.
+Per default the fraction_severe is reduced by 100-95% (see parameter table).
+
+![model](https://github.com/numalariamodeling/covid-chicago/blob/master/SEIR_vaccine.png)
+(Note, the post-ICU compartment not shown in flowshart but included in the emodl file)
+
+</p>
+</details>
+
 ## 1.2. Model parameters
 Most of the parameters are derived from literature, local hospital data as well as doublechecked with other models used in Illinois (i.e. [UChicago](https://github.com/cobeylab/covid_IL/tree/master/Parameters)).
 The starting date, intervention effect size, and the transmission parameter "Ki"are fitted to death data.
@@ -46,7 +60,7 @@ All the parameters are sampled from a uniform distribution as specified in the [
 | Kr_hc     | Recovery rate of critical cases in med/surg after ICU stay                   |  
 | Kc        | Progression to critical                                                      |  
 | Km        | Deaths                                                                       |   
-
+| Kv_l      | Vaccinations (S -> S_V) for vaccine intervention model only                   |   
 
 ### 1.2.2  Transmission and disease parameters 
 
@@ -67,10 +81,14 @@ All the parameters are sampled from a uniform distribution as specified in the [
 | Recovery   time critical   (time varying)                               | Time until   critical cases (severe symptomatic) recover and return to H before discharge                                                                                                     | (8,10)            |                                                                                | [Bi et al 2020](https://www.thelancet.com/journals/laninf/article/PIIS1473-3099(20)30287-5/fulltext)                                                                             |
 | Recovery   time postcrit                                                | Time until   critical cases that stayed in med/surg after ICU stay are discharged                                                                                                             | (1,4)            |                                                                                 | Assumed, informed by NMH data                                                                             |
 | Fraction   symptomatic                                                  | Fraction of infections that   develop either mild or severe symptoms                                                                                                                          | (0.5,   0.7)      |                                                                                | [Oran and Topol et al 2020](https://www.scripps.edu/science-and-medicine/translational-institute/about/news/sarc-cov-2-infection/)                                                                              |
+| Reduced fraction   symptomatic                                          | Lower fraction of infections that   develop either mild or severe symptoms   (reduced for vaccinated population)                                                                              | (0.8,   1)      |                                                                                | Assumed                                                                            |
 | Fraction   severe symptomatic                                           | Fraction of symptomatic that   develop severe symptoms                                                                                                                                        | (0.02,   0.1)     |                                                                                | [Salje et al 2020](https://www.medrxiv.org/content/10.1101/2020.04.20.20072413v2)                                                                             |
+| Reduced  fraction severe symptomatic                                    | Lower fraction of symptomatic that   develop severe symptoms    (reduced for vaccinated population)                                                                                           | (0,   0.05)     |                                                                                | Assumed                                                                             |
 | Fraction critical     (time varying)                                    | Fraction   of severe symptomatic infections that require intensive care                                                                                                                       | (0.2, 0.35)       |                                                                                | [Lewnard et al 2020](https://pubmed.ncbi.nlm.nih.gov/32444358/)                                                                             |
 | CFR       (time varying)                                                | Case fatality rate                                                                                                                                                                            | (0.01, 0.04)      |                                                                                | [Wang et al 2020](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7042881/)                                                                              |
 | Reduced   infectiousness of detected cases                              | Fraction of detected cases that   isolate and are removed from the infectious population                                                                                                      | (0,   0.3)        |                                                                                | Assumed                                                                       |
+| Reduced   infectiousness of asymptomatic cases                          | Fraction of asymptomatic cases that are less infectious (currently disabled/not used)                                                                                                         | (1,  1)        |                                                                                | /                                                                      |
+| Reduced   infectiousness of vaccinated cases                            | Fraction of vaccinated cases that  are less infectious (only used in vaccine intervention model)                                                                                            | (0.1,   0.2)        |                                                                                | Assumed                                                                       |
 | Detection   probability of asymptomatic case                            | Used for contact tracing   simulations, per default asymtomatic cases are not detected                                                                                                        | (0,   0)          |                                                                                | Assumed   initial value, increase informed from Illinois specific data                                                                       |
 | Detection   probability of mild symptomatic case   (time varying)       | Initial value of the detection   rate, which is increasing over time                                                                                                                          | (0.05,   0.2)     |                                                                                | Assumed   initial value, increase informed from Illinois specific data        |
 | Detection   probability of severe symptomatic case  (time varying)      | Initial value of the detection   rate, which is increasing over time                                                                                                                          | (0.2,   0.5)      |                                                                                | Calculated from IL data                                        |
@@ -83,13 +101,13 @@ The [time-event](https://idmod.org/docs/cms/model-file.html?searchText=time-even
 Time-event are used to define reduction in the transmission rate, reflecting a decrease in contact rates due to social distancing interventions (i.e. stay-at-home order). 
 The time event can also be used to reflect increasing testing rates by increasing the detection of cases (i.e. dSym and dSys for increased testing at health facilities, or dAs and dSym for contact tracing)
 
-Current scenarios include:
-- No stay-at-home 
-- Continued stay-at-home
-- Stop stay-at-home order - immediately
-- Stop stay-at-home order - step-wise 
-- Contact tracing - immediately
-- Contact tracing - step-wise
+Current scenarios include any combination of those listed below:
+- Baseline (continued mitigation)
+- Reopen (discontinued mitigation)
+- Rollback  (itensified mitigation)
+- Triggered rollback (itensified mitigation based on threshold i.e. in critical cases)
+- Bvariant (increase in transmission rate and disease severity)
+- Vaccinations (splitting compartments into not-vaccinated vs vaccinated with substantially reduced infectiousness and severity for vaccinated population)
 
 For details, see the [cms implementation in one of the emodl generators](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_base.py#L514)
 
@@ -148,6 +166,7 @@ A ranking 'observeLevel' was introduced to select subsets of the outcomes. The p
 | 41             | symptomatic_mild_det   | Number of detected mild infections in the population                                   | secondary    | symptomatic_mild_det                                                                                                   |
 | 42             | symptomatic_severe     | Number of severe symptomatic infections                                                | secondary    | Sys, Sys_det3; Sys, Sys_preD, Sys_det3 ; Sys, Sys_preD, Sys_det3a,   Sys_det3b                                         |
 | 43             | symptomatic_severe_det | Number of detected severe symptomatic infections                                       | secondary    | symptomatic_severe_det                                                                                                 |
+Note, when using the vaccination scenario, these outcome channels include both vaccinated and not vaccinated compartments, whereas additional (same) outcomes are generated for the vaccinated population, denoted with suffix _V.
  
 </p>
 </details>
@@ -240,11 +259,13 @@ Note: this extension works for any sub-group as it duplicates the parameter name
 - python runScenarios.py --model "base" -r EMS_9  --scenario "baseline"  -n "userinitials"
 - python runScenarios.py --model "base" -r EMS_10 --scenario "baseline"  -n "userinitials"
 - python runScenarios.py --model "base" -r EMS_11 --scenario "baseline"  -n "userinitials"
+Note: the base model structure is not being updated and to run single regions it is recommended to use the locale model as described below.
 
 ##### Locale model
 - python runScenarios.py --model "locale" -r IL --scenario "baseline"  -n "userinitials"
-
-
+- python runScenarios.py --model "locale" -r IL -sr EMS_1  --scenario "baseline"  -n "userinitials"
+- python runScenarios.py --model "locale" -r IL -sr EMS_1 EMS_5 EMS_11  --scenario "baseline"  -n "userinitials"
+Note: -sr can take any number or combination of the 11 subregions in the format of EMS_1  to EMS_11 
 
 ##### Age model
 - python runScenarios.py --model "age" -r EMS_1  --scenario "baseline"  -n "userinitials"
@@ -258,8 +279,9 @@ Note: this extension works for any sub-group as it duplicates the parameter name
 - python runScenarios.py --model "age" -r EMS_9  --scenario "baseline"  -n "userinitials"
 - python runScenarios.py --model "age" -r EMS_10 --scenario "baseline"  -n "userinitials"
 - python runScenarios.py --model "age" -r EMS_11 --scenario "baseline"  -n "userinitials"
+Note: This model is not maintained and will be integrated into the locale model. 
 
-##### Age-locale model
+##### Age-locale model (testing)
 - python runScenarios.py --model "agelocale" -r IL --scenario "baseline"  -n "userinitials"
  
 ##### NU model 
@@ -277,25 +299,22 @@ The examples above show an abbreviated version, accepting most defaults. The tab
 |----	|---------------------	|----------------|----------|----------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|--------------------------------------------------------------------------------------------------------------------------------	|---------------------------	|
 | 1  	| --masterconfig      	| -mc            | FALSE    | FALSE    	| Master yaml file that includes all model parameters.                                                                                                                                                                                                                                                 	|                                                                                                                                	| "extendedcobey_200428.yaml" 	|
 | 2  	| --running_location  	| -rl            | FALSE    | FALSE    	| Location where the simulation is being run.  If None (not provided) the script tries to   determine running location based system variables                                                                                                                                                          	| "Local", "NUCLUSTER"                                                                                                           	| "None"                      	|
-| 3  	| --region            	| -r             | FALSE     | TRUE     	| Region on which to run simulation. E.g. 'IL'                                                                                                                                                                                                                                                         	| 'IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7',   'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'                  	| /                         	|
-| 4  	| --experiment_config 	| -c             | FALSE    | FALSE    	| Config file (in YAML) containing the parameters to override the default config. This file should have the same   structure as the default config. example: ./experiment_configs/sample_experiment.yaml If not provided, the default   experiment_config is selected based on model specification 	|                                                                                                                                		| "None"                      	|
-| 5  	| --emodl_template    	| -e             | FALSE    | FALSE    	| Template emodl file to use. If not provided, the emodl_template is generated based on model AND scenario specification. If no scenario specification is given it uses the baseline scenario!                                                                                                   	|                                                                                                                                		| "None"                      	|
-| 6  	| --model             	| -m             | TRUE     | TRUE     	| Model type (see choices)                                                                                                                                                                                                                                                                                          	| "base",   "locale","age","agelocale","nu"                                                                                      	| /                          	|
-| 7  	| --scenario          	| -s             | DEPENDS    | FALSE  	| Intervention scenario to use. Might differ for locale and other models.                                                                                                                                                                                                                                                                        	| see emodl readme…                                                                                                              	| "baseline"                  	|
-| 8  	| --paramdistribution 	| -dis           | TRUE    | FALSE    	| Use parameter ranges or means (could be extended to specify shape of distribution)  (used only for locale/spatial model)                                                                                                                                                                                                                      	| "uniform_range", "uniform_mean"                                                                 	| "uniform_range"             	|
-| 9  	| --cfg_template      	| -cfg           | FALSE    | FALSE    	| Template cfg file to use. For more details visit   https://docs.idmod.org/projects/cms/en/latest/solvers.html                                                                                                                                                                                        	| "model_B.cfg", "model_Tau.cfg", "model_RLeapingFast.cfg", "model_RLeaping.cfg","model_FD.cfg","model_DFSP.cfg","model_SSA.cfg" 	| "model_B.cfg"               	|
-| 10 	| --name_suffix       	| -n             | FALSE    | FALSE    	| Adding custom suffix to the   experiment name. If not specified, a random number will be used                                                                                                                                                                                                        	|                                                                                                                                	| f"_test_rn{str(today.microsecond)[-2:]}"            	|
-| 11 	| --post_process      	| -p             | DEPENDS    | FALSE    	| Whether or not to run post-processing. Note default on NUCLUSTER vs Local   varies                                                                                                                                                                                                                   	| "dataComparison", "processForCivis"                                                                                            	| "None"                      	|
-| 12 	| --sample_csv        	| -csv           | FALSE    | FALSE    	| Name of sampled_parameters.csv, any   input csv will be renamed per default to 'sampled_parameters.csv'                                                                                                                                                                                              	|                                                                                                                                	| "None"                      	|
-| 13 	| --observeLevel        | -obs           | FALSE    | FALSE    	| Specifies which outcome channels to simulate and return in trajectoriesDat.csv                                                                                                                                                                                              							| "primary", "secondary", "tertiary"                                                                                     	     	| "secondary"                  	|
-| 13 	| --expandModel         | -expand        | FALSE    | FALSE    	| Specific for test delay, defines where to allow test delay (As,Sym, Sys)                                                                                                                                                                                              							    | "uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"                                                                      | "testDelay_AsSymSys"                  	|
-| 13 	| --trigger_channel     | -trigger       | TRUE    | FALSE    	| Specific channel name of trigger to use (used only for locale/spatial model)                                                                                                                                                                                      									| "None", "critical", "crit_det", "hospitalized", "hosp_det"                                                                        | "None"                  	|
-| 13 	| --fit_params          | -fit           | TRUE    | FALSE    	| Name of parameters to fit (testing stage, currently supports only single ki multipliers),                                                                                                                                                                                     						| ki_multiplier_4 to ki_multiplier_13 (currently supports only 1 at a time)                                                         | "None"                  	|
+| 3  	| --region            	| -r             | FALSE     | TRUE     | Region for which to run simulation. E.g. 'IL'                                                                                                                                                                                                                                                         	| 'IL','EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7',   'EMS_8', 'EMS_9', 'EMS_10','EMS_11','NU'                  	| /                         	|
+| 4  	| --subregion           | -sr            | TRUE     | FALSE     | Subregion for which to run simulation.                                                                                                                                                                                                                                                        	| any combination of EMS_1 to EMS_11  i.e. 'EMS_11' , 'EMS_1' 'EMS_2'  , 'EMS_1' 'EMS_5' 'EMS_11'                                    	| ['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7',   'EMS_8', 'EMS_9', 'EMS_10','EMS_11']                        	|
+| 5  	| --experiment_config 	| -c             | FALSE    | FALSE    	| Config file (in YAML) containing the parameters to override the default config. This file should have the same   structure as the default config. example: ./experiment_configs/sample_experiment.yaml If not provided, the default   experiment_config is selected based on model specification 	|                                                                                                                                		| "None"                      	|
+| 6  	| --emodl_template    	| -e             | FALSE    | FALSE    	| Template emodl file to use. If not provided, the emodl_template is generated based on model AND scenario specification. If no scenario specification is given it uses the baseline scenario!                                                                                                   	|                                                                                                                                		| "None"                      	|
+| 7  	| --model             	| -m             | TRUE     | TRUE     	| Model type (see choices)                                                                                                                                                                                                                                                                                          	| "base",   "locale","age","agelocale","nu"                                                                                      	| /                          	|
+| 8  	| --scenario          	| -s             | DEPENDS    | FALSE  	| Intervention scenario to use. Might differ for locale and other models.                                                                                                                                                                                                                                | 'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant", "vaccine"' (Separated by underscore)                                                                                                            	| "baseline"                  	|
+| 9  	| --paramdistribution 	| -dis           | TRUE    | FALSE    	| Use parameter ranges or means (could be extended to specify shape of distribution)  (used only for locale/spatial model)                                                                                                                                                                                                                      	| "uniform_range", "uniform_mean"                                                                 	| "uniform_range"             	|
+| 10  	| --cfg_template      	| -cfg           | FALSE    | FALSE    	| Template cfg file to use. For more details visit   https://docs.idmod.org/projects/cms/en/latest/solvers.html                                                                                                                                                                                        	| "model_B.cfg", "model_Tau.cfg", "model_RLeapingFast.cfg", "model_RLeaping.cfg","model_FD.cfg","model_DFSP.cfg","model_SSA.cfg" 	| "model_B.cfg"               	|
+| 11 	| --name_suffix       	| -n             | FALSE    | FALSE    	| Adding custom suffix to the   experiment name. If not specified, a random number will be used                                                                                                                                                                                                        	|                                                                                                                                	| f"_test_rn{str(today.microsecond)[-2:]}"            	|
+| 12 	| --post_process      	| -p             | DEPENDS    | FALSE    	| Whether or not to run post-processing. Note default on NUCLUSTER vs Local   varies                                                                                                                                                                                                                   	| "dataComparison", "processForCivis"                                                                                            	| "None"                      	|
+| 13 	| --sample_csv        	| -csv           | FALSE    | FALSE    	| Name of sampled_parameters.csv, any   input csv will be renamed per default to 'sampled_parameters.csv'                                                                                                                                                                                              	|                                                                                                                                	| "None"                      	|
+| 14 	| --observeLevel        | -obs           | FALSE    | FALSE    	| Specifies which outcome channels to simulate and return in trajectoriesDat.csv                                                                                                                                                                                              							| "primary", "secondary", "tertiary"                                                                                     	     	| "secondary"                  	|
+| 15 	| --expandModel         | -expand        | FALSE    | FALSE    	| Specific for test delay, defines where to allow test delay (As,Sym, Sys)                                                                                                                                                                                              							    | "uniformtestDelay", "testDelay_SymSys", "testDelay_AsSymSys"                                                                      | "testDelay_AsSymSys"                  	|
+| 16 	| --trigger_channel     | -trigger       | TRUE    | FALSE    	| Specific channel name of trigger to use (used only for locale/spatial model)                                                                                                                                                                                      									| "None", "critical", "crit_det", "hospitalized", "hosp_det"                                                                        | "None"                  	|
+| 17 	| --fit_params          | -fit           | TRUE    | FALSE    	| Name of parameters to fit (testing stage, currently supports only single ki multipliers),                                                                                                                                                                                     						| ki_multiplier_4 to ki_multiplier_13 (currently supports only 1 at a time)                                                         | "None"                  	|
 
-Planned updates:
-- add "normal_range" and "normal_mean" to  --paramdistribution
-- add --fitting argument
-- add vaccine and  B variant scenarios
 
 </p>
 </details>
@@ -314,10 +333,10 @@ The [sample_parameters.py](sample_parameters.py) script allows to:
 Running examples:  
 - nsamples: optional, if specified if overwrites the nsamples in the base configuration, if loading an existing csv the first n samples will be selected (i.e. when selecting samples from an excisting csv file, could be modified to be random if needed)
 - emodl_template: the emodl template is required to test whether the parameter csv table includes all required parameters defined in the desired emodl file to run
-- example 1: `python sample_parameters.py -rl Local -r IL --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl  -save sampled_parameters2.csv`
-- example 2: `python sample_parameters.py -rl Local -save sampled_parameters_1000.csv --nsamples 1000`
-- example 3: `python sample_parameters.py -rl Local -load sampled_parameters_1000.csv -save sampled_parameters_1000_v2.csv  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
-- example 4: `python sample_parameters.py   --csv_name_combo  sampled_parameters_sm7.csv   -save sampled_parameters_sm7_combo.csv`
+- example 1: `python sample_parameters.py -rl Local -r IL --model locale --experiment_config spatial_EMS_experiment.yaml --emodl_template extendedmodel_EMS.emodl  -save sampled_parameters2.csv`
+- example 2: `python sample_parameters.py -rl Local --model locale -save sampled_parameters_1000.csv --nsamples 1000`
+- example 3: `python sample_parameters.py -rl Local --model locale -load sampled_parameters_1000.csv -save sampled_parameters_1000_v2.csv  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
+- example 4: `python sample_parameters.py   --model locale --csv_name_combo  sampled_parameters_sm7.csv   -save sampled_parameters_sm7_combo.csv`
    -(sampled_parameters_sm7.csv not under version control, but would for example include 10 values for social multiplier 7 for all 11 regions, the base sample parameters are repeated for each of the 10 rows of the additional csv)
 
 When running simulations with an pre-existing csv file, specify 
@@ -349,45 +368,7 @@ If you do not have `wine` installed on your system, you can use the provided [Do
 To build the Docker image, run `docker build -t cms`. Set `DOCKER_IMAGE=cms` in your environment or your `.env` file to use it.
 
 ### Running on Quest (NUCLUSTER) 
-A cloned version of the git repository can be found under `/projects/p30781/covidproject/covid-chicago/`.
-
-Requirements:
-All the modules need to be installed on the personal quest environment 
-- use pip install ... in your terminal 
-- install `dotenv` and `yamlordereddictloader`
-`conda create --name dotenv-py37 -c conda-forge python-yamlordereddictloader python=3.7 --yes`
-`source activate dotenv-py37`
-`conda install -c conda-forge yamlordereddictloader`
-
-Alternatively, a virtual environment can be activated using:
-i.e. add a `set-covid-chicago` command in the `bash.profile` file in the home directory
-
-	set-covid-chicago(){
-		module purge all
-		module load python/anaconda3.6
-		source activate /projects/p30781/anaconda3/envs/team-test-py37
-	}
-  
-[Box syncing](https://kb.northwestern.edu/page.php?id=70521):
-
-	mirror-box-covid(){
-		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Cleaned\ Data/ /projects/p30781/covidproject/data/covid_IDPH/Cleaned\ Data/; exit"
-		lftp -p 990 -u <useremail> ftps://box.com -e "mirror NU-malaria-team/data/covid_IDPH/Corona\ virus\ reports/ /projects/p30781/covidproject/data/covid_IDPH/Corona\ virus\ reports/; exit"
-		lftp -p 990 -u <useremail> ftps://box.com -e "mirror -R /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/ NU-malaria-team/projects/covid_chicago/cms_sim/simulation_output/; exit"
-	}
- 
-
-##### Submit job 
-On Quest jobs are submitted using the SLURM workload manager and syntax ([SLURM on quest](https://kb.northwestern.edu/page.php?id=89456))
-`cd /projects/p30781/covidproject/covid-chicago/`
-`- python runScenarios.py -rl NUCLUSTER --model "base" -r IL --scenario "baseline"  -n "userinitials"`
-
-The experiments will go to the `_temp` folder on the quest gitrepository. 
-To avoid confusion on owner of the simulations it is recommended to include the initials in the experiment name using the name_suffix argument
-
-The status of the job submission can be called via `squeue -u <username>`
-
-Further helpful examples are in the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
+Information related to running on quest can be found in the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
 
 </p>
 </details>
@@ -399,10 +380,12 @@ Batch files are only generated for the most important postprocessing files and a
 To see all the available postprocessing scripts, go to the [plotters folder](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/) (see readme in folder for details).
 When adding the flag `--post_process "processForCivis"` in the `runScenarios.py` submission command, the batch files related to the weekly deliverables are automatically executed. 
 
-## Postprocessing on local machine
+## Postprocessing
 Locally, there are two main batch files:
 - `run_postprocess.bat` is a wrapper batch file that runs postprocessing files from the list below (general postprocessing not for weekly deliverables)
 - `run_postprocess_for_civis.bat` is a wrapper batch file that runs postprocessing from the list below (postprocessing for weekly deliverables)
+
+For postprocessing on Quest, please read the [readme in nucluster](https://github.com/numalariamodeling/covid-chicago/tree/master/nucluster#submission-workflow-on-the-nu-cluster-quest)
 
 The postprocessing includes the following steps below:
 
@@ -430,43 +413,6 @@ ATTENTION-2: 1_runSimulateTraces.bat only needed for parameter estimation!
 </p>
 </details>
 
-## Postprocessing on the NU cluster 'Quest'
-On Quest shell instead of batch files are generated for the same python files as shown above.
-For a detailed descripton of the shell files and processing steps, expand below:
-
-<details><summary>Detailed processing steps</summary>
-<p> 
-
-The time limit for each single simulation was set to 30 min per default.
-Simulation run in the `_temp` folder (`/projects/p30781/covidproject/covid-chicago/_temp/`) in the git repository.
-After all simulations ran, they are automatically combined and moved to the Box folder on Quest, located in 
-`simulation_output` (`/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/`)
-
-Wrapper shell script:
-- `run_postprocessing.sh` runs automatically after simulation finish, it includes scripts from the list below.
-
-Run from `/projects/p30781/covidproject/covid-chicago/_temp/<exp_name>`
-- `0_runCombineAndTrimTrajectories.sh` 
-- `0_cleanupSimulations.sh`  calls  [cleanup.py](https://github.com/numalariamodeling/covid-chicago/blob/master/nucluster/cleanup.py) and transfers files from temp to Box (on Quest)
-
-Run from `/projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>`
-- `0_locale_age_postprocessing.sh`
-- `1_runTraceSelection.sh` 
-- (`1_runSimulateTraces.sh` )
-- `2_runDataComparison.sh` 
-- `3_runProcessTrajectories.sh`
-- `4_runRtEstimation.sh` 
-- `5_runOverflowProbabilities.sh` 
-- `6_runPrevalenceIFR.sh` 
-- `7_runICUnonICU.sh` 
-- `8_runHospICUDeathsForecast.sh` 
-- `9_runCopyDeliverables.sh`
-- `10_runIterationComparison.sh` 
-- `11_runCleanUpAndZip.sh` 
-
-</p>
-</details>
-
 
 # 4 Data sources
 - Populaton estimates per county (2019): [County Population Totals: 2010-2019](https://www.census.gov/data/tables/time-series/demo/popest/2010s-counties-total.html#par_textimage_242301767)
@@ -487,6 +433,11 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
+- 20210402 deactivated bvariant due to bug, updated parameter fit, updated plotter/nuciviscopy to include vaccine and bvariant descriptions,   
+- 20210317 added ki multiplier 15 to intervention emodl yaml, set bvariant_start date after ki multiplier 15, updated scaling factor 
+- 20210316 added transmission multiplier 15 for March, included bvariant, included vaccinations, updated parameter fit
+- 20210303 updated parameter fit 
+- 20210217 added transmission multiplier 14 for February, added range for initial transmission rate
 - 20210210 model update: added pre-/post ICU compartments, added reduced infectiousness for asymptomatic infections, updated time-varying IL specific parameters
 - 20210204 workflow update: attached emodl generation to runScenarios.py (optional)
 - 20210203 updated parameter fit, recovery_As set to 9

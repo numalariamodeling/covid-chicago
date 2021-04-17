@@ -9,10 +9,7 @@ import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import yaml
-import yamlordereddictloader
 
-from dotenv import load_dotenv
-load_dotenv()
 
 from load_paths import load_box_paths
 from simulation_helpers import (DateToTimestep, cleanup, write_emodl,
@@ -347,6 +344,14 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                                        generateNew=generateNew,
                                        use_means=use_means)
 
+    if Location == 'NUCLUSTER' and cfg_file =="model_B.cfg":
+        fin = open(os.path.join(temp_exp_dir, cfg_file), "rt")
+        cfg_txt = fin.read()
+        cfg_txt = cfg_txt.replace('"Tau"  : 0.001', '"Tau"  : 0.0001')
+        fin.close()
+        fin = open(os.path.join(temp_exp_dir, cfg_file), "wt")
+        fin.write(cfg_txt)
+
     for row_i, row in dfparam.iterrows():
         Ki = row['Ki']
         scen_num = row['scen_num']
@@ -383,7 +388,11 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
 
 
 def get_experiment_config(experiment_config_file):
-    config = yaml.load(open(os.path.join('./experiment_configs', args.masterconfig)), Loader=yamlordereddictloader.Loader)
+    try:
+        import yamlordereddictloader
+        config = yaml.load(open(os.path.join('./experiment_configs', args.masterconfig)), Loader=yamlordereddictloader.Loader)
+    except:
+        config = yaml.load(open(os.path.join('./experiment_configs', args.masterconfig)))
     yaml_file = open(os.path.join('./experiment_configs',experiment_config_file))
     expt_config = yaml.safe_load(yaml_file)
     for param_type, updated_params in expt_config.items():
@@ -392,7 +401,6 @@ def get_experiment_config(experiment_config_file):
         if updated_params:
             config[param_type].update(updated_params)
     return config
-
 
 def get_experiment_setup_parameters(experiment_config):
     return experiment_config['experiment_setup_parameters']
@@ -456,6 +464,15 @@ def parse_args():
         required=True
     )
     parser.add_argument(
+        "-sr",
+        "--subregion",
+        type=str,
+        help="For locale model only, optionally select single region(s) within IL 'EMS_1'",
+        nargs='+',
+        default=['EMS_1', 'EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10','EMS_11'],
+        required=False
+    )
+    parser.add_argument(
         "-c",
         "--experiment_config",
         type=str,
@@ -487,10 +504,9 @@ def parse_args():
         "--scenario",
         type=str,
         help=("Intervention scenario to use, default = baseline"
-              "Example choices are shown below for a full list please visit the GitHub readme"),
-        choices=["baseline", "rollback", "reopen_rollback", "rollbacktriggered_delay", "gradual_reopening",
-                 "gradual_reopening2","interventionSTOP","contactTracing","improveHS","contactTracing_improveHS",
-                 "reopen_contactTracing_improveHS","bvariant"],
+              'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant", "vaccine"'
+              'Separated by underscore, example: reopen_rollback '
+              "For a full list please visit the GitHub readme"),
         default="baseline"
     )
     parser.add_argument(
@@ -498,7 +514,7 @@ def parse_args():
         "--paramdistribution",
         type=str,
         help="Use parameter ranges or means (could be extended to specify shape of distribution)",
-        choices=["uniform_range", "uniform_mean", "normal_range", "normal_mean"],
+        choices=["uniform_range", "uniform_mean"], #, "normal_range", "normal_mean"],
         default= "uniform_range"
     )
 
@@ -538,8 +554,10 @@ def parse_args():
         "-obs",
         "--observeLevel",
         type=str,
-        help="Specifies which outcome channels to simulate and return in trajectoriesDat.csv",
-        choices=["primary", "secondary", "tertiary"],
+        help=("Specifies which group of outcome channels to simulate and return in trajectoriesDat.csv."
+              "The number of outcome channels affects file size and may slow down speed of postprocessing."
+              "When specifying 'all', the channels include each single state variable"),
+        choices=["primary", "secondary", "tertiary",'all'],
         default='secondary'
     )
     parser.add_argument(
@@ -557,22 +575,22 @@ def parse_args():
         help="If true adds and time event for change in test delay (i.e. reduced time to detection)"
     )
     parser.add_argument(
-        "-trigger",
-        "--trigger_channel",
+        "-ic",
+        "--intervention_config",
         type=str,
-        help="Specific channel name of trigger to use",
-        choices=["None", "critical", "crit_det", "hospitalized", "hosp_det"],
-        default=None
+        help="Name of intervention configurations for emodl structure (i.e. number of time-events, or read in csv)",
+        default='intervention_emodl_config.yaml'
     )
     parser.add_argument(
         "-fit",
         "--fit_params",
         type=str,
-        help=("Name of parameters to fit (testing stage, currently supports only single ki multipliers),"
-              "to be etxtended using nargs='+' when ready. It adds a scaling factor to the region specific ki_multipliers"),
+        help=("Name of parameters to fit (testing stage, currently supports only single ki multipliers)"
+              "to be etxtended using nargs='+' when ready. It adds a scaling factor to the region specific ki_multipliers"
+              "For simplicity should be used with -dis 'uniform_mean'"),
         #choices=["ki_multiplier_4", "ki_multiplier_5", "ki_multiplier_6", "ki_multiplier_7", "ki_multiplier_8",
         #         "ki_multiplier_9", "ki_multiplier_10", "ki_multiplier_11", "ki_multiplier_12", "ki_multiplier_13"],
-        default=None
+        default= [None]
     )
     return parser.parse_args()
 
@@ -616,14 +634,24 @@ if __name__ == '__main__':
     # =============================================================
     #   Model specifications
     # =============================================================
+    if len(args.subregion) == 1:
+        subregion = args.subregion
+        subregion_label = args.subregion[0]
+    else:
+        subregion = args.subregion
+        subregion_label = ''
+        if len(subregion) < 11:
+            subregion_label = '_sub'
+
     if emodl_template is None:
         log.debug(f"Running scenarios for {model} and {scenario}")
-        emodl_template = write_emodl(model,
+        emodl_template = write_emodl(model=model,
+                                     subregion=subregion,
                                      scenario=scenario,
                                      change_testDelay=args.change_testDelay,
                                      observeLevel=args.observeLevel,
                                      expandModel=args.expandModel,
-                                     trigger_channel=args.trigger_channel,
+                                     intervention_config=args.intervention_config,
                                      fit_params = args.fit_params,
                                      emodl_name=None)
 
@@ -658,15 +686,15 @@ if __name__ == '__main__':
         exp_name = f"{today.strftime('%Y%m%d')}_{region}_{args.name_suffix}"
     else:
         if model =='locale':
-            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.paramdistribution}_{args.name_suffix}_{scenario}"
+            exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}{subregion_label}_{args.name_suffix}_{scenario}"
         else:
             exp_name = f"{today.strftime('%Y%m%d')}_{region}_{model}_{args.name_suffix}_{scenario}"
-        if args.fit_params != None:
+        if args.fit_params[0] != None:
             exp_name = exp_name.replace(scenario,'fitting')
 
     # Generate folders and copy required files
     temp_dir, temp_exp_dir, trajectories_dir, sim_output_path, plot_path = makeExperimentFolder(
-        exp_name, emodl_dir, emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, wdir=wdir,
+        exp_name, emodl_dir, emodl_template, cfg_dir, args.cfg_template,  yaml_dir,  args.masterconfig, args.experiment_config, args.intervention_config, wdir=wdir,
         git_dir=git_dir)
     log.debug(f"temp_dir = {temp_dir}\n"
               f"temp_exp_dir = {temp_exp_dir}\n"
@@ -691,7 +719,7 @@ if __name__ == '__main__':
         generateSubmissionFile_quest(nscen, exp_name, args.experiment_config, trajectories_dir,git_dir, temp_exp_dir,exe_dir,sim_output_path,model)
         submission_script=None
         if args.post_process == 'processForCivis':
-            submission_script = 'submit_runSimulations_with_trace_selection.sh'
+            submission_script = 'submit_runSimulations_for_civis.sh'
         runExp(trajectories_dir=temp_exp_dir, Location='NUCLUSTER',submission_script=submission_script )
 
     if Location == 'Local':

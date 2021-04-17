@@ -30,7 +30,7 @@ if __name__ == '__main__' :
     adf = adf[adf['date'] >= pd.Timestamp('2020-10-01')]
     # print(adf.columns.values)
 
-    channels = ['infected', 'new_detected_hospitalized']
+    channels = ['infected', 'new_hosp_det']
 
     gdf = adf.groupby(['run_num', 'sample_num'])
     palette = sns.color_palette('rainbow', len(gdf))

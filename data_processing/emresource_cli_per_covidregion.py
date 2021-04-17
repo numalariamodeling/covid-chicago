@@ -82,12 +82,12 @@ def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_gr
 
     regions = '-'.join(map(str, ems_list))
     fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.png'))
-    #fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
+    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
 
 if __name__ == '__main__' :
 
-    first_plot_day = pd.to_datetime(date(2020, 10, 15))
+    first_plot_day = pd.to_datetime(date(2021, 2, 1))
     last_plot_day = pd.to_datetime(today)
 
     plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
-    plot_emresource(ems_list=range(1, 12), scale='nolog')
+    plot_emresource(ems_list=range(0, 12), scale='nolog')

@@ -83,7 +83,7 @@ def plot_sim_and_ref(exp_names, ems_nr, first_day, last_day, ymax=10000, logscal
             ax.set_title(titles[c], y=0.8, fontsize=12)
 
         axes[-1].legend()
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
         ax.set_xlim(first_day, last_day)
         if logscale:
             ax.set_ylim(0.1, ymax)
@@ -121,10 +121,13 @@ if __name__ == '__main__':
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names) - 1], '_plots')
 
-    for ems_nr in range(1, 12):
-        print("Start processing region " + str(ems_nr))
-        #plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
+    """Get group names"""
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=os.path.join(wdir, 'simulation_output',exp_names[0]))
+
+    for grp_nr in grp_numbers:
+        print("Start processing region " + str(grp_nr))
+        #plot_sim_and_ref(exp_names, ems_nr=grp_nr, first_day=first_plot_day,
         #                 last_day=last_plot_day, logscale=True)
-        plot_sim_and_ref(exp_names, ems_nr=ems_nr, first_day=first_plot_day,
+        plot_sim_and_ref(exp_names, ems_nr=grp_nr, first_day=first_plot_day,
                          last_day=last_plot_day, logscale=False)
 

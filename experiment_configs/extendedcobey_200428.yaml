@@ -1,8 +1,8 @@
 experiment_setup_parameters:
   'number_of_samples': 600
   'number_of_runs': 1
-  'duration': 530
-  'monitoring_samples': 530 # needs to be less than or equal to duration
+  'duration': 560 # until 5th Sep 2021 for startdate 2020-02-13 
+  'monitoring_samples': 560 # needs to be less than or equal to duration
   'random_seed': 751
   'initialAs': 10
 fixed_parameters_region_specific:
@@ -265,25 +265,45 @@ sampled_parameters:
     function_kwargs: {'low':0.091 , 'high':0.169}
   'fraction_dead_change9':
     np.random: uniform
-    function_kwargs: {'low':0.0280, 'high':0.052}                                           
+    function_kwargs: {'low':0.0280, 'high':0.052}
+  ### ---- VACCINE ----------------------
+  #'vacc_daily_cov':
+  #  np: linspace
+  #  function_kwargs: {'start':0.00523, 'stop':0.00523, 'num' : 1} ## not used per default
+  ### if trace selection would allow group by parameter, to keep uncertainity in intervention parameters
+  ### currenly all traces are ranked regardless of groupings
+  'reduced_fraction_Sym':
+    np.random: uniform
+    function_kwargs: { 'low': 0.8, 'high': 0.8 }
+  'reduced_fraction_Sys':
+    np.random: uniform
+    function_kwargs: { 'low': 0.05, 'high': 0.05 }
+  'reduced_infectious_V':
+    np.random: uniform
+    function_kwargs: { 'low': 0.1, 'high': 0.1}
+  'reduced_fraction_Sys_notV':
+    np.random: uniform
+    function_kwargs: { 'low': 0.15, 'high': 0.15}
 intervention_parameters:
   ###------------------------------------------------
-  ### PARAMETER SCALING FACTORS ONLY USED IN FITTING
+  ### ---- Parameter scalingfactor ------------------
+  ### parameter scaling factors only used in fitting
   ### (currenlty only applies to fitting ki_multipliers in locale model)
   ### i.e. when specifying --fit_params "ki_multiplier_13"
   'scalingfactor':
     np: linspace
-    function_kwargs: {'start':0.95, 'stop':1.1}
+    function_kwargs: {'start':1, 'stop':2, 'num' :1}
     #function_kwargs: {'start':0.95, 'stop':1.1, 'num' : 5}
   ###------------------------------------------------
   ### INTERVENTION PARAMETERS  - EFFECT SIZE
   ### (only used if corresponding emodl is defined)   
   ###------------------------------------------------  
-  ### ---- IMMEDIATE REOPENING ----------------------
-  ### Relative increase in transmission rate due to COVID-19 B variant  
+  ### ---- B.1.1.7 Variant  ----------------------
+  ### Relative increase in transmission and severity due to COVID-19 B variant
+  ### here i.e. 50% increase = 0.5, not 1.5
   'bvariant_infectivity':
     np: linspace
-    function_kwargs: {'start':1.5, 'stop':1.5}
+    function_kwargs: {'start':0.5, 'stop':0.5}
   ### Fraction of the population infected with COVID-19 B variant  
   'bvariant_fracinfect':
     np: linspace
@@ -291,30 +311,21 @@ intervention_parameters:
     #function_kwargs: {'start':0.5, 'stop':0.5}
     #function_kwargs: {'start':0.75, 'stop':0.75}
     #function_kwargs: {'start':0.25, 'stop':0.75, 'num' : 3}
-  ### Relative increase in fraction severe due to COVID-19 B variant  
+  ### Relative increase in fraction severe due to COVID-19 B variant
+  ### Here 50% increase = 1.5
   'bvariant_severity':
     np: linspace
     function_kwargs: {'start':1.5, 'stop':1.5}
-  ### Reset Ki to defined proporions of it's initial value  
-  'backtonormal_multiplier':
-    np.random: uniform
-    # Add 'size' in function_kwargs to have multiple values instead of just one
-    function_kwargs: {'low':0.10, 'high':0.10}
-  ### ---- GRADUAL REOPENING ----------------------
-  ### Reset Ki to defined proporions of it's initial value using multiple time-events
-  ### Default in the yaml is a linear increase, scaling  reopening_multiplier_4 by 0.25, 0.5, 0.75 and 1
-  #'reopening_multiplier_1':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.02, 'high':0.02}
-  #'reopening_multiplier_2':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.04, 'high':0.04}
-  #'reopening_multiplier_3':
-  #  np.random: uniform
-  #  function_kwargs: {'low':0.06, 'high':0.06}
-  'reopening_multiplier_4':
+  ### ---- ROLLBACK OR TRIGGEREDROLLBACK ----------------------
+  ### Decrease Ki due to more intense mitigation measures
+  'rollback_multiplier':
     np: linspace
-    function_kwargs: {'start':0, 'stop':0.20, 'num' : 1}
+    function_kwargs: {'start':0.1, 'stop':0.20, 'num' : 1}
+  ### ---- REOPENING ----------------------
+  ### Reset Ki to defined proporions of it's initial value using multiple time-events
+  'reopen_multiplier':
+    np: linspace
+    function_kwargs: {'start':0.20, 'stop':0.20, 'num' : 1}
   ### ---- IMPROVED TESTING/ISOLATION TURNAROUND -----------
   'change_testDelay_As_1':
     np: linspace
@@ -394,6 +405,12 @@ time_parameters:
   'ki_multiplier_time_13':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2021-01-20}
+  'ki_multiplier_time_14':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-02-15}
+  'ki_multiplier_time_15':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-03-15}    
   ### ---- Increased detections ---- 
   ### Change in d_Sys
   'd_Sys_change_time_1':
@@ -489,11 +506,6 @@ time_parameters:
   'fraction_dead_time_3':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-07-01}                     
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-06-01}   
-  'cfr_time_2':
-    custom_function: DateToTimestep
-    function_kwargs: {'dates': 2020-07-01}   
   'fraction_dead_time_4':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2020-08-01}   
@@ -516,28 +528,65 @@ time_parameters:
   ### INTERVENTION PARAMETERS  - DATES
   ### (only used with corresponding emodl)
   ###------------------------------------------------
-  ### ---- intervention1 ---
-  'intervention1_start':
+  ### ---- Bvariant ---
+  'bvariant_start':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-01-10}
+    function_kwargs: {'dates': 2021-03-20}
     #function_kwargs: {'dates': [2021-01-01, 2021-01-14, 2021-02-01]}
-  'intervention1_scaleupend':
+  'bvariant_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-10}
-  'intervention1_end':
+    function_kwargs: {'dates': 2021-06-01} #if gradual change
+  'bvariant_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #no end
-  ### ---- intervention2 ---
-  'intervention2_start':
+  ### ---- Reopen---
+  'reopen_start':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2021-02-10}
-    #function_kwargs: {'dates': [2020-07-16, 2020-07-30, 2020-08-01]}
-  'intervention2_scaleupend':
+  'reopen_scaleupend':
     custom_function: DateToTimestep
-    function_kwargs: {'dates': 2021-03-10}
-  'intervention2_end':
+    function_kwargs: {'dates': 2021-03-01} #if gradual change
+  'reopen_end':
     custom_function: DateToTimestep
     function_kwargs: {'dates': 2099-01-01} #no end
+  ### ---- Rollback---
+  'rollback_start':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-04-10}
+  'rollback_scaleupend':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #if gradual change
+  'rollback_end':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #no end
+  ### ---- TRIGGEREDROLLBACK ----------------------
+  ### Decrease Ki due to more intense mitigation measures
+  ### Start = date after which trigger can be activated
+  ### scaleup dates and end are dummies (end could be useful, not added yet)
+  'triggeredrollback_start':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-03-01}
+  'triggeredrollback_scaleupend':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #dummy
+  'triggeredrollback_end':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #no end
+  ### ---- Vaccine---
+  'vaccine_start':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2020-12-15}
+  'vaccine_scaleupend':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-06-01} #used if n_gradual_steps >1 in intervention_emodl_config.yaml
+  'vaccine_end':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2099-01-01} #not used
+    ### assume that after Feb most of the high risk populations are vaccinated and remaining population less severe
+    ### simplified date informed by vaccine scale up  (i.e. not time varying age distribution of not vaccinated pop)
+  'fraction_severe_changeV_time':
+    custom_function: DateToTimestep
+    function_kwargs: {'dates': 2021-02-01}
   ### ---- IMPROVED TEST/ISOLATION TURNAROUND ---
   'change_testDelay_time1':
     custom_function: DateToTimestep

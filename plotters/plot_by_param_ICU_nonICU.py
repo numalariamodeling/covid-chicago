@@ -127,8 +127,8 @@ def plot_covidregions(channel,subgroups, plot_path,first_day, last_day) :
         for d, exp_name in enumerate(exp_names) :
             df = load_sim_data(exp_name, region_suffix=region_suffix)
             df = df[(df['date'] >= first_day) & (df['date'] <= last_day)]
-            exp_name_label = int(exp_name.split('_')[0])
-            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems_nr, panel_heading = region_label, label="")
+            exp_name_label = str(exp_name.split('_')[-2]) + str(exp_name.split('_')[-1])
+            plot_on_fig(df, c, axes, channel=channel, color=palette[d],ems=ems_nr, panel_heading = region_label, label=exp_name_label)
 
         axes[-1].legend()
         #fig.suptitle(x=0.5, y=0.999,t=channel)
@@ -148,10 +148,11 @@ if __name__ == '__main__' :
     first_plot_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
     last_plot_day = pd.Timestamp.today()+ pd.Timedelta(15,'days')
 
-    covidregionlist = range(0, 12)
+    """Get group names"""
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=os.path.join(wdir, 'simulation_output', exp_names[0]))
 
     plot_path = os.path.join(wdir, 'simulation_output', exp_names[len(exp_names)-1], '_plots')
-    plot_covidregions(channel='crit_det', subgroups=covidregionlist,
+    plot_covidregions(channel='crit_det', subgroups=grp_numbers,
                       plot_path=plot_path, first_day= first_plot_day, last_day=last_plot_day)
-    plot_covidregions(channel='hosp_det', subgroups=covidregionlist,
+    plot_covidregions(channel='hosp_det', subgroups=grp_numbers,
                       plot_path=plot_path, first_day= first_plot_day, last_day=last_plot_day)
