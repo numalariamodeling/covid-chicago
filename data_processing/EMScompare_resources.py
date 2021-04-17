@@ -71,6 +71,8 @@ def plot_emresource(scale='') :
     fig = plt.figure(figsize=(14,10))
     fig.subplots_adjust(left=0.07, right=0.97, top=0.95, bottom=0.05, hspace=0.25)
 
+    # ref_df = ref_df[(ref_df['date'] >= date(2020, 3, 1)) & (ref_df['date'] < date(2021, 1, 1))]
+
     def format_plot(ax) :
         ax.set_xlim(xmin, )
         ax.xaxis.set_major_formatter(formatter)
@@ -89,6 +91,9 @@ def plot_emresource(scale='') :
             df['moving_ave'] = df[name].rolling(window = 7, center=True).mean()
             ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
             ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.3, label='')
+            if name == 'non ICU' :
+                ax.set_ylim(0,)
+            # ax.set_xlim(date(2020,3,25), date(2021,1,1))
 
         ax.set_title('covid region %d' % covid_region)
         format_plot(ax)
@@ -117,6 +122,6 @@ def plot_emresource(scale='') :
 if __name__ == '__main__' :
 
     plot_emresource('nolog')
-    plot_emresource('log')
+    # plot_emresource('log')
     # emresource_by_ems()
     # plt.show()
