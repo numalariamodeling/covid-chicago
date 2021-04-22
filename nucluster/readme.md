@@ -20,9 +20,10 @@ Some applications like [FastX](https://www.starnet.com/fastx/) or [MobaXterm](ht
 When using FastX or MobaXterm, the wine installation usually pop's up automatically when running simulation for the first time.
 If the 'Wine Mono not installed' error appears run
 
-`module load singularity`
-`rm -rf ~/.wine`
-`singularity shell -B /projects:/projects /software/singularity/images/singwine-v1.img winecfg`
+	module load singularity
+	rm -rf ~/.wine
+	singularity shell -B /projects:/projects /software/singularity/images/singwine-v1.img winecfg
+
 
 And click *ok* on the configuration window that pops up (see wine_installation.png)
 
@@ -66,9 +67,10 @@ and then run `source ~/.bash_profile` followed by `set-covid-chicago` in the ter
 Manual package installation is not recommended, but if necessary can be done via pip install from the termianl. Using the requirements.txt.
 dotenv and yamlordereddictloader are known to cause issues, and yamlordereddictloader is not required although recommended for save loading of yaml files.
 If pip install does not work, the commands below might be useful. 
-`conda create --name dotenv-py37 -c conda-forge` 
-`source activate dotenv-py37`  
-`conda install -c conda-forge yamlordereddictloader` 
+
+	conda create --name dotenv-py37 -c conda-forge
+	source activate dotenv-py37
+	conda install -c conda-forge yamlordereddictloader
 
 
 ## Syncing files between Box and Quest 
@@ -84,15 +86,18 @@ If pip install does not work, the commands below might be useful.
 ## Testrun CMS/wine 
 To check whether CMS runs on quest run a single simulation via:
 
-`cd /projects/p30781/covidproject/covid-chicago/testrun/`
-`dos2unix runSimulations_covid_base_p30781.sh`  
-`bash runSimulations_covid_base_p30781.sh` 
+	cd /projects/p30781/covidproject/covid-chicago/testrun/
+	dos2unix runSimulations_covid_base_p30781.sh
+	bash runSimulations_covid_base_p30781.sh
+	
 (or b1137)
 
 ### Full workflow 
 In the full workflow multiple simulations submitted as array job to Quest via:
-`cd /projects/p30781/covidproject/covid-chicago/`
-`python runScenarios.py -r IL -sr EMS_11 --model "locale" --scenario "baseline"  -n "userinitials"`
+
+	cd /projects/p30781/covidproject/covid-chicago/
+	python runScenarios.py -r IL -sr EMS_11 --model "locale" --scenario "baseline"  -n "userinitials"
+	
 The running location does not need to be specified (optionally via -rl 'NUCLUSTER') as identified automatically based on the system environment.
 
 The experiments will go to the `_temp` folder on the quest gitrepository. 
@@ -103,21 +108,19 @@ The status of the job submission can be called via `squeue -u <username>`
 
 
 The single steps are:
-1. Navigate to the project folder: 
-	`cd /projects/p30781/covidproject`
+1. Navigate to the project folder via 	`cd /projects/p30781/covidproject`
 
 2. Prepare simulation input files or copy simulation files (optional):
   - relevant files to edit are the yaml files.
   
-3. Submit runScenarios.py : 
-	`python runScenarios.py -r IL -sr EMS_11 --model "locale" --scenario "baseline"  -n "userinitials"`
+3. Submit runScenarios.py : `python runScenarios.py -r IL -sr EMS_11 --model "locale" --scenario "baseline"  -n "userinitials"`
 	
 4. Submit postprocessing jobs (most run automatically, if not single sbatch files can be submitted as below)
-	`cd /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>/sh"`
-	`sbatch 2_runDataComparison.sh"`
+
+	cd /projects/p30781/covidproject/projects/covid_chicago/cms_sim/simulation_output/<exp_name>/sh"
+	sbatch 2_runDataComparison.sh"
 	
-	 or interactively to see output directly in terminal (for testing)
-	`bash 2_runDataComparison.sh"`
+or interactively to see output directly in terminal (for testing): `bash 2_runDataComparison.sh"`
 	
 5. Copy final files to Box
  - Recommended to zip before copying using `python cleanup_and_zip_simFiles.py --stem "<exp_name>"  --Location "NUCLUSTER" --zip_dir` (--del_trajectories to reduce folder size!)
