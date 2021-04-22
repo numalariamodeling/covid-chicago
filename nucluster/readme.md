@@ -203,7 +203,9 @@ Example shell job submission files (experiment specific shell files generated in
 - Box sync
 	`lftp -p 990 -u <useremail> ftps://ftp.box.com -e "mirror <from_dir> <to_dir>; exit"`
 
-## Troubleshooting
+# Troubleshooting
+
+## Python framework
 
 
 #### No trajectoriesDat.csv
@@ -216,6 +218,9 @@ either with `source activate /projects/p30781/anaconda3/envs/team-test-py37`
 or using 
 `source ~/.bash_profile`
 `set-covid-chicago`
+
+
+## Wine container on Quest 
 
 #### Wine Mono not installed 
 Reinstall wine
@@ -234,8 +239,30 @@ Reinstall wine
 #### wine: cannot find '~binaries/compartments/compartments.exe'
 Check if compartments.exe exit and if the paths in [load_paths.py](https://github.com/numalariamodeling/covid-chicago/blob/master/load_paths.py) are correctly set!
 
+
+## Issues when running on quest 
 #### sbatch: error: This does not look like a batch script. 
 In some instances, when shell submission files are generated on a local windows machine and copied to quest this error occurs.
 Then the sh file needs to be converted via `dos2unix <name_of_sh_file.sh>`
+
+
+## CMS and EMODL errors
+
+Generally returns a 
+`Unhandled CLR exception during evaluation:`
+`CLR Exception: `
+followed by further specifications: 
+
+#### &message: "bad identifier|@s"
+- @ not replaced in emodl
+- check master yaml and generated emodls within the simulation folder 
+
+#### System.InvalidOperationException: Sequence contains no matching element
+- tab instead of space
+- `_` instead of `::` for locale species
+
+
+#### System.Configuration.ConfigurationErrorsException: Unrecognized configuration section 
+- time-event same name as a parameter
 
 
