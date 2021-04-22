@@ -653,55 +653,55 @@ class covidModel:
                           f'))\n'
 
         reaction_str_Ic = f'\n(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} ' \
-                          f'(/ (+ (* infectious_undet_symp_{grp} (- 1 @bvariant_fracinfect@) )' \
-                          f'(* infectious_undet_As_{grp} reduced_infectious_As (- 1 @bvariant_fracinfect@) ) ' \
-                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_undet_symp_{grp} @bvariant_fracinfect@ @bvariant_infectivity@ )  ' \
-                          f'(* infectious_undet_As_{grp} reduced_infectious_As @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@)  ) N_{grp} )))\n'
+                          f'(/ (+ (* infectious_undet_symp_{grp} (- 1 bvariant_fracinfect) )' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As (- 1 bvariant_fracinfect) ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_undet_symp_{grp} bvariant_fracinfect @bvariant_infectivity@ )  ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@)  ) N_{grp} )))\n'
 
         reaction_str_Id = f'\n(reaction exposure_{grp}   (S::{grp}) (E::{grp}) (* Ki_{grp} S::{grp} ' \
-                          f'(/ (+ (* infectious_undet_symp_{grp} (- 1 @bvariant_fracinfect@) )' \
-                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V (- 1 @bvariant_fracinfect@) ) ' \
-                          f'(* infectious_undet_As_{grp} reduced_infectious_As (- 1 @bvariant_fracinfect@) ) ' \
-                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@))' \
-                          f'(* infectious_undet_symp_{grp} @bvariant_fracinfect@ @bvariant_infectivity@ )  ' \
-                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_undet_As_{grp} reduced_infectious_As @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@) ' \
-                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@) ' \
-                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@)) N_{grp} )))\n'
+                          f'(/ (+ (* infectious_undet_symp_{grp} (- 1 bvariant_fracinfect) )' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V (- 1 bvariant_fracinfect) ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As (- 1 bvariant_fracinfect) ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 bvariant_fracinfect))' \
+                          f'(* infectious_undet_symp_{grp} bvariant_fracinfect @bvariant_infectivity@ )  ' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@) ' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases bvariant_fracinfect  @bvariant_infectivity@) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@)) N_{grp} )))\n'
 
         reaction_str_Ie = f'\n(reaction exposure_{grp}   (S_V::{grp}) (E_V::{grp}) (* Ki_{grp} S_V::{grp} ' \
-                          f'(/ (+ (* infectious_undet_symp_{grp} (- 1 @bvariant_fracinfect@) )' \
-                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V (- 1 @bvariant_fracinfect@) ) ' \
-                          f'(* infectious_undet_As_{grp} reduced_infectious_As (- 1 @bvariant_fracinfect@) ) ' \
-                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@)) ' \
-                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 @bvariant_fracinfect@))' \
-                          f'(* infectious_undet_symp_{grp} @bvariant_fracinfect@ @bvariant_infectivity@ )  ' \
-                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_undet_As_{grp} reduced_infectious_As @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@ ) ' \
-                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@) ' \
-                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@) ' \
-                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases @bvariant_fracinfect@ @bvariant_infectivity@)) N_{grp} )))\n'
+                          f'(/ (+ (* infectious_undet_symp_{grp} (- 1 bvariant_fracinfect) )' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V (- 1 bvariant_fracinfect) ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As (- 1 bvariant_fracinfect) ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 bvariant_fracinfect)) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases (- 1 bvariant_fracinfect))' \
+                          f'(* infectious_undet_symp_{grp} bvariant_fracinfect @bvariant_infectivity@ )  ' \
+                          f'(* (+ infectious_undet_symp_V_{grp} infectious_undet_As_V_{grp} ) reduced_infectious_V bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_undet_As_{grp} reduced_infectious_As bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_det_symp_{grp} reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@ ) ' \
+                          f'(* infectious_det_AsP_{grp} reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@) ' \
+                          f'(* infectious_det_symp_V_{grp} reduced_infectious_V reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@) ' \
+                          f'(* infectious_det_AsP_V_{grp} reduced_infectious_V reduced_inf_of_det_cases bvariant_fracinfect @bvariant_infectivity@)) N_{grp} )))\n'
 
-        if 'vaccine' in self.add_interventions and not 'bvariant' in self.add_interventions  :
+        if 'vaccine' in self.add_interventions and 'bvariant' not in self.add_interventions  :
             reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_{grp} S::{grp}))\n'
             reaction_str_I = reaction_str_I + reaction_str_Ia + reaction_str_Ib
 
-        if 'bvariant' in self.add_interventions and not 'vaccine' in self.add_interventions  :
-            reaction_str_I = reaction_str_c
+        if 'bvariant' in self.add_interventions and 'vaccine' not in self.add_interventions  :
+            reaction_str_I = reaction_str_Ic
 
-        if 'vaccine' in self.add_interventions and  'bvariant' in self.add_interventions  :
+        if 'vaccine' in self.add_interventions and 'bvariant' in self.add_interventions  :
             reaction_str_I = f'(reaction vaccination_{grp}  (S::{grp}) (S_V::{grp}) (* Kv_{grp} S::{grp}))\n'
             reaction_str_I = reaction_str_I + reaction_str_Id + reaction_str_Ie
 
@@ -1053,7 +1053,7 @@ class covidModel:
 
         def write_vaccine():
             emodl_str = ';COVID-19 vaccine scenario\n'
-            read_from_csv = intervention_param['read_from_csv']
+            #read_from_csv = intervention_param['read_from_csv']
             csvfile = intervention_param['vaccination_csv']
             df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
             df['Date'] = pd.to_datetime(df['date'])
@@ -1098,13 +1098,22 @@ class covidModel:
             csvfile = intervention_param['bvariant_csv']
             if read_from_csv and csvfile != "":
                 df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
+
+                fracinfect_timevent = ''
+                fracinfect_str = ''
+
                 intervention_dates = list(df['Date'].values)
                 fracinfect = list(df['variant_freq'].values)
+                if len(intervention_dates) != len(fracinfect):
+                    raise ValueError("intervention_dates not same lengths as fracinfect")
 
-                fracinfect_timevent = ''.join([f'(time-event bvariant_fracinfect {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
-                                               f'((bvariant_fracinfect {fracinfect[i - 1]})))\n'
-                                               for i, date in enumerate(intervention_dates, 1)])
+                fracinfect_str = f'(param bvariant_fracinfect 0)\n(observe bvariant_fracinfect_t bvariant_fracinfect)\n'
 
+                fracinfect_timevent = ''.join([f'(time-event bvariant_fracinfect_change {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
+                                                 f'((bvariant_fracinfect {fracinfect[i - 1]})))\n'
+                                                 for i, date in enumerate(intervention_dates, 1)])
+
+                fracinfect_str = fracinfect_str + fracinfect_timevent
 
             else:
                 n_gradual_steps, intervention_dates = covidModel.get_intervention_dates(intervention_param,scen='bvariant')
@@ -1114,24 +1123,8 @@ class covidModel:
                                                f'{(1 / (len(intervention_dates)) * i)})))'
                                                f')\n' for i, date in enumerate(intervention_dates, 1)])
 
-
-                #emodl_param = ''.join([ f'(param Ki_bvariant_initial_{grp} 0)\n'
-                #                        f'(time-event ki_bvariant_initial {covidModel.DateToTimestep(pd.Timestamp(intervention_dates[0])-pd.Timedelta(2,"days"), self.startdate)} ('
-                #                        f'(Ki_bvariant_initial_{grp} Ki_{grp})'
-                #                       f'))\n ' for grp in self.grpList])
-
-                #emodl_timeevents = ''
-                #for i, date in enumerate(intervention_dates, 1):
-                #    temp_str = f'(time-event ki_bvariant_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
-                #    temp_str = temp_str + ''.join([f' (Ki_{grp} ( + Ki_bvariant_initial_{grp}  (* (* Ki_bvariant_initial_{grp} @bvariant_infectivity@)  (* @bvariant_fracinfect@ {(1 / (len(intervention_dates)) * i)} ))))' for grp in self.grpList])
-                #    temp_str = temp_str + f'))\n'
-                #    emodl_timeevents = emodl_timeevents + temp_str
-
-                #bvariant_infectivity =  emodl_param + emodl_timeevents
-
-            """keep track of fracinfect, and use for update symptom development reactions"""
-            fracinfect_str = '(param bvariant_fracinfect 0)\n' \
-                             '(observe bvariant_fracinfect_t bvariant_fracinfect)\n' + fracinfect_timevent
+                fracinfect_str = '(param bvariant_fracinfect 0)\n' \
+                                 '(observe bvariant_fracinfect_t bvariant_fracinfect)\n' + fracinfect_timevent
 
             """fraction severe adjustment over time"""
             frac_severe_timevent = ''.join([f'(time-event fraction_severe_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
@@ -1146,7 +1139,6 @@ class covidModel:
                                             f')\n' for i, date in enumerate(intervention_dates, 1)])
 
             frac_severe_str = '(param fraction_severeB (* @fraction_severe@ @bvariant_severity@))\n' + frac_severe_timevent
-
             if 'vaccine' in self.add_interventions:
                 """fraction severe adjustment over time"""
                 frac_severeV_timevent = ''.join([f'(time-event fraction_severe_V_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} '
