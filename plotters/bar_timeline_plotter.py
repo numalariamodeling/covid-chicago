@@ -131,7 +131,8 @@ if __name__ == '__main__':
     #p = load_color_palette('wes')
     #palette = [p[x] for x in [8, 4, 2, 1, 3]]
     #palette = ('#65213d', "#9c4468", "#b26e8a", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
-    palette = ('#65213d', "#9c4468", "#b26e8a",  "#007060", "#00a08a", "#66c6b8")
+    #palette = ('#65213d', "#9c4468", "#b26e8a",  "#007060", "#00a08a", "#66c6b8")
+    palette = ('#913058', "#F6851F", "#00A08A", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
 
     args = parse_args()
     exp_names = args.exp_names
