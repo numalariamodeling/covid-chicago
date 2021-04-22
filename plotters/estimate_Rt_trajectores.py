@@ -159,7 +159,7 @@ def rt_plot(df, plotname, first_day=None, last_day=None):
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def run_Rt_estimation(grp_numbers, smoothing_window, r_window_size):
+def run_Rt_estimation(grp_numbers, smoothing_window, r_window_size,min_date=None):
     """Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
     smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
@@ -178,6 +178,9 @@ def run_Rt_estimation(grp_numbers, smoothing_window, r_window_size):
         print(region_suffix)
         df = load_sim_data(exp_name, region_suffix=region_suffix)
         df['date'] = pd.to_datetime(df['date'])
+
+        if min_date is not None:
+            df = df[df['date'] >= min_date ]
 
         """Use default distributions (for covid-19)"""
         si_distrb, delay_distrb = get_distributions(show_plot=False)
@@ -206,17 +209,18 @@ if __name__ == '__main__':
 
     test_mode = False
     if test_mode:
-        stem = "20210406_IL_locale__test_rn38_bvariant_vaccine"
+        stem = "20210422_IL_localeEMS_11__test_rn94_baseline"
         Location = 'Local'
-        subregion = 11
-        process_step = 1
+        subregion = None
+        combine_and_plot = False
     else:
         args = parse_args()
         stem = args.stem
         Location = args.Location
         subregion = args.subregion
+        combine_and_plot = args.combine_and_plot
 
-    first_plot_day = pd.Timestamp('2020-03-01')
+    first_plot_day = pd.Timestamp('2021-01-01')
     last_plot_day = pd.Timestamp.today() + pd.Timedelta(90, 'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
@@ -231,10 +235,10 @@ if __name__ == '__main__':
         if subregion is not None:
             grp_numbers = [int(subregion)]
 
-        if not args.combine_and_plot :
-            run_Rt_estimation(grp_numbers, smoothing_window=28, r_window_size=3)
+        if not combine_and_plot :
+            run_Rt_estimation(grp_numbers, smoothing_window=28, r_window_size=3, min_date = first_plot_day )
         """Process needs to be separated when running same script in parallel versus all in one go, depending on simulation size"""
-        if  args.combine_and_plot or subregion is None:
+        if  combine_and_plot or subregion is None:
             grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_dir)
             df_rt_all = pd.DataFrame()
             for ems_nr in grp_numbers:
@@ -255,7 +259,7 @@ if __name__ == '__main__':
             rt_plot(df=df_rt_all, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'), last_day=last_plot_day,
                     plotname=f'rt_trajectories_truncated')
 
-            df_rt_aggr = df_rt_all.groupby(['date', 'geography_modeled'])['rt_median'].agg(
+            df_rt_aggr = df_rt_all.groupby(['model_date','date', 'geography_modeled'])['rt_median'].agg(
                 [CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75,np.min, np.max]).reset_index()
             df_rt_aggr.to_csv(os.path.join(exp_dir, 'rt_trajectories_aggr.csv'), index=False)
             rt_plot_aggr(df=df_rt_aggr, plotname=f'rt_full')
