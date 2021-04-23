@@ -310,3 +310,9 @@ if __name__ == '__main__':
         """THIS WILL DELETE ALL SINGLE TRAJECTORIES!"""
         shutil.rmtree(trajectories_path, ignore_errors=True)
         print(f'Single trajectories deleted')
+
+    """ Start parallel rt estimation per trajectory """
+    if Location == "NUCLUSTER" :
+        temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
+        p = os.path.join(temp_exp_dir,'sh', '4_runRtEstimation_trajectories.sh')
+        subprocess.call(['sh',p])
