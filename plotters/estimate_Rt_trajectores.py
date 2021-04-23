@@ -67,7 +67,7 @@ def get_distributions(show_plot=False):
     return si_distrb, delay_distrb
 
 
-def plot_rt_aggr(df, grp_numbers, plotname, first_day=None, last_day=None,stats=None):
+def plot_rt_aggr(df, grp_numbers, plot_path, plotname, first_day=None, last_day=None,stats=None):
     fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
     palette = sns.color_palette('husl', 8)
@@ -117,7 +117,7 @@ def plot_rt_aggr(df, grp_numbers, plotname, first_day=None, last_day=None,stats=
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def plot_rt(df, grp_numbers, plotname, first_day=None, last_day=None):
+def plot_rt(df, grp_numbers, plot_path, plotname, first_day=None, last_day=None):
     fig = plt.figure(figsize=(16, 8))
     fig.suptitle(x=0.5, y=0.989, t='Estimated time-varying reproductive number (Rt)')
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
@@ -155,7 +155,7 @@ def plot_rt(df, grp_numbers, plotname, first_day=None, last_day=None):
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def run_Rt_estimation_trajectories(grp_numbers, smoothing_window, r_window_size,min_date=None):
+def run_Rt_estimation_trajectories(exp_name,exp_dir,grp_numbers, smoothing_window, r_window_size,min_date=None):
     """Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
     smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
@@ -200,14 +200,12 @@ def run_Rt_estimation_trajectories(grp_numbers, smoothing_window, r_window_size,
         df_rt_scen.to_csv(os.path.join(exp_dir, 'rt_trajectories' + region_label + '.csv'), index=False)
 
 def run_combine_and_plot(exp_dir, grp_numbers, last_plot_day):
-
+    plot_path = os.path.join(exp_dir, '_plots')
     df_rt_all = pd.DataFrame()
     for ems_nr in grp_numbers:
         if ems_nr == 0:
-            region_suffix = '_All'
             region_label = "illinois"
         else:
-            region_suffix = f'_EMS-{ems_nr}'
             region_label = f'covidregion_{str(ems_nr)}'
         try:
             df_rt = pd.read_csv(os.path.join(exp_dir, 'rt_trajectories' + region_label + '.csv'))
@@ -218,9 +216,9 @@ def run_combine_and_plot(exp_dir, grp_numbers, last_plot_day):
     df_rt_all.to_csv(os.path.join(exp_dir, 'rt_trajectories.csv'), index=False)
 
     """Plot """
-    plot_rt(df=df_rt_all,grp_numbers=grp_numbers, plotname=f'rt_trajectories_full')
+    plot_rt(df=df_rt_all,grp_numbers=grp_numbers,plot_path=plot_path, plotname=f'rt_trajectories_full')
     plot_rt(df=df_rt_all,grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'), last_day=last_plot_day,
-            plotname=f'rt_trajectories_truncated')
+            plot_path=plot_path,plotname=f'rt_trajectories_truncated')
 
     """Aggregate rt estimates per date and region """
     df_rt_aggr = df_rt_all.groupby(['model_date', 'date', 'geography_modeled'])['rt_median'].agg(
@@ -228,9 +226,9 @@ def run_combine_and_plot(exp_dir, grp_numbers, last_plot_day):
     df_rt_aggr.to_csv(os.path.join(exp_dir, 'rt_trajectories_aggr.csv'), index=False)
 
     """Plot """
-    plot_rt_aggr(df=df_rt_aggr,grp_numbers=grp_numbers, plotname=f'rt_full',stats='minmax')
-    plot_rt_aggr(df=df_rt_aggr,grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'),
-                 last_day=last_plot_day, plotname=f'rt_truncated',stats='minmax')
+   # plot_rt_aggr(df=df_rt_aggr, grp_numbers=grp_numbers, plot_path=plot_path, plotname=f'rt_full', stats='minmax')
+   # plot_rt_aggr(df=df_rt_aggr, grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'),
+   #              last_day=last_plot_day, plot_path=plot_path, plotname=f'rt_truncated', stats='minmax')
 
     return df_rt_aggr
 
@@ -265,7 +263,7 @@ if __name__ == '__main__':
             grp_numbers = [int(subregion)]
 
         if not combine_and_plot :
-            run_Rt_estimation_trajectories(grp_numbers, smoothing_window=28, r_window_size=3, min_date = first_plot_day )
+            run_Rt_estimation_trajectories(exp_name,exp_dir,grp_numbers, smoothing_window=28, r_window_size=3, min_date = first_plot_day )
         """Process needs to be separated when running same script in parallel versus all in one go, depending on simulation size"""
         if  combine_and_plot or subregion is None:
             run_combine_and_plot(exp_dir,grp_numbers, last_plot_day)

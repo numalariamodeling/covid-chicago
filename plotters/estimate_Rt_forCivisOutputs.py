@@ -53,7 +53,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def run_Rt_estimation(grp_numbers,smoothing_window, r_window_size):
+def run_Rt_estimation(exp_name,grp_numbers,smoothing_window, r_window_size):
     """
     Rt estimation using median new_infections, aggregated from the trajectoriesDat.csv
     Code following online example:
@@ -119,7 +119,7 @@ def run_Rt_estimation(grp_numbers,smoothing_window, r_window_size):
 
     return df_rt
 
-def use_Rt_trajectories(exp_dir,grp_numbers, min_date = None, use_pre_aggr=True ):
+def use_Rt_trajectories(exp_name,exp_dir,grp_numbers, min_date = None, use_pre_aggr=True ):
     """
     If exist load rt_trajectories_aggr, otherwise rerun rt estimation for new_infections per trajectory:
     Note: estimation per trajectory may take >1 hour or may run out of memory, depending on date and scenarios
@@ -133,8 +133,7 @@ def use_Rt_trajectories(exp_dir,grp_numbers, min_date = None, use_pre_aggr=True 
         df = pd.read_csv(os.path.join(exp_dir, 'rt_trajectories_aggr.csv'))
         df['date'] = pd.to_datetime(df['date'])
     else:
-        use_pre_aggr = True
-        run_Rt_estimation_trajectories(grp_numbers, smoothing_window=28, r_window_size=3, min_date = min_date)
+        run_Rt_estimation_trajectories(exp_name,exp_dir,grp_numbers, smoothing_window=28, r_window_size=3, min_date = min_date)
         df = run_combine_and_plot(exp_dir,grp_numbers=grp_numbers, last_plot_day=min_date )
 
     df.rename(columns={"CI_50": "rt_median", "amin": "rt_lower", "amax": "rt_upper"}, inplace=True)
@@ -189,7 +188,7 @@ if __name__ == '__main__':
 
     test_mode = False
     if test_mode:
-        stem = "20210402_IL_locale_sub_ae_test_v7_vaccine"
+        stem = "20210423_IL_localeEMS_1_testRtnew_baseline"
         Location = 'Local'
         plot_only=False
         use_pre_aggr= False
@@ -215,18 +214,19 @@ if __name__ == '__main__':
         grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_dir)
         if plot_only==False:
             if use_pre_aggr:
-                run_Rt_estimation(grp_numbers,smoothing_window=28, r_window_size=3)
+                run_Rt_estimation(exp_name,grp_numbers,smoothing_window=28, r_window_size=3)
             else:
                 try:
                     print("Running use_Rt_trajectories")
-                    use_Rt_trajectories(exp_dir,grp_numbers)
+                    use_Rt_trajectories(exp_name,exp_dir,grp_numbers)
+                    print("Successfully ran use_Rt_trajectories")
                 except:
                     print("Memory or run time error in use_Rt_trajectories\n"
                                      "Estimate Rt based on aggregated median new infections")
-                    run_Rt_estimation(grp_numbers, smoothing_window=28, r_window_size=3)
+                    run_Rt_estimation(exp_name,grp_numbers, smoothing_window=28, r_window_size=3)
 
         df_rt_all = pd.read_csv(os.path.join(exp_dir, f'nu_{exp_name.split("_")[0]}.csv'))
-        plot_rt_aggr(df=df_rt_all,grp_numbers=grp_numbers, plotname='estimated_rt_by_covidregion_full')
-        plot_rt_aggr(df=df_rt_all,grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'), last_day=last_plot_day,
-                plotname='rt_by_covidregion_truncated')
+        plot_rt_aggr(df=df_rt_all,grp_numbers=grp_numbers, plot_path=plot_path,plotname='estimated_rt_by_covidregion_full')
+        plot_rt_aggr(df=df_rt_all,grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'),
+                     last_day=last_plot_day, plot_path=plot_path, plotname='rt_by_covidregion_truncated')
 
