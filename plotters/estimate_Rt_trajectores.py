@@ -67,31 +67,27 @@ def get_distributions(show_plot=False):
     return si_distrb, delay_distrb
 
 
-def rt_plot_aggr(df, plotname, first_day=None, last_day=None,stats='minmax'):
+def plot_rt_aggr(df, grp_numbers, plotname, first_day=None, last_day=None,stats=None):
     fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
     palette = sns.color_palette('husl', 8)
 
     if stats=='minmax':
+        channel = 'CI_50'
         channel_lo ='amin'
         channel_up = 'amax'
-    else:
-        stats='95% CI'
+    elif stats == '95% CI' :
+        channel = 'CI_50'
         channel_lo ='CI_2pt5'
         channel_up = 'CI_97pt5'
+    else:
+        channel = 'rt_median'
+        channel_lo ='rt_lower'
+        channel_up = 'rt_upper'
 
     df['date'] = pd.to_datetime(df['date'])
     if first_day != None:
         df = df[df['date'].between(first_day, last_day)]
-
-    rt_min = df[channel_lo].min()
-    rt_max = df[channel_up].max()
-    if rt_max > 4:
-        rt_max = 4
-    if rt_max < 1.1:
-        rt_max = 1.1
-    if rt_min > 0.9:
-        rt_min = 0.9
 
     for e, ems_nr in enumerate(grp_numbers):
         if ems_nr == 0:
@@ -102,7 +98,7 @@ def rt_plot_aggr(df, plotname, first_day=None, last_day=None,stats='minmax'):
         ax = fig.add_subplot(3, 4, e + 1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         mdf = df.loc[df['geography_modeled'] == region_label]
-        ax.plot(mdf['date'], mdf['CI_50'], color=palette[0])
+        ax.plot(mdf['date'], mdf[channel], color=palette[0])
         ax.fill_between(mdf['date'].values, mdf[channel_lo], mdf[channel_up],
                         color=palette[0], linewidth=0, alpha=0.3)
         plotsubtitle = region_label.replace('covidregion_', f'COVID-19 Region ')
@@ -115,13 +111,13 @@ def rt_plot_aggr(df, plotname, first_day=None, last_day=None,stats='minmax'):
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
         ax.axvline(x=pd.Timestamp.today(), color='#737373', linestyle='--')
         ax.axhline(y=1, color='black', linestyle='-')
-        ax.set_ylim(rt_min, rt_max)
+
     fig.suptitle(x=0.5, y=0.989, t='Estimated time-varying reproductive number (Rt)' +f' ({stats} range)' )
     plt.savefig(os.path.join(plot_path, f'{plotname}.png'))
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def rt_plot(df, plotname, first_day=None, last_day=None):
+def plot_rt(df, grp_numbers, plotname, first_day=None, last_day=None):
     fig = plt.figure(figsize=(16, 8))
     fig.suptitle(x=0.5, y=0.989, t='Estimated time-varying reproductive number (Rt)')
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
@@ -159,7 +155,7 @@ def rt_plot(df, plotname, first_day=None, last_day=None):
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
 
 
-def run_Rt_estimation(grp_numbers, smoothing_window, r_window_size,min_date=None):
+def run_Rt_estimation_trajectories(grp_numbers, smoothing_window, r_window_size,min_date=None):
     """Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
     smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
@@ -203,16 +199,49 @@ def run_Rt_estimation(grp_numbers, smoothing_window, r_window_size,min_date=None
             df_rt_scen = df_rt_scen.append(df_rt)
         df_rt_scen.to_csv(os.path.join(exp_dir, 'rt_trajectories' + region_label + '.csv'), index=False)
 
+def run_combine_and_plot(exp_dir, grp_numbers, last_plot_day):
 
+    df_rt_all = pd.DataFrame()
+    for ems_nr in grp_numbers:
+        if ems_nr == 0:
+            region_suffix = '_All'
+            region_label = "illinois"
+        else:
+            region_suffix = f'_EMS-{ems_nr}'
+            region_label = f'covidregion_{str(ems_nr)}'
+        try:
+            df_rt = pd.read_csv(os.path.join(exp_dir, 'rt_trajectories' + region_label + '.csv'))
+            df_rt_all = df_rt_all.append(df_rt)
+        except:
+            print('rt_trajectories' + region_label + '.csv not included')
+
+    df_rt_all.to_csv(os.path.join(exp_dir, 'rt_trajectories.csv'), index=False)
+
+    """Plot """
+    plot_rt(df=df_rt_all,grp_numbers=grp_numbers, plotname=f'rt_trajectories_full')
+    plot_rt(df=df_rt_all,grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'), last_day=last_plot_day,
+            plotname=f'rt_trajectories_truncated')
+
+    """Aggregate rt estimates per date and region """
+    df_rt_aggr = df_rt_all.groupby(['model_date', 'date', 'geography_modeled'])['rt_median'].agg(
+        [CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75, np.min, np.max]).reset_index()
+    df_rt_aggr.to_csv(os.path.join(exp_dir, 'rt_trajectories_aggr.csv'), index=False)
+
+    """Plot """
+    plot_rt_aggr(df=df_rt_aggr,grp_numbers=grp_numbers, plotname=f'rt_full',stats='minmax')
+    plot_rt_aggr(df=df_rt_aggr,grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'),
+                 last_day=last_plot_day, plotname=f'rt_truncated',stats='minmax')
+
+    return df_rt_aggr
 
 if __name__ == '__main__':
 
-    test_mode = False
+    test_mode = True
     if test_mode:
-        stem = "20210422_IL_localeEMS_11__test_rn94_baseline"
+        stem = "20210402_IL_locale_sub_ae_test_v7_vaccine"
         Location = 'Local'
         subregion = None
-        combine_and_plot = False
+        combine_and_plot = True
     else:
         args = parse_args()
         stem = args.stem
@@ -220,7 +249,7 @@ if __name__ == '__main__':
         subregion = args.subregion
         combine_and_plot = args.combine_and_plot
 
-    first_plot_day = pd.Timestamp('2021-01-01')
+    first_plot_day = pd.Timestamp('2020-03-01')
     last_plot_day = pd.Timestamp.today() + pd.Timedelta(90, 'days')
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
@@ -236,34 +265,10 @@ if __name__ == '__main__':
             grp_numbers = [int(subregion)]
 
         if not combine_and_plot :
-            run_Rt_estimation(grp_numbers, smoothing_window=28, r_window_size=3, min_date = first_plot_day )
+            run_Rt_estimation_trajectories(grp_numbers, smoothing_window=28, r_window_size=3, min_date = first_plot_day )
         """Process needs to be separated when running same script in parallel versus all in one go, depending on simulation size"""
         if  combine_and_plot or subregion is None:
-            grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_dir)
-            df_rt_all = pd.DataFrame()
-            for ems_nr in grp_numbers:
-                if ems_nr == 0:
-                    region_suffix = '_All'
-                    region_label = "illinois"
-                else:
-                    region_suffix = f'_EMS-{ems_nr}'
-                    region_label = f'covidregion_{str(ems_nr)}'
-                try:
-                    df_rt = pd.read_csv(os.path.join(exp_dir, 'rt_trajectories' + region_label + '.csv'))
-                    df_rt_all = df_rt_all.append(df_rt)
-                except:
-                    print( 'rt_trajectories' + region_label + '.csv not added' )
+            run_combine_and_plot(exp_dir,grp_numbers, last_plot_day)
 
-            df_rt_all.to_csv(os.path.join(exp_dir, 'rt_trajectories.csv'), index=False)
-            rt_plot(df=df_rt_all, plotname=f'rt_trajectories_full')
-            rt_plot(df=df_rt_all, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'), last_day=last_plot_day,
-                    plotname=f'rt_trajectories_truncated')
-
-            df_rt_aggr = df_rt_all.groupby(['model_date','date', 'geography_modeled'])['rt_median'].agg(
-                [CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75,np.min, np.max]).reset_index()
-            df_rt_aggr.to_csv(os.path.join(exp_dir, 'rt_trajectories_aggr.csv'), index=False)
-            rt_plot_aggr(df=df_rt_aggr, plotname=f'rt_full')
-            rt_plot_aggr(df=df_rt_aggr, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'),
-                         last_day=last_plot_day, plotname=f'rt_truncated')
 
 

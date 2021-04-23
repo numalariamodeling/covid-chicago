@@ -18,6 +18,7 @@ import seaborn as sns
 sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
+from estimate_Rt_trajectores import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -44,73 +45,23 @@ def parse_args():
         action='store_true',
         help="If specified only Rt plots will be generated, given Rt was already estimated",
     )
+    parser.add_argument(
+        "--use_pre_aggr",
+        action='store_true',
+        help="If specified uses pre-aggregated new_infections instead of new_infections per trajectory to estimate Rt",
+    )
     return parser.parse_args()
 
 
-def get_distributions(show_plot=False):
-    si_distrb = covid19.generate_standard_si_distribution()
-    delay_distrb = covid19.generate_standard_infection_to_reporting_distribution()
-
-    if show_plot:
-        fig, axs = plt.subplots(1, 2, figsize=(12, 3))
-        axs[0].bar(range(len(si_distrb)), si_distrb, width=1)
-        axs[1].bar(range(len(delay_distrb)), delay_distrb, width=1)
-        axs[0].set_title('Default serial interval distribution')
-        axs[1].set_title('Default infection-to-reporting delay distribution')
-
-    return si_distrb, delay_distrb
-
-
-def rt_plot(df, plotname,first_day=None, last_day=None):
-    fig = plt.figure(figsize=(16, 8))
-    fig.suptitle(x=0.5, y=0.989, t='Estimated time-varying reproductive number (Rt)')
-    fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.93, bottom=0.05)
-    palette = sns.color_palette('husl', 8)
-
-    df['date'] = pd.to_datetime(df['date'])
-    if first_day != None:
-        df = df[df['date'].between(first_day, last_day)]
-
-    rt_min = df['rt_lower'].min()
-    rt_max = df['rt_upper'].max()
-    if rt_max > 4:
-        rt_max = 4
-    if rt_max < 1.1:
-        rt_max = 1.1
-    if rt_min > 0.9:
-        rt_min = 0.9
-
-    for e, reg in enumerate(df['geography_modeled'].unique()):
-        ax = fig.add_subplot(3, 4, e + 1)
-        ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
-        mdf = df.loc[df['geography_modeled'] == reg]
-        ax.plot(mdf['date'], mdf['rt_median'], color=palette[0])
-        ax.fill_between(mdf['date'].values, mdf['rt_lower'], mdf['rt_upper'],
-                        color=palette[0], linewidth=0, alpha=0.3)
-        plotsubtitle = reg.replace('covidregion_', f'COVID-19 Region ')
-        if reg == 'illinois':
-            plotsubtitle = 'Illinois'
-        ax.set_title(plotsubtitle)
-
-        if first_day != None:
-            ax.set_xlim(first_day, last_day)
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b-%d'))
-        else:
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%y'))
-        ax.axvline(x=pd.Timestamp.today(), color='#737373', linestyle='--')
-        ax.axhline(y=1, color='black', linestyle='-')
-        ax.set_ylim(rt_min, rt_max)
-
-    plt.savefig(os.path.join(plot_path, f'{plotname}.png'))
-    plt.savefig(os.path.join(plot_path, 'pdf', f'{plotname}.pdf'), format='PDF')
-
-
 def run_Rt_estimation(grp_numbers,smoothing_window, r_window_size):
-    """Code following online example:
+    """
+    Rt estimation using median new_infections, aggregated from the trajectoriesDat.csv
+    Code following online example:
     https://github.com/lo-hfk/epyestim/blob/main/notebooks/covid_tutorial.ipynb
     smoothing_window of 28 days was found to be most comparable to EpiEstim in this case
     r_window_size default is 3 if not specified, increasing r_window_size narrows the uncertainity bounds
     """
+
     simdate = exp_name.split("_")[0]
     df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'))
     df['date'] = pd.to_datetime(df['date'])
@@ -145,7 +96,79 @@ def run_Rt_estimation(grp_numbers,smoothing_window, r_window_size):
         # df_rt['r_window_size'] = r_window_size
         df_rt_all = df_rt_all.append(df_rt)
 
+    df_rt_all['rt_pre_aggr'] = use_pre_aggr
     df_rt_all.to_csv(os.path.join(exp_dir, 'rtNU.csv'), index=False)
+
+    if not 'rt_median' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+        df_rt_all['date'] = pd.to_datetime(df_rt_all['date'])
+
+        df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
+                              left_on=['date', 'geography_modeled'],
+                              right_on=['date', 'geography_modeled'])
+        df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
+    else:
+        print("Warning: Overwriting already present Rt estimates")
+        df = df.drop(['rt_median', 'rt_lower', 'rt_upper'], axis=1)
+        df['date'] = pd.to_datetime(df['date'])
+        df_rt_all['date'] = pd.to_datetime(df_rt_all['date'])
+        df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
+                              left_on=['date', 'geography_modeled'],
+                              right_on=['date', 'geography_modeled'])
+        df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
+
+    return df_rt
+
+def use_Rt_trajectories(exp_dir,grp_numbers, min_date = None, use_pre_aggr=True ):
+    """
+    If exist load rt_trajectories_aggr, otherwise rerun rt estimation for new_infections per trajectory:
+    Note: estimation per trajectory may take >1 hour or may run out of memory, depending on date and scenarios
+    estimate_Rt_trajectories.py (separate script) allows to run in parallel per region on NUCLUSTER.
+    """
+    simdate = exp_name.split("_")[0]
+    if min_date is None:
+        min_date = pd.Timestamp('2021-01-01')
+
+    if os.path.exists(os.path.join(exp_dir, 'rt_trajectories_aggr.csv')):
+        df = pd.read_csv(os.path.join(exp_dir, 'rt_trajectories_aggr.csv'))
+        df['date'] = pd.to_datetime(df['date'])
+    else:
+        use_pre_aggr = True
+        run_Rt_estimation_trajectories(grp_numbers, smoothing_window=28, r_window_size=3, min_date = min_date)
+        df = run_combine_and_plot(exp_dir,grp_numbers=grp_numbers, last_plot_day=min_date )
+
+    df.rename(columns={"CI_50": "rt_median", "amin": "rt_lower", "amax": "rt_upper"}, inplace=True)
+    df = df.drop(['CI_2pt5', 'CI_97pt5', 'CI_25','CI_75'], axis=1)
+
+    if df['date'].min() > pd.Timestamp('2020-03-01') :
+
+        if use_pre_aggr:
+            rt_name = 'rt_trajectories_aggr.csv'
+            rdf = pd.read_csv(os.path.join(wdir, 'simulation_saved', rt_name))
+            rdf.rename(columns={"CI_50": "rt_median", "amin": "rt_lower", "amax": "rt_upper"}, inplace=True)
+            rdf = rdf.drop(['CI_2pt5', 'CI_97pt5', 'CI_25', 'CI_75'], axis=1)
+        else:
+            rt_name = 'rtNU.csv'
+            rdf = pd.read_csv(os.path.join(wdir, 'simulation_saved', rt_name))
+
+        """Read saved historical Rt estimates"""
+        rdf = rdf[df.columns]
+        rdf['date'] = pd.to_datetime(rdf['date'])
+        rdf = rdf[rdf['date'] < df['date'].min()]
+        df_rt_all = rdf.append(df)
+        del rdf, df
+    else:
+        df_rt_all = df
+        del df
+
+    df_rt_all['rt_pre_aggr'] = use_pre_aggr
+    df_rt_all.to_csv(os.path.join(exp_dir, 'rtNU.csv'), index=False)
+
+    """ Add to civis deliverables """
+    df = pd.read_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'))
+    df['date'] = pd.to_datetime(df['date'])
+    df_rt_all['date'] = pd.to_datetime(df_rt_all['date'])
+    df_rt_all = df_rt_all.drop(['model_date'], axis=1)
 
     if not 'rt_median' in df.columns:
         df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
@@ -154,26 +177,29 @@ def run_Rt_estimation(grp_numbers,smoothing_window, r_window_size):
         df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
     else:
         print("Warning: Overwriting already present Rt estimates")
-        df = df.drop(['rt_median', 'rt_lower', 'rt_upper'], axis=1)
+        df = df.drop(['rt_median', 'rt_lower', 'rt_upper','rt_pre_aggr'], axis=1)
         df_with_rt = pd.merge(how='left', left=df, right=df_rt_all,
                               left_on=['date', 'geography_modeled'],
                               right_on=['date', 'geography_modeled'])
         df_with_rt.to_csv(os.path.join(exp_dir, f'nu_{simdate}.csv'), index=False)
 
 
-    return df_rt
-
 
 if __name__ == '__main__':
 
     test_mode = False
     if test_mode:
-        stem = "20210203_IL_quest_baseline"
+        stem = "20210402_IL_locale_sub_ae_test_v7_vaccine"
         Location = 'Local'
+        plot_only=False
+        use_pre_aggr= False
     else:
         args = parse_args()
         stem = args.stem
         Location = args.Location
+        plot_only = args.plot_only
+        use_pre_aggr = args.use_pre_aggr
+
 
     first_plot_day = pd.Timestamp('2020-03-01')
     last_plot_day = pd.Timestamp.today() + pd.Timedelta(90,'days')
@@ -187,11 +213,20 @@ if __name__ == '__main__':
         plot_path = os.path.join(exp_dir, '_plots')
         """Get group names"""
         grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=exp_dir)
-        if args.plot_only==False:
-            run_Rt_estimation(grp_numbers,smoothing_window=28, r_window_size=3)
+        if plot_only==False:
+            if use_pre_aggr:
+                run_Rt_estimation(grp_numbers,smoothing_window=28, r_window_size=3)
+            else:
+                try:
+                    print("Running use_Rt_trajectories")
+                    use_Rt_trajectories(exp_dir,grp_numbers)
+                except:
+                    print("Memory or run time error in use_Rt_trajectories\n"
+                                     "Estimate Rt based on aggregated median new infections")
+                    run_Rt_estimation(grp_numbers, smoothing_window=28, r_window_size=3)
 
         df_rt_all = pd.read_csv(os.path.join(exp_dir, f'nu_{exp_name.split("_")[0]}.csv'))
-        rt_plot(df=df_rt_all, plotname='estimated_rt_by_covidregion_full')
-        rt_plot(df=df_rt_all, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'), last_day=last_plot_day,
+        plot_rt_aggr(df=df_rt_all,grp_numbers=grp_numbers, plotname='estimated_rt_by_covidregion_full')
+        plot_rt_aggr(df=df_rt_all,grp_numbers=grp_numbers, first_day=pd.Timestamp.today() - pd.Timedelta(90, 'days'), last_day=last_plot_day,
                 plotname='rt_by_covidregion_truncated')
 
