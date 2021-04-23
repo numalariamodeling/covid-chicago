@@ -508,6 +508,21 @@ def generateSubmissionFile_quest(scen_num, exp_name, experiment_config, trajecto
     file.write(submit_combineSimulations_civis)
     file.close()
 
+    ### FIXME array lengths fixed at 1-11
+    array = '#SBATCH --array=1-11\n'
+    header_post = shell_header(t="04:00:00", memG=64, job_name=f'rt1_{exp_name}', arrayJob=array)
+    pycommand = f'\ncd {plotters_dir}\npython estimate_Rt_trajectores.py  --stem "{exp_name}" --Location "NUCLUSTER" ' \
+                '--subregion ${SLURM_ARRAY_TASK_ID} '
+    file = open(os.path.join(temp_exp_dir, 'sh', '4_runRtEstimation_trajectories.sh'), 'w')
+    file.write(header_post + pymodule + pycommand)
+    file.close()
+
+    ### Combine Rt estimates from parallel run
+    header_post = shell_header(t="02:00:00", memG=64, job_name=f'rt2_{exp_name}')
+    pycommand = f'\ncd {plotters_dir}\npython estimate_Rt_trajectores.py  --stem "{exp_name}" --Location "NUCLUSTER" --combine_and_plot '
+    file = open(os.path.join(temp_exp_dir, 'sh', '4_runRtEstimation_trajectories.sh'), 'w')
+    file.write(header_post + pymodule + pycommand)
+    file.close()
 
     """
     Draft for setting up job dependencies 
