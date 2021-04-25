@@ -31,6 +31,14 @@ def parse_args():
         help="Local or NUCLUSTER",
         default="Local"
     )
+    parser.add_argument(
+        "-l",
+        "--labels",
+        type=str,
+        nargs='+',
+        help="Experiment labels, if not specified will be extracted from exp_names",
+        default=None
+    )
     return parser.parse_args()
 
 
@@ -66,7 +74,46 @@ def plot_Ki(exp_name,first_day,last_day):
     plt.savefig(os.path.join(plot_path, 'pdf', plotname + '.pdf'), format='PDF')
 
 
-if __name__ == '__main__' :
+def plot_Ki_compare(exp_names, labels, first_day, last_day):
+    sim_output_path = os.path.join(wdir, 'simulation_output', exp_names[-1])
+    plot_path = os.path.join(sim_output_path, '_plots')
+
+    base_list = ['time', 'startdate', 'scen_num', 'sample_num', 'run_num']
+    """Get group names"""
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+    grp_list = [grp for grp in grp_list if grp != "All"]
+
+    fig = plt.figure(figsize=(16, 8))
+    fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
+    axes = [fig.add_subplot(3, 4, x + 1) for x in range(len(grp_list))]
+
+    palette = sns.color_palette('Set1', 12)
+
+    column_list = base_list + [f'Ki_t_{grp}' for grp in grp_list]
+    for e, exp_name in enumerate(exp_names):
+        df = load_sim_data(exp_name, region_suffix=None, column_list=column_list)
+        df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
+
+        for c, grp in enumerate(grp_list):
+            ax = axes[c]
+            mdf = df.groupby('date')[f'Ki_t_{grp}'].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+
+            ax.set_title(grp.replace('_EMS-', 'COVID-19 Region '))
+            ax.plot(mdf['date'], mdf['CI_50'], color=palette[e], label=exp_name)
+            ax.fill_between(mdf['date'].values, mdf['CI_2pt5'], mdf['CI_97pt5'], color=palette[e], linewidth=0,
+                            alpha=0.2)
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%Y'))
+
+    axes[-1].legend()
+    plotname = f'Ki_by_covidregion_compare'
+    plt.suptitle('Time varying transmission rate (Ki_t)', x=0.5, y=0.999, fontsize=14)
+    plt.tight_layout()
+
+    plt.savefig(os.path.join(plot_path, plotname + '.png'))
+    plt.savefig(os.path.join(plot_path, 'pdf', plotname + '.pdf'), format='PDF')
+
+
+if __name__ == '__main__':
 
     args = parse_args()
     stem = args.stem
@@ -84,3 +131,8 @@ if __name__ == '__main__' :
         plot_path = os.path.join(sim_output_path, '_plots')
 
         plot_Ki(exp_name,first_day=first_plot_day, last_day=last_plot_day)
+    if len(exp_names) > 1:
+        labels = args.labels
+        if labels == None:
+            labels = [''.join(exp.split("_")[-3:]) for exp in exp_names]
+        plot_Ki_compare(exp_names, labels, first_day=first_plot_day, last_day=last_plot_day)

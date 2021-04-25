@@ -168,12 +168,13 @@ def extract_sample_traces(exp_name,traces_to_keep_ratio, traces_to_keep_min):
     nunique = df_samples.apply(pd.Series.nunique)
     cols_to_drop = nunique[nunique == 1].index
     df_samples = df_samples.drop(cols_to_drop, axis=1)
-    grp_list = get_grp_list(exp_name)
+    grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=output_path)
+    grp_list = [grp for grp in grp_list if grp !="All"]
 
     df_traces = pd.DataFrame()
-    for grp in grp_list:
-        grp_nr = grp.split('_')[-1]
-        grp_suffix= grp.split('_')[0]
+    for e, grp in enumerate(grp_list):
+        grp_nr =grp_numbers[e]
+
 
         """Drop parameters that correspond to other regions"""
         grp_channels = [i for i in df_samples.columns if grp_suffix in i]
