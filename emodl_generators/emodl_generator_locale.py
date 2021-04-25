@@ -1156,7 +1156,7 @@ class covidModel:
                 frac_severe_str = frac_severe_str + frac_severeV_str
 
 
-            emodl_str = emodl_str +  fracinfect_str + frac_severe_str #bvariant_infectivity
+            emodl_str = emodl_str +  fracinfect_str + frac_severe_str
 
             return emodl_str
 
