@@ -4,6 +4,7 @@ Output: tracjectoriesDat including all outcome channels, and trajectoriesDat_tri
 If number of trajectories exceeds a specified limit, multiple trajectories in chunks will be returned.
 """
 import argparse
+import subprocess
 import pandas as pd
 import os
 import shutil
@@ -313,6 +314,6 @@ if __name__ == '__main__':
 
     """ Start parallel rt estimation per trajectory """
     if Location == "NUCLUSTER" :
-        temp_exp_dir = os.path.join(git_dir, '_temp', exp_name)
-        p = os.path.join(temp_exp_dir,'sh', '4_runRtEstimation_trajectories.sh')
-        subprocess.call(['sh',p])
+        exp_dir = os.path.join(sim_out_dir, exp_name)
+        p = os.path.join(exp_dir, 'submit_runRtEstimation_trajectories.sh')
+        subprocess.call([p])

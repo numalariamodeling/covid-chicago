@@ -234,7 +234,7 @@ def run_combine_and_plot(exp_dir, grp_numbers, last_plot_day):
 
 if __name__ == '__main__':
 
-    test_mode = True
+    test_mode = False
     if test_mode:
         stem = "20210402_IL_locale_sub_ae_test_v7_vaccine"
         Location = 'Local'
