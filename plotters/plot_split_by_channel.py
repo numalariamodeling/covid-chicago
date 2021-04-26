@@ -119,25 +119,20 @@ def get_channels(channelGrp):
     return  nchannels, label0, label1
 
 
-def compare_channels(channelGrp, grp="All", logscale=False, save_csv=False):
+def compare_channels(channelGrp,grp="All",logscale=False):
+
     nchannels, label0, label1 = get_channels(channelGrp)
 
-    trajectories_cols = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), index_col=0,
-                                    nrows=0).columns.tolist()
-
-    cols = list( set([ch.replace('new_', '').replace('_V', '') for ch in nchannels['channels1'] + nchannels['channels2']]))
-    column_list = []
+    trajectories_cols = pd.read_csv(os.path.join(sim_output_path, 'trajectoriesDat.csv'), index_col=0, nrows=0).columns.tolist()
+    cols = list(set([ch.replace('new_','').replace('_V','') for ch in nchannels['channels1']+nchannels['channels2']]))
+    column_list=[]
     for col in cols:
         column_list = column_list + [x for x in trajectories_cols if x.startswith(col)]
 
-    df = load_sim_data(exp_name, region_suffix=f'_{grp}', fname='trajectoriesDat.csv', column_list=column_list,
-                       add_incidence=True)
+    df = load_sim_data(exp_name, region_suffix=f'_{grp}',fname='trajectoriesDat.csv',column_list=column_list, add_incidence=True)
     df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
-    if channelGrp == 'bvariant':
+    if channelGrp =='bvariant':
         df['B_prev'] = df['infected_B'] / df['infected']
-
-    if save_csv:
-        export_csv(df,channelGrp,nchannels)
 
     palette = sns.color_palette('Set1', len(nchannels))
     fig = plt.figure(figsize=(12, 6))
@@ -150,51 +145,36 @@ def compare_channels(channelGrp, grp="All", logscale=False, save_csv=False):
 
     for d, key in enumerate(nchannels.keys()):
         channels = nchannels[key]
-        if len([col for col in channels if not col in df.columns]) > 0:
+        if len([col for col in channels if not col in df.columns])>0:
             raise ValueError("Not all columns in dataframe")
         else:
             if d == 0:
                 label = label0
             if d == 1:
                 label = label1
-        plot_on_fig(df, channels, axes, color=palette[d], label=label, logscale=logscale)
+        plot_on_fig(df, channels, axes, color=palette[d], label=label,logscale=logscale)
 
     axes[-1].legend()
 
     plot_name = f'{channelGrp}_comparison_{grp}'
-    if logscale:
+    if logscale :
         plot_name = plot_name + "_log"
 
     plt.savefig(os.path.join(plot_path, plot_name + '.png'))
-    plt.savefig(os.path.join(plot_path, 'pdf', plot_name + '.pdf'), format='PDF')
+    plt.savefig(os.path.join(plot_path,'pdf', plot_name + '.pdf'), format='PDF')
     plt.show()
 
-
-def export_csv(df,channelGrp,nchannels):
-
-    adf = pd.DataFrame()
-    for d, key in enumerate(nchannels.keys()):
-        channels = nchannels[key]
-        #for c, channel in enumerate(channels):
-        mdf = df.groupby('date')[channels].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
-        #dframe = dframe.reset_index(level=0, drop=True)
-        mdf.columns = ['_'.join(x) if isinstance(x, tuple) else x for x in mdf.columns.ravel()]
-        #mdf['channel'] = channel
-        adf = adf.append(mdf)
-
-    adf.to_csv(os.path.join(sim_output_path,f'{channelGrp}_aggr.csv'))
-
-if __name__ == '__main__':
+if __name__ == '__main__' :
 
     args = parse_args()
-    stem =args.stem
+    stem = args.stem
     channelGrp = args.channelGrp
     Location = args.Location
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
-    first_day = pd.Timestamp.today() - pd.Timedelta(120, 'days')
-    last_day = pd.Timestamp.today() + pd.Timedelta(150, 'days')
+    first_day = pd.Timestamp.today()- pd.Timedelta(60,'days')
+    last_day = pd.Timestamp.today()+ pd.Timedelta(150,'days')
     if channelGrp == 'Vaccinated':
         first_day = pd.Timestamp('2021-01-01')
 
@@ -202,9 +182,9 @@ if __name__ == '__main__':
     for exp_name in exp_names:
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         plot_path = os.path.join(sim_output_path, '_plots')
-        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path = sim_output_path)
 
         for grp in grp_list:
             print(f'Process started for {grp}')
-            compare_channels(channelGrp=channelGrp, grp=grp,save_csv=True)
-            # compare_channels(channelGrp=channelGrp, grp=grp,logscale=True)
+            compare_channels(channelGrp=channelGrp, grp=grp)
+            #compare_channels(channelGrp=channelGrp, grp=grp,logscale=True)
