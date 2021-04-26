@@ -7,13 +7,12 @@ time_varying_parameter:
   'n_recovery_time_crit_change': 1
   'n_recovery_time_hosp_change': 1
 interventions:
-  'n_gradual_steps': 8
-  'rollback_relative_to_initial': False
-  'rollback_regionspecific': False
+  'n_gradual_steps': 8 # if not using a csv and if scaleup date < 2099 in master yaml
+  'trigger_channel': 'crit_det'
+  'bvariant_csv': ""
+  'vaccination_csv': "vaccination_linear.csv" #"vaccination_linear_doubled.csv"
   'reopen_relative_to_initial': False
   'reopen_regionspecific': False
-  'trigger_channel': 'crit_det'
-  'read_from_csv': False
-  'bvariant_csv': ""
-  'vaccination_csv': "vaccination_linear.csv" #"vaccination_linear_doubled.csv" 
-  #'reopen_csv': "ki_increase_scenario.csv"
+  'reopen_csv': ""
+  'rollback_regionspecific': False
+  'rollback_csv': ""
