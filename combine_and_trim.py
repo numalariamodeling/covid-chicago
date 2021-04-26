@@ -313,7 +313,8 @@ if __name__ == '__main__':
         print(f'Single trajectories deleted')
 
     """ Start parallel rt estimation per trajectory """
-    if Location == "NUCLUSTER" :
-        exp_dir = os.path.join(sim_out_dir, exp_name)
-        p = os.path.join(exp_dir, 'submit_runRtEstimation_trajectories.sh')
-        subprocess.call([p])
+    # FIXME permission denied
+    #if Location == "NUCLUSTER" :
+    #    exp_dir = os.path.join(sim_out_dir, exp_name)
+    #    p = os.path.join(exp_dir, 'submit_runRtEstimation_trajectories.sh')
+    #    subprocess.call([p])
