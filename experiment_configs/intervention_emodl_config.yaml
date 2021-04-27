@@ -16,4 +16,5 @@ interventions:
   'read_from_csv': False
   'bvariant_csv': ""
   'vaccination_csv': "vaccination_linear.csv" #"vaccination_linear_doubled.csv" 
+  'mitigation_csv': "mitigation.csv"
   #'reopen_csv': "ki_increase_scenario.csv"
