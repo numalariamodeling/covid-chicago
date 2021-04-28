@@ -1003,7 +1003,6 @@ class covidModel:
 
         def write_vaccine():
             emodl_str = ';COVID-19 vaccine scenario\n'
-            read_from_csv = intervention_param['read_from_csv']
             csvfile = intervention_param['vaccination_csv']
             df = pd.read_csv(os.path.join("./experiment_configs", 'input_csv', csvfile))
             df['Date'] = pd.to_datetime(df['date'])

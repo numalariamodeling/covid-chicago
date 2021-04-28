@@ -25,7 +25,6 @@ vaccine_past_start <- as.Date('2020-12-20') + 21
 vaccine_past_end <- max(dat$date )
 vaccine_fut_start <- vaccine_past_end
 vaccine_fut_end <- as.Date('2021-12-31')
-target_increase <- c(2)
 
 ### Linear model by COVID-19 region
 lmdat_list <- list()
@@ -84,13 +83,79 @@ for(reg in c(1:11)){
   }
 lmdat_scenario <- lmdat_list %>% bind_rows()
 
+
+### Linear model, slowed
+lmdat_list <- list()
+for(reg in c(1:11)){
+
+  t = lmdat_continued %>%
+    filter(covid_region==reg & date == vaccine_fut_end) %>%
+    mutate(t=persons_first_vaccinated * 0.75) %>%
+    select(t) %>% as.numeric()
+
+  dat_i <- dat %>%
+    filter(covid_region==reg) %>%
+    select(date,persons_first_vaccinated)
+
+  dt_scen <- as.data.frame(cbind('date'=vaccine_fut_end, 'persons_first_vaccinated'=t))
+  dt_scen$date <- as.Date(dt_scen$date, origin = as.Date('1970-01-01'))
+
+  dat_i <- dat_i %>%
+    filter(date ==max(date)) %>%
+    select(date,persons_first_vaccinated)
+
+  dat_i <- rbind(dat_i,dt_scen)
+  model = lm(persons_first_vaccinated ~ date,  data=dat_i)
+  dates <- seq(from=vaccine_fut_start,to=vaccine_fut_end, by='days')
+  xdat = as.data.frame(dates)
+  colnames(xdat)='date'
+  xdat$persons_first_vaccinated <- predict(model,xdat)
+  xdat$persons_first_vaccinated[xdat$persons_first_vaccinated <0] <-0
+  xdat$model='predicted'
+  xdat$covid_region = reg
+  xdat$scenario = 'slowed'
+  lmdat_list[[length(lmdat_list)+1]] = xdat
+  }
+lmdat_scenario2 <- lmdat_list %>% bind_rows()
+
+### Linear model, stagnating
+stag_list <- list()
+for(reg in c(1:11)){
+
+  b <- dat %>%
+    filter(covid_region==reg) %>%
+    filter(date==max(date)) %>%
+    dplyr::select(covid_region,population,persons_first_vaccinated,persons_first_vaccinated_perc,daily_first_vacc_perc)
+
+  date <- seq(as.Date(max(dat$date)),as.Date("2021-12-31"),'days')
+  dat_i <- as.data.frame(date)
+  dat_i[1,'persons_first_vaccinated'] <- b$persons_first_vaccinated
+  dat_i['daily_first_vacc_perc'] <- b$daily_first_vacc_perc
+  dat_i['population'] <- b$population
+  dat_i['daily_first_vacc'] <- 0
+
+  head(dat_i)
+  for(i in c(1:nrow(dat_i))){
+    dat_i[i+1,'daily_first_vacc'] <- (dat_i[i+1,'population'] - dat_i[i,'persons_first_vaccinated'] )*  dat_i[i+1,'daily_first_vacc_perc']
+    dat_i[i+1,'persons_first_vaccinated'] <- dat_i[i,'persons_first_vaccinated']  +  dat_i[i+1,'daily_first_vacc']
+ }
+
+  xdat = as.data.frame(dat_i)
+  xdat$persons_first_vaccinated[xdat$persons_first_vaccinated <0] <-0
+  xdat$model='predicted'
+  xdat$covid_region = reg
+  xdat$scenario = 'stagnating'
+  stag_list[[length(stag_list)+1]] = xdat
+  }
+stagnating_scenario <- stag_list %>% bind_rows() %>% select(colnames(lmdat_scenario))
+
 ##--------------------------------------------
 ### Combine and add population
 ##--------------------------------------------
 popdat <- as.data.frame(cbind(c(1:11),c(660965,1243906, 556776, 656946, 403659, 739098, 800605, 1455324, 1004309, 2693959, 2456274)))
 colnames(popdat) <- c("covid_region","pop")
 
-lmdat <- as.data.frame( rbind(lmdat_continued, lmdat_scenario)) %>% left_join( popdat, by="covid_region")
+lmdat <- as.data.frame( rbind(lmdat_continued, lmdat_scenario,lmdat_scenario2,stagnating_scenario)) %>% left_join( popdat, by="covid_region")
 lmdat$persons_first_vaccinated_raw <- lmdat$persons_first_vaccinated
 lmdat <- lmdat %>% mutate(persons_first_vaccinated = ifelse(persons_first_vaccinated>pop,pop,persons_first_vaccinated))
 tapply(lmdat$persons_first_vaccinated,lmdat$scenario, summary)
@@ -128,8 +193,8 @@ lmdat[duplicated(lmdat[,c("date","covid_region","scenario")]),c("date","covid_re
 
 table(lmdat$scenario)
 lmdat$scenario <- factor(lmdat$scenario,
-                          levels=c('continued','doubled'),
-                          labels=c('continued_trend','doubled_trend'))
+                          levels=c('continued','doubled','slowed','stagnating'),
+                          labels=c('continued_trend','doubled_trend','slowed_trend','stagnating_trend'))
 
 #lmdat %>% filter(date <= vaccine_past_end & scenario=='continued_trend') %>%
 #  fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_historical.csv'))
@@ -143,10 +208,24 @@ lmdat %>%
   fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_linear_doubled.csv'))
 
 lmdat %>%
-  group_by(covid_region,scenario) %>%
-  filter(date ==Sys.Date()+90) %>%
-  summarize(mean=mean(persons_first_vaccinated/pop)*100) %>%
-  pivot_wider(names_from=scenario , values_from=mean)
+  filter((scenario=='continued_trend' & date < vaccine_past_end) |
+           (scenario=='stagnating_trend' & date >= vaccine_past_end)) %>%
+  fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_stagnating.csv'))
+
+
+lmdat %>%
+  filter((scenario=='continued_trend' & date < vaccine_past_end) |
+           (scenario=='slowed_trend' & date >= vaccine_past_end)) %>%
+  fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_linear_slowed.csv'))
+
+
+# lmdat %>%
+#   #dplyr::mutate(target_date =Sys.Date()+90) %>%
+#   dplyr::mutate(target_date =as.Date("2021-07-01")) %>%
+#   dplyr::filter(date ==target_date_effective) %>%
+#   group_by(covid_region,scenario,target_date_effective) %>%
+#   dplyr::summarize(mean=mean(persons_first_vaccinated/pop)*100) %>%
+#   pivot_wider(names_from=scenario , values_from=mean)
 
 
 ### Plots
@@ -177,7 +256,7 @@ f_custom_plot <- function(channel='persons_first_vaccinated',SAVE=TRUE){
   facet_wrap(~covid_region, scales="free")+
   scale_y_continuous(labels=comma)+
   scale_x_date(date_labels = "%b", date_breaks = "2 month")+
-  scale_color_manual(values=c('#add2c8','#00a08a'))+
+  scale_color_brewer(palette="Dark2")+
   labs(title="",
        subtitle='Assumed future vaccination scenarios per COVID-19 Region in Illinois\n',
        color="scenario",
@@ -200,9 +279,9 @@ ggsave(paste0(channel,".pdf"),
 return(pplot)
 }
 
-f_custom_plot(channel='persons_first_vaccinated')
-f_custom_plot(channel='persons_first_vaccinated_perc')
-f_custom_plot(channel='daily_first_vacc_perc')
+f_custom_plot(channel='persons_first_vaccinated',SAVE=T)
+f_custom_plot(channel='persons_first_vaccinated_perc',SAVE=T)
+f_custom_plot(channel='daily_first_vacc_perc',SAVE=T)
 
 
 lmdatAggr <- lmdat %>% group_by(date,scenario) %>%
@@ -225,7 +304,7 @@ pplot <- ggplot(data=lmdatAggr)+
   background_grid()+
   scale_y_continuous(labels=comma)+
   scale_x_date(date_labels = "%b", date_breaks = "1 month")+
-  scale_color_manual(values=c('#add2c8','#00a08a'))+
+  scale_color_brewer(palette="Dark2")+
   labs(title="",
        subtitle='Assumed future vaccination scenarios for Illinois\n',
        color="scenario",

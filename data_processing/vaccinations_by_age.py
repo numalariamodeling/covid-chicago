@@ -11,6 +11,8 @@ sys.path.append('../')
 from processing_helpers import *
 from load_paths import load_box_paths
 
+mpl.rcParams['pdf.fonttype'] = 42
+
 
 def get_pop_by_age(adjust_for_chicago=True):
     """Population by age per covid region"""
