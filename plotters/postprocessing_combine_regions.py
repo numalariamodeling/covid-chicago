@@ -120,9 +120,12 @@ def combine_hospitaloverflow(exp_names):
     dfAll = pd.DataFrame()
     for exp_name in exp_names:
         simdate = exp_name.split("_")[0]
+        grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
+        geographies = [grp.replace("EMS-","covidregion_") for grp in grp_list  ]
         csv_name = f'nu_hospitaloverflow_{simdate}.csv'
         sim_output_path = os.path.join(wdir, 'simulation_output', exp_name)
         df = pd.read_csv(os.path.join(sim_output_path, csv_name))
+        df = df.loc[df['geography_modeled'].isin(geographies)]
         dfAll = pd.concat([dfAll, df])
         del df
 
