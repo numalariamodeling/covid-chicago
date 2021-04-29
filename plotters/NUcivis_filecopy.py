@@ -53,7 +53,7 @@ def copyFiles(output_dir):
     """Scenario needs to be 'baseline' for fname 1 and 2"""
     for fname in [fname1,fname2]:
         df = pd.read_csv(os.path.join(output_dir,'csv', fname))
-        df['scenario_name'] = 'baseline_test'
+        df['scenario_name'] = 'baseline'
         df.to_csv(os.path.join(output_dir,'csv', fname), index=False, date_format='%Y-%m-%d')
 
 def subset_df(fname, regions_to_keep, output_dir,save_dir=None):
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     fname = f"nu_{simdate}.csv"
     exp_dir = os.path.join(wdir,"simulation_output", exp_name)
-    NUcivis_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate,'_test')
+    NUcivis_dir = os.path.join(projectpath, 'NU_civis_outputs', simdate)
 
     """ Deliverables for CIVIS"""
     createFolder(output_dir=NUcivis_dir)

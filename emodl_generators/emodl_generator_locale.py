@@ -1213,27 +1213,7 @@ class covidModel:
             emodl_str = emodl_str + emodl_param + emodl_timeevents
 
             return emodl_str
-        
-        def write_mitigation():
-            emodl_str = ';COVID-19 mitigation rollback time_event\n'
-            csvfile = intervention_param['mitigation_csv']
-    
-            df = pd.read_csv(os.path.join('./experiment_configs', 'input_csv', csvfile))
-            intervention_dates = list(df['Date'].values)
-            ki_reset = list(df['ki_reset'].values)
-    
-            emodl_timeevents = ''
-    
-    
-            for i, date in enumerate(intervention_dates, 1):
-                temp_str = f'(time-event ki_rollback_change{i} {intervention_dates[i-1]} ('
-                temp_str = temp_str + ''.join([f' (Ki_{grp} {ki_reset[i-1]})' for grp in self.grpList ])
-                temp_str = temp_str + f'))\n'
-                emodl_timeevents = emodl_timeevents + temp_str
-                
-            emodl_str = emodl_str + emodl_timeevents
-    
-            return emodl_str
+
 
         """Select intervention to add to emodl"""
         intervention_str = ""
@@ -1247,8 +1227,6 @@ class covidModel:
             intervention_str = intervention_str + write_reopen()
         if "vaccine" in self.add_interventions:
             intervention_str = intervention_str + write_vaccine()
-        if "mitigation" in self.add_interventions:
-            intervention_str = intervention_str + write_mitigation()
 
         return total_string.replace(';[INTERVENTIONS]', intervention_str )
 
