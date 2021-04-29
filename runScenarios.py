@@ -504,7 +504,7 @@ def parse_args():
         "--scenario",
         type=str,
         help=("Intervention scenario to use, default = baseline"
-              'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant", "vaccine"'
+              'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant", "vaccine", "mitigation"'
               'Separated by underscore, example: reopen_rollback '
               "For a full list please visit the GitHub readme"),
         choices=['baseline', 'rollback', 'reopen', 'triggeredrollback','rollback_reopen', 'triggeredrollback_reopen'
