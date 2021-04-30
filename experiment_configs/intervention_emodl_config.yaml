@@ -4,7 +4,7 @@ time_varying_parameter:
   'n_d_Sym_P_As_change': 8
   'n_frac_crit_change': 10
   'n_fraction_dead_change': 9
-  'n_recovery_time_crit_change': 1
+  'n_recovery_time_crit_change': 2
   'n_recovery_time_hosp_change': 1
 interventions:
   'n_gradual_steps': 8 # if not using a csv and if scaleup date < 2099 in master yaml
