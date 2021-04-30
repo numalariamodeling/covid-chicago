@@ -193,7 +193,7 @@ sampled_parameters:
       np.random: uniform
       function_kwargs:
         - {'low': 0.162, 'high': 0.162}
-        - {'low': 0.145, 'high': 0.145}
+        - {'low': 0.185, 'high': 0.185}
         - {'low': 0.279, 'high': 0.279}
         - {'low': 0.199, 'high': 0.199}
         - {'low': 0.230, 'high': 0.230}
@@ -210,7 +210,7 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.145, 'high': 0.145}
         - {'low': 0.125, 'high': 0.125}
-        - {'low': 0.3319, 'high': 0.3319}
+        - {'low': 0.332, 'high': 0.332}
         - {'low': 0.205, 'high': 0.205}
         - {'low': 0.190, 'high': 0.190}
         - {'low': 0.230, 'high': 0.230}
@@ -226,7 +226,7 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.1725, 'high': 0.1725}
         - {'low': 0.1696, 'high': 0.1696}
-        - {'low': 0.1194, 'high': 0.1194}
+        - {'low': 0.1004, 'high': 0.1004}
         - {'low': 0.1912, 'high': 0.1912}
         - {'low': 0.1860, 'high': 0.1860}
         - {'low': 0.1321, 'high': 0.1321}
@@ -242,8 +242,8 @@ sampled_parameters:
       function_kwargs:
         - {'low': 0.1433, 'high': 0.1433}
         - {'low': 0.1522, 'high': 0.1522}
-        - {'low': 0.3938, 'high': 0.3938}
-        - {'low': 0.1541, 'high': 0.1541}
+        - {'low': 0.4284, 'high': 0.4284}
+        - {'low': 0.1912, 'high': 0.1912}
         - {'low': 0.1627, 'high': 0.1627}
         - {'low': 0.1826, 'high': 0.1826}
         - {'low': 0.0796, 'high': 0.0796}
@@ -257,31 +257,31 @@ sampled_parameters:
       np.random: uniform
       function_kwargs:
         - {'low': 0.4038, 'high': 0.4038}
-        - {'low': 0.4776, 'high': 0.4776}
-        - {'low': 0.5084, 'high': 0.5084}
-        - {'low': 0.2541, 'high': 0.2541}
+        - {'low': 0.4076, 'high': 0.4076}
+        - {'low': 0.5284, 'high': 0.5284}
+        - {'low': 0.2012, 'high': 0.2012}
         - {'low': 0.3866, 'high': 0.3866}
-        - {'low': 0.4270, 'high': 0.4270}
-        - {'low': 0.2904, 'high': 0.2904}
+        - {'low': 0.4370, 'high': 0.4370}
+        - {'low': 0.3904, 'high': 0.3904}
         - {'low': 0.2288, 'high': 0.2288}
-        - {'low': 0.2379, 'high': 0.2379}
-        - {'low': 0.3083, 'high': 0.3083}
+        - {'low': 0.2579, 'high': 0.2579}
+        - {'low': 0.3883, 'high': 0.3883}
         - {'low': 0.2348, 'high': 0.2348}
   ki_multiplier_16:
     IL:
       expand_by_age: True
       np.random: uniform
       function_kwargs:
-        - {'low': 0.3724, 'high': 0.3724}
-        - {'low': 0.4880, 'high': 0.4880}
-        - {'low': 0.6553, 'high': 0.6553}
-        - {'low': 0.3013, 'high': 0.3013}
+        - {'low': 0.1433, 'high': 0.1433}
+        - {'low': 0.1382, 'high': 0.1382}
+        - {'low': 0.5484, 'high': 0.5484}
+        - {'low': 0.3812, 'high': 0.3812}
         - {'low': 0.3866, 'high': 0.3866}
-        - {'low': 0.4333, 'high': 0.4333}
-        - {'low': 0.4345, 'high': 0.4345}
-        - {'low': 0.1648, 'high': 0.1648}
-        - {'low': 0.2927, 'high': 0.2927}
-        - {'low': 0.3557, 'high': 0.3557}
+        - {'low': 0.1826, 'high': 0.1826}
+        - {'low': 0.0796, 'high': 0.0796}
+        - {'low': 0.2288, 'high': 0.2288}
+        - {'low': 0.3027, 'high': 0.3027}
+        - {'low': 0.1638, 'high': 0.1638}
         - {'low': 0.2355, 'high': 0.2355}
   ###------------------------------------------------
   ### REGION-SPECIFIC PARAMETER UPDATE
@@ -313,7 +313,41 @@ sampled_parameters:
       np.random: uniform
       function_kwargs:
         - {'low': 184, 'high': 184}
-        - {'low': 243, 'high': 243}                                 
+        - {'low': 243, 'high': 243}                    
+        - {'low': 184, 'high': 184}
+        - {'low': 281, 'high': 281}
+        - {'low': 184, 'high': 184}
+        - {'low': 130, 'high': 130}
+        - {'low': 233, 'high': 233}
+        - {'low': 250, 'high': 250}
+        - {'low': 219, 'high': 219}
+        - {'low': 258, 'high': 258}
+        - {'low': 148, 'high': 148}
+  recovery_time_crit_change2:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 14.0,  'high': 14.0}
+        - {'low': 14.9,  'high': 14.9}
+        - {'low': 16.5,  'high': 16.5}
+        - {'low': 4.1,  'high': 4.1}
+        - {'low': 2.9,  'high': 2.9}
+        - {'low': 16.2,  'high': 16.2}
+        - {'low': 5.8,  'high': 5.8}
+        - {'low': 8.8,  'high': 8.8}
+        - {'low': 2.1,  'high': 2.1}
+        - {'low': 11.8,  'high': 11.8}
+        - {'low': 18.4, 'high': 18.4}
+  ### --------- Time in timesteps since startdate ---------
+  ### (Note: introduces an error when using a different startdate!)
+  recovery_time_crit_change_time_2:
+    IL:
+      expand_by_age: True
+      np.random: uniform
+      function_kwargs:
+        - {'low': 184, 'high': 184}
+        - {'low': 243, 'high': 243}                           
         - {'low': 184, 'high': 184}
         - {'low': 281, 'high': 281}
         - {'low': 184, 'high': 184}
