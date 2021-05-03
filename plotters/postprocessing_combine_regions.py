@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import os
 import sys
@@ -105,7 +106,8 @@ def combine_rtNU(exp_names):
 
     """Get all IL"""
     # TODO better to recalculate, here using mean across regions
-    dfIL = dfAll.groupby(grp_channels)[channels].agg(np.sum).reset_index()
+    grp_channels = ['model_date', 'date',  'rt_pre_aggr']
+    dfIL = dfAll.groupby(grp_channels)[channels].agg(np.mean).reset_index()
     dfIL[region_channel] = 'illinois'
     dfIL = dfIL[dfAll.columns]
     dfAll = pd.concat([dfAll, dfIL])
@@ -164,13 +166,17 @@ def combine_civis_csv(exp_names):
     dfAll = pd.concat([dfAll, dfIL])
 
     if os.path.exists(os.path.join(sim_output_path_new, 'rtNU.csv')):
-        df_rt_all = pd.read_csv(os.path.join(sim_output_path, csv_name))
+        #dfAll = pd.read_csv(os.path.join(sim_output_path_new, 'nu_20210429.csv'))
+        dfAll['date'] = pd.to_datetime(dfAll['date'])
+        df_rt_all = pd.read_csv(os.path.join(sim_output_path_new,  'rtNU.csv'))
+        df_rt_all['date'] = pd.to_datetime(df_rt_all['date'])
+
         dfAll = pd.merge(how='left', left=dfAll, right=df_rt_all,
                               left_on=['date', 'geography_modeled'],
                               right_on=['date', 'geography_modeled'])
 
     print(f'N regions in combined df= {len(dfAll[region_channel].unique())}')
-    dfAll.to_csv(os.path.join(sim_output_path_new, csv_name), index=False, date_format='%Y-%m-%d')
+    dfAll.to_csv(os.path.join(sim_output_path_new,  'nu_20210429.csv'), index=False, date_format='%Y-%m-%d')
 
 
 def copy_regional_plots(exp_names):
@@ -186,12 +192,27 @@ def copy_regional_plots(exp_names):
 if __name__ == '__main__':
 
     args = parse_args()
-    stem = args.stem
-    exp_name_new = f'{stem}_combined'
+    custom_exp_names = False
+    if custom_exp_names:
+        exp_name_new = '20210429_IL_ae_v8_MRtest'
+        exp_names = ['20210428_IL_localeEMS_1_ae_v3_bvariant_vaccine',
+                     '20210429_IL_localeEMS_2_ae_v5_bvariant_vaccine',
+                     '20210429_IL_localeEMS_3_ae_v6_bvariant_vaccine',
+                     '20210428_IL_localeEMS_4_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_5_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_6_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_7_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_8_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_9_ae_v3_bvariant_vaccine',
+                     '20210429_IL_localeEMS_10_ae_v5_bvariant_vaccine',
+                     '20210429_IL_localeEMS_11_ae_v5_bvariant_vaccine']
+    else:
+        stem = args.stem
+        exp_name_new = f'{stem}_combined'
+        exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+        exp_names = [x for x in exp_names if 'zip' not in x]  ### exclude zips
+        exp_names = [x for x in exp_names if '_combined' not in x]  ### _combined should not be used in simulation names
 
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    exp_names = [x for x in exp_names if 'zip' not in x]  ### exclude zips
-    exp_names = [x for x in exp_names if '_combined' not in x]  ### _combined should not be used in simulation names
 
     sim_output_path_new = os.path.join(wdir, 'simulation_output', exp_name_new)
     plot_path_new = os.path.join(sim_output_path_new, '_plots')
@@ -230,7 +251,4 @@ if __name__ == '__main__':
     combine_civis_csv(exp_names)
     print("copy_regional_plots")
     copy_regional_plots(exp_names)
-
-
-
 
