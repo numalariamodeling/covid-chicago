@@ -33,12 +33,14 @@ def createFolder(output_dir):
         os.makedirs(output_dir)
     if not os.path.exists(os.path.join(output_dir, "plots")):
         os.makedirs(os.path.join(output_dir, "plots"))
+    if not os.path.exists(os.path.join(output_dir, "csv")):
+        os.makedirs(os.path.join(output_dir, "csv"))
 
 def copyFiles(output_dir):
     fname1 = f'nu_{simdate}.csv'
     fname2 = f'nu_hospitaloverflow_{simdate}.csv'
-    shutil.copyfile(os.path.join(exp_dir, fname1), os.path.join(output_dir, fname1))
-    shutil.copyfile(os.path.join(exp_dir, fname2), os.path.join(output_dir, fname2))
+    shutil.copyfile(os.path.join(exp_dir, fname1), os.path.join(output_dir,'csv', fname1))
+    shutil.copyfile(os.path.join(exp_dir, fname2), os.path.join(output_dir,'csv', fname2))
 
     filelist= [file for file in os.listdir(os.path.join(exp_dir, '_plots')) if file.endswith('.png')]
     for file in filelist :
