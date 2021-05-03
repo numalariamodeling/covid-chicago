@@ -15,10 +15,10 @@ import epyestim
 import epyestim.covid19 as covid19
 import seaborn as sns
 
+from estimate_Rt_trajectores import *
 sys.path.append('../')
 from load_paths import load_box_paths
 from processing_helpers import *
-from estimate_Rt_trajectores import *
 
 mpl.rcParams['pdf.fonttype'] = 42
 
