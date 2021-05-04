@@ -197,6 +197,7 @@ def copy_regional_plots(exp_names):
 
         filelist = [f for f in os.listdir(os.path.join(plot_path)) if f.endswith('.png')]
         filelist = [f for f in filelist if "covidregion_" in f or  "EMS-" in f]
+        filelist = [f for f in filelist if "rt_" not in f ]
         for file in filelist:
             shutil.copyfile(os.path.join(plot_path, file), os.path.join(plot_path_new, file))
 
@@ -209,6 +210,22 @@ def replace_stem(submission_file):
     fin = open(submission_file, "w")
     fin.write(txt)
     fin.close()
+
+def copy_submission_files():
+    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh')) if f.endswith('.sh')]
+    for file in filelist:
+        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh', file), os.path.join(sim_output_path_new, 'sh', file))
+        replace_stem(submission_file=os.path.join(sim_output_path_new, 'sh', file))
+
+    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0])) if f.endswith('.sh')]
+    for file in filelist:
+        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], file), os.path.join(sim_output_path_new, file))
+        replace_stem(submission_file=os.path.join(sim_output_path_new, file))
+
+    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat')) if  f.endswith('.bat')]
+    for file in filelist:
+        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat', file), os.path.join(sim_output_path_new, 'bat', file))
+        replace_stem(submission_file=os.path.join(sim_output_path_new, 'bat', file))
 
 if __name__ == '__main__':
 
@@ -246,17 +263,8 @@ if __name__ == '__main__':
         os.makedirs(os.path.join(sim_output_path_new, 'bat'))
 
     """Move sh or bat files"""
-    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh')) if f.endswith('.sh')]
-    for file in filelist:
-        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh', file),
-                        os.path.join(sim_output_path_new, 'sh', file))
-        replace_stem(submission_file= os.path.join(sim_output_path_new, 'sh', file) )
-
-    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat')) if f.endswith('.bat')]
-    for file in filelist:
-        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat', file),
-                        os.path.join(sim_output_path_new, 'bat', file))
-        replace_stem(submission_file= os.path.join(sim_output_path_new, 'bat', file))
+    print("Running copy_submission_files")
+    copy_submission_files()
 
     print("Running copy_traces")
     copy_traces(exp_names)
