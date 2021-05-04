@@ -35,16 +35,12 @@ def createFolder(output_dir):
         os.makedirs(os.path.join(output_dir, "plots"))
     if not os.path.exists(os.path.join(output_dir, "csv")):
         os.makedirs(os.path.join(output_dir, "csv"))
-    if not os.path.exists(os.path.join(output_dir, "trajectories")):
-        os.makedirs(os.path.join(output_dir, "trajectories"))
 
 def copyFiles(output_dir):
     fname1 = f'nu_{simdate}.csv'
     fname2 = f'nu_hospitaloverflow_{simdate}.csv'
-    fname3 = f'trajectoriesDat_{exp_scenario}.csv'
     shutil.copyfile(os.path.join(exp_dir, fname1), os.path.join(output_dir,'csv', fname1))
     shutil.copyfile(os.path.join(exp_dir, fname2), os.path.join(output_dir,'csv', fname2))
-    shutil.copyfile(os.path.join(exp_dir, 'trajectoriesDat.csv'), os.path.join(output_dir,'trajectories', fname3))
 
     filelist= [file for file in os.listdir(os.path.join(exp_dir, '_plots')) if file.endswith('.png')]
     for file in filelist :
@@ -64,7 +60,7 @@ def subset_df(fname, regions_to_keep, output_dir,save_dir=None):
     df.to_csv(os.path.join(save_dir, fname))
 
 
-def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=None):
+def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=None, A7=None, A8=None):
     Q1 = "1) How has the date range of data used changed since your last update?"
     Q2 = "2) How have data sources changed since your last update?"
     Q3 = "3) What important changes have you made in your methodology since the last update?"
@@ -73,26 +69,23 @@ def writeChangelog(output_dir,A1=None,A2=None, A3=None, A4=None, A5=None, A6=Non
     Q5 = "5) Relevant time events in the simulations"
     Q6 = "6) Bvariant: "
     Q7 = "7) Vaccinations: "
-    Q7 = "8) Future scenarios: "
+    Q8 = "8) Future scenarios: "
 
     if A1 == None :A1 = "- another week of EMResource and LL data"
     if A2 == None :A2 = "- same as last week, also using CLI admissions for validation"
-    if A3 == None :A3 = "- updated fitting "
+    if A3 == None :A3 = "- updated fitting, , included bvariant (see 6)), adjusted latest transmission rate multiplier to account for the stagnating trend in data "
     if A4 == None :A4 = "..."
     if os.path.exists(os.path.join(exp_dir, f'traces_ranked_region_11.csv')):
         A4 = A4 + "\n Note: using the 25% if the simulation trajectories that best fit the data"
     if A5 == None :  A5 = "- Reduction in transmission rate due to 'shelter in place policies': " \
                           "2020-03-12, 2020-03-17, 2020-03-21, 2020-04-21" \
-                          "\n- Change in transmission rate during reopening period : " \
-                          "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20 " \
-                           "2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20," \
-                            "2021-02-15 ,2021-03-15  "\
+                          "\n- Change in transmission rate during reopening period : 2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20 2020-06-21 ,2020-07-25, 2020-08-25 , 2020-09-17, 2020-10-10, 2020-11-07, 2020-12-20, 2021-01-20, 2021-02-15 ,2021-03-07, 2021-04-07  "\
                           "\n- Increase in detection rates/ decrease in fraction dead: monthly between March to Oct/Dec 2020"
-    if A6 == None : A6 = \ "- bvariant not included in historical fit but in future projections with higher infectiousness and severity for a fraction of the population, reaching 25% by May"
-    if A7 == None : A7 = \ "- added vaccination, assuming current trend in daily vaccinations to continue until end of 2021 " \
-                          "\n- assume that vaccinations reduce mild infections by 20% severe symptoms by 95%, and infectiousness by 90% for the vaccinated population (all ages)" \
-                          "\n- added a 85% reduction in severe infections for those not vaccinated,  time-varying and depending on the fraction of pop aged > 65 vaccinated (1st dose)" \
-    if A8 == None : A8 = "- No additional scenarios"
+    if A6 == None : A6 = "\n- bvariant not included in historical fit but in future projections with higher infectiousness and severity for a fraction of the population, reaching 25% by May"
+    if A7 == None : A7 = "\n- added vaccination, assuming current trend in daily vaccinations to continue until end of 2021 " \
+                         "\n- assume that vaccinations reduce mild infections by 20% severe symptoms by 95%, and infectiousness by 90% for the vaccinated population (all ages)" \
+                         "\n- added a 85% reduction in severe infections for those not vaccinated,  time-varying and depending on the fraction of pop aged > 65 vaccinated (1st dose)"
+    A8 = "- No additional scenarios"
 
     file = open(os.path.join(output_dir, 'changelog.txt'), 'w')
     file.write(f'Northwestern University COVID-19 Modelling Team \n\n Date: {simdate} \n\n '

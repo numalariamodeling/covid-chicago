@@ -42,8 +42,12 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
         if region_suffix =='_EMS-1':
             reg_cols = [col for col in reg_cols if not 'EMS-10' in col]
             reg_cols = [col for col in reg_cols if not 'EMS-11' in col]
-        df = df[['run_num', 'sample_num', 'scen_num','startdate', 'time']+reg_cols]
+        #df = df[['run_num', 'sample_num', 'scen_num','startdate', 'time']+reg_cols]
         df.columns = df.columns.str.replace(region_suffix, '')
+
+        """ If trajectoriesDat_region_0 was re-generated from single region runs, it already includes selected traces only"""
+        if "_combined" in exp_name and ems_nr == 0:
+            select_traces = False
 
         if select_traces:
             if os.path.exists(os.path.join(sim_output_path, f'traces_ranked_region_{str(ems_nr)}.csv')):
@@ -500,18 +504,32 @@ def get_grp_list(exp_name,  input_wdir=None, input_sim_output_path =None):
 
 def get_group_names(exp_path, uniquechannel ='Ki_t', fname="trajectoriesDat.csv"):
     """Similar to get_grp_list, but uses trajectoriesDat column names"""
-    trajectories_cols = pd.read_csv(os.path.join(exp_path, fname), index_col=0,
-                                    nrows=0).columns.tolist()
-    cols = [col for col in trajectories_cols if uniquechannel in col]
-    if len(cols) != 0:
-        grp_list = [col.replace(f'{uniquechannel}_', '') for col in cols]
-        grp_suffix = grp_list[0][:3]
-        grp_numbers =  [int(grp.replace('EMS-', '')) for grp in grp_list]
-        if len(cols) > 1:
-            grp_list = grp_list + ['All']
-            grp_numbers = grp_numbers + [0]
+
+    if "_combined" in exp_path:
+        pattern = 'trajectoriesDat_region'
+        grp_suffix = 'EMS'
+        files = os.listdir(exp_path)
+        trajectories = [x.replace(f'{pattern}_','') for x in files if pattern in x]
+        grp_numbers = [int(x.replace('.csv','')) for x in trajectories]
+        grp_numbers.sort()
+
+        grp_list =  [f'{grp_suffix}-{str(x)}' for x in grp_numbers if x > 0]
+        if 0 in grp_numbers:
+            grp_list =  grp_list + ['All']
+
     else:
-        grp_list = None
-        grp_suffix=None
-        grp_numbers = None
+        trajectories_cols = pd.read_csv(os.path.join(exp_path, fname), index_col=0,
+                                        nrows=0).columns.tolist()
+        cols = [col for col in trajectories_cols if uniquechannel in col]
+        if len(cols) != 0:
+            grp_list = [col.replace(f'{uniquechannel}_', '') for col in cols]
+            grp_suffix = grp_list[0][:3]
+            grp_numbers =  [int(grp.replace('EMS-', '')) for grp in grp_list]
+            if len(cols) > 1:
+                grp_list = grp_list + ['All']
+                grp_numbers = grp_numbers + [0]
+        else:
+            grp_list = None
+            grp_suffix=None
+            grp_numbers = None
     return grp_list, grp_suffix, grp_numbers

@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import os
 import sys
@@ -63,33 +64,45 @@ def copy_and_rename_trajectories(exp_names):
 def trajectories_All(exp_name_new):
     """trajectories for all IL"""
 
-    dfAll = pd.DataFrame()
-    for grp in range(1, 12):
-        region_suffix = f'_EMS-{str(grp)}'
-        df = load_sim_data(exp_name_new, region_suffix=region_suffix)
+    pattern  =  'trajectoriesDat_region'
+    files = os.listdir(sim_output_path_new)
+    trajectories = [x.replace(f'{pattern}_','') for x in files if pattern in x]
+    grp_numbers = [int(x.replace('.csv','')) for x in trajectories]
 
-        """Scen_num and sample_num wont be the same across regions"""
-        df['sample_num'] = df.groupby(['time']).cumcount() + 1
-        df['scen_num'] = df.groupby(['time']).cumcount() + 1
-        dfAll = pd.concat([dfAll, df])
+    if len(grp_numbers)<11:
+        print(f'Warning number of single trajectories csvs <11 (only {len(grp_numbers)} found) '
+              f'trajectoriesDat_region_0.csv not generated')
+    else:
+        dfAll = pd.DataFrame()
+        for grp in grp_numbers:
+            region_suffix = f'_EMS-{str(grp)}'
+            df = load_sim_data(exp_name_new, region_suffix=region_suffix )
 
-    """Get all IL"""
-    grp_channels = ['time', 'startdate', 'sample_num', 'scen_num', 'date', 'run_num']
-    # channels = [ch for ch in dfAll.columns if ch not in  grp_channels]
+            """Scen_num and sample_num wont be the same across regions"""
+            df['sample_num'] = df.groupby(['time']).cumcount() + 1
+            df['scen_num'] = df.groupby(['time']).cumcount() + 1
+            dfAll = pd.concat([dfAll, df])
 
-    trajectories_cols = pd.read_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_2.csv'),
-                                    index_col=0, nrows=0).columns.tolist()
-    channels = [col for col in trajectories_cols if '_EMS-' in col]
-    channels = [col.replace("_EMS-2", "") for col in channels if not '_t_' in col]
+        """Get all IL"""
+        grp_channels = ['time', 'startdate', 'sample_num', 'scen_num', 'date', 'run_num']
+        # channels = [ch for ch in dfAll.columns if ch not in  grp_channels]
 
-    dfIL = dfAll.groupby(grp_channels)[channels].agg(np.sum).reset_index()
-    dfIL.to_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_0.csv'), index=False, date_format='%Y-%m-%d')
+        """Use f"""
+        trajectories_cols = pd.read_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_{grp_numbers[0]}.csv'),
+                                        index_col=0, nrows=0).columns.tolist()
+        channels = [col for col in trajectories_cols if '_EMS-' in col]
+        channels = [col.replace(f'_EMS-{grp_numbers[0]}', "") for col in channels if not '_t_' in col]
+
+        dfIL = dfAll.groupby(grp_channels)[channels].agg(np.sum).reset_index()
+        for col in channels:
+            dfIL.rename(columns={col: f'{col}_All'}, inplace=True)
+
+        dfIL.to_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_0.csv'), index=False, date_format='%Y-%m-%d')
 
 
 def combine_rtNU(exp_names):
     csv_name = 'rtNU.csv'
     region_channel = 'geography_modeled'
-    grp_channels = ['model_date', 'date', 'geography_modeled', 'rt_pre_aggr']
     channels = ['rt_median', 'rt_lower', 'rt_upper']
 
     dfAll = pd.DataFrame()
@@ -104,8 +117,9 @@ def combine_rtNU(exp_names):
         dfAll['model_date'] = dfAll['model_date'].unique()[0]
 
     """Get all IL"""
-    # TODO better to recalculate, here using mean across regions
-    dfIL = dfAll.groupby(grp_channels)[channels].agg(np.sum).reset_index()
+    # better to recalculate using trajectoriesDat_region_0.csv, here using mean across regions
+    grp_channels = ['model_date', 'date',  'rt_pre_aggr']
+    dfIL = dfAll.groupby(grp_channels)[channels].agg(np.mean).reset_index()
     dfIL[region_channel] = 'illinois'
     dfIL = dfIL[dfAll.columns]
     dfAll = pd.concat([dfAll, dfIL])
@@ -164,13 +178,17 @@ def combine_civis_csv(exp_names):
     dfAll = pd.concat([dfAll, dfIL])
 
     if os.path.exists(os.path.join(sim_output_path_new, 'rtNU.csv')):
-        df_rt_all = pd.read_csv(os.path.join(sim_output_path, csv_name))
+        #dfAll = pd.read_csv(os.path.join(sim_output_path_new, 'nu_20210429.csv'))
+        dfAll['date'] = pd.to_datetime(dfAll['date'])
+        df_rt_all = pd.read_csv(os.path.join(sim_output_path_new,  'rtNU.csv'))
+        df_rt_all['date'] = pd.to_datetime(df_rt_all['date'])
+
         dfAll = pd.merge(how='left', left=dfAll, right=df_rt_all,
                               left_on=['date', 'geography_modeled'],
                               right_on=['date', 'geography_modeled'])
 
     print(f'N regions in combined df= {len(dfAll[region_channel].unique())}')
-    dfAll.to_csv(os.path.join(sim_output_path_new, csv_name), index=False, date_format='%Y-%m-%d')
+    dfAll.to_csv(os.path.join(sim_output_path_new,  'nu_20210429.csv'), index=False, date_format='%Y-%m-%d')
 
 
 def copy_regional_plots(exp_names):
@@ -178,20 +196,61 @@ def copy_regional_plots(exp_names):
         plot_path = os.path.join(wdir, 'simulation_output', exp_name, '_plots')
 
         filelist = [f for f in os.listdir(os.path.join(plot_path)) if f.endswith('.png')]
-        # filelist = [f for f in filelist if "covidregion" in f]
+        filelist = [f for f in filelist if "covidregion_" in f or  "EMS-" in f]
+        filelist = [f for f in filelist if "rt_" not in f ]
         for file in filelist:
             shutil.copyfile(os.path.join(plot_path, file), os.path.join(plot_path_new, file))
 
 
+def replace_stem(submission_file):
+    fin = open(submission_file, "rt")
+    txt = fin.read()
+    fin.close()
+    txt = txt.replace(f'{exp_names[0]}', f'{exp_name_new}')
+    fin = open(submission_file, "w")
+    fin.write(txt)
+    fin.close()
+
+def copy_submission_files():
+    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh')) if f.endswith('.sh')]
+    for file in filelist:
+        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh', file), os.path.join(sim_output_path_new, 'sh', file))
+        replace_stem(submission_file=os.path.join(sim_output_path_new, 'sh', file))
+
+    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0])) if f.endswith('.sh')]
+    for file in filelist:
+        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], file), os.path.join(sim_output_path_new, file))
+        replace_stem(submission_file=os.path.join(sim_output_path_new, file))
+
+    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat')) if  f.endswith('.bat')]
+    for file in filelist:
+        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat', file), os.path.join(sim_output_path_new, 'bat', file))
+        replace_stem(submission_file=os.path.join(sim_output_path_new, 'bat', file))
+
 if __name__ == '__main__':
 
     args = parse_args()
-    stem = args.stem
-    exp_name_new = f'{stem}_combined'
+    custom_exp_names = False
+    if custom_exp_names:
+        exp_name_new = '20210428_IL_ae_combined_bvariant_vaccine'
+        exp_names = ['20210428_IL_localeEMS_1_ae_v3_bvariant_vaccine',
+                     '20210429_IL_localeEMS_2_ae_v5_bvariant_vaccine',
+                     '20210429_IL_localeEMS_3_ae_v6_bvariant_vaccine',
+                     '20210428_IL_localeEMS_4_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_5_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_6_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_7_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_8_ae_v3_bvariant_vaccine',
+                     '20210428_IL_localeEMS_9_ae_v3_bvariant_vaccine',
+                     '20210429_IL_localeEMS_10_ae_v5_bvariant_vaccine',
+                     '20210429_IL_localeEMS_11_ae_v5_bvariant_vaccine']
+    else:
+        stem = args.stem
+        exp_name_new = f'{stem}_combined'
+        exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
+        exp_names = [x for x in exp_names if 'zip' not in x]  ### exclude zips
+        exp_names = [x for x in exp_names if '_combined' not in x]  ### _combined should not be used in simulation names
 
-    exp_names = [x for x in os.listdir(os.path.join(wdir, 'simulation_output')) if stem in x]
-    exp_names = [x for x in exp_names if 'zip' not in x]  ### exclude zips
-    exp_names = [x for x in exp_names if '_combined' not in x]  ### _combined should not be used in simulation names
 
     sim_output_path_new = os.path.join(wdir, 'simulation_output', exp_name_new)
     plot_path_new = os.path.join(sim_output_path_new, '_plots')
@@ -199,38 +258,30 @@ if __name__ == '__main__':
     if not os.path.exists(sim_output_path_new):
         os.makedirs(sim_output_path_new)
         os.makedirs(plot_path_new)
+        os.makedirs(os.path.join(plot_path_new, 'pdf'))
         os.makedirs(os.path.join(sim_output_path_new, 'sh'))
         os.makedirs(os.path.join(sim_output_path_new, 'bat'))
 
-    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh')) if f.endswith('.sh')]
-    for file in filelist:
-        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'sh', file),
-                        os.path.join(sim_output_path_new, 'sh', file))
-    filelist = [f for f in os.listdir(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat')) if
-                f.endswith('.bat')]
-    for file in filelist:
-        shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat', file),
-                        os.path.join(sim_output_path_new, 'bat', file))
+    """Move sh or bat files"""
+    print("Running copy_submission_files")
+    copy_submission_files()
 
-    print("copy_traces")
+    print("Running copy_traces")
     copy_traces(exp_names)
     try:
-        print("copy_and_rename_trajectories")
+        print("Running copy_and_rename_trajectories")
         copy_and_rename_trajectories(exp_names)
-        print("trajectories_All")
+        print("Generating trajectories_All")
         trajectories_All(exp_name_new)
     except:
-        print("check trajectories")
+        print("Error check trajectories")
 
-    print("combine_rtNU")
+    print("Running combine_rtNU")
     combine_rtNU(exp_names)
-    print("combine_hospitaloverflow")
+    print("Running combine_hospitaloverflow")
     combine_hospitaloverflow(exp_names)
-    print("combine_civis_csv")
+    print("Running combine_civis_csv")
     combine_civis_csv(exp_names)
-    print("copy_regional_plots")
+    print("Running copy_regional_plots")
     copy_regional_plots(exp_names)
-
-
-
 
