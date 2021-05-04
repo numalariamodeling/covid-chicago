@@ -64,33 +64,45 @@ def copy_and_rename_trajectories(exp_names):
 def trajectories_All(exp_name_new):
     """trajectories for all IL"""
 
-    dfAll = pd.DataFrame()
-    for grp in range(1, 12):
-        region_suffix = f'_EMS-{str(grp)}'
-        df = load_sim_data(exp_name_new, region_suffix=region_suffix)
+    pattern  =  'trajectoriesDat_region'
+    files = os.listdir(sim_output_path_new)
+    trajectories = [x.replace(f'{pattern}_','') for x in files if pattern in x]
+    grp_numbers = [int(x.replace('.csv','')) for x in trajectories]
 
-        """Scen_num and sample_num wont be the same across regions"""
-        df['sample_num'] = df.groupby(['time']).cumcount() + 1
-        df['scen_num'] = df.groupby(['time']).cumcount() + 1
-        dfAll = pd.concat([dfAll, df])
+    if len(grp_numbers)<11:
+        print(f'Warning number of single trajectories csvs <11 (only {len(grp_numbers)} found) '
+              f'trajectoriesDat_region_0.csv not generated')
+    else:
+        dfAll = pd.DataFrame()
+        for grp in grp_numbers:
+            region_suffix = f'_EMS-{str(grp)}'
+            df = load_sim_data(exp_name_new, region_suffix=region_suffix )
 
-    """Get all IL"""
-    grp_channels = ['time', 'startdate', 'sample_num', 'scen_num', 'date', 'run_num']
-    # channels = [ch for ch in dfAll.columns if ch not in  grp_channels]
+            """Scen_num and sample_num wont be the same across regions"""
+            df['sample_num'] = df.groupby(['time']).cumcount() + 1
+            df['scen_num'] = df.groupby(['time']).cumcount() + 1
+            dfAll = pd.concat([dfAll, df])
 
-    trajectories_cols = pd.read_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_2.csv'),
-                                    index_col=0, nrows=0).columns.tolist()
-    channels = [col for col in trajectories_cols if '_EMS-' in col]
-    channels = [col.replace("_EMS-2", "") for col in channels if not '_t_' in col]
+        """Get all IL"""
+        grp_channels = ['time', 'startdate', 'sample_num', 'scen_num', 'date', 'run_num']
+        # channels = [ch for ch in dfAll.columns if ch not in  grp_channels]
 
-    dfIL = dfAll.groupby(grp_channels)[channels].agg(np.sum).reset_index()
-    dfIL.to_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_0.csv'), index=False, date_format='%Y-%m-%d')
+        """Use f"""
+        trajectories_cols = pd.read_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_{grp_numbers[0]}.csv'),
+                                        index_col=0, nrows=0).columns.tolist()
+        channels = [col for col in trajectories_cols if '_EMS-' in col]
+        channels = [col.replace(f'_EMS-{grp_numbers[0]}', "") for col in channels if not '_t_' in col]
+
+        dfIL = dfAll.groupby(grp_channels)[channels].agg(np.sum).reset_index()
+        for col in channels:
+            dfIL.rename(columns={col: f'{col}_All'}, inplace=True)
+
+        dfIL.to_csv(os.path.join(sim_output_path_new, f'trajectoriesDat_region_0.csv'), index=False, date_format='%Y-%m-%d')
 
 
 def combine_rtNU(exp_names):
     csv_name = 'rtNU.csv'
     region_channel = 'geography_modeled'
-    grp_channels = ['model_date', 'date', 'geography_modeled', 'rt_pre_aggr']
     channels = ['rt_median', 'rt_lower', 'rt_upper']
 
     dfAll = pd.DataFrame()
@@ -105,7 +117,7 @@ def combine_rtNU(exp_names):
         dfAll['model_date'] = dfAll['model_date'].unique()[0]
 
     """Get all IL"""
-    # TODO better to recalculate, here using mean across regions
+    # better to recalculate using trajectoriesDat_region_0.csv, here using mean across regions
     grp_channels = ['model_date', 'date',  'rt_pre_aggr']
     dfIL = dfAll.groupby(grp_channels)[channels].agg(np.mean).reset_index()
     dfIL[region_channel] = 'illinois'
@@ -220,6 +232,7 @@ if __name__ == '__main__':
     if not os.path.exists(sim_output_path_new):
         os.makedirs(sim_output_path_new)
         os.makedirs(plot_path_new)
+        os.makedirs(os.path.join(plot_path_new, 'pdf'))
         os.makedirs(os.path.join(sim_output_path_new, 'sh'))
         os.makedirs(os.path.join(sim_output_path_new, 'bat'))
 
@@ -233,22 +246,22 @@ if __name__ == '__main__':
         shutil.copyfile(os.path.join(wdir, 'simulation_output', exp_names[0], 'bat', file),
                         os.path.join(sim_output_path_new, 'bat', file))
 
-    print("copy_traces")
+    print("Running copy_traces")
     copy_traces(exp_names)
     try:
-        print("copy_and_rename_trajectories")
+        print("Running copy_and_rename_trajectories")
         copy_and_rename_trajectories(exp_names)
-        print("trajectories_All")
+        print("Generating trajectories_All")
         trajectories_All(exp_name_new)
     except:
-        print("check trajectories")
+        print("Error check trajectories")
 
-    print("combine_rtNU")
+    print("Running combine_rtNU")
     combine_rtNU(exp_names)
-    print("combine_hospitaloverflow")
+    print("Running combine_hospitaloverflow")
     combine_hospitaloverflow(exp_names)
-    print("combine_civis_csv")
+    print("Running combine_civis_csv")
     combine_civis_csv(exp_names)
-    print("copy_regional_plots")
+    print("Running copy_regional_plots")
     copy_regional_plots(exp_names)
 
