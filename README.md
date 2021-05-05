@@ -119,6 +119,8 @@ For details, click here [here](https://github.com/numalariamodeling/covid-chicag
 Currently the model includes 28 compartments of which 43 outcome variables are generated.
 The outcome variables or channels, as referred to in the py plotters, are different aggregates of the main compartments by type (i.e. all detected, all severe symptomatic) and includes cumulative counts for the calculation of incidences during postprocessing. 
 A ranking 'observeLevel' was introduced to select subsets of the outcomes. The primary outcomes are those required for the weekly deliverables, the secondary are the related outcomes that are not required for the standard outputs and tertiary are those that can easily be calculated outside the model, such as prevalence, or outcomes rarely used such as infectiousness by symptomatic type and detection level. 
+The outcomes indicated with a \* were removed from the direct model outcomes, and are calculated in the postprocessing, daily counts are can be calculated from all 'cumulative' outcomes.
+
 
 <details><summary>Show table</summary>
 <p>
@@ -142,7 +144,7 @@ A ranking 'observeLevel' was introduced to select subsets of the outcomes. The p
 | 16             | hosp_det               | Number of detected COVID-19 hospitalizations                                           | primary      | H1_det3,  H2_det3,  H3_det3                                                                                            |
 | 17             | hosp_det_cumul         | Number of all detected COVID-19 hospitalizations that happened   (cumulative)          | primary      | H1_det3, H2_det3, H3_det3, C2_det3, C3_det3, D3_det3, RH1_det3,   RC2_det3                                             |
 | 18             | hospitalized           | Number of severe symptomatic infections that are hospitalized                          | primary      | H1,  H2,   H3,     H1_det3,  H2_det3,  H3_det3                                                                         |
-| 19             | infected               | Number of all infected in the population                                               | primary      | all except susceptibles                                                                                                |
+| 19             | infected               | Number of all infected in the population                                               | primary      | all exposed, pre-symptomatic, symptomatic, hospitalized, and critical (N- (susceptible + deaths + recoveries))         |
 | 20             | infected_cumul         | Number of all that were infected (cumulative)                                          | secondary    | infected, recovered, deaths                                                                                            |
 | 21             | infected_det           | Number of all  infected that are   detected                                            | secondary    | infectious_det,  H1_det3,  H2_det3,    H3_det3,  C2_det3, C3_det3                                                      |
 | 23             | infectious_det         | Number of all infectious that are detected                                             | tertiary     | As_det1, P_det , Sym_det2, Sys_det3                                                                                    |
@@ -151,12 +153,12 @@ A ranking 'observeLevel' was introduced to select subsets of the outcomes. The p
 | 26             | infectious_undet       | Number of infectious that are not detected                                             | tertiary     | As, P, Sym, Sys, H1, H2, H3, C2, C3                                                                                    |
 | 27             | presymptomatic         | Number of presymptomatic infections                                                    | primary      | P, Pdet                                                                                                                |
 | 28             | presymptomatic_det     | Number of all detected presymptomatic infections                                       | secondary    | Pdet                                                                                                                   |
-| 29             | prevalence             | Number of infected (cumul) over total population                                       | tertiary     | infected /  N                                                                                                          |
-| 30             | prevalence_det         | Number of detected infected (cumul) over total population                              | tertiary     | infected_det /  N                                                                                                      |
+| 29             | prevalence\*             | Number of infected (cumul) over total population                                       | tertiary     | infected /  N                                                                                                          |
+| 30             | prevalence_det\*         | Number of detected infected (cumul) over total population                              | tertiary     | infected_det /  N                                                                                                      |
 | 31             | recovered              | Number of recovered COVID-19 cases    in the population                                | primary      | RAs,RSym, RH1,  RC2, RAs_det1,   RSym_det2, RH1_det3, RC2_det3                                                         |
 | 32             | recovered_det          | Number of detected recovered COVID-19 cases in the population                          | primary      | RAs_det1, RSym_det2, RH1_det3, RC2_det3                                                                                |
-| 33             | seroprevalence         | Number of recovered (cumul) over total population                                      | tertiary     | (infected + recovered) /  N                                                                                            |
-| 34             | seroprevalence_det     | Number of detected recovered (cumul) over total population                             | tertiary     | (infected_det + recovered_det) /  N                                                                                    |
+| 33             | seroprevalence*         | Number of recovered (cumul) over total population                                      | tertiary     | (infected + recovered) /  N                                                                                            |
+| 34             | seroprevalence_det\*     | Number of detected recovered (cumul) over total population                             | tertiary     | (infected_det + recovered_det) /  N                                                                                    |
 | 35             | susceptible            | Number of susceptibles in the population                                               | primary      | S                                                                                                                      |
 | 36             | symp_mild_cumul        | Number of all mild symptomatic infections that happened (cumulative)                   | primary      | symptomatic_mild, RSym,  RSym_det2                                                                                     |
 | 37             | symp_mild_det_cumul    | Number of all detected mild symptomatic infections that happened   (cumulative)        | primary      | symptomatic_mild_det, RSym_det2                                                                                        |
@@ -166,7 +168,12 @@ A ranking 'observeLevel' was introduced to select subsets of the outcomes. The p
 | 41             | symptomatic_mild_det   | Number of detected mild infections in the population                                   | secondary    | symptomatic_mild_det                                                                                                   |
 | 42             | symptomatic_severe     | Number of severe symptomatic infections                                                | secondary    | Sys, Sys_det3; Sys, Sys_preD, Sys_det3 ; Sys, Sys_preD, Sys_det3a,   Sys_det3b                                         |
 | 43             | symptomatic_severe_det | Number of detected severe symptomatic infections                                       | secondary    | symptomatic_severe_det                                                                                                 |
-Note, when using the vaccination scenario, these outcome channels include both vaccinated and not vaccinated compartments, whereas additional (same) outcomes are generated for the vaccinated population, denoted with suffix _V.
+
+Notes:
+- when using the vaccination scenario, these outcome channels include both vaccinated and not vaccinated compartments, whereas additional (same) outcomes are generated for the vaccinated population, denoted with suffix \_V.
+- prevalence, seroprevalence and infection fatality ratio calculated using [calculate_prevalence](https://github.com/numalariamodeling/covid-chicago/blob/master/processing_helpers.py#L268), example use in [plot_prevalence.py](https://github.com/numalariamodeling/covid-chicago/blob/master/plotters/plot_prevalence.py)
+- daily new counts are calculated from the cumulative outcomes using [calculate_incidence](https://github.com/numalariamodeling/covid-chicago/blob/master/processing_helpers.py#L286), this function is integrated into the [load_sim_data](https://github.com/numalariamodeling/covid-chicago/blob/master/processing_helpers.py#L71) function when reading in trajectoriesDat.csv 
+- look up how these are defined in the emodl [here](https://github.com/numalariamodeling/covid-chicago/blob/master/emodl_generators/emodl_generator_locale.py#L253)
  
 </p>
 </details>
@@ -206,46 +213,8 @@ a default configuration file [extendedcobey.yaml](https://github.com/numalariamo
 and substitutes parameters with the values/functions in the
 user-provided configuration file using the `@param@` placeholder. Multiple trajectories.csv that are produced per single simulation are combined into a trajectoriesDat.csv, used for postprocessing and plotting.
 
-## 2.2 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
-The configuration file is in [YAML](https://yaml.org/) format and is divided into 5
-blocks: `experiment_setup_parameters`,
-`fixed_parameters_region_specific`, `fixed_parameters_global`,
-`sampled_parameters`, `fitted_parameters`. The sampled parameters need
-the sampling function as well as the arguments to pass into that
-function (`function_kwargs`). Currently, only a few
-sampling/calculation functions are supported. More can be added by
-allowing for more libraries in `generateParameterSamples` of [runScenarios.py](runScenarios.py).
-
-Note that the user-supplied configuration file is used to provide
-*additional* or *updated* parameters from the base configuration file.
-
-## 2.3 Inputs:
-- Master configuration: YAML file that defines the parameter input values for the model (if not specified uses the default `extendedcobey_200428.yaml`)
-- Running location: Where the simulation is being run (either `Local`
-  or `NUCLUSTER`)
-- Region: The region of interest. (e.g. `EMS_1`, or `IL` for all EMS 1-11 inclued in the same model)
-- Configuration file: The configuration file with the parameters to
-  use for the simulation. If a parameter is not provided, the value in
-  the default configuration will be used. (e.g. [sample_experiment.yaml](sample_experiment.yaml))
-- Emodl template (optional): The template emodl file to substitute in
-  parameter values. The default is [extendedmodel.emodl](extendedmodel.emodl). emodl
-  files are in the `./emodl` directory.
-- cfg template (optional): The default cfg file uses the [Tau leaping](https://idmod.org/docs/cms/tau-leaping.html) solver (recommended B solver).
-- Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
-  parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
-
-### Region specific sample parameters (i.e. using estimates parameters per regions)
-- [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
-
-###  Age extension and age specific parameters 
-- `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
-Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
-
-
 <details><summary>Show runScenarios examples</summary>
 <p>  
-
-####  Usage examples: 
 
 ##### Base model
 - python runScenarios.py --model "base" -r EMS_1  --scenario "baseline"  -n "userinitials"
@@ -292,7 +261,12 @@ Note: This model is not maintained and will be integrated into the locale model.
 
 The examples above show an abbreviated version, accepting most defaults. The table below shows all available options and their defaults.
 
-<details><summary>Show all options</summary>
+### runScenarios options
+The minimum command is [python runScenarios.py](https://github.com/numalariamodeling/covid-chicago/blob/master/runScenarios.py). 
+If no arguments are specified, per default a 'baseline' simulation runs for all 11 regions in Illinois and the file name will include a random number for unique identification. 
+The table below shows an overview of all arguments currently enabled. 
+
+<details><summary>Show runScenarios options</summary>
 <p>  
 
 | no 	| argument long       	| argument short | model specific | required 	| help                                                                                                                                                                                                                                                                                                 	| choices                                                                                                                        	| default                   	|
@@ -319,7 +293,43 @@ The examples above show an abbreviated version, accepting most defaults. The tab
 </p>
 </details>
 
-## 2.4 Sampled parameters 
+## 2.2 [Configuration file](https://github.com/numalariamodeling/covid-chicago/tree/master/experiment_configs):
+The configuration file is in [YAML](https://yaml.org/) format and is divided into 5
+blocks: `experiment_setup_parameters`,
+`fixed_parameters_region_specific`, `fixed_parameters_global`,
+`sampled_parameters`, `fitted_parameters`. The sampled parameters need
+the sampling function as well as the arguments to pass into that
+function (`function_kwargs`). Currently, only a few
+sampling/calculation functions are supported. More can be added by
+allowing for more libraries in `generateParameterSamples` of [runScenarios.py](runScenarios.py).
+
+Note that the user-supplied configuration file is used to provide
+*additional* or *updated* parameters from the base configuration file.
+
+## 2.3 Inputs:
+- Master configuration: YAML file that defines the parameter input values for the model (if not specified uses the default `extendedcobey_200428.yaml`)
+- Running location: Where the simulation is being run (either `Local`
+  or `NUCLUSTER`)
+- Region: The region of interest. (e.g. `EMS_1`, or `IL` for all EMS 1-11 inclued in the same model)
+- Configuration file: The configuration file with the parameters to
+  use for the simulation. If a parameter is not provided, the value in
+  the default configuration will be used. (e.g. [sample_experiment.yaml](sample_experiment.yaml))
+- Emodl template (optional): The template emodl file to substitute in
+  parameter values. The default is [extendedmodel.emodl](extendedmodel.emodl). emodl
+  files are in the `./emodl` directory.
+- cfg template (optional): The default cfg file uses the [Tau leaping](https://idmod.org/docs/cms/tau-leaping.html) solver (recommended B solver).
+- Suffix for experiment name added as name_suffix (optional): The template emodl file to substitute in
+  parameter values. The default is test_randomnumber (e.g. `20200417_EMS_10_test_rn29`)
+
+### Region specific sample parameters (i.e. using estimates parameters per regions)
+- [`EMSspecific_sample_parameters.yaml`](https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/EMSspecific_sample_parameters.yaml)
+
+###  Age extension and age specific parameters 
+- `sample_age4grp_experiment.yaml `(https://github.com/numalariamodeling/covid-chicago/blob/master/experiment_configs/sample_age4grp_experiment.yaml) 
+Note: this extension works for any sub-group as it duplicates the parameter names for the defined group names, which need to be defined in the same way in the corresponding emodl file.
+
+
+### Sampled parameters 
 As described in 2.1. and 2.2 parameters are sampled from the base configuration files when running `python runScenarios.py`.
 The [sample_parameters.py](sample_parameters.py) script allows to: 
 (1) generate csv file from configuration files without running simulations
@@ -433,6 +443,7 @@ The model is updated every week to fit to latest hospitalisation and deaths repo
 <details><summary>Show history of updates</summary>
 <p>  
 
+- 20210429 updated parameter fit, added 2nd ICU recovery parameter (recovery_time_crit_change2 and recovery_time_crit_change_time_2)
 - 20210415 added tranmission multiplier 16 for April, updated weekly fit, reactivated bvariant (now starting at 20210410)
 - 20210402 deactivated bvariant due to bug, updated parameter fit, updated plotter/nuciviscopy to include vaccine and bvariant descriptions,   
 - 20210317 added ki multiplier 15 to intervention emodl yaml, set bvariant_start date after ki multiplier 15, updated scaling factor 

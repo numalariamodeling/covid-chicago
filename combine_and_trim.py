@@ -4,6 +4,7 @@ Output: tracjectoriesDat including all outcome channels, and trajectoriesDat_tri
 If number of trajectories exceeds a specified limit, multiple trajectories in chunks will be returned.
 """
 import argparse
+import subprocess
 import pandas as pd
 import os
 import shutil
@@ -310,3 +311,10 @@ if __name__ == '__main__':
         """THIS WILL DELETE ALL SINGLE TRAJECTORIES!"""
         shutil.rmtree(trajectories_path, ignore_errors=True)
         print(f'Single trajectories deleted')
+
+    """ Start parallel rt estimation per trajectory """
+    # FIXME permission denied
+    #if Location == "NUCLUSTER" :
+    #    exp_dir = os.path.join(sim_out_dir, exp_name)
+    #    p = os.path.join(exp_dir, 'submit_runRtEstimation_trajectories.sh')
+    #    subprocess.call([p])

@@ -11,6 +11,7 @@ sys.path.append('../')
 from processing_helpers import *
 from load_paths import load_box_paths
 
+mpl.rcParams['pdf.fonttype'] = 42
 
 def plot_vaccinations(adf, channels,channel_title, plot_name=None):
 
@@ -33,7 +34,7 @@ def plot_vaccinations(adf, channels,channel_title, plot_name=None):
                 ax.bar(mdf['date'], mdf[channel], color=palette[c], label=channel, alpha=0.6)
             else :
                 ax.plot(mdf['date'], mdf[channel], color=palette[c], label=channel)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%d'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b-%d'))
         ax.set_title(plotsubtitle)
         if 'perc' in channels[0]:
             ax.set_ylim(0, 0.5)
@@ -46,38 +47,44 @@ def plot_vaccinations(adf, channels,channel_title, plot_name=None):
     plt.savefig(os.path.join(plot_path, f'{plot_name}.png'))
     plt.savefig(os.path.join(plot_path, 'pdf', f'{plot_name}.pdf'), format='PDF')
 
-def plot_vaccinations_compare(adf, channels):
-
+def plot_vaccinations_compare(adf, channels,type):
+    channel_daily = channels[0]
+    channel_cumul = channels[1]
+    channel_cumul_perc = channels[2]
     pdf = adf[adf['date']== max(adf['date'])]
-    pdf = pdf.groupby(['date'])[['persons_fully_vaccinated','population']].agg(np.sum).reset_index()
+    pdf = pdf.groupby(['date'])[[channel_cumul,'population']].agg(np.sum).reset_index()
     maxdate = max(pdf['date']).strftime('%b-%d-%Y')
-    pdf['persons_fully_vaccinated_perc'] = pdf['persons_fully_vaccinated'] / pdf['population']
-    IL_fully_vaccinated = int(pdf['persons_fully_vaccinated'])
-    IL_fully_vaccinated_perc = float(pdf['persons_fully_vaccinated_perc'])
-    IL_fully_vaccinated_perc = str(round(IL_fully_vaccinated_perc*100,3))
+    pdf[f'{channel_cumul}_perc'] = pdf[channel_cumul] / pdf['population']
+    IL_vaccinated = int(pdf[channel_cumul])
+    IL_vaccinated_perc = float(    pdf[f'{channel_cumul}_perc'])
+    IL_vaccinated_perc = str(round(IL_vaccinated_perc*100,3))
 
-    fig = plt.figure(figsize=(14, 6))
+    fig = plt.figure(figsize=(16, 6))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.5, wspace=0.3, top=0.90, bottom=0.08)
-    fig.suptitle(x=0.5, y=0.98, t=f'Fully vaccinated in IL by {maxdate} {IL_fully_vaccinated_perc} % (n={IL_fully_vaccinated})', size=14)
+    fig.suptitle(x=0.5, y=0.98, t=f'Population {type} vaccinated in IL by {maxdate} {IL_vaccinated_perc} % (n={IL_vaccinated})', size=14)
     palette = sns.color_palette('coolwarm', len(adf['covid_region'].unique()))
     for c, channel in enumerate(channels):
         ax = fig.add_subplot(1, len(channels), c+1)
         ax.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.3)
         ax.set_title(channel)
-        yvalues = adf.groupby(['date'])['daily_full_vaccinated'].agg(np.sum).reset_index()['daily_full_vaccinated'].values
+        yvalues = adf.groupby(['date'])[channel_daily].agg(np.sum).reset_index()[channel_daily].values
         for e, ems_num in enumerate(adf['covid_region'].unique()):
             mdf = adf[adf['covid_region'] == ems_num]
-            if channel =='daily_full_vaccinated':
+            if channel ==channel_daily:
                 ax.bar(mdf['date'], yvalues, color=palette[e], label=f'Region {str(int(ems_num))}')
-                yvalues = yvalues - mdf['daily_full_vaccinated'].values
-                ax.set_ylabel('daily_full_vaccinated')
-            else:
+                yvalues = yvalues - mdf[channel_daily].values
+                ax.set_ylabel(channel_daily)
+            elif channel == channel_cumul_perc:
                 ax.plot(mdf['date'], mdf[channel]*100, color=palette[e], label=f'Region {str(int(ems_num))}')
-                ax.set_ylabel('Persons fully vaccinated per region (%)')
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%d'))
+                ax.set_ylabel(f'Persons {type} vaccinated per region (%)')
+            else:
+                ax.plot(mdf['date'], mdf[channel], color=palette[e], label=f'Region {str(int(ems_num))}')
+                ax.set_ylabel(f'Persons {type} vaccinated per region')
+
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b-%d'))
         ax.legend()
-        plt.savefig(os.path.join(plot_path, f'compare_covidregions.png'))
-        plt.savefig(os.path.join(plot_path, 'pdf', f'compare_covidregions.pdf'), format='PDF')
+        plt.savefig(os.path.join(plot_path, f'compare_covidregions_{type}.png'))
+        plt.savefig(os.path.join(plot_path, 'pdf', f'compare_covidregions_{type}.pdf'), format='PDF')
 
 if __name__ == '__main__':
 
@@ -148,5 +155,5 @@ if __name__ == '__main__':
                       plot_name = 'population_vaccinated_by_covidregion')
 
     """Comparing COVID-19 region"""
-    plot_vaccinations_compare(adf=inc_df, channels = ['daily_full_vaccinated','persons_fully_vaccinated_perc'])
-
+    plot_vaccinations_compare(adf=inc_df, channels = ['daily_full_vaccinated','persons_fully_vaccinated','persons_fully_vaccinated_perc'],type='fully')
+    plot_vaccinations_compare(adf=inc_df, channels = ['daily_first_vacc','persons_first_vaccinated','persons_first_vaccinated_perc'],type='first')

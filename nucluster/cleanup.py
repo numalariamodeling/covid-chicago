@@ -1,5 +1,4 @@
 import argparse
-import subprocess
 import sys
 import os
 import shutil
@@ -102,3 +101,4 @@ if __name__ == '__main__':
 
         cleanup(exp_name, sim_out_dir, wdir, keep_simsfiles=args.keep_simsfiles,
                 keep_single_trajectories=args.keep_single_trajectories)
+
