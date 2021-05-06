@@ -1258,7 +1258,7 @@ class covidModel:
     
     
             for i, date in enumerate(intervention_dates, 1):
-                temp_str = f'(time-event ki_mitigation_change{i} {date)}('
+                temp_str = f'(time-event ki_mitigation_change{i} {date}('
                 temp_str = temp_str + ''.join([f' (Ki_{grp} {ki_reset[i-1]})' for grp in  self.grpList] )
                 temp_str = temp_str + f'))\n'
                 emodl_timeevents = emodl_timeevents + temp_str 
