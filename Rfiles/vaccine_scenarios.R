@@ -171,12 +171,14 @@ ceiling_dates <- lmdat %>%
                    persons_first_vaccinated_perc=min(persons_first_vaccinated_perc))  %>%
   dplyr::rename(date_ceiling=date,persons_first_vaccinated_perc_ceiling=persons_first_vaccinated_perc)
 
+table(ceiling_dates$scenario)
+summary(ceiling_dates$date_ceiling)
 lmdat_cap <- lmdat %>%
-  left_join(ceiling_dates) %>%
+  merge(ceiling_dates, by=c("covid_region","pop","scenario"), all.x=TRUE) %>%
   dplyr::group_by(covid_region,pop, scenario) %>%
-  mutate(daily_first_vacc = ifelse(date>=date_ceiling ,0,daily_first_vacc),
-         daily_first_vacc_perc = ifelse(date>=date_ceiling ,0,daily_first_vacc_perc),
-         persons_first_vaccinated_perc = ifelse(date>=date_ceiling ,persons_first_vaccinated_perc_ceiling,persons_first_vaccinated_perc))
+  mutate(daily_first_vacc = ifelse(!is.na(date_ceiling) & date>=date_ceiling ,0,daily_first_vacc),
+         daily_first_vacc_perc = ifelse(!is.na(date_ceiling) & date>=date_ceiling ,0,daily_first_vacc_perc),
+         persons_first_vaccinated_perc = ifelse(!is.na(date_ceiling) & date>=date_ceiling ,persons_first_vaccinated_perc_ceiling,persons_first_vaccinated_perc))
 
 
 summary(lmdat$date)
@@ -277,8 +279,10 @@ return(pplot)
 f_custom_plot(channel='persons_first_vaccinated',SAVE=T)
 f_custom_plot(channel='persons_first_vaccinated_perc',SAVE=T)
 f_custom_plot(channel='daily_first_vacc_perc',SAVE=T)
+
 pplot <- f_custom_plot(pdat=lmdat_cap,channel='persons_first_vaccinated_perc',SAVE=F)
 ggsave(paste0("persons_first_vaccinated_perc_cap.png"),plot = pplot, path = file.path(wdir, "parameters","vaccinations"), width = 21, height = 10, device = "png")
+
 pplot <- f_custom_plot(pdat=lmdat_cap,channel='daily_first_vacc_perc',SAVE=F)
 ggsave(paste0("daily_first_vacc_perc_cap.png"),plot = pplot, path = file.path(wdir, "parameters","vaccinations"), width = 21, height = 10, device = "png")
 
