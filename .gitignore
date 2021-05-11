@@ -31,8 +31,8 @@ experiment_configs/input_csv/*
 !experiment_configs/input_csv/vaccination_linear_doubled.csv
 !experiment_configs/input_csv/vaccination_linear.csv
 !experiment_configs/input_csv/vaccination_stagnating.csv
-!experiment_configs/input_csv/vaccination_linear_slowed.csv
-!experiment_configs/input_csv/vaccination_linear_slowed_cap.csv
+!experiment_configs/input_csv/vaccination_linearpast30days.csv
+!experiment_configs/input_csv/vaccination_linearpast30days_cap.csv
 !experiment_configs/input_csv/vaccination_linear_cap.csv
 !experiment_configs/input_csv/vaccination_fractionSevere_adjustment.csv
 !experiment_configs/input_csv/vaccination_fractionSevere_adjustment_IL.csv

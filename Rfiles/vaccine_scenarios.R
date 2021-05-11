@@ -106,7 +106,7 @@ for(reg in c(1:11)){
   lmdat_list[[reg]] = xdat
   rm(dat_i)
 }
-lmdat_scenario2 <- lmdat_list %>% bind_rows()
+lmdat_scenario_30days <- lmdat_list %>% bind_rows()
 
 ### Linear model, stagnating
 stag_list <- list()
@@ -145,7 +145,7 @@ stagnating_scenario <- stag_list %>% bind_rows() %>% select(colnames(lmdat_scena
 popdat <- as.data.frame(cbind(c(1:11),c(660965,1243906, 556776, 656946, 403659, 739098, 800605, 1455324, 1004309, 2693959, 2456274)))
 colnames(popdat) <- c("covid_region","pop")
 
-lmdat <- as.data.frame( rbind(lmdat_continued, lmdat_scenario,lmdat_scenario2,stagnating_scenario)) %>% left_join( popdat, by="covid_region")
+lmdat <- as.data.frame( rbind(lmdat_continued, lmdat_scenario,lmdat_scenario_30days,stagnating_scenario)) %>% left_join( popdat, by="covid_region")
 lmdat$persons_first_vaccinated_raw <- lmdat$persons_first_vaccinated
 lmdat <- lmdat %>% mutate(persons_first_vaccinated = ifelse(persons_first_vaccinated>pop,pop,persons_first_vaccinated))
 tapply(lmdat$persons_first_vaccinated,lmdat$scenario, summary)
@@ -218,11 +218,11 @@ lmdat %>%
 lmdat %>%
   filter((scenario=='continued_trend' & date < vaccine_past_end) |
            (scenario=='trend_past30days' & date >= vaccine_past_end)) %>%
-  fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_linear_slowed.csv'))
+  fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_linearpast30days.csv'))
 
 lmdat_cap %>%   filter((scenario=='continued_trend' & date < vaccine_past_end) |
            (scenario=='trend_past30days' & date >= vaccine_past_end)) %>%
-  fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_linear_slowed_cap.csv'))
+  fwrite(file.path(git_dir, "experiment_configs","input_csv",'vaccination_linearpast30days_cap.csv'))
 
 
 ### Plots
