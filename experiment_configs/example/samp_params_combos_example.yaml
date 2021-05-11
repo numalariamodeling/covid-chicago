@@ -1,0 +1,12 @@
+factorial: True
+replicate_number: 5
+additional_params:
+    abc: 10
+    Kw_multiplier:
+        np.random: uniform
+        function_kwargs: {'low': 0.8, 'high':1.2}
+    Kw_multiplier2:
+        np.random: uniform
+        function_kwargs: {'low': 0.8, 'high':1.2}
+    ghi:
+        something_else: abc123
