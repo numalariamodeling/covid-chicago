@@ -10,7 +10,7 @@ interventions:
   'n_gradual_steps': 8 # if not using a csv and if scaleup date < 2099 in master yaml
   'trigger_channel': 'crit_det'
   'bvariant_csv': ""
-  'vaccination_csv': "vaccination_linear.csv" #"vaccination_linear_doubled.csv"
+  'vaccination_csv': "vaccination_linearpast30days_cap.csv" #"vaccination_linear_doubled.csv" "vaccination_linear.csv" vaccination_linearpast30days.csv
   'reopen_relative_to_initial': False
   'reopen_regionspecific': False
   'reopen_csv': ""
