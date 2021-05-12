@@ -47,3 +47,7 @@ def create_mitigation_df(path):
     else:
         mitigation = 'no mitigation'
     return mitigation
+
+if __name__ == '__main__':
+    # Map command line arguments to function arguments.
+    create_mitigation_df(*sys.argv[1:])
