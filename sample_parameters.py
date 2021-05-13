@@ -9,6 +9,7 @@ from simulation_helpers import *
 from runScenarios import *
 import itertools
 import yamlordereddictloader
+import warnings
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -334,26 +335,35 @@ def gen_combos_from_yaml(csv_base, yaml_file):
     df = pd.DataFrame(index=range(0, N_replicate))
     
     for parameter, parameter_function in additional_params.items():
-        if isinstance(parameter_function, (int, float)):
+        if isinstance(parameter_function, (int, float)): # if single number
             df[parameter] = parameter_function
-        elif 'np.random' in parameter_function:
+        elif 'list' in parameter_function: # if a list of numbers, factorial_after controls binding behaviours
+            if not parameter_function['factorial_after']:
+                if len(parameter_function['list']) == replicate_number:
+                    df[parameter] = parameter_function['list']
+                else:
+                    warnings.warn(parameter + ': List length different from replicate_number and factorial_after is not True.')
+            else:
+                df_after[parameter] = parameter_function['list']
+        elif 'np.random' in parameter_function: # if np.random, draw from distribution
             function_kwargs = parameter_function['function_kwargs']
             func = getattr(np.random, parameter_function['np.random'])
             df[parameter] = func(**{"size": N_replicate, **function_kwargs})
-        else:
-            import warnings
+        else: # Other unspecified ways are ignored
             warnings.warn("Parameter " + parameter + " skipped: don't know how to sample this parameter.")
     
     if factorial:
-      master_df = gen_combos(csv_base=csv_base, csv_add=df)
+        master_df = gen_combos(csv_base=csv_base, csv_add=df)
+        if not df_after.shape[0] == 0:
+            master_df = gen_combos(csv_base=master_df, csv_add=df_after)
     else:
-      df['sample_num2'] = range(0, df.shape[0])
-      csv_base1 = pd.concat([csv_base]*replicate_number, ignore_index=True)
-      csv_base1 = csv_base1.rename(columns={"sample_num":"sample_num1"}).sort_values(by=['sample_num1'])
-      csv_base1.drop(list(df.columns), axis=1, inplace=True, errors='ignore')
-      
-      master_df = pd.concat([csv_base1.reset_index(drop=True), df], axis=1)
-      master_df['scen_num'] = range(0, master_df.shape[0])
+        df['sample_num2'] = range(0, df.shape[0])
+        csv_base1 = pd.concat([csv_base]*replicate_number, ignore_index=True)
+        csv_base1 = csv_base1.rename(columns={"sample_num":"sample_num1"}).sort_values(by=['sample_num1'])
+        csv_base1.drop(list(df.columns), axis=1, inplace=True, errors='ignore')
+        
+        master_df = pd.concat([csv_base1.reset_index(drop=True), df], axis=1)
+        master_df['scen_num'] = range(0, master_df.shape[0])
     
     return(master_df)
 
