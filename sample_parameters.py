@@ -333,6 +333,7 @@ def gen_combos_from_yaml(csv_base, yaml_file):
         N_replicate = replicate_number * csv_base.shape[0]
     
     df = pd.DataFrame(index=range(0, N_replicate))
+    df_after = pd.DataFrame()
     
     for parameter, parameter_function in additional_params.items():
         if isinstance(parameter_function, (int, float)): # if single number
