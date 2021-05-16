@@ -71,6 +71,8 @@ def load_sim_data(exp_name, region_suffix ='_All', input_wdir=None, fname=None,
     df = df.dropna()
     first_day = pd.Timestamp(df['startdate'].unique()[0])
     df['date'] = df['time'].apply(lambda x: first_day + pd.Timedelta(int(x),'days'))
+    """In rare instances dates might be duplicated (i.e. timestep 33.7, 34.2 and 34.9, 35.6)"""
+    df.drop_duplicates(subset=['run_num','scen_num', 'sample_num', 'date'], keep='last', inplace=True)
 
     if add_incidence:
         #if 'recovered' in df.columns:
