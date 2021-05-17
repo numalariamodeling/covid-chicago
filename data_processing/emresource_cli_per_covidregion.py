@@ -53,11 +53,11 @@ def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_gr
 
     if len(ems_list) == 2:
         fig = plt.figure(figsize=(12, 5))
-        fig.subplots_adjust(right=0.97, left=0.07, hspace=0.25, top=0.95, bottom=0.01)
+        fig.subplots_adjust(right=0.97, left=0.07, hspace=0.15, top=0.95, bottom=0.01)
         axes = [fig.add_subplot(1, 2, x + 1) for x in range(len(ems_list))]
     else:
         fig = plt.figure(figsize=(14, 12))
-        fig.subplots_adjust(right=0.97, wspace=0.5, left=0.1, hspace=0.9, top=0.95, bottom=0.07)
+        fig.subplots_adjust(right=0.97, wspace=0.2, left=0.1, hspace=0.5, top=0.95, bottom=0.07)
         axes = [fig.add_subplot(4, 3, x + 1) for x in range(len(ems_list))]
 
     for ei, ems in enumerate(ems_list):
@@ -71,7 +71,7 @@ def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_gr
             ax.plot(df['date'].values, df['moving_ave'], color=palette[c], label=name)
             ax.scatter(df['date'].values, df[name], s=10, linewidth=0, color=palette[c], alpha=0.7, label='')
         ax.set_title('covid region %d' % ems)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d\n%b'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b-%d'))
         #ax.set_ylim(0, df[name].max())
 
         if scale == 'log':
@@ -81,8 +81,8 @@ def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_gr
         ax.legend(loc='upper left', shadow=False, ncol=1)
 
     regions = '-'.join(map(str, ems_list))
-    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.png'))
-    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_covidregion_{regions}_{scale}.pdf'), format='PDF')
+    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_by_covidregion.png'))
+    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_by_covidregion.pdf'), format='PDF')
 
 if __name__ == '__main__' :
 

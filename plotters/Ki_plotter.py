@@ -49,17 +49,18 @@ def plot_Ki(exp_name,first_day,last_day):
     grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
     grp_list = [grp for grp in grp_list if grp !="All"]
 
-    column_list = base_list + [f'Ki_t_{grp}' for grp in grp_list ]
-    df = load_sim_data(exp_name, region_suffix=None, column_list=column_list)
-    df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
-
     fig = plt.figure(figsize=(16, 8))
     fig.subplots_adjust(right=0.97, left=0.05, hspace=0.4, wspace=0.2, top=0.95, bottom=0.05)
     palette = sns.color_palette('Set1', 12)
 
     for c, grp in enumerate(grp_list):
+        column_list = base_list + [f'Ki_t_{grp}']
+        df = load_sim_data(exp_name, region_suffix=f'_{grp}', column_list=column_list)
+        df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
+
+
         ax = fig.add_subplot(3, 4, c + 1)
-        mdf = df.groupby('date')[f'Ki_t_{grp}'].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
+        mdf = df.groupby('date')[f'Ki_t'].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
         ax.set_title(grp.replace('_EMS-', 'COVID-19 Region '))
         ax.plot(mdf['date'], mdf['CI_50'], color=palette[0])
@@ -89,12 +90,14 @@ def plot_Ki_compare(exp_names, labels, first_day, last_day):
 
     palette = sns.color_palette('Set1', 12)
 
-    column_list = base_list + [f'Ki_t_{grp}' for grp in grp_list]
+
     for e, exp_name in enumerate(exp_names):
-        df = load_sim_data(exp_name, region_suffix=None, column_list=column_list)
-        df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
 
         for c, grp in enumerate(grp_list):
+            column_list = base_list +[ f'Ki_t_{grp}']
+            df = load_sim_data(exp_name, region_suffix=f'_{grp}', column_list=column_list)
+            df = df[df['date'].between(pd.Timestamp(first_day), pd.Timestamp(last_day))]
+
             ax = axes[c]
             mdf = df.groupby('date')[f'Ki_t_{grp}'].agg([CI_50, CI_2pt5, CI_97pt5, CI_25, CI_75]).reset_index()
 
