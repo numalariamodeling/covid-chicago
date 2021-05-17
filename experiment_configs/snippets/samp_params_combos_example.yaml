@@ -2,6 +2,15 @@ factorial: True
 replicate_number: 5
 additional_params:
     abc: 10
+    # Replicate each row by 5, fill them with random sample of Kw_multipliers,
+    # then add def the factorial way
+    def:
+       factorial_after: True
+       list:
+           - 21
+           - 22
+           - 23
+
     Kw_multiplier:
         np.random: uniform
         function_kwargs: {'low': 0.8, 'high':1.2}

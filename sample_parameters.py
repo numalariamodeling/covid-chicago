@@ -356,6 +356,7 @@ def gen_combos_from_yaml(csv_base, yaml_file):
     if factorial:
         master_df = gen_combos(csv_base=csv_base, csv_add=df)
         if not df_after.shape[0] == 0:
+            master_df = master_df.drop(['sample_num1', 'sample_num2'], axis=1)
             master_df = gen_combos(csv_base=master_df, csv_add=df_after)
     else:
         df['sample_num2'] = range(0, df.shape[0])

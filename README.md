@@ -349,7 +349,7 @@ Running examples:
 - example 3: `python sample_parameters.py -rl Local --model locale -load sampled_parameters_1000.csv -save sampled_parameters_1000_v2.csv  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
 - example 4: `python sample_parameters.py   --model locale --csv_name_combo  sampled_parameters_sm7.csv   -save sampled_parameters_sm7_combo.csv`
    -(sampled_parameters_sm7.csv not under version control, but would for example include 10 values for social multiplier 7 for all 11 regions, the base sample parameters are repeated for each of the 10 rows of the additional csv)
-- example 5: `python sample_parameters.py -e "..\experiment_configs\example\example.emodl" -load "..\example\csv_base.csv" -yaml ".\experiment_configs\example\samp_params_combos_example.yaml"`
+- example 5: `python sample_parameters.py -e "..\experiment_configs\snippets\example.emodl" -load "..\snippets\csv_base.csv" -yaml ".\experiment_configs\snippets\samp_params_combos_example.yaml"`
    - See the example yaml file for how to specify the additional parameters.
 
 When running simulations with an pre-existing csv file, specify 
