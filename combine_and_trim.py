@@ -109,13 +109,20 @@ def trim_trajectories(df, fname,sample_param_to_keep, time_start=1, time_stop=10
 
     column_list = ['time', 'run_num'] + sample_param_to_keep
     if grpnames is not None:
-        for grp in grpnames:
-            grp_ch = str(grp.replace('_', '-'))
-            [column_list.append(f'{channel}_{str(grp_ch)}') for channel in channels]
-            if grp_ch !="All" and not 'age' in grp_ch :
-                [column_list.append(f'{time_varying_param}_{str(grp_ch)}') for time_varying_param in time_varying_params]
-            del grp, grp_ch
-        column_list = column_list + ['N_All']
+        if len(grpnames) >1:
+          for grp in grpnames:
+              grp_ch = str(grp.replace('_', '-'))
+              [column_list.append(f'{channel}_{str(grp_ch)}') for channel in channels]
+              if grp_ch !="All" and not 'age' in grp_ch :
+                  [column_list.append(f'{time_varying_param}_{str(grp_ch)}') for time_varying_param in time_varying_params]
+              del grp, grp_ch
+          column_list = column_list + ['N_All']
+        else:
+          grp = grpnames[0]
+          grp_ch = str(grp.replace('_', '-'))
+          [column_list.append(f'{channel}_{str(grp_ch)}') for channel in channels]
+          if not 'age' in grp_ch :
+            [column_list.append(f'{time_varying_param}_{str(grp_ch)}') for time_varying_param in time_varying_params]
     else:
         column_list = column_list + channels + time_varying_params
 
@@ -155,8 +162,11 @@ def combine_trajectories(sampledf, Nscenarios_start=0, Nscenarios_stop=1000, fna
 def combine_trajectories_chunks(grp_list, useTrim=True):
 
     """workaround for using EMS vs region in filename for spatial model and keep suffix also for 'All'"""
-    grp_save_suffix = [grp for grp in grp_list[1:]][0][:3]
-    if grp_save_suffix == 'EMS': grp_save_suffix = 'region'
+    if len(grp_list) == 1:
+        grp_save_suffix = grp_list[0][:3]
+    else:
+        grp_save_suffix = [grp for grp in grp_list[1:]][0][:3]
+    if grp_save_suffix == 'EMS': grp_save_suffix = 'region'  # opposite to i.e. age model
 
     files = os.listdir(exp_path)
     files = [file for file in files if '.csv' in file ]
@@ -192,7 +202,7 @@ def combine_trajectories_chunks(grp_list, useTrim=True):
                 df_all.append(df_f)
             del df_f
 
-        fname = f'trajectoriesDat_{grp_save_suffix}_{i}'
+        fname = f'trajectoriesDat_{grp_save_suffix}_{grp.replace(f"{grp_suffix}-","")}'
         if useTrim: fname = f'{fname}_trim'
         df_all.to_csv(os.path.join(exp_path, f'{fname}.csv'), index=False, date_format='%Y-%m-%d')
         if i ==0:
@@ -226,24 +236,21 @@ if __name__ == '__main__':
     trajectories_path = os.path.join(exp_path, 'trajectories')
 
     """Define model type and grp suffix of parameters and outcome channels"""
-    sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"))
-    N_cols = [col for col in sampledf.columns if 'N_' in col]
-    if len(N_cols)!=0:
-        grp_list = ['All'] + [col.replace('N_','') for col in N_cols]
-        grp_suffix = grp_list[0][:3]
-    else:
-        grp_list = None
-        N_cols = ['speciesS', 'initialAs']
+    traj = [t for t in os.listdir(os.path.join(exp_path,"trajectories")) if ".csv" in t][0]
+    trajdf = pd.read_csv(os.path.join(exp_path,"trajectories", traj), skiprows=1)
+    channels = [ch for ch in trajdf['sampletimes'].values if "Ki_t" in ch]
+    grp_list = [ch.replace("{0}","").replace("Ki_t_","") for ch in channels]
+    grp_suffix = grp_list[0][:3]
 
     """Define parameters to keep"""
-    sample_param_to_keep = ['startdate', 'scen_num', 'sample_num'] + N_cols
+    sample_param_to_keep = ['startdate', 'scen_num', 'sample_num']
     if isinstance(additional_sample_param, list): sample_param_to_keep = sample_param_to_keep + additional_sample_param
 
     try:
         sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"), usecols= sample_param_to_keep)
     except:
         """when running from input csv sample_num might be missing"""
-        sample_param_to_keep = ['startdate', 'scen_num'] + N_cols
+        sample_param_to_keep = ['startdate', 'scen_num']
         if isinstance(additional_sample_param, list): sample_param_to_keep = sample_param_to_keep + additional_sample_param
         sampledf = pd.read_csv(os.path.join(exp_path, "sampled_parameters.csv"), usecols= sample_param_to_keep)
         sample_param_to_keep = sample_param_to_keep + ['sample_num']
