@@ -230,20 +230,20 @@ def copy_submission_files():
 if __name__ == '__main__':
 
     args = parse_args()
-    custom_exp_names = False
+    custom_exp_names = True
     if custom_exp_names:
-        exp_name_new = '20210428_IL_ae_combined_bvariant_vaccine'
-        exp_names = ['20210428_IL_localeEMS_1_ae_v3_bvariant_vaccine',
-                     '20210429_IL_localeEMS_2_ae_v5_bvariant_vaccine',
-                     '20210429_IL_localeEMS_3_ae_v6_bvariant_vaccine',
-                     '20210428_IL_localeEMS_4_ae_v3_bvariant_vaccine',
-                     '20210428_IL_localeEMS_5_ae_v3_bvariant_vaccine',
-                     '20210428_IL_localeEMS_6_ae_v3_bvariant_vaccine',
-                     '20210428_IL_localeEMS_7_ae_v3_bvariant_vaccine',
-                     '20210428_IL_localeEMS_8_ae_v3_bvariant_vaccine',
-                     '20210428_IL_localeEMS_9_ae_v3_bvariant_vaccine',
-                     '20210429_IL_localeEMS_10_ae_v5_bvariant_vaccine',
-                     '20210429_IL_localeEMS_11_ae_v5_bvariant_vaccine']
+        exp_name_new = '20210513_IL_ae_combined_bvariant_vaccine'
+        exp_names = ['20210511_IL_localeEMS_1_ae_v2_bvariant_vaccine',
+                     '20210513_IL_localeEMS_2_ae_v8_bvariant_vaccine',
+                     '20210513_IL_localeEMS_3_ae_v6_bvariant_vaccine',
+                     '20210511_IL_localeEMS_4_ae_v2_bvariant_vaccine',
+                     '20210511_IL_localeEMS_5_ae_v1_bvariant_vaccine',
+                     '20210513_IL_localeEMS_6_ae_v5_bvariant_vaccine',
+                     '20210512_IL_localeEMS_7_ae_v3_bvariant_vaccine',
+                     '20210512_IL_localeEMS_8_ae_v3_bvariant_vaccine',
+                     '20210511_IL_localeEMS_9_ae_v2_bvariant_vaccine',
+                     '20210513_IL_localeEMS_10_ae_v5_bvariant_vaccine',
+                     '20210513_IL_localeEMS_11_ae_v5_bvariant_vaccine']
     else:
         stem = args.stem
         exp_name_new = f'{stem}_combined'
