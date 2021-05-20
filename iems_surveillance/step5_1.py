@@ -34,7 +34,7 @@ def create_mitigation_df(path):
         mitigation_list.append([mitigation_date, 0.09])
         mitigation_df = pd.DataFrame(mitigation_list, columns = ['Date', 'ki_reset'])
         # combine  to create sample parameter mitigation csv
-        parameters_df = pd.read_csv(os.path.join('../experiment_configs', 'input_csv','sample_parameters_single.csv'))
+        parameters_df = pd.read_csv(os.path.join('../experiment_configs', 'input_csv','sampled_parameters_single.csv'))
         df = pd.DataFrame()
         df = df.append([parameters_df]*3,ignore_index = True)
         df['sample_num'] = df.index+1
@@ -43,7 +43,7 @@ def create_mitigation_df(path):
         df['mitigation_time'] = mitigation_df['Date']
         mitigation = 'mitigation'
         # out put new sample mitigation!!!!!
-        df.to_csv(os.path.join('../experiment_configs', 'input_csv','sample_parameters_mitigation.csv'),index=False)
+        df.to_csv(os.path.join('../experiment_configs', 'input_csv','sampled_parameters_mitigation.csv'),index=False)
     else:
         mitigation = 'no mitigation'
     return mitigation
