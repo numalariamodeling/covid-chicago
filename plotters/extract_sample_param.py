@@ -251,6 +251,6 @@ if __name__ == '__main__':
         ## Save samples ranked in order of trace selection (fitting performance)
         save_ranked_samples_per_region(sim_output_path,git_dir, grp_list, n_traces_to_keep=None,save_to_git=False)
 
-        ### Plot samples (all)
-        #extract_samples(grp_numbers,save_dir=None, plot_dists=True, include_grp_param=True)
-        #extract_mean_of_samples(grp_numbers, save_dir=None, plot_dists=False, include_grp_param=True)
+        grp_numbers = [nr for nr in grp_numbers if nr != 0]
+        extract_samples(grp_numbers,save_dir=None, plot_dists=True, include_grp_param=True)
+        extract_mean_of_samples(grp_numbers, save_dir=None, plot_dists=False, include_grp_param=True)
