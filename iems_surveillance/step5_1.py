@@ -22,13 +22,16 @@ def DateToTimestep(date, startdate = pd.Timestamp('2020-02-13')):
 def create_mitigation_df(path):
     #Rt_df = pd.read_csv('step5_input.csv')
     Rt_df = pd.read_csv(os.path.join('../../projects','covid_chicago', 'cms_sim','simulation_output', path, 'step5_input.csv'))
+    print('read Rt series success')
+    # look at only trajectory number 2 for testing 
+    Rt_df = Rt_df.loc[Rt_df['scen_num']==2]
     Rt_series = list(Rt_df['R_mean'].values)
     Dates = list(Rt_df['date'].values)
     mitigation_list = []
     mitigation = ''
-    if Rt_series[250]>0.5:
+    if Rt_series[-1]>1:
         print('mitigation')
-        mitigation_date = DateToTimestep(Dates[250])+4
+        mitigation_date = DateToTimestep(Dates[-1])+4
         mitigation_list.append([mitigation_date, 0.07])
         mitigation_list.append([mitigation_date, 0.05])
         mitigation_list.append([mitigation_date, 0.09])
@@ -44,6 +47,7 @@ def create_mitigation_df(path):
         mitigation = 'mitigation'
         # out put new sample mitigation!!!!!
         df.to_csv(os.path.join('../experiment_configs', 'input_csv','sampled_parameters_mitigation.csv'),index=False)
+        #df.to_csv(os.path.join('sampled_parameters_mitigation.csv'),index=False)
     else:
         mitigation = 'no mitigation'
     return mitigation
