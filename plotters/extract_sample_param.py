@@ -249,7 +249,7 @@ if __name__ == '__main__':
         #grp_numbers = [x for x in grp_numbers if x !=0]
 
         ## Save samples ranked in order of trace selection (fitting performance)
-        save_ranked_samples_per_region(sim_output_path,git_dir, grp_list, n_traces_to_keep=3,save_to_git=False)
+        save_ranked_samples_per_region(sim_output_path,git_dir, grp_list, n_traces_to_keep=None,save_to_git=False)
 
         ### Plot samples (all)
         #extract_samples(grp_numbers,save_dir=None, plot_dists=True, include_grp_param=True)
