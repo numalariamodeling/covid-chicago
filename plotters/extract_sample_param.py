@@ -141,10 +141,10 @@ def extract_samples(grp_numbers,nsamples=100, seed_nr=751, save_dir=None, save_a
                                  plot_path=plot_path)
         plot_param_distributions(df=df_extract, param_list=IL_specific_param, param_class="IL_specific_model_parameters",
                                  plot_path=plot_path)
-        plot_param_by_channel(sample_df=df_extract, param_list=sample_params_core, param_class="Core_model_parameters",
-                              plot_path=plot_path)
-        plot_param_by_channel(sample_df=df_extract, param_list=IL_specific_param, param_class="IL_specific_model_parameters",
-                              plot_path=plot_path)
+        #plot_param_by_channel(sample_df=df_extract, param_list=sample_params_core, param_class="Core_model_parameters",
+        #                      plot_path=plot_path)
+        #plot_param_by_channel(sample_df=df_extract, param_list=IL_specific_param, param_class="IL_specific_model_parameters",
+        #                      plot_path=plot_path)
 
 
 def extract_mean_of_samples(grp_numbers,save_dir=None, plot_dists=False, include_grp_param=True, fname=None):
@@ -203,6 +203,35 @@ def extract_mean_of_samples(grp_numbers,save_dir=None, plot_dists=False, include
                                  param_class="IL_specific_grp_parameters", plot_path=plot_path)
 
 
+def save_ranked_samples_per_region(sim_output_path,git_dir, grp_list, n_traces_to_keep=None,save_to_git=False):
+
+    for e, grp in enumerate(grp_list):
+        grp_nr = grp_numbers[e]
+        save_csv_name = f'sample_parameters_region_{str(grp_nr)}.csv'
+
+        df_samples = pd.read_csv(os.path.join(sim_output_path, 'sampled_parameters.csv'))
+        rank_export_df = pd.read_csv(os.path.join(sim_output_path, f'traces_ranked_region_{str(grp_nr)}.csv'))
+
+        if n_traces_to_keep is not None:
+            rank_export_df = rank_export_df[0:n_traces_to_keep]
+            save_csv_name = f'sample_parameters_region_{str(grp_nr)}_{n_traces_to_keep}.csv'
+        df_samples = df_samples[df_samples['sample_num'].isin(rank_export_df.sample_num.unique())]
+
+        # FIXME list of regions to drop hardcoded, also EMS_1 vs EMS_11
+        # Keeping all columns, does not affect simulations except being confusing to have all
+        #cols_to_drop = []
+        #for ems in ['EMS_2', 'EMS_3', 'EMS_4', 'EMS_5', 'EMS_6', 'EMS_7', 'EMS_8', 'EMS_9', 'EMS_10']:
+        #    cols_to_drop = cols_to_drop + [i for i in df_samples.columns if ems in (i)]
+        #df_samples = df_samples.drop(cols_to_drop, axis=1)
+
+        df_samples['scen_num_orig'] = df_samples['scen_num']
+        df_samples['sample_num_orig'] = df_samples['sample_num']
+        df_samples['scen_num'] = range(0, len(df_samples))
+        df_samples.to_csv(os.path.join(sim_output_path,save_csv_name), index=False)
+        if save_to_git:
+            df_samples.to_csv(os.path.join(git_dir, 'experiment_config','input_csv',save_csv_name), index=False)
+
+
 if __name__ == '__main__':
     args = parse_args()
     stem = args.stem
@@ -218,6 +247,10 @@ if __name__ == '__main__':
         """Get group names"""
         grp_list, grp_suffix, grp_numbers = get_group_names(exp_path=sim_output_path)
         #grp_numbers = [x for x in grp_numbers if x !=0]
-        
-        extract_samples(grp_numbers,save_dir=None, plot_dists=True, include_grp_param=True)
-        extract_mean_of_samples(grp_numbers, save_dir=None, plot_dists=False, include_grp_param=True)
+
+        ## Save samples ranked in order of trace selection (fitting performance)
+        save_ranked_samples_per_region(sim_output_path,git_dir, grp_list, n_traces_to_keep=3,save_to_git=False)
+
+        ### Plot samples (all)
+        #extract_samples(grp_numbers,save_dir=None, plot_dists=True, include_grp_param=True)
+        #extract_mean_of_samples(grp_numbers, save_dir=None, plot_dists=False, include_grp_param=True)
