@@ -247,7 +247,7 @@ def add_parameters(df, parameter_type, config, region, age_bins, full_factorial=
     return df
 
 
-def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region, generateNew,use_means):
+def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalues, region, generateNew,nsamples,use_means):
     """ Given a yaml configuration file (e.g. ./extendedcobey.yaml),
     generate a dataframe of the parameters for a simulation run using the specified
     functions/sampling mechanisms.
@@ -280,6 +280,10 @@ def generateParameterSamples(samples, pop, start_dates, config, age_bins, Kivalu
         result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
     else :
         result = pd.read_csv(os.path.join('./experiment_configs', "input_csv",args.sample_csv))
+        if nsamples is not None:
+            ### Assumes unique sample_nums are ordered according to trace selection, or random
+            sample_num_values_to_keep = result['sample_num'].values[0:int(nsamples)]
+            result = result[result['sample_num'].isin(sample_num_values_to_keep)]
         result.to_csv(os.path.join(temp_exp_dir, "sampled_parameters.csv"), index=False)
 
     return result
@@ -331,8 +335,10 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
         use_means = True
 
     generateNew = True
+    nsamples = None
     if args.sample_csv is not None :
         generateNew = False
+        nsamples = args.nsamples
 
     dfparam = generateParameterSamples(samples=sub_samples,
                                        pop=simulation_population,
@@ -342,6 +348,7 @@ def generateScenarios(simulation_population, Kivalues, duration, monitoring_samp
                                        Kivalues=Kivalues,
                                        region=region,
                                        generateNew=generateNew,
+                                       nsamples=nsamples,
                                        use_means=use_means)
 
     if Location == 'NUCLUSTER' and cfg_file =="model_B.cfg":
@@ -552,6 +559,16 @@ def parse_args():
         "--sample_csv",
         type=str,
         help="Name of sampled_parameters.csv, any input csv will be renamed per default to 'sampled_parameters.csv'",
+        default=None
+    )
+    parser.add_argument(
+        "-ns",
+        "--nsamples",
+        type=str,
+        help="Only used together with sample_csv, specifies how many sample_nums to keep from the csv"
+             "the sample_num can either be random or ranked according to the trace selection and the top n samples will be selected"
+             "When running multiple scenarios per sample, these will be maintained "
+             "(i.e. 3 intervention levels per sample_num), since the scen_num will not be changed",
         default=None
     )
     parser.add_argument(
