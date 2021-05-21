@@ -17,5 +17,6 @@ additional_params:
     Kw_multiplier2:
         np.random: uniform
         function_kwargs: {'low': 0.8, 'high':1.2}
-    ghi:
-        something_else: abc123
+    # Following line will raise value error due to unrecognized "something_else"
+    # ghi:
+    #     something_else: abc123

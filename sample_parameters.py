@@ -321,7 +321,7 @@ def gen_combos_from_yaml(csv_base, yaml_file):
       Ensure that all parameters have unique names in input files
       and that multiple input files are supplied.
     """
-    config = yaml.load(open(yaml_file), Loader=yamlordereddictloader.Loader)
+    config = yaml.load(open(os.path.join(yaml_dir, yaml_file)), Loader=yamlordereddictloader.Loader)
     
     factorial = config['factorial']
     replicate_number = config['replicate_number']
@@ -343,7 +343,7 @@ def gen_combos_from_yaml(csv_base, yaml_file):
                 if len(parameter_function['list']) == replicate_number:
                     df[parameter] = parameter_function['list']
                 else:
-                    warnings.warn(parameter + ': List length different from replicate_number and factorial_after is not True.')
+                    raise ValueError(parameter + ': List length different from replicate_number and factorial_after is not True.')
             else:
                 df_after[parameter] = parameter_function['list']
         elif 'np.random' in parameter_function: # if np.random, draw from distribution
@@ -351,7 +351,7 @@ def gen_combos_from_yaml(csv_base, yaml_file):
             func = getattr(np.random, parameter_function['np.random'])
             df[parameter] = func(**{"size": N_replicate, **function_kwargs})
         else: # Other unspecified ways are ignored
-            warnings.warn("Parameter " + parameter + " skipped: don't know how to sample this parameter.")
+            raise ValueError("Parameter " + parameter + " skipped: don't know how to sample this parameter.")
     
     if factorial:
         master_df = gen_combos(csv_base=csv_base, csv_add=df)
