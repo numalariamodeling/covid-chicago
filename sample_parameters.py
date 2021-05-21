@@ -8,6 +8,8 @@ from load_paths import load_box_paths
 from simulation_helpers import *
 from runScenarios import *
 import itertools
+import yamlordereddictloader
+import warnings
 
 mpl.rcParams['pdf.fonttype'] = 42
 
@@ -86,6 +88,14 @@ def parse_args():
         "--csv_name_combo",
         type=str,
         help="Name of csv file with parameters to add to main sampled parameters",
+        default=None
+    )
+	
+    parser.add_argument(
+        "-yaml",
+        "--yaml_name_combo",
+        type=str,
+        help="Path of yaml file with parameters to add or replace to main sampled parameters",
         default=None
     )
 
@@ -303,6 +313,61 @@ def gen_combos(csv_base, csv_add):
     master_df['sample_num'] = make_identifier(master_df[['sample_num1', 'sample_num2']])
     master_df['scen_num'] = master_df['sample_num']
     return master_df
+	
+def gen_combos_from_yaml(csv_base, yaml_file):
+    """
+      Function takes a base csv, generates a master csv file by adding 
+      or replacing parameters based on specifications in yaml_file.
+      Ensure that all parameters have unique names in input files
+      and that multiple input files are supplied.
+    """
+    config = yaml.load(open(os.path.join(yaml_dir, yaml_file)), Loader=yamlordereddictloader.Loader)
+    
+    factorial = config['factorial']
+    replicate_number = config['replicate_number']
+    additional_params = config['additional_params']
+    
+    if factorial:
+        N_replicate = replicate_number
+    else:
+        N_replicate = replicate_number * csv_base.shape[0]
+    
+    df = pd.DataFrame(index=range(0, N_replicate))
+    df_after = pd.DataFrame()
+    
+    for parameter, parameter_function in additional_params.items():
+        if isinstance(parameter_function, (int, float)): # if single number
+            df[parameter] = parameter_function
+        elif 'list' in parameter_function: # if a list of numbers, factorial_after controls binding behaviours
+            if not parameter_function['factorial_after']:
+                if len(parameter_function['list']) == replicate_number:
+                    df[parameter] = parameter_function['list']
+                else:
+                    raise ValueError(parameter + ': List length different from replicate_number and factorial_after is not True.')
+            else:
+                df_after[parameter] = parameter_function['list']
+        elif 'np.random' in parameter_function: # if np.random, draw from distribution
+            function_kwargs = parameter_function['function_kwargs']
+            func = getattr(np.random, parameter_function['np.random'])
+            df[parameter] = func(**{"size": N_replicate, **function_kwargs})
+        else: # Other unspecified ways are ignored
+            raise ValueError("Parameter " + parameter + " skipped: don't know how to sample this parameter.")
+    
+    if factorial:
+        master_df = gen_combos(csv_base=csv_base, csv_add=df)
+        if not df_after.shape[0] == 0:
+            master_df = master_df.drop(['sample_num1', 'sample_num2'], axis=1)
+            master_df = gen_combos(csv_base=master_df, csv_add=df_after)
+    else:
+        df['sample_num2'] = range(0, df.shape[0])
+        csv_base1 = pd.concat([csv_base]*replicate_number, ignore_index=True)
+        csv_base1 = csv_base1.rename(columns={"sample_num":"sample_num1"}).sort_values(by=['sample_num1'])
+        csv_base1.drop(list(df.columns), axis=1, inplace=True, errors='ignore')
+        
+        master_df = pd.concat([csv_base1.reset_index(drop=True), df], axis=1)
+        master_df['scen_num'] = range(0, master_df.shape[0])
+    
+    return(master_df)
 
 
 if __name__ == '__main__':
@@ -322,20 +387,20 @@ if __name__ == '__main__':
     yaml_dir = os.path.join(git_dir, 'experiment_configs')
 
     if args.csv_name_load == None:
-
         dfparam = get_parameters(from_configs=True, sub_samples=sub_samples)
-
     else:
-
         dfparam = get_parameters(from_configs=False, sample_csv_name=args.csv_name_load)
-
-    if bool(args.param_dic) and args.csv_name_combo == None:
+	
+    if np.sum([bool(args.param_dic), args.csv_name_combo != None, args.yaml_name_combo != None]) > 1:
+        raise NotImplementedError('Does not support input of additional parameters for more than one way.')
+    elif bool(args.param_dic):
         dic, dfparam = change_param(df=dfparam, param_dic=args.param_dic)
-
-    if args.csv_name_combo != None:
+    elif args.csv_name_combo != None:
         dfparam2 = pd.read_csv(os.path.join('./experiment_configs', 'input_csv', args.csv_name_combo))
         dfparam1 = dfparam
         del dfparam
         dfparam = gen_combos(csv_base=dfparam1, csv_add=dfparam2)
+    elif args.yaml_name_combo != None:
+        dfparam = gen_combos_from_yaml(csv_base=dfparam, yaml_file=args.yaml_name_combo)
 
     check_and_save_parameters(df=dfparam, emodl_template=emodl_name, sample_csv_name=args.csv_name_save)

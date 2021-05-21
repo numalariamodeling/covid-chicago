@@ -336,6 +336,7 @@ The [sample_parameters.py](sample_parameters.py) script allows to:
 (2) load and modify an existing sampled_parameters.csv (change or add single or multiple parameter) (default location `experiment_configs\input_csv`)
 (3) replace single values for one or more parameter use python dictionary  `--param_dic  {\"capacity_multiplier\":\"0.5\"}`
 (4) combine with multiple values for one or more parameters define additional csv file   `--csv_name_combo startdate_Ki_sets.csv`
+(5) combine with multiple values for one or more parameters defined according to YAML    `--yaml_name_combo example.yaml`
 
 <details><summary>Show examples</summary>
 <p>  
@@ -348,6 +349,8 @@ Running examples:
 - example 3: `python sample_parameters.py -rl Local --model locale -load sampled_parameters_1000.csv -save sampled_parameters_1000_v2.csv  --param_dic  {\"capacity_multiplier\":\"0.5\"} `
 - example 4: `python sample_parameters.py   --model locale --csv_name_combo  sampled_parameters_sm7.csv   -save sampled_parameters_sm7_combo.csv`
    -(sampled_parameters_sm7.csv not under version control, but would for example include 10 values for social multiplier 7 for all 11 regions, the base sample parameters are repeated for each of the 10 rows of the additional csv)
+- example 5: `python sample_parameters.py -e "example.emodl" -load "example_csv_base.csv" -yaml "samp_params_combos_example.yaml"`
+   - See the example yaml file (default directory is `./experiment_config/`) for how to specify the additional parameters.
 
 When running simulations with an pre-existing csv file, specify 
 - `--sample_csv` (name of csv file in `experiment_configs\input_csv` ).
