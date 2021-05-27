@@ -178,7 +178,7 @@ def combine_civis_csv(exp_names):
     dfAll = pd.concat([dfAll, dfIL])
 
     if os.path.exists(os.path.join(sim_output_path_new, 'rtNU.csv')):
-        #dfAll = pd.read_csv(os.path.join(sim_output_path_new, 'nu_20210429.csv'))
+        #dfAll = pd.read_csv(os.path.join(sim_output_path_new, f'nu_{simdate}.csv'))
         dfAll['date'] = pd.to_datetime(dfAll['date'])
         df_rt_all = pd.read_csv(os.path.join(sim_output_path_new,  'rtNU.csv'))
         df_rt_all['date'] = pd.to_datetime(df_rt_all['date'])
@@ -188,7 +188,7 @@ def combine_civis_csv(exp_names):
                               right_on=['date', 'geography_modeled'])
 
     print(f'N regions in combined df= {len(dfAll[region_channel].unique())}')
-    dfAll.to_csv(os.path.join(sim_output_path_new,  'nu_20210429.csv'), index=False, date_format='%Y-%m-%d')
+    dfAll.to_csv(os.path.join(sim_output_path_new,  f'nu_{simdate}.csv'), index=False, date_format='%Y-%m-%d')
 
 
 def copy_regional_plots(exp_names):
@@ -232,18 +232,18 @@ if __name__ == '__main__':
     args = parse_args()
     custom_exp_names = True
     if custom_exp_names:
-        exp_name_new = '20210513_IL_ae_combined_bvariant_vaccine'
-        exp_names = ['20210511_IL_localeEMS_1_ae_v2_bvariant_vaccine',
-                     '20210513_IL_localeEMS_2_ae_v8_bvariant_vaccine',
-                     '20210513_IL_localeEMS_3_ae_v6_bvariant_vaccine',
-                     '20210511_IL_localeEMS_4_ae_v2_bvariant_vaccine',
-                     '20210511_IL_localeEMS_5_ae_v1_bvariant_vaccine',
-                     '20210513_IL_localeEMS_6_ae_v5_bvariant_vaccine',
-                     '20210512_IL_localeEMS_7_ae_v3_bvariant_vaccine',
-                     '20210512_IL_localeEMS_8_ae_v3_bvariant_vaccine',
-                     '20210511_IL_localeEMS_9_ae_v2_bvariant_vaccine',
-                     '20210513_IL_localeEMS_10_ae_v5_bvariant_vaccine',
-                     '20210513_IL_localeEMS_11_ae_v5_bvariant_vaccine']
+        exp_name_new = '20210527_IL_ae_combined_bvariant_vaccine'
+        exp_names = ['20210526_IL_localeEMS_1_ae_v4_bvariant_vaccine',
+                     '20210527_IL_localeEMS_2_ae_v5_bvariant_vaccine',
+                     '20210527_IL_localeEMS_3_ae_v4_bvariant_vaccine',
+                     '20210526_IL_localeEMS_4_ae_v1_bvariant_vaccine',
+                     '20210526_IL_localeEMS_5_ae_v2_bvariant_vaccine',
+                     '20210526_IL_localeEMS_6_ae_v2_bvariant_vaccine',
+                     '20210527_IL_localeEMS_7_ae_v5_bvariant_vaccine',
+                     '20210527_IL_localeEMS_8_ae_v3_bvariant_vaccine',
+                     '20210527_IL_localeEMS_9_ae_v3_bvariant_vaccine',
+                     '20210526_IL_localeEMS_10_ae_v1_bvariant_vaccine',
+                     '20210527_IL_localeEMS_11_ae_v3_bvariant_vaccine']
     else:
         stem = args.stem
         exp_name_new = f'{stem}_combined'
