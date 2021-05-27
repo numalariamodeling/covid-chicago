@@ -260,6 +260,7 @@ if __name__ == '__main__':
         os.makedirs(plot_path_new)
         os.makedirs(os.path.join(plot_path_new, 'pdf'))
         os.makedirs(os.path.join(sim_output_path_new, 'sh'))
+        os.makedirs(os.path.join(sim_output_path_new, 'sh', 'log'))
         os.makedirs(os.path.join(sim_output_path_new, 'bat'))
 
     """Move sh or bat files"""
