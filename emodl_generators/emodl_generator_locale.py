@@ -1246,7 +1246,7 @@ class covidModel:
 
             return emodl_str
                                    
-       def write_mitigation():
+        def write_mitigation():
             emodl_str = ';COVID-19 mitigation rollback time_event\n'
             csvfile = intervention_param['mitigation_csv']
     
