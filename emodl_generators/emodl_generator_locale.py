@@ -1246,7 +1246,7 @@ class covidModel:
 
             return emodl_str
                                    
-        def write_mitigation():
+       def write_mitigation():
             emodl_str = ';COVID-19 mitigation rollback time_event\n'
             csvfile = intervention_param['mitigation_csv']
     
@@ -1258,15 +1258,15 @@ class covidModel:
     
     
             for i, date in enumerate(intervention_dates, 1):
-                temp_str = f'(time-event ki_mitigation_change{i} @mitigation_time@ ('
-                temp_str = temp_str + ''.join([f' (Ki_{grp} @mitigation_ki@)' for grp in  self.grpList] )
+                temp_str = f'(time-event ki_mitigation_change{i} {covidModel.DateToTimestep(pd.Timestamp(date), self.startdate)} ('
+                temp_str = temp_str + ''.join([f' (Ki_{grp} {ki_reset[i-1]})' for grp in  self.grpList] )
                 temp_str = temp_str + f'))\n'
                 emodl_timeevents = emodl_timeevents + temp_str 
                                    
             emodl_str = emodl_str + emodl_timeevents
     
-            return emodl_str
-                                   
+            return emodl_str              
+    
         """Select intervention to add to emodl"""
         intervention_str = ""
         if "bvariant" in self.add_interventions:
