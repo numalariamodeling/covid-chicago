@@ -13,7 +13,9 @@ output: new_symp_mild.csv in the simulation output folder
 run: module load R/4.0.0  
      R --vanilla -f Step3.R --args "insert simulation folder name"   
 output: downsampled_cases.csv in simulation output folder. 
-- 4 evaluate Rt
-- 5 make decision
-- 6 + 1 pick up saved model and run simulations
-- 7 measure ICU admission and deaths
+- 4 evaluate Rt & 5 calculate mitigation probability: these two steps are done in the same script
+run: python3 final_stage4.py "insert simulation folder name"
+- 6 combine death count results
+trajectories_death_total.R
+combine_death.R
+- 7 plot deaths
