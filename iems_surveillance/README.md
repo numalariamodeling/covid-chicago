@@ -2,8 +2,8 @@
 # IEMS_surveillance
 
 new model steps:
-scripts up to step 5 are fully tested
-need new .sh to run all code successively
+scripts up to step 5 are fully tested.  
+need new .sh to run all code successively.  
 
 - 1 run covid model with/without mitigation (no script here)
 - 2 grab data series: daily new mild symptomatics
