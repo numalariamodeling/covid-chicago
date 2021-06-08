@@ -10,9 +10,9 @@ need new .sh to run all code successively (all_run.sh is for old model, but can 
 run: python3 iems_step2_example.py -exp "insert simulation folder name" -loc "NUCLUSTER"  
 output: new_symp_mild.csv in the simulation output folder
 - 3 downsample to generate survaillance data  
-run: module load R/4.0.0
-     R --vanilla -f Step3.R --args "insert simulation folder name" 
-output: downsampled_cases.csv in simulation output folder
+run: module load R/4.0.0  
+     R --vanilla -f Step3.R --args "insert simulation folder name"   
+output: downsampled_cases.csv in simulation output folder. 
 - 4 evaluate Rt
 - 5 make decision
 - 6 + 1 pick up saved model and run simulations
