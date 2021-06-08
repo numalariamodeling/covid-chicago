@@ -12,8 +12,8 @@ output: new_symp_mild.csv in the simulation output folder
 - 3 downsample to generate survaillance data  
 run: module load R/4.0.0  
      R --vanilla -f Step3.R --args "insert simulation folder name"   
-output: downsampled_cases.csv in simulation output folder. 
-- 4 evaluate Rt & 5 calculate mitigation probability: these two steps are done in the same script. 
+output: downsampled_cases.csv in simulation output folder   
+- 4 evaluate Rt & 5 calculate mitigation probability: these two steps are done in the same script   
 run: python3 final_stage4.py "insert simulation folder name"
 - 6 combine death count results
 trajectories_death_total.R
