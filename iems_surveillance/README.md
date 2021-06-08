@@ -6,7 +6,9 @@ scripts up to step 5 are fully tested
 need new .sh to run all code successively (all_run.sh is for old model, but can be used as a referenced for new .sh)   
 
 - 1 run covid model with/without mitigation (no script here)
-- 2 grab data series: daily new mild symptomatics
+- 2 grab data series: daily new mild symptomatics  
+run: python3 iems_step2_example.py -exp "insert simulation name" -loc "NUCLUSTER"  
+output: new_symp_mild.csv in the simulation output folder
 - 3 downsample to generate survaillance data
 - 4 evaluate Rt
 - 5 make decision
