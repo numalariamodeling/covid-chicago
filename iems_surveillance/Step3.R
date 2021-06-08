@@ -36,3 +36,4 @@ for (i in 1:length(data1[,7])){
   }
 
 write.csv(newdata,file="downsampled_cases.csv")
+ 
