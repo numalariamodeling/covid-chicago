@@ -16,3 +16,4 @@ for (i in 1:reps){
 }
 
 write.csv(deaths, file = "total_death_set.csv")
+ 
