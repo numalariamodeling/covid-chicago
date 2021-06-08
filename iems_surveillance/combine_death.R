@@ -38,3 +38,4 @@ for (i in 1:x1) {
 #Combine distribution from Set A and Set B
 
 distributions = distributionA + distributionB;
+ 
