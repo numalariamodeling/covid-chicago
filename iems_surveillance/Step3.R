@@ -1,3 +1,4 @@
+# downsampling step
 cmd<-commandArgs(trailingOnly = TRUE)
 setwd(paste("/projects/b1139/covidproject/projects/covid_chicago/cms_sim/simulation_output/",cmd,sep = ""))
 data1<-read.csv("new_symp_mild.csv")
@@ -9,6 +10,7 @@ downsample2<-rep(0,50)
 downsample3<-rep(0,50)
 downsample4<-rep(0,50)
 downsample5<-rep(0,50)
+# prob = downsampling binomial probability
 for (i in 1:length(data1[,7])){
   for (j in 1:50){
     downsample1[j]<-rbinom(n=1,size=data1[i,col_name],prob=15/2000)
