@@ -1,10 +1,12 @@
 
 # IEMS_surveillance
 
-Evaluating COVID-19 surveillance systems using  modeling.
+new model steps:
+scripts up to step 5 are fully tested
+need new .sh to run all code successively
 
-- 1 run covid model
-- 2 grab data series
+- 1 run covid model with/without mitigation (no script here)
+- 2 grab data series: daily new mild symptomatics
 - 3 downsample to generate survaillance data
 - 4 evaluate Rt
 - 5 make decision
