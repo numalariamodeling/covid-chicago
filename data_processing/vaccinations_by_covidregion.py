@@ -37,7 +37,7 @@ def plot_vaccinations(adf, channels,channel_title, plot_name=None):
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%b-%d'))
         ax.set_title(plotsubtitle)
         if 'perc' in channels[0]:
-            ax.set_ylim(0, 0.5)
+            ax.set_ylim(0, 1)
 
     ax.legend()
 
