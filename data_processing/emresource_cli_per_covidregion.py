@@ -7,13 +7,12 @@ sys.path.append('../')
 from load_paths import load_box_paths
 import matplotlib as mpl
 import matplotlib.dates as mdates
-from datetime import date, timedelta, datetime
 import seaborn as sns
 from processing_helpers import *
 #from plotting.colors import load_color_palette
 
 mpl.rcParams['pdf.fonttype'] = 42
-today = datetime.today()
+
 
 datapath, projectpath, wdir,exe_dir, git_dir = load_box_paths()
 
@@ -31,7 +30,7 @@ def parse_args():
 def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_grid = True):
 
     if channels == None:
-        channels = ['ICU conf', 'non ICU', 'CLI admissions']
+        channels = ['CLI admissions'] #['ICU conf', 'non ICU', 'CLI admissions']
     if palette == None:
         palette = ('#913058', "#F6851F", "#00A08A", "#D61B5A", "#5393C3", "#F1A31F", "#98B548", "#8971B3", "#969696")
 
@@ -53,7 +52,7 @@ def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_gr
 
     if len(ems_list) == 2:
         fig = plt.figure(figsize=(12, 5))
-        fig.subplots_adjust(right=0.97, left=0.07, hspace=0.15, top=0.95, bottom=0.01)
+        fig.subplots_adjust(right=0.97, left=0.07, hspace=0.13, top=0.93, bottom=0.01)
         axes = [fig.add_subplot(1, 2, x + 1) for x in range(len(ems_list))]
     else:
         fig = plt.figure(figsize=(14, 12))
@@ -77,17 +76,19 @@ def plot_emresource(ems_list, scale= '', channels = None, palette = None, add_gr
         if scale == 'log':
             ax.set_yscale('log')
 
-    if ei+1 == len(ems_list):
-        ax.legend(loc='upper left', shadow=False, ncol=1)
+    if len(channels)==1:
+        fig.suptitle(channels[0], y=1, fontsize=14)
+    else:
+        if ei+1 == len(ems_list):
+            ax.legend(loc='upper left', shadow=False, ncol=1)
 
-    regions = '-'.join(map(str, ems_list))
-    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_by_covidregion.png'))
-    fig.savefig(os.path.join(plot_path, f'EMResource_and_CLI_by_covidregion.pdf'), format='PDF')
+    fig.savefig(os.path.join(plot_path, f'CLI_by_covidregion.png'))
+    fig.savefig(os.path.join(plot_path, f'CLI_by_covidregion.pdf'), format='PDF')
 
 if __name__ == '__main__' :
 
-    first_plot_day = pd.to_datetime(date(2021, 2, 1))
-    last_plot_day = pd.to_datetime(today)
+    first_plot_day = pd.Timestamp('2021-4-1')
+    last_plot_day = pd.Timestamp.today()
 
     plot_path = os.path.join(projectpath, 'Plots + Graphs', 'Emresource Plots')
     plot_emresource(ems_list=range(0, 12), scale='nolog')
