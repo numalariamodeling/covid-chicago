@@ -511,13 +511,15 @@ def parse_args():
         "--scenario",
         type=str,
         help=("Intervention scenario to use, default = baseline"
-              'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant", "vaccine"'
+              'Any combination of "baseline", "rollback","triggeredrollback", "reopen","bvariant","bvariant2", "vaccine"'
               'Separated by underscore, example: reopen_rollback '
               "For a full list please visit the GitHub readme"),
         choices=['baseline', 'rollback', 'reopen', 'triggeredrollback','rollback_reopen', 'triggeredrollback_reopen',
                  'vaccine', 'rollback_vaccine', 'reopen_vaccine', 'triggeredrollback_vaccine','rollback_reopen_vaccine', 'triggeredrollback_reopen_vaccine',
                  'bvariant', 'rollback_bvariant', 'reopen_bvariant', 'triggeredrollback_bvariant','rollback_reopen_bvariant', 'triggeredrollback_reopen_bvariant',
-                 'bvariant_vaccine', 'rollback_bvariant_vaccine', 'reopen_bvariant_vaccine', 'triggeredrollback_bvariant_vaccine','rollback_reopen_bvariant_vaccine', 'triggeredrollback_reopen_bvariant_vaccine'],
+                 'bvariant_vaccine', 'rollback_bvariant_vaccine', 'reopen_bvariant_vaccine', 'triggeredrollback_bvariant_vaccine','rollback_reopen_bvariant_vaccine', 'triggeredrollback_reopen_bvariant_vaccine',
+                 'bvariant2', 'rollback_bvariant2', 'reopen_bvariant2', 'triggeredrollback_bvariant2','rollback_reopen_bvariant2', 'triggeredrollback_reopen_bvariant2',
+                 'bvariant2_vaccine', 'rollback_bvariant2_vaccine', 'reopen_bvariant2_vaccine', 'triggeredrollback_bvariant2_vaccine','rollback_reopen_bvariant2_vaccine', 'triggeredrollback_reopen_bvariant2_vaccine'],
         default="baseline"
     )
     parser.add_argument(
