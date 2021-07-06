@@ -879,7 +879,7 @@ class covidModel:
             d_Sym_P_As_change_timeevent = ''.join([f'(time-event d_Sym_change{i} @d_Sym_change_time_{i}@ '
                                                    f'('
                                                    f'(d_Sym @d_Sym_change{i}@) ' \
-                                                   f'(d_P d_PAs_change1) ' \
+                                                   f'(d_P d_PAs_change{i}) ' \
                                                    f'(d_As d_PAs_change{i}))'
                                                    f')'
                                                    f'\n' for i in n_d_PAs_changes])
