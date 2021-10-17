@@ -148,10 +148,10 @@ def aggregate_trajectories(grp, param=None, channels=None):
 if __name__ == '__main__':
 
     args = parse_args()
-    exp_name = args.exp_name
-    Location = args.Location
-    param = args.param
-    plot_only = args.plot_only
+    exp_name = '20210519_IL_localeEMS_11_jg300d_mitigation'
+    Location = 'NUCLUSTER'
+    param = 'mitigation_ki'
+    plot_only = False
 
     datapath, projectpath, wdir, exe_dir, git_dir = load_box_paths(Location=Location)
 
@@ -188,4 +188,4 @@ if __name__ == '__main__':
             filename = f'trajectoriesDat_aggr.csv'
             df.to_csv(os.path.join(exp_path, filename), index=False)
 
-    plot_sim(exp_name,exp_path,grp_list, param, channel='new_crit_det')
+    plot_sim(exp_name,exp_path,grp_list, param, channel='Ki_t')

@@ -145,7 +145,6 @@ def main(path) :
 
 
 if __name__ == '__main__': 
-    main('title')
     main(*sys.argv[1:])
 
 
