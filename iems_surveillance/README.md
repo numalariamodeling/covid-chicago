@@ -17,7 +17,7 @@ output: downsampled_cases.csv in simulation output folder
 run: python3 final_stage4.py "insert simulation folder name"   
 output: prob.csv in simulation output folder, and plots
 - 6 combine death count results
-trajectories_death_total.R
+trajectories_death_total.R (tested locally)
 combine_death.R
 - 7 plot deaths  
 

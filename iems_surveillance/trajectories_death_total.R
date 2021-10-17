@@ -1,5 +1,5 @@
 #for calculating total amount of deaths for any Set A/B per X1
-setwd("~/Spring 2021")
+#setwd("~/Spring 2021")
 traj = read.csv(file = 'trajectoriesDat.csv')
 total_time = max(traj$time)
 rows = nrow(traj)
@@ -16,3 +16,4 @@ for (i in 1:reps){
 }
 
 write.csv(deaths, file = "total_death_set.csv")
+ 
