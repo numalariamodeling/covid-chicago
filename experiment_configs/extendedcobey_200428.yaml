@@ -304,6 +304,7 @@ intervention_parameters:
   'bvariant_infectivity':
     np: linspace
     function_kwargs: {'start':0.5, 'stop':0.5}
+    #function_kwargs: {'start':1.5, 'stop':1.5}  #bvariant2
   ### Fraction of the population infected with COVID-19 B variant  
   'bvariant_fracinfect':
     np: linspace
